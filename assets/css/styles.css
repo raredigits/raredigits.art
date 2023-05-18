@@ -1,0 +1,49 @@
+* {
+    -webkit-locale: auto;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: 'Bai Jamjuree', 'Ubuntu', sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    color: #fff;
+    background-color: #000;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    background-image: url(/assets/img/rare-bg.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+article {
+    padding: 50px;
+}
+
+article p {
+    line-height: 5px;
+}
+
+h1 {
+    font-size: 2em;
+    line-height: 0;
+    font-weight: 700;
+}
+
+footer {
+    font-size: 14px;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 10px;
+}
