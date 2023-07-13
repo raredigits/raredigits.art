@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Gemsbuck01Black';
+    src: url('../fonts/Gemsbuck01Black.woff');
+  }
+
 * {
     -webkit-locale: auto;
     padding: 0;
@@ -12,38 +17,123 @@ html, body {
 
 body {
     font-family: 'Bai Jamjuree', 'Ubuntu', sans-serif;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 28px;
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     color: #fff;
-    background-color: #000;
+    background-color: #1E2225;
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
-    background-image: url(/assets/img/rare-bg.jpg);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
 }
 
-article {
-    padding: 50px;
-}
-
-article p {
-    line-height: 5px;
-}
-
 h1 {
-    font-size: 2em;
-    line-height: 0;
-    font-weight: 700;
+    font-family: 'Gemsbuck01Black';
+    font-size: 36px;
+    line-height: 38px;
+    margin: 0;
+}
+
+p {
+    margin-top: 5px;
+    color: #9ca1a5;
+
+}
+
+/* HEADER */
+
+header {
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+    height: 64px;
+    background: #000000;
+    margin: 20px 30px;
+    right: 0px;
+    left: 0px;
+}
+
+.logo {
+    height: 26px;
+    margin: auto;
+    margin-left: 25px;
+}
+
+.menu_green {
+    font-family: 'Gemsbuck01Black';
+    font-size: 18px;
+    text-transform: uppercase;
+    color: #00FF4E;
+    margin: auto;
+    margin-right: 25px;
+}
+
+
+/* CONTENT */
+
+main {
+    width: 100%;
+    height: 100%;
+}
+
+article {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    align-items:center;
+    padding: 0% 14%;
+    margin-top: 50px;
+}
+
+.content {
+    display: inline-block;
+    max-width: 341px;
+}
+
+.img_main {
+width: 65%;
 }
 
 footer {
+    display: flex;
+    justify-content: space-between;
+    height: 64px;
+    background: #000000;
+    margin: 20px 30px;
+    padding: 18px 25px;
+    right: 0px;
+    left: 0px;
+}
+
+.slogan {
+    font-family: 'Gemsbuck01Black';
     font-size: 14px;
-    width: 100%;
-    text-align: center;
-    padding-bottom: 10px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.copyright {
+    font-size: 14px;
+    text-align: right;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 950px) {
+    article {
+        background-size: 60%;
+        background-position: top right;
+    }
+
+    .content {
+        padding-top: 50%;
+    }
 }
