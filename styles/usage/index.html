@@ -212,7 +212,7 @@
                     <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
                 </div>
                 <div class="col-span-2">
-                    <a href="">Create an Issue</a>
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
                     <p class="font-size-xs">If you find a bug or have a feature request</p>
                 </div>
                 <div class="col-span-2">
@@ -222,7 +222,6 @@
             </div>
         </div>
     </section>
-  
 </div>
   
 <main>
@@ -311,23 +310,82 @@
   </section>
 
     <article>
-      <div class="construction-notice">
-    <p>
-        <span style="font-size: 2em">🚧</span>
-    </p>
-    <p><strong>SECTION ON RECONSTRUCTION</strong></p>
-    <p>
-        <span class="white-bg">
-        Work on this section is in progress. Everything will be available soon.
-        </span>
-    </p>
-    <p>
-        <a href="">Statement on Reconstruction</a>
-    </p>
-    <p>
-        <span class="material-icons" style="font-size: 2em">construction</span>
-    </p>
-</div>
+      <h2>General Principles</h2>
+<p>Rare Styles provides a solid foundation for creating clean, functional interfaces. This guide explains how to effectively implement the style system in your projects and customize it when needed.</p>
+<h2>Including the Stylesheet</h2>
+<p>Add the Rare Styles stylesheet to your project by including it in the <code>&lt;head&gt;</code> section of your HTML:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://raredigits.github.io/rare-styles/rare.min.css&quot;&gt;
+</code></pre>
+<p>For development environments or when you need unminified code:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://raredigits.github.io/rare-styles/rare.css&quot;&gt;
+</code></pre>
+<h2>Understanding Cascading Styles</h2>
+<p>The &quot;C&quot; in CSS stands for &quot;Cascading,&quot; a fundamental principle that determines which styles take precedence when multiple rules apply to the same element. The system works through three key mechanisms:</p>
+<ul>
+<li>Inheritance - Many properties naturally flow down from parent to child elements</li>
+<li>Specificity - More specific selectors override less specific ones</li>
+<li>Source order - Later styles override earlier styles</li>
+</ul>
+<p>This cascade principle is what makes customizing Rare Styles straightforward: you can override the default styles simply by adding more specific rules or loading your custom styles after the main stylesheet.</p>
+<h2>Customization Approach</h2>
+<p>The simplest way to customize Rare Styles is to create your own stylesheet and include it after the main Rare Styles file:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://raredigits.github.io/rare-styles/rare.min.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;path/to/my-beautiful-styles.css&quot;&gt;
+</code></pre>
+<p>This approach preserves all the functional benefits of Rare Styles while allowing you to:</p>
+<ul>
+<li>Override colors to match your brand</li>
+<li>Adjust typography or spacing</li>
+<li>Create custom component variants</li>
+<li>Add entirely new elements</li>
+</ul>
+<p>Here's a simple example of brand-specific customization in <code>my-beautiful-styles.css</code>:</p>
+<pre><code class="language-css">:root {
+  /* Override primary colors */
+  --color-primary: #0056b3;
+  --color-primary-dark: #004494;
+  --color-accent: #ff6b00;
+  
+  /* Adjust typography */
+  --font-heading: 'Montserrat', sans-serif;
+}
+
+/* Custom card style */
+.card.premium {
+  border-left: 4px solid var(--color-accent);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom button variant */
+.btn.brand {
+  background-color: var(--color-accent);
+  color: white;
+  border-radius: 2px;
+}
+</code></pre>
+<p>This lightweight customization adjusts the color scheme, changes the heading font, and adds two new component variants without modifying the original stylesheet.</p>
+<h2>Learning from Examples</h2>
+<p>Check out the <a href="/examples">examples section</a> to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.</p>
+<h2>Getting Help</h2>
+<p>Don't hesitate to create an issue in the <a href="https://github.com/raredigits/rare-styles">GitHub repository</a> if you encounter problems or have questions. The repository is home to mostly harmless and generally friendly developers who are happy to help. Whether you've found a bug, need clarification, or want to suggest an improvement, the community welcomes your input.</p>
+<h2>Working with Third-Party Libraries</h2>
+<p>When integrating Rare Styles with other UI libraries or frameworks:</p>
+<ul>
+<li>Load order matters - Place Rare Styles before or after other CSS libraries depending on which should take precedence</li>
+<li>Namespace conflicts - Be aware of potential class name collisions between libraries</li>
+<li>CSS resets - Rare Styles includes its own minimal reset; additional reset libraries are usually unnecessary</li>
+<li>Framework integration - For component-based frameworks (React, Vue, etc.), consider using the Rare Styles variables in your component styles for consistency</li>
+</ul>
+<h2>Performance Considerations</h2>
+<p>When customizing Rare Styles:</p>
+<ul>
+<li>Use CSS variables whenever possible instead of overriding entire rule sets</li>
+<li>Consider using media queries strategically to load custom styles only when needed</li>
+<li>For production, combine and minify your custom CSS with the base stylesheet</li>
+<li>Audit your final CSS periodically to remove unused styles</li>
+</ul>
+<p>Remember that the best customizations are minimal. Rare Styles already handles the fundamentals of creating clean, functional interfaces—your customizations should focus on brand identity and specific functional needs rather than reinventing the wheel.</p>
+
     </article>
   </div>
 </main>
@@ -337,7 +395,7 @@
     <p>&copy; 2023—2025 <a href="https://raredigits.io">Rare Digits Production</a></p>
     <div class="row gap-md padding-y-sm font-size-lg">
       <span class="vendor-logo wa bw"></span>
-      <span class="vendor-logo github color"></span>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
     </div>
   </div>
 
