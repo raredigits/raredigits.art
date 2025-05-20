@@ -80,8 +80,7 @@ article .meta-info {
 }
 
 .text-content-caption,
-.highlight,
-pre {
+.highlight {
     width: var(--text-content-caption);
     margin-left: calc(-1 * var(--space-lg));
     margin-right: calc(-1 * var(--space-lg));
@@ -167,6 +166,7 @@ pre {
     border-radius: var(--space-sm);
     overflow-x: auto;
     margin-bottom: 1em;
+    margin-left: calc(-1 * var(--space-lg));
     box-shadow: var(--inner-shadow-sm);
     scrollbar-width: none; 
     -ms-overflow-style: none;
@@ -177,6 +177,7 @@ pre {
 
     @include bp.mobile {
         padding: var(--space-md);
+        margin-left: calc(-1 * var(--space-sm));
     }
 }
 

@@ -3424,16 +3424,14 @@ article .meta-info {
 }
 
 .text-content-caption,
-.highlight,
-pre {
+.highlight {
   width: var(--text-content-caption);
   margin-left: calc(-1 * var(--space-lg));
   margin-right: calc(-1 * var(--space-lg));
 }
 @media screen and (max-width: 768px) {
   .text-content-caption,
-  .highlight,
-  pre {
+  .highlight {
     width: calc(100vw - var(--space-md));
     margin-left: calc(-1 * var(--space-sm));
   }
@@ -3513,6 +3511,7 @@ pre {
   border-radius: var(--space-sm);
   overflow-x: auto;
   margin-bottom: 1em;
+  margin-left: calc(-1 * var(--space-lg));
   box-shadow: var(--inner-shadow-sm);
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -3525,6 +3524,7 @@ pre {
 @media screen and (max-width: 768px) {
   pre {
     padding: var(--space-md);
+    margin-left: calc(-1 * var(--space-sm));
   }
 }
 
@@ -4395,6 +4395,17 @@ nav a.current {
 .sidebar a:hover {
   border-bottom: none;
   display: block;
+}
+
+.link-img {
+  text-decoration: none;
+  border-bottom: none;
+  background-image: none;
+}
+.link-img:hover {
+  text-decoration: none;
+  border-bottom: none;
+  background-image: none;
 }
 
 footer a {

@@ -63,6 +63,17 @@ nav a.current {
     display: block;
 }
 
+.link-img {
+    text-decoration: none;
+    border-bottom: none;
+    background-image: none;
+    &:hover {
+        text-decoration: none;
+        border-bottom: none;
+        background-image: none;
+    }
+}
+
 footer a {
     color: var(--gray-trans);
     border-bottom: 1px solid var(--gray-trans);
