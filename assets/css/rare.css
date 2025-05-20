@@ -4936,7 +4936,7 @@ table th:not(:first-child):not(:last-child) {
   flex-direction: column;
   justify-content: space-between;
   position: fixed;
-  top: 0;
+  top: -100%;
   left: 0;
   width: 100%;
   height: 95vh;
