@@ -1,0 +1,181 @@
+---
+layout: page.njk
+title: "Color System"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/colors/'
+---
+
+<h2>Neutral Foundation</h2>
+<div class="meta-info">css/colors/</div>
+
+<p>The style system employs a neutral monochromatic palette as its foundation for presenting information. Visual hierarchy is established primarily through typographic techniques and grid structure rather than relying on color differentiation.</p>
+<p>This approach helps maintain focus on content while ensuring accessibility and reducing cognitive load for users. The restraint in color usage creates a professional, timeless aesthetic that won't quickly feel dated.</p>
+<div class="highlight">
+    When information architecture is strong, color becomes an accent—not a necessity
+</div>
+<p>For the design and development team, it eliminates the paradox of choice that comes with access to 16.7 million possible HEX colors, streamlining decision-making and ensuring consistency.</p>
+
+<h3>Grayscale Palette</h3>
+<p>Black and white serve as the foundational contrast colors in the system. The grayscale palette between them performs a supporting function, ensuring comfortable information perception and helping users intuitively distinguish between primary and secondary information.</p>
+<p>The core grayscale palette consists of three primary and five supplementary shades that are used throughout the template:</p>
+<div class="card text-content-caption padding-lg">
+    <h4>Grays Family</h4>
+    <div class="column width100">
+        <div class="white-bg width-100 padding-md">
+            white
+        </div>
+        <div class="gray-lightest-bg width-100 padding-md">
+            gray-lightest
+        </div>
+        <div class="gray-light-bg width-100 padding-md">
+            gray-light
+        </div>
+        <div class="gray-mid-light-bg width-100 padding-md">
+            gray-mid-light
+        </div>
+        <div class="gray-bg width-100 padding-md">
+            gray
+        </div>
+        <div class="gray-trans-bg gray-light width-100 padding-md">
+            gray-trans
+        </div>
+        <div class="gray-mid-dark-bg gray-light width-100 padding-md">
+            gray-mid-dark
+        </div>
+        <div class="gray-dark-bg gray-light width-100 padding-md">
+            gray-dark
+        </div>
+        <div class="gray-darkest-bg gray-light width-100 padding-md">
+            gray-darkest
+        </div>
+        <div class="black-bg gray-light width-100 padding-md">
+            black
+        </div>
+    </div>
+</div>
+<p>These settings can be adjusted in your global stylesheet according to specific project needs:</p>
+<pre>
+<code><span class="code-comment">// css/modules/colors/_base.scss</span>
+    
+<span class="code-comment">// Base Colors </span>
+
+--black: #000; // Text color
+--white: #fff; // Used for blocks highlighting
+
+<span class="code-comment">// Grays Family </span>
+
+--gray-light: #f0f0f0; // Used for backgrounds
+--gray: #cccccc; // Used for borders, dividers
+--gray-dark: #333333; // Used for secondary text
+
+--gray-lightest: #fafafa; // Used for cards backgrounds
+--gray-mid-light: #e4e4e4; // Used for secondary backgrounds
+--gray-trans: #888888; // Used for disabled states
+--gray-mid-dark: #666666; // Used for labels, captions
+--gray-darkest: #191919; // Used for highlighting light-grays</code>
+</pre>
+
+<p>
+    These grays are implemented across all levels of the interface - from section backgrounds to specialized text elements like blockquotes, citations, and preformatted text blocks.
+</p>
+
+<h2>Accent Colors</h2>
+<p>While the grayscale palette forms the foundation, strategic use of color helps highlight key informational elements and establish visual hierarchy where necessary.</p>
+
+<h3>Brand Color</h3>
+<p>The most prominent color in the system is defined by the <code>--brand-color</code> variable. This color is primarily used for links and supporting elements, ensuring brand recognition and consistency throughout the interface.</p>
+<pre>
+<code><span class="code-comment">// css/modules/colors/_brand.scss</span>
+    
+--brand-color: #00ff4e; <span class="code-comment">// Primary brand color</span>
+--brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant for hover states</span>
+--brand-color-dark: #00b300; <span class="code-comment">// Darker variant for active states</span>
+</code></pre>
+
+<h3>Technical Colors</h3>
+<p>Technical colors are used to highlight important info: statuses, warnings, and errors.</p>
+<div class="card text-content-caption padding-lg">
+    <div class="column width100">
+        <div class="yellow-bg width-100 padding-md">
+            yellow - for warnings
+        </div>
+        <div class="red-bg width-100 padding-md">
+            red - for errors
+        </div>
+        <div class="green-bg white width-100 padding-md">
+            green - for success
+        </div>
+    </div>
+</div>
+<p>Technical colors should be used strictly for their intended purpose — a designer must avoid inflating the importance of content that isn’t truly critical.</p>
+
+<h3>Supporting Colors</h3>
+<div class="meta-info">css/modules/colors/_supporting.scss</div>
+<p>A limited set of supporting colors is available for specific purposes like data visualization and thematic section coding:</p>
+<div class="card text-content-caption padding-lg">
+    <div class="column width100">
+        <div class="cherry-bg white width-100 padding-md">
+            cherry
+        </div>
+        <div class="plum-bg white width-100 padding-md">
+            plum
+        </div>
+        <div class="ocean-bg gray-light width-100 padding-md">
+            ocean
+        </div>
+        <div class="orange-bg width-100 padding-md">
+            orange
+        </div>
+        <div class="pink-bg width-100 padding-md">
+            pink
+        </div>
+        <div class="princess-bg width-100 padding-md">
+            princess
+        </div>
+        <div class="safari-bg width-100 padding-md">
+            safari
+        </div>
+        <div class="purple-bg gray-light width-100 padding-md">
+            purple
+        </div>
+        <div class="pen-bg white width-100 padding-md">
+            pen
+        </div>
+        <div class="tiffany-bg white width-100 padding-md">
+            tiffany
+        </div>
+        <div class="blueberry-bg gray-light width-100 padding-md">
+            blueberry
+        </div>
+        <div class="coral-bg width-100 padding-md">
+            coral
+        </div>
+    </div>
+</div>
+
+<h2>Technical Implementation</h2>
+<p>Using these colors in your project is straightforward. To apply colors to elements, simply assign one of the following class patterns:</p>
+
+<ul>
+    <li><code>{color-name}</code> - Applies the color to text</li>
+    <li><code>{color-name}-bg</code> - Applies the color as a background</li>
+    <li><code>{color-name}-link</code> - Formats the element as a link with the specified color</li>
+</ul>
+
+<p>For example:</p>
+<div class="card text-content-caption padding-lg">
+<div>&lt;span class="red"&gt;<span class="red">Error message</span>&lt;/span&gt;</div>
+<div>&lt;span class="ocean-bg white"&gt;<span class="ocean-bg white">Ocean background, white text</span>&lt;/span&gt;</div>
+<div>&lt;a class="cherry-link"&gt;<a class="cherry-link" href="">Cherry link</a>&lt;/a&gt;</div>
+</div>
+
+<p>Remember that just because these color classes are available doesn't mean they should be used extensively. The most effective interfaces often use color sparingly, relying on it only when necessary to highlight truly important information or actions.</p>
+
+<!-- <h2>Themes</h2>
+<p>By default, the system includes a dark theme where the roles of key colors are inverted. This provides users with viewing options that accommodate different environments and preferences while maintaining the same information hierarchy.</p>
+<p>To ensure projects using this system maintain their unique visual identity rather than appearing as clones, customization through themes is recommended. This can be achieved by implementing brand-specific color coding and modifying the base color values.</p>
+
+<p>A particularly effective approach is to subtly incorporate your brand color into the grayscale palette. Even a slight tint toward your primary brand color can create a distinctive visual identity without compromising the system's structural integrity.</p>
+
+<p>Developers can create custom themes by following the implementation guidelines in the <a href="/styles/themes/">Theming Section</a>. This allows for appropriate customization while preserving the core design principles and user experience benefits of the system.</p> -->

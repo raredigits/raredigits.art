@@ -1,0 +1,79 @@
+:root {
+    --link-color: var(--primary-text-color);
+    --link-color-secondary: var(--text-color-dark);
+    --link-color-light: var(--text-color-light);
+}
+
+a {
+    color: var(--link-color);
+    text-decoration: underline;
+    text-decoration-color: var(--brand-color-dark);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    background-image: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%
+    );
+    background-size: 100% 2px;
+    background-position: 0 1.2em;
+    background-repeat: no-repeat;
+    transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
+}
+
+a:hover {
+    background-size: 100% 1.3em;
+    background-position: 0 0;
+}
+
+a img {
+    display: block;
+}
+
+h1 a, h2 a, h3 a, h4 a {
+    color: var(--primary-text-color);
+    text-decoration: none;
+    border: none;
+}
+
+nav a {
+    color: var(--gray-trans);
+    background-image: none;
+    position: relative;
+    display: inline;
+    text-decoration: none;
+    border-bottom: 0;
+    transition: none;
+    z-index: 2;
+}
+
+nav a:hover {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    background-image: none;
+}
+
+nav a.current {
+    position: relative;
+    top: 1px;
+    border-bottom: 2px solid var(--gray-trans);
+}
+
+.sidebar a:hover {
+    border-bottom: none;
+    display: block;
+}
+
+footer a {
+    color: var(--gray-trans);
+    border-bottom: 1px solid var(--gray-trans);
+}
+
+footer a:hover {
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--gray-dark);
+}
+
+footer a::before,
+footer a:hover::before {
+    content: none;
+}

@@ -1,0 +1,41 @@
+@use "../utilities/breakpoints" as bp;
+
+.collapsible-container {
+    padding: var(--space-md) var(--space-lg);
+    margin-left: calc(-1 * var(--space-lg));
+
+    @include bp.mobile {
+        margin-left: calc(-1 * var(--space-md));
+        margin-right: calc(-1 * var(--space-md));
+        padding: var(--space-md);
+    }
+}
+
+.collapsible-trigger,
+details summary {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--text-color-light);
+    cursor: pointer;
+}
+
+.collapsible-trigger .collapsible-icon {
+    text-decoration: none;
+}
+
+.collapsible-content {
+    display: none;
+    padding-top: var(--space-lg);
+}
+
+.collapsible-content .caption,
+.collapsible-content .highlight,
+.collapsible-content pre {
+    margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
+
+    @include bp.mobile {
+        margin-left: calc(-1 * var(--space-sm));
+    }
+}

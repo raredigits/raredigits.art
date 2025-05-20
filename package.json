@@ -1,0 +1,31 @@
+{
+  "name": "raredigits.art",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm-run-all --parallel sass-watch eleventy-serve",
+    "build": "npm run sass-build && eleventy",
+    "sass-watch": "sass --watch assets/css/rare.scss assets/css/rare.css",
+    "sass-build": "sass assets/css/rare.scss assets/css/rare.css",
+    "eleventy-serve": "eleventy --serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raredigits/raredigits.art.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/raredigits/raredigits.art/issues"
+  },
+  "homepage": "https://github.com/raredigits/raredigits.art#readme",
+  "description": "",
+  "dependencies": {
+    "@11ty/eleventy": "^3.0.0"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "sass": "^1.86.3"
+  }
+}

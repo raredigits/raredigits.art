@@ -1,0 +1,28 @@
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      {% if page.url == "/" %}
+        <div class="header-logo"></div>
+      {% else %}
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      {% endif %}
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        {% for item in site.navigation %}
+        <li>
+            <a href="{{ item.url }}"
+               class="{% if page.url and page.url.indexOf(item.url) == 0 %}current{% endif %}">
+              {{ item.text }}
+            </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <button class="hamburger no-decoration" aria-label="Toggle navigation">
+        <span class="material-icons icon-menu">menu</span>
+        <span class="material-icons icon-close">close</span>
+    </button>
+  </div>
+</header>
+{% include "hamburger.njk" %}

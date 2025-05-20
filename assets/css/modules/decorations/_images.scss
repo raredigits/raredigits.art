@@ -1,0 +1,29 @@
+@use "../utilities/breakpoints" as bp;
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.vendor-logo {
+    display: inline-block;
+    aspect-ratio: 1/1;  /* квадратный логотип */
+    background-repeat: no-repeat;
+    background-size: auto 400%; /* 4 состояния — 400% */
+    height: calc(var(--font-size) * 1.3);
+    vertical-align: middle;
+}
+
+.vendor-logo.colored     { background-position: 0 0%; }
+.vendor-logo.colored-bg  { background-position: 0 33.3333%; }
+.vendor-logo.bw       { background-position: 0 66.6666%; }
+.vendor-logo.bw-bg    { background-position: 0 100%; }
+
+.vendor-logo.github {
+    background-image: url('/assets/img/common/vendors/github.svg');
+}
+
+.vendor-logo.wa {
+    background-image: url('/assets/img/common/vendors/wa.svg');
+}

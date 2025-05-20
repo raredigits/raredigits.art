@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout System | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+</head>
+
+<body>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="current">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <button class="hamburger no-decoration" aria-label="Toggle navigation">
+        <span class="material-icons icon-menu">menu</span>
+        <span class="material-icons icon-close">close</span>
+    </button>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid">
+                    <div class="col-span-2 padding-b-md">
+                        1. Prepare Layout
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase">
+                   Friendly Reminder:
+                </div>
+                <div class="col-span-2 mobile-hidden">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 gray-trans padding-b-lg" style="column-count: 2;">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase">
+                    Manuals:
+                </div>
+                <div class="col-span-11 grid">
+                    <div class="col-span-2">
+                        <span class="bold">General Settings</span>
+                        <ul class="nav-list">
+                            <li>Base Unit</li>
+                            <li>Viewport & Container</li>
+                            <li>Spacing Scale</li>
+                            <li>Brand Palette</li>
+                            <li>Semantic Colors</li>
+                            <li>Text Colors</li>
+                            <li>Typefaces</li>
+                            <li>UI Tokens</li>
+                            <li>States</li>
+                            <li>Naming System</li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="bold">Modules</span>
+                        <ul class="nav-list">
+                            <li><a href="/styles/layout/">Layout</a></li>
+                            <li>Grid</li>
+                            <li>Spaces</li>
+                            <li><a href="/styles/bricks/">Componets</a></li>
+                            <li>Navigation</li>
+                            <li><a href="/styles/typography/">Typography</a></li>
+                            <li><a href="/styles/colors/">Colors</a></li>
+                            <li>Special</li>
+                            <li><a href="/styles/themes/">Themes</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="bold">Layouts</span>
+                        <ul class="nav-list">
+                            <li>General Layout</li>
+                            <li>Full-Width</li>
+                            <li>Mobile Only</li>
+                            <li>Floors System</li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="bold">Components</span>
+                        <ul class="nav-list">
+                            <li>Sections</li>
+                            <li>Cards</li>
+                            <li>Card Decks</li>
+                            <li>Tables</li>
+                            <li>Images</li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="bold">Decorations</span>
+                        <ul class="nav-list">
+                            <li>Text Captions</li>
+                            <li>Spaces</li>
+                            <li>Dividers</li>
+                            <li>Shadows</li>
+                        </ul>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="bold">Usage</span>
+                        <ul class="nav-list">
+                            <li>Import Styles</li>
+                            <li>Customization</li>
+                            <li>Basic Scripts</li>
+                            <li><a href="/101/">Mark-Up 101</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+  
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  <div class="sidebar-wrapper">
+    
+      
+      
+        <nav class="sidebar-nav no-scrollbar">
+          <h5 class="sidebar-header">
+            
+              <a href="/styles/">Styles</a>
+            
+          </h5>
+          <ul>
+            
+              
+                <li><a href="/styles/idea/">The Idea</a></li>
+              
+            
+              
+                <li><a href="/styles/usage/">Usage</a></li>
+              
+            
+              
+                <li><a href="/styles/modules/">Modules</a></li>
+              
+            
+              
+                <li class="bold">Layout</li>
+              
+            
+              
+                <li><a href="/styles/typography/">Typography</a></li>
+              
+            
+              
+                <li><a href="/styles/colors/">Colors</a></li>
+              
+            
+              
+                <li><a href="/styles/bricks/">Bricks</a></li>
+              
+            
+              
+                <li><a href="/styles/alignment/">Alignment</a></li>
+              
+            
+              
+                <li><a href="/styles/navigation/">Navigation</a></li>
+              
+            
+              
+                <li><a href="/styles/decorations/">Decorations</a></li>
+              
+            
+              
+                <li><a href="/styles/special/">Special</a></li>
+              
+            
+              
+                <li><a href="/styles/utilities/">Utilities</a></li>
+              
+            
+              
+                <li><a href="/styles/themes/">Themes</a></li>
+              
+            
+              
+                <li><a href="/scripts/">Scripts</a></li>
+              
+            
+          </ul>
+        </nav>
+      
+    
+  </div>
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Layout System</h1>
+    
+  </section>
+
+    <article>
+      
+<section>
+    <h2>Grid Architecture</h2>
+    <div class="meta-info">
+        css/modules/layout/_grid.scss<br>
+    </div>
+    
+    <p>
+        The grid system creates order. 
+    </p>
+    <p>
+        From the first glance, users sense a thoughtfully organized presentation. This structured approach creates visual harmony that guides viewers naturally through content, making information feel accessible and well-designed across all devices.
+    </p>
+    <div class="remarked">
+        <p>
+            For consistent and predictable layouts that showcase data clearly, the system implements <strong>a 12-column grid with a 16px base unit</strong>. On mobile devices, this simplifies to a 6-column grid for better readability on smaller screens. This thoughtful structure makes it straightforward to align elements and maintain uniform spacing throughout your interface, helping your users focus on the data rather than being distracted by inconsistent design.
+        </p>
+        <div class="remark">
+            <p>
+                <strong>Grid 101:</strong><br>
+                <a href="https://css-tricks.com/snippets/css/complete-guide-grid/">CSS Grid Guide</a><br>
+                <a href="https://learncssgrid.com">Learn CSS Grid</a><br>
+                <a href="https://cssgridgarden.com">Play & Learn</a>
+            </p>
+        </div>
+    </div>
+    <div class="card text-content-caption padding-lg">
+        <div class="grid-global-fixed gap-xs" style="height: 400px">
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+            <div class="skeleton-column col-span-1"></div>
+        </div>
+    </div>
+    <p>
+        This standardized approach brings order to your layouts. It creates a clear structure for organizing content while adapting seamlessly to any screen size.
+    </p>
+    <p>
+        The grid fraction <code>.fr</code> (1fr) is your layout's basic building block. Use it as your measuring unit for all internal elements. This creates immediate visual harmony because everything shares the same underlying math. When components snap to this invisible grid, the result feels intentional and polished—never random or misaligned.
+    </p>
+    <p>
+        Grid settings can be adjusted in your global stylesheet according to specific project needs.</p>
+    <pre><code><span class="code-comment">// css/modules/layout/_grid.scss</span>
+--base-unit: 16px;
+--grid-columns: 12;
+--grid-gap: var(--base-unit);
+--grid-columns-global: repeat(12, 1fr);
+--grid-columns-global-mobile: repeat(6, 1fr);
+--grid-gap-global: var(--base-unit);
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), 1fr);
+    gap: var(--grid-gap);
+    width: 100%;
+
+    @include bp.mobile {
+        --grid-columns: 6;
+        --grid-gap: var(--space-xs);
+    }
+}
+
+.grid-global {
+    display: grid;
+    grid-template-columns: var(--grid-columns-global);
+    gap: var(--grid-gap-global);
+
+    @include bp.mobile {
+        grid-template-columns: var(--global-grid-columns-mobile);
+        gap: var(--space-xs);
+    }
+}
+
+<span class="code-comment">// fraction width</span>
+--global-fr: calc((var(--site-max-width) - (11 * var(--grid-gap-global))) / 12);
+
+.fr {
+    width: var(--global-fr);</code>
+</pre>
+    <p>The CSS Grid's fractional units ensure content adapts naturally to various viewport dimensions without requiring extensive media query overrides.</p>
+</section>
+
+<section>
+    <h2>Template Structure</h2>
+    <div class="meta-info">
+        css/modules/layout/_containers.scss<br>
+    </div>
+
+    <p>
+        The template structure creates intuitive organization. It features three main zones: header, content area, and footer—a familiar pattern users understand without thinking. The header establishes identity and houses main navigation. The footer contains supporting links that stay out of the way until needed.
+    </p>
+    
+    <p>
+        The content area divides into three logical sections for maximum clarity: a page title that immediately confirms location, a sidebar providing context and secondary options, and the article section where primary content lives. This structured approach helps users navigate naturally while keeping information neatly arranged.
+    </p>
+    
+    <div class="card text-content-caption padding-lg gap-md">
+        <div class="grid-global-fixed gap-xs relative" style="z-index: 2;">
+            <div class="bordered padding-sm grid-global-fixed gap-xs" style="grid-column: 1/-1; grid-row: 1; z-index: 2;">
+                <div style="grid-column: 1/3;">&lt;header&gt;</div>
+                <div style="grid-column: 4/9;">.nav-global</div>
+            </div>
+            <div class="grid-global-fixed gap-xs bordered padding-top-md" style="grid-column: 1/-1; grid-row: 2; z-index: 2;">
+                <div class="padding-sm" style="grid-column: 1/-1; grid-row: 1; z-index: 2;">
+                    .content
+                </div>
+                <div class="gray-mid-light-bg padding-sm" style="grid-column: 1/-1; grid-row: 2; z-index: 2;">
+                    .page-title
+                </div>
+                <div class="gray-mid-light-bg padding-sm" style="grid-column: 1/span 3; grid-row: 3; z-index: 2;">
+                    .sidebar
+                </div>
+                <div class="gray-mid-light-bg column padding-sm gap-xs" style="grid-column: 4/span 9; grid-row: 3; z-index: 2;">
+                    &lt;article&gt;
+                    <div class="grid grid-cols-9 gap-xs margin-b-lg">
+                        <div class="gray-bg col-span-3 padding-sm"></div>
+                        <div class="gray-bg col-span-6 row-start-2 padding-sm"></div>
+                        <div class="gray-bg col-span-6 row-start-3 padding-sm"></div>
+                        <div class="gray-bg col-span-6 row-start-4 padding-sm"></div>
+                        <div class="gray-bg col-span-4 row-start-5 padding-sm"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bordered width-100 padding-sm" style="grid-column: 1/-1; grid-row: 3; z-index: 2;">
+                &lt;footer&gt;
+            </div>
+            <!-- Grid visualization in the background -->
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 1; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 2; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 3; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 4; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 5; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 6; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 7; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 8; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 9; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 10; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 11; grid-row: 1/4; z-index: 1;"></div>
+            <div class="skeleton-column" style="opacity: 0.2; grid-column: 12; grid-row: 1/4; z-index: 1;"></div>
+        </div>
+    </div>
+    <p>
+        Maintain the sidebar space even on pages that don't require it. This consistency helps users develop a clear mental map of your site as they navigate between sections. The predictable structure makes the entire experience more intuitive and easier to use.
+    </p>
+    <h3>Text Content</h3>
+    <p>
+        Text content in articles is limited to a maximum width on larger screens. This isn't just about aesthetics—it's about readability. Too-long lines significantly reduce reading speed and comprehension. 
+    </p>
+    <pre><code><span class="code-comment"># css/modules/typography/_text-content.scss</span>
+--text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
+
+article p {
+    max-width: var(--text-content-width);
+}</code></pre>
+    <p>
+        For visitors who need to quickly scan and understand information, this thoughtful constraint makes your content immediately more accessible.
+    </p>
+</section>
+
+<section>
+    <h2>Responsive Behavior</h2>
+    <div class="meta-info">
+        css/modules/_breakpoints.scss<br>
+    </div>
+    <p>
+        The style system adapts to three key device categories for optimal data presentation. 
+    </p>
+    <ul>
+        <li>
+            <strong>Mobile</strong> (up to 768 px): Focuses on essential content, ensuring clarity and ease of use.
+        </li>
+        <li>
+            <strong>Tablet</strong> (769 px to 1,023 px): Balances content density and readability, providing a comfortable viewing experience.
+        </li>
+        <li>
+            <strong>Desktop</strong> (1,024 px and above): Utilizes available space for a rich, detailed presentation of information.
+        </li>
+    </ul>
+    <p>
+        To maintain readability of business data on widescreen displays, content width is capped at 1,600 px.
+    </p>
+    <p>
+        These breakpoints provide a reliable starting point for most projects, though you can adjust them based on specific requirements.
+    </p>
+    <p>
+        Start with mobile layouts as your foundation. This mobile-first approach ensures your core content works well on the most constrained devices before enhancing for larger screens.
+    </p>
+    
+    <div class="padding-y-lg padding-l-5">
+        <div class="phone-frame-wrapper">
+            <div class="grid-mobile phone-screen-content gap-xs">
+                <div class="column stretched gap-xs" style="grid-column: 1 / span 6; grid-row: 1/4; z-index: 2;">
+                    <div>
+                        <div class="grid-mobile relative">
+                            <div class="padding-sm col-span-2">
+                                &lt;header&gt;
+                            </div>
+                            <div class="padding-y-sm col-span-4">
+                                .nav-global
+                            </div>
+                            <div class="absolute top-xs right-sm">
+                                <span class="material-icons" style="font-size: 24px;">menu</span>
+                            </div>
+                        </div>
+                        <div class="bordered width-100 padding-top-sm column gap-xs" style="grid-column: 1/-1; grid-row: 2;">
+                            <span class="padding-x-sm">.content</span>
+                            <div class="gray-mid-light-bg width-100 padding-sm">.sidebar menu</div>
+                            <div class="gray-mid-light-bg width-100 padding-sm">.page-title</div>
+                            <div class="gray-mid-light-bg width-100 padding-sm column gap-xs">
+                                &lt;article&gt;
+                                <div class="grid grid-cols-6 gap-xs margin-b-lg">
+                                    <div class="gray-bg col-span-3 padding-sm"></div>
+                                    <div class="gray-bg col-span-6 row-start-2 padding-sm"></div>
+                                    <div class="gray-bg col-span-6 row-start-3 padding-sm"></div>
+                                    <div class="gray-bg col-span-6 row-start-4 padding-sm"></div>
+                                    <div class="gray-bg col-span-4 row-start-5 padding-sm"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bordered width-100 padding-sm">&lt;footer&gt;</div>
+                </div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 1; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 2; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 3; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 4; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 5; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 6; grid-row: 1/4; z-index: 1;"></div>
+            </div>
+            <img class="phone-frame" src="/assets/img/common/misc/iphone-frame.png" alt="">
+        </div>  
+    </div>
+
+    <p>
+        As viewport size decreases, adapt your layout intelligently while keeping key navigation visible. Avoid hiding important elements in hamburger menus—this reduces conversion rates and frustrates users. Instead, implement horizontal scrolling or dropdown menus with clear labels when space is limited. Sidebar content may shift below the header as a streamlined navigation strip, and content expands to use available width. Always keep primary actions immediately accessible.
+    </p>
+    <p>
+        As screen size increases, you gain valuable space. Use it strategically to guide user attention rather than cluttering the interface with unnecessary elements. Maintain visual hierarchy and let important content breathe.
+    </p>
+    <p>
+        These transformations happen automatically through carefully crafted media queries targeting specific breakpoints. The information hierarchy stays consistent across all devices—elements simply rearrange to suit different screen dimensions.
+    </p>
+    <p>
+        Always keep navigation paths accessible on touch devices, including nested submenus. Make the header sticky or fixed for better usability. Size interactive elements appropriately for touch—aim for at least 44×44px target areas. Test across multiple devices to verify a consistent, intuitive experience everywhere.
+    </p>
+</section>
+
+<section>
+    <h2>Full-Width Layout Option</h2>
+    <p>
+        For content that needs extra horizontal space—landing pages, data visualizations, comparison tables, or reference materials—the system includes a full-width option. This configuration removes sidebar constraints while maintaining familiar navigation patterns.
+    </p>
+    <div class="remarked">
+        <div class="card text-content-caption padding-lg gap-md">
+            <div class="grid-global-fixed gap-xs relative" style="z-index: 2;">
+                <div class="bordered width-100 grid-global-fixed grid-xs" style="grid-column: 1/-1; grid-row: 1; z-index: 2;">
+                    <div class="padding-sm col-span-3">&lt;header&gt;</div>
+                    <div class="padding-y-sm col-span-9">.nav-global</div>
+                </div>
+                <div class="grid-global-fixed gap-xs bordered" style="grid-column: 1/-1; grid-row: 2; z-index: 2;">
+                    <div class="padding-sm" style="grid-column: 1/-1; grid-row: 1; z-index: 2;">
+                        .content
+                    </div>
+                    <div class="gray-mid-light-bg center padding-sm" style="grid-column: 1/-1; grid-row: 2; z-index: 2;">
+                            .page-title
+                    </div>
+                    <div class="gray-mid-light-bg center column padding-sm gap-xs" style="grid-column: 1/-1; grid-row: 3; z-index: 2;">
+                        &lt;article&gt;
+                        <div class="margin-b-lg column gap-xs width-100 center">
+                            <div class="gray-bg width-50 padding-sm"></div>
+                            <div class="gray-bg width-75 padding-sm"></div>
+                            <div class="gray-bg width-75 padding-sm"></div>
+                            <div class="gray-bg width-75 padding-sm"></div>
+                            <div class="gray-bg width-30 padding-sm"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bordered width-100 padding-sm" style="grid-column: 1/-1; grid-row: 3; z-index: 2;">
+                    &lt;footer&gt;
+                </div>
+                <!-- Grid visualization in the background -->
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 1; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 2; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 3; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 4; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 5; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 6; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 7; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 8; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 9; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 10; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 11; grid-row: 1/4; z-index: 1;"></div>
+                <div class="skeleton-column" style="opacity: 0.2; grid-column: 12; grid-row: 1/4; z-index: 1;"></div>
+            </div>
+        </div>
+        <div class="remark handwritten">
+            <p>Feel free to create a new layout, rearrange elements, add custom styles, and you're ready!</p>
+        </div>
+    </div>
+    <p>
+        This expanded layout gives content room to breathe without confusing users about site structure. Choose the most appropriate layout based on what your content needs rather than forcing everything into one template.
+    </p>
+    <p>
+        Remember that every design decision should support one primary goal: helping users find, understand, and act upon information efficiently. Visual design should enhance this purpose, not compete with it.
+    </p>
+</section>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <p>&copy; 2023—2025 <a href="https://raredigits.io">Rare Digits Production</a></p>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <span class="vendor-logo wa bw"></span>
+      <span class="vendor-logo github color"></span>
+    </div>
+  </div>
+
+</footer>
+
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+
+</body>
+</html>

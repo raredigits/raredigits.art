@@ -1,0 +1,27 @@
+<aside class="sidebar">
+  <div class="sidebar-wrapper">
+    {% if displaySidebar %}
+      {% set currentSection = sidebarmenu.sections[section] %}
+      {% if currentSection %}
+        <nav class="sidebar-nav no-scrollbar">
+          <h5 class="sidebar-header">
+            {% if page.url == currentSection.url %}
+              {{ section }}
+            {% else %}
+              <a href="{{ currentSection.url }}">{{ section }}</a>
+            {% endif %}
+          </h5>
+          <ul>
+            {% for item in currentSection.items %}
+              {% if page.url == item.url %}
+                <li class="bold">{{ item.title }}</li>
+              {% else %}
+                <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </nav>
+      {% endif %}
+    {% endif %}
+  </div>
+</aside>

@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap" rel="stylesheet');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+@import url('https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap">');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+
+:root {
+    --primary-font: 'Fira Sans', sans-serif;
+    --heading-font: 'Playfair Display', serif;
+    --code-font: 'Cousine', monospace;
+    --script-font: 'Caveat', cursive;
+
+    --font-size: 16px;
+    --font-size-xs: 0.8rem;
+    --font-size-sm: 0.9rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.2rem;
+    --font-size-xl: 1.4rem;
+    --font-size-xxl: 2.2rem;
+
+    --line-height: 1.5em;
+    --line-height-sm: 1.2em;
+    --line-height-xs: 1em;
+    --line-height-lg: 2em;
+
+    --font-weight-thin: 100;
+    --font-weight-light: 200;
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    --primary-text-color: var(--primary-color);
+    --text-color-light: var(--gray-trans);
+    --text-color-dark: var(--gray-dark);
+}

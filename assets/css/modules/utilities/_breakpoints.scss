@@ -1,0 +1,40 @@
+$mobile-max: 768px;
+$tablet-min: 769px;
+$tablet-max: 1023px;
+$desktop-min: 1024px;
+
+@mixin mobile {
+  @media screen and (max-width: $mobile-max) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (min-width: $tablet-min) and (max-width: $tablet-max) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (min-width: $desktop-min) {
+    @content;
+  }
+}
+
+@mixin multi-breakpoint($breakpoints...) {
+  @each $breakpoint in $breakpoints {
+    @if $breakpoint == "mobile" {
+      @include mobile {
+        @content;
+      }
+    } @else if $breakpoint == "tablet" {
+      @include tablet {
+        @content;
+      }
+    } @else if $breakpoint == "desktop" {
+      @include desktop {
+        @content;
+      }
+    }
+  }
+}

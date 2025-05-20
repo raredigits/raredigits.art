@@ -1,38 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,200;0,400;0,600;0,700;1,200;1,400;1,600;1,700&display=swap" rel="stylesheet">
-    <title>Rare Digits Production</title>
-</head>
-<body>
-    <main>
-        <header>
-            <img class="logo" src="/assets/img/Rare_logo.svg" alt="Rare Digits">
-                <NavLink to="/collections" class="menu_green">Collections</NavLink>
-         </header>
-        <article>
-            <div class="content">
-             <h1>Welcome <br>
-               to Rare Digits <br>
-               Universe,</h1>
-             <p>a realm where true creativity and originality 
-                flourish amidst the sea of clichés. 
-                Here, authenticity and uniqueness bring 
-                value to existence, standing as the last 
-                bastions against the relentless stream of replication.</p>
-            </div>
-            <img class="img_main" src="/assets/img/img_main.png" alt="">
-        </article>
-      </main>
-    <footer>
-        <a class="slogan">Painting Pixels, Building Worlds</a>
-        <a class="copyright">© 2023 Rare Digits</a>
-    </footer>
-</body>
-</html>
+---
+layout: main.njk
+title: Painting World
+permalink: '/'
+---
+
+<div class="main-hero-wrapper">
+    <div class="main-rare-square"></div>
+    <div class="main-hero bold">
+        Painting <a class="yellow-link" href="#" id="toggle-noise">noise</a>. 
+        Shaping <a href="/manifesto/">sense</a>
+    </div>
+    <div class="main-manifesto">
+        <span class="mobile-hidden"><strong>Design is&nbsp;indulgence. Deletion is&nbsp;discipline.</strong><br></span>
+        Decoration is&nbsp;easy. Subtraction is&nbsp;Rare.<br>
+        Signal is&nbsp;value.<br>
+        Cut&nbsp;noise.<br>
+        Forge&nbsp;Rarity.
+    </div>
+    <div class="main-hero-description">
+        <strong>Rare Styles</strong> is a collection of styles and UI elements designed to present only what matters.
+        <p>Built for dashboards, reports, and decision-making tools — where clarity rules, fluff dies, and every pixel pulls its weight.</p>
+    </div>
+    <div class="main-copyright">
+        Feel free to copy, remix, and build upon this work, even commercially, as long as you credit the original creation.
+        <p>Shared under <a class="gray-mid-dark-link" href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a>
+        </p>
+        <p>2023—{{ page.date | date: "%Y" }} &copy; <a class="gray-mid-dark-link" href="https://raredigits.io">Rare Digits Production</a></p>
+        
+    </div>
+</div>
+<div class="main-brush"></div>
+
+<div class="grid-noise">
+    <div class="grid-noise-container">
+      <div class="col" style="grid-column: 1; grid-row: 1 / -1;"></div>
+      <div class="col" style="grid-column: 2; grid-row: 1 / -1;"></div>
+      <div class="col" style="grid-column: 3; grid-row: 1 / -1;"></div>
+      <div class="col" style="grid-column: 4; grid-row: 1 / -1;"></div>
+      <div class="col" style="grid-column: 5; grid-row: 1 / -1;"></div>
+      <div class="col" style="grid-column: 6; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 7; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 8; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 9; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 10; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 11; grid-row: 1 / -1;"></div>
+      <div class="col mobile-hidden" style="grid-column: 12; grid-row: 1 / -1;"></div>
+  
+      <div class="row" style="grid-row: 1; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 2; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 3; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 4; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 5; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 6; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 7; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 8; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 9; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 10; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 11; grid-column: 1 / -1;"></div>
+      <div class="row" style="grid-row: 12; grid-column: 1 / -1;"></div>
+    </div>
+  </div>

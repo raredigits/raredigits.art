@@ -1,0 +1,10 @@
+{% if title %}
+  <section class="page-title">
+    <h1>{{ title }}</h1>
+    {% if remark %}
+      <p class="eyebrow">
+        <span>{{ remark }}</span>
+      </p>
+    {% endif %}
+  </section>
+{% endif %}

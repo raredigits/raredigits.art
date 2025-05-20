@@ -1,0 +1,15 @@
+.flex {
+    display: flex;
+}
+
+.row, 
+.row-mobile {
+    display: flex;
+    flex-wrap: nowrap;
+}
+
+.column, 
+.column-mobile {
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,33 @@
+name: Sync CSS to rare-styles
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/css/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout raredigits.art
+        uses: actions/checkout@v3
+
+      - name: Clone rare-styles repo
+        run: |
+          git clone https://x-access-token:${{ secrets.RARE_STYLES_PAT }}@github.com/raredigits/rare-styles.git temp-rare-styles
+
+      - name: Copy CSS to rare-styles
+        run: |
+          cp -r assets/css/* temp-rare-styles/
+
+      - name: Commit & Push to rare-styles
+        run: |
+          cd temp-rare-styles
+          git config user.name "Rare Sync Bot"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Sync CSS from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+          git push origin main

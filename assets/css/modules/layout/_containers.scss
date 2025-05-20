@@ -1,0 +1,99 @@
+@use "../utilities/breakpoints" as bp;
+
+:root {
+    --site-max-width: clamp(1116px, 95vw, 1600px);
+    --header-height: var(--space-xl);
+}
+
+
+header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    background: var(--bg-color);
+    z-index: 100;
+}
+
+main {
+    width: 100%;
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr;
+    padding: var(--header-height) var(--space-md) calc(var(--space-lg) * 5);
+}
+
+.content {
+    max-width: var(--site-max-width);
+    width: 100%;
+    height: 100%;
+    grid-template-rows: auto 1fr;
+    margin: 0 auto;
+    align-items: start;
+}
+
+.sidebar {
+    grid-row: 2;
+    grid-column: 1/ span 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-sm));
+    margin-top: var(--space-sm);
+    padding-bottom: var(--space-lg);
+    z-index: 10;
+
+    @include bp.mobile {
+        grid-row: 1;
+        grid-column: 1 / -1;
+        top: var(--header-height);
+        width: 100vw;
+        margin-top: 0;
+        margin-left: calc(-1 * var(--space-md));
+        margin-right: calc(-1 * var(--space-md));
+        padding: 0 var(--space-md);
+        background: var(--bg-color);
+        z-index: 99;
+    }
+}
+
+.page-title {
+    grid-row: 1;
+    grid-column: 1 / 9;
+    min-height: var(--space-xxl);
+    display: flex;
+    align-items: flex-end;
+
+    @include bp.mobile {
+        grid-row: 2;
+        grid-column: 1 / -1;
+    }
+}
+
+article {
+    grid-row: 2;
+    grid-column: 4 / span 9;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    @include bp.mobile {
+        grid-row: 3;
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+footer {
+    width: 100%;
+    background: var(--gray-lightest);
+    color: var(--gray-trans);
+    font-size: var(--font-size-sm);
+}
+
+.site-width-wrapper {
+    max-width: var(--site-max-width);
+    width: 100%;
+    margin: 0 auto;
+}

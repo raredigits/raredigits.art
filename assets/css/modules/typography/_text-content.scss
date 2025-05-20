@@ -1,0 +1,207 @@
+@use "../utilities/breakpoints" as bp;
+
+:root {
+    --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
+    --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
+}
+
+@include bp.tablet {
+    :root {
+        --text-content-width: calc((var(--global-fr) * 7) + var(--grid-gap-global) * 6);
+    }
+}
+
+@include bp.mobile {
+    :root {
+        --text-content-width: 100%;
+    }
+}
+
+.text-content-width {
+    width: var(--text-content-width);
+}
+
+article p,
+article ul, 
+article ol  {
+    max-width: var(--text-content-width);
+
+    @include bp.mobile {
+        max-width: 100%;
+    }
+}
+
+article .meta-info {
+    margin-top: var(--space-sm);
+}
+
+.lead-container {
+    width: var(--global-fr-4);
+
+    @include bp.mobile {
+        width: 100%;
+    }
+}
+
+.lead {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-light);
+    margin: var(--space-sm) 0 var(--space-md);
+    line-height: var(--line-height-sm);
+
+    @include bp.mobile {
+        width: 80%;
+    }
+}
+
+.remarked {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.remarked > :first-child {
+    min-width: var(--content-max-width);
+}
+
+.remark {
+    width: calc(var(--global-fr) * 3);
+    min-width: calc(var(--global-fr) * 2);
+    max-width: calc(var(--global-fr) * 4);
+
+    @include bp.multi-breakpoint(tablet, mobile) {
+        width: fit-content;
+        min-width: fit-content;
+        max-width: fit-content;
+        margin-left: auto;
+        padding-left: 50%;
+    }
+}
+
+.text-content-caption,
+.highlight,
+pre {
+    width: var(--text-content-caption);
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+
+    @include bp.mobile {
+        width: calc(100vw - var(--space-md));
+        margin-left: calc(-1 * var(--space-sm));
+    }
+}
+
+.meta-info {
+    margin-bottom: var(--space-md);
+}
+
+.caption {
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-light);
+    line-height: var(--line-height);
+    padding: var(--space-lg) calc(var(--space-lg) - var(--space-sm)) ;
+    background-color: var(--gray-light);
+    border-left: var(--space-sm) solid var(--primary-color);
+}
+
+.highlight {
+    text-align: center;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height);
+    font-weight: 700;
+    border: var(--space-sm) solid var(--brand-color);
+    padding: var(--space-lg);
+}
+
+mark {
+    background-color: var(--yellow);
+    color: var(--primary-color);
+}
+
+.note,
+.meta-info,
+.warning,
+.remark,
+cite,
+.footnote {
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+}
+
+.warning {
+    padding: var(--space-sm) var(--space-md);
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-xs);
+    color: var(--warning-color);
+}
+
+cite {
+    display: block;
+    width: 100%;
+    text-align: right;
+    color: var(--grey-dark);
+}
+
+.handwritten {
+    font-family: var(--script-font);
+    font-size: var(--font-size-xl);
+}
+
+.footnote {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color-light);
+}
+
+
+pre {
+    line-height: var(--line-height-sm);
+    background-color: var(--gray-mid-light);
+    color: var(--gray-dark);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--space-sm);
+    overflow-x: auto;
+    margin-bottom: 1em;
+    box-shadow: var(--inner-shadow-sm);
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+
+    @include bp.tablet {
+        padding: var(--space-md);
+    }
+
+    @include bp.mobile {
+        padding: var(--space-md);
+    }
+}
+
+code {
+    font-size: var(--font-size-sm);
+    color: var(--gray-dark);
+    background-color: var(--gray-mid-light);
+    padding: calc(var(--space-px) * 2) var(--space-xs) var(--space-px);
+    border: var(--border-code);
+    border-radius: var(--space-xs);
+    font-family: var(--code-font);
+    width: fit-content;
+    
+    @include bp.mobile {
+        font-size: var(--font-size-xs);
+    }
+}
+
+pre code {
+    padding: 0;
+    border: none;
+    border-radius: none;
+    background: none;
+}
+
+.code-comment {
+    color: var(--gray-trans);
+}

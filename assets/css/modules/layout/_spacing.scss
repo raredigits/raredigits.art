@@ -1,0 +1,186 @@
+@use "../utilities/breakpoints" as bp;
+
+:root {
+    --space-px: 1px;
+    --space-xs: calc(var(--base-unit) * 0.25); // 4px
+    --space-sm: calc(var(--base-unit) * 0.5); // 8px
+    --space-md: var(--base-unit);
+    --space-lg: calc(var(--base-unit) * 2); // 32px
+    --space-xl: calc(var(--base-unit) * 3); // 48px
+    --space-xxl: calc(var(--base-unit) * 6); // 96px
+    --space-fr: var(--global-fr);
+    --space-5: 5%;
+    --space-10: 10%;
+    --space-15: 15%;
+    --space-20: 20%;
+    --space-25: 25%;
+    --space-30: 30%;
+    --space-33: 33%;
+    --space-50: 50%;
+    --space-60: 60%;
+    --space-66: 66%;
+    --space-70: 70%;
+    --space-75: 75%;
+    --space-80: 80%;
+    --space-90: 90%;
+    --space-100: 100%;
+    --space-0: 0;
+    --space-auto: auto;
+}
+
+$spaces:
+px,
+xs,
+sm,
+md,
+lg,
+xl,
+xxl,
+fr,
+5,
+10,
+15,
+20,
+25,
+30,
+33,
+50,
+60,
+66,
+70,
+75,
+80,
+90,
+100,
+0,
+auto;
+
+.full-width {
+  width: 100%;
+}
+
+.full-width-caption {
+  width: calc(100% + var(--space-lg));
+  margin-left: calc(-1 * var(--space-lg));
+  margin-right: calc(-1 * var(--space-lg));
+
+  @include bp.mobile {
+      width: calc(100% + var(--space-md));
+      margin-left: calc(-1 * var(--space-sm));
+  }
+}
+
+@each $space in $spaces {
+  .width-#{$space} {
+    width: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+  .height-#{$space} {
+    height: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+  .margin-#{$space} {
+    margin: var(--space-#{$space});
+  }
+  
+  .margin-y-#{$space} {
+    margin-top: var(--space-#{$space});
+    margin-bottom: var(--space-#{$space});
+  }
+  
+  .margin-x-#{$space} {
+    margin-left: var(--space-#{$space});
+    margin-right: var(--space-#{$space});
+  }
+  
+  .margin-t-#{$space} {
+    margin-top: var(--space-#{$space});
+  }
+  
+  .margin-r-#{$space} {
+    margin-right: var(--space-#{$space});
+  }
+  
+  .margin-b-#{$space} {
+    margin-bottom: var(--space-#{$space});
+  }
+  
+  .margin-l-#{$space} {
+    margin-left: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+  .padding-#{$space} {
+    padding: var(--space-#{$space});
+  }
+  
+  .padding-y-#{$space} {
+    padding-top: var(--space-#{$space});
+    padding-bottom: var(--space-#{$space});
+  }
+  
+  .padding-x-#{$space} {
+    padding-left: var(--space-#{$space});
+    padding-right: var(--space-#{$space});
+  }
+  
+  .padding-t-#{$space} {
+    padding-top: var(--space-#{$space});
+  }
+  
+  .padding-r-#{$space} {
+    padding-right: var(--space-#{$space});
+  }
+  
+  .padding-b-#{$space} {
+    padding-bottom: var(--space-#{$space});
+  }
+  
+  .padding-l-#{$space} {
+    padding-left: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+  .gap-#{$space} {
+    gap: var(--space-#{$space});
+  }
+  
+  .gap-x-#{$space} {
+    column-gap: var(--space-#{$space});
+  }
+  
+  .gap-y-#{$space} {
+    row-gap: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+  .air-#{$space} {
+    width: 100%;
+    height: var(--space-#{$space});
+  }
+}
+
+@each $space in $spaces {
+    .top-#{$space} {
+      top: var(--space-#{$space});
+    }
+    
+    .right-#{$space} {
+      right: var(--space-#{$space});
+    }
+    
+    .bottom-#{$space} {
+      bottom: var(--space-#{$space});
+    }
+    
+    .left-#{$space} {
+      left: var(--space-#{$space});
+    }
+}

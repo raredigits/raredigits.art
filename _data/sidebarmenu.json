@@ -1,0 +1,61 @@
+{
+  "sections": {
+    "Rareism": {
+      "url": "/manifesto/",
+      "items": [
+      { "title": "Manifesto", "url": "/manifesto/" },
+      { "title": "Principles", "url": "/manifesto/principles/" },
+      { "title": "Rarified Tips", "url": "/manifesto/tips/" }
+      ]
+    },
+    "Styles": {
+      "url": "/styles/",
+      "items": [
+      { "title": "The Idea", "url": "/styles/idea/" },
+      { "title": "Usage", "url": "/styles/usage/" },
+      { "title": "Modules", "url": "/styles/modules/" },
+      { "title": "Layout", "url": "/styles/layout/" },
+      { "title": "Typography", "url": "/styles/typography/" },
+      { "title": "Colors", "url": "/styles/colors/" },
+      { "title": "Bricks", "url": "/styles/bricks/" },
+      { "title": "Alignment", "url": "/styles/alignment/" },
+      { "title": "Navigation", "url": "/styles/navigation/" },
+      { "title": "Decorations", "url": "/styles/decorations/" },
+      { "title": "Special", "url": "/styles/special/" },
+      { "title": "Utilities", "url": "/styles/utilities/" },
+      { "title": "Themes", "url": "/styles/themes/" },
+      { "title": "Scripts", "url": "/scripts/" }
+      ]
+    },
+    "Charts": {
+      "url": "/charts/",
+      "items": [
+      { "title": "Line", "url": "/charts/line/" },
+      { "title": "Area", "url": "/charts/area/" },
+      { "title": "Bar", "url": "/charts/bar/" },
+      { "title": "Pie", "url": "/charts/pie/" },
+      { "title": "Donut", "url": "/charts/donut/" },
+      { "title": "Radial", "url": "/charts/radial/" },
+      { "title": "Dots", "url": "/charts/dots/" },
+      { "title": "Graph", "url": "/charts/graph/" }
+      ]
+    },
+    "Scripts": {
+      "url": "/scripts/",
+      "items": [
+      { "title": "Hamburger", "url": "/scripts/hamburger/" },
+      { "title": "Tabs", "url": "/scripts/tabs/" },
+      { "title": "Dropdown", "url": "/scripts/dropdown/" },
+      { "title": "Collapsible", "url": "/scripts/collapsible/" },
+      { "title": "Switch", "url": "/scripts/switch/" },  
+      { "title": "Tooltip", "url": "/scripts/tooltip/" },
+      { "title": "Modal", "url": "/scripts/modal/" },
+      { "title": "Scroll", "url": "/scripts/scroll/" },
+      { "title": "Alert", "url": "/scripts/alert/" },
+      { "title": "Popover", "url": "/scripts/popover/" },
+      { "title": "Progress", "url": "/scripts/progress/" },
+      { "title": "Carousel", "url": "/scripts/carousel/" }
+      ]
+    }  
+  }
+}

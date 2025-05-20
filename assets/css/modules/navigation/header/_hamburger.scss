@@ -1,0 +1,99 @@
+@use "../../utilities/breakpoints" as bp;
+
+.hamburger {
+    position: absolute;
+    right: 0;
+    top: calc(var(--space-sm) - 2px);
+    grid-column: 12/span 1;
+    text-align: right;
+    display: block;
+    background: var(--bg-color);
+    color: var(--primary-color);
+    padding-left: var(--space-sm);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hamburger .icon-close {
+    display: none;
+}
+
+.hamburger.active .icon-menu {
+    display: none;
+}
+
+.hamburger.active .icon-close {
+    display: inline;
+}
+
+.nav-hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed;
+    top: -100%;
+    // top: 0;
+    left: 0;
+    width: 100%;
+    height: 90vh;
+    padding-top: var(--header-height);
+    background-color: var(--gray-lightest);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+    transition: top 0.3s ease-in-out;
+    overflow-y: scroll;
+    z-index: 99;
+
+    @include bp.mobile {
+        padding-top: calc(var(--header-height) + var(--space-lg));
+        height: 95vh;
+    }
+}
+
+.nav-hamburger.active {
+    top: 0;
+    box-shadow: var(--shadow-md);
+}
+
+.nav-hamburger-wrapper {
+    max-width: var(--site-max-width);
+    height: 100%;
+    margin: 0 auto;
+}
+
+.nav-hamburger ul {
+    grid-column: 4/span 9;
+    grid-row: 1 / -1;
+    padding-top: var(--space-md);
+    list-style-type: none;
+    padding: 0;
+
+    @include bp.mobile {
+        grid-column: 3 / span 4;
+    }
+}
+
+.nav-hamburger ul li {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    // &:hover {
+    //     color: var(--primary-color);
+    //     text-decoration: none;
+    //     transform: translateY(-2px);
+    //     box-shadow: var(--shadow-sm);
+    // }
+
+    @include bp.mobile {
+        margin-bottom: var(--space-xs);
+    }
+}
+
+.hamburger-img {
+    max-width: 100px;
+    color: var(--gray);
+    &:hover {
+        color: var(--gray-light);
+    }
+}

@@ -1,0 +1,69 @@
+:root {
+    // Base Colors 
+
+    --black: #000; // Text color
+    --white: #fff; // Used for blocks highlighting
+
+    // Grays Family
+    
+    --gray-light: #f0f0f0; // Used for backgrounds
+    --gray: #cccccc; // Used for borders, dividers
+    --gray-dark: #333333; // Used for secondary text
+
+    --gray-lightest: #fafafa; // Used for cards backgrounds
+    --gray-mid-light: #e4e4e4; // Used for secondary backgrounds
+    --gray-trans: #888888; // Used for disabled states
+    --gray-mid-dark: #666666; // Used for labels, captions
+    --gray-darkest: #191919; // Used for highlighting light-grays
+
+    --text-color: var(--black);
+    --bg-color: var(--gray-light);
+    --border-color: var(--gray);
+    --border-color-light: var(--gray-mid-light);
+    --border-code: 1px solid var(--border-color);
+
+    --red: #ff0000;
+    --green: #389e0d;
+    --yellow: #ffe000;
+
+    --primary-color: var(--black);
+    --secondary-color: var(--grey-dark);
+}
+
+$base_colors:
+black, 
+white, 
+
+gray-light,
+gray,
+gray-dark,
+gray-lightest,
+gray-mid-light,
+gray-trans,
+gray-mid-dark,
+gray-darkest,
+
+bg-color, 
+
+yellow,
+green,
+red;
+
+// Generate CSS variables for each color
+@each $color in $base_colors {
+    .#{$color + ""} {
+        color: var(--#{$color});
+    }
+
+    .#{$color + ""}-bg {
+        background-color: var(--#{$color});
+    }
+
+    .#{$color}-link {
+        text-decoration-color: var(--#{$color});
+        background-image: linear-gradient(
+          to top,
+          color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
+        );
+    }
+}

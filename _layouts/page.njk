@@ -1,0 +1,17 @@
+{% include "head.njk" %}
+
+{% include "header.njk" %}
+  
+<main>
+  <div class="content grid-global">
+    {% if displaySidebar != false %}
+      {% include "sidebar.njk" %}
+    {% endif %}
+    {% include "title.njk" %}
+    <article>
+      {{ content | safe }}
+    </article>
+  </div>
+</main>
+  
+{% include "footer.njk" %}

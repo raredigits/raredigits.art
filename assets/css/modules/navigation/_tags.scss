@@ -1,0 +1,14 @@
+.tag {
+    font-size: 0.9em;
+    background-color: var(--gray-lightest);
+    color: var(--gray-trans);
+    padding: 0 var(--space-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-sm);
+    text-decoration: none;
+    transition: background-color 0.3s;
+
+    &:hover {
+        color: var(--primary-text-color);
+    }
+}

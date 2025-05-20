@@ -1,0 +1,68 @@
+.bordered {
+    border: 1px solid var(--border-color);
+}
+
+.bordered-light {
+    border: 1px solid var(--border-color-light);
+}
+
+.border-top {
+    border-top: 1px solid var(--border-color);
+}
+
+.border-bottom {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.circle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
+}
+
+.square {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1 / 1;
+}
+
+.rounded-xs {
+    border-radius: var(--space-xs);
+}
+
+.rounded-sm {
+    border-radius: var(--space-sm);
+}
+
+.rounded-md {
+    border-radius: var(--space-md);
+}
+
+.rounded-lg {
+    border-radius: var(--space-lg);
+}
+
+.rounded-xl {
+    border-radius: var(--space-xl);
+}
+
+.divider-md,
+.divider-lg {
+    width: 100%;
+    background: var(--border-color);
+}
+
+.divider-md {
+    height: 1px;
+    margin: var(--space-md) 0;
+}
+
+.divider-lg {
+    height: 2px;
+    margin: var(--space-lg) 0;
+}

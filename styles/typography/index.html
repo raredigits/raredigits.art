@@ -1,0 +1,275 @@
+---
+layout: page.njk
+title: "Typography"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/typography/'
+---
+
+<section>
+    <h2>Foundation of Visual Hierarchy</h2>
+    <div class="meta-info">
+        css/modules/_typography.scss
+    </div>
+    <p>Typography forms the backbone of visual hierarchy in the system.</p>
+    <div class="card text-content-caption padding-lg">
+        <div class="grid-global-fixed gap-xs">
+            <div class="bordered padding-sm heading" style="grid-column: 1 / -1; grid-row: 1;">
+                Page Title
+            </div>
+            <div class="bordered padding-sm col-span-3" style="grid-row: 2;">
+                <span class="meta-info">Meta Copy</span>
+                <div class="width-75 column gap-xs">
+                    <div class="width-100 padding-xs gray-bg"></div>
+                    <div class="width-100 padding-xs gray-bg"></div>
+                </div>
+            </div>
+            <div class="col-span-9 bordered padding-sm flex column gap-xs" style="grid-row: 2;">
+                Body Copy
+                <div class="grid grid-cols-5 gap-xs">
+                    <div class="skeleton-row col-span-2 row-start-1"></div>
+                    <div class="skeleton-row col-span-2 row-start-2"></div>
+                    <div class="bordered col-span-3 row-start-3 padding-t-sm padding-b-lg padding-l-sm">
+                        .text-content-caption
+                    </div>
+                    <div class="col-span-5 grid grid-cols-5 gap-xs">
+                        <div class="skeleton-row col-span-2 row-start-1"></div>
+                        <div class="skeleton-row col-span-2 row-start-2"></div>
+                        <div class="skeleton-row col-span-2 row-start-3"></div>
+                        <div class="bordered col-span-1 col-start-3 row-span-2 note padding-l-sm">
+                            .remark
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>
+        Through deliberate text treatment, content is organized into meaningful blocks and emphasis is placed where it matters most. This approach allows information to be structured and prioritized without excessive reliance on color or decorative elements.</p>
+    
+
+    <p>
+        The core principle governing typographic design can be summarized as:
+    </p>
+    <div class="highlight">
+        Clarity through structure, space, and proportion
+    </div>
+    <p>
+        These principles provide a framework for creating clear information hierarchies while maintaining visual restraint. When thoughtfully arranged according to the grid system and using proper spacing, typography naturally leads users through content—letting them focus on meaning rather than design.
+    </p>
+</section>
+
+<h2>Typeface Selection</h2>
+<p>There are tons of different standards and approaches to typography and fonts selection. This system sticks to the simplest one: <em>Content is king</em>.</p>
+<div class="card collapsible-container">
+    <p>
+        <span class="section-icon material-icons-outlined">description</span>
+        <span class="collapsible-trigger">There’s a solid write-up on this in 101<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
+    </p>
+    <div class="collapsible-content">
+        <h2>Choosing the Right Font</h2>
+        
+        <section class="lead-container">
+            <p class="lead">
+                Fonts set the mood. They guide the eye. But they are not the star of the show.
+            </p>
+            <p class="meta-info">
+                Written by a typesetter who has broken more layouts than you’ve built
+            </p>
+        </section>
+        <section>
+            <p>
+                People often ask: “What font should I use?” My answer is always the same — for what?
+            </p>
+            <p>
+                I’ve spent two decades setting type for longreads that stretched past 15,000 words, in five languages, and across six continents. I’ve watched heatmaps, eye-tracking, bounce rates — and let me say this: typography matters.
+            </p>
+            <div class="remarked">
+                <p>
+                    <em>A lot.</em> <strong>But...</strong>
+                </p>
+                <aside class="remark">Ah, those sneaky tricks just to get the reader to scroll down for the sake of time-on-page stats, right?</aside>
+            </div>
+        </section>
+        <section>
+            <h3>Typography Isn’t a Frill, It’s the Path</h3>
+            <p>
+                Listen up: typography isn’t some optional flourish you slap on at the last minute. Pick the wrong font—say, Comic Sans for a longread about military conflict—and you don’t need to be a psychic to guess how that’s gonna end. End of story.
+            </p>
+            <p class="warning">
+                ⚠️ Warning: If your layout depends on the user noticing the font before they notice the message, you’ve already failed.
+            </p>
+            <p>
+                Meanwhile, over at Bloomberg, serious and very busy gentlemen drop <strong>$2,000 a month on the ugliest UI in the world</strong>, a terminal that runs on <em>nobody-cares-what-family-font</em>. Nobody’s begging for cursive serifs or novelty grotesque.
+            </p>
+            <p>
+                <mark>They need speed and clarity, not your designer ego on parade.</mark>
+            </p>
+            <p>
+                Because the content is too valuable to ignore.<br>That’s your real UX.
+            </p>
+            <div class="caption">
+                <p>A bad font doesn’t just look bad. It <em>feels</em> irrelevant.</p>
+            </div>
+        </section>
+        <section>
+            <h3 class="copy-heading">Font Rules</h3>
+            <p>
+                If you want to talk about font rules, you’re already in the same boat as all that nonsense about cramming everything “important” into the first viewport. Or the usual garbage like “no more than seven items,” “never mix more than two fonts,” “beware of clashing colors.” Long story short — these are rules made up by clowns for courses aimed at other clowns.
+            </p>
+            <div class="remarked">
+                <p>
+                    Cut it out. If your content is solid, people will scroll whether it’s front‑loaded or not. People will read it across hundred viewports if it’s worth it. And those who try to dress up weak content with curly fonts and “10 essential shocking titles…” — those are the folks who’ve never read a book without a clickbait title.
+                </p>
+                <aside class="remark remark-text">
+                    Imagine the first viewport of an Agatha Christie novel:
+                    <ul>
+                        <li>There’s been a murder.</li>
+                        <li>It’s complicated.</li>
+                        <li>The gardener did it.</li>
+                    </ul>
+                    <p>Exactly.</p>
+                </aside>
+            </div>
+        </section>
+        <h3 class="copy-heading">Clean the Noise</h3>
+        <p>
+            Here’s the deal: good typography isn’t a trend—it’s a discipline.  Want to make your interface addictive?
+        </p>
+        <p>This is a guide:</p>
+        <ul>
+            <li>Strip out the noise,</li>
+            <li>Highlight what's vital,</li>
+            <li>Lock your grid, </li>
+            <li>Nail your margins and leading,</li>
+            <li>Let hierarchy guide the eye,</li>
+            <li>Make the essentials pop and bury the rest,</li>
+            <li>Watch your data fly off the page</li>
+        </ul>
+        <p>
+            People scroll — if they trust you. And trust isn’t built by flash. It’s built by interest, clarity, and rhythm. Good typography is invisible.
+        </p>
+        <div class="highlight">
+            Make it beautiful by making it understandable. Not&nbsp;loud. Not&nbsp;clever. Just&nbsp;right
+        </div>
+        
+        <p>
+            At the end of the day, content is king.<br>
+            And typography is the throne.
+        </p>
+        <div class="remarked">
+            <p>
+                In every type of content, importance is never obvious. Seek the important; highlight the interesting; everything else is noise.
+            </p>
+            <p>Your job isn’t to impress or show off; it’s to serve the story. Get that right, and your readers won’t even notice the typeface—they’ll just keep reading.</p>
+            <div class="remark remark-text">
+                <div class="relative">
+                    <span class="material-icons">lightbulb_outline</span>
+                    Note: Interest always beats importance. If something’s boring, it will be skipped — even if it’s crucial.
+                </div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        
+        <p class="footnote">
+            * Bonus Tip: Every solution has a downside. Learn to think about harm, not just benefit. A flashy fix can backfire.
+        </p>
+        <div class="air-lg"></div>
+    </div>
+</div>
+
+<p>The style system employs flourish carefully selected typefaces, each serving a specific purpose in the information hierarchy:</p>
+
+<pre>
+<code><span class="code-comment">assets/css/modules/typography/_fonts.scss</span>
+    
+--primary-font: 'Fira Sans', sans-serif;
+--heading-font: 'Playfair Display', serif;
+--code-font: 'Cousine', monospace;
+--script-font: 'Caveat', cursive;</code>
+</pre>
+
+<section>
+    <h3>Fonts Usage</h3>
+    <table>
+        <tr>
+            <td class="top">
+                <p class="bold">Primary Font: Fira Sans</p>
+                <span class="meta-info">
+                    Google Fonts:
+                    <a href="https://fonts.google.com/specimen/Fira+Sans/tester">Type tester</a>
+                    <span class="material-icons-outlined">launch</span>
+                </span>
+            </td>
+            <td class="left">
+                <p>Used for body text and general content.</p>
+                <p>The sans-serif design creates a professional, business-like tone while its slightly playful terminal details add a touch of approachability. With a comprehensive range of weights from thin to extra bold, Fira Sans addresses all typographic needs within the main content.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="top">
+                <p class="bold">Heading Font: Playfair Display</p>
+                <span class="meta-info">
+                    Google Fonts:
+                    <a href="https://fonts.google.com/specimen/Playfair+Display/tester">Type tester</a>
+                    <span class="material-icons-outlined">launch</span>
+                </span>
+            </td>
+            <td class="left">
+                <p>Reserved for headings and titles.</p>
+                <p>Its elegant serifs and strong stroke contrast counterbalance the utilitarian nature of the body text, creating visual interest at key points in the content hierarchy without compromising readability.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="top">
+                <p class="bold">Tech Font: Cousine</p>
+                <span class="meta-info">
+                    Google Fonts:
+                    <a href="https://fonts.google.com/specimen/Cousine/tester">Type tester</a>
+                    <span class="material-icons-outlined">launch</span>
+                </span>
+            </td>
+            <td class="left">
+                <p>Employed for technical information, including code snippets, tables, and data visualizations.</p>
+                <p>Its monospaced character width ensures secondary status in the information hierarchy while simultaneously conveying technical precision and formality.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="top">
+                <p class="bold">Script Font: Caveat</p>
+                <span class="meta-info">
+                    Google Fonts:
+                    <a href="https://fonts.google.com/specimen/Caveat/tester">Type tester</a>
+                    <span class="material-icons-outlined">launch</span>
+                </span>
+            </td>
+            <td class="left">
+                <p>Used for comments and annotations.</p>
+                <p>This handwriting-style font creates a personal touch for notes, asides, and informal remarks that complement the main content.</p>
+            </td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>Copy Hierarchy</h2>
+    <p>
+        Text hierarchy creates instant visual structure. It guides users through information in order of importance, making content scannable at a glance.
+    </p>
+    
+    <p>The system builds hierarchy using three primary tools: <span class="font-size-xl">size</span>, <strong>weight</strong>, and <span class="gray-trans">color</span>.</p>
+    <p>
+        The principle is straightforward: more important information appears larger and darker. Secondary elements use lighter tones to visually recede. 
+    </p>
+    <p>The stronger the contrast between primary and secondary elements, the clearer your structure becomes. This deliberate difference in treatment creates natural reading paths without requiring conscious effort from users.</p>
+    <div class="card text-content-width padding-lg">
+        <ins class="uppercase">Content is King</ins>
+        <div class="meta-info">
+            And typography is the throne
+        </div>
+        <p class="width-75">In every type of content, importance is never obvious. Seek the important; highlight the interesting; everything else is noise.</p>
+    </div>
+    <p>The stronger the contrast between primary and secondary elements, the clearer the structure.</p>
+    <p>Always separate semantic groups with whitespace or background shading—never rely solely on layout to imply relationships. This clear delineation helps users immediately understand how information is organized, reducing cognitive load and improving comprehension.</p>
+    <p>Remember that effective hierarchy isn't about making everything stand out—it's about creating meaningful visual relationships that guide attention where it matters most.</p>
+</section>

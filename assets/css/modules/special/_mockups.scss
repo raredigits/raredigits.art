@@ -1,0 +1,23 @@
+// Iphone mockup styles
+
+.phone-frame-wrapper {
+    position: relative;
+    width: fit-content;
+    z-index: 5;
+}
+
+.phone-frame {
+    position: relative;
+    z-index: 4;
+    display: block;
+}
+
+.phone-screen-content {
+    position: absolute;
+    top: 8%;
+    bottom: 8%;
+    left: 4%;
+    width: 92%;
+    overflow: hidden;
+    z-index: 3;
+}

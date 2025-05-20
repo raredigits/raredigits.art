@@ -1,0 +1,28 @@
+.material-icons,
+.material-icons-outlined {
+    position: relative;
+    top: 0.2em;
+    font-size: inherit;
+}
+
+.section-icon.material-icons-outlined {
+    display: inline-block;
+    position: relative;
+    top: 0.3em;
+    margin-left: -1.3rem;
+    font-size: 1.5rem;
+    color: var(--text-color-light);
+}
+
+.remark .material-icons {
+    position: absolute;
+    top: -0.2em;
+    left: -1.2em;
+    font-size: 1.5em;
+}
+
+@media (max-width: 768px) {
+    .section-icon.material-icons-outlined {
+        margin-left: 0;
+    }
+}

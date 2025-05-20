@@ -1,0 +1,15 @@
+.skeleton-column,
+.skeleton-row {
+    padding: var(--space-sm);
+    background: var(--gray);
+}
+
+.skeleton-column {
+    height: 100%;
+    width: auto;
+}
+
+.skeleton-row {
+    height: auto;
+    width: 100%;
+}

@@ -1,0 +1,101 @@
+---
+layout: page.njk
+title: "Stylesheet Modules"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/modules/'
+---
+
+<section>
+    <div class="meta-info">css/modules/</div>
+    
+    <p>For ease of navigation and maintenance, all style elements are organized into logical groups. These modules are processed through a preprocessor and compiled into a single CSS file.</p>
+    
+    <p>This modular approach makes the codebase more manageable by separating concerns and allowing you to quickly locate specific styling components. It also facilitates collaboration, as different team members can work on separate modules without creating conflicts.</p>
+</section>
+
+<section>
+    <h2>Module Organization</h2>
+    <p>The system uses SCSS preprocessing to compile these separate modules into a single optimized CSS file. This approach offers several advantages:</p>
+    <ul>
+        <li>Variables and mixins can be shared across modules</li>
+        <li>Styles can be nested for better readability</li>
+        <li>Complex calculations and functions streamline development</li>
+        <li>Changes to one module won't impact others unexpectedly</li>
+    </ul>
+    
+    <p>The complete module structure is organized as follows:</p>
+
+    <pre class="full-width-caption">
+<code>css/
+│
+├── rare.scss                     # Main entry file that imports all modules
+│
+├── modules/   
+│   │
+│   ├── layout/                   # Layout components
+│   │   ├── _grid.scss            # Grid system definitions
+│   │   ├── _containers.scss      # Content containers styles (header, main, footer)
+│   │   └── _spacing.scss         # Margin and padding utilities
+│   │
+│   ├── typography/               # Typography components
+│   │   ├── _fonts.scss           # Font imports and definitions
+│   │   ├── _headings.scss        # Heading styles
+│   │   ├── _body.scss            # Paragraph and inline text styles
+│   │   └── _text-content.scss    # Blockquotes, code blocks, etc.
+│   │
+│   ├── colors/                   # Color variables and palettes
+│   │   ├── _base.scss            # Base colors
+│   │   ├── _brand.scss           # Brand colors
+│   │   ├── _supporting.scss      # Supporting colors
+│   │   └── _blue.scss            # Blue palette
+│   │
+│   ├── bricks/                   # Holders and wrappers
+│   │   ├── _sections.scss        # Section styles
+│   │   ├── _cards.scss           # Cards and card decks
+│   │   └── _tables.scss          # Table styles
+│   │
+│   ├── align/                    # Alignment utilities
+│   │   ├── _align.scss           # Alignment variables
+│   │   ├── _flex.scss            # Flexbox utilities
+│   │   └── _position.scss        # Positioning utilities
+│   │
+│   ├── navigation/               # Navigation components
+│   │   ├── _header.scss          # Header styles
+│   │   ├── _hamburger.scss       # Hamburger menu styles
+│   │   ├── _navigation.scss      # Navigation bars styles
+│   │   └── _links.scss           # Link styles
+│   │
+│   ├── elements/                 # Interactive UI elements
+│   │   ├── _buttons.scss         # Button styles
+│   │   ├── _forms.scss           # Form element styles
+│   │   ├── _pop-ups.scss         # Pop-up and modal styles
+│   │   └── _tooltips.scss        # Tooltip styles
+│   │
+│   ├── decorations/              # Visual enhancements
+│   │   ├── _images.scss          # Image styles
+│   │   ├── _icons.scss           # Icon styles
+│   │   ├── _borders.scss         # Borders styles
+│   │   ├── _shadows.scss         # Shadow styles
+│   │   └── _skeleton.scss        # Skeleton styles
+│   │
+│   ├── special/                  # Special components
+│   │   ├── _construction.scss    # Construction notice
+│   │   ├── _cookies.scss         # Cookies consent 
+│   │   ├── _collapsible.scss     # Collapsible elements
+│   │   └── _mockups.scss         # Browsers mockups
+│   │
+│   └── utilities/                # Helper classes
+│       ├── _breakpoints.scss     # Responsive breakpoint definitions
+│       ├── _display.scss         # Display and visibility helpers
+│       └── _resets.scss          # CSS resets
+│
+└── vendor/                       # Third-party styles
+    └── normalize.css             # CSS normalization
+</code>
+    </pre>
+    
+    <p>When adding new features, place them within the appropriate existing module rather than creating isolated stylesheets. This maintains system coherence and makes relationships between elements clear.</p>
+    
+    <p>The main <code>rare.scss</code> file imports all modules in the correct order, ensuring dependencies are resolved properly during compilation. This automated build process eliminates the need to manually manage stylesheet references in your HTML.</p>
+</section>

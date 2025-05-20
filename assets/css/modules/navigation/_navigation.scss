@@ -1,0 +1,70 @@
+@use "../utilities/breakpoints" as bp;
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav li {
+    min-height: var(--space-lg);
+    @include bp.mobile {
+        min-height: var(--space-md);
+    }
+}
+
+.sidebar-wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: var(--space-sm);
+}
+
+.sidebar-header {
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    white-space: nowrap;
+}
+
+.sidebar-nav li {
+    font-size: 0.9em;
+}
+
+.sidebar-section {
+    padding-top: var(--space-lg);
+}
+
+@media (max-width: 768px) {
+    .sidebar-wrapper {
+        width: 100%;
+        height: var(--space-lg);
+        flex-flow: row nowrap;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .sidebar-header {
+        height: 100%;
+        margin-bottom: 0;
+        align-content: center;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        gap: var(--space-md);
+        overflow-x: auto;
+        height: 100%;
+        align-items: center;
+    }
+
+    .sidebar-nav * {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: var(--space-sm);
+        align-items: center;
+        white-space: nowrap;
+    }
+    
+    .sidebar-nav ul li {
+        margin: 0 var(--space-sm);
+        white-space: nowrap;
+    }
+}

@@ -1,0 +1,35 @@
+.center-center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.center {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.right {
+    text-align: right;
+}
+
+.left {
+    text-align: left;
+}
+
+.top {
+    text-align: top;
+    vertical-align: top;
+}
+
+.bottom {
+    text-align: bottom;
+    vertical-align: bottom;
+}
+
+.stretched {
+    justify-content: space-between;
+}

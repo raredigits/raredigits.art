@@ -1,0 +1,28 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    background: var(--gray-lightest);
+    position: relative;
+}
+
+.card-hover:hover {
+    background: var(--grey-lightest);
+    border-bottom: 1px solid var(--border-color-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-header {
+    border-bottom: 1px solid var(--border-color-light);
+}
+
+.card-inverted {
+    display: flex;
+    flex-direction: column;
+    background: var(--gray-dark);
+    color: var(--gray-light);
+    position: relative;
+}
+
+.card-inverted a {
+    color: var(--gray-light);
+}

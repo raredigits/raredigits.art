@@ -1,0 +1,72 @@
+@use "../../utilities/breakpoints" as bp;
+
+:root {
+    --header-height: var(--space-xl);
+}
+
+.header-container {
+    max-width: var(--site-max-width);
+    height: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 102;
+}
+
+.header-logo-wrapper {
+    grid-column: 1 /span 2;
+    height: 100%;
+    padding: var(--base-unit) 0;
+    @include bp.mobile {
+        grid-column: 1 /span 2;
+    }
+}
+
+.header-logo {
+    background: url('/assets/img/logo/logo.svg') no-repeat;
+    height: calc(var(--header-height) - calc(var(--space-md) * 2));
+    min-width: 100px;
+}
+
+.nav-global {
+    grid-column: 4 / span 9;
+    height: var(--header-height);
+
+    @include bp.mobile {
+        grid-column: 3 / span 3;
+        padding-right: var(--space-lg);
+        overflow: hidden;
+    }
+}
+  
+.nav-global ul {
+    display: flex;
+    gap: var(--space-md);
+    height: 100%;
+    align-items: center;
+    margin: 0;
+    padding-bottom: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    @include bp.mobile {
+        overflow-x: auto;
+        scrollbar-width: none; 
+        -ms-overflow-style: none;
+    }
+}
+
+.nav-global li {
+    height: 100%;
+}
+
+.nav-global a {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.nav-global a:hover,
+.nav-global a.current:hover {
+    position: relative;
+    top: 1px;
+}

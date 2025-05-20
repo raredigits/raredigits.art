@@ -1,0 +1,19 @@
+{
+  "title": "Rare Digits Art",
+  "description": "Rare Styles",
+  "url": "https://raredigits.io",
+  "navigation": [
+    { "text": "Manifesto", "url": "/manifesto/" },
+    { "text": "Styles", "url": "/styles/" },
+    { "text": "Charts", "url": "/charts/" },
+    { "text": "Examples", "url": "/examples/" },
+    { "text": "101", "url": "/kb/" },
+    { "text": "Pricing", "url": "/pricing/" }
+  ],
+  "hamburger": [
+    { "text": "License", "url": "/legal/license/" },
+    { "text": "Terms of Use", "url": "/legal/terms/" },
+    { "text": "Login", "url": "/login/" },
+    { "text": "GitHub", "url": "" }
+  ]
+}

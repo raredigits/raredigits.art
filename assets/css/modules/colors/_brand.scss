@@ -1,0 +1,30 @@
+:root {
+    --brand-color: #00ff4e;
+    --brand-color-light: #d8f9d1;
+    --brand-color-dark: #00b300;
+    --brand-color-rgb: 0, 255, 78;
+}
+
+$brand_colors:
+brand-color,
+brand-color-light,
+brand-color-dark;
+
+// Generate CSS variables for each color
+@each $color in $brand_colors {
+    .#{$color + ""} {
+        color: var(--#{$color});
+    }
+
+    .#{$color + ""}-bg {
+        background-color: var(--#{$color});
+    }
+
+    .#{$color}-link {
+      text-decoration-color: var(--#{$color});
+      background-image: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
+      );
+    }
+}

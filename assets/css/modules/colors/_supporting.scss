@@ -1,0 +1,47 @@
+:root {
+    --plum: #4e4153;
+    --cherry: #86241a;
+    --orange: #fa8c16;
+    --coral: #fe7c64;
+    --pink: #ffd6e7;
+    --princess: #ff00f5;
+    --safari: #ffb038;
+    --purple: #722ed1;
+    --pen: #0033a0;
+    --tiffany: #53c9e9;
+    --ocean: #2f7395;
+    --blueberry: #221e4d;
+}
+
+$supporting_colors:
+plum,
+cherry,
+orange,
+coral,
+pink,
+princess,
+safari,
+purple,
+pen,
+tiffany,
+ocean,
+blueberry;
+
+// Generate CSS variables for each color
+@each $color in $supporting_colors {
+    .#{$color + ""} {
+        color: var(--#{$color});
+    }
+
+    .#{$color + ""}-bg {
+        background-color: var(--#{$color});
+    }
+
+    .#{$color}-link {
+      text-decoration-color: var(--#{$color});
+      background-image: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
+      );
+    }
+}

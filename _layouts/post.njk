@@ -1,0 +1,46 @@
+{% include "head.njk" %}
+
+{% include "header.njk" %}
+  
+<main>
+  <div class="content grid-global">
+    <aside class="sidebar">
+      <div class="sidebar-wrapper meta-info">
+
+        <nav class="sidebar-nav no-scrollbar">
+          <h5 class="sidebar-header">
+            <a href="/kb/">Knowledge Base</a>
+          </h5>
+
+          {% if section %}
+            <div>
+              <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>{{ section }}
+            </div>
+          {% endif %}
+          
+          {% if author %}
+            <p>by {{ author }}</p>
+          {% endif %}
+
+          {% if date %}
+            <div>{{ date | dateLong }}</div>
+          {% endif %}
+
+          {% if tags %}
+            <div class="tags">
+              {% for tag in tags %}
+                <span class="tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </nav>
+      </div>
+    </aside>
+    {% include "title.njk" %}
+    <article>
+      {{ content | safe }}
+    </article>
+  </div>
+</main>
+  
+{% include "footer.njk" %}

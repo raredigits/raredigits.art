@@ -1,0 +1,42 @@
+.no-decoration {
+    text-decoration: none;
+    border-bottom: none;
+    border: none;
+    box-shadow: none;
+}
+
+.no-decoration:hover,
+.no-decoration a:hover {
+    border: none;
+    box-shadow: none;
+    background: initial;
+    background-color: none;
+    color: none;
+}
+
+.no-decoration::before,
+.no-decoration:hover::before {
+    content: none;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.no-border {
+    border: none;
+    border-bottom: none;
+}
+
+.no-scrollbar {
+    scrollbar-width: none; 
+    -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none; 
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
