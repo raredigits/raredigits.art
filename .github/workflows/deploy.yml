@@ -29,5 +29,4 @@ jobs:
         with:
           personal_token: ${{ secrets.RARE_STYLES_PAT }}
           publish_dir: ./_site
-          external_repository: raredigits/raredigits.art
           publish_branch: gh-pages
