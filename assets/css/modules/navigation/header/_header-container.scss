@@ -33,7 +33,6 @@
 
     @include bp.mobile {
         grid-column: 3 / span 3;
-        padding-right: var(--space-lg);
         overflow: hidden;
     }
 }

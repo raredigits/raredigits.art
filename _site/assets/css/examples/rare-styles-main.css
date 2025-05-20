@@ -5,13 +5,10 @@
     flex-direction: column;
     padding: var(--header-height) var(--space-md) var(--space-md);
     position: relative;
+    overflow: hidden;
 }
 
 .main-hero-wrapper {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-template-rows: repeat(12, 1fr);
-    gap: 16px;
     aspect-ratio: 1 / 1;
     max-width: var(--site-max-width);
     width: 100%;
@@ -103,10 +100,7 @@
     max-width: var(--site-max-width);
     width: 100%;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(12, 1fr);
-    gap: 16px;
     aspect-ratio: 1 / 1;
     padding: var(--header-height) 0 var(--space-md);
 }
@@ -129,49 +123,41 @@
     }
 
     .main-hero-wrapper {
-        grid-template-columns: repeat(6, 1fr);
         grid-template-rows: repeat(12, 1fr);
-        gap: 16px;
         aspect-ratio: 1 / 1;
     }
 
     .main-rare-square {
         grid-column: 3 /span 2;
-        grid-row: 3 / span 2;
+        grid-row: 2 / span 2;
     }
 
     .main-hero {
         grid-column: 1 / span 5;
-        grid-row: 6 / span 2;
+        grid-row: 5 / span 2;
         margin-bottom: var(--space-lg);
     }
 
     .main-manifesto {
-        grid-column: 1 /span 6;
-        grid-row: 9 / span 2;
+        grid-column: 1 /span 4;
+        grid-row: 7 / span 2;
         margin-bottom: var(--space-lg);
     }
 
     .main-hero-description {
         grid-column: 1 /span 4;
-        grid-row: 11 / span 2;
+        grid-row: 10 / span 2;
         padding-right: var(--space-md);
     }
 
     .main-copyright {
         grid-column: 5 /span 2;
-        grid-row: 11 / span 2;
+        grid-row: 10 / span 2;
     }
 
     .main-brush {
         width: 90vw;
         right: -22vw;
         bottom: 21vh;
-    }
-
-    .grid-noise-container {
-        grid-template-columns: repeat(6, 1fr);
-        grid-template-rows: repeat(12, 1fr);
-        gap: 16px;
     }
 }

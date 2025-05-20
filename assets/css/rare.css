@@ -4202,7 +4202,6 @@ table th:not(:first-child):not(:last-child) {
 @media screen and (max-width: 768px) {
   .nav-global {
     grid-column: 3/span 3;
-    padding-right: var(--space-lg);
     overflow: hidden;
   }
 }
