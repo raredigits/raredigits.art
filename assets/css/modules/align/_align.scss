@@ -6,10 +6,9 @@
     text-align: center;
 }
 
-.center {
+.center-x {
     text-align: center;
     justify-content: center;
-    align-items: center;
 }
 
 .right {
@@ -23,6 +22,11 @@
 .top {
     text-align: top;
     vertical-align: top;
+}
+
+.center-y {
+    display: flex;
+    align-items: center;
 }
 
 .bottom {

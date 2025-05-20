@@ -1,4 +1,4 @@
-@use "../utilities/breakpoints" as bp;
+@use "../utilities/breakpoints" as *;
 
 :root {
     --base-unit: 16px;
@@ -17,7 +17,7 @@
     gap: var(--grid-gap);
     width: 100%;
 
-    @include bp.mobile {
+    @include mobile {
         --grid-columns: 6;
         --grid-gap: var(--space-xs);
     }
@@ -28,7 +28,7 @@
     grid-template-columns: var(--grid-columns-global);
     gap: var(--grid-gap-global);
 
-    @include bp.mobile {
+    @include mobile {
         grid-template-columns: var(--grid-columns-global-mobile);
         gap: var(--space-xs);
     }
@@ -46,77 +46,91 @@
     gap: var(--global-grid-gap);
 }
 
+.auto-cols-fr { grid-auto-columns: 1fr; }
+.auto-rows-fr { grid-auto-rows: 1fr; }
+
 // COLUMNS
 
-.grid-cols-12 {
-    --grid-columns: 12;
+@mixin generate-grid-cols($prefix: "") {
+    @for $i from 1 through 12 {
+      .#{$prefix}grid-cols-#{$i} {
+        --grid-columns: #{$i};
+      }
+    }
+
+    .#{$prefix}col-span-full {
+      grid-column: 1 / -1;
+    }
 }
 
-.grid-cols-11 {
-    --grid-columns: 11;
+@include generate-grid-cols();
+
+@include mobile {
+  @include generate-grid-cols("mobile\\:");
 }
 
-.grid-cols-10 {
-    --grid-columns: 10;
+@include tablet {
+  @include generate-grid-cols("tablet\\:");
 }
 
-.grid-cols-9 {
-    --grid-columns: 9;
-}
-
-.grid-cols-8 {
-    --grid-columns: 8;
-}
-
-.grid-cols-7 {
-    --grid-columns: 7;
-}
-
-.grid-cols-6 {
-    --grid-columns: 6;
-}
-
-.grid-cols-5 {
-    --grid-columns: 5;
-}
-
-.grid-cols-4 {
-    --grid-columns: 4;
-}
-
-.grid-cols-3 {
-    --grid-columns: 3;
-}
-
-.grid-cols-2 {
-    --grid-columns: 2;
-}
-
-.grid-cols-1 {
-    --grid-columns: 1;
-}
-
-.col-span-full {
-    grid-column: 1 / -1;
+@include desktop {
+  @include generate-grid-cols("desktop\\:");
 }
 
 @for $i from 1 through 12 {
     .col-span-#{$i} {
       grid-column: span $i;
     }
+
+    @include mobile {
+        .mobile\:col-span-#{$i} {
+          grid-column: span #{$i};
+        }
+      }
+    
+      @include tablet {
+        .tablet\:col-span-#{$i} {
+          grid-column: span #{$i};
+        }
+      }
+    
+      @include desktop {
+        .desktop\:col-span-#{$i} {
+          grid-column: span #{$i};
+        }
+      }
 }
 
-@for $i from 1 through 12 {
-    .col-start-#{$i} {
-      grid-column-start: $i;
+@mixin generate-col-position($type, $max) {
+    $base-class: if($type == 'start', 'col-start', 'col-end');
+  
+    @for $i from 1 through $max {
+      .#{$base-class}-#{$i} {
+        grid-column-#{$type}: $i;
+      }
+  
+      @include mobile {
+        .mobile\:#{$base-class}-#{$i} {
+          grid-column-#{$type}: $i;
+        }
+      }
+  
+      @include tablet {
+        .tablet\:#{$base-class}-#{$i} {
+          grid-column-#{$type}: $i;
+        }
+      }
+  
+      @include desktop {
+        .desktop\:#{$base-class}-#{$i} {
+          grid-column-#{$type}: $i;
+        }
+      }
     }
 }
 
-@for $i from 1 through 13 {
-    .col-end-#{$i} {
-      grid-column-end: $i;
-    }
-}
+@include generate-col-position('start', 12);
+@include generate-col-position('end', 13);
 
 // ROWS
 
@@ -196,13 +210,13 @@
     }
 }
 
-@include bp.tablet {
+@include tablet {
     :root {
         --global-fr: calc((100vw - (11 * var(--grid-gap-global))) / 12);
     }
 }
 
-@include bp.mobile {
+@include mobile {
     :root {
         --global-fr: calc((100vw - (5 * var(--grid-gap-global))) / 6);
     }

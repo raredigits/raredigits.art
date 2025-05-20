@@ -5,25 +5,24 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <div class="sidebar-wrapper meta-info">
-
+      <div class="sidebar-wrapper">
         <nav class="sidebar-nav no-scrollbar">
           <h5 class="sidebar-header">
             <a href="/kb/">Knowledge Base</a>
           </h5>
 
           {% if section %}
-            <div>
+            <div class="sidebar-meta">
               <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>{{ section }}
             </div>
           {% endif %}
           
           {% if author %}
-            <p>by {{ author }}</p>
+            <div class="sidebar-meta">by {{ author }}</div>
           {% endif %}
 
           {% if date %}
-            <div>{{ date | dateLong }}</div>
+            <div class="sidebar-meta">{{ date | dateLong }}</div>
           {% endif %}
 
           {% if tags %}
