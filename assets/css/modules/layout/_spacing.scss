@@ -5,9 +5,9 @@
   --space-xs: calc(var(--base-unit) * 0.25);
   --space-sm: calc(var(--base-unit) * 0.5);
   --space-md: var(--base-unit);
-  --space-lg: calc(var(--base-unit) * 2);
-  --space-xl: calc(var(--base-unit) * 3);
-  --space-xxl: calc(var(--base-unit) * 6);
+  --space-lg: calc(var(--base-unit) * 2); // 32px
+  --space-xl: calc(var(--base-unit) * 3); // 48px
+  --space-xxl: calc(var(--base-unit) * 6); // 96px
   --space-fr: var(--global-fr);
 
   // Percentages
@@ -18,6 +18,7 @@
   --space-25: 25%;
   --space-30: 30%;
   --space-33: 33%;
+  --space-40: 40%;
   --space-50: 50%;
   --space-60: 60%;
   --space-66: 66%;
@@ -34,7 +35,7 @@
 }
 
 $spaces: px, xs, sm, md, lg, xl, xxl, fr,
-         5, 10, 15, 20, 25, 30, 33, 50,
+         5, 10, 15, 20, 25, 30, 33, 40, 50,
          60, 66, 70, 75, 80, 90, 95, 100,
          0, auto;
 
@@ -159,7 +160,7 @@ $spaces: px, xs, sm, md, lg, xl, xxl, fr,
 @mixin generate-responsive-spacings($properties, $prefix, $space-vars) {
   @each $space in $space-vars {
     @include bp.mobile {
-      .mobile\\:#{$prefix}-#{$space} {
+      .mobile\:#{$prefix}-#{$space} {
         @each $prop in $properties {
           #{$prop}: var(--space-#{$space});
         }
@@ -167,7 +168,7 @@ $spaces: px, xs, sm, md, lg, xl, xxl, fr,
     }
 
     @include bp.tablet {
-      .tablet\\:#{$prefix}-#{$space} {
+      .tablet\:#{$prefix}-#{$space} {
         @each $prop in $properties {
           #{$prop}: var(--space-#{$space});
         }
@@ -175,7 +176,7 @@ $spaces: px, xs, sm, md, lg, xl, xxl, fr,
     }
 
     @include bp.desktop {
-      .desktop\\:#{$prefix}-#{$space} {
+      .desktop\:#{$prefix}-#{$space} {
         @each $prop in $properties {
           #{$prop}: var(--space-#{$space});
         }

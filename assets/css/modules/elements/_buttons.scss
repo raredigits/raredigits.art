@@ -4,12 +4,13 @@ button,
     background: var(--bg-color-light);
     border-radius: var(--space-lg);
     border: none;
+    text-decoration: none;
     padding: var(--space-sm) var(--space-md);
     white-space: nowrap;
     cursor: pointer;
-    
 
     &:hover {
+        color: var(--primary-color);
         background: var(--bg-color);
         border: 1px solid var(--border-color);
     }
