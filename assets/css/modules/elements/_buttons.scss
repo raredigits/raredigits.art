@@ -1,0 +1,48 @@
+button,
+.button {
+    width: fit-content;
+    background: var(--bg-color-light);
+    border-radius: var(--space-lg);
+    border: none;
+    padding: var(--space-sm) var(--space-md);
+    white-space: nowrap;
+    cursor: pointer;
+    
+
+    &:hover {
+        background: var(--bg-color);
+        border: 1px solid var(--border-color);
+    }
+}
+
+.wa-button-wrapper {
+  position: sticky;
+  bottom: var(--space-md);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: var(--space-md);
+  pointer-events: auto;
+}
+
+.wa-button {
+  width: 60px;
+  height: 60px;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  border-radius: 50%;
+  background-color: #25D366;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  background-repeat: no-repeat;
+  background-position: 0 33.3333%;
+  background-size: auto 400%;
+  background-image: url('/assets/img/common/vendors/wa.svg');
+  transition: box-shadow 0.2s ease;
+
+  &:hover,
+  &:focus {
+    background-position: 0 33.3333%;
+    background-size: auto 400%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+}

@@ -43,4 +43,5 @@ In the age of excess, refusal becomes revolution.
 
 Rarity endures.
 
-**Painting noise. Shaping sense.**
+**Painting noise.   
+Shaping sense.**

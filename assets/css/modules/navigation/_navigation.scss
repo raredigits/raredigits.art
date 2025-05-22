@@ -1,5 +1,9 @@
 @use "../utilities/breakpoints" as bp;
 
+.nav-list {
+    margin-bottom: var(--space-lg);
+}
+
 nav ul {
     list-style-type: none;
     padding: 0;

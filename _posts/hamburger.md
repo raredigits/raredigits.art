@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 permalink: "kb/{{ title | slug }}/"
-date: 2023-06-01
+date: 2023-10-01
 title: "Hamburger Menu Saga"
 section: UI
 tags: navigation

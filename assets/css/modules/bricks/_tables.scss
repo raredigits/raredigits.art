@@ -1,4 +1,5 @@
 table {
+    display: block;
     min-width: 100%;
     border-collapse: collapse;
     margin-bottom: var(--space-lg);
@@ -6,6 +7,11 @@ table {
     overflow-x: auto;
     font-family: var(--code-font);
     font-size: var(--font-size-sm);
+}
+
+tbody {
+    display: table;
+    width: 100%;
 }
 
 table td:first-child,

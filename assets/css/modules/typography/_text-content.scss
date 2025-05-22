@@ -1,17 +1,17 @@
-@use "../utilities/breakpoints" as bp;
+@use "../utilities/breakpoints" as *;
 
 :root {
     --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
     --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
 }
 
-@include bp.tablet {
+@include tablet {
     :root {
         --text-content-width: calc((var(--global-fr) * 7) + var(--grid-gap-global) * 6);
     }
 }
 
-@include bp.mobile {
+@include mobile {
     :root {
         --text-content-width: 100%;
     }
@@ -26,7 +26,7 @@ article ul,
 article ol  {
     max-width: var(--text-content-width);
 
-    @include bp.mobile {
+    @include mobile {
         max-width: 100%;
     }
 }
@@ -38,7 +38,7 @@ article .meta-info {
 .lead-container {
     width: var(--global-fr-4);
 
-    @include bp.mobile {
+    @include mobile {
         width: 100%;
     }
 }
@@ -49,7 +49,7 @@ article .meta-info {
     margin: var(--space-sm) 0 var(--space-md);
     line-height: var(--line-height-sm);
 
-    @include bp.mobile {
+    @include mobile {
         width: 80%;
     }
 }
@@ -66,11 +66,11 @@ article .meta-info {
 }
 
 .remark {
-    width: calc(var(--global-fr) * 3);
+    width: calc(var(--global-fr) * 2);
     min-width: calc(var(--global-fr) * 2);
     max-width: calc(var(--global-fr) * 4);
 
-    @include bp.multi-breakpoint(tablet, mobile) {
+    @include multi-breakpoint(tablet, mobile) {
         width: fit-content;
         min-width: fit-content;
         max-width: fit-content;
@@ -85,7 +85,7 @@ article .meta-info {
     margin-left: calc(-1 * var(--space-lg));
     margin-right: calc(-1 * var(--space-lg));
 
-    @include bp.mobile {
+    @include mobile {
         width: calc(100vw - var(--space-md));
         margin-left: calc(-1 * var(--space-sm));
     }
@@ -171,11 +171,11 @@ pre {
     scrollbar-width: none; 
     -ms-overflow-style: none;
 
-    @include bp.tablet {
+    @include tablet {
         padding: var(--space-md);
     }
 
-    @include bp.mobile {
+    @include mobile {
         padding: var(--space-md);
         margin-left: calc(-1 * var(--space-sm));
     }
@@ -191,7 +191,7 @@ code {
     font-family: var(--code-font);
     width: fit-content;
     
-    @include bp.mobile {
+    @include mobile {
         font-size: var(--font-size-xs);
     }
 }
@@ -205,4 +205,33 @@ pre code {
 
 .code-comment {
     color: var(--gray-trans);
+}
+
+@mixin generate-columns($max: 6, $prefix: "") {
+    @if $prefix == "" {
+      .columns {
+        column-count: 2;
+        column-gap: var(--space-lg);
+      }
+    }
+  
+    @for $i from 1 through $max {
+      .#{$prefix}columns-#{$i} {
+        column-count: $i;
+      }
+    }
+}
+
+@include generate-columns();
+
+@include mobile {
+  @include generate-columns(6, "mobile\\:");
+}
+
+@include tablet {
+  @include generate-columns(6, "tablet\\:");
+}
+
+@include desktop {
+  @include generate-columns(6, "desktop\\:");
 }

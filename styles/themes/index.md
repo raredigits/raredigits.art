@@ -10,6 +10,9 @@ permalink: '/styles/themes/'
 
 The current trend of offering light/dark mode toggles and customizable interfaces tailored to individual user preferences is undeniable. It appears everywhere, from operating systems to text editors.
 
+<img src="/assets/img/illustrations/batman-inverted.jpg">
+<cite>Superhero following modern design trend</cite>
+
 But this style system focuses on building **functional interfaces** designed for efficiency and clarity. Decorative flourishes and aesthetic customizations, while fashionable, fall outside the core mission.
 
 ### The Science Is Clear

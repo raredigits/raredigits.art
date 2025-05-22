@@ -1,0 +1,215 @@
+@use "../utilities/breakpoints" as bp;
+
+// Alias map: semantic → core spacing variable
+$spacing-aliases: (
+  s: xs,
+  m: sm,
+  l: md,
+  xl: lg,
+  xxl: xl
+);
+
+// Base generator (non-responsive)
+@mixin generate-spacing-aliases($map, $prefix, $properties) {
+  @each $alias, $real in $map {
+    .#{$prefix}-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}t-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-top: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}r-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-right: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}b-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-bottom: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}l-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-left: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}x-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-left: var(--space-#{$real});
+        #{$prop}-right: var(--space-#{$real});
+      }
+    }
+
+    .#{$prefix}y-#{$alias} {
+      @each $prop in $properties {
+        #{$prop}-top: var(--space-#{$real});
+        #{$prop}-bottom: var(--space-#{$real});
+      }
+    }
+  }
+}
+
+// Responsive generator (mobile:, tablet:, desktop:)
+@mixin generate-responsive-spacing-aliases($map, $prefix, $properties) {
+  @each $alias, $real in $map {
+    @include bp.mobile {
+      .mobile\\:#{$prefix}-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}t-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}r-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}b-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}l-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}x-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .mobile\\:#{$prefix}y-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+    }
+
+    @include bp.tablet {
+      .tablet\\:#{$prefix}-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}t-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}r-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}b-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}l-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}x-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .tablet\\:#{$prefix}y-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+    }
+
+    @include bp.desktop {
+      .desktop\\:#{$prefix}-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}t-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}r-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}b-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}l-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}x-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-left: var(--space-#{$real});
+          #{$prop}-right: var(--space-#{$real});
+        }
+      }
+
+      .desktop\\:#{$prefix}y-#{$alias} {
+        @each $prop in $properties {
+          #{$prop}-top: var(--space-#{$real});
+          #{$prop}-bottom: var(--space-#{$real});
+        }
+      }
+    }
+  }
+}
+
+// Invocation
+@include generate-spacing-aliases($spacing-aliases, "p", ("padding"));
+@include generate-spacing-aliases($spacing-aliases, "m", ("margin"));
+@include generate-spacing-aliases($spacing-aliases, "gap", ("gap"));
+@include generate-spacing-aliases($spacing-aliases, "w", ("width"));
+@include generate-spacing-aliases($spacing-aliases, "h", ("height"));
+
+@include generate-responsive-spacing-aliases($spacing-aliases, "p", ("padding"));
+@include generate-responsive-spacing-aliases($spacing-aliases, "m", ("margin"));
+@include generate-responsive-spacing-aliases($spacing-aliases, "gap", ("gap"));
+@include generate-responsive-spacing-aliases($spacing-aliases, "w", ("width"));
+@include generate-responsive-spacing-aliases($spacing-aliases, "h", ("height"));

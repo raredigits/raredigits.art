@@ -8,13 +8,13 @@ a {
     color: var(--link-color);
     text-decoration: underline;
     text-decoration-color: var(--brand-color-dark);
-    text-decoration-thickness: 2px;
+    text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
     background-image: linear-gradient(
       to top,
       color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%
     );
-    background-size: 100% 2px;
+    background-size: 100% 1px;
     background-position: 0 1.2em;
     background-repeat: no-repeat;
     transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
@@ -28,6 +28,11 @@ a:hover {
 a img {
     display: block;
 }
+
+.link-thick {
+    text-decoration-thickness: 2px;
+    background-size: 100% 2px;
+} 
 
 h1 a, h2 a, h3 a, h4 a {
     color: var(--primary-text-color);

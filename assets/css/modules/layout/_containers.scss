@@ -32,14 +32,13 @@ main {
 
 .page-title {
     grid-row: 1;
-    grid-column: 1 / 9;
+    grid-column: 1 / -1;
     min-height: var(--space-xxl);
     display: flex;
-    align-items: flex-end;
+    border-bottom: 1px solid var(--border-color);
 
     @include bp.mobile {
         grid-row: 2;
-        grid-column: 1 / -1;
     }
 }
 

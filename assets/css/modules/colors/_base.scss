@@ -16,8 +16,12 @@
     --gray-mid-dark: #666666; // Used for labels, captions
     --gray-darkest: #191919; // Used for highlighting light-grays
 
-    --text-color: var(--black);
+    --primary-color: var(--black);
+    --secondary-color: var(--gray-dark);
+
     --bg-color: var(--gray-light);
+    --bg-color-light: var(--gray-lightest);
+    
     --border-color: var(--gray);
     --border-color-light: var(--gray-mid-light);
     --border-code: 1px solid var(--border-color);
@@ -25,9 +29,6 @@
     --red: #ff0000;
     --green: #389e0d;
     --yellow: #ffe000;
-
-    --primary-color: var(--black);
-    --secondary-color: var(--grey-dark);
 }
 
 $base_colors:

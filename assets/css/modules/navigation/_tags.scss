@@ -1,13 +1,13 @@
 .tag {
+    color: var(--text-color-light);
+    background: var(--bg-color-light);
+    display: inline-block;
+    padding: 1px 8px;
+    border: 1px solid var(--border-color-light);
+    border-radius: 3px;
     font-size: 0.9em;
-    background-color: var(--gray-lightest);
-    color: var(--gray-trans);
-    padding: 0 var(--space-sm);
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-sm);
-    text-decoration: none;
-    transition: background-color 0.3s;
-
+    margin-bottom: 3px;
+    
     &:hover {
         color: var(--primary-text-color);
     }
