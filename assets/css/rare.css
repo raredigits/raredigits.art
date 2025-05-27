@@ -66,6 +66,8 @@
 }
 
 .no-decoration {
+  background: none;
+  background-image: none;
   text-decoration: none;
   border-bottom: none;
   border: none;
@@ -16400,7 +16402,7 @@ footer {
   --font-size-sm: 0.9rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.2rem;
-  --font-size-xl: 1.4rem;
+  --font-size-xl: 1.5rem;
   --font-size-xxl: 2.2rem;
   --line-height: 1.5em;
   --line-height-sm: 1.2em;

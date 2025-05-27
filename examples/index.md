@@ -1,8 +1,8 @@
 ---
 layout: page.njk
-title: "CSS Usage Examples"
+title: "Usage Examples"
 section: "Styles"
-displaySidebar: true
+displaySidebar: false
 permalink: '/examples/'
 ---
 
