@@ -34,3 +34,21 @@
     --text-color-light: var(--gray-trans);
     --text-color-dark: var(--gray-dark);
 }
+
+.font-size-xs {font-size: var(--font-size-xs);}
+.font-size-sm {font-size: var(--font-size-sm);}
+.font-size-md {font-size: var(--font-size-md);}
+.font-size-lg {font-size: var(--font-size-lg);}
+.font-size-xl {font-size: var(--font-size-xl);}
+.font-size-xxl {font-size: var(--font-size-xxl);}
+
+.line-height {line-height: var(--line-height);}
+.line-height-sm {line-height: var(--line-height-sm);}
+.line-height-xs {line-height: var(--line-height-xs);}
+.line-height-lg {line-height: var(--line-height-lg);}
+
+.font-weight-thin {font-weight: var(--font-weight-thin);}
+.font-weight-light {font-weight: var(--font-weight-light);}
+.font-weight-normal {font-weight: var(--font-weight-normal);}
+.font-weight-bold {font-weight: var(--font-weight-bold);}
+.font-weight-black {font-weight: var(--font-weight-black);}
