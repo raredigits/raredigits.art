@@ -1,12 +1,12 @@
 button,
 .button {
+    display: block;
     width: fit-content;
     background: var(--bg-color-light);
     border-radius: var(--space-lg);
     border: none;
     text-decoration: none;
     padding: var(--space-sm) var(--space-md);
-    white-space: nowrap;
     cursor: pointer;
 
     &:hover {

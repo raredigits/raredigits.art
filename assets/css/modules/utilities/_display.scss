@@ -20,8 +20,20 @@
     display: block;
 }
 
+.wrap {
+    flex-wrap: wrap;
+}
+
+.no-wrap {
+    flex-wrap: nowrap;
+}
+
 .text-wrap {
     white-space: wrap;
+}
+
+.text-nowrap {
+    white-space: nowrap;
 }
 
 .z-index-0 {
