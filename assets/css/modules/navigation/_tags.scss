@@ -1,14 +1,15 @@
 .tag {
+    background: none;
     color: var(--text-color-light);
-    background: var(--bg-color-light);
-    display: inline-block;
-    padding: 1px 8px;
-    border: 1px solid var(--border-color-light);
-    border-radius: 3px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-sm);
+    color: var(--text-color-light);
+    padding: 0 4px 1px;
     font-size: 0.9em;
-    margin-bottom: 3px;
+    line-height: 1em;
     
     &:hover {
-        color: var(--primary-text-color);
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
     }
 }
