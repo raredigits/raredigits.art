@@ -1,5 +1,9 @@
 @use "../utilities/breakpoints" as bp;
 
+:root {
+    --sidebar-width: calc(var(--global-fr) * 3 + var(--grid-gap) * 2);
+}
+
 .sidebar {
     grid-row: 2;
     grid-column: 1/ span 3;
