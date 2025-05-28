@@ -113,21 +113,25 @@
 }
 
 .sidebar::before {
-    content: "";
-    display: block;
-    width: var(--space-md);
-    height: 100%;
-    background-color: var(--bg-color);
-    position: absolute;
-    left: calc(-1 * var(--space-md));
+    @include bp.mobile {
+        content: "";
+        display: block;
+        width: var(--space-md);
+        height: 100%;
+        background-color: var(--bg-color);
+        position: absolute;
+        left: calc(-1 * var(--space-md));
+    }
 }
 
 .sidebar::after {
-    content: "";
-    display: block;
-    width: var(--space-md);
-    height: 100%;
-    background-color: var(--bg-color);
-    position: absolute;
-    right: calc(-1 * var(--space-md));
+    @include bp.mobile {
+        content: "";
+        display: block;
+        width: var(--space-md);
+        height: 100%;
+        background-color: var(--bg-color);
+        position: absolute;
+        right: calc(-1 * var(--space-md));
+    }
 }
