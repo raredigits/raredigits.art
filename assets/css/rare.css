@@ -1299,8 +1299,6 @@ header {
 main {
   width: 100%;
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: 1fr;
   padding: var(--header-height) var(--space-md) calc(var(--space-lg) * 5);
 }
 
@@ -17745,6 +17743,7 @@ nav a.current {
 }
 
 footer a {
+  background-image: none;
   color: var(--gray-trans);
   border-bottom: 1px solid var(--gray-trans);
 }
@@ -17890,7 +17889,7 @@ button,
   width: fit-content;
   background: var(--bg-color-light);
   border-radius: var(--space-lg);
-  border: none;
+  border: 1px solid var(--bg-color-light);
   text-decoration: none;
   padding: var(--space-sm) var(--space-md);
   cursor: pointer;
