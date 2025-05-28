@@ -16403,8 +16403,9 @@ footer {
   --font-size-xl: 1.5rem;
   --font-size-xxl: 2.2rem;
   --line-height: 1.5em;
-  --line-height-sm: 1.2em;
   --line-height-xs: 1em;
+  --line-height-sm: 1.2em;
+  --line-height-md: 1.7em;
   --line-height-lg: 2em;
   --font-weight-thin: 100;
   --font-weight-light: 200;
@@ -17744,6 +17745,7 @@ nav a.current {
 
 footer a {
   background-image: none;
+  text-decoration: none;
   color: var(--gray-trans);
   border-bottom: 1px solid var(--gray-trans);
 }
