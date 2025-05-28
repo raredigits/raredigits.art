@@ -5,35 +5,32 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <div class="sidebar-wrapper">
-        <nav class="sidebar-nav no-scrollbar">
-          <h5 class="sidebar-header">
-            <a href="/kb/">Knowledge Base</a>
-          </h5>
+      <h5 class="sidebar-header">
+          <a href="/kb/">Knowledge Base</a>
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        {% if section %}
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>{{ section }}
+          </div>
+        {% endif %}
+        
+        {% if author %}
+          <div class="sidebar-meta">by {{ author }}</div>
+        {% endif %}
 
-          {% if section %}
-            <div class="sidebar-meta">
-              <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>{{ section }}
-            </div>
-          {% endif %}
-          
-          {% if author %}
-            <div class="sidebar-meta">by {{ author }}</div>
-          {% endif %}
+        {% if date %}
+          <div class="sidebar-meta">{{ date | dateLong }}</div>
+        {% endif %}
 
-          {% if date %}
-            <div class="sidebar-meta">{{ date | dateLong }}</div>
-          {% endif %}
-
-          {% if tags %}
-            <div class="tags">
-              {% for tag in tags %}
-                <span class="tag">#{{ tag }}</span>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </nav>
-      </div>
+        {% if tags %}
+          <div class="tags">
+            {% for tag in tags %}
+              <span class="tag">#{{ tag }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </nav>
     </aside>
     {% include "title.njk" %}
     <article>
