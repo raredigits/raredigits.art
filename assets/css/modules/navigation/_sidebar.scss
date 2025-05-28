@@ -5,7 +5,7 @@
     grid-column: 1/ span 3;
     position: sticky;
     top: calc(var(--header-height) + var(--space-sm));
-    margin-top: var(--space-sm);
+    margin: var(--space-sm) var(--space-sm) 0 0;
     padding-bottom: var(--space-lg);
     display: flex;
     flex-flow: column nowrap;
@@ -20,7 +20,7 @@
         grid-column: 1 / -1;
         flex-flow: row nowrap;
         top: var(--header-height);
-        margin-top: 0;
+        margin: 0;
         padding-bottom: 0;
         background: var(--bg-color);
         border-bottom: 1px solid var(--border-color);
@@ -101,7 +101,8 @@
     }
 }
 
-.sidebar-icon a {
+.sidebar-icon a,
+.sidebar-icon a:hover {
     display: inline-block;
 }
 
