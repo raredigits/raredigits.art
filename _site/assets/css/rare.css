@@ -17886,6 +17886,10 @@ nav li {
   }
 }
 
+.sidebar-icon a {
+  display: inline-block;
+}
+
 @media screen and (max-width: 768px) {
   .sidebar-icon.material-icons {
     top: 0;

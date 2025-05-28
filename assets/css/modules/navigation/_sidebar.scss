@@ -61,7 +61,6 @@
         gap: var(--space-sm);
         align-items: center;
         white-space: nowrap;
-       
     }
 }
 
@@ -100,6 +99,10 @@
     @include bp.mobile {
         left: 0;
     }
+}
+
+.sidebar-icon a {
+    display: inline-block;
 }
 
 .sidebar-icon.material-icons {
