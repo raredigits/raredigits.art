@@ -7,16 +7,13 @@ h1 {
     line-height: var(--line-height-sm);
 }
 
-h2,
-h3 {
-    margin: var(--space-sm) 0 var(--space-md);
-}
-
 h2 {
+    margin: var(--space-lg) 0 var(--space-md);
     font-size: 1.8em;
 }
 
 h3 {
+    margin: var(--space-sm) 0 var(--space-md);
     font-size: 1.4em;
 }
 
