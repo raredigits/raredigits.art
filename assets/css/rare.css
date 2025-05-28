@@ -18166,6 +18166,62 @@ img {
   width: 100%;
 }
 
+.text-content-separator-sm {
+  height: 1px;
+  background-color: var(--border-color);
+  width: var(--text-content-width);
+  margin: var(--space-sm) 0;
+}
+
+.content-separator-sm {
+  height: 1px;
+  background-color: var(--border-color);
+  width: 100%;
+  margin: var(--space-sm) 0;
+}
+
+.text-content-separator-md {
+  height: 1px;
+  background-color: var(--border-color);
+  width: var(--text-content-width);
+  margin: var(--space-md) 0;
+}
+
+.content-separator-md {
+  height: 1px;
+  background-color: var(--border-color);
+  width: 100%;
+  margin: var(--space-md) 0;
+}
+
+.text-content-separator-lg {
+  height: 1px;
+  background-color: var(--border-color);
+  width: var(--text-content-width);
+  margin: var(--space-lg) 0;
+}
+
+.content-separator-lg {
+  height: 1px;
+  background-color: var(--border-color);
+  width: 100%;
+  margin: var(--space-lg) 0;
+}
+
+.text-content-separator-xl {
+  height: 1px;
+  background-color: var(--border-color);
+  width: var(--text-content-width);
+  margin: var(--space-xl) 0;
+}
+
+.content-separator-xl {
+  height: 1px;
+  background-color: var(--border-color);
+  width: 100%;
+  margin: var(--space-xl) 0;
+}
+
 .construction-notice {
   position: absolute;
   top: 0;
