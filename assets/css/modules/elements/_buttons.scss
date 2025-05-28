@@ -4,7 +4,7 @@ button,
     width: fit-content;
     background: var(--bg-color-light);
     border-radius: var(--space-lg);
-    border: none;
+    border: 1px solid var(--bg-color-light);
     text-decoration: none;
     padding: var(--space-sm) var(--space-md);
     cursor: pointer;

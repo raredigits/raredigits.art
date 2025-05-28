@@ -16,8 +16,6 @@ header {
 main {
     width: 100%;
     min-height: 100vh;
-    display: grid;
-    grid-template-rows: 1fr;
     padding: var(--header-height) var(--space-md) calc(var(--space-lg) * 5);
 }
 
