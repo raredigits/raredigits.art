@@ -1,0 +1,26 @@
+$spaces: sm, md, lg, xl;
+
+@each $space in $spaces {
+  .text-content-separator-#{$space} {
+    height: 1px;
+    background-color: var(--border-color);
+    width: var(--text-content-width);
+    margin: var(--space-#{$space}) 0;
+  }
+
+  .content-separator-#{$space} {
+    height: 1px;
+    background-color: var(--border-color);
+    width: 100%;
+    margin: var(--space-#{$space}) 0;
+  }
+}
+
+$widths: 10, 25, 30, 50, 75, 100;
+
+@each $width in $widths {
+  .hr-#{$width} {
+    width: #{$width}%;
+    margin: 0 auto;
+  }
+}
