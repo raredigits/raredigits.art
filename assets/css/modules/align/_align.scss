@@ -11,6 +11,14 @@
     justify-content: center;
 }
 
+.center-y {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
 .right {
     text-align: right;
 }
