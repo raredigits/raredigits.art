@@ -1290,6 +1290,7 @@
 
 header {
   width: 100%;
+  height: var(--header-height);
   position: fixed;
   top: 0;
   background: var(--bg-color);
