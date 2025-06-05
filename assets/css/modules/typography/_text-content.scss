@@ -14,6 +14,7 @@
 @include mobile {
     :root {
         --text-content-width: 100%;
+        --text-content-caption: calc(100vw - var(--space-md));
     }
 }
 
@@ -80,13 +81,14 @@ article .meta-info {
 }
 
 .text-content-caption,
-.highlight {
+.highlight,
+p.highlight {
     width: var(--text-content-caption);
+    max-width: unset;
     margin-left: calc(-1 * var(--space-lg));
     margin-right: calc(-1 * var(--space-lg));
 
     @include mobile {
-        width: calc(100vw - var(--space-md));
         margin-left: calc(-1 * var(--space-sm));
     }
 }
