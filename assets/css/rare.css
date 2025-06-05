@@ -16575,6 +16575,7 @@ ins {
 @media screen and (max-width: 768px) {
   :root {
     --text-content-width: 100%;
+    --text-content-caption: calc(100vw - var(--space-md));
   }
 }
 .text-content-width {
@@ -16655,15 +16656,17 @@ article .meta-info {
 }
 
 .text-content-caption,
-.highlight {
+.highlight,
+p.highlight {
   width: var(--text-content-caption);
+  max-width: unset;
   margin-left: calc(-1 * var(--space-lg));
   margin-right: calc(-1 * var(--space-lg));
 }
 @media screen and (max-width: 768px) {
   .text-content-caption,
-  .highlight {
-    width: calc(100vw - var(--space-md));
+  .highlight,
+  p.highlight {
     margin-left: calc(-1 * var(--space-sm));
   }
 }
