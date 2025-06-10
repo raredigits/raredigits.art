@@ -69,6 +69,15 @@ nav a.current {
     display: block;
 }
 
+nav a.tag {
+    border: 1px solid var(--border-color);
+}
+
+.sidebar a.tag:hover {
+    display: inline;
+    border: 1px solid var(--primary-color);
+}
+
 .link-img {
     text-decoration: none;
     border-bottom: none;

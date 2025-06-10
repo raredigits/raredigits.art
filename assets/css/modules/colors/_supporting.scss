@@ -29,19 +29,19 @@ blueberry;
 
 // Generate CSS variables for each color
 @each $color in $supporting_colors {
-    .#{$color + ""} {
+    .#{"#{$color}"} {
         color: var(--#{$color});
     }
 
-    .#{$color + ""}-bg {
+    .#{"#{$color}"}-bg {
         background-color: var(--#{$color});
     }
 
-    .#{$color}-link {
-      text-decoration-color: var(--#{$color});
-      background-image: linear-gradient(
-        to top,
-        color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
-      );
+    .#{"#{$color}"}-link {
+        text-decoration-color: var(--#{$color});
+        background-image: linear-gradient(
+            to top,
+            color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
+        );
     }
 }

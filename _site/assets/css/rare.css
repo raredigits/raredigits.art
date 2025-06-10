@@ -1290,6 +1290,7 @@
 
 header {
   width: 100%;
+  height: var(--header-height);
   position: fixed;
   top: 0;
   background: var(--bg-color);
@@ -16574,6 +16575,7 @@ ins {
 @media screen and (max-width: 768px) {
   :root {
     --text-content-width: 100%;
+    --text-content-caption: calc(100vw - var(--space-md));
   }
 }
 .text-content-width {
@@ -16654,15 +16656,17 @@ article .meta-info {
 }
 
 .text-content-caption,
-.highlight {
+.highlight,
+p.highlight {
   width: var(--text-content-caption);
+  max-width: unset;
   margin-left: calc(-1 * var(--space-lg));
   margin-right: calc(-1 * var(--space-lg));
 }
 @media screen and (max-width: 768px) {
   .text-content-caption,
-  .highlight {
-    width: calc(100vw - var(--space-md));
+  .highlight,
+  p.highlight {
     margin-left: calc(-1 * var(--space-sm));
   }
 }
@@ -17453,6 +17457,14 @@ table th:not(:first-child):not(:last-child) {
   justify-content: center;
 }
 
+.center-y {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
 .right {
   text-align: right;
 }
@@ -18123,10 +18135,10 @@ img {
 }
 
 :root {
-  --shadow: 0 0 9px var(--gray);
-  --shadow-sm: 0 4px 3px var(--gray-trans);
-  --shadow-md: 0 4px 6px var(--gray-trans);
-  --shadow-lg: 0 10px 15px var(--gray-trans);
+  --shadow: 0 0 4px var(--gray);
+  --shadow-sm: 0 3px 3px var(--gray-trans);
+  --shadow-md: 0 4px 3px var(--gray-trans);
+  --shadow-lg: 0 6px 6px var(--gray-trans);
   --inner-shadow-sm: inset 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
 

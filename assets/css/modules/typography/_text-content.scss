@@ -36,6 +36,11 @@ article .meta-info {
     margin-top: var(--space-sm);
 }
 
+.nobr,
+.nobreak {
+    white-space: nowrap;
+}
+
 .lead-container {
     width: var(--global-fr-4);
 
@@ -144,6 +149,7 @@ cite,
 cite {
     display: block;
     width: 100%;
+    margin: var(--space-sm) 0;
     text-align: right;
     color: var(--grey-dark);
 }
