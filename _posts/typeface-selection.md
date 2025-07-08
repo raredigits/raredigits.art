@@ -84,10 +84,12 @@ And typography is the throne.
         In every type of content, importance is never obvious. Seek the important; highlight the interesting; everything else is noise.
     </p>
     <p>Your job isn’t to impress or show off; it’s to serve the story. Get that right, and your readers won’t even notice the typeface—they’ll just keep reading.</p>
-    <div class="remark remark-text">
+    <div class="remark">
         <div class="relative">
-            <span class="material-icons">lightbulb_outline</span>
-            Note: Interest always beats importance. If something’s boring, it will be skipped — even if it’s crucial.
+            <p>
+                <span class="material-icons mobile-hidden">lightbulb_outline</span>
+                Note: Interest always beats importance. If something’s boring, it will be skipped — even if it’s crucial.
+            </p>
         </div>
     </div>
 </div>

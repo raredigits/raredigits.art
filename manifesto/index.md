@@ -22,7 +22,7 @@ Seems, we've lost sight of what matters.
 The essential buried in noise.   
 Time to separate wheat from chaff.
 
-<ins>Let Digital Rareism Wear the Crown.</ins>
+<div class="highlight">Let Digital Rareism Wear the Crown</div>
 
 Switch off the noise. Carve out the signal.   
 Send the decorator on holiday.   
@@ -43,5 +43,7 @@ In the age of excess, refusal becomes revolution.
 
 Rarity endures.
 
-**Painting noise.   
-Shaping sense.**
+<p class="lead">
+    Painting noise.<br>
+    Shaping sense.
+</p>

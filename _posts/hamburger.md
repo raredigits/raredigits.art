@@ -19,8 +19,8 @@ The fundamental issue with hamburger menus isn't their recognizability (users ha
 <div class="remarked">
 <p>This informational vacuum creates a motivational desert. Without visible cues about what content awaits, users have little incentive to explore. The result? <strong>Usage metrics for hidden navigation items consistently underperform</strong> compared to visible alternatives.</p>
 <div class="remark">
-    <p><a href="https://www.lukew.com/ff/entry.asp?1945">Obvious Always Wins</a><br>
-    <a href="https://lmjabreu.com/post/why-and-how-to-avoid-hamburger-menus/">Why and How to Avoid Hamburger Menus</a></p>
+    <p><a href="https://www.lukew.com/ff/entry.asp?1945">Obvious Always Wins</a></p>
+    <p><a href="https://lmjabreu.com/post/why-and-how-to-avoid-hamburger-menus/">Why and How to Avoid Hamburger Menus</a></p>
 </div>
 </div>
 

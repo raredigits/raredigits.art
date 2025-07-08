@@ -16640,6 +16640,7 @@ article .meta-info {
   width: calc(var(--global-fr) * 2);
   min-width: calc(var(--global-fr) * 2);
   max-width: calc(var(--global-fr) * 4);
+  line-height: 1.2em;
 }
 @media screen and (min-width: 769px) and (max-width: 1023px) {
   .remark {
@@ -16647,7 +16648,10 @@ article .meta-info {
     min-width: fit-content;
     max-width: fit-content;
     margin-left: auto;
-    padding-left: 50%;
+    margin-right: -16px;
+    padding: 0 var(--space-md);
+    background-color: var(--gray-lightest);
+    border-left: 4px solid var(--border-color-light);
   }
 }
 @media screen and (max-width: 768px) {
@@ -16656,7 +16660,10 @@ article .meta-info {
     min-width: fit-content;
     max-width: fit-content;
     margin-left: auto;
-    padding-left: 50%;
+    margin-right: -16px;
+    padding: 0 var(--space-md);
+    background-color: var(--gray-lightest);
+    border-left: 4px solid var(--border-color-light);
   }
 }
 
@@ -16734,7 +16741,7 @@ cite {
 
 .handwritten {
   font-family: var(--script-font);
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-lg);
 }
 
 .footnote {
