@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/scripts/">Scripts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            
+              <li><a href="/scripts/hamburger/">Hamburger</a></li>
+            
+          
+            
+              <li><a href="/scripts/tabs/">Tabs</a></li>
+            
+          
+            
+              <li><a href="/scripts/dropdown/">Dropdown</a></li>
+            
+          
+            
+              <li><a href="/scripts/collapsible/">Collapsible</a></li>
+            
+          
+            
+              <li><a href="/scripts/switch/">Switch</a></li>
+            
+          
+            
+              <li><a href="/scripts/tooltip/">Tooltip</a></li>
+            
+          
+            
+              <li><a href="/scripts/modal/">Modal</a></li>
+            
+          
+            
+              <li><a href="/scripts/scroll/">Scroll</a></li>
+            
+          
+            
+              <li><a href="/scripts/alert/">Alert</a></li>
+            
+          
+            
+              <li><a href="/scripts/popover/">Popover</a></li>
+            
+          
+            
+              <li><a href="/scripts/progress/">Progress</a></li>
+            
+          
+            
+              <li><a href="/scripts/carousel/">Carousel</a></li>
+            
+          
+            
+              <li class="bold">Search</li>
+            
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Search</h1>
+    
+  </section>
+
+    <article>
+      <div class="meta-info">
+js/hamburger.js<br>
+<p>
+    v.1.0 Stable | 
+    <a href="/assets/js/hamburger.js">Download</a> <span class="material-icons">file_download</span>
+</p>
+</div>
+<p>For small static websites it usually makes more sense to use an off-the-shelf search library instead of building a custom solution from scratch. It saves development time, has lower maintenance cost, and is more reliable in the long run. One such solution — which is used on this site — is Pagefind.</p>
+<p><a href="https://pagefind.app">Pagefind</a> is a fast, privacy-friendly, static-site search engine. It builds a client-side index from your generated HTML and serves results instantly—no external services, no backend, and minimal JavaScript. For Eleventy sites, Pagefind plugs in cleanly after the static build, indexing only what you ship to production.</p>
+<h2>Installation</h2>
+<ol>
+<li>Install packages командой в терминале</li>
+</ol>
+<pre><code class="language-html">npm i -D @11ty/eleventy pagefind
+</code></pre>
+<ol start="2">
+<li>Обновляем скрипты сборки и запуска сайта в файл package.json</li>
+</ol>
+<pre><code class="language-html">&quot;scripts&quot;: {
+    &quot;start&quot;: &quot;eleventy --serve &amp; pagefind --source _site&quot;,
+    &quot;build&quot;: &quot;eleventy&quot;,
+    &quot;postbuild&quot;: &quot;pagefind --source _site&quot;
+},
+</code></pre>
+<ol start="3">
+<li>Проверяем установку зависимостей в файле package.json</li>
+</ol>
+<pre><code class="language-html">&quot;devDependencies&quot;: {
+    &quot;@11ty/eleventy&quot;: &quot;^3.1.0&quot;,
+    &quot;pagefind&quot;: &quot;^1.1.0&quot;
+}
+</code></pre>
+<div class="air-lg"></div>
+<h2>Adding the Search UI to the Website</h2>
+<p>First, we need an element that will allow users to open the search interface. In this example, we place a button in the site header next to the hamburger menu:</p>
+<pre><code class="language-html">&lt;div class=&quot;header-icons&quot;&gt;
+  &lt;button class=&quot;icon-search no-decoration&quot; id=&quot;search-button&quot; aria-label=&quot;Поиск&quot;&gt;
+      &lt;span class=&quot;material-icons&quot;&gt;search&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button class=&quot;hamburger no-decoration&quot; aria-label=&quot;Toggle navigation&quot;&gt;
+      &lt;span class=&quot;material-icons icon-menu&quot;&gt;menu&lt;/span&gt;
+      &lt;span class=&quot;material-icons icon-close&quot;&gt;close&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+</code></pre>
+<p>Next, create a container that will hold both the search input and the search results. Initially it is hidden until the user clicks the search button.</p>
+<pre><code class="language-html">&lt;div class=&quot;search-wrapper&quot;&gt;
+  &lt;div id=&quot;searchbar&quot; class=&quot;searchbar&quot; hidden&gt;
+    &lt;div id=&quot;search&quot; class=&quot;search-input&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>All nessasary styles already included to the Rare Style. Also Pagefind ships with its own default styles and JavaScript. Include them inside <code>&lt;head&gt;</code> of your layout:</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;/pagefind/pagefind-ui.css&quot;&gt;
+&lt;script src=&quot;/pagefind/pagefind-ui.js&quot; defer&gt;&lt;/script&gt;
+</code></pre>
+<p>Now add a small JavaScript file that will initialize Pagefind UI and show/hide the search panel when the user clicks the button:</p>
+<pre><code class="language-js">function initSearchUI() {
+    var btn = document.getElementById('search-button');
+    var bar = document.getElementById('searchbar');
+    var container = document.getElementById('search');
+    var initialized = false;
+    var inputListenerAdded = false;
+
+    function openSearch() {
+        if (bar) {
+            bar.hidden = false;
+        }
+        
+        if (!initialized &amp;&amp; window.PagefindUI &amp;&amp; container) {
+            new PagefindUI({
+                element: '#search',
+                showSubResults: true,
+                translations: { placeholder: 'Search…' }
+            });
+            initialized = true;
+        }
+        
+        setTimeout(function() {
+            if (container) {
+                var input = container.querySelector('input[type=&quot;text&quot;]') || container.querySelector('input');
+                if (input) {
+                    if (input.focus) input.focus();
+                    
+                    if (!inputListenerAdded) {
+                        input.addEventListener('input', function() {
+                            if (!bar) return;
+                            if (input.value &amp;&amp; input.value.trim().length &gt; 0) {
+                                bar.classList.add('has-query');
+                            } else {
+                                bar.classList.remove('has-query');
+                            }
+                        });
+                        inputListenerAdded = true;
+                    }
+                }
+            }
+        }, 50);
+        
+        document.addEventListener('keydown', escListener);
+    }
+
+    function closeSearch() {
+        if (bar) {
+            bar.hidden = true;
+            bar.classList.remove('has-query');
+        }
+        document.removeEventListener('keydown', escListener);
+    }
+
+    function escListener(e) {
+        if (e.key === 'Escape') closeSearch();
+    }
+
+    if (btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (bar &amp;&amp; bar.hidden) {
+                openSearch();
+            } else {
+                closeSearch();
+            }
+        });
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearchUI);
+} else {
+    initSearchUI();
+}
+</code></pre>
+<p>Finally, make sure this script is included at the end of the page, before <code>&lt;/body&gt;</code>:</p>
+<pre><code class="language-html">&lt;script src=&quot;/assets/js/search.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>After running your Eleventy build and Pagefind index build, the search UI should be working.</p>
+<h2>Functionality</h2>
+<p>The script automatically handles:</p>
+<ul>
+<li>Toggling the menu open/closed when clicking the hamburger button</li>
+<li>Closing the menu when users click anywhere outside the menu area</li>
+<li>Adding/removing the <code>.active</code> class to control visibility</li>
+</ul>
+<div class="air-md"></div>
+<details>
+    <summary>Raw code</summary>
+<pre><code class="language-js">document.addEventListener('DOMContentLoaded', () =&gt; {
+  const hamburger = document.querySelector('.hamburger');
+  const navGlobal = document.querySelector('.nav-hamburger');
+
+  // Toggle the hamburger menu on click
+  hamburger.addEventListener('click', () =&gt; {
+    hamburger.classList.toggle('active');
+    navGlobal.classList.toggle('active');
+  });
+
+  // Closing the menu when clicking outside
+  document.addEventListener('click', (event) =&gt; {
+    if (!navGlobal.contains(event.target) &amp;&amp; !hamburger.contains(event.target)) {
+      hamburger.classList.remove('active');
+      navGlobal.classList.remove('active');
+    }
+  });
+});
+</code></pre>
+</details>
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <p>&copy; 2023—2025 <a href="https://raredigits.io">Rare Digits Production</a></p>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+
+</body>
+</html>
