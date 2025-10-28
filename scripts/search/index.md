@@ -4,29 +4,30 @@ title: "Search"
 section: "Scripts"
 displaySidebar: true
 permalink: '/scripts/search/'
+templateEngineOverride: md
 ---
 
 <div class="meta-info">
-js/hamburger.js<br>
+js/search.js<br>
 <p>
     v.1.0 Stable | 
-    <a href="/assets/js/hamburger.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/search.js">Download</a> <span class="material-icons">file_download</span>
 </p>
 </div>
 
-For small static websites it usually makes more sense to use an off-the-shelf search library instead of building a custom solution from scratch. It saves development time, has lower maintenance cost, and is more reliable in the long run. One such solution — which is used on this site — is Pagefind.
+If you need search on a static website, the easiest and most reliable option is to use a ready-made library instead of building your own search from scratch. It works out of the box, is free to use, and has already been tested on many real websites. One such library — and the one used on this site — is Pagefind.
 
-[Pagefind](https://pagefind.app) is a fast, privacy-friendly, static-site search engine. It builds a client-side index from your generated HTML and serves results instantly—no external services, no backend, and minimal JavaScript. For Eleventy sites, Pagefind plugs in cleanly after the static build, indexing only what you ship to production.
+[Pagefind](https://pagefind.app) is a fast and privacy-friendly search engine designed specifically for static sites. It scans the already-built HTML pages and creates a small client-side index, so search works instantly in the browser without any backend or third-party service. On Eleventy sites, Pagefind integrates right after the build step and indexes only what is actually deployed to production.
 
 ## Installation
 
-1.	Install packages командой в терминале
+1. Run the installation command from the root directory of your project. This will add Pagefind to your development dependencies.
 
 ```html
-npm i -D @11ty/eleventy pagefind
+npm i -D pagefind
 ```
 
-2.	Обновляем скрипты сборки и запуска сайта в файл package.json
+2. Update the build and start scripts. Open your package.json file and modify the “scripts” section so that Pagefind runs automatically after Eleventy builds the site, and so that both can be run together during local development.
 
 ```html
 "scripts": {
@@ -36,7 +37,7 @@ npm i -D @11ty/eleventy pagefind
 },
 ```
 
-3. Проверяем установку зависимостей в файле package.json
+3. Verify that the dependencies are listed in package.json. In the same file, scroll down to the “devDependencies” section and make sure that both @11ty/eleventy and pagefind are present with valid version numbers.
 
 ```html
 "devDependencies": {
@@ -45,11 +46,11 @@ npm i -D @11ty/eleventy pagefind
 }
 ```
 
-<div class="air-lg"></div>
+If the installation was successful, they should appear there automatically.
 
 ## Adding the Search UI to the Website
 
-First, we need an element that will allow users to open the search interface. In this example, we place a button in the site header next to the hamburger menu:
+First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-icons">search</span> in the website header next to the hamburger menu:
 
 ```html
 <div class="header-icons">
@@ -73,7 +74,7 @@ Next, create a container that will hold both the search input and the search re
 </div>
 ```
 
-All nessasary styles already included to the Rare Style. Also Pagefind ships with its own default styles and JavaScript. Include them inside `<head>` of your layout:
+All necessary styles are already included in Rare Styles. Pagefind also ships with its own default styles and JavaScript. Include them inside the `<head>` section of your layout:
 
 ```html
 <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
@@ -165,39 +166,78 @@ Finally, make sure this script is included at the end of the page, before `</
 <script src="/assets/js/search.js"></script>
 ```
 
-After running your Eleventy build and Pagefind index build, the search UI should be working.
+After you start the site locally and Pagefind finishes indexing (for example by running `npm run start` from your terminal), the search UI should be fully functional.
 
-## Functionality
+You can always customize how the search results look by applying your own styles.
 
-The script automatically handles:
+## Indexing Controls
 
-- Toggling the menu open/closed when clicking the hamburger button
-- Closing the menu when users click anywhere outside the menu area
-- Adding/removing the `.active` class to control visibility
+Pagefind gives you several simple HTML-based controls to fine-tune what gets indexed and how search results are ranked. These settings are added directly in your templates using attributes or meta tags. The full list of options is available in the official [documentation](https://pagefind.app/docs/), below are the ones you will most likely need in practice.
 
-<div class="air-md"></div>
+#### Excluding a page from the index
 
-<details>
-    <summary>Raw code</summary>
+If a page should never appear in search results (for example, the search page itself or some drafts), set a flag in the template:
 
-```js
-document.addEventListener('DOMContentLoaded', () => {
-  const hamburger = document.querySelector('.hamburger');
-  const navGlobal = document.querySelector('.nav-hamburger');
-
-  // Toggle the hamburger menu on click
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navGlobal.classList.toggle('active');
-  });
-
-  // Closing the menu when clicking outside
-  document.addEventListener('click', (event) => {
-    if (!navGlobal.contains(event.target) && !hamburger.contains(event.target)) {
-      hamburger.classList.remove('active');
-      navGlobal.classList.remove('active');
-    }
-  });
-});
+```njk
+{% set pagefind_exclude = true %}
 ```
-</details>
+
+Then in your layout `<head>` section, add a conditional meta tag:
+
+```html
+{% if pagefind_exclude %}
+  <meta name="pagefind:exclude" content="true">
+{% endif %}
+```
+
+Any page with this flag will be completely removed from the index.
+
+#### Limiting the indexed area on a page
+
+By default, Pagefind indexes the entire visible HTML. To prevent navigation bars, footers, hidden UI elements or banners from being indexed, you can explicitly mark only the “content” area using data-pagefind-body:
+
+```html
+<header> … navigation, logo … </header>
+
+<main data-pagefind-body>
+    <!-- only this content will be indexe -->
+    <h1>Article title</h1>
+    <p>Some text of the article…</p>
+</main>
+
+<footer> … contacts, copyright … </footer>
+```
+
+Everything outside the data-pagefind-body container will be ignored during indexing.
+
+#### Ignoring specific elements
+
+When you do not want to restructure the layout or you only need to ignore a few blocks, you can mark them individually:
+
+```html
+<nav data-pagefind-ignore>…</nav>
+<div class="sidebar" data-pagefind-ignore>…</div>
+<div class="ads" data-pagefind-ignore>…</div>
+```
+
+Ignored nodes and everything inside them will not be indexed.
+
+#### Prioritizing certain pages in search results
+
+You can give some pages more “weight” so they will appear higher in search results. For example, to boost blog posts over static pages:
+
+```html
+<html data-pagefind-weight="10">
+```
+
+And for lower-priority pages:
+
+```html
+<html data-pagefind-weight="2">
+```
+
+Higher values result in higher ranking when relevance is equal.
+
+### Additional configuration
+
+Pagefind also supports optional configuration for translations, filters, metadata-based filtering, and other advanced options (for example: restricting results by tags, grouping by content type, or customizing UI strings). These features are configured either through HTML attributes or through the `PagefindUI` initialization options. Refer to the official [documentation](https://pagefind.app/docs/) for the full list of supported options.
