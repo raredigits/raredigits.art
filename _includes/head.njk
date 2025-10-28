@@ -9,6 +9,15 @@
     {% if page.url == "/" %}
         <link rel="stylesheet" href="assets/css/examples/rare-styles-main.css">
     {% endif %}
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    {% if pagefind_exclude %}
+      <meta name="pagefind:exclude" content="true">
+    {% endif %}
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">

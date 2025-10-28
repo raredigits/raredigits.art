@@ -7,6 +7,13 @@
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -81,10 +88,20 @@
         
       </ul>
     </nav>
-    <button class="hamburger no-decoration" aria-label="Toggle navigation">
-        <span class="material-icons icon-menu">menu</span>
-        <span class="material-icons icon-close">close</span>
-    </button>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
   </div>
 </header>
 <div class="nav-hamburger">
@@ -555,6 +572,7 @@
 
 </footer>
 
+<script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>

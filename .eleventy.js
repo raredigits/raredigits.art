@@ -25,6 +25,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets/js");
   eleventyConfig.addPassthroughCopy("assets/css/rare.css");
   eleventyConfig.addPassthroughCopy("assets/css/examples/rare-styles-main.css");
+  eleventyConfig.addPassthroughCopy("assets/css/rare-website.css");
 
   eleventyConfig.addWatchTarget("./assets/css/rare.css");
   eleventyConfig.addWatchTarget("./assets/css/examples/rare-styles-main.css");

@@ -1,17 +1,6 @@
 @use "../../utilities/breakpoints" as bp;
 
 .hamburger {
-    position: absolute;
-    right: 0;
-    top: calc(var(--space-sm) - 2px);
-    grid-column: 12/span 1;
-    text-align: right;
-    display: block;
-    background: var(--bg-color);
-    color: var(--primary-color);
-    padding: 0 0 0 var(--space-sm);
-    border: none;
-    font-size: 24px;
     cursor: pointer;
     z-index: 1000;
 }

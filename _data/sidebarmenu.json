@@ -54,7 +54,8 @@
       { "title": "Alert", "url": "/scripts/alert/" },
       { "title": "Popover", "url": "/scripts/popover/" },
       { "title": "Progress", "url": "/scripts/progress/" },
-      { "title": "Carousel", "url": "/scripts/carousel/" }
+      { "title": "Carousel", "url": "/scripts/carousel/" },
+      { "title": "Search", "url": "/scripts/search/" }
       ]
     }  
   }
