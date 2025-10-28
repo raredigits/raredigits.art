@@ -1,4 +1,5 @@
 function initSearchUI() {
+    if (document.body.classList.contains('page-search')) return;
     var btn = document.getElementById('search-button');
     var bar = document.getElementById('searchbar');
     var container = document.getElementById('search');
