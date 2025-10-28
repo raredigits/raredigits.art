@@ -17722,7 +17722,8 @@ table th:not(:first-child):not(:last-child) {
   }
 }
 
-.searchbar .pagefind-ui input {
+.searchbar .pagefind-ui input,
+#search-page .pagefind-ui input {
   outline: none;
 }
 
@@ -17733,6 +17734,10 @@ table th:not(:first-child):not(:last-child) {
 
 .searchbar .pagefind-ui__results-area li:hover {
   background: var(--gray-lightest);
+}
+
+.page-search .icon-search {
+  display: none;
 }
 
 :root {

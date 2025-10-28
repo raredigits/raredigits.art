@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Decorations | Rare Digits Art</title>
+    <title>Search | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
     
     <link rel="stylesheet" href="/assets/css/rare-website.css">
 
+    
+      <meta name="pagefind:exclude" content="true">
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
@@ -32,7 +34,7 @@
       }
     </script>
 </head>
-<body class="">
+<body class="page-search">
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -53,7 +55,7 @@
         
         <li>
             <a href="/styles/"
-               class="current">
+               class="">
               Styles
             </a>
         </li>
@@ -261,100 +263,32 @@
     
       <aside class="sidebar">
   
-    
-    
-      <h5 class="sidebar-header">
-          
-            <a href="/styles/">Styles</a>
-          
-      </h5>
-      <nav class="sidebar-nav no-scrollbar">
-        <ul>
-          
-            
-              <li><a href="/styles/idea/">The Idea</a></li>
-            
-          
-            
-              <li><a href="/styles/usage/">Usage</a></li>
-            
-          
-            
-              <li><a href="/styles/modules/">Modules</a></li>
-            
-          
-            
-              <li><a href="/styles/layout/">Layout</a></li>
-            
-          
-            
-              <li><a href="/styles/typography/">Typography</a></li>
-            
-          
-            
-              <li><a href="/styles/colors/">Colors</a></li>
-            
-          
-            
-              <li><a href="/styles/bricks/">Bricks</a></li>
-            
-          
-            
-              <li><a href="/styles/alignment/">Alignment</a></li>
-            
-          
-            
-              <li><a href="/styles/navigation/">Navigation</a></li>
-            
-          
-            
-              <li class="bold">Decorations</li>
-            
-          
-            
-              <li><a href="/styles/special/">Special</a></li>
-            
-          
-            
-              <li><a href="/styles/utilities/">Utilities</a></li>
-            
-          
-            
-              <li><a href="/styles/themes/">Themes</a></li>
-            
-          
-            
-              <li><a href="/scripts/">Scripts</a></li>
-            
-          
-        </ul>
-      </nav>
-    
-  
 </aside>
     
     
   <section class="page-title">
-    <h1>Decorations</h1>
+    <h1>Search</h1>
     
   </section>
 
     <article>
       
-<section>
-    <h3>Images</h3>
-    <p>
-        Images by default extend beyond text boundaries and fill 100% of the parent element's width. This gives content vibrancy and dynamism.
-    </p>
-    <img src="/assets/img/illustrations/leg-split.jpg" alt="">
-    <cite>img { max-width: 100%; height: auto; }</cite>
-    <p>
-        For custom solutions, it's easiest to use either available parent blocks or personal classes.
-    </p>
-    <p>Pre-installed image classes include:<br>
-        <code>.vendor-logo</code> — used for social media logos and other vendor branding.
-    </p>
-</section>
+<div id="search-page"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.PagefindUI) {
+      new PagefindUI({
+        element: '#search-page',     // ← отдельный контейнер для «страничного» поиска
+        showSubResults: true,
+        translations: {
+          placeholder: 'Search…',
+          load_more: 'Load more'
+        }
+      });
+    }
+  });
+</script>
     </article>
   </div>
 </main>

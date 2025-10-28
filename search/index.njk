@@ -1,0 +1,25 @@
+---
+layout: page
+title: Search
+pagefind_exclude: true         
+disable_header_search: true      
+body_class: page-search          
+permalink: /search/
+---
+
+<div id="search-page"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.PagefindUI) {
+      new PagefindUI({
+        element: '#search-page',     // ← отдельный контейнер для «страничного» поиска
+        showSubResults: true,
+        translations: {
+          placeholder: 'Search…',
+          load_more: 'Load more'
+        }
+      });
+    }
+  });
+</script>

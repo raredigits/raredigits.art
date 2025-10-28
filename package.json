@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npm-run-all pagefind:build --parallel sass-watch eleventy-serve",
+    "start": "npm-run-all --parallel sass-watch eleventy-serve",
     "build": "npm run sass-build && eleventy",
     "postbuild": "npm run pagefind:build",
 
