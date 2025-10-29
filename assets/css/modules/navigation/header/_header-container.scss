@@ -86,6 +86,12 @@
 
 .header-icons button {
     display: inline;
+    appearance: none;
+    -webkit-appearance: none;
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+    -webkit-tap-highlight-color: transparent;
     padding: 0;
     margin-left: var(--base-unit);
     height: 100%;
