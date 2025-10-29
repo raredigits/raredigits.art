@@ -339,7 +339,7 @@
       <div class="meta-info">
 js/search.js<br>
 <p>
-    v.1.0 Stable | 
+    v.1.1 Stable | 
     <a href="/assets/js/search.js">Download</a> <span class="material-icons">file_download</span>
 </p>
 </div>
@@ -515,6 +515,63 @@ if (document.readyState === 'loading') {
 <p>Higher values result in higher ranking when relevance is equal.</p>
 <h3>Additional configuration</h3>
 <p>Pagefind also supports optional configuration for translations, filters, metadata-based filtering, and other advanced options (for example: restricting results by tags, grouping by content type, or customizing UI strings). These features are configured either through HTML attributes or through the <code>PagefindUI</code> initialization options. Refer to the official <a href="https://pagefind.app/docs/">documentation</a> for the full list of supported options.</p>
+<h2>Search Page</h2>
+<p>In addition to the “overlay” search opened from a button in the header, you may also want to have a stand-alone search page at /search/. This is useful when you want a full-page search experience (especially on mobile), or when users expect search to exist as a real page in navigation.</p>
+<h4>1. Create a new template for the search page.</h4>
+<p>Create a file such as search.njk with the following front matter and markup:</p>
+<pre><code class="language-njk">---
+layout: page
+title: Search
+permalink: /search/
+pagefind_exclude: true # do not index this page itself
+disable_header_search: true # hide the overlay-search button on this page
+body_class: page-search # optional CSS hook
+---
+
+&lt;div id=&quot;search-page&quot;&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.PagefindUI) {
+      new PagefindUI({
+        element: '#search-page',   // stand-alone search container
+        showSubResults: true,
+        translations: {
+          placeholder: 'Search…',
+          load_more: 'Load more'
+        }
+      });
+    }
+  });
+&lt;/script&gt;
+</code></pre>
+<p>Key points:</p>
+<ul>
+<li><code>pagefind_exclude</code>: true ensures this page will not show up in the search results itself.</li>
+<li>we use a different container (<code>#search-page</code>) so it does not conflict with the overlay search container.</li>
+<li>we optionally pass <code>disable_header_search</code>: true so that the header button won’t show on this page.</li>
+</ul>
+<p>To conditionally style or change behavior on specific pages (for example, on the dedicated search page), you can pass a custom class through front matter and render it on the <code>&lt;body&gt;</code> element.</p>
+<pre><code class="language-njk">&lt;body class=&quot;{{ body_class }}&quot;&gt;
+</code></pre>
+<p>With the example above, the search page will render as:</p>
+<pre><code class="language-html">&lt;body class=&quot;page-search&quot;&gt;
+</code></pre>
+<p>This makes it possible to target this page in CSS or conditionally skip overlay initialization in JavaScript.</p>
+<h4>2. Hide the overlay-search button on this page (optional)</h4>
+<p>In your header template, wrap the search button in a condition:</p>
+<pre><code class="language-njk">{% if not disable_header_search %}
+  &lt;button id=&quot;search-button&quot; ...&gt;…&lt;/button&gt;
+{% endif %}
+</code></pre>
+<p>Alternatively, you may simply hide it with CSS using <code>.page-search</code> as a body class.</p>
+<h4>3. Prevent the overlay script from running on the search page</h4>
+<p>If your overlay is initialized by a global script such as <code>/assets/js/search.js</code>, add a guard at the top:</p>
+<pre><code class="language-js">// Do not initialize the overlay search on the dedicated /search/ page
+if (document.body.classList.contains('page-search')) return;
+</code></pre>
+<p>This ensures there will never be two search UIs active on the same page.</p>
+<p>At this point, the setup provides two independent search interfaces: an overlay search that is opened from the header on regular pages, and a dedicated /search/ page with a full-page search interface. They do not conflict with each other because they use separate containers and separate initialization logic. The search page itself is excluded from the index so it never appears in search results, which is the recommended practice for dedicated search pages.</p>
 
     </article>
   </div>

@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search | Rare Digits Art</title>
+    <title>Building Your Own Search Engine | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
     
     <link rel="stylesheet" href="/assets/css/rare-website.css">
 
-    
-      <meta name="pagefind:exclude" content="true">
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
@@ -34,7 +32,7 @@
       }
     </script>
 </head>
-<body class="page-search">
+<body class="">
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -76,7 +74,7 @@
         
         <li>
             <a href="/kb/"
-               class="">
+               class="current">
               101
             </a>
         </li>
@@ -260,35 +258,52 @@
   
 <main>
   <div class="content grid-global">
-    
-      <aside class="sidebar">
-  
-</aside>
-    
+    <aside class="sidebar">
+      <h5 class="sidebar-header">
+          <a href="/kb/">Knowledge Base</a>
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Dev
+          </div>
+        
+        
+        
+          <div class="sidebar-meta">by Jeeves</div>
+        
+
+        
+          <div class="sidebar-meta">October 29, 2025</div>
+        
+
+        
+          <div class="tags">
+            
+              <span class="tag">#meta</span>
+            
+          </div>
+        
+      </nav>
+    </aside>
     
   <section class="page-title">
-    <h1>Search</h1>
+    <h1>Building Your Own Search Engine</h1>
     
   </section>
 
     <article>
-      
-<div id="search-page"></div>
+      <h3>The urge to build a Ferrari to deliver a pizza</h3>
+<p>There is a certain type of developer who, when told “we need search on the website, ” immediately opens a blank file and starts writing their own search engine. This is the software equivalent of building a shadow banking system in Excel macros because Bloomberg didn’t have the exact screen you wanted. You can do it, it may even work for a while, but everyone around you will quietly wish you didn’t.</p>
+<p>For static sites the rational thing to do is: don’t roll your own. Not because you can’t — let’s assume you absolutely could — but because nobody earns extra credibility points in 2025 for reinventing full-text indexing from scratch on a blog. Just like in finance, there are tasks where inventiveness is rewarded (new structured products, new exchanges), and there are tasks where using an existing, boring, proven thing is the optimal choice. Static-site search is the latter.</p>
+<h3>Pagefind as the ETF of search</h3>
+<p>So you pick <a href="https://pagefind.app">Pagefind</a>. It’s basically the ETF of website search: low-overhead, passive, client-side, privacy-respecting, and costs nothing. You pipe your static site through Eleventy, Pagefind vacuums up the text and spits out an index, and the whole thing sits in the browser doing its job without servers or SaaS invoices. No vendor lock-in, no external API, no “your quota for this month is over.” Like a good index fund, it just quietly works.</p>
+<p>And because developers share one trait with bankers — if something “just works” we get suspicious — we wrote down a full step-by-step implementation so you can inspect every knob yourself rather than trusting black boxes. The guide is <a href="/scripts/search/">here</a>.</p>
+<h3>Weights, or: how reality is rearranged</h3>
+<p>Once the search is working, the curious developer will eventually ask: “but how do I make the results better?” And the answer is: weights. You start telling the engine which types of pages matter more than others — posts above static pages, titles above footers, this topic above that topic. It’s a bit tedious but it absolutely works.</p>
+<p>And at this point it is hard not to glance sideways at modern LLMs. They look brilliant and elegant now — but only because someone spent a truly absurd amount of time assigning and re-assigning weights. Now imagine how different the answers would look if the same knowledge was weighted differently. Not censored, not removed — just rearranged in priority.</p>
+<p>When someone says “search is objective, ” what they usually mean is “my weighting is currently invisible to you.” The data is all there, nothing is hidden — but the order in which it appears is a choice, and choices have consequences. In finance, in language models, and yes, even in blog search.</p>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    if (window.PagefindUI) {
-      new PagefindUI({
-        element: '#search-page',
-        showSubResults: true,
-        translations: {
-          placeholder: 'Search…',
-          load_more: 'Load more'
-        }
-      });
-    }
-  });
-</script>
     </article>
   </div>
 </main>

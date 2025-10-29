@@ -10,7 +10,7 @@ templateEngineOverride: md
 <div class="meta-info">
 js/search.js<br>
 <p>
-    v.1.0 Stable | 
+    v.1.1 Stable | 
     <a href="/assets/js/search.js">Download</a> <span class="material-icons">file_download</span>
 </p>
 </div>
@@ -241,3 +241,83 @@ Higher values result in higher ranking when relevance is equal.
 ### Additional configuration
 
 Pagefind also supports optional configuration for translations, filters, metadata-based filtering, and other advanced options (for example: restricting results by tags, grouping by content type, or customizing UI strings). These features are configured either through HTML attributes or through the `PagefindUI` initialization options. Refer to the official [documentation](https://pagefind.app/docs/) for the full list of supported options.
+
+## Search Page
+
+In addition to the “overlay” search opened from a button in the header, you may also want to have a stand-alone search page at /search/. This is useful when you want a full-page search experience (especially on mobile), or when users expect search to exist as a real page in navigation.
+
+#### 1. Create a new template for the search page.
+
+Create a file such as search.njk with the following front matter and markup:
+
+```njk
+---
+layout: page
+title: Search
+permalink: /search/
+pagefind_exclude: true # do not index this page itself
+disable_header_search: true # hide the overlay-search button on this page
+body_class: page-search # optional CSS hook
+---
+
+<div id="search-page"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.PagefindUI) {
+      new PagefindUI({
+        element: '#search-page',   // stand-alone search container
+        showSubResults: true,
+        translations: {
+          placeholder: 'Search…',
+          load_more: 'Load more'
+        }
+      });
+    }
+  });
+</script>
+```
+
+Key points:
+- `pagefind_exclude`: true ensures this page will not show up in the search results itself.
+- we use a different container (`#search-page`) so it does not conflict with the overlay search container.
+- we optionally pass `disable_header_search`: true so that the header button won’t show on this page.
+
+To conditionally style or change behavior on specific pages (for example, on the dedicated search page), you can pass a custom class through front matter and render it on the `<body>` element.
+
+```njk
+<body class="{{ body_class }}">
+```
+
+With the example above, the search page will render as:
+
+```html
+<body class="page-search">
+```
+
+This makes it possible to target this page in CSS or conditionally skip overlay initialization in JavaScript.
+
+#### 2. Hide the overlay-search button on this page (optional)
+
+In your header template, wrap the search button in a condition:
+
+```njk
+{% if not disable_header_search %}
+  <button id="search-button" ...>…</button>
+{% endif %}
+```
+
+Alternatively, you may simply hide it with CSS using `.page-search` as a body class.
+
+#### 3. Prevent the overlay script from running on the search page
+
+If your overlay is initialized by a global script such as `/assets/js/search.js`, add a guard at the top:
+
+```js
+// Do not initialize the overlay search on the dedicated /search/ page
+if (document.body.classList.contains('page-search')) return;
+```
+
+This ensures there will never be two search UIs active on the same page.
+
+At this point, the setup provides two independent search interfaces: an overlay search that is opened from the header on regular pages, and a dedicated /search/ page with a full-page search interface. They do not conflict with each other because they use separate containers and separate initialization logic. The search page itself is excluded from the index so it never appears in search results, which is the recommended practice for dedicated search pages.
