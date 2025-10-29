@@ -16652,7 +16652,7 @@ article .meta-info {
     max-width: var(--text-content-width);
     min-width: none;
     text-align: right;
-    margin: 0;
+    margin-top: var(--space-md);
   }
 }
 @media screen and (max-width: 768px) {
@@ -16661,13 +16661,12 @@ article .meta-info {
     max-width: var(--text-content-width);
     min-width: none;
     text-align: right;
-    margin: 0;
+    margin-top: var(--space-md);
   }
 }
 
 .remark a {
   color: var(--gray-trans);
-  text-decoration-color: var(--border-color);
 }
 
 .text-content-caption,
@@ -16724,6 +16723,7 @@ cite,
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
+  line-height: 1.3em;
 }
 
 .warning {
@@ -17950,6 +17950,7 @@ nav li {
 
 .sidebar-meta {
   font-size: var(--font-size-sm);
+  line-height: 1.3em;
   color: var(--text-color-light);
   width: 75%;
   margin-bottom: var(--space-md);
