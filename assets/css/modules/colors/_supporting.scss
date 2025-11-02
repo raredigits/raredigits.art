@@ -11,6 +11,7 @@
     --tiffany: #53c9e9;
     --ocean: #2f7395;
     --blueberry: #221e4d;
+    --matrix: #00ff4e;
 }
 
 $supporting_colors:
@@ -25,7 +26,8 @@ purple,
 pen,
 tiffany,
 ocean,
-blueberry;
+blueberry,
+matrix;
 
 // Generate CSS variables for each color
 @each $color in $supporting_colors {
