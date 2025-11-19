@@ -16987,6 +16987,10 @@ ol {
   font-weight: var(--font-weight-bold);
 }
 
+.italic {
+  font-style: italic;
+}
+
 .heading {
   font-family: var(--heading-font);
   font-weight: var(--font-weight-bold);
@@ -17082,50 +17086,6 @@ article .meta-info {
   .lead {
     width: 80%;
   }
-}
-
-.remarked {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.remarked > :first-child {
-  min-width: var(--content-max-width);
-}
-
-.remark {
-  height: fit-content;
-  width: calc(var(--global-fr) * 2);
-  min-width: calc(var(--global-fr) * 2);
-  max-width: calc(var(--global-fr) * 4);
-  margin: var(--space-sm) 0 0;
-  padding: var(--space-md) 0;
-  border-top: 1px solid var(--border-color);
-  line-height: 1.2em;
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .remark {
-    width: 100%;
-    max-width: var(--text-content-width);
-    min-width: none;
-    text-align: right;
-    margin-top: var(--space-md);
-  }
-}
-@media screen and (max-width: 768px) {
-  .remark {
-    width: 100%;
-    max-width: var(--text-content-width);
-    min-width: none;
-    text-align: right;
-    margin-top: var(--space-md);
-  }
-}
-
-.remark a {
-  color: var(--gray-trans);
 }
 
 .text-content-caption,
@@ -17262,6 +17222,119 @@ pre code {
 
 .code-comment {
   color: var(--gray-trans);
+}
+
+.remarked {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.remarked > :first-child {
+  min-width: var(--content-max-width);
+}
+
+.remark {
+  height: fit-content;
+  width: calc(var(--global-fr) * 2);
+  min-width: calc(var(--global-fr) * 2);
+  max-width: calc(var(--global-fr) * 4);
+  margin: var(--space-sm) 0 0;
+  padding: var(--space-sm) 0 var(--space-md) var(--space-md);
+  border-top: 1px solid var(--border-color);
+  line-height: 1.2em;
+  position: relative;
+}
+@media screen and (min-width: 769px) and (max-width: 1023px) {
+  .remark {
+    width: 100%;
+    max-width: var(--text-content-width);
+    min-width: none;
+    text-align: right;
+    margin-top: var(--space-md);
+  }
+}
+@media screen and (max-width: 768px) {
+  .remark {
+    width: 100%;
+    max-width: var(--text-content-width);
+    min-width: none;
+    text-align: right;
+    margin-top: var(--space-md);
+  }
+}
+
+.remark::before {
+  content: "attach_file";
+  font-family: "Material Icons Outlined";
+  font-size: var(--font-size-lg);
+  position: absolute;
+  top: -9px;
+  left: -3px;
+  color: var(--border-color);
+  background: var(--bg-color);
+}
+
+.remark a {
+  color: var(--gray-trans);
+}
+
+.footnote-inside-text {
+  float: right;
+  width: calc(var(--global-fr) * 2 + var(--base-unit));
+  font-size: var(--font-size-sm);
+  color: var(--text-color-light);
+  margin-right: calc(var(--global-fr) + var(--base-unit));
+  line-height: 1.2em;
+}
+
+.footnote-inside-text a {
+  color: var(--text-color-light);
+}
+
+.sidenote-wrapper {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  column-gap: var(--base-unit);
+  grid-auto-flow: row dense;
+}
+.sidenote-wrapper > :first-child {
+  margin-top: 0;
+  grid-column: 1/span 5;
+}
+.sidenote-wrapper .sidenote {
+  grid-column: 7/span 2;
+  grid-row: 1/span 2;
+  align-self: start;
+  width: 100%;
+  max-width: calc(2 * var(--global-fr));
+  font-size: var(--font-size-sm);
+  line-height: 1.2em;
+  color: var(--text-color-light);
+  padding-top: var(--space-xs);
+}
+.sidenote-wrapper .sidenote a {
+  color: var(--text-color-light);
+}
+.sidenote-wrapper .sidenote p:first-child {
+  margin-top: 0;
+}
+.sidenote-wrapper :not(:first-child):not(.sidenote) {
+  grid-column: 1/span 5;
+}
+@media (max-width: 1024px) {
+  .sidenote-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+  .sidenote-wrapper .sidenote {
+    max-width: 100%;
+  }
+  .sidenote-wrapper .sidenote p:first-child {
+    margin-top: var(--space-md);
+  }
 }
 
 .columns {
