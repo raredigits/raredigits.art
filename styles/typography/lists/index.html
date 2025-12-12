@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rare Value | Rare Digits Art</title>
+    <title>Text Elements / Lists and Tables | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -46,14 +46,14 @@
         
         <li>
             <a href="/manifesto/"
-               class="current">
+               class="">
               Manifesto
             </a>
         </li>
         
         <li>
             <a href="/styles/"
-               class="">
+               class="current">
               Styles
             </a>
         </li>
@@ -265,7 +265,7 @@
     
       <h5 class="sidebar-header">
           
-            <a href="/manifesto/">Rareism</a>
+            <a href="/styles/">Styles</a>
           
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -273,7 +273,7 @@
           
             <li>
               
-                <a href="/manifesto/">Manifesto</a>
+                <a href="/styles/idea/">The Idea</a>
               
               
               
@@ -282,7 +282,7 @@
           
             <li>
               
-                <a href="/manifesto/principles/">Principles</a>
+                <a href="/styles/usage/">Usage</a>
               
               
               
@@ -291,7 +291,134 @@
           
             <li>
               
-                <a href="/manifesto/tips/">Rarified Tips</a>
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/text-content/">Text Content</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <span class="bold">Lists and Tables</span>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/interactive/">Interactive Elements</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/sidenotes/">Sidenotes</a>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/scripts/">Scripts</a>
               
               
               
@@ -306,11 +433,101 @@
     
     
   <section class="page-title">
-    <h1>Rare Value</h1>
+    <h1>Text Elements / Lists and Tables</h1>
   </section>
 
     <article>
-      
+      <h2>Lists</h2>
+<div class="meta-info">
+    css/modules/typography/_lists.scss
+</div>
+<h2>Tables</h2>
+<div class="meta-info">css/modules/typography/_tables.scss</div>
+<p>Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.</p>
+<table class="table-striped">
+    <tr>
+        <th>Library</th>
+        <th>Versatility</th>
+        <th>Simplicity</th>
+        <th>Recognizability</th>
+        <th>Score</th>
+    </tr>
+    <tr>
+        <td>Tailwind</td>
+        <td>V</td>
+        <td>X</td>
+        <td>X</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Bootstrap</td>
+        <td>V</td>
+        <td>X</td>
+        <td>V</td>
+        <td>2</td>
+    </tr>
+    <tr>
+        <td>Rare Styles</td>
+        <td>V</td>
+        <td>V</td>
+        <td>V</td>
+        <td>3</td>
+    </tr>
+</table>
+<div class="sidenote-wrapper">
+    <div>
+        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. Horizontal scrolling <code>overflow-x: auto;</code> prevents disruption of the overall layout grid.
+        </p>
+        <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don’t overload tables with unnecessary information or use them for content better presented as text or graphics.
+        </p>
+    </div>
+    <div class="sidenote">
+        <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile: width-75</code>, etc., or create custom classes.</p>
+    </div>
+</div>
+<h3>Preset Tables</h3>
+<div class="sidenote-wrapper">
+    <div>
+        <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
+        </p>
+        <p>
+            <code>.table-striped</code> — Used for multi-column tables with alternating background colors for easier reading.<br>
+            <code>.table-terminal</code> — Used for tables displaying terminal-style data.
+        </p>
+    </div>
+    <div class="sidenote">
+        <p>
+            .table-terminal example:
+        </p>
+        <table class="table-terminal">
+            <tr>
+                <td>Visitors:</td>
+                <td>1,234</td>
+            </tr>
+            <tr>
+                <td>Clicks:</td>
+                <td>345</td>
+            </tr>
+            <tr>
+                <td>Leads:</td>
+                <td>123</td>
+            </tr>
+            <tr>
+                <td>Sales:</td>
+                <td>12</td>
+            </tr>
+            <tr>
+                <td>Revenue:</td>
+                <td>$1,234</td>
+            </tr>
+            <tr>
+                <td>Conversion:</td>
+                <td>1%</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
     </article>
   </div>
 </main>

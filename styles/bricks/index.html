@@ -271,61 +271,131 @@
       <nav class="sidebar-nav no-scrollbar">
         <ul>
           
-            
-              <li><a href="/styles/idea/">The Idea</a></li>
-            
+            <li>
+              
+                <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/usage/">Usage</a></li>
-            
+            <li>
+              
+                <a href="/styles/usage/">Usage</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/modules/">Modules</a></li>
-            
+            <li>
+              
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/layout/">Layout</a></li>
-            
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/typography/">Typography</a></li>
-            
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/colors/">Colors</a></li>
-            
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li class="bold">Bricks</li>
-            
+            <li>
+              
+                <span class="bold">Bricks</span>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/alignment/">Alignment</a></li>
-            
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/navigation/">Navigation</a></li>
-            
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/decorations/">Decorations</a></li>
-            
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/special/">Special</a></li>
-            
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/utilities/">Utilities</a></li>
-            
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/styles/themes/">Themes</a></li>
-            
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
           
-            
-              <li><a href="/scripts/">Scripts</a></li>
-            
+            <li>
+              
+                <a href="/scripts/">Scripts</a>
+              
+              
+              
+              
+            </li>
           
         </ul>
       </nav>
@@ -336,7 +406,6 @@
     
   <section class="page-title">
     <h1>Building Blocks</h1>
-    
   </section>
 
     <article>
@@ -345,16 +414,16 @@
     css/modules/bricks/
 </div>
 <section>
-    <p>Like pieces in a construction kit, the style system uses a minimal set of semantic building blocks to represent content: <code>&lt;section&gt;</code>, <code>.card</code>, and <code>&lt;table&gt;</code>. 
+    <p>Like pieces in a construction kit, the style system uses a minimal set of semantic building blocks to represent content: <code>&lt;section&gt;</code>, <code>.card</code>, and <code>&lt;space&gt;</code>.
     </p>
-    <p>These foundational elements combine with typography, whitespace, and basic decorative elements to solve any content presentation challenge—no matter how complex the hierarchy.
+    <p>These foundational elements combine with typography, whitespace, and basic decorative elements to solve any content presentation challenge—no matter how complex the hierarchy.
     </p>
 </section>
 
 <section>
     <h2>Section</h2>
     <div class="meta-info">css/modules/bricks/_sections.scss</div>
-    <p>The section serves as the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set.</p>
+    <p>The section serves as the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set.</p>
     <p>Visually separated with <code>margin-bottom: var(--space-lg)</code>:</p>
     <div class="card text-content-caption padding-lg gap-sm">
         <div class="text-content-width column gap-xs">
@@ -380,14 +449,14 @@
 <section>
     <h2>Card</h2>
     <div class="meta-info">css/modules/bricks/_cards.scss</div>
-    <p>Cards provide more distinct content separation, allowing you to create complex hierarchies and group related elements. By default, they stand out through background color.
+    <p>Cards provide more distinct content separation, allowing you to create complex hierarchies and group related elements. By default, they stand out through background color.
     </p>
-    <p>From a markup perspective, cards have a default <em>flex column</em> layout.</p>
+    <p>From a markup perspective, cards have a default <em>flex column</em> layout.</p>
     <div class="card center-center padding-lg">
-        .card
+       .card
     </div>
-    <p>Consider cards as your versatile connector pieces—they can take on any visual style: sizes, colors, margins, paddings, alignment, and borders.</p>
-    <p>Content-wise, cards can function as simple containers or develop their own complex hierarchy and structure. They can hold any content type, blocks, or interactive elements.</p>
+    <p>Consider cards as your versatile connector pieces—they can take on any visual style: sizes, colors, margins, paddings, alignment, and borders.</p>
+    <p>Content-wise, cards can function as simple containers or develop their own complex hierarchy and structure. They can hold any content type, blocks, or interactive elements.</p>
     <div class="card text-content-width stretched">
         <div class="card-header padding-md">.card-header</div>
         <div class="column gap-sm padding-md">
@@ -400,7 +469,7 @@
 
 <section>
     <h3>Card Deck</h3>
-    <p>Just as you would combine building blocks to create larger structures, cards can be assembled into unified semantic constructions without limitations.</p>
+    <p>Just as you would combine building blocks to create larger structures, cards can be assembled into unified semantic constructions without limitations.</p>
     <div class="card-inverted padding-b-lg text-content-width">
         <div>
             <img src="/assets/img/illustrations/poker.jpg" alt="">
@@ -410,13 +479,13 @@
         </div>
         <div class="padding-x-md">
             <p>
-                "Card Deck" isn't a standalone selector. Block-level parent elements like <code>&lt;div&gt;</code>, <code>.card</code>, or <code>&lt;section&gt;</code> can serve as wrappers.
+                „Card Deck” isn’t a standalone selector. Block-level parent elements like <code>&lt;div&gt;</code>, <code>.card</code>, or <code>&lt;section&gt;</code> can serve as wrappers.
             </p>
             <div class="card center-center padding-lg black">
                 .card .center-center .padding-lg
             </div>
             <div class="divider-lg"></div>
-            <p>Remember that cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
+            <p>Remember that cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
         </div>
         <cite class="absolute right-md bottom-md">.card-inverted</cite>
     </div>
@@ -424,7 +493,7 @@
 
 <section>
     <h3>Helper Selectors</h3>
-    <p>The stylesheet includes several preset helper selectors for styling cards. Their combinations can satisfy virtually any design requirement—like specialized adapter pieces that help connect your building blocks in unique ways.</p>
+    <p>The stylesheet includes several preset helper selectors for styling cards. Their combinations can satisfy virtually any design requirement—like specialized adapter pieces that help connect your building blocks in unique ways.</p>
     <div class="grid grid-cols-3 gap-md">
         <div class="card rounded-sm gray-bg col-span-2 center-center">
             <code>.rounded</code>
@@ -465,98 +534,6 @@
     </div>
 </section>
 
-<section>
-    <h2>Tables</h2>
-    <div class="meta-info">css/modules/bricks/_tables.scss</div>
-    <p>Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.
-    </p>
-    <table class="table-striped">
-        <tr>
-            <th>Library</th>
-            <th>Versatility</th>
-            <th>Simplicity</th>
-            <th>Recognizability</th>
-            <th>Score</th>
-        </tr>
-        <tr>
-            <td>Tailwind</td>
-            <td>V</td>
-            <td>X</td>
-            <td>X</td>
-            <td>1</td>
-        </tr>
-        <tr>
-            <td>Bootstrap</td>
-            <td>V</td>
-            <td>X</td>
-            <td>V</td>
-            <td>2</td>
-        </tr>
-        <tr>
-            <td>Rare Styles</td>
-            <td>V</td>
-            <td>V</td>
-            <td>V</td>
-            <td>3</td>
-        </tr>
-    </table>
-    <div class="remarked">
-        <div>
-            <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. Horizontal scrolling <code>overflow-x: auto;</code> prevents disruption of the overall layout grid.
-            </p>
-            <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don't overload tables with unnecessary information or use them for content better presented as text or graphics.
-            </p>
-        </div>
-        <div class="remark">
-            <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile: width-75</code>, etc., or create custom classes.</p>
-        </div>
-    </div>
-</section>
-
-<section>
-    <h3>Preset Tables</h3>
-    <div class="remarked">
-        <div>
-            <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
-            </p>
-            <p>
-                <code>.table-striped</code> — Used for multi-column tables with alternating background colors for easier reading.<br>
-                <code>.table-terminal</code> — Used for tables displaying terminal-style data.
-            </p>
-        </div>
-        <div class="remark">
-            <p>
-                .table-terminal example:
-            </p>
-            <table class="table-terminal">
-                <tr>
-                    <td>Visitors:</td>
-                    <td>1,234</td>
-                </tr>
-                <tr>
-                    <td>Clicks:</td>
-                    <td>345</td>
-                </tr>
-                <tr>
-                    <td>Leads:</td>
-                    <td>123</td>
-                </tr>
-                <tr>
-                    <td>Sales:</td>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <td>Revenue:</td>
-                    <td>$1,234</td>
-                </tr>
-                <tr>
-                    <td>Conversion:</td>
-                    <td>1%</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-</section>
     </article>
   </div>
 </main>
