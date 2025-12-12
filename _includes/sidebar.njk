@@ -12,11 +12,28 @@
       <nav class="sidebar-nav no-scrollbar">
         <ul>
           {% for item in currentSection.items %}
-            {% if page.url == item.url %}
-              <li class="bold">{{ item.title }}</li>
-            {% else %}
-              <li><a href="{{ item.url }}">{{ item.title }}</a></li>
-            {% endif %}
+            <li>
+              {% if page.url == item.url %}
+                <span class="bold">{{ item.title }}</span>
+              {% else %}
+                <a href="{{ item.url }}">{{ item.title }}</a>
+              {% endif %}
+              
+              {% if item.subitems and page.url.startsWith(item.url) %}
+                <ul class="sidebar-submenu">
+                  {% for subitem in item.subitems %}
+                    <li>
+                      {% if page.url == subitem.url %}
+                        <span class="bold">{{ subitem.title }}</span>
+                      {% else %}
+                        <a href="{{ subitem.url }}">{{ subitem.title }}</a>
+                      {% endif %}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+              
+            </li>
           {% endfor %}
         </ul>
       </nav>

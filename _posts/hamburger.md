@@ -16,9 +16,9 @@ This widespread adoption followed a predictable pattern: designers embraced them
 
 The fundamental issue with hamburger menus isn't their recognizability (users have indeed figured them out) but their profound uninformativeness. A hamburger menu tells users absolutely nothing about what lurks behind those three lines. It's like labeling all the doors in your house "Door" – technically accurate but spectacularly unhelpful.
 
-<div class="remarked">
+<div class="sidenote-wrapper">
 <p>This informational vacuum creates a motivational desert. Without visible cues about what content awaits, users have little incentive to explore. The result? <strong>Usage metrics for hidden navigation items consistently underperform</strong> compared to visible alternatives.</p>
-<div class="remark">
+<div class="sidenote sidenote-link">
     <p><a href="https://www.lukew.com/ff/entry.asp?1945">Obvious Always Wins</a></p>
     <p><a href="https://lmjabreu.com/post/why-and-how-to-avoid-hamburger-menus/">Why and How to Avoid Hamburger Menus</a></p>
 </div>

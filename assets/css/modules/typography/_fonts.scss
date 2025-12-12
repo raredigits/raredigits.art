@@ -4,6 +4,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap">');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons+Outlined');
+@import url('https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined');
 
 :root {
     --primary-font: 'Fira Sans', sans-serif;
@@ -34,6 +35,7 @@
 
     --primary-text-color: var(--primary-color);
     --text-color-light: var(--gray-trans);
+    --text-color-lightest: var(--gray);
     --text-color-dark: var(--gray-dark);
 }
 

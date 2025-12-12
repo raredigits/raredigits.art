@@ -45,7 +45,12 @@
     }
 }
 
+h5.sidebar-header a:hover {
+    color: var(--primary-color);
+}
+
 .sidebar-nav {
+    width: 100%;
     font-size: 0.9em;
 
     @include bp.mobile {
@@ -73,6 +78,25 @@
 
     @include bp.mobile {
         margin: 0 var(--space-sm);
+    }
+}
+
+.sidebar-nav .sidebar-submenu {
+    padding-top: var(--space-sm);
+    margin-left: var(--space-sm);
+
+    & a {
+        color: var(--text-color-lightest);
+    }
+
+    & a:hover {
+        color: var(--primary-color);
+    }
+
+
+    @include bp.mobile {
+        padding-top: 0;
+        margin-left: 0;
     }
 }
 

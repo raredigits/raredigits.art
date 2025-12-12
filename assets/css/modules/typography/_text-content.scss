@@ -18,8 +18,8 @@
     }
 }
 
-.text-content-width {
-    width: var(--text-content-width);
+article {
+    display: block;
 }
 
 article p,
@@ -71,6 +71,14 @@ p.highlight {
     @include mobile {
         margin-left: calc(-1 * var(--space-sm));
     }
+}
+
+.text-content-caption {
+    position: relative;
+}
+
+.text-content-width {
+    width: var(--text-content-width);
 }
 
 .meta-info {
@@ -130,9 +138,18 @@ cite {
     color: var(--grey-dark);
 }
 
-.handwritten {
-    font-family: var(--script-font);
-    font-size: var(--font-size-lg);
+blockquote {
+    max-width: var(--text-content-width);
+    margin-left: calc(var(--space-md) * -1);
+    padding: var(--space-md) 0 var(--space-md) var(--space-lg);
+    background-image: url('/assets/img/common/app/mark-quote.svg');
+    background-position: 0 var(--space-md);
+    background-size: var(--space-lg);
+    background-repeat: no-repeat;
+}
+
+blockquote p:first-of-type {
+    text-indent: 1.5em;
 }
 
 .footnote {
@@ -141,16 +158,15 @@ cite {
     border-top: 1px solid var(--border-color-light);
 }
 
-
 pre {
     line-height: var(--line-height-sm);
     background-color: var(--gray-mid-light);
     color: var(--gray-dark);
-    padding: var(--space-md) var(--space-lg);
+    padding: var(--space-md);
     border-radius: var(--space-sm);
     overflow-x: auto;
     margin-bottom: 1em;
-    margin-left: calc(-1 * var(--space-lg));
+    margin-left: calc(-1 * var(--space-md));
     box-shadow: var(--inner-shadow-sm);
     scrollbar-width: none; 
     -ms-overflow-style: none;
@@ -191,116 +207,20 @@ pre code {
     color: var(--gray-trans);
 }
 
-// REMARKS
-
-.remarked {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-    width: 100%;
+.handwritten,
+.sidenote.handwritten,
+.sidenote.handwritten p {
+    font-family: var(--script-font);
+    font-size: var(--font-size-lg);
+    line-height: 1em;
 }
 
-.remarked > :first-child {
-    min-width: var(--content-max-width);
+.bold {
+    font-weight: var(--font-weight-bold);
 }
 
-.remark {
-    height: fit-content;
-    width: calc(var(--global-fr) * 2);
-    min-width: calc(var(--global-fr) * 2);
-    max-width: calc(var(--global-fr) * 4);
-    margin: var(--space-sm) 0 0;
-    padding: var(--space-sm) 0 var(--space-md) var(--space-md);
-    border-top: 1px solid var(--border-color);
-    line-height: 1.2em;
-    position: relative;
-
-    @include multi-breakpoint(tablet, mobile) {
-        width: 100%;
-        max-width: var(--text-content-width);
-        min-width: none;
-        text-align: right;
-        margin-top: var(--space-md);
-    }
-}
-
-.remark::before {
-  content: "bookmark_border";
-  font-family: "Material Icons Outlined";
-  font-size: var(--font-size-lg);
-  position: absolute;
-  top: -9px;
-  left: -3px;
-  color: var(--border-color);
-  background: var(--bg-color);
-}
-
-.remark a {
-    color: var(--gray-trans);
-}
-
-.footnote-inside-text {
-    float: right;
-    width: calc(var(--global-fr) * 2 + var(--base-unit));
-    font-size: var(--font-size-sm);
-    color: var(--text-color-light);
-    margin-right: calc(var(--global-fr) + var(--base-unit));
-    line-height: 1.2em;
-}
-
-.footnote-inside-text a {
-    color: var(--text-color-light);
-}
-
-.sidenote-wrapper {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    column-gap: var(--base-unit);
-    grid-auto-flow: row dense;
-
-    & > :first-child {
-        margin-top: 0;
-        grid-column: 1 / span 5;
-    }
-
-    .sidenote {
-        grid-column: 7 / span 2;
-        grid-row: 1 / span 2;
-        align-self: start;
-        width: 100%;
-        max-width: calc(2 * var(--global-fr));
-        font-size: var(--font-size-sm);
-        line-height: 1.2em;
-        color: var(--text-color-light);
-        padding-top: var(--space-xs);
-    }
-
-    .sidenote a {
-        color: var(--text-color-light);
-    }
-
-    .sidenote p:first-child {
-        margin-top: 0;
-    }
-
-    :not(:first-child):not(.sidenote) {
-        grid-column: 1 / span 5;
-    }
-
-    @media (max-width: 1024px) {
-        & { 
-            display: flex; 
-            flex-direction: column;
-                .sidenote {
-                    max-width: 100%; 
-                }
-        }
-
-        .sidenote p:first-child {
-            margin-top: var(--space-md);
-        }
-    }
+.italic {
+    font-style: italic;
 }
 
 // COLUMNS
@@ -332,4 +252,26 @@ pre code {
 
 @include desktop {
   @include generate-columns(6, "desktop\\:");
+}
+
+// TEASERS
+
+.teaser-bottom {
+    width: var(--text-content-caption);
+    max-width: unset;
+    margin-top: var(--space-lg);
+    margin-left: calc(-1*var(--space-lg));
+    margin-right: calc(-1*var(--space-lg));
+    border-top: var(--space-sm) solid var(--border-color);
+    border-left: var(--space-sm) solid var(--border-color);
+    border-right: var(--space-sm) solid var(--border-color);
+    padding: var(--space-md) var(--space-lg);
+
+    & h3 a {
+        background: none;
+    }
+
+    @media (max-width: 1024px) {
+        margin-left: calc(-1*var(--space-sm));
+    }
 }

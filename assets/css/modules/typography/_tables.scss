@@ -45,6 +45,6 @@ table th:not(:first-child):not(:last-child) {
 }
 
 .table-terminal tbody tr:hover,
-.table-striped tbody tr:nth-child(even):hover {
+.table-striped tbody tr:hover {
     background-color: var(--gray-lightest);
 }

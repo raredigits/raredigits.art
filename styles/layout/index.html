@@ -13,16 +13,16 @@ permalink: '/styles/layout/'
     </div>
     
     <p>
-        The grid system creates order. 
+        The grid system creates order.
     </p>
     <p>
-        From the first glance, users sense a thoughtfully organized presentation. This structured approach creates visual harmony that guides viewers naturally through content, making information feel accessible and well-designed across all devices.
+        From the first glance, users sense a thoughtfully organized presentation. This structured approach creates visual harmony that guides viewers naturally through content, making information feel accessible and well-designed across all devices.
     </p>
-    <div class="remarked">
+    <div class="sidenote-wrapper">
         <p>
-            For consistent and predictable layouts that showcase data clearly, the system implements <strong>a 12-column grid with a 16px base unit</strong>. On mobile devices, this simplifies to a 6-column grid for better readability on smaller screens. This thoughtful structure makes it straightforward to align elements and maintain uniform spacing throughout your interface, helping your users focus on the data rather than being distracted by inconsistent design.
+            For consistent and predictable layouts that showcase data clearly, the system implements <strong>a 12-column grid with a 16px base unit</strong>. On mobile devices, this simplifies to a 6-column grid for better readability on smaller screens. This thoughtful structure makes it straightforward to align elements and maintain uniform spacing throughout your interface, helping your users focus on the data rather than being distracted by inconsistent design.
         </p>
-        <div class="remark">
+        <div class="sidenote sidenote-attach">
             <p>
                 <strong>How-To Grid:</strong><br>
                 <a href="https://css-tricks.com/snippets/css/complete-guide-grid/">CSS Grid Guide</a><br>
@@ -48,13 +48,13 @@ permalink: '/styles/layout/'
         </div>
     </div>
     <p>
-        This standardized approach brings order to your layouts. It creates a clear structure for organizing content while adapting seamlessly to any screen size.
+        This standardized approach brings order to your layouts. It creates a clear structure for organizing content while adapting seamlessly to any screen size.
     </p>
     <p>
-        The grid fraction <code>.fr</code> (1fr) is your layout's basic building block. Use it as your measuring unit for all internal elements. This creates immediate visual harmony because everything shares the same underlying math. When components snap to this invisible grid, the result feels intentional and polished—never random or misaligned.
+        The grid fraction <code>.fr</code> (1fr) is your layout’s basic building block. Use it as your measuring unit for all internal elements. This creates immediate visual harmony because everything shares the same underlying math. When components snap to this invisible grid, the result feels intentional and polished—never random or misaligned.
     </p>
     <p>
-        Grid settings can be adjusted in your global stylesheet according to specific project needs.</p>
+        Grid settings can be adjusted in your global stylesheet according to specific project needs.</p>
     <pre><code><span class="code-comment">// css/modules/layout/_grid.scss</span>
 --base-unit: 16px;
 --grid-columns: 12;
@@ -92,7 +92,7 @@ permalink: '/styles/layout/'
 .fr {
     width: var(--global-fr);</code>
 </pre>
-    <p>The CSS Grid's fractional units ensure content adapts naturally to various viewport dimensions without requiring extensive media query overrides.</p>
+    <p>The CSS Grid’s fractional units ensure content adapts naturally to various viewport dimensions without requiring extensive media query overrides.</p>
 </section>
 
 <section>
@@ -102,11 +102,11 @@ permalink: '/styles/layout/'
     </div>
 
     <p>
-        The template structure creates intuitive organization. It features three main zones: header, content area, and footer—a familiar pattern users understand without thinking. The header establishes identity and houses main navigation. The footer contains supporting links that stay out of the way until needed.
+        The template structure creates intuitive organization. It features three main zones: header, content area, and footer—a familiar pattern users understand without thinking. The header establishes identity and houses main navigation. The footer contains supporting links that stay out of the way until needed.
     </p>
-    
+
     <p>
-        The content area divides into three logical sections for maximum clarity: a page title that immediately confirms location, a sidebar providing context and secondary options, and the article section where primary content lives. This structured approach helps users navigate naturally while keeping information neatly arranged.
+        The content area divides into three logical sections for maximum clarity: a page title that immediately confirms location, a sidebar providing context and secondary options, and the article section where primary content lives. This structured approach helps users navigate naturally while keeping information neatly arranged.
     </p>
     
     <div class="card text-content-caption padding-lg gap-md">
@@ -155,20 +155,20 @@ permalink: '/styles/layout/'
         </div>
     </div>
     <p>
-        Maintain the sidebar space even on pages that don't require it. This consistency helps users develop a clear mental map of your site as they navigate between sections. The predictable structure makes the entire experience more intuitive and easier to use.
+        Maintain the sidebar space even on pages that don’t require it. This consistency helps users develop a clear mental map of your site as they navigate between sections. The predictable structure makes the entire experience more intuitive and easier to use.
     </p>
     <h3>Text Content</h3>
     <p>
-        Text content in articles is limited to a maximum width on larger screens. This isn't just about aesthetics—it's about readability. Too-long lines significantly reduce reading speed and comprehension. 
+        Text content in articles is limited to a maximum width on larger screens. This isn’t just about aesthetics—it’s about readability. Too-long lines significantly reduce reading speed and comprehension.
     </p>
-    <pre><code><span class="code-comment"># css/modules/typography/_text-content.scss</span>
+    <pre><code><span class="code-comment">// css/modules/typography/_text-content.scss</span>
 --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
 
 article p {
     max-width: var(--text-content-width);
 }</code></pre>
     <p>
-        For visitors who need to quickly scan and understand information, this thoughtful constraint makes your content immediately more accessible.
+        For visitors who need to quickly scan and understand information, this thoughtful constraint makes your content immediately more accessible.
     </p>
 </section>
 
@@ -178,27 +178,27 @@ article p {
         css/modules/_breakpoints.scss<br>
     </div>
     <p>
-        The style system adapts to three key device categories for optimal data presentation. 
+        The style system adapts to three key device categories for optimal data presentation.
     </p>
     <ul>
         <li>
-            <strong>Mobile</strong> (up to 768 px): Focuses on essential content, ensuring clarity and ease of use.
+            <strong>Mobile</strong> (up to 768 px): Focuses on essential content, ensuring clarity and ease of use.
         </li>
         <li>
-            <strong>Tablet</strong> (769 px to 1,023 px): Balances content density and readability, providing a comfortable viewing experience.
+            <strong>Tablet</strong> (769 px to 1,023 px): Balances content density and readability, providing a comfortable viewing experience.
         </li>
         <li>
-            <strong>Desktop</strong> (1,024 px and above): Utilizes available space for a rich, detailed presentation of information.
+            <strong>Desktop</strong> (1,024 px and above): Utilizes available space for a rich, detailed presentation of information.
         </li>
     </ul>
-    <p>
-        To maintain readability of business data on widescreen displays, content width is capped at 1,600 px.
+   <p>
+        To maintain readability of business data on widescreen displays, content width is capped at 1,600 px.
     </p>
     <p>
-        These breakpoints provide a reliable starting point for most projects, though you can adjust them based on specific requirements.
+        These breakpoints provide a reliable starting point for most projects, though you can adjust them based on specific requirements.
     </p>
     <p>
-        Start with mobile layouts as your foundation. This mobile-first approach ensures your core content works well on the most constrained devices before enhancing for larger screens.
+        Start with mobile layouts as your foundation. This mobile-first approach ensures your core content works well on the most constrained devices before enhancing for larger screens.
     </p>
     
     <div class="padding-y-lg padding-l-5">
@@ -247,23 +247,23 @@ article p {
     </div>
 
     <p>
-        As viewport size decreases, adapt your layout intelligently while keeping key navigation visible. Avoid hiding important elements in hamburger menus—this reduces conversion rates and frustrates users. Instead, implement horizontal scrolling or dropdown menus with clear labels when space is limited. Sidebar content may shift below the header as a streamlined navigation strip, and content expands to use available width. Always keep primary actions immediately accessible.
+        As viewport size decreases, adapt your layout intelligently while keeping key navigation visible. Avoid hiding important elements in hamburger menus—this reduces conversion rates and frustrates users. Instead, implement horizontal scrolling or dropdown menus with clear labels when space is limited. Sidebar content may shift below the header as a streamlined navigation strip, and content expands to use available width. Always keep primary actions immediately accessible.
     </p>
     <p>
-        As screen size increases, you gain valuable space. Use it strategically to guide user attention rather than cluttering the interface with unnecessary elements. Maintain visual hierarchy and let important content breathe.
+        As screen size increases, you gain valuable space. Use it strategically to guide user attention rather than cluttering the interface with unnecessary elements. Maintain visual hierarchy and let important content breathe.
     </p>
     <p>
-        These transformations happen automatically through carefully crafted media queries targeting specific breakpoints. The information hierarchy stays consistent across all devices—elements simply rearrange to suit different screen dimensions.
+        These transformations happen automatically through carefully crafted media queries targeting specific breakpoints. The information hierarchy stays consistent across all devices—elements simply rearrange to suit different screen dimensions.
     </p>
     <p>
-        Always keep navigation paths accessible on touch devices, including nested submenus. Make the header sticky or fixed for better usability. Size interactive elements appropriately for touch—aim for at least 44×44px target areas. Test across multiple devices to verify a consistent, intuitive experience everywhere.
+        Always keep navigation paths accessible on touch devices, including nested submenus. Make the header sticky or fixed for better usability. Size interactive elements appropriately for touch—aim for at least 44×44px target areas. Test across multiple devices to verify a consistent, intuitive experience everywhere.
     </p>
 </section>
 
 <section>
     <h2>Full-Width Layout Option</h2>
     <p>
-        For content that needs extra horizontal space—landing pages, data visualizations, comparison tables, or reference materials—the system includes a full-width option. This configuration removes sidebar constraints while maintaining familiar navigation patterns.
+        For content that needs extra horizontal space—landing pages, data visualizations, comparison tables, or reference materials—the system includes a full-width option. This configuration removes sidebar constraints while maintaining familiar navigation patterns.
     </p>
     <div class="sidenote-wrapper">
         <div class="card text-content-caption padding-lg gap-md">
@@ -308,12 +308,12 @@ article p {
                 <div class="skeleton-column" style="opacity: 0.2; grid-column: 12; grid-row: 1/4; z-index: 1;"></div>
             </div>
         </div>
-        <div class="sidenote">
-            <p class="handwritten">Feel free to create a new layout, rearrange elements, add custom styles, and you're ready!</p>
+        <div class="sidenote handwritten">
+            <p>Feel free to create a new layout, rearrange elements, add custom styles, and you’re ready!</p>
         </div>
     </div>
     <p>
-        This expanded layout gives content room to breathe without confusing users about site structure. Choose the most appropriate layout based on what your content needs rather than forcing everything into one template.
+        This expanded layout gives content room to breathe without confusing users about site structure. Choose the most appropriate layout based on what your content needs rather than forcing everything into one template.
     </p>
     <p>
         Remember that every design decision should support one primary goal: helping users find, understand, and act upon information efficiently. Visual design should enhance this purpose, not compete with it.

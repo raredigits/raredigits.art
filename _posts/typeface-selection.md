@@ -85,10 +85,7 @@ And typography is the throne.
     <p>
         In every type of content, importance is never obvious. Seek the important; highlight the interesting; everything else is noise.
     </p>
-    <div class="sidenote relative">
-        <div class="absolute" style="top: -8px; left: -12px;">
-            <span class="material-icons mobile-hidden">lightbulb_outline</span>
-        </div>
+    <div class="sidenote sidenote-bulb">
         <p>
             Note: Interest always beats importance. If something’s boring, it will be skipped — even if it’s crucial.
         </p>

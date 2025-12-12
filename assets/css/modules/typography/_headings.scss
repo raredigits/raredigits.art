@@ -34,3 +34,7 @@ h6 {
 .subheader {
     font-size: var(--font-size-lg);
 }
+
+article > :is(h2, h3):first-child {
+    margin-top: 0;
+}

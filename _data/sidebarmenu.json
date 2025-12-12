@@ -15,7 +15,16 @@
       { "title": "Usage", "url": "/styles/usage/" },
       { "title": "Modules", "url": "/styles/modules/" },
       { "title": "Layout", "url": "/styles/layout/" },
-      { "title": "Typography", "url": "/styles/typography/" },
+      { 
+          "title": "Typography", 
+          "url": "/styles/typography/",
+          "subitems": [
+            { "title": "Text Content", "url": "/styles/typography/text-content/" },
+            { "title": "Lists and Tables", "url": "/styles/typography/lists/" },
+            { "title": "Interactive Elements", "url": "/styles/typography/interactive/" },
+            { "title": "Sidenotes", "url": "/styles/typography/sidenotes/" }
+          ]
+      },
       { "title": "Colors", "url": "/styles/colors/" },
       { "title": "Bricks", "url": "/styles/bricks/" },
       { "title": "Alignment", "url": "/styles/alignment/" },
