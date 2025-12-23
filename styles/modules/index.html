@@ -59,6 +59,13 @@
         </li>
         
         <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
             <a href="/charts/"
                class="">
               Charts
@@ -388,15 +395,6 @@
               
             </li>
           
-            <li>
-              
-                <a href="/scripts/">Scripts</a>
-              
-              
-              
-              
-            </li>
-          
         </ul>
       </nav>
     
@@ -489,8 +487,8 @@
 │   │   └── _skeleton.scss        # Skeleton styles
 │   │
 │   ├── special/                  # Special components
+│   │   ├── _cookie-consent.scss  # Cookies consent 
 │   │   ├── _construction.scss    # Construction notice
-│   │   ├── _cookies.scss         # Cookies consent 
 │   │   ├── _collapsible.scss     # Collapsible elements
 │   │   └── _mockups.scss         # Browsers mockups
 │   │
@@ -522,6 +520,19 @@
   </div>
 
 </footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">privacy policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/cookie-consent.js"></script>
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
