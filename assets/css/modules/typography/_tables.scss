@@ -22,6 +22,7 @@ table th:first-child {
 
 table td:last-child,
 table th:last-child {
+    text-align: right;
     padding-left: var(--space-sm);
 }
 
@@ -47,4 +48,15 @@ table th:not(:first-child):not(:last-child) {
 .table-terminal tbody tr:hover,
 .table-striped tbody tr:hover {
     background-color: var(--gray-lightest);
+}
+
+.table-small {
+    width: fit-content;
+    min-width: fit-content;
+}
+
+.table-small th,
+.table-small th:last-child,
+.table-small td:last-child {
+    text-align: left;
 }

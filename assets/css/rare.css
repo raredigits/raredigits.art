@@ -17542,6 +17542,7 @@ table th:first-child {
 
 table td:last-child,
 table th:last-child {
+  text-align: right;
   padding-left: var(--space-sm);
 }
 
@@ -17567,6 +17568,17 @@ table th:not(:first-child):not(:last-child) {
 .table-terminal tbody tr:hover,
 .table-striped tbody tr:hover {
   background-color: var(--gray-lightest);
+}
+
+.table-small {
+  width: fit-content;
+  min-width: fit-content;
+}
+
+.table-small th,
+.table-small th:last-child,
+.table-small td:last-child {
+  text-align: left;
 }
 
 :root {
@@ -18983,6 +18995,57 @@ img {
   background-color: var(--border-color);
   width: 100%;
   margin: var(--space-xl) 0;
+}
+
+.cookie-notice {
+  max-width: var(--site-max-width);
+  display: block;
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f0f0f0;
+  color: #000;
+  padding: var(--space-lg) var(--space-lg) var(--space-md);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  border-radius: 15px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+@media screen and (max-width: 768px) {
+  .cookie-notice {
+    padding: 15px 5%;
+    width: 90%;
+  }
+}
+
+.cookie-notice__content {
+  position: relative;
+}
+
+.cookie-notice__content h3 {
+  position: absolute;
+  margin: 0;
+  top: -50px;
+  font-size: 3.5em;
+}
+@media screen and (max-width: 768px) {
+  .cookie-notice__content h3 {
+    font-size: 2.5em;
+    top: -60px;
+  }
+}
+
+.cookie-notice__content a {
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px solid var(--brand-color);
+}
+
+.cookie-notice__content button {
+  position: relative;
+  display: inline-block;
+  margin-top: var(--space-md);
 }
 
 .construction-notice {

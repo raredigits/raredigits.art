@@ -65,7 +65,7 @@ content: "cognition";
 </section>
 
 <pre class="text-content-width">
-<code><span class="code-comment">assets/css/modules/typography/_text-content.scss</span>
+<code><span class="code-comment">// assets/css/modules/typography/_text-content.scss</span>
 .sidenote-attach::before,
 .sidenote-link::before,
 .sidenote-bulb::before,

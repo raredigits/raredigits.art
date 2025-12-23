@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collapsible Content | Rare Digits Art</title>
+    <title>Simple Cookie Notice | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -307,7 +307,7 @@
           
             <li>
               
-                <span class="bold">Collapsible</span>
+                <a href="/scripts/collapsible/">Collapsible</a>
               
               
               
@@ -397,7 +397,7 @@
           
             <li>
               
-                <a href="/scripts/cookies/">Cookies</a>
+                <span class="bold">Cookies</span>
               
               
               
@@ -412,141 +412,140 @@
     
     
   <section class="page-title">
-    <h1>Collapsible Content</h1>
+    <h1>Simple Cookie Notice</h1>
   </section>
 
     <article>
       <div class="meta-info">
-js/collapsible.js<br>
+js/cookie-consent.js<br>
 <p>
     v.1.0 Stable | 
-    <a href="/assets/js/collapsible.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/cookie-consent.js">Download</a> <span class="material-icons">file_download</span>
 </p>
 </div>
-<p>The collapsible component provides a clean solution for managing large, secondary content or detailed information that might otherwise clutter the interface. When implemented correctly, it allows users to progressively discover content based on their interest level, maintaining a clean, focused interface by default.</p>
-<p>This pattern is particularly useful for:</p>
-<ul>
-<li>FAQ sections</li>
-<li>Detailed specifications</li>
-<li>Supplementary information</li>
-<li>Long descriptions that would disrupt the main content flow</li>
-</ul>
-<div class="air-lg"></div>
-<h3>Native HTML Solution</h3>
-<p>Basic HTML5 provides built-in <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
-<details>
-<summary>Native HTML Example</summary>
-<p>HTML5 provides built-in elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
-<pre><code class="language-html">&lt;details&gt;
-  &lt;summary&gt;Click to expand&lt;/summary&gt;
-  &lt;p&gt;This content is hidden by default and appears when the user clicks the summary.&lt;/p&gt;
-&lt;/details&gt;
-</code></pre>
-</details>
-<p>Using pure HTML elements offer several advantages:</p>
-<ul>
-<li>Zero JavaScript dependency</li>
-<li>Built-in accessibility features</li>
-<li>Native browser support</li>
-<li>Consistent behavior across platforms</li>
-</ul>
-<div class="air-lg"></div>
-<h3>JavaScript</h3>
-<p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available:</p>
-<div class="card collapsible-container">
-    <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
-    </p>
-    <div class="collapsible-content">
-        <p>The script handles two common HTML structures:</p>
-        <ul>
-            <li>Structure 1: Trigger and content are siblings</li>
-            <li>Structure 2: Trigger inside parent element (like <code>&lt;p&gt;</code>) followed by content</li>
-        </ul>
-        <p>Below is a practical implementation example showing how the collapsible component works.</p>
-        <pre>
-<code><span class="code-comment">// Structure 1 (siblings under same parent):</span>
-&lt;div class="container"&gt;
-    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-icons-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
-    &lt;div class="collapsible-content"&gt;Content goes here&lt;/div&gt;
-&lt;/div&gt;
-<div class="air-md"></div>
-<span class="code-comment">// Structure 2 (content after trigger's parent):</span>
-&lt;div class="container"&gt;
-    &lt;p&gt;
-        &lt;span class="collapsible-trigger"&gt;Trigger&lt;span class="collapsible-icon"&gt;...&gt;/span&gt;&lt;/span&gt;
-    &lt;/p&gt;
-    &lt;div class="collapsible-content"&gt;Content&lt;/div&gt;
-&lt;/div&gt;</code>
-        </pre>
-        <p>Note: The <code>.collapsible-icon</code> element is optional. If it's not present, the script will still toggle the visibility of the content, but there won't be any icon changes.</p>
-        <div class="air-lg"></div>
-    </div>
+<p>A lightweight, dependency-free cookie notice banner written in plain HTML and JavaScript.</p>
+<p>This snippet displays a basic notification informing users that the website uses cookies and hides it after user acknowledgment by storing a browser cookie.</p>
+<p>It is designed to be simple, transparent, and easy to integrate into static websites, including Eleventy (11ty).</p>
+<div class="text-content-caption">
+    <img src="/assets/img/illustrations/cookies-consent-example.jpg" alt="Cookies consent script example">
 </div>
-<div class="air-lg"></div>
-<details>
-<summary>Technical Requirements</summary>
-<p>Pay attention for several points:</p>
+<h2>Important Legal Disclaimer ⚠️</h2>
+<p>This project is <strong>NOT a full cookie consent management solution</strong>. It does <strong>not</strong>:</p>
+<ul>
+<li>Implement granular consent (analytics / marketing / necessary cookies)</li>
+<li>Block scripts prior to consent</li>
+<li>Provide region-specific compliance logic</li>
+<li>Guarantee compliance with GDPR, ePrivacy Directive, CCPA, CPRA, or any other local or international privacy regulations</li>
+</ul>
+<p>Its sole purpose is to <strong>inform users that cookies are used</strong> and to remember that the notice has been dismissed. This project provides <strong>notification</strong>, not <strong>legal compliance</strong>. Use at your own risk.</p>
+<p>If your website is subject to specific legal requirements, consult a qualified legal professional and consider using a dedicated Consent Management Platform (CMP).</p>
+<h2>Features</h2>
+<ul>
+<li>No dependencies</li>
+<li>No build step</li>
+<li>Plain JavaScript (ES5+)</li>
+<li>Stores dismissal state in a browser cookie</li>
+<li>Works on static websites</li>
+<li>Safe cookie defaults (<code>SameSite=Lax</code>, <code>Secure</code> on HTTPS)</li>
+</ul>
+<h2>How It Works</h2>
 <ol>
-<li>The clickable element must have class <code>.collapsible-trigger</code></li>
-<li>The hidden content must have class <code>.collapsible-content</code></li>
-<li>Optional: Icon element with class <code>.collapsible-icon</code></li>
-<li>The default state of <code>.collapsible-content</code> should be set as <code>display: none;</code> or <code>max-height: 0;</code> to ensure content is hidden before JavaScript runs</li>
+<li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
+<li>If the cookie is missing, the notice is displayed</li>
+<li>When the user clicks the confirmation button, the cookie is set</li>
+<li>The notice is hidden for subsequent visits</li>
 </ol>
+<p>Default cookie lifetime: <strong>31 days</strong></p>
+<h2>Installation</h2>
+<details>
+<summary>Required HTML Markup</summary>
+<p>The script expects the following <strong>mandatory element IDs</strong>. If they are missing or renamed, the script will not function.</p>
+<pre><code class="language-html">&lt;div id=&quot;cookie-notice&quot; class=&quot;cookie-notice&quot;&gt;
+  &lt;div class=&quot;cookie-notice__content&quot;&gt;
+    &lt;h3&gt;🍪&lt;/h3&gt;
+    &lt;p class=&quot;bold&quot;&gt;Help yourself to some cookies!&lt;/p&gt;
+    &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&quot;/legal/privacy&quot;&gt;privacy policy&lt;/a&gt;.&lt;/p&gt;
+    &lt;div class=&quot;width-100 right&quot;&gt;
+        &lt;button id=&quot;cookie-notice-accept&quot; class=&quot;cookie-notice__button&quot;&gt;Nice!&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
 </details>
 <div class="air-md"></div>
 <details>
-    <summary>Raw code</summary>
-<pre><code class="language-js">document.addEventListener('DOMContentLoaded', function() {
-    // Find all trigger elements
-    const triggers = document.querySelectorAll('.collapsible-trigger');
-
-    // Add click handler to each trigger
-    triggers.forEach(trigger =&gt; {
-        trigger.addEventListener('click', function() {
-            // Try to find related content element
-            let content;
-
-            // Check if trigger and content are siblings
-            if (this.nextElementSibling &amp;&amp; this.nextElementSibling.classList.contains('collapsible-content')) {
-                content = this.nextElementSibling;
-            }
-            // Check if content is the next sibling of trigger's parent
-            else if (this.parentElement &amp;&amp;
-                        this.parentElement.nextElementSibling &amp;&amp;
-                        this.parentElement.nextElementSibling.classList.contains('collapsible-content')) {
-                content = this.parentElement.nextElementSibling;
-            }
-
-            // Exit if no content found
-            if (!content) return;
-
-            // Find the icon (if it exists)
-            const icon = this.querySelector('.collapsible-icon');
-
-            // Check if content is currently visible
-            const isVisible = window.getComputedStyle(content).display !== 'none';
-
-            // Toggle visibility
-            if (isVisible) {
-                content.style.display = 'none';
-                if (icon) icon.textContent = 'keyboard_arrow_down';
-            } else {
-                content.style.display = 'block';
-                if (icon) icon.textContent = 'keyboard_arrow_up';
-            }
-        });
-    });
-});
-</code></pre>
+<summary>Required IDs (Mandatory)</summary>
+<p>Be sure to include <strong>the mandatory IDs</strong> in your HTML elements:</p>
+<table class="table-small">
+    <tr>
+        <th>ID</th>
+        <th>Purpose</th> 
+    </tr>
+    <tr>
+        <td><code>cookie-notice</code></td>
+        <td>Root container shown / hidden by the script</td>
+    </tr>
+    <tr>
+        <td><code>cookie-notice-accept</code></td>
+        <td>Button that dismisses the notice</td>
+    </tr>
+</table>
+<p>These IDs are <strong>hard-coded in the JavaScript file</strong>.</p>
 </details>
-<div class="air-lg"></div>
-<h3>Pseudo-Link Styling Cheat Sheet</h3>
-<p>Create a special style for pseudo-links.</p>
-<p>Following best practices, <code>.collapsible-trigger</code> elements should be visually distinguished to indicate their interactive nature.</p>
-<p>When designing the visual treatment for collapsible triggers, aim for a balance between subtlety and clarity. Users should recognize them as interactive elements without disrupting the flow of content.</p>
-<p>Bonus: If it’s part of a bigger text block, avoid <code>display: block</code> — it should feel natural inside the flow.</p>
+<div class="air-md"></div>
+<details>
+<summary>Required CSS (Minimum)</summary>
+<p>The Rare Styles Library already includes styles for the cookie consent block. If you use this script on its own, make sure to add the required styles. At minimum, the notice <strong>must be hidden by default</strong>.</p>
+<pre><code class="language-css">.cookie-notice {
+    display: none;
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    max-width: 360px;
+    padding: 1rem;
+    background: #111;
+    color: #fff;
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+.cookie-notice a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.cookie-notice__button {
+    margin-top: 0.75rem;
+    cursor: pointer;
+}
+</code></pre>
+<p>You are free to fully replace these styles with your own design system.</p>
+</details>
+<div class="air-md"></div>
+<details>
+<summary>JavaScript Setup</summary>
+<p>Place the script file anywhere you prefer and include it <strong>after the markup</strong>, or just before the closing <code>&lt;/body&gt;</code> tag.</p>
+<pre><code class="language-html">&lt;script src=&quot;/assets/js/cookie-consent.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>The script runs automatically on <code>DOMContentLoaded</code>. No configuration is required.</p>
+</details>
+<h2>Assumptions Made by the Script</h2>
+<ul>
+<li>JavaScript is enabled</li>
+<li>Cookies are enabled</li>
+<li>The site operates on a single domain</li>
+<li>The notice markup exists on the page where the script runs</li>
+</ul>
+<p>If any of these assumptions are false, the script will fail silently.</p>
+<h2>Customization</h2>
+<p>You may safely change:</p>
+<ul>
+<li>Text content</li>
+<li>Styles and class names</li>
+<li>Cookie lifetime (in days)</li>
+<li>Cookie name</li>
+</ul>
+<p>If you rename required IDs, you must update the script accordingly.</p>
 
     </article>
   </div>

@@ -32,8 +32,7 @@
       { "title": "Decorations", "url": "/styles/decorations/" },
       { "title": "Special", "url": "/styles/special/" },
       { "title": "Utilities", "url": "/styles/utilities/" },
-      { "title": "Themes", "url": "/styles/themes/" },
-      { "title": "Scripts", "url": "/scripts/" }
+      { "title": "Themes", "url": "/styles/themes/" }
       ]
     },
     "Charts": {
@@ -64,7 +63,8 @@
       { "title": "Popover", "url": "/scripts/popover/" },
       { "title": "Progress", "url": "/scripts/progress/" },
       { "title": "Carousel", "url": "/scripts/carousel/" },
-      { "title": "Search", "url": "/scripts/search/" }
+      { "title": "Search", "url": "/scripts/search/" },
+      { "title": "Cookies", "url": "/scripts/cookies/" }
       ]
     }  
   }

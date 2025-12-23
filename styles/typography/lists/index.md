@@ -53,6 +53,7 @@ Tabular data forms a crucial part of business information presentation. Tables
     <div>
         <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. Horizontal scrolling <code>overflow-x: auto;</code> prevents disruption of the overall layout grid.
         </p>
+        <p>For small tables and table-style data presentation, , the <code>.table-small</code> selector is available with left-aligned content.</p>
         <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don’t overload tables with unnecessary information or use them for content better presented as text or graphics.
         </p>
     </div>
@@ -66,10 +67,24 @@ Tabular data forms a crucial part of business information presentation. Tables
     <div>
         <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
         </p>
-        <p>
-            <code>.table-striped</code> — Used for multi-column tables with alternating background colors for easier reading.<br>
-            <code>.table-terminal</code> — Used for tables displaying terminal-style data.
-        </p>
+        <table class="table-small">
+            <tr>
+                <th>Selector</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>.table-striped</code></td>
+                <td>Alternating background colors</td>
+            </tr>
+            <tr>
+                <td><code>.table-terminal</code></td>
+                <td>Terminal-style data</td>
+            </tr>
+            <tr>
+                <td><code>.table-small</code></td>
+                <td>Used for small tables</td>
+            </tr>
+        </table>
     </div>
     <div class="sidenote">
         <p>

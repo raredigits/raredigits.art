@@ -5,6 +5,7 @@
   "navigation": [
     { "text": "Manifesto", "url": "/manifesto/" },
     { "text": "Styles", "url": "/styles/" },
+    { "text": "Scripts", "url": "/scripts/" },
     { "text": "Charts", "url": "/charts/" },
     { "text": "Examples", "url": "/examples/" },
     { "text": "101", "url": "/kb/" },
