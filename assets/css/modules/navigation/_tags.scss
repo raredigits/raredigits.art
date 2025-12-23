@@ -6,8 +6,9 @@
     border-radius: var(--space-sm);
     color: var(--text-color-light);
     padding: 1px 4px;
-    font-size: 0.9em;
+    font-size: var(--font-size-sm);
     line-height: 1em;
+    cursor: pointer;
     
     &:hover {
         color: var(--primary-color);

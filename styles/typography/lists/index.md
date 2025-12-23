@@ -12,6 +12,42 @@ permalink: '/styles/typography/lists/'
     css/modules/typography/_lists.scss
 </div>
 
+### Feed list
+
+A feed does not need ambition. It needs discipline. In Rare Styles, a feed is a strict vertical column where items follow each other calmly, separated by lines, not by personality. Titles carry meaning. Meta information stays in the background and knows its place.
+
+The structure is intentionally minimal. Fewer selectors, fewer decisions, fewer chances to break consistency.
+
+- <code>.feed-list</code> — the main container for the feed. Defines the vertical flow and establishes the column layout.
+- <code>.feed-list__item</code> — a single feed entry. Items are visually separated with vertical borders to preserve rhythm and continuity.
+- <code>.feed-list__item-meta</code> — a generic style applied to all meta information such as date, category, tags, or importance. Uses smaller type and reduced contrast.
+
+<div class="air-md"></div>
+
+Knowledge Base feed example:
+
+<div class="feed-list">
+    <div class="feed-list__item">
+        <span class="feed-list__item-meta">01.10.2023</span>
+        <h4><a href="">Hamburger Menu Saga</a></h4>
+        <span class="feed-list__item-meta tag">#navigation</span>
+    </div>
+    <div class="feed-list__item">
+        <span class="feed-list__item-meta">01.09.2023</span>
+        <h4><a href="">Modern Favicons Set</a></h4>
+        <span class="feed-list__item-meta tag">#meta</span>
+    </div>
+    <div class="feed-list__item">
+        <span class="feed-list__item-meta">01.07.2023</span>
+        <h4><a href="">Choosing the Right Font</a></h4>
+        <span class="feed-list__item-meta tag">#fonts</span>
+    </div>
+</div>
+
+<div class="air-md"></div>
+
+<p>In Rare Styles, feeds avoid decorative wrappers and semantic overengineering. One container, repeatable items, and a single meta style. If something needs emphasis, the title handles it. Everything else steps back and lets the list breathe.</p>
+
 ## Tables
 
 <div class="meta-info">css/modules/typography/_tables.scss</div>

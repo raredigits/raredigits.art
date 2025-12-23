@@ -16,3 +16,27 @@
     page-break-inside: avoid;
     -webkit-column-break-inside: avoid;
 }
+
+.feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.feed-list__item {
+    padding: var(--space-md) 0 var(--space-xs);
+    border-top: 1px solid var(--border-color);
+}
+
+.feed-list__item:first-child {
+    border-top: none;
+}
+
+.feed-list__item h4 {
+    margin: 0 0 var(--space-xs);
+}
+
+.feed-list__item-meta,
+.feed-list__item-meta .tag {
+    color: var(--text-color-light);
+    font-size: var(--font-size-xs);
+}
