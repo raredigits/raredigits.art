@@ -68,7 +68,7 @@ The script expects the following **mandatory element IDs**. If they are missing 
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to some cookies!</p>
-    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">privacy policy</a>.</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="width-100 right">
         <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
     </div>

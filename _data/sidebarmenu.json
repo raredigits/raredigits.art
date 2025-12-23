@@ -66,6 +66,13 @@
       { "title": "Search", "url": "/scripts/search/" },
       { "title": "Cookies", "url": "/scripts/cookies/" }
       ]
-    }  
+    },
+    "Legal": {
+      "url": "/legal/",
+      "items": [
+      { "title": "Terms of Use", "url": "/legal/terms/" },
+      { "title": "Privacy Policy", "url": "/legal/privacy/" }
+      ]
+    }
   }
 }
