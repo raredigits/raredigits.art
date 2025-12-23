@@ -17024,6 +17024,30 @@ ins {
   -webkit-column-break-inside: avoid;
 }
 
+.feed-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-list__item {
+  padding: var(--space-md) 0 var(--space-xs);
+  border-top: 1px solid var(--border-color);
+}
+
+.feed-list__item:first-child {
+  border-top: none;
+}
+
+.feed-list__item h4 {
+  margin: 0 0 var(--space-xs);
+}
+
+.feed-list__item-meta,
+.feed-list__item-meta .tag {
+  color: var(--text-color-light);
+  font-size: var(--font-size-xs);
+}
+
 .remarked {
   display: flex;
   flex-flow: row wrap;
@@ -18696,8 +18720,9 @@ h5.sidebar-header a:hover {
   border-radius: var(--space-sm);
   color: var(--text-color-light);
   padding: 1px 4px;
-  font-size: 0.9em;
+  font-size: var(--font-size-sm);
   line-height: 1em;
+  cursor: pointer;
 }
 .tag:hover {
   color: var(--primary-color);
