@@ -17365,6 +17365,10 @@ blockquote p:first-of-type {
   border-top: 1px solid var(--border-color-light);
 }
 
+.code-block {
+  position: relative;
+}
+
 pre {
   line-height: var(--line-height-sm);
   background-color: var(--gray-mid-light);
@@ -18851,10 +18855,19 @@ img {
 }
 .copy-data-icon {
   cursor: pointer;
+  user-select: none;
 }
 
 .copy-data-icon:hover {
   color: var(--primary-color);
+}
+
+.code-block .copy-data-icon {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-xs);
+  background: none;
+  border: none;
 }
 
 .bordered {

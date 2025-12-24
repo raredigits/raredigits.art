@@ -64,7 +64,8 @@
       { "title": "Progress", "url": "/scripts/progress/" },
       { "title": "Carousel", "url": "/scripts/carousel/" },
       { "title": "Search", "url": "/scripts/search/" },
-      { "title": "Cookies", "url": "/scripts/cookies/" }
+      { "title": "Cookies", "url": "/scripts/cookies/" },
+      { "title": "Copy", "url": "/scripts/copy-to-clipboard/" }
       ]
     },
     "Legal": {

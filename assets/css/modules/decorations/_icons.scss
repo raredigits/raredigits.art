@@ -33,8 +33,17 @@
 
 .copy-data-icon {
     cursor: pointer;
+    user-select: none;
 }
 
 .copy-data-icon:hover {
     color: var(--primary-color);
+}
+
+.code-block .copy-data-icon {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-xs);
+    background: none;
+    border: none;
 }
