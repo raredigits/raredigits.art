@@ -18849,6 +18849,14 @@ img {
     margin-left: 0;
   }
 }
+.copy-data-icon {
+  cursor: pointer;
+}
+
+.copy-data-icon:hover {
+  color: var(--primary-color);
+}
+
 .bordered {
   border: 1px solid var(--border-color);
 }

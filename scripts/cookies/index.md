@@ -8,11 +8,13 @@ permalink: '/scripts/cookies/'
 ---
 
 <div class="meta-info">
-js/cookie-consent.js<br>
-<p>
-    v.1.0 Stable | 
-    <a href="/assets/js/cookie-consent.js">Download</a> <span class="material-icons">file_download</span>
-</p>
+    <p>js/cookie-consent.js</p>
+    <p>v.1.0.0 Stable |
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
+    <span class="material-icons copy-data-icon" title="Copy link">content_copy</span> |
+    <a href="/assets/js/cookie-consent.js">Download</a>
+    <span class="material-icons">file_download</span>
+    </p>
 </div>
 
 A lightweight, dependency-free cookie notice banner written in plain HTML and JavaScript.
