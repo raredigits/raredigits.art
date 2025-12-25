@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Cookie Notice | Rare Digits Art</title>
+    <title>Taming &lt;pre&gt;&lt;/pre&gt; | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -60,7 +60,7 @@
         
         <li>
             <a href="/scripts/"
-               class="current">
+               class="">
               Scripts
             </a>
         </li>
@@ -81,7 +81,7 @@
         
         <li>
             <a href="/kb/"
-               class="">
+               class="current">
               101
             </a>
         </li>
@@ -265,282 +265,155 @@
   
 <main>
   <div class="content grid-global">
-    
-      <aside class="sidebar">
-  
-    
-    
+    <aside class="sidebar">
       <h5 class="sidebar-header">
-          
-            <a href="/scripts/">Scripts</a>
-          
+          <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
-        <ul>
-          
-            <li>
-              
-                <a href="/scripts/hamburger/">Hamburger</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/tabs/">Tabs</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/dropdown/">Dropdown</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/collapsible/">Collapsible</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/switch/">Switch</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/tooltip/">Tooltip</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/modal/">Modal</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/scroll/">Scroll</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/alert/">Alert</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/popover/">Popover</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/progress/">Progress</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/carousel/">Carousel</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/search/">Search</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <span class="bold">Cookies</span>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/copy-to-clipboard/">Copy</a>
-              
-              
-              
-              
-            </li>
-          
-        </ul>
+        
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Dev
+          </div>
+        
+        
+        
+          <div class="sidebar-meta">by Jeeves</div>
+        
+
+        
+          <div class="sidebar-meta">November 01, 2023</div>
+        
+
+        
+          <div class="tags">
+            
+              <span class="tag">#analytics</span>
+            
+          </div>
+        
       </nav>
-    
-  
-</aside>
-    
+    </aside>
     
   <section class="page-title">
-    <h1>Simple Cookie Notice</h1>
+    <h1>Taming &lt;pre&gt;&lt;/pre&gt;</h1>
   </section>
 
     <article>
-      <div class="meta-info">
-    <p>js/cookie-consent.js</p>
-    <p>v.1.0.0 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button> |
-    <a href="/assets/js/cookie-consent.js">Download</a>
-    <span class="material-icons">file_download</span>
-    </p>
-</div>
-<p>A lightweight, dependency-free cookie notice banner written in plain HTML and JavaScript.</p>
-<p>This snippet displays a basic notification informing users that the website uses cookies and hides it after user acknowledgment by storing a browser cookie.</p>
-<p>It is designed to be simple, transparent, and easy to integrate into static websites, including Eleventy (11ty).</p>
-<div class="text-content-caption">
-    <img src="/assets/img/illustrations/cookies-consent-example.jpg" alt="Cookies consent script example">
-</div>
-<h2>Important Legal Disclaimer ⚠️</h2>
-<p>This project is <strong>NOT a full cookie consent management solution</strong>.</p>
-<p>It does <strong>not</strong>:</p>
+      <p>Web development has this lovely habit: something looks trivial, obvious, almost boring… until you actually use it. Then it quietly erodes your workday, your confidence, and maybe a bit of your belief that the web was designed on purpose.</p>
+<p>Displaying raw code in documentation sounds like the most boring, solved problem in the world. HTML literally has a special tag for it:</p>
+<pre><code class="language-html">&lt;pre&gt;
+  &lt;code&gt; … &lt;/code&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Done, right?</p>
+<p>Hahaha. No.</p>
+<p>Using <code>&lt;pre&gt;</code> in production is a very HTML experience: it works beautifully,
+right up until the moment something slightly real happens, and then it starts
+behaving like a well-meaning intern who confidently does the opposite of what
+you asked — and insists that this is, in fact, the standard.</p>
+<p>Here’s why.</p>
+<h3>Problem 1: HTML Inside &lt;pre&gt; Still Gets Parsed</h3>
+<p>Browser sees:</p>
+<pre><code class="language-html">&lt;pre&gt;
+  &lt;code&gt;
+    &lt;div&gt;hello&lt;/div&gt;
+  &lt;/code&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Browser thinks: “Oh cool, a <code>&lt;div&gt;</code>! Let me rear-range your DOM like I’m cleaning my room by throwing everything out the window.”</p>
+<p>Suddenly your nicely contained code block explodes into actual DOM elements. Instead of “show code”, your page yells “execute code”.</p>
+<p>What people normally do? You get a buffet of coping strategies:</p>
 <ul>
-<li>Implement granular consent (analytics / marketing / necessary cookies)</li>
-<li>Block scripts prior to consent</li>
-<li>Provide region-specific compliance logic</li>
-<li>Guarantee compliance with GDPR, ePrivacy Directive, CCPA, CPRA, or any other local or international privacy regulations</li>
+<li>Escape everything manually: <code>&amp;lt;div&amp;gt;</code> and <code>&amp;gt;</code> and your sanity evaporates.</li>
+<li>Bring in Prism / Highlight.js — hire a bouncer for your raccoon.</li>
+<li>Wrap code inside <code>&lt;script type=&quot;text/plain&quot;&gt;</code> like you’re a magician smuggling contraband through security.</li>
 </ul>
-<p>Its sole purpose is to <strong>inform users that cookies are used</strong> and to remember that the notice has been dismissed. This project provides <strong>notification</strong>, not <strong>legal compliance</strong>. Use at your own risk.</p>
-<p>If your website is subject to specific legal requirements, consult a qualified legal professional and consider using a dedicated Consent Management Platform (CMP).</p>
-<h2>Features</h2>
+<p>Or just scream and give up.</p>
+<h3>Problem 2: Tabulation and Formatting Randomly Die</h3>
+<p>You’d think <code>&lt;pre&gt;</code> “preserves formatting”. And it does… unless your page is rendered by fun friends like, Markdown, Liquid, Nunjucks, as well as your hopes and dreams.</p>
+<p>Suddenly your code block turns into this:</p>
+<pre><code class="language-html">&lt;code&gt;
+&quot;body {...}&quot;
+&lt;p&gt;header {...}&lt;/p&gt;
+&lt;p&gt;.title {...}&lt;/p&gt;
+&lt;p&gt;footer {...}&lt;/p&gt;
+&lt;/code&gt;
+</code></pre>
+<p>Markdown sees blank lines and goes: “Paragraphs? Inside <code>&lt;code&gt;</code>?! Don’t think — DO!” Thanks buddy.</p>
+<h3>Problem 3: The Copy Button of Doom</h3>
+<p>Maybe you’re kind. Maybe you think about users. Maybe you want a sweet “Copy” button so they don’t select text like cavemen.</p>
+<p>You could do what GitHub does:</p>
 <ul>
-<li>No dependencies</li>
-<li>No build step</li>
-<li>Plain JavaScript (ES5+)</li>
-<li>Stores dismissal state in a browser cookie</li>
-<li>Works on static websites</li>
-<li>Safe cookie defaults (<code>SameSite=Lax</code>, <code>Secure</code> on HTTPS)</li>
+<li>Find every <code>&lt;pre&gt;</code></li>
+<li>JS injects a button</li>
+<li>Everyone claps</li>
+<li>Angels sing</li>
 </ul>
-<h2>How It Works</h2>
-<ol>
-<li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
-<li>If the cookie is missing, the notice is displayed</li>
-<li>When the user clicks the confirmation button, the cookie is set</li>
-<li>The notice is hidden for subsequent visits</li>
-</ol>
-<p>Default cookie lifetime: <strong>31 days</strong></p>
-<h2>Installation</h2>
-<details>
-<summary>Required HTML Markup</summary>
-<p>The script expects the following <strong>mandatory element IDs</strong>. If they are missing or renamed, the script will not function.</p>
-<div class="code-block">
-    <pre><code id="snippet-1" class="language-html">&lt;div id=&#34;cookie-notice&#34; class=&#34;cookie-notice&#34;&gt;
-  &lt;div class=&#34;cookie-notice__content&#34;&gt;
-    &lt;h3&gt;🍪&lt;/h3&gt;
-    &lt;p class=&#34;bold&#34;&gt;Help yourself to some cookies!&lt;/p&gt;
-    &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&#34;/legal/privacy&#34;&gt;Privacy Policy&lt;/a&gt;.&lt;/p&gt;
-    &lt;div class=&#34;right&#34;&gt;
-      &lt;button id=&#34;cookie-notice-accept&#34; class=&#34;cookie-notice__button&#34;&gt;Nice!&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
-</div>
-</details>
-<div class="air-md"></div>
-<details>
-<summary>Required IDs (Mandatory)</summary>
-<p>Be sure to include <strong>the mandatory IDs</strong> in your HTML elements:</p>
-<table class="table-small">
-    <tr>
-        <th>ID</th>
-        <th>Purpose</th> 
-    </tr>
-    <tr>
-        <td><code>cookie-notice</code></td>
-        <td>Root container shown / hidden by the script</td>
-    </tr>
-    <tr>
-        <td><code>cookie-notice-accept</code></td>
-        <td>Button that dismisses the notice</td>
-    </tr>
-</table>
-<p>These IDs are <strong>hard-coded in the JavaScript file</strong>.</p>
-</details>
-<div class="air-md"></div><details>
-<summary>Required CSS (Minimum)</summary>
-<p>The Rare Styles Library already includes styles for the cookie consent block. If you use this script on its own, make sure to add the required styles. At minimum, the notice <strong>must be hidden by default</strong>.</p>
-<div class="code-block">
-    <pre><code id="snippet-2" class="language-css">.cookie-notice {&#10;    max-width: var(--site-max-width);&#10;    display: block;&#10;    position: fixed; &#10;    bottom: 10px; &#10;    left: 50%;&#10;    transform: translateX(-50%);&#10;    background: #f0f0f0;&#10;    color: #000;&#10;    padding: var(--space-lg) var(--space-lg) var(--space-md);&#10;    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);&#10;    border-radius: 15px;&#10;    box-sizing: border-box;&#10;    z-index: 1000;&#10;&#10;    @include bp.mobile {&#10;        padding: 15px 5%;&#10;        width: 90%;&#10;    }&#10;}&#10;&#10;.cookie-notice__content {&#10;    position: relative;&#10;}&#10;&#10;.cookie-notice__content h3 {&#10;    position: absolute;&#10;    margin: 0;&#10;    top: -50px;&#10;    font-size: 3.5em;&#10;&#10;    @include bp.mobile {&#10;        font-size: 2.5em;&#10;        top: -60px;&#10;    }&#10;}&#10;&#10;.cookie-notice__content a {&#10;    color: #000;&#10;    text-decoration: none;&#10;    border-bottom: 1px solid var(--brand-color);&#10;}&#10;&#10;.cookie-notice__content button {&#10;    position: relative;&#10;    display: inline-block;&#10;    margin-top: var(--space-md);&#10;}</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
-</div>
-<p>You are free to fully replace these styles with your own design system.</p>
-</details>
-<div class="air-md"></div><details>
-<summary>JavaScript Setup</summary>
-<p>Place the script file anywhere you prefer and include it <strong>after the markup</strong>, or just before the closing <code>&lt;/body&gt;</code> tag.</p>
-<div class="code-block">
-    <pre><code id="snippet-3" class="language-html">&lt;script src=&#34;/assets/js/cookie-consent.js&#34;&gt;&lt;/script&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
-</div>
-<p>The script runs automatically on <code>DOMContentLoaded</code>. No configuration is required.</p>
-</details>
-<h2>Assumptions Made by the Script</h2>
+<p>…but maybe you don’t want a global script?<br>
+…and maybe you want copy buttons only on some blocks?<br>
+…and maybe you run Eleventy, Liquid, Markdown, Nunjucks, HTML and probably two demons inside one page.</p>
+<p>Then everything catches fire.</p>
+<h3>The “Build a Rocketship to Press One Button” Option</h3>
+<p>At this point, many teams go: “Screw it. Let’s add three plugins, a pipeline transformer, a shortcode system, a mystic chant and hope nothing breaks.”</p>
+<p>It’s elegant in the same way duct-taping a nuclear reactor is elegant.</p>
+<h2>The Solution</h2>
+<p>No extra JS. No extra plugins. No coping mechanisms involving alcohol.</p>
+<p>We did this:</p>
+<h3>1. Wrap the snippet so engines don’t chew it</h3>
+<pre><code class="language-liquid">{%- capture codeSnippet -%}
+&lt;div id=&quot;codeSnippet&quot;&gt;
+  ...
+&lt;/div&gt;
+{%- endcapture -%}
+</code></pre>
+<p>Liquid now stores raw text.
+Nobody touches it.
+Nobody “helps”.</p>
+<p>Then we render:</p>
+<pre><code class="language-html">
+&lt;div class=&quot;code-block&quot;&gt;
+  &lt;pre&gt;&lt;code id=&quot;snippet&quot; class=&quot;language-html&quot;&gt;
+    {{ codeSnippet | escape }}
+  &lt;/code&gt;&lt;/pre&gt;
+
+  &lt;button
+    class=&quot;copy-data-icon&quot;
+    data-copy-target=&quot;#snippet&quot;&gt;
+    content_copy
+  &lt;/button&gt;
+&lt;/div&gt;
+
+</code></pre>
+<p>escape turns <code>&lt;</code> into <code>&amp;lt;</code>, browser stops being “creative”, <code>&lt;pre&gt;</code> preserves lines, copy button works.
+Life is briefly good.</p>
+<h3>2. CSS Is Worse (Of Course)</h3>
+<p>CSS brings another level of pain: Markdown decides to insert <code>&lt;p&gt;</code> tags inside your <code>&lt;code&gt;</code> like a toddler decorating a cake with olives.</p>
+<p>So for CSS, we add one trick:</p>
+<pre><code class="language-liquid">{{ codeStyles | escape | replace: '\n', '&amp;#10;' }}
+</code></pre>
+<p>Markdown stops “helping”, browser renders <code>&amp;#10;</code> as actual newlines, formatting survives.</p>
+<p>Victory.</p>
+<p>Dirty victory. But victory.</p>
+<h2>Bonus Lessons Learned (so you don’t step in the same rakes)</h2>
+<p>Things we discovered along the way:</p>
 <ul>
-<li>JavaScript is enabled</li>
-<li>Cookies are enabled</li>
-<li>The site operates on a single domain</li>
-<li>The notice markup exists on the page where the script runs</li>
+<li><code>{% raw %}</code> is not a magic wand. It only stops Liquid, Markdown still happily destroys things.</li>
+<li>Markdown only leaves <code>&lt;pre&gt;</code> alone if the whole surrounding block is “HTML territory”. Mixed mode triggers chaos.</li>
+<li>Whitespace control in Liquid (<code>{%- … -%}</code>) is your friend.</li>
+<li>Browsers were never designed to “show HTML” safely inside HTML. That’s like asking a tiger to babysit a churrasco.</li>
 </ul>
-<p>If any of these assumptions are false, the script will fail silently.</p>
-<h2>Customization</h2>
-<p>You may safely change:</p>
+<h2>Final Thoughts</h2>
+<p><code>&lt;pre&gt;</code> isn’t broken. It just obeys rules written in 1995, before documentation pages, Eleventy, copy buttons, mobile devices, or happiness existed.</p>
+<p>So if you’re:</p>
 <ul>
-<li>Text content</li>
-<li>Styles and class names</li>
-<li>Cookie lifetime (in days)</li>
-<li>Cookie name</li>
+<li>showing code</li>
+<li>want formatting</li>
+<li>want a copy button</li>
+<li>and don’t want to drown your life in dependencies</li>
 </ul>
-<p>If you rename required IDs, you must update the script accordingly.</p>
+<p>then this works. Reliably. Sanely. Mostly.</p>
+<p>And if future you is reading this because it broke again…
+well, you knew what industry you signed up for.</p>
 
     </article>
   </div>
