@@ -55,6 +55,11 @@ table th:not(:first-child):not(:last-child) {
     min-width: fit-content;
 }
 
+.table-small td {
+    vertical-align: top;
+    padding-bottom: var(--space-sm);
+}
+
 .table-small th,
 .table-small th:last-child,
 .table-small td:last-child {

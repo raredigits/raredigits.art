@@ -41,10 +41,10 @@ document.addEventListener("click", async (e) => {
   icon.dataset.copyBusy = "1";
 
   const showSuccess = () => {
-    icon.textContent = ICON_SUCCESS;
+    icon.dataset.icon = ICON_SUCCESS;
     clearTimeout(icon._copyTimer);
     icon._copyTimer = setTimeout(() => {
-      icon.textContent = ICON_DEFAULT;
+      icon.dataset.icon = ICON_DEFAULT;
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };

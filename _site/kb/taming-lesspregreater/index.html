@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taming &lt;pre&gt; | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="current">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    <aside class="sidebar">
+      <h5 class="sidebar-header">
+          <a href="/kb/">Knowledge Base</a>
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Dev
+          </div>
+        
+        
+        
+          <div class="sidebar-meta">by Jeeves</div>
+        
+
+        
+          <div class="sidebar-meta">November 01, 2023</div>
+        
+
+        
+          <div class="tags">
+            
+              <span class="tag">#front-end</span>
+            
+          </div>
+        
+      </nav>
+    </aside>
+    
+  <section class="page-title">
+    <h1>Taming &lt;pre&gt;</h1>
+  </section>
+
+    <article>
+      <p>Web development has this lovely habit: something looks trivial, obvious, almost boring… until you actually use it. Then it quietly erodes your workday, your confidence, and maybe a bit of your belief that the web was designed on purpose.</p>
+<p>Displaying raw code in documentation sounds like the most boring, solved problem in the world. HTML literally has a special tag for it:</p>
+<pre><code class="language-html">&lt;pre&gt;
+  &lt;code&gt; … &lt;/code&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Done, right?</p>
+<p>Hahaha. No.</p>
+<div class="sidenote-wrapper">
+  <p>Using <code>&lt;pre&gt;</code> in production is a very HTML experience: it works beautifully,
+right up until the moment something slightly real happens, and then it starts
+behaving like a well-meaning intern who confidently does the opposite of what
+you asked — and insists that this is, in fact, the standard.</p>
+  <div class="sidenote">
+    <p>No need to explain, gimme <a href="#solution">solution</a>!</p>
+  </div>
+</div>
+<p>Here’s why.</p>
+<h3>Problem 1: HTML Inside &lt;pre&gt; Still Gets Parsed</h3>
+<p>The first surprise comes from a very simple misunderstanding: <code>&lt;pre&gt;</code> was never
+really designed to “show code safely.” It was designed to <em>preserve whitespace</em>.
+That’s it. It keeps your spaces and newlines, and then politely lets the rest of
+HTML behave exactly like HTML always behaves: by enthusiastically trying to execute
+and restructure anything that looks like a tag.</p>
+<p>Browser sees:</p>
+<pre><code class="language-html">&lt;pre&gt;
+  &lt;code&gt;
+    &lt;div&gt;hello&lt;/div&gt;
+  &lt;/code&gt;
+&lt;/pre&gt;
+</code></pre>
+<p>Browser thinks: “Oh cool, a <code>&lt;div&gt;</code>! Let me rear-range your DOM like I’m cleaning my room by throwing everything out the window.”</p>
+<p>So instead of “please show this snippet to the reader,” your page quietly turns it into “please run this snippet inside my layout, ” and now you don’t have a code block, you have live HTML bursting out of containment like a lab experiment escaping through the vents.</p>
+<p>What people normally do? There’s a familiar buffet of coping strategies:</p>
+<ul>
+<li>Escape everything manually: <code>&amp;lt;div&amp;gt;</code> and <code>&amp;gt;</code> and your sanity evaporates.</li>
+<li>Bring in <a href="https://prismjs.com">Prism</a> / <a href="https://highlightjs.org">Highlight.js</a> — basically hiring a professional bouncer to stop your browser from “helpfully” interpreting your example.</li>
+<li>Wrap code inside <code>&lt;script type=&quot;text/plain&quot;&gt;</code> like you’re a magician smuggling contraband through security.</li>
+</ul>
+<p>Or just scream and give up.</p>
+<h3>Problem 2: Tabulation and Formatting Randomly Die</h3>
+<p>You’d think that <code>&lt;pre&gt;</code> “preserves formatting.” And it does… right up until your content passes through the beloved modern publishing gauntlet: Markdown, Liquid, Nunjucks, Eleventy, Astro, Hugo, Jekyll, Next.js MDX, or whatever clever static-site framework you swore would “simplify everything this time.”</p>
+<p>Well, suppose you are a relatively civilized person, and your documentation is written in Markdown. Markdown even gives you fenced code blocks:<div class="code-block text-content-width"></p>
+  <pre><code id="snippet-1" class="language-css">```css
+// your styles here ...
+```</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button></p>
+</div>
+<p>You expected to see cleanly formatted CSS. But suddenly, after rendering in the browser, your perfectly innocent code block turns into something like this:</p>
+<pre><code class="language-html">&lt;code&gt;
+&quot;body {...}&quot;
+&lt;p&gt;header {...}&lt;/p&gt;
+&lt;p&gt;.title {...}&lt;/p&gt;
+&lt;p&gt;footer {...}&lt;/p&gt;
+&lt;/code&gt;
+</code></pre>
+<p>What happened? Something in the chain noticed that “blank line = new paragraph, ” proudly did what the spec told it to do, and inserted friendly <code>&lt;p&gt;</code> tags… inside your <code>&lt;code&gt;</code> block. Markdown, in particular, is incredibly enthusiastic about this. When it sees a blank line, it tilts its head like a golden retriever and proudly declares: “Ah yes, clearly this is a paragraph structure.” Afterwards, you don’t get a CSS block — you get an essay, because consistency is for weaker systems.</p>
+<p>And the worst part is: it isn’t wrong. It is simply doing its job. Its job just happens to be making you question every positive emotion you ever had toward web standards.</p>
+<h3>Problem 3: The Copy Button of Doom</h3>
+<p>Maybe you’re kind. Maybe you think about users. Maybe you want a sweet « Copy » button so they don’t have to select text like cavemen.</p>
+<div class="text-content-width center-x padding-b-lg font-size-xxl">
+  <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button>
+</div>
+<p>And the obvious answer is: just do what GitHub does. Let JavaScript stroll across the page, find every <code>&lt;pre&gt;</code>, invisibly wire it with a clipboard button, and turn your documentation into a frictionless UX paradise where code leaps obediently into the user’s buffer and everyone applauds like we’ve solved civilization.</p>
+<p>But maybe you don’t want a global script quietly modifying your entire page. And maybe you only want copy buttons on <em>some</em> blocks, not on every stray <code>&lt;pre&gt;</code> fragment. And maybe — just to make things more interesting — you’re already juggling Eleventy and Liquid and Markdown and Nunjucks and HTML, plus whatever cosmic entity lives in your build pipeline pretending to be helpful.</p>
+<p>At that point the system stops being elegant, stops being predictable, and starts producing fire purely out of enthusiasm.</p>
+<h3>The “Build a Rocketship to Press One Button” Option</h3>
+<p>At this point, many teams just give up on dignity and say: “Fine. Let’s install three plugins, a build pipeline transformer, a shortcode framework, two Markdown extensions, and some custom JavaScript glue. Surely that will make the <em>copy button</em> behave.”</p>
+<p>And technically, it works. Eventually. After a few hours of massaging config files, aligning CSS, fighting mysterious whitespace behavior, learning which library wants fenced code, which one wants HTML, and which one wants a blood sacrifice at sunset. Every additional dependency brings its own personality, its own philosophy, and its own definition of “correct.”</p>
+<p>Then you close your eyes and hope the maintainers of any of these libraries don’t update something critical next week. You hope security advisories don’t appear. You hope you never have to remember why this particular chain of plugins exists in the first place. Because now you’re not just adding a copy button — you’re adopting a small ecosystem of complexity and quietly agreeing to be responsible for it for the foreseeable future.</p>
+<p>It’s “elegant” in the same way duct-taping a nuclear reactor is elegant: technically operational, emotionally exhausting, and one slightly wrong vibration away from an impressive light show.</p>
+<p><a id="solution"></a></p>
+<h2>The Solution</h2>
+<p>No extra JS frameworks.
+No plugin farms.
+No coping mechanisms involving alcohol.</p>
+<p>Just a boring, reliable approach that works.</p>
+<div class="air-md"></div>
+<p><strong>Step 1. Create snippet.</strong></p>
+<p>We start by taking the code we want to show and moving it <em>out of harm’s way</em>. That means we wrap it in a Liquid <code>{% capture %}</code> block so the build pipeline treats it as inert text instead of something it should “interpret, ” “optimize, ” or creatively reinterpret according to its spiritual beliefs. In Liquid, <code>{% capture %}</code> basically says: “This is a string. Please don’t be clever.”</p>
+<p>So we do this:<div class="code-block text-content-width"></p>
+  <pre><code id="snippet-2" class="language-css">{%- capture codeSnippet -%}
+&lt;div id=&#34;codeSnippet&#34;&gt;
+  ...
+&lt;/div&gt;
+{%- endcapture -%}
+</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button></p>
+</div>
+<p>Now the snippet lives safely as plain text.<br>
+No Markdown rules touch it.<br>
+No templating system improvises.<br>
+Nobody “helps”.</p>
+<div class="air-md"></div>
+<p><strong>Step 2. Render the snippet on your terms.</strong></p>
+<p>Later, when we actually want to show this snippet, we explicitly place it inside <code>&lt;pre&gt;&lt;code&gt;</code> and tell the browser: “Display this. Literally. Calmly.”<div class="code-block"></p>
+  <pre><code id="snippet-3" class="language-css">&lt;div class=&#34;code-block&#34;&gt;
+  &lt;pre&gt;&lt;code id=&#34;snippet&#34;&gt;{{ codeSnippet | escape }}&lt;/code&gt;&lt;/pre&gt;
+  &lt;button class=&#34;copy-data-icon&#34; title=&#34;Copy link&#34; data-icon=&#34;content_copy&#34; data-copy-target=&#34;#snippet&#34;&gt;&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button></p>
+</div>
+<p>escape is doing the important emotional labor here. It turns <code>&lt;</code> into <code>&amp;lt;</code> and <code>&gt;</code> into <code>&amp;gt;</code>, browser stops being “creative”, <code>&lt;pre&gt;</code> preserves lines, copy button works. Life is briefly good.</p>
+<div class="air-md"></div>
+<p><strong>Step 2a. CSS Is Worse (Of Course).</strong></p>
+<p>HTML inside <code>&lt;pre&gt;</code> is one category of pain. CSS, however, politely introduces an entirely different one.</p>
+<p>Because this is where Markdown really leans in. It sees blank lines inside your CSS block and, with great confidence and zero hesitation, begins inserting <code>&lt;p&gt;</code> tags <em>inside your <code>&lt;code&gt;</code></em>, like a toddler enthusiastically decorating a cake with olives. The browser is technically not wrong, Markdown is technically not wrong, but the end result is emotionally devastating.</p>
+<p>So for CSS we add a very small but incredibly calming trick:<div class="code-block"></p>
+  <pre><code id="snippet-4">{{ codeStyles | escape | replace: &#39;\n&#39;, &#39;&amp;#10;&#39; }}</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+</div>
+<p>escape keeps the browser from executing anything. <code>replace</code> swaps literal newlines with <code>&amp;#10;</code>, which Markdown politely ignores but browsers happily render as real line breaks. Markdown stops “helping.” Indentation lives. Formatting survives.</p>
+<p>Victory.</p>
+<p>A slightly questionable, morally grey victory.</p>
+<p>But still victory.</p>
+<details>
+<summary>Quick note on <code>| escape</code> and other liquid filters</summary>
+<p>Liquid gives you a few knobs here:</p>
+<p>&lt;div&gt;</p>
+<table class="table-small">
+    <tr>
+        <th>Filter</th>
+        <th>Purpose</th> 
+    </tr>
+    <tr>
+        <td><code>| escape</code></td>
+        <td>Converts HTML tags into entities so they render as text.</td>
+    </tr>
+    <tr>
+        <td><code>| strip</code></td>
+        <td>Removes leading and trailing whitespace if you want a tighter block.</td>
+    </tr>
+    <tr>
+        <td><code><nobr>| replace: '\n', '&amp;#10;'</nobr></code></td>
+        <td>Useful when Markdown insists on turning blank lines into <code>&lt;p&gt;</code> tags; replacing raw newlines with <code>&amp;#10;</code> keeps formatting without triggering Markdown’s “this must be prose” reflex.</td>
+    </tr>
+</table>
+<p>You can mix these depending on how cursed your build pipeline is.</p>
+</details>
+<div class="air-md"></div>
+<p><strong>Step 3. Enable Copy-to-Clipboard.</strong></p>
+<div class="sidenote-wrapper">
+  <p>Once the snippet safely renders as text, the final step is simply letting users copy it without wrestling their trackpads like it’s 2004. For that we use a small, boring, reliable vanilla JavaScript helper. It listens for clicks on the “Copy” button, grabs the content of the associated data, and sends it straight to the clipboard. No frameworks, no magic, no hidden emotional consequences.</p>
+  <div class="sidenote sidenote-link">
+    <p>You can read more and grab the script here: <a href="/scripts/copy-to-clipboard/">copy-to-clipboard.js</a></p>
+  </div>
+</div>
+<p>Just make sure to include the script on the page — either from your local assets or via CDN — otherwise the button will sit there like a decorative confidence indicator instead of a feature.</p>
+<h2>Final Thoughts</h2>
+<p>Here’s the short version of what we learned, so you don’t have to collect the same bruises.</p>
+<p><code>{% raw %}</code> is not a magic shield — it only calms Liquid, while Markdown will happily continue rearranging your work with a confident smile.</p>
+<p><code>&lt;pre&gt;</code> behaves predictably only when the entire surrounding context is pure HTML territory; once you mix Markdown and templating engines, the rules start colliding in ways that feel less like a specification and more like jazz improvisation.</p>
+<p>Liquid’s whitespace controls (<code>{%- … -%}</code>) are surprisingly powerful emotional support tools. And, most importantly, browsers were never designed to “show HTML safely inside HTML.” Expecting them to do so is like asking a tiger to babysit a steak: everyone involved is technically behaving correctly, and it still goes badly.</p>
+<p><code>&lt;pre&gt;</code> itself is not broken. It is simply following rules written in a very different era, before modern documentation systems, static-site pipelines, Markdown layers, copy buttons, mobile browsers, and the fragile dream of happiness in web development. So if your goal is to show code, keep formatting, add a copy button, and not bury your life under libraries, plugins and dependencies, this approach works. Reliably. Sanely. Mostly.</p>
+<p>And if future, you is reading this because it somehow broke again… well, you chose this profession.</p>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2025 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

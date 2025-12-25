@@ -1,5 +1,6 @@
 .material-icons,
-.material-icons-outlined {
+.material-icons-outlined,
+.material-symbols-outlined {
     position: relative;
     top: 0.2em;
     font-size: inherit;
@@ -32,18 +33,32 @@
 }
 
 .copy-data-icon {
+    display: inline-block;
+    font-family: "Material Symbols Outlined";
+    font-size: var(--font-size-lg);
+    position: relative;
+    top: 0.2em;
+    font-size: inherit;
+    line-height: inherit;
+    background: none;
+    color: var(--text-color-light);
+    border: none;
+    padding: 0;
     cursor: pointer;
-    user-select: none;
+}
+
+.copy-data-icon::before {
+    content: attr(data-icon);
 }
 
 .copy-data-icon:hover {
     color: var(--primary-color);
+    background: none;
+    border: none;
 }
 
 .code-block .copy-data-icon {
     position: absolute;
     top: var(--space-sm);
-    right: var(--space-xs);
-    background: none;
-    border: none;
+    right: var(--space-sm);
 }

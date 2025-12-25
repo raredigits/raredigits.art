@@ -427,20 +427,20 @@
     <article>
       <div class="meta-info">
     <p>js/copy-to-clipboard.js</p>
-    <p>v.1.0.1 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v.1.0.1/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
-    <span class="material-icons copy-data-icon" title="Copy link">content_copy</span> |
+    <p>v2.0.0 Stable (<a href="#changelog">Changelog</a>) |
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v2.0.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
+    <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
     <span class="material-icons">file_download</span>
     </p>
 </div>
-<p>This is a small utility that adds a “copy” icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.</p>
+<p>This is a small utility that adds a “copy” <span class="material-symbols-outlined">content_copy</span> icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.</p>
 <p>Click the icon, the data goes to the clipboard, the icon briefly turns into a checkmark, everyone is happy and moves on.</p>
 <p>The script doesn’t care about your layout, your CSS philosophy, or how deeply nested your markup is. It follows one simple rule: either you explicitly tell it what to copy, or you place it next to something marked as copyable.</p>
 <p>That’s the whole contract:</p>
 <ul>
-<li>If the icon has data-copy-target, the script copies text from that element.</li>
-<li>If not, it looks for the nearest element marked with data-copy.</li>
+<li>If the icon has <code>data-copy-target</code>, the script copies text from that element.</li>
+<li>If not, it looks for the nearest element marked with <code>data-copy</code>.</li>
 <li>If that element is a link, it copies the URL. Otherwise, it copies the text content.</li>
 </ul>
 <p>No duplicated data. No hard-coded containers. No assumptions about structure.
@@ -449,18 +449,21 @@ It works the same way on documentation sites, dashboards, crypto wallets, and 
 <h2>Basic usage</h2>
 <p><strong>Copy a link (URL, not label)</strong></p>
 <pre><code class="language-html">&lt;a href=&quot;https://cdn.jsdelivr.net/script.min.js&quot; data-copy&gt;Copy Link&lt;/a&gt;
-&lt;span class=&quot;material-icons copy-data-icon&quot; title=&quot;Copy&quot;&gt;content_copy&lt;/span&gt;
+&lt;button class=&quot;copy-data-icon&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
 </code></pre>
 <p>Clicking the icon copies the full CDN URL.</p>
+<p>Check it out: <a href="https://cdn.jsdelivr.net/script.min.js" data-copy>Copy Link</a> <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></p>
+<div class="air-md"></div>
 <p><strong>Copy plain text (addresses, hashes, IDs)</strong></p>
 <pre><code class="language-html">&lt;span data-copy&gt;0x9f1b...cA11&lt;/span&gt;
-&lt;span class=&quot;material-icons copy-data-icon&quot; title=&quot;Copy&quot;&gt;content_copy&lt;/span&gt;
+&lt;button class=&quot;copy-data-icon&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
 </code></pre>
 <p>Works exactly like wallet address copy buttons. Because that’s what it is.</p>
+<div class="air-md"></div>
 <p><strong>Copy code from a block</strong></p>
-<p>Use the <code>.code-block</code> wrapper and a <code>button</code> with the <code>copy-data-icon</code> and <code>material-icons</code> classes to create a classic code block with a copy button:</p>
+<p>Use the <code>.code-block</code> wrapper and a <code>button</code> with the <code>copy-data-icon</code> class to create a classic code block with a copy button:</p>
 <pre><code class="language-html">&lt;div class=&quot;code-block&quot;&gt;
-    &lt;button class=&quot;copy-data-icon material-icons&quot;&gt;content_copy&lt;/button&gt;
+    &lt;button class=&quot;copy-data-icon&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
 <p>To get a result like this:</p>
@@ -468,44 +471,45 @@ It works the same way on documentation sites, dashboards, crypto wallets, and 
     <pre><code id="snippet-1">npm i rare-scripts
 # or
 pnpm add rare-scripts</code></pre>
-    <button class="copy-data-icon material-icons" type="button" title="Copy" aria-label="Copy code" data-copy-target="#snippet-1">content_copy</button>
+    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
 </div>
-<p>Use data-copy-target when proximity is not enough or would be ambiguous.</p>
+<p>Use <code>data-copy-target</code> when proximity is not enough or would be ambiguous.</p>
 <h2>JavaScript</h2>
 <p>Include once per page:</p>
-<pre><code class="language-js">const ICON_DEFAULT = &quot;content_copy&quot;;
-const ICON_SUCCESS = &quot;check&quot;;
+<div class="code-block">
+<pre><code id="snippet-2" class="language-js">const ICON_DEFAULT = "content_copy";
+const ICON_SUCCESS = "check";
 const RESET_MS = 1200;
 
 function getCopyText(icon) {
   if (icon.dataset.copyTarget) {
     const target = document.querySelector(icon.dataset.copyTarget);
-    return target?.textContent?.trim() || &quot;&quot;;
+    return target?.textContent?.trim() || "";
   }
 
   const source =
-    icon.closest(&quot;[data-copy]&quot;) ||
-    icon.parentElement?.querySelector(&quot;[data-copy]&quot;);
+    icon.closest("[data-copy]") ||
+    icon.parentElement?.querySelector("[data-copy]");
 
-  if (!source) return &quot;&quot;;
-  return source.getAttribute(&quot;href&quot;) || source.textContent.trim();
+  if (!source) return "";
+  return source.getAttribute("href") || source.textContent.trim();
 }
 
 function fallbackCopy(text) {
-  const ta = document.createElement(&quot;textarea&quot;);
+  const ta = document.createElement("textarea");
   ta.value = text;
-  ta.style.position = &quot;fixed&quot;;
-  ta.style.opacity = &quot;0&quot;;
-  ta.style.pointerEvents = &quot;none&quot;;
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  ta.style.pointerEvents = "none";
   document.body.appendChild(ta);
   ta.select();
-  const ok = document.execCommand(&quot;copy&quot;);
+  const ok = document.execCommand("copy");
   ta.remove();
   return ok;
 }
 
-document.addEventListener(&quot;click&quot;, async (e) =&gt; {
-  const icon = e.target.closest(&quot;.copy-data-icon&quot;);
+document.addEventListener("click", async (e) => {
+  const icon = e.target.closest(".copy-data-icon");
   if (!icon) return;
 
   if (icon.dataset.copyBusy) return;
@@ -513,13 +517,13 @@ document.addEventListener(&quot;click&quot;, async (e) =&gt; {
   const text = getCopyText(icon);
   if (!text) return;
 
-  icon.dataset.copyBusy = &quot;1&quot;;
+  icon.dataset.copyBusy = "1";
 
-  const showSuccess = () =&gt; {
-    icon.textContent = ICON_SUCCESS;
+  const showSuccess = () => {
+    icon.dataset.icon = ICON_SUCCESS;
     clearTimeout(icon._copyTimer);
-    icon._copyTimer = setTimeout(() =&gt; {
-      icon.textContent = ICON_DEFAULT;
+    icon._copyTimer = setTimeout(() => {
+      icon.dataset.icon = ICON_DEFAULT;
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };
@@ -531,32 +535,26 @@ document.addEventListener(&quot;click&quot;, async (e) =&gt; {
     if (fallbackCopy(text)) showSuccess();
     else delete icon.dataset.copyBusy;
   }
-});
-</code></pre>
+});</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button></p>
+</div>
 <h2>Including the script</h2>
 <p>Don’t forget to actually include the script on the page.
 Icons don’t copy things by positive thinking alone.</p>
-<p>You can either host the file locally or load it from a CDN. Both options work the same way.</p>
-<pre><code class="language-html">// Local file:
-&lt;script src=&quot;/js/copy-to-clipboard.min.js&quot;&gt;&lt;/script&gt;
+<p>You can either host the file locally or load it from a CDN. Both options work the same way.<div class="code-block"></p>
+  <pre><code id="snippet-3">// Local file:
+&lt;script src=&#34;/js/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;
 
 // CDN:
-&lt;script src=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v.1.0.1/copy-to-clipboard/copy-to-clipboard.min.js&quot;&gt;&lt;/script&gt;
-</code></pre>
+&lt;script src=&#34;https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v2.0.0/copy-to-clipboard/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button></p>
+</div>
 <p>Include it once per page, preferably near the end of the document or with defer.</p>
 <h2>Styling</h2>
-<p>Make it feel clickable, not decorative:</p>
-<pre><code class="language-css">// css/modules/decorations/_icons.scss
-
-.copy-data-icon {
-    cursor: pointer;
-    user-select: none;
-}
-
-.copy-data-icon:hover {
-    color: var(--primary-color);
-}
-</code></pre>
+<p>Make it feel clickable, not decorative:<div class="code-block"></p>
+  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    font-family: &#34;Material Symbols Outlined&#34;;&#10;    font-size: var(--font-size-lg);&#10;    position: relative;&#10;    top: 0.2em;&#10;    font-size: inherit;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--text-color-light);&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;.copy-data-icon::before {&#10;    content: attr(data-icon);&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--primary-color);&#10;    background: none;&#10;    border: none;&#10;}</code></pre>
+<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+</div>
 <p>Design principles (why this won’t rot):</p>
 <ul>
 <li>The script does not depend on layout.</li>
@@ -566,8 +564,18 @@ Icons don’t copy things by positive thinking alone.</p>
 <li>Scales from one icon to hundreds without extra listeners.</li>
 </ul>
 <p>If an element should be copied, mark it with <code>data-copy</code>.<br>
-If the icon should copy something specific, tell it where.</p>
+If the icon should copy something specific, tell it where with <code>data-copy-target</code>.</p>
 <p>Everything else is none of the script’s business.</p>
+<p><a id="changelog"></a></p>
+<h2>Changelog</h2>
+<h3>v2.0.0</h3>
+<ul>
+<li>Changed required selector to <code>.copy-data-icon</code>, legacy markup no longer supported</li>
+<li>Updated CSS to render icons via: <code>::before</code> with <code>content: attr (data-icon)</code></li>
+<li>Replaced Material Icons <code>&lt;span&gt;</code> integration with a generic <code>&lt;button&gt;</code> element</li>
+<li>Introduced <code>data-icon</code> attribute for icon state control instead of inner text</li>
+<li>Improved clipboard API handling; deprecated fallback kept as backup</li>
+</ul>
 
     </article>
   </div>

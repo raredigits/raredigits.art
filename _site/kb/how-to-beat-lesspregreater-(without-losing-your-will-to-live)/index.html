@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Cookie Notice | Rare Digits Art</title>
+    <title>How to Beat &lt;pre&gt; (Without Losing Your Will to Live) | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -60,7 +60,7 @@
         
         <li>
             <a href="/scripts/"
-               class="current">
+               class="">
               Scripts
             </a>
         </li>
@@ -81,7 +81,7 @@
         
         <li>
             <a href="/kb/"
-               class="">
+               class="current">
               101
             </a>
         </li>
@@ -265,282 +265,90 @@
   
 <main>
   <div class="content grid-global">
-    
-      <aside class="sidebar">
-  
-    
-    
+    <aside class="sidebar">
       <h5 class="sidebar-header">
-          
-            <a href="/scripts/">Scripts</a>
-          
+          <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
-        <ul>
-          
-            <li>
-              
-                <a href="/scripts/hamburger/">Hamburger</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/tabs/">Tabs</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/dropdown/">Dropdown</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/collapsible/">Collapsible</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/switch/">Switch</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/tooltip/">Tooltip</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/modal/">Modal</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/scroll/">Scroll</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/alert/">Alert</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/popover/">Popover</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/progress/">Progress</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/carousel/">Carousel</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/search/">Search</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <span class="bold">Cookies</span>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/scripts/copy-to-clipboard/">Copy</a>
-              
-              
-              
-              
-            </li>
-          
-        </ul>
+        
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Dev
+          </div>
+        
+        
+        
+          <div class="sidebar-meta">by Jeeves</div>
+        
+
+        
+          <div class="sidebar-meta">November 01, 2023</div>
+        
+
+        
+          <div class="tags">
+            
+              <span class="tag">#analytics</span>
+            
+          </div>
+        
       </nav>
-    
-  
-</aside>
-    
+    </aside>
     
   <section class="page-title">
-    <h1>Simple Cookie Notice</h1>
+    <h1>How to Beat &lt;pre&gt; (Without Losing Your Will to Live)</h1>
   </section>
 
     <article>
-      <div class="meta-info">
-    <p>js/cookie-consent.js</p>
-    <p>v.1.0.0 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button> |
-    <a href="/assets/js/cookie-consent.js">Download</a>
-    <span class="material-icons">file_download</span>
-    </p>
-</div>
-<p>A lightweight, dependency-free cookie notice banner written in plain HTML and JavaScript.</p>
-<p>This snippet displays a basic notification informing users that the website uses cookies and hides it after user acknowledgment by storing a browser cookie.</p>
-<p>It is designed to be simple, transparent, and easy to integrate into static websites, including Eleventy (11ty).</p>
-<div class="text-content-caption">
-    <img src="/assets/img/illustrations/cookies-consent-example.jpg" alt="Cookies consent script example">
-</div>
-<h2>Important Legal Disclaimer ⚠️</h2>
-<p>This project is <strong>NOT a full cookie consent management solution</strong>.</p>
-<p>It does <strong>not</strong>:</p>
-<ul>
-<li>Implement granular consent (analytics / marketing / necessary cookies)</li>
-<li>Block scripts prior to consent</li>
-<li>Provide region-specific compliance logic</li>
-<li>Guarantee compliance with GDPR, ePrivacy Directive, CCPA, CPRA, or any other local or international privacy regulations</li>
-</ul>
-<p>Its sole purpose is to <strong>inform users that cookies are used</strong> and to remember that the notice has been dismissed. This project provides <strong>notification</strong>, not <strong>legal compliance</strong>. Use at your own risk.</p>
-<p>If your website is subject to specific legal requirements, consult a qualified legal professional and consider using a dedicated Consent Management Platform (CMP).</p>
-<h2>Features</h2>
-<ul>
-<li>No dependencies</li>
-<li>No build step</li>
-<li>Plain JavaScript (ES5+)</li>
-<li>Stores dismissal state in a browser cookie</li>
-<li>Works on static websites</li>
-<li>Safe cookie defaults (<code>SameSite=Lax</code>, <code>Secure</code> on HTTPS)</li>
-</ul>
-<h2>How It Works</h2>
-<ol>
-<li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
-<li>If the cookie is missing, the notice is displayed</li>
-<li>When the user clicks the confirmation button, the cookie is set</li>
-<li>The notice is hidden for subsequent visits</li>
-</ol>
-<p>Default cookie lifetime: <strong>31 days</strong></p>
-<h2>Installation</h2>
-<details>
-<summary>Required HTML Markup</summary>
-<p>The script expects the following <strong>mandatory element IDs</strong>. If they are missing or renamed, the script will not function.</p>
-<div class="code-block">
-    <pre><code id="snippet-1" class="language-html">&lt;div id=&#34;cookie-notice&#34; class=&#34;cookie-notice&#34;&gt;
-  &lt;div class=&#34;cookie-notice__content&#34;&gt;
-    &lt;h3&gt;🍪&lt;/h3&gt;
-    &lt;p class=&#34;bold&#34;&gt;Help yourself to some cookies!&lt;/p&gt;
-    &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&#34;/legal/privacy&#34;&gt;Privacy Policy&lt;/a&gt;.&lt;/p&gt;
-    &lt;div class=&#34;right&#34;&gt;
-      &lt;button id=&#34;cookie-notice-accept&#34; class=&#34;cookie-notice__button&#34;&gt;Nice!&lt;/button&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
-</div>
-</details>
-<div class="air-md"></div>
-<details>
-<summary>Required IDs (Mandatory)</summary>
-<p>Be sure to include <strong>the mandatory IDs</strong> in your HTML elements:</p>
-<table class="table-small">
-    <tr>
-        <th>ID</th>
-        <th>Purpose</th> 
-    </tr>
-    <tr>
-        <td><code>cookie-notice</code></td>
-        <td>Root container shown / hidden by the script</td>
-    </tr>
-    <tr>
-        <td><code>cookie-notice-accept</code></td>
-        <td>Button that dismisses the notice</td>
-    </tr>
-</table>
-<p>These IDs are <strong>hard-coded in the JavaScript file</strong>.</p>
-</details>
-<div class="air-md"></div><details>
-<summary>Required CSS (Minimum)</summary>
-<p>The Rare Styles Library already includes styles for the cookie consent block. If you use this script on its own, make sure to add the required styles. At minimum, the notice <strong>must be hidden by default</strong>.</p>
-<div class="code-block">
-    <pre><code id="snippet-2" class="language-css">.cookie-notice {&#10;    max-width: var(--site-max-width);&#10;    display: block;&#10;    position: fixed; &#10;    bottom: 10px; &#10;    left: 50%;&#10;    transform: translateX(-50%);&#10;    background: #f0f0f0;&#10;    color: #000;&#10;    padding: var(--space-lg) var(--space-lg) var(--space-md);&#10;    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);&#10;    border-radius: 15px;&#10;    box-sizing: border-box;&#10;    z-index: 1000;&#10;&#10;    @include bp.mobile {&#10;        padding: 15px 5%;&#10;        width: 90%;&#10;    }&#10;}&#10;&#10;.cookie-notice__content {&#10;    position: relative;&#10;}&#10;&#10;.cookie-notice__content h3 {&#10;    position: absolute;&#10;    margin: 0;&#10;    top: -50px;&#10;    font-size: 3.5em;&#10;&#10;    @include bp.mobile {&#10;        font-size: 2.5em;&#10;        top: -60px;&#10;    }&#10;}&#10;&#10;.cookie-notice__content a {&#10;    color: #000;&#10;    text-decoration: none;&#10;    border-bottom: 1px solid var(--brand-color);&#10;}&#10;&#10;.cookie-notice__content button {&#10;    position: relative;&#10;    display: inline-block;&#10;    margin-top: var(--space-md);&#10;}</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
-</div>
-<p>You are free to fully replace these styles with your own design system.</p>
-</details>
-<div class="air-md"></div><details>
-<summary>JavaScript Setup</summary>
-<p>Place the script file anywhere you prefer and include it <strong>after the markup</strong>, or just before the closing <code>&lt;/body&gt;</code> tag.</p>
-<div class="code-block">
-    <pre><code id="snippet-3" class="language-html">&lt;script src=&#34;/assets/js/cookie-consent.js&#34;&gt;&lt;/script&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
-</div>
-<p>The script runs automatically on <code>DOMContentLoaded</code>. No configuration is required.</p>
-</details>
-<h2>Assumptions Made by the Script</h2>
-<ul>
-<li>JavaScript is enabled</li>
-<li>Cookies are enabled</li>
-<li>The site operates on a single domain</li>
-<li>The notice markup exists on the page where the script runs</li>
-</ul>
-<p>If any of these assumptions are false, the script will fail silently.</p>
-<h2>Customization</h2>
-<p>You may safely change:</p>
-<ul>
-<li>Text content</li>
-<li>Styles and class names</li>
-<li>Cookie lifetime (in days)</li>
-<li>Cookie name</li>
-</ul>
-<p>If you rename required IDs, you must update the script accordingly.</p>
+      <h2>The Analytics Noise Problem</h2>
+<p>We all use Google Analytics. It's the standard way to understand user behavior and measure site performance. But there's a common issue that plagues development teams: analytics noise from local testing.</p>
+<p>Every pageview, every click during local development gets faithfully reported to your analytics dashboard, creating a statistical fog that obscures actual user behavior. Your bounce rate suddenly includes that time you reloaded the homepage 47 times while tweaking the hero image.</p>
+<h2>The Conventional Solution</h2>
+<p>The standard approach involves environment segregation using environment variables:</p>
+<pre><code class="language-html">{ % if environment == &quot;production&quot; % }
+  &lt;!-- Google Analytics code --&gt;
+{ % endif % }
+</code></pre>
+<p>This works well enough for larger projects with established build pipelines. Your CI/CD system dutifully sets environment variables, your templating engine conditionally renders the analytics snippet, and your development activity stays quarantined from production statistics.</p>
+<p>It's valid. It works. But it demands infrastructure.</p>
+<h2>A Simpler Approach</h2>
+<p>For smaller projects or quick prototypes, here's a lightweight solution that requires no environment configuration, build steps, or template logic:</p>
+<pre><code class="language-js">&lt;script&gt;
+  if (!['localhost', '127.0.0.1'].includes(location.hostname)) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = &quot;https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX&quot;;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  }
+&lt;/script&gt;
+</code></pre>
+<p>This elegant little snippet simply checks if you're on localhost before loading any analytics code. No environment variables, no build system configuration, no template conditions—just plain JavaScript doing what it does best.</p>
+<h2>One-Minute Optimization</h2>
+<p>With just a moment's thought, you can extend this approach:</p>
+<pre><code class="language-js">&lt;script&gt;
+  // Add your development and staging domains as needed
+  const devDomains = ['localhost', '127.0.0.1', 'staging.yourdomain.com', 'dev.yourdomain.com'];
+  
+  if (!devDomains.some(domain =&gt; location.hostname.includes(domain))) {
+    // Analytics only loads in production environments
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = &quot;https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX&quot;;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  }
+&lt;/script&gt;
+</code></pre>
+<p>This version accommodates not just localhost but any development or staging domains you might use. The <code>.some()</code> method even allows partial matching, so feature-branch.dev.yourdomain.com gets correctly identified as a development environment.</p>
+<h2>The End of Environment Dances</h2>
+<p>With this approach, you can deploy the same code to any environment without worry. Your analytics will automatically activate in production while staying dormant during development. No more cluttering your bounce rate with development activity, no more filtering out internal traffic, and no more environment variable configuration just to prevent analytics noise.</p>
+<p>Sometimes the simplest solutions are hiding in plain sight, waiting for someone to notice them.</p>
 
     </article>
   </div>

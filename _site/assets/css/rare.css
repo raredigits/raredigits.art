@@ -17369,6 +17369,10 @@ blockquote p:first-of-type {
   position: relative;
 }
 
+.code-block code {
+  white-space: pre;
+}
+
 pre {
   line-height: var(--line-height-sm);
   background-color: var(--gray-mid-light);
@@ -17601,6 +17605,11 @@ table th:not(:first-child):not(:last-child) {
 .table-small {
   width: fit-content;
   min-width: fit-content;
+}
+
+.table-small td {
+  vertical-align: top;
+  padding-bottom: var(--space-sm);
 }
 
 .table-small th,
@@ -18822,7 +18831,8 @@ img {
 }
 
 .material-icons,
-.material-icons-outlined {
+.material-icons-outlined,
+.material-symbols-outlined {
   position: relative;
   top: 0.2em;
   font-size: inherit;
@@ -18854,20 +18864,34 @@ img {
   }
 }
 .copy-data-icon {
+  display: inline-block;
+  font-family: "Material Symbols Outlined";
+  font-size: var(--font-size-lg);
+  position: relative;
+  top: 0.2em;
+  font-size: inherit;
+  line-height: inherit;
+  background: none;
+  color: var(--text-color-light);
+  border: none;
+  padding: 0;
   cursor: pointer;
-  user-select: none;
+}
+
+.copy-data-icon::before {
+  content: attr(data-icon);
 }
 
 .copy-data-icon:hover {
   color: var(--primary-color);
+  background: none;
+  border: none;
 }
 
 .code-block .copy-data-icon {
   position: absolute;
   top: var(--space-sm);
-  right: var(--space-xs);
-  background: none;
-  border: none;
+  right: var(--space-sm);
 }
 
 .bordered {
