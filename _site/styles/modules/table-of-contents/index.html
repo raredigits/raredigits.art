@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taming &amp;lt;pre&amp;gt; | Rare Digits Art</title>
+    <title>Table of Contents | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -53,7 +53,7 @@
         
         <li>
             <a href="/styles/"
-               class="">
+               class="current">
               Styles
             </a>
         </li>
@@ -81,7 +81,7 @@
         
         <li>
             <a href="/kb/"
-               class="current">
+               class="">
               101
             </a>
         </li>
@@ -265,155 +265,338 @@
   
 <main>
   <div class="content grid-global">
-    <aside class="sidebar">
+    
+      <aside class="sidebar">
+  
+    
+    
       <h5 class="sidebar-header">
-          <a href="/kb/">Knowledge Base</a>
+          
+            <a href="/styles/">Styles</a>
+          
       </h5>
       <nav class="sidebar-nav no-scrollbar">
-        
-          <div class="sidebar-meta">
-            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Dev
-          </div>
-        
-        
-        
-          <div class="sidebar-meta">by Jeeves</div>
-        
-
-        
-          <div class="sidebar-meta">November 01, 2023</div>
-        
-
-        
-          <div class="tags">
-            
-              <span class="tag">#analytics</span>
-            
-          </div>
-        
+        <ul>
+          
+            <li>
+              
+                <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/usage/">Usage</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Table of Contents</span>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
       </nav>
-    </aside>
+    
+  
+</aside>
+    
     
   <section class="page-title">
-    <h1>Taming &amp;lt;pre&amp;gt;</h1>
+    <h1>Table of Contents</h1>
   </section>
 
     <article>
-      <p>Web development has this lovely habit: something looks trivial, obvious, almost boring… until you actually use it. Then it quietly erodes your workday, your confidence, and maybe a bit of your belief that the web was designed on purpose.</p>
-<p>Displaying raw code in documentation sounds like the most boring, solved problem in the world. HTML literally has a special tag for it:</p>
-<pre><code class="language-html">&lt;pre&gt;
-  &lt;code&gt; … &lt;/code&gt;
-&lt;/pre&gt;
-</code></pre>
-<p>Done, right?</p>
-<p>Hahaha. No.</p>
-<p>Using <code>&lt;pre&gt;</code> in production is a very HTML experience: it works beautifully,
-right up until the moment something slightly real happens, and then it starts
-behaving like a well-meaning intern who confidently does the opposite of what
-you asked — and insists that this is, in fact, the standard.</p>
-<p>Here’s why.</p>
-<h3>Problem 1: HTML Inside &lt;pre&gt; Still Gets Parsed</h3>
-<p>Browser sees:</p>
-<pre><code class="language-html">&lt;pre&gt;
-  &lt;code&gt;
-    &lt;div&gt;hello&lt;/div&gt;
-  &lt;/code&gt;
-&lt;/pre&gt;
-</code></pre>
-<p>Browser thinks: “Oh cool, a <code>&lt;div&gt;</code>! Let me rear-range your DOM like I’m cleaning my room by throwing everything out the window.”</p>
-<p>Suddenly your nicely contained code block explodes into actual DOM elements. Instead of “show code”, your page yells “execute code”.</p>
-<p>What people normally do? You get a buffet of coping strategies:</p>
-<ul>
-<li>Escape everything manually: <code>&amp;lt;div&amp;gt;</code> and <code>&amp;gt;</code> and your sanity evaporates.</li>
-<li>Bring in Prism / Highlight.js — hire a bouncer for your raccoon.</li>
-<li>Wrap code inside <code>&lt;script type=&quot;text/plain&quot;&gt;</code> like you’re a magician smuggling contraband through security.</li>
-</ul>
-<p>Or just scream and give up.</p>
-<h3>Problem 2: Tabulation and Formatting Randomly Die</h3>
-<p>You’d think <code>&lt;pre&gt;</code> “preserves formatting”. And it does… unless your page is rendered by fun friends like, Markdown, Liquid, Nunjucks, as well as your hopes and dreams.</p>
-<p>Suddenly your code block turns into this:</p>
-<pre><code class="language-html">&lt;code&gt;
-&quot;body {...}&quot;
-&lt;p&gt;header {...}&lt;/p&gt;
-&lt;p&gt;.title {...}&lt;/p&gt;
-&lt;p&gt;footer {...}&lt;/p&gt;
-&lt;/code&gt;
-</code></pre>
-<p>Markdown sees blank lines and goes: “Paragraphs? Inside <code>&lt;code&gt;</code>?! Don’t think — DO!” Thanks buddy.</p>
-<h3>Problem 3: The Copy Button of Doom</h3>
-<p>Maybe you’re kind. Maybe you think about users. Maybe you want a sweet “Copy” button so they don’t select text like cavemen.</p>
-<p>You could do what GitHub does:</p>
-<ul>
-<li>Find every <code>&lt;pre&gt;</code></li>
-<li>JS injects a button</li>
-<li>Everyone claps</li>
-<li>Angels sing</li>
-</ul>
-<p>…but maybe you don’t want a global script?<br>
-…and maybe you want copy buttons only on some blocks?<br>
-…and maybe you run Eleventy, Liquid, Markdown, Nunjucks, HTML and probably two demons inside one page.</p>
-<p>Then everything catches fire.</p>
-<h3>The “Build a Rocketship to Press One Button” Option</h3>
-<p>At this point, many teams go: “Screw it. Let’s add three plugins, a pipeline transformer, a shortcode system, a mystic chant and hope nothing breaks.”</p>
-<p>It’s elegant in the same way duct-taping a nuclear reactor is elegant.</p>
-<h2>The Solution</h2>
-<p>No extra JS. No extra plugins. No coping mechanisms involving alcohol.</p>
-<p>We did this:</p>
-<h3>1. Wrap the snippet so engines don’t chew it</h3>
-<pre><code class="language-liquid">{%- capture codeSnippet -%}
-&lt;div id=&quot;codeSnippet&quot;&gt;
-  ...
-&lt;/div&gt;
-{%- endcapture -%}
-</code></pre>
-<p>Liquid now stores raw text.
-Nobody touches it.
-Nobody “helps”.</p>
-<p>Then we render:</p>
-<pre><code class="language-html">
-&lt;div class=&quot;code-block&quot;&gt;
-  &lt;pre&gt;&lt;code id=&quot;snippet&quot; class=&quot;language-html&quot;&gt;
-    {{ codeSnippet | escape }}
-  &lt;/code&gt;&lt;/pre&gt;
+      
+<div class="grid gap-lg grid-cols-3 mobile:grid-cols-2">
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/layout/">Layouts</a>
+      </h4>
 
-  &lt;button
-    class=&quot;copy-data-icon&quot;
-    data-copy-target=&quot;#snippet&quot;&gt;
-    content_copy
-  &lt;/button&gt;
-&lt;/div&gt;
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/layout/#grid/">Grid</a>
+            </li>
+          
+            <li>
+              <a href="/styles/layout/#template-structure/">Template Structure</a>
+            </li>
+          
+            <li>
+              <a href="/styles/layout/#responsive-design/">Responsive Design</a>
+            </li>
+          
+            <li>
+              <a href="/styles/layout/#full-width-layout/">Full-Width Layout</a>
+            </li>
+          
+            <li>
+              <a href="/styles/layout/#themes/">Themes</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/typography/">Typography</a>
+      </h4>
 
-</code></pre>
-<p>escape turns <code>&lt;</code> into <code>&amp;lt;</code>, browser stops being “creative”, <code>&lt;pre&gt;</code> preserves lines, copy button works.
-Life is briefly good.</p>
-<h3>2. CSS Is Worse (Of Course)</h3>
-<p>CSS brings another level of pain: Markdown decides to insert <code>&lt;p&gt;</code> tags inside your <code>&lt;code&gt;</code> like a toddler decorating a cake with olives.</p>
-<p>So for CSS, we add one trick:</p>
-<pre><code class="language-liquid">{{ codeStyles | escape | replace: '\n', '&amp;#10;' }}
-</code></pre>
-<p>Markdown stops “helping”, browser renders <code>&amp;#10;</code> as actual newlines, formatting survives.</p>
-<p>Victory.</p>
-<p>Dirty victory. But victory.</p>
-<h2>Bonus Lessons Learned (so you don’t step in the same rakes)</h2>
-<p>Things we discovered along the way:</p>
-<ul>
-<li><code>{% raw %}</code> is not a magic wand. It only stops Liquid, Markdown still happily destroys things.</li>
-<li>Markdown only leaves <code>&lt;pre&gt;</code> alone if the whole surrounding block is “HTML territory”. Mixed mode triggers chaos.</li>
-<li>Whitespace control in Liquid (<code>{%- … -%}</code>) is your friend.</li>
-<li>Browsers were never designed to “show HTML” safely inside HTML. That’s like asking a tiger to babysit a churrasco.</li>
-</ul>
-<h2>Final Thoughts</h2>
-<p><code>&lt;pre&gt;</code> isn’t broken. It just obeys rules written in 1995, before documentation pages, Eleventy, copy buttons, mobile devices, or happiness existed.</p>
-<p>So if you’re:</p>
-<ul>
-<li>showing code</li>
-<li>want formatting</li>
-<li>want a copy button</li>
-<li>and don’t want to drown your life in dependencies</li>
-</ul>
-<p>then this works. Reliably. Sanely. Mostly.</p>
-<p>And if future you is reading this because it broke again…
-well, you knew what industry you signed up for.</p>
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/typography/#font-families/">Font Families</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#copy-hierarchy/">Copy Hierarchy</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#headings/">Headings</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#body-text/">Body Text</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#blockquotes/">Blockquotes</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#code/">Code</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#inline-elements/">Sidenotes</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/#horizontal-rules/">Horizontal Rules</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/typography/interactive/">Interactive Elements</a>
+      </h4>
+
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/typography/interactive/#links/">Links</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/interactive/#buttons/">Buttons</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/interactive/#forms/">Forms</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/typography/lists/">Lists</a>
+      </h4>
+
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/typography/lists/#general-lists/">General Lists</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/lists/#semi-column-lists/">Semi-Column Lists</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/lists/#feed-list/">Feed List</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/typography/lists/">Tables</a>
+      </h4>
+
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/typography/lists/#basic-table/">Basic Table</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/lists/#striped-table/">Striped Table</a>
+            </li>
+          
+            <li>
+              <a href="/styles/typography/lists/#terminal-table/">Terminal Table</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+    <div class="index-list">
+      <h4>
+        <a href="/styles/colors/">Colors</a>
+      </h4>
+
+      
+        <ul>
+          
+            <li>
+              <a href="/styles/colors/#grayscale-palette/">Grayscale Palette</a>
+            </li>
+          
+            <li>
+              <a href="/styles/colors/#brand-color/">Brand Color</a>
+            </li>
+          
+            <li>
+              <a href="/styles/colors/#technical-colors/">Technical Colors</a>
+            </li>
+          
+            <li>
+              <a href="/styles/colors/#supporting-colors/">Supporting Colors</a>
+            </li>
+          
+        </ul>
+      
+    </div>
+  
+</div>
 
     </article>
   </div>

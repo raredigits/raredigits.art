@@ -1,0 +1,64 @@
+[
+  {
+    "category": "Layouts",
+    "url": "/styles/layout/",
+    "topics": [
+      { "title": "Grid", "url": "/styles/layout/#grid/" },
+      { "title": "Template Structure", "url": "/styles/layout/#template-structure/" },
+      { "title": "Responsive Design", "url": "/styles/layout/#responsive-design/" },
+      { "title": "Full-Width Layout", "url": "/styles/layout/#full-width-layout/" },
+      { "title": "Themes", "url": "/styles/layout/#themes/" }
+    ]
+  },
+  {
+    "category": "Typography",
+        "url": "/styles/typography/",
+        "topics": [
+        { "title": "Font Families", "url": "/styles/typography/#font-families/" },
+        { "title": "Copy Hierarchy", "url": "/styles/typography/#copy-hierarchy/" },
+        { "title": "Headings", "url": "/styles/typography/#headings/" },
+        { "title": "Body Text", "url": "/styles/typography/#body-text/" },
+        { "title": "Blockquotes", "url": "/styles/typography/#blockquotes/" },
+        { "title": "Code", "url": "/styles/typography/#code/" },
+        { "title": "Sidenotes", "url": "/styles/typography/#inline-elements/" },
+        { "title": "Horizontal Rules", "url": "/styles/typography/#horizontal-rules/" }
+        ]
+  },
+  {
+    "category": "Interactive Elements",
+    "url": "/styles/typography/interactive/",
+    "topics": [
+      { "title": "Links", "url": "/styles/typography/interactive/#links/" },
+      { "title": "Buttons", "url": "/styles/typography/interactive/#buttons/" },
+      { "title": "Forms", "url": "/styles/typography/interactive/#forms/" }
+    ]
+  },
+  {
+    "category": "Lists",
+    "url": "/styles/typography/lists/",
+    "topics": [
+      { "title": "General Lists", "url": "/styles/typography/lists/#general-lists/" },
+      { "title": "Semi-Column Lists", "url": "/styles/typography/lists/#semi-column-lists/" },
+      { "title": "Feed List", "url": "/styles/typography/lists/#feed-list/" }
+    ]
+  },
+  {
+    "category": "Tables",
+    "url": "/styles/typography/lists/",
+    "topics": [
+      { "title": "Basic Table", "url": "/styles/typography/lists/#basic-table/" },
+      { "title": "Striped Table", "url": "/styles/typography/lists/#striped-table/" },
+      { "title": "Terminal Table", "url": "/styles/typography/lists/#terminal-table/" }
+    ]
+  },
+  {
+    "category": "Colors",
+    "url": "/styles/colors/",
+    "topics": [
+      { "title": "Grayscale Palette", "url": "/styles/colors/#grayscale-palette/" },
+      { "title": "Brand Color", "url": "/styles/colors/#brand-color/" },
+      { "title": "Technical Colors", "url": "/styles/colors/#technical-colors/" },
+      { "title": "Supporting Colors", "url": "/styles/colors/#supporting-colors/" }
+    ]
+  }
+]

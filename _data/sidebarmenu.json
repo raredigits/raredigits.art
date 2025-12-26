@@ -13,7 +13,13 @@
       "items": [
       { "title": "The Idea", "url": "/styles/idea/" },
       { "title": "Usage", "url": "/styles/usage/" },
-      { "title": "Modules", "url": "/styles/modules/" },
+      { 
+          "title": "Modules", 
+          "url": "/styles/modules/",
+          "subitems": [
+            { "title": "Table of Contents", "url": "/styles/modules/table-of-contents/" }
+          ]
+      },
       { "title": "Layout", "url": "/styles/layout/" },
       { 
           "title": "Typography", 

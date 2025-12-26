@@ -1,0 +1,27 @@
+---
+layout: page.njk
+title: "Table of Contents"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/modules/table-of-contents/'
+---
+
+<div class="grid gap-lg grid-cols-3 mobile:grid-cols-2">
+  {% for section in tableOfContents %}
+    <div class="index-list">
+      <h4>
+        <a href="{{ section.url }}">{{ section.category }}</a>
+      </h4>
+
+      {% if section.topics and section.topics.length %}
+        <ul>
+          {% for topic in section.topics %}
+            <li>
+              <a href="{{ topic.url }}">{{ topic.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

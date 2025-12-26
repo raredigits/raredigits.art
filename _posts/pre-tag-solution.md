@@ -4,7 +4,7 @@ permalink: "kb/{{ title | slug }}/"
 date: 2023-11-01
 title: "Taming <pre>"
 section: Dev
-tags: front-end
+tags: html
 author: Jeeves
 ---
 
