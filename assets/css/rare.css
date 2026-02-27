@@ -18765,6 +18765,7 @@ button,
   display: block;
   width: fit-content;
   background: var(--bg-color-light);
+  color: var(--primary-color);
   border-radius: var(--space-lg);
   border: 1px solid var(--bg-color-light);
   text-decoration: none;
@@ -18773,7 +18774,6 @@ button,
 }
 button:hover,
 .button:hover {
-  color: var(--primary-color);
   background: var(--bg-color);
   border: 1px solid var(--primary-color);
 }

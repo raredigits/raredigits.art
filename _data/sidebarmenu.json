@@ -44,11 +44,19 @@
     "Charts": {
       "url": "/charts/",
       "items": [
-      { "title": "Line", "url": "/charts/line/" },
-      { "title": "Area", "url": "/charts/area/" },
+      { 
+          "title": "Line", 
+          "url": "/charts/line/",
+          "subitems": [
+            { "title": "Area", "url": "/charts/line/area/" },
+            { "title": "Time Series", "url": "/charts/line/time-series/" },
+            { "title": "Two Axes", "url": "/charts/line/two-axes/" }
+          ]
+      },
       { "title": "Bar", "url": "/charts/bar/" },
       { "title": "Pie", "url": "/charts/pie/" },
       { "title": "Donut", "url": "/charts/donut/" },
+      { "title": "Combined", "url": "/charts/combined/" },
       { "title": "Radial", "url": "/charts/radial/" },
       { "title": "Dots", "url": "/charts/dots/" },
       { "title": "Graph", "url": "/charts/graph/" }

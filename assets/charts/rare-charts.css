@@ -1,0 +1,110 @@
+/* assets/charts/src/core/charts.css */
+.rc-chart {
+  display: flex;
+  flex-direction: column;
+}
+.rc-chart > .rc-chart-header {
+  order: 0;
+}
+.rc-chart > svg {
+  order: 1;
+}
+.rc-chart > .rc-chart-footer {
+  order: 2;
+}
+.rc-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-right: 2px;
+  user-select: none;
+}
+.rc-chart-header-left {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+h5.chart-title {
+  margin: 0;
+  font-family: var(--rc-font);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--rc-muted);
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+p.chart-subtitle {
+  margin: 2px 0 6px 0;
+  font-family: var(--rc-font);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  color: var(--rc-muted);
+  opacity: 0.9;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chart-legend {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--rc-font);
+  font-size: 11px;
+  color: var(--rc-muted);
+  white-space: nowrap;
+}
+.chart-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+  background: var(--rc-accent);
+  border: 1px solid var(--rc-border);
+  box-sizing: border-box;
+}
+.rc-chart-footer {
+  user-select: none;
+  padding-right: 2px;
+}
+cite.chart-source {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--rc-font);
+  font-size: 11px;
+  color: var(--rc-muted);
+  opacity: 0.85;
+  font-style: normal;
+}
+.rc-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: #fff;
+  border: 1px solid var(--rc-border);
+  padding: 8px 16px;
+  font-family: var(--rc-font);
+  font-size: 14px;
+  color: var(--rc-text);
+  opacity: 0;
+  transition: opacity 0.1s;
+  white-space: nowrap;
+  z-index: 100;
+}
+.rc-crosshair {
+  stroke: #444;
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}

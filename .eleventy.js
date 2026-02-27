@@ -26,10 +26,13 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets/css/rare.css");
   eleventyConfig.addPassthroughCopy("assets/css/examples/rare-styles-main.css");
   eleventyConfig.addPassthroughCopy("assets/css/rare-website.css");
+  eleventyConfig.addPassthroughCopy("assets/charts");
 
   eleventyConfig.addWatchTarget("./assets/css/rare.css");
   eleventyConfig.addWatchTarget("./assets/css/examples/rare-styles-main.css");
   eleventyConfig.addWatchTarget("./assets/css/");
+
+  eleventyConfig.addWatchTarget("./assets/charts/rare-charts.js");
 
   eleventyConfig.setBrowserSyncConfig({
     files: [
