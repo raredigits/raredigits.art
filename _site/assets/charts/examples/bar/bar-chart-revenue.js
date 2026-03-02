@@ -15,15 +15,15 @@
   ];
 
   new RareCharts.Bar('#bar-chart-revenue', {
-    title: 'Revenue',
+    title:    'Revenue Performance',
     subtitle: 'Total monthly revenue gained in 2024, USD',
     legend: [
-      { label: 'Revenue', color: '#00aaff' }
+      { label: 'Revenue', color: '#00aaff', type: 'bar' },
     ],
-    source: 'Source: Internal accounting',
-    height: 420,
+    source:   'Source: Internal accounting',
+    height:   420,
+    barColor: '#00aaff',
     yTickFormat: d => '$' + Number(d).toLocaleString('en-US'),
-    theme: { bar: '#00aaff' },
     tooltipFormat: d => `
       <div style="color:#555">${d.label} 2025</div>
       <div style="color:#00aaff">$${(d.value / 1000).toFixed(0)}K</div>

@@ -15,18 +15,40 @@
 //   yTickFormat    — function(value) => string
 //   xTickFormat    — function(date) => string
 //   yTicks         — number of ticks (default: 4)
-//   yFormat        — 'auto' (default) | 'percent' | 'number'  (used only if yTickFormat is not provided)
-//   zeroEpsilon    — treat values with |v| < epsilon as zero (default: 1e-6)
+//   yFormat        — 'auto' (default) | 'percent' | 'number'
+//   zeroEpsilon    — treat |v| < epsilon as zero (default: 1e-6)
+//   yPrefix / ySuffix
 //
-//   yLabelsOnly    — show only Y tick labels (no axis line, no tick lines) (default: true)
+//   yLabelsOnly    — show only Y tick labels (default: true)
 //   endLabels      — show last value labels on the right (default: true)
 //
 //   crosshair      — enable crosshair + dots + tooltip (default: true)
 //   tooltipFormat  — function({date, points:[{name,value,color}]}) => html
+//
+//   curve          — 'linear'|'monotone'|'basis'|'cardinal'|'step'|... (default: 'monotone')
+//   curveTension   — 0..1 for 'cardinal' (default: 0)
+//   area           — fill area under line(s) (default: false)
+//   areaOpacity    — default area opacity (default: 0.12)
+//   areaBaseline   — 'zero'|'min'|number (default: 'zero')
+//
+// Per-series overrides (multi-series only):
+//   series.curve, series.strokeWidth, series.area, series.areaOpacity, series.areaBaseline
 
 import * as d3 from 'd3';
-import { Chart } from '../core/Chart.js';
-import { Tooltip } from '../core/Tooltip.js';
+import { Chart }             from '../core/Chart.js';
+import { Tooltip }           from '../core/Tooltip.js';
+import { Crosshair }         from '../core/Crosshair.js';
+import { parseDate, resolveEase, resolveStrokeDash } from '../core/utils.js';
+import { linePath, areaPath }     from '../core/seriesPath.js';
+import {
+  renderGrid,
+  renderZeroBaseline,
+  renderAxisX,
+  renderAxisYRight,
+  renderEndLabels,
+  animateLines,
+  renderMarkers,
+} from '../core/renderHelpers.js';
 
 export class Line extends Chart {
   constructor(selector, options = {}) {
@@ -34,19 +56,21 @@ export class Line extends Chart {
       height: 240,
       margin: {
         top:    options.margin?.top    ?? 10,
-        right:  options.margin?.right  ?? 60, 
+        right:  options.margin?.right  ?? 60,
         bottom: options.margin?.bottom ?? 18,
         left:   options.margin?.left   ?? 0,
       },
       ...options,
     });
 
-    this._series = [];
-    this._tooltip = new Tooltip(this.container, this.theme);
+    this._series       = [];
     this._didAnimateIn = false;
 
-    this._initSVG();
+    const tooltip = new Tooltip(this.container, this.theme);
+    this._initSVG(tooltip);
   }
+
+  // ─── Data ─────────────────────────────────────────────────────────────────
 
   setData(data) {
     this._series = this._normalizeData(data);
@@ -54,44 +78,42 @@ export class Line extends Chart {
     return this;
   }
 
-  _parseDate(v) {
-    if (v instanceof Date) return v;
-    if (typeof v === 'number') return new Date(v);
-    const dt = new Date(v);
-    return Number.isNaN(+dt) ? null : dt;
-  }
-
   _normalizeData(data) {
     if (!data) return [];
 
-    // If looks like [{date,value}] => single series
-    if (Array.isArray(data) && data.length && data[0] && 'date' in data[0] && 'value' in data[0]) {
+    // Single-series shorthand: [{date, value}, ...]
+    if (Array.isArray(data) && data[0] && 'date' in data[0] && 'value' in data[0]) {
       return [{
-        name: this.options.seriesName ?? 'Series',
-        color: this.options.lineColor ?? (this.theme.blue ?? this.theme.accent),
-        values: data.map(d => ({
-          date: this._parseDate(d.date),
-          value: +d.value,
-        })).filter(d => d.date && Number.isFinite(d.value))
+        name:   this.options.seriesName ?? 'Series',
+        color:  this.options.lineColor  ?? this.theme.accent,
+        type:   'line',
+        values: data
+          .map(d => ({ date: parseDate(d.date), value: +d.value }))
+          .filter(d => d.date && Number.isFinite(d.value)),
       }];
     }
 
     // Multi-series
-    if (Array.isArray(data)) {
-      return data.map((s, idx) => ({
-        name: s.name ?? `Series ${idx + 1}`,
-        color: s.color ?? (this.theme.colors?.[idx % (this.theme.colors.length || 1)] ?? (this.theme.accent)),
-        values: (s.values ?? []).map(d => ({
-          date: this._parseDate(d.date),
-          value: +d.value,
-        })).filter(d => d.date && Number.isFinite(d.value))
-      })).filter(s => s.values.length);
-    }
-
-    return [];
+    return (Array.isArray(data) ? data : [])
+      .map((s, idx) => ({
+        name:         s.name   ?? `Series ${idx + 1}`,
+        color:        s.color  ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent),
+        type:         'line',
+        curve:        s.curve,
+        area:         s.area,
+        areaOpacity:  s.areaOpacity,
+        areaBaseline: s.areaBaseline,
+        strokeWidth:  Number.isFinite(+s.strokeWidth) ? +s.strokeWidth : 2,
+        values: (s.values ?? [])
+          .map(d => ({ date: parseDate(d.date), value: +d.value }))
+          .filter(d => d.date && Number.isFinite(d.value)),
+      }))
+      .filter(s => s.values.length);
   }
 
-  _initSVG() {
+  // ─── Init ─────────────────────────────────────────────────────────────────
+
+  _initSVG(tooltip) {
     this.container.style.height = this.options.height + 'px';
 
     this.svg = d3.select(this.container)
@@ -100,31 +122,26 @@ export class Line extends Chart {
       .attr('height', '100%');
 
     const { left, top } = this.margin;
+    this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
 
-    this.g = this.svg.append('g')
-      .attr('transform', `translate(${left},${top})`);
+    this.gGrid  = this.g.append('g').attr('class', 'rc-grid');
+    this.gLines = this.g.append('g').attr('class', 'rc-lines');
+    this.gAxisX = this.g.append('g').attr('class', 'rc-axis rc-axis-x');
+    this.gAxisY = this.g.append('g').attr('class', 'rc-axis rc-axis-y');
+    this.gEnds    = this.g.append('g').attr('class', 'rc-end-labels');
+    this.gMarkers = this.g.append('g').attr('class', 'rc-markers');
+    this.gZero  = this.g.append('g').attr('class', 'rc-zero-layer');
 
-    this.gGrid   = this.g.append('g').attr('class', 'rc-grid');
-    this.gLines  = this.g.append('g').attr('class', 'rc-lines');
-    this.gAxisX  = this.g.append('g').attr('class', 'rc-axis rc-axis-x');
-    this.gAxisY  = this.g.append('g').attr('class', 'rc-axis rc-axis-y');
-    this.gEnds   = this.g.append('g').attr('class', 'rc-end-labels');
-
-    // Crosshair layer
-    this.gCross  = this.g.append('g').attr('class', 'rc-crosshair');
-    this.crossLine = this.gCross.append('line')
-      .attr('class', 'rc-cross-line')
-      .attr('y1', 0)
-      .attr('y2', 0)
-      .attr('opacity', 0);
-
-    this.gCrossDots = this.gCross.append('g').attr('class', 'rc-cross-dots');
-
-    this.overlay = this.g.append('rect')
+    const gCross  = this.g.append('g').attr('class', 'rc-crosshair');
+    const overlay = this.g.append('rect')
       .attr('class', 'rc-overlay')
       .attr('fill', 'transparent')
       .style('pointer-events', 'all');
+
+    this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
   }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   render() {
     if (!this._series.length) return;
@@ -132,226 +149,123 @@ export class Line extends Chart {
     const W = this.width, H = this.height;
     if (W <= 0 || H <= 0) return;
 
+    const o = this.options;
     const t = this.theme;
 
-    const animate = (this.options.animate ?? true) && !this._didAnimateIn;
-    const duration = this.options.duration ?? 650;
-    const easeName = this.options.ease ?? 'cubicOut';
-    const ease = easeName === 'linear'
-      ? d3.easeLinear
-      : (easeName === 'cubicInOut' ? d3.easeCubicInOut : d3.easeCubicOut);
+    // Animation
+    const animate  = (o.animate ?? true) && !this._didAnimateIn;
+    const duration = o.duration ?? 650;
+    const ease     = resolveEase(o.ease ?? 'cubicOut');
 
-    const crosshair = this.options.crosshair ?? true;
-    const endLabels = this.options.endLabels ?? true;
-    const yLabelsOnly = this.options.yLabelsOnly ?? true;
-
-    const all = this._series.flatMap(s => s.values);
+    // Scales
+    const all  = this._series.flatMap(s => s.values);
     const xPad = 8;
-    const x = d3.scaleTime()
+    const x    = d3.scaleTime()
       .domain(d3.extent(all, d => d.date))
       .range([xPad, W - xPad]);
 
     const maxY = d3.max(all, d => d.value);
     const minY = d3.min(all, d => d.value);
-    const pad = (maxY - minY) * 0.08 || 1;
-
-    const y = d3.scaleLinear()
+    const pad  = (maxY - minY) * 0.08 || 1;
+    const y    = d3.scaleLinear()
       .domain([minY - pad, maxY + pad])
       .nice(4)
       .range([H, 0]);
 
-    const yTicks = this.options.yTicks ?? 4;
+    // Formatters
+    const yTicks   = o.yTicks ?? 4;
+    const absMax   = d3.max(all, d => Math.abs(d.value)) ?? 0;
+    const usePercent = (o.yFormat ?? 'auto') === 'percent' ||
+                       ((o.yFormat ?? 'auto') === 'auto' && absMax <= 1);
 
-    // Y formatter defaults:
-    // - If values look like fractions (absMax <= 1) we default to percent.
-    // - Otherwise we default to a compact number format.
-    // Override with `yTickFormat`, or force via `yFormat: 'percent' | 'number' | 'auto'`.
-    const yFormatMode = this.options.yFormat ?? 'auto';
-    const absMax = d3.max(all, d => Math.abs(d.value)) ?? 0;
-    const usePercent = yFormatMode === 'percent' || (yFormatMode === 'auto' && absMax <= 1);
+    const prefix  = o.yPrefix ?? '';
+    const suffix  = o.ySuffix ?? '';
+    const zeroEps = o.zeroEpsilon ?? 1e-6;
+    const baseY   = usePercent ? d3.format('+.2%') : d3.format('.2s');
 
-    const prefix = this.options.yPrefix ?? '';
-    const suffix = this.options.ySuffix ?? '';
-    const zeroEps = this.options.zeroEpsilon ?? 1e-6;
-
-    const baseY = usePercent
-      ? d3.format('+.2%')
-      : d3.format('.2s');
-
-    const yTickFormat = this.options.yTickFormat ?? (v => {
-      // kill +0.00% / -0.00% and any tiny noise around zero
-      if (Math.abs(v) < zeroEps) {
-        const z = usePercent && !suffix ? '0%' : '0';
-        return `${prefix}${z}${suffix}`;
-      }
+    const yTickFormat = o.yTickFormat ?? (v => {
+      if (Math.abs(v) < zeroEps) return `${prefix}${usePercent && !suffix ? '0%' : '0'}${suffix}`;
       return `${prefix}${baseY(v)}${suffix}`;
     });
 
-    const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%m/%d')(d));
+    const xTickFormat = o.xTickFormat ?? (d => d3.timeFormat('%m/%d')(d));
 
-    // Grid: horizontal, subtle
-    this.gGrid
-      .attr('transform', 'translate(0,0)')
-      .call(d3.axisLeft(y).ticks(yTicks).tickSize(-W).tickFormat(''))
-      .call(g => {
-        g.selectAll('line').attr('stroke', t.grid);
-        g.select('.domain').remove();
-        g.selectAll('text').remove();
-      });
+    // Curve / area options
+    const defaultCurve    = o.curve          ?? 'monotone';
+    const tension         = o.curveTension   ?? 0;
+    const globalArea      = o.area           ?? false;
+    const globalAreaOp    = o.areaOpacity    ?? 0.12;
+    const globalAreaBase  = o.areaBaseline   ?? 'zero';
+    const globalDash      = o.strokeDash    ?? null;
+    const globalMarkers   = o.markers       ?? false;
+    const globalShape     = o.markerShape   ?? 'circle';
+    const globalSize      = o.markerSize    ?? 4;
 
-    // X axis bottom
-    this.gAxisX
-      .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x).ticks(6).tickSize(0).tickFormat(xTickFormat))
-      .call(g => {
-        g.selectAll('text').attr('fill', t.muted);
-        g.select('.domain').remove();
-        g.selectAll('line').remove();
-      });
+    // ── Render helpers ──
+    renderGrid(this.gGrid, y, W, yTicks, t);
+    renderZeroBaseline(this.gZero, y, W, t);
+    renderAxisX(this.gAxisX, x, H, xTickFormat, t);
+    renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t);
 
-    // Y axis right: labels only (no axis line)
-    this.gAxisY
-      .attr('transform', `translate(${W},0)`)
-      .call(d3.axisRight(y).ticks(yTicks).tickSize(0).tickFormat(yTickFormat))
-      .call(g => {
-        g.selectAll('text').attr('fill', t.muted);
-        if (yLabelsOnly) {
-          g.select('.domain').remove();
-          g.selectAll('line').remove();
-        } else {
-          g.select('.domain').attr('stroke', t.border);
-          g.selectAll('line').remove();
-        }
-      });
+    // Areas
+    const areaSeries = this._series.filter(s => (s.area ?? globalArea) === true);
+    this.gLines.selectAll('.rc-line-area')
+      .data(areaSeries, s => s.name)
+      .join('path')
+      .attr('class', 'rc-line-area')
+      .attr('d', s => areaPath(s, x, y, defaultCurve, globalAreaBase, tension))
+      .attr('fill',    s => s.color)
+      .attr('opacity', s => s.areaOpacity ?? globalAreaOp);
 
-    // Line generator
-    const curveName = this.options.curve ?? 'monotone';
-    const curve =
-    curveName === 'linear' ? d3.curveLinear :
-    curveName === 'step'   ? d3.curveStep :
-    d3.curveMonotoneX;
-
-    const line = d3.line()
-    .x(d => x(d.date))
-    .y(d => y(d.value))
-    .curve(curve);
-
-    // Draw lines
+    // Lines
     const paths = this.gLines.selectAll('.rc-line')
       .data(this._series, s => s.name)
       .join('path')
       .attr('class', 'rc-line')
       .attr('fill', 'none')
-      .attr('stroke', s => s.color)
-      .attr('stroke-width', 2)
-      .attr('d', s => line(s.values));
+      .attr('stroke',       s => s.color)
+      .attr('stroke-width',   s => s.strokeWidth ?? 2)
+      .attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
+      .attr('d', s => linePath(s, x, y, defaultCurve, tension));
 
-    // Animate line drawing once
     if (animate) {
-      paths.each(function() {
-        const p = d3.select(this);
-        const total = this.getTotalLength?.() ?? 0;
-        if (!total) return;
+      // Lines with a dash pattern cannot use the draw-animation trick
+      // (both use stroke-dasharray and conflict). Animate solid lines only;
+      // dashed/dotted lines appear instantly with their real pattern.
+      const solidPaths = paths.filter(s => !resolveStrokeDash(s.strokeDash ?? globalDash));
+      const dashedPaths = paths.filter(s =>  resolveStrokeDash(s.strokeDash ?? globalDash));
 
-        p.attr('stroke-dasharray', `${total} ${total}`)
-         .attr('stroke-dashoffset', total)
-         .transition()
-         .duration(duration)
-         .ease(ease)
-         .attr('stroke-dashoffset', 0);
-      });
+      dashedPaths.attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
+                 .attr('stroke-dashoffset', null);
 
-      setTimeout(() => { this._didAnimateIn = true; }, duration + 20);
+      animateLines(solidPaths, duration, ease, () => { this._didAnimateIn = true; });
+
+      // If there are no solid paths, mark animation done immediately
+      if (solidPaths.empty()) this._didAnimateIn = true;
     } else {
-      paths.attr('stroke-dasharray', null).attr('stroke-dashoffset', null);
+      paths.attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
+           .attr('stroke-dashoffset', null);
       this._didAnimateIn = true;
     }
 
-    // End labels (right side) like the screenshot
-    this.gEnds.selectAll('*').remove();
-    if (endLabels) {
-      const lastPoints = this._series.map(s => {
-        const d = s.values[s.values.length - 1];
-        return { name: s.name, color: s.color, date: d.date, value: d.value };
-      });
-
-      this.gEnds.selectAll('.rc-end-label')
-        .data(lastPoints)
-        .join('text')
-        .attr('class', 'rc-end-label')
-        .attr('x', W + 10)
-        .attr('y', d => y(d.value))
-        .attr('dy', '0.35em')
-        .attr('fill', d => d.color)
-        .style('font-family', t.font)
-        .style('font-size', t.fontSize)
-        .text(d => yTickFormat(d.value));
+    // End labels
+    if (o.endLabels ?? true) {
+      renderEndLabels(this.gEnds, this._series, y, W, yTickFormat, t);
+    } else {
+      this.gEnds.selectAll('*').remove();
     }
 
-    // Crosshair (vertical line + dots + tooltip)
-    this.overlay
-      .attr('width', W)
-      .attr('height', H);
+    // Markers
+    renderMarkers(this.gMarkers, this._series, x, () => y, globalMarkers, globalShape, globalSize, t);
 
-    this.crossLine
-      .attr('y1', 0)
-      .attr('y2', H)
-      .attr('stroke', t.border)
-      .attr('stroke-dasharray', '2,3');
-
-    const bisect = d3.bisector(d => d.date).left;
-
-    const setCross = (mx, event) => {
-      const dt = x.invert(mx);
-
-      const points = this._series.map(s => {
-        const vals = s.values;
-        const i = bisect(vals, dt, 1);
-        const a = vals[i - 1];
-        const b = vals[i];
-        const d = (!b || (dt - a.date) < (b.date - dt)) ? a : b;
-        return { name: s.name, color: s.color, date: d.date, value: d.value };
-      });
-
-      this.crossLine
-        .attr('x1', mx)
-        .attr('x2', mx)
-        .attr('opacity', crosshair ? 1 : 0);
-
-      const dots = this.gCrossDots.selectAll('.rc-cross-dot')
-        .data(points, d => d.name)
-        .join('circle')
-        .attr('class', 'rc-cross-dot')
-        .attr('r', 3)
-        .attr('fill', d => d.color)
-        .attr('stroke', t.bg)
-        .attr('stroke-width', 1.5)
-        .attr('cx', d => x(d.date))
-        .attr('cy', d => y(d.value))
-        .attr('opacity', crosshair ? 1 : 0);
-
-      if (!crosshair) return;
-
-      const payload = { date: points[0]?.date, points };
-
-      const html = this.options.tooltipFormat
-        ? this.options.tooltipFormat(payload)
-        : `<div>${d3.timeFormat('%b %d, %Y')(payload.date)}</div>` +
-          points.map(p => `<div style="color:${p.color}">${p.name}: ${yTickFormat(p.value)}</div>`).join('');
-
-      const [px, py] = d3.pointer(event, this.container);
-      this._tooltip.show(px, py, html);
-    };
-
-    this.overlay
-      .on('mousemove', (event) => {
-        const [mx] = d3.pointer(event, this.overlay.node());
-        setCross(mx, event);
-      })
-      .on('mouseleave', () => {
-        this.crossLine.attr('opacity', 0);
-        this.gCrossDots.selectAll('.rc-cross-dot').attr('opacity', 0);
-        this._tooltip.hide();
-      });
+    // Crosshair
+    this._crosshair.bind({
+      W, H, x,
+      series:     this._series,
+      enabled:    o.crosshair ?? true,
+      scaleFor:   () => y,
+      formatFor:  (_s, v) => yTickFormat(v),
+      tooltipFmt: o.tooltipFormat,
+    });
   }
 }

@@ -1,39 +1,43 @@
 // RareCharts — Tooltip
 // Универсальный тултип для всех типов графиков.
+// Цвета берутся из theme.tooltip, не хардкодятся.
 
 export class Tooltip {
   constructor(container, theme) {
+    this._container = container;
     this.theme = theme;
+
+    const tt = theme.tooltip ?? {};
+
     this.el = document.createElement('div');
+    this.el.className = 'rc-tooltip';
+
     Object.assign(this.el.style, {
-      position:      'absolute',
-      pointerEvents: 'none',
-      background:    '#ffffff',
-      border:        '1px solid #3a3a3a',
-      padding:       '8px 16px',
-      fontFamily:    theme.font,
-      fontSize:      '14px',
-      color:         theme.text,
-      opacity:       '0',
-      transition:    'opacity 0.1s',
-      whiteSpace:    'nowrap',
-      zIndex:        '100',
+      fontFamily: theme.numericFont ?? theme.font,
+      fontSize:   '13px',
+      color:      tt.text  ?? theme.text,
+      background: tt.bg    ?? '#fff',
+      border:     `1px solid ${tt.border ?? theme.border}`,
+      boxShadow:  tt.shadow ?? 'none',
     });
-    container.style.position = 'relative';
+
     container.appendChild(this.el);
   }
 
   show(x, y, html) {
     this.el.innerHTML = html;
-    // Не выходим за правый край контейнера
-    const maxX = this.el.parentElement.clientWidth - this.el.offsetWidth - 12;
-    this.el.style.left    = `${Math.min(x + 12, maxX)}px`;
-    this.el.style.top     = `${Math.max(y - 20, 8)}px`;
-    this.el.style.opacity = '1';
+    this.el.classList.add('is-visible');
+
+    // Не выходим за правый и нижний края контейнера
+    const maxX = this._container.clientWidth  - this.el.offsetWidth  - 12;
+    const maxY = this._container.clientHeight - this.el.offsetHeight - 8;
+
+    this.el.style.left = `${Math.min(x + 12, maxX)}px`;
+    this.el.style.top  = `${Math.min(Math.max(y - 20, 8), maxY)}px`;
   }
 
   hide() {
-    this.el.style.opacity = '0';
+    this.el.classList.remove('is-visible');
   }
 
   destroy() {

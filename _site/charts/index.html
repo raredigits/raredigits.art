@@ -298,16 +298,7 @@
           
             <li>
               
-                <a href="/charts/pie/">Pie</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/donut/">Donut</a>
+                <a href="/charts/dual-axes/">Dual Axes</a>
               
               
               
@@ -325,16 +316,7 @@
           
             <li>
               
-                <a href="/charts/radial/">Radial</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/dots/">Dots</a>
+                <a href="/charts/pie-and-donut/">Pie and Donut</a>
               
               
               
@@ -344,6 +326,33 @@
             <li>
               
                 <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
               
               
               
@@ -362,150 +371,43 @@
   </section>
 
     <article>
-      
-
-
-
-<!-- ── Header ─────────────────────── -->
-<div class="hd">
-  <span class="hd-ticker">AAPL</span>
-  <span class="hd-price"  id="hd-price">—</span>
-  <span class="hd-change" id="hd-change">—</span>
-  <span class="hd-label">RARE CHARTS ▸ DEMO</span>
+      <p>RareCharts is a charting library for professional data presentation. It is built for situations where numbers actually matter: financial reporting, KPI dashboards, operational analytics, strategic reviews. This is not a decorative widget and not a playground for “look, animations”.</p>
+<h3>Interpretation time is not abstract. It is cost</h3>
+<p>Text can be precise. Tables can be structured. But both require sequential reading and mental calculation. A chart compresses that process. It turns numbers into shape, direction, magnitude and change — things the brain reads almost instantly.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="line-chart-demo-revenue"></div>
 </div>
-
-<!-- ── Range buttons ──────────────── -->
-<div class="range-bar" id="rangeBar">
-  <button class="range-btn" data-range="1M">1M</button>
-  <button class="range-btn" data-range="3M">3M</button>
-  <button class="range-btn" data-range="6M">6M</button>
-  <button class="range-btn active" data-range="1Y">1Y</button>
-  <button class="range-btn" data-range="2Y">2Y</button>
-  <button class="range-btn" data-range="ALL">ALL</button>
-</div>
-
-<!-- ── Main chart ─────────────────── -->
-<div class="chart-main" id="mainChart">
-  <span class="chart-hint">SCROLL TO ZOOM · DRAG TO PAN</span>
-</div>
-
-<!-- ── Overview ───────────────────── -->
-<div class="chart-overview" id="overview"></div>
-
-<!-- ── Stats ─────────────────────── -->
-<div class="stats">
-  <div><div class="stat-label">OPEN</div>   <div class="stat-value" id="s-open">—</div></div>
-  <div><div class="stat-label">HIGH</div>   <div class="stat-value" id="s-high">—</div></div>
-  <div><div class="stat-label">LOW</div>    <div class="stat-value" id="s-low">—</div></div>
-  <div><div class="stat-label">VOLUME</div> <div class="stat-value" id="s-vol">—</div></div>
-  <div><div class="stat-label">52W HIGH</div><div class="stat-value" id="s-52h">—</div></div>
-  <div><div class="stat-label">52W LOW</div> <div class="stat-value" id="s-52l">—</div></div>
-</div>
-
-<!-- ── Bar + Donut ────────────────── -->
-<div class="section-title">SECONDARY CHARTS</div>
-<div class="cards-row">
-  <div class="card">
-    <div class="card-title">PORTFOLIO ALLOCATION</div>
-    <div id="donutChart"></div>
+<p>If you write: “Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.</p>
+<h3>RareCharts</h3>
+<div class="sidenote-wrapper">
+  <div>
+    <p>RareCharts is part of Rare Styles, our design system for professional interfaces. This means its visual language, typography and spacing are aligned with a broader system. At the same time, the library can work independently in any project without requiring the rest of Rare Styles.</p>
+  </div>
+  <div class="sidenote">
+    <h5>Built on D3</h5>
+    <p>RareCharts is built on top of D3.js, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
+  </div>
+  <div>
+    <p>You can integrate it into an existing product, an internal dashboard, a reporting tool, or a public-facing analytics page. Architecturally it does not impose a design ideology. It provides a structured base.</p>
+    <p><strong>The library includes</strong>: line charts, bar charts, pie charts, network graphs and combined charts. The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.</p>
+    <p>This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.</p>
   </div>
 </div>
-
-<!-- D3 + RareCharts -->
+<h3>Standard Structure</h3>
+<p>Every chart follows a consistent composition: title, subtitle, legend, chart area and data source. These elements are configurable. They can be provided, extended, overridden or omitted entirely.</p>
+<p>The structure is there to support professional reporting standards. It keeps charts from turning into isolated visual fragments and instead makes them part of a coherent document.</p>
+<h3>Data Handling</h3>
+<p>RareCharts works with internal datasets as well as JSON and CSV inputs. This makes it naturally compatible with APIs, backend responses and analytics pipelines. If your data is structured, it can be visualized.</p>
+<p>The data model is explicit and predictable, which becomes critical when multiple charts consume data from different sources but must behave consistently.</p>
+<h3>Styling and Themes</h3>
+<p>The library includes a built-in styling system and predefined themes that can be overridden or extended. By default, a chart occupies 100% of the parent container’s width, while its height is defined per instance. This ensures predictable behavior in responsive layouts.</p>
+<p>There are no hidden layout “surprises”. Control remains with the developer.</p>
+<h3>Professional Considerations</h3>
+<p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
+<p>These are not cosmetic concerns. In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>
+<p>The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.</p>
 <script src="/assets/charts/rare-charts.js"></script>
-
-<script>
-(async () => {
-  // ── Данные ─────────────────────────────────
-  // В реальном проекте: await RareCharts.fromJson('/data/aapl.json', {...})
-  const { d3 } = RareCharts;
-  const data = RareCharts.generateMockPrices(730, 162);
-  const last = data[data.length - 1];
-  const prev = data[data.length - 2];
-  const chg  = last.value - prev.value;
-  const pct  = chg / prev.value * 100;
-
-  // ── Header ─────────────────────────────────
-  document.getElementById('hd-price').textContent = '$' + last.value.toFixed(2);
-  const chgEl = document.getElementById('hd-change');
-  chgEl.textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${pct.toFixed(2)}%)`;
-  chgEl.className = 'hd-change ' + (chg >= 0 ? 'up' : 'down');
-
-  // ── Stats ──────────────────────────────────
-  document.getElementById('s-open').textContent = '$' + last.open.toFixed(2);
-  document.getElementById('s-high').textContent = '$' + last.high.toFixed(2);
-  document.getElementById('s-low').textContent  = '$' + last.low.toFixed(2);
-  document.getElementById('s-vol').textContent  = d3.format('.2s')(last.volume);
-  document.getElementById('s-52h').textContent  = '$' + d3.max(data, d => d.high).toFixed(2);
-  document.getElementById('s-52l').textContent  = '$' + d3.min(data, d => d.low).toFixed(2);
-
-  // ── TimeSeries ─────────────────────────────
-  const mainChart = new RareCharts.TimeSeries('#mainChart', {
-    height: 340,
-    tooltipFormat: d => {
-      const c = d.value - d.open;
-      const p = (c / d.open * 100).toFixed(2);
-      const color = c >= 0 ? '#00c97a' : '#ff3b5c';
-      return `
-        <div class="rc-tooltip-date">${d.date.toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'})}</div>
-        <div class="rc-tooltip-price" style="color:${color}">$${d.value.toFixed(2)}</div>
-        <div class="rc-tooltip-sub">${c >= 0 ? '+' : ''}${c.toFixed(2)} (${p}%)  VOL ${d3.format('.2s')(d.volume)}</div>
-      `;
-    }
-  });
-
-  mainChart.setData(data);
-
-  // ── Overview ───────────────────────────────
-  const overview = new RareCharts.Overview('#overview', { height: 56 });
-  overview.setData(data, extent => {
-    mainChart.setView(extent);
-  });
-
-  // Двусторонняя синхронизация
-  mainChart.onViewChange(extent => overview.setBrush(extent));
-
-  // Начальный вид — последний год
-  const end   = data[data.length - 1].date;
-  const start = new Date(end);
-  start.setFullYear(start.getFullYear() - 1);
-  mainChart.setView([start, end]);
-  overview.setBrush([start, end]);
-
-  // ── Range buttons ──────────────────────────
-  document.getElementById('rangeBar').addEventListener('click', e => {
-    const btn = e.target.closest('.range-btn');
-    if (!btn) return;
-
-    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const range = btn.dataset.range;
-    const end   = data[data.length - 1].date;
-    const start = new Date(end);
-    if      (range === '1M')  start.setMonth(start.getMonth() - 1);
-    else if (range === '3M')  start.setMonth(start.getMonth() - 3);
-    else if (range === '6M')  start.setMonth(start.getMonth() - 6);
-    else if (range === '1Y')  start.setFullYear(start.getFullYear() - 1);
-    else if (range === '2Y')  start.setFullYear(start.getFullYear() - 2);
-    else if (range === 'ALL') start.setTime(data[0].date.getTime());
-
-    mainChart.setView([start, end]);
-    overview.setBrush([start, end]);
-  });
-
-  // ── Donut ──────────────────────────────────
-  new RareCharts.Donut('#donutChart', {
-    height: 160,
-    centerFormat: v => '$' + (v).toFixed(0) + 'B'
-  }).setData([
-    { label: 'AAPL',  value: 42 },
-    { label: 'MSFT',  value: 28 },
-    { label: 'GOOGL', value: 18 },
-    { label: 'AMZN',  value: 12 },
-  ]);
-})();
-</script>
+<script src="/assets/charts/examples/line/line-chart-revenue.js"></script>
 
     </article>
   </div>

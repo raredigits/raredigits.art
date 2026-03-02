@@ -2,7 +2,7 @@
 // Handles container setup, header/footer rendering, dimensions, and resize.
 // All chart types extend this class.
 
-import { createTheme } from './Theme.js';
+import { createTheme } from './theme.js';
 
 export class Chart {
   constructor(selector, options = {}) {
@@ -26,13 +26,13 @@ export class Chart {
       left:   options.margin?.left   ?? 0,
     };
 
-    // Bind theme values into CSS variables for header/footer styling
-    this.container.style.setProperty('--rc-font', this.theme.font);
-    this.container.style.setProperty('--rc-muted', this.theme.muted);
-    this.container.style.setProperty('--rc-border', this.theme.border);
-    this.container.style.setProperty('--rc-accent', this.theme.accent);
+    // Bind theme values into CSS custom properties for header/footer styling
+    this.container.style.setProperty('--rc-font',      this.theme.font);
+    this.container.style.setProperty('--rc-muted',     this.theme.muted);
+    this.container.style.setProperty('--rc-border',    this.theme.border);
+    this.container.style.setProperty('--rc-accent',    this.theme.accent);
     this.container.style.setProperty('--rc-font-size', this.theme.fontSize);
-    this.container.style.setProperty('--rc-text', this.theme.text);
+    this.container.style.setProperty('--rc-text',      this.theme.text);
 
     this._headerEl   = null;
     this._titleEl    = null;
@@ -48,20 +48,16 @@ export class Chart {
     this._resizeObserver.observe(this.container);
   }
 
-  // ── Header (Title / Subtitle / Legend) ────────────────
-  // Vertical stack: title, subtitle, legend (each optional).
+  // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
 
   _renderHeader() {
-    const hasTitle = !!this.options.title;
+    const hasTitle    = !!this.options.title;
     const hasSubtitle = !!this.options.subtitle;
-    const hasLegend = this.options.legend !== undefined && this.options.legend !== null;
+    const hasLegend   = this.options.legend != null;
 
     if (!hasTitle && !hasSubtitle && !hasLegend) return;
 
-    // Remove existing header if re-rendered
-    if (this._headerEl && this._headerEl.parentNode) {
-      this._headerEl.parentNode.removeChild(this._headerEl);
-    }
+    if (this._headerEl?.parentNode) this._headerEl.remove();
 
     this._headerEl = document.createElement('div');
     this._headerEl.className = 'rc-chart-header';
@@ -69,7 +65,7 @@ export class Chart {
     // Title
     if (hasTitle) {
       this._titleEl = document.createElement('h5');
-      this._titleEl.className = 'chart-title';
+      this._titleEl.className = 'rc-chart-title';
       this._titleEl.textContent = this.options.title;
       this._headerEl.appendChild(this._titleEl);
     }
@@ -77,7 +73,7 @@ export class Chart {
     // Subtitle
     if (hasSubtitle) {
       this._subtitleEl = document.createElement('p');
-      this._subtitleEl.className = 'chart-subtitle';
+      this._subtitleEl.className = 'rc-chart-subtitle';
       this._subtitleEl.textContent = this.options.subtitle;
       this._headerEl.appendChild(this._subtitleEl);
     }
@@ -85,23 +81,28 @@ export class Chart {
     // Legend
     if (hasLegend) {
       this._legendEl = document.createElement('div');
-      this._legendEl.className = 'chart-legend';
+      this._legendEl.className = 'rc-legend';
 
       const legend = this.options.legend;
 
       if (Array.isArray(legend)) {
         legend.forEach(item => {
           const el = document.createElement('div');
-          el.className = 'chart-legend-item';
+          el.className = 'rc-legend-item';
 
-          const dot = document.createElement('span');
-          dot.className = 'chart-legend-dot';
-          dot.style.background = item.color ?? this.theme.accent;
+          // Line indicator for line-type series; dot for everything else
+          const indicator = document.createElement('span');
+          if (item.type === 'bar' || item.type === 'dot') {
+            indicator.className = 'rc-legend-dot';
+          } else {
+            indicator.className = 'rc-legend-line';
+          }
+          indicator.style.background = item.color ?? this.theme.accent;
 
           const text = document.createElement('span');
-          text.textContent = item.label;
+          text.textContent = item.label ?? item.name ?? '';
 
-          el.appendChild(dot);
+          el.appendChild(indicator);
           el.appendChild(text);
           this._legendEl.appendChild(el);
         });
@@ -110,9 +111,7 @@ export class Chart {
       } else if (typeof legend === 'string') {
         this._legendEl.innerHTML = legend;
       } else {
-        const s = document.createElement('div');
-        s.textContent = String(legend);
-        this._legendEl.appendChild(s);
+        this._legendEl.textContent = String(legend);
       }
 
       this._headerEl.appendChild(this._legendEl);
@@ -121,22 +120,19 @@ export class Chart {
     this.container.insertBefore(this._headerEl, this.container.firstChild);
   }
 
-  // ── Footer (Source) ───────────────────────────────────
+  // ── Footer (Source) ───────────────────────────────────────────────────────
 
   _renderFooter() {
-    const hasSource = this.options.source !== undefined && this.options.source !== null && this.options.source !== '';
+    const hasSource = !!this.options.source;
     if (!hasSource) return;
 
-    // Remove existing footer if re-rendered
-    if (this._footerEl && this._footerEl.parentNode) {
-      this._footerEl.parentNode.removeChild(this._footerEl);
-    }
+    if (this._footerEl?.parentNode) this._footerEl.remove();
 
     this._footerEl = document.createElement('div');
     this._footerEl.className = 'rc-chart-footer';
 
     this._sourceEl = document.createElement('cite');
-    this._sourceEl.className = 'chart-source';
+    this._sourceEl.className = 'rc-chart-source';
 
     const src = this.options.source;
     if (src instanceof HTMLElement) {
@@ -149,9 +145,7 @@ export class Chart {
     this.container.appendChild(this._footerEl);
   }
 
-  // ── Dimensions ───────────────────────────────────────
-  // Height is reduced by header and footer height so the chart SVG
-  // doesn't overflow the container.
+  // ── Dimensions ────────────────────────────────────────────────────────────
 
   get width() {
     return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
@@ -168,7 +162,6 @@ export class Chart {
     if (this.width > 0 && this.height > 0) this.render();
   }
 
-  // Implemented by each chart type
   render() {
     throw new Error('render() must be implemented');
   }
@@ -176,11 +169,11 @@ export class Chart {
   destroy() {
     this._resizeObserver.disconnect();
     this.container.innerHTML = '';
-    this._headerEl = null;
-    this._titleEl = null;
+    this._headerEl   = null;
+    this._titleEl    = null;
     this._subtitleEl = null;
-    this._legendEl = null;
-    this._footerEl = null;
-    this._sourceEl = null;
+    this._legendEl   = null;
+    this._footerEl   = null;
+    this._sourceEl   = null;
   }
 }

@@ -22,21 +22,29 @@ var RareCharts = (() => {
   __export(index_exports, {
     Bar: () => Bar,
     Donut: () => Donut,
+    DualAxes: () => DualAxes,
+    Graph: () => Graph,
     Line: () => Line,
     Overview: () => Overview,
+    Pie: () => Donut,
     TimeSeries: () => TimeSeries,
     createTheme: () => createTheme,
     d3: () => src_exports,
+    darkTheme: () => darkTheme,
     defaultTheme: () => defaultTheme,
     fromApi: () => fromApi,
     fromArray: () => fromArray,
     fromCsv: () => fromCsv,
     fromJson: () => fromJson,
-    generateMockPrices: () => generateMockPrices
+    generateMockPrices: () => generateMockPrices,
+    linkPresets: () => linkPresets
   });
 
   // assets/charts/src/core/charts.css
-  var charts_default = ".rc-chart { display: flex; flex-direction: column; margin: var(--font-size-sm) 0 var(--space-lg); }\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-chart > .rc-chart-footer { order: 2; }\n\n.rc-chart > svg { \n    font-family: var(--primary-font);\n    order: 1; \n}\n\n.rc-chart svg .tick text {\n    font-size: var(--font-size-xs);\n    fill: var(--primary-color);\n}\n\n.rc-chart-header {\n    display: flex;\n    flex-direction: column;\n    user-select: none;\n}\n\nh5.chart-title {\n    margin: 0;\n    font-family: var(--primary-font);\n    text-transform: uppercase;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n}\n\np.chart-subtitle {\n    font-size: var(--font-size-sm);\n    margin: 0;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n}\n\n.chart-legend {\n    padding-top: var(--space-sm);\n    display: flex;\n    flex-wrap: nowrap;\n    gap: var(--space-md);\n    font-size: var(--font-size-sm);\n}\n\n.chart-legend-item {\n    display: inline-flex;\n    align-items: center;\n    gap: 6px;\n    white-space: nowrap;\n}\n\n.chart-legend-dot {\n    width: var(--space-sm);\n    height: var(--space-sm);\n    display: inline-block;\n    box-sizing: border-box;\n}\n\n.rc-chart-footer {\n    user-select: none;\n}\n\ncite.chart-source {\n    text-align: left;\n    font-style: normal;\n    color: var(--primary-color);\n    font-size: var(--font-size-sm);\n    margin: var(--space-sm) 0;\n    overflow: hidden;\n    text-overflow: ellipsis;\n    white-space: nowrap;\n}\n\n.rc-tooltip {\n    position: absolute;\n    pointer-events: none;\n    background: #fff;\n    border: 1px solid var(--border-color);\n    padding: var(--space-md) var(--space-lg);\n    opacity: 0;\n    transition: opacity 0.1s;\n    white-space: nowrap;\n    z-index: 100;\n}\n\n.rc-crosshair {\n    stroke: #444;\n    stroke-width: 1;\n    stroke-dasharray: 4 4;\n}\n\n/* LINE PRICE CHART */\n\n.line-chart-price-header {\n    display: flex;\n    justify-content: space-between;\n    align-items: baseline;\n    gap: var(--space-md);\n\n    & .ticker {\n        font-size: var(--font-size-xl);\n        font-weight: bold;\n        text-transform: uppercase;\n    }\n\n    & .price { font-size: var(--font-size-xl); }\n\n    & .change { font-size: var(--font-size-md);}\n\n    & .hd-change.up   { color: var(--green); }\n    & .hd-change.down { color: var(--red);   }\n}\n\n.line-chart-price-range-bar {\n    display: flex;\n    gap: var(--space-sm);\n    align-items: center;\n    background-color: var(--gray-mid-light);\n    width: fit-content;\n    padding: var(--space-sm);\n    margin: var(--space-sm) 0;\n    border-radius: var(--space-sm);\n}\n\n.range-btn {\n    background: none; \n    border: 1px solid var(--border-color);\n    font-size: var(--font-size-sm);\n    border-radius: var(--space-sm);\n    padding: var(--space-sm) var(--space-md);\n    cursor: pointer;\n    transition: all .1s;\n}\n\n.range-btn.active {\n    background-color: var(--gray-light);\n    border-color: var(--primary-color); \n}\n\n.line-chart-price-stats {\n    display: flex;\n    gap: var(--space-lg);\n\n    & .stat-label { \n        color: var(--gray-trans); \n        font-size: var(--font-size-sm); \n    }\n}";
+  var charts_default = '/* RareCharts \u2014 charts.css\n   \u0421\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435.\n   \u0426\u0432\u0435\u0442\u0430 \u2014 \u0447\u0435\u0440\u0435\u0437 theme (JS), \u043D\u0435 \u0447\u0435\u0440\u0435\u0437 CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  margin: var(--font-size-sm) 0 var(--space-lg);\n  position: relative; /* \u043D\u0443\u0436\u0435\u043D \u0434\u043B\u044F absolute-\u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F tooltip */\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-chart > svg              { order: 1; }\n.rc-chart > .rc-chart-footer { order: 2; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  overflow: visible; /* \u0438\u043D\u0430\u0447\u0435 end labels \u0438 crosshair dots \u043E\u0431\u0440\u0435\u0437\u0430\u044E\u0442\u0441\u044F */\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  color: var(--muted-color, #666);\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* \u041B\u0438\u043D\u0438\u044F \u2014 \u0434\u043B\u044F line \u0441\u0435\u0440\u0438\u0439 */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* \u0422\u043E\u0447\u043A\u0430 \u2014 \u0434\u043B\u044F bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* \u0422\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 transition.\n   bg, border, shadow \u2014 Tooltip.js \u0441\u0442\u0430\u0432\u0438\u0442 \u0438\u043D\u043B\u0430\u0439\u043D \u0438\u0437 theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-md) var(--space-lg);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 1;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-intro {\n  font-size: var(--font-size-sm);\n  color: var(--muted-color, #666);\n  margin: 0 0 var(--space-lg);\n  max-width: 56ch;\n}\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md) var(--space-lg);\n  margin-bottom: var(--space-lg);\n}\n\n.rc-demo-group {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  font-size: var(--font-size-xs, 11px);\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: var(--muted-color, #888);\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n/* Code snippet */\n\n.rc-demo-code-wrap {\n  margin-top: var(--space-lg);\n  border-top: 1px solid var(--border-color, #e0e0e0);\n  padding-top: var(--space-md);\n}\n\n.rc-demo-code {\n  font-family: var(--numeric-font, "IBM Plex Mono", monospace);\n  font-size: var(--font-size-sm);\n  line-height: 1.6;\n  color: var(--muted-color, #555);\n  margin: 0;\n  white-space: pre;\n  overflow-x: auto;\n}\n';
+
+  // assets/charts/src/charts/price-chart.css
+  var price_chart_default = "/* RareCharts \u2014 price-chart.css\n   \u0421\u0442\u0438\u043B\u0438 \u0441\u043F\u0435\u0446\u0438\u0444\u0438\u0447\u043D\u044B\u0435 \u0434\u043B\u044F Price Line Chart (\u0442\u0438\u043A\u0435\u0440, \u0446\u0435\u043D\u0430, range bar). */\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #00c97a); }\n.price-chart-change.down { color: var(--negative-color, #ff3b5c); }\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  display: flex;\n  gap: var(--space-lg);\n  flex-wrap: wrap;\n}\n\n.price-chart-stat {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-value {\n  font-size: var(--font-size-sm);\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-sm);\n  align-items: center;\n  width: fit-content;\n  padding: var(--space-sm);\n  margin: var(--space-sm) 0;\n  border-radius: var(--space-sm);\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn {\n  background: none;\n  border: 1px solid var(--border-color);\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: inherit;\n}\n\n.range-btn:hover {\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn.active {\n  background-color: var(--surface-color, #f5f5f5);\n  border-color: var(--text-color, #000);\n}\n";
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -17109,27 +17117,97 @@ var RareCharts = (() => {
     return zoom;
   }
 
-  // assets/charts/src/core/Theme.js
+  // assets/charts/src/core/theme.js
   var defaultTheme = {
+    // ── Backgrounds ────────────────────────────────────────────────────────────
     bg: "#ffffff",
-    surface: "#f0f0f0",
-    grid: "#e0e0e0",
-    border: "var(--border-color)",
+    surface: "#f5f5f5",
+    // tooltip bg, panel fills
+    // ── Structure ──────────────────────────────────────────────────────────────
+    grid: "#e8e8e8",
+    // horizontal grid lines
+    border: "#cccccc",
+    // axis lines, zero baseline
+    crosshair: "#aaaaaa",
+    // vertical hover line — intentionally subtler than border
+    // ── Text ───────────────────────────────────────────────────────────────────
     text: "#000000",
-    muted: "#555555",
-    accent: "var(--gray-trans)",
-    green: "#00c97a",
-    red: "#ff3b5c",
-    blue: "#00aaff",
-    bar: "var(--gray-trans)",
-    colors: ["#ff6200", "#00aaff", "#00c97a", "#ffcc00", "#cc44ff", "#ff3b5c"],
+    // primary labels
+    muted: "#666666",
+    // axis tick labels, secondary text
+    // ── Semantic (P&L, deltas, signals) ────────────────────────────────────────
+    positive: "#00c97a",
+    // gains, up moves
+    negative: "#ff3b5c",
+    // losses, down moves
+    accent: "#ff6200",
+    // Bloomberg orange — highlights, single-series default
+    // ── Series palette ─────────────────────────────────────────────────────────
+    // Used in order for multi-series charts; override the full array or per-series.
+    colors: [
+      "#ff6200",
+      // orange  — primary
+      "#00aaff",
+      // blue
+      "#00c97a",
+      // green
+      "#ffcc00",
+      // yellow
+      "#cc44ff",
+      // violet
+      "#ff3b5c"
+      // red
+    ],
+    // ── Typography ─────────────────────────────────────────────────────────────
     font: "var(--primary-font)",
     fontSize: "var(--font-size-sm)",
-    axisFontSize: "var(--font-size-sm)",
-    axisFontFamily: "var(--primary-font)"
+    // Separate monospace font for numbers on axes and in tooltips.
+    // Falls back through a chain of common tabular fonts.
+    numericFont: 'var(--numeric-font, "IBM Plex Mono", "Roboto Mono", ui-monospace, monospace)',
+    // ── Sizing defaults ────────────────────────────────────────────────────────
+    // Charts use these as fallbacks when options are not passed explicitly.
+    strokeWidth: 2,
+    dotRadius: 3,
+    // crosshair dot radius
+    markerSize: 4,
+    // per-point marker size
+    barOpacity: 0.35,
+    // ── Tooltip ────────────────────────────────────────────────────────────────
+    tooltip: {
+      bg: "#ffffff",
+      border: "#e0e0e0",
+      text: "#000000",
+      muted: "#888888",
+      shadow: "0 2px 8px rgba(0,0,0,0.10)"
+    }
   };
+  var darkTheme = createTheme({
+    bg: "#0a0a0a",
+    surface: "#141414",
+    grid: "#1c1c1c",
+    border: "#2a2a2a",
+    crosshair: "#3a3a3a",
+    text: "#e8e8e8",
+    muted: "#888888",
+    accent: "#ff6200",
+    numericFont: '"IBM Plex Mono", "Roboto Mono", ui-monospace, monospace',
+    tooltip: {
+      bg: "#1a1a1a",
+      border: "#2e2e2e",
+      text: "#e8e8e8",
+      muted: "#888888",
+      shadow: "0 2px 12px rgba(0,0,0,0.55)"
+    }
+  });
   function createTheme(overrides = {}) {
-    return { ...defaultTheme, ...overrides };
+    return {
+      ...defaultTheme,
+      ...overrides,
+      tooltip: {
+        ...defaultTheme.tooltip,
+        ...overrides.tooltip ?? {}
+      }
+    };
   }
 
   // assets/charts/src/core/Chart.js
@@ -17165,44 +17243,45 @@ var RareCharts = (() => {
       this._resizeObserver = new ResizeObserver(() => this._onResize());
       this._resizeObserver.observe(this.container);
     }
-    // ── Header (Title / Subtitle / Legend) ────────────────
-    // Vertical stack: title, subtitle, legend (each optional).
+    // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
     _renderHeader() {
       const hasTitle = !!this.options.title;
       const hasSubtitle = !!this.options.subtitle;
-      const hasLegend = this.options.legend !== void 0 && this.options.legend !== null;
+      const hasLegend = this.options.legend != null;
       if (!hasTitle && !hasSubtitle && !hasLegend) return;
-      if (this._headerEl && this._headerEl.parentNode) {
-        this._headerEl.parentNode.removeChild(this._headerEl);
-      }
+      if (this._headerEl?.parentNode) this._headerEl.remove();
       this._headerEl = document.createElement("div");
       this._headerEl.className = "rc-chart-header";
       if (hasTitle) {
         this._titleEl = document.createElement("h5");
-        this._titleEl.className = "chart-title";
+        this._titleEl.className = "rc-chart-title";
         this._titleEl.textContent = this.options.title;
         this._headerEl.appendChild(this._titleEl);
       }
       if (hasSubtitle) {
         this._subtitleEl = document.createElement("p");
-        this._subtitleEl.className = "chart-subtitle";
+        this._subtitleEl.className = "rc-chart-subtitle";
         this._subtitleEl.textContent = this.options.subtitle;
         this._headerEl.appendChild(this._subtitleEl);
       }
       if (hasLegend) {
         this._legendEl = document.createElement("div");
-        this._legendEl.className = "chart-legend";
+        this._legendEl.className = "rc-legend";
         const legend = this.options.legend;
         if (Array.isArray(legend)) {
           legend.forEach((item) => {
             const el = document.createElement("div");
-            el.className = "chart-legend-item";
-            const dot = document.createElement("span");
-            dot.className = "chart-legend-dot";
-            dot.style.background = item.color ?? this.theme.accent;
+            el.className = "rc-legend-item";
+            const indicator = document.createElement("span");
+            if (item.type === "bar" || item.type === "dot") {
+              indicator.className = "rc-legend-dot";
+            } else {
+              indicator.className = "rc-legend-line";
+            }
+            indicator.style.background = item.color ?? this.theme.accent;
             const text = document.createElement("span");
-            text.textContent = item.label;
-            el.appendChild(dot);
+            text.textContent = item.label ?? item.name ?? "";
+            el.appendChild(indicator);
             el.appendChild(text);
             this._legendEl.appendChild(el);
           });
@@ -17211,25 +17290,21 @@ var RareCharts = (() => {
         } else if (typeof legend === "string") {
           this._legendEl.innerHTML = legend;
         } else {
-          const s2 = document.createElement("div");
-          s2.textContent = String(legend);
-          this._legendEl.appendChild(s2);
+          this._legendEl.textContent = String(legend);
         }
         this._headerEl.appendChild(this._legendEl);
       }
       this.container.insertBefore(this._headerEl, this.container.firstChild);
     }
-    // ── Footer (Source) ───────────────────────────────────
+    // ── Footer (Source) ───────────────────────────────────────────────────────
     _renderFooter() {
-      const hasSource = this.options.source !== void 0 && this.options.source !== null && this.options.source !== "";
+      const hasSource = !!this.options.source;
       if (!hasSource) return;
-      if (this._footerEl && this._footerEl.parentNode) {
-        this._footerEl.parentNode.removeChild(this._footerEl);
-      }
+      if (this._footerEl?.parentNode) this._footerEl.remove();
       this._footerEl = document.createElement("div");
       this._footerEl.className = "rc-chart-footer";
       this._sourceEl = document.createElement("cite");
-      this._sourceEl.className = "chart-source";
+      this._sourceEl.className = "rc-chart-source";
       const src = this.options.source;
       if (src instanceof HTMLElement) {
         this._sourceEl.appendChild(src);
@@ -17239,9 +17314,7 @@ var RareCharts = (() => {
       this._footerEl.appendChild(this._sourceEl);
       this.container.appendChild(this._footerEl);
     }
-    // ── Dimensions ───────────────────────────────────────
-    // Height is reduced by header and footer height so the chart SVG
-    // doesn't overflow the container.
+    // ── Dimensions ────────────────────────────────────────────────────────────
     get width() {
       return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
     }
@@ -17254,7 +17327,6 @@ var RareCharts = (() => {
     _onResize() {
       if (this.width > 0 && this.height > 0) this.render();
     }
-    // Implemented by each chart type
     render() {
       throw new Error("render() must be implemented");
     }
@@ -17273,39 +17345,295 @@ var RareCharts = (() => {
   // assets/charts/src/core/Tooltip.js
   var Tooltip = class {
     constructor(container, theme) {
+      this._container = container;
       this.theme = theme;
+      const tt = theme.tooltip ?? {};
       this.el = document.createElement("div");
+      this.el.className = "rc-tooltip";
       Object.assign(this.el.style, {
-        position: "absolute",
-        pointerEvents: "none",
-        background: "#ffffff",
-        border: "1px solid #3a3a3a",
-        padding: "8px 16px",
-        fontFamily: theme.font,
-        fontSize: "14px",
-        color: theme.text,
-        opacity: "0",
-        transition: "opacity 0.1s",
-        whiteSpace: "nowrap",
-        zIndex: "100"
+        fontFamily: theme.numericFont ?? theme.font,
+        fontSize: "13px",
+        color: tt.text ?? theme.text,
+        background: tt.bg ?? "#fff",
+        border: `1px solid ${tt.border ?? theme.border}`,
+        boxShadow: tt.shadow ?? "none"
       });
-      container.style.position = "relative";
       container.appendChild(this.el);
     }
     show(x4, y4, html2) {
       this.el.innerHTML = html2;
-      const maxX = this.el.parentElement.clientWidth - this.el.offsetWidth - 12;
+      this.el.classList.add("is-visible");
+      const maxX = this._container.clientWidth - this.el.offsetWidth - 12;
+      const maxY2 = this._container.clientHeight - this.el.offsetHeight - 8;
       this.el.style.left = `${Math.min(x4 + 12, maxX)}px`;
-      this.el.style.top = `${Math.max(y4 - 20, 8)}px`;
-      this.el.style.opacity = "1";
+      this.el.style.top = `${Math.min(Math.max(y4 - 20, 8), maxY2)}px`;
     }
     hide() {
-      this.el.style.opacity = "0";
+      this.el.classList.remove("is-visible");
     }
     destroy() {
       this.el.remove();
     }
   };
+
+  // assets/charts/src/core/Crosshair.js
+  var Crosshair = class {
+    /**
+     * @param {d3.Selection}  g        — parent <g> for crosshair elements
+     * @param {d3.Selection}  overlay  — transparent rect for mouse events
+     * @param {Tooltip}       tooltip  — RareCharts Tooltip instance
+     * @param {object}        theme
+     */
+    constructor(g, overlay, tooltip, theme) {
+      this._g = g;
+      this._overlay = overlay;
+      this._tooltip = tooltip;
+      this._theme = theme;
+      this._line = g.append("line").attr("class", "rc-cross-line").attr("opacity", 0);
+      this._dots = g.append("g").attr("class", "rc-cross-dots");
+    }
+    /**
+     * Bind (or update) crosshair behaviour to the overlay rect.
+     *
+     * @param {object} ctx
+     * @param {number}       ctx.W           — chart width
+     * @param {number}       ctx.H           — chart height
+     * @param {Function}     ctx.x           — d3 time scale
+     * @param {Function}     ctx.scaleFor    — (series) => d3 y-scale for that series
+     * @param {Function}     ctx.formatFor   — (series, value) => formatted string
+     * @param {Array}        ctx.series      — all series (line + bar)
+     * @param {boolean}      ctx.enabled     — show crosshair (default true)
+     * @param {Function}     ctx.tooltipFmt  — optional custom html builder
+     */
+    bind({ W, H, x: x4, scaleFor, formatFor, series, enabled = true, tooltipFmt }) {
+      const t = this._theme;
+      this._overlay.attr("width", W).attr("height", H);
+      this._line.attr("y1", 0).attr("y2", H).attr("stroke", t.crosshair).attr("stroke-dasharray", "2,3");
+      if (!enabled) {
+        this._overlay.on("mousemove", null).on("mouseleave", null);
+        return;
+      }
+      const bisect = bisector((d) => d.date).left;
+      const pickNearest = (vals, dt) => {
+        const i = bisect(vals, dt, 1);
+        const a4 = vals[i - 1];
+        const b = vals[i];
+        if (!a4) return b;
+        if (!b) return a4;
+        return dt - a4.date < b.date - dt ? a4 : b;
+      };
+      const move = (event) => {
+        const [mx] = pointer_default(event, this._overlay.node());
+        const dt = x4.invert(mx);
+        const points = series.map((s2) => {
+          const d = pickNearest(s2.values, dt);
+          const fmt = formatFor(s2, d.value);
+          return { name: s2.name, axis: s2.axis, type: s2.type, color: s2.color, date: d.date, value: d.value, fmt };
+        });
+        this._line.attr("x1", mx).attr("x2", mx).attr("opacity", 1);
+        this._dots.selectAll(".rc-cross-dot").data(points.filter((p) => p.type !== "bar"), (p) => p.name).join("circle").attr("class", "rc-cross-dot").attr("r", 3).attr("fill", (p) => p.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (p) => x4(p.date)).attr("cy", (p) => scaleFor(p)(p.value)).attr("opacity", 1);
+        const payload = { date: points[0]?.date, points };
+        const html2 = tooltipFmt ? tooltipFmt(payload) : `<div style="color:${t.muted}">${timeFormat("%b %d, %Y")(payload.date)}</div>` + points.map(
+          (p) => `<div style="color:${p.color}">${p.name}: ${p.fmt}</div>`
+        ).join("");
+        const [px, py] = pointer_default(event, this._overlay.node().closest(".rc-chart") ?? this._overlay.node().parentElement);
+        this._tooltip.show(px, py, html2);
+      };
+      const leave = () => {
+        this._line.attr("opacity", 0);
+        this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
+        this._tooltip.hide();
+      };
+      this._overlay.on("mousemove", move).on("mouseleave", leave);
+    }
+    hide() {
+      this._line.attr("opacity", 0);
+      this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
+      this._tooltip.hide();
+    }
+  };
+
+  // assets/charts/src/core/utils.js
+  function parseDate(v2) {
+    if (v2 instanceof Date) return v2;
+    if (typeof v2 === "number") return new Date(v2);
+    const dt = new Date(v2);
+    return Number.isNaN(+dt) ? null : dt;
+  }
+  function resolveCurve(name, tension = 0) {
+    switch (name) {
+      case "monotone":
+        return monotoneX;
+      case "basis":
+        return basis_default2;
+      case "cardinal":
+        return cardinal_default.tension(tension);
+      case "step":
+        return step_default;
+      case "stepBefore":
+        return stepBefore;
+      case "stepAfter":
+        return stepAfter;
+      case "linear":
+      default:
+        return linear_default;
+    }
+  }
+  function resolveStrokeDash(dash) {
+    if (!dash || dash === "solid") return null;
+    if (Array.isArray(dash)) return dash.join(",");
+    switch (dash) {
+      case "dashed":
+        return "6,4";
+      case "dotted":
+        return "2,3";
+      case "dashDot":
+        return "8,4,2,4";
+      case "longDash":
+        return "12,4";
+      default:
+        return null;
+    }
+  }
+  function markerPath(shape, size = 4) {
+    const s2 = size;
+    switch (shape) {
+      case "square":
+        return `M${-s2},${-s2}h${s2 * 2}v${s2 * 2}h${-s2 * 2}z`;
+      case "diamond":
+        return `M0,${-s2}L${s2},0L0,${s2}L${-s2},0z`;
+      case "triangle":
+        return `M0,${-s2}L${s2},${s2}L${-s2},${s2}z`;
+      case "cross": {
+        const t = s2 * 0.35;
+        return `M${-s2},${-t}h${s2 - t}v${-(s2 - t)}h${t * 2}v${s2 - t}h${s2 - t}v${t * 2}h${-(s2 - t)}v${s2 - t}h${-t * 2}v${-(s2 - t)}h${-(s2 - t)}z`;
+      }
+      case "circle":
+      default:
+        return null;
+    }
+  }
+  function resolveEase(name) {
+    switch (name) {
+      case "cubicInOut":
+        return cubicInOut;
+      case "linear":
+        return linear2;
+      case "cubicOut":
+      default:
+        return cubicOut;
+    }
+  }
+
+  // assets/charts/src/core/seriesPath.js
+  function baselineValue(baseline, domain) {
+    if (typeof baseline === "number" && Number.isFinite(baseline)) return baseline;
+    if (baseline === "min") return domain[0];
+    return 0;
+  }
+  function linePath(series, x4, y4, defaultCurve = "linear", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    return line_default2().x((d) => x4(d.date)).y((d) => y4(d.value)).curve(curve)(series.values);
+  }
+  function areaPath(series, x4, y4, defaultCurve = "linear", globalBaseline = "zero", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    const base = baselineValue(series.areaBaseline ?? globalBaseline, y4.domain());
+    return area_default5().x((d) => x4(d.date)).y0(y4(base)).y1((d) => y4(d.value)).curve(curve)(series.values);
+  }
+
+  // assets/charts/src/core/renderHelpers.js
+  function renderGrid(g, scale2, W, ticks2, theme) {
+    g.call(axisLeft(scale2).ticks(ticks2).tickSize(-W).tickFormat("")).call((sel) => {
+      sel.selectAll("line").attr("stroke", theme.grid);
+      sel.select(".domain").remove();
+      sel.selectAll("text").remove();
+    });
+  }
+  function renderZeroBaseline(g, scale2, W, theme) {
+    const [lo, hi] = scale2.domain();
+    const hasZero = lo < 0 && hi > 0;
+    g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale2(0)).attr("y2", scale2(0)).attr("stroke", theme.border).attr("stroke-width", 1.5).attr("opacity", 0.9);
+  }
+  function renderAxisX(g, scale2, H, tickFormat2, theme) {
+    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(6).tickSize(0).tickFormat(tickFormat2)).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "1.2em").style("font-family", theme.numericFont);
+      sel.select(".domain").remove();
+      sel.selectAll("line").remove();
+    });
+  }
+  function renderAxisYRight(g, scale2, W, ticks2, tickFormat2, labelsOnly = true, theme) {
+    g.attr("transform", `translate(${W},0)`).call(axisRight(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2)).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.text ?? theme.muted).attr("text-anchor", "start").attr("x", 8).style("font-family", theme.numericFont).style("font-variant-numeric", "tabular-nums");
+      if (labelsOnly) {
+        sel.select(".domain").remove();
+        sel.selectAll("line").remove();
+      } else {
+        sel.select(".domain").attr("stroke", theme.border);
+        sel.selectAll("line").remove();
+      }
+    });
+  }
+  function renderAxisYLeft(g, scale2, ticks2, tickFormat2, labelsOnly = true, theme) {
+    g.attr("transform", "translate(0,0)").call(axisLeft(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2)).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.text ?? theme.muted).attr("text-anchor", "end").attr("x", -8).style("font-variant-numeric", "tabular-nums");
+      if (labelsOnly) {
+        sel.select(".domain").remove();
+        sel.selectAll("line").remove();
+      } else {
+        sel.select(".domain").attr("stroke", theme.border);
+        sel.selectAll("line").remove();
+      }
+    });
+  }
+  function renderEndLabels(g, series, yScale, W, tickFormat2, theme) {
+    g.selectAll("*").remove();
+    const points = series.filter((s2) => s2.type !== "bar").map((s2) => {
+      const d = s2.values[s2.values.length - 1];
+      return { name: s2.name, color: s2.color, value: d.value };
+    });
+    g.selectAll(".rc-end-label").data(points, (d) => d.name).join("text").attr("class", "rc-end-label").attr("x", W + 10).attr("y", (d) => yScale(d.value)).attr("dy", "0.35em").attr("fill", (d) => d.color).style("font-family", theme.numericFont).style("font-size", theme.fontSize).style("font-variant-numeric", "tabular-nums").text((d) => tickFormat2(d.value));
+  }
+  function renderAxisTitles(g, W, y1Title, y2Title, theme) {
+    const titles = [];
+    if (y2Title) titles.push({ axis: "y2", text: y2Title });
+    if (y1Title) titles.push({ axis: "y1", text: y1Title });
+    g.selectAll(".rc-axis-title").data(titles, (d) => d.axis).join("text").attr("class", (d) => `rc-axis-title rc-axis-title-${d.axis}`).attr("x", (d) => d.axis === "y1" ? W + 8 : -8).attr("y", -28).attr("text-anchor", (d) => d.axis === "y1" ? "start" : "end").attr("dominant-baseline", "hanging").attr("fill", theme.muted).style("font-family", theme.font).style("font-size", theme.fontSize).style("font-weight", "bold").style("text-transform", "uppercase").text((d) => d.text);
+  }
+  function animateLines(paths, duration, ease, onDone) {
+    paths.each(function() {
+      const p = select_default2(this);
+      const total = this.getTotalLength?.() ?? 0;
+      if (!total) return;
+      p.attr("stroke-dasharray", `${total} ${total}`).attr("stroke-dashoffset", total).transition().duration(duration).ease(ease).attr("stroke-dashoffset", 0).on("end", function() {
+        select_default2(this).attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
+      });
+    });
+    if (onDone) setTimeout(onDone, duration + 20);
+  }
+  function renderMarkers(g, series, x4, scaleFor, globalMarkers = false, globalShape = "circle", globalSize = 4, theme) {
+    const markerItems = series.filter((s2) => s2.type !== "bar" && (s2.markers ?? globalMarkers)).flatMap((s2) => {
+      const shape = s2.markerShape ?? globalShape;
+      const size = s2.markerSize ?? globalSize;
+      const fill = s2.markerFill ?? s2.color;
+      const stroke = s2.markerStroke ?? theme.bg;
+      const y4 = scaleFor(s2);
+      const path2 = markerPath(shape, size);
+      return s2.values.map((d, i) => ({
+        key: `${s2.name}|${i}`,
+        cx: x4(d.date),
+        cy: y4(d.value),
+        shape,
+        size,
+        fill,
+        stroke,
+        path: path2
+      }));
+    });
+    const circles = markerItems.filter((d) => !d.path);
+    const shapes = markerItems.filter((d) => d.path);
+    g.selectAll(".rc-marker-circle").data(circles, (d) => d.key).join("circle").attr("class", "rc-marker-circle").attr("cx", (d) => d.cx).attr("cy", (d) => d.cy).attr("r", (d) => d.size).attr("fill", (d) => d.fill).attr("stroke", (d) => d.stroke).attr("stroke-width", 1.5);
+    g.selectAll(".rc-marker-shape").data(shapes, (d) => d.key).join("path").attr("class", "rc-marker-shape").attr("transform", (d) => `translate(${d.cx},${d.cy})`).attr("d", (d) => d.path).attr("fill", (d) => d.fill).attr("stroke", (d) => d.stroke).attr("stroke-width", 1.5);
+  }
 
   // assets/charts/src/charts/Line.js
   var Line = class extends Chart {
@@ -17321,46 +17649,40 @@ var RareCharts = (() => {
         ...options
       });
       this._series = [];
-      this._tooltip = new Tooltip(this.container, this.theme);
       this._didAnimateIn = false;
-      this._initSVG();
+      const tooltip = new Tooltip(this.container, this.theme);
+      this._initSVG(tooltip);
     }
+    // ─── Data ─────────────────────────────────────────────────────────────────
     setData(data) {
       this._series = this._normalizeData(data);
       this.render();
       return this;
     }
-    _parseDate(v2) {
-      if (v2 instanceof Date) return v2;
-      if (typeof v2 === "number") return new Date(v2);
-      const dt = new Date(v2);
-      return Number.isNaN(+dt) ? null : dt;
-    }
     _normalizeData(data) {
       if (!data) return [];
-      if (Array.isArray(data) && data.length && data[0] && "date" in data[0] && "value" in data[0]) {
+      if (Array.isArray(data) && data[0] && "date" in data[0] && "value" in data[0]) {
         return [{
           name: this.options.seriesName ?? "Series",
-          color: this.options.lineColor ?? (this.theme.blue ?? this.theme.accent),
-          values: data.map((d) => ({
-            date: this._parseDate(d.date),
-            value: +d.value
-          })).filter((d) => d.date && Number.isFinite(d.value))
+          color: this.options.lineColor ?? this.theme.accent,
+          type: "line",
+          values: data.map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
         }];
       }
-      if (Array.isArray(data)) {
-        return data.map((s2, idx) => ({
-          name: s2.name ?? `Series ${idx + 1}`,
-          color: s2.color ?? (this.theme.colors?.[idx % (this.theme.colors.length || 1)] ?? this.theme.accent),
-          values: (s2.values ?? []).map((d) => ({
-            date: this._parseDate(d.date),
-            value: +d.value
-          })).filter((d) => d.date && Number.isFinite(d.value))
-        })).filter((s2) => s2.values.length);
-      }
-      return [];
+      return (Array.isArray(data) ? data : []).map((s2, idx) => ({
+        name: s2.name ?? `Series ${idx + 1}`,
+        color: s2.color ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent),
+        type: "line",
+        curve: s2.curve,
+        area: s2.area,
+        areaOpacity: s2.areaOpacity,
+        areaBaseline: s2.areaBaseline,
+        strokeWidth: Number.isFinite(+s2.strokeWidth) ? +s2.strokeWidth : 2,
+        values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
+      })).filter((s2) => s2.values.length);
     }
-    _initSVG() {
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG(tooltip) {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
       const { left: left2, top: top2 } = this.margin;
@@ -17370,23 +17692,22 @@ var RareCharts = (() => {
       this.gAxisX = this.g.append("g").attr("class", "rc-axis rc-axis-x");
       this.gAxisY = this.g.append("g").attr("class", "rc-axis rc-axis-y");
       this.gEnds = this.g.append("g").attr("class", "rc-end-labels");
-      this.gCross = this.g.append("g").attr("class", "rc-crosshair");
-      this.crossLine = this.gCross.append("line").attr("class", "rc-cross-line").attr("y1", 0).attr("y2", 0).attr("opacity", 0);
-      this.gCrossDots = this.gCross.append("g").attr("class", "rc-cross-dots");
-      this.overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
+      this.gMarkers = this.g.append("g").attr("class", "rc-markers");
+      this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
+      const gCross = this.g.append("g").attr("class", "rc-crosshair");
+      const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
+      this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
     }
+    // ─── Render ───────────────────────────────────────────────────────────────
     render() {
       if (!this._series.length) return;
       const W = this.width, H = this.height;
       if (W <= 0 || H <= 0) return;
+      const o = this.options;
       const t = this.theme;
-      const animate = (this.options.animate ?? true) && !this._didAnimateIn;
-      const duration = this.options.duration ?? 650;
-      const easeName = this.options.ease ?? "cubicOut";
-      const ease = easeName === "linear" ? linear2 : easeName === "cubicInOut" ? cubicInOut : cubicOut;
-      const crosshair = this.options.crosshair ?? true;
-      const endLabels = this.options.endLabels ?? true;
-      const yLabelsOnly = this.options.yLabelsOnly ?? true;
+      const animate = (o.animate ?? true) && !this._didAnimateIn;
+      const duration = o.duration ?? 650;
+      const ease = resolveEase(o.ease ?? "cubicOut");
       const all = this._series.flatMap((s2) => s2.values);
       const xPad = 8;
       const x4 = time().domain(extent(all, (d) => d.date)).range([xPad, W - xPad]);
@@ -17394,96 +17715,61 @@ var RareCharts = (() => {
       const minY = min(all, (d) => d.value);
       const pad3 = (maxY2 - minY) * 0.08 || 1;
       const y4 = linear3().domain([minY - pad3, maxY2 + pad3]).nice(4).range([H, 0]);
-      const yTicks = this.options.yTicks ?? 4;
-      const yFormatMode = this.options.yFormat ?? "auto";
+      const yTicks = o.yTicks ?? 4;
       const absMax = max(all, (d) => Math.abs(d.value)) ?? 0;
-      const usePercent = yFormatMode === "percent" || yFormatMode === "auto" && absMax <= 1;
-      const prefix = this.options.yPrefix ?? "";
-      const suffix = this.options.ySuffix ?? "";
-      const zeroEps = this.options.zeroEpsilon ?? 1e-6;
+      const usePercent = (o.yFormat ?? "auto") === "percent" || (o.yFormat ?? "auto") === "auto" && absMax <= 1;
+      const prefix = o.yPrefix ?? "";
+      const suffix = o.ySuffix ?? "";
+      const zeroEps = o.zeroEpsilon ?? 1e-6;
       const baseY = usePercent ? format("+.2%") : format(".2s");
-      const yTickFormat = this.options.yTickFormat ?? ((v2) => {
-        if (Math.abs(v2) < zeroEps) {
-          const z = usePercent && !suffix ? "0%" : "0";
-          return `${prefix}${z}${suffix}`;
-        }
+      const yTickFormat = o.yTickFormat ?? ((v2) => {
+        if (Math.abs(v2) < zeroEps) return `${prefix}${usePercent && !suffix ? "0%" : "0"}${suffix}`;
         return `${prefix}${baseY(v2)}${suffix}`;
       });
-      const xTickFormat = this.options.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
-      this.gGrid.attr("transform", "translate(0,0)").call(axisLeft(y4).ticks(yTicks).tickSize(-W).tickFormat("")).call((g) => {
-        g.selectAll("line").attr("stroke", t.grid);
-        g.select(".domain").remove();
-        g.selectAll("text").remove();
-      });
-      this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(6).tickSize(0).tickFormat(xTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted);
-        g.select(".domain").remove();
-        g.selectAll("line").remove();
-      });
-      this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).ticks(yTicks).tickSize(0).tickFormat(yTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted);
-        if (yLabelsOnly) {
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
-        } else {
-          g.select(".domain").attr("stroke", t.border);
-          g.selectAll("line").remove();
-        }
-      });
-      const curveName = this.options.curve ?? "monotone";
-      const curve = curveName === "linear" ? linear_default : curveName === "step" ? step_default : monotoneX;
-      const line = line_default2().x((d) => x4(d.date)).y((d) => y4(d.value)).curve(curve);
-      const paths = this.gLines.selectAll(".rc-line").data(this._series, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", 2).attr("d", (s2) => line(s2.values));
+      const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
+      const defaultCurve = o.curve ?? "monotone";
+      const tension = o.curveTension ?? 0;
+      const globalArea = o.area ?? false;
+      const globalAreaOp = o.areaOpacity ?? 0.12;
+      const globalAreaBase = o.areaBaseline ?? "zero";
+      const globalDash = o.strokeDash ?? null;
+      const globalMarkers = o.markers ?? false;
+      const globalShape = o.markerShape ?? "circle";
+      const globalSize = o.markerSize ?? 4;
+      renderGrid(this.gGrid, y4, W, yTicks, t);
+      renderZeroBaseline(this.gZero, y4, W, t);
+      renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
+      renderAxisYRight(this.gAxisY, y4, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t);
+      const areaSeries = this._series.filter((s2) => (s2.area ?? globalArea) === true);
+      this.gLines.selectAll(".rc-line-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-line-area").attr("d", (s2) => areaPath(s2, x4, y4, defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
+      const paths = this.gLines.selectAll(".rc-line").data(this._series, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
       if (animate) {
-        paths.each(function() {
-          const p = select_default2(this);
-          const total = this.getTotalLength?.() ?? 0;
-          if (!total) return;
-          p.attr("stroke-dasharray", `${total} ${total}`).attr("stroke-dashoffset", total).transition().duration(duration).ease(ease).attr("stroke-dashoffset", 0);
-        });
-        setTimeout(() => {
+        const solidPaths = paths.filter((s2) => !resolveStrokeDash(s2.strokeDash ?? globalDash));
+        const dashedPaths = paths.filter((s2) => resolveStrokeDash(s2.strokeDash ?? globalDash));
+        dashedPaths.attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("stroke-dashoffset", null);
+        animateLines(solidPaths, duration, ease, () => {
           this._didAnimateIn = true;
-        }, duration + 20);
+        });
+        if (solidPaths.empty()) this._didAnimateIn = true;
       } else {
-        paths.attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
+        paths.attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("stroke-dashoffset", null);
         this._didAnimateIn = true;
       }
-      this.gEnds.selectAll("*").remove();
-      if (endLabels) {
-        const lastPoints = this._series.map((s2) => {
-          const d = s2.values[s2.values.length - 1];
-          return { name: s2.name, color: s2.color, date: d.date, value: d.value };
-        });
-        this.gEnds.selectAll(".rc-end-label").data(lastPoints).join("text").attr("class", "rc-end-label").attr("x", W + 10).attr("y", (d) => y4(d.value)).attr("dy", "0.35em").attr("fill", (d) => d.color).style("font-family", t.font).style("font-size", t.fontSize).text((d) => yTickFormat(d.value));
+      if (o.endLabels ?? true) {
+        renderEndLabels(this.gEnds, this._series, y4, W, yTickFormat, t);
+      } else {
+        this.gEnds.selectAll("*").remove();
       }
-      this.overlay.attr("width", W).attr("height", H);
-      this.crossLine.attr("y1", 0).attr("y2", H).attr("stroke", t.border).attr("stroke-dasharray", "2,3");
-      const bisect = bisector((d) => d.date).left;
-      const setCross = (mx, event) => {
-        const dt = x4.invert(mx);
-        const points = this._series.map((s2) => {
-          const vals = s2.values;
-          const i = bisect(vals, dt, 1);
-          const a4 = vals[i - 1];
-          const b = vals[i];
-          const d = !b || dt - a4.date < b.date - dt ? a4 : b;
-          return { name: s2.name, color: s2.color, date: d.date, value: d.value };
-        });
-        this.crossLine.attr("x1", mx).attr("x2", mx).attr("opacity", crosshair ? 1 : 0);
-        const dots = this.gCrossDots.selectAll(".rc-cross-dot").data(points, (d) => d.name).join("circle").attr("class", "rc-cross-dot").attr("r", 3).attr("fill", (d) => d.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (d) => x4(d.date)).attr("cy", (d) => y4(d.value)).attr("opacity", crosshair ? 1 : 0);
-        if (!crosshair) return;
-        const payload = { date: points[0]?.date, points };
-        const html2 = this.options.tooltipFormat ? this.options.tooltipFormat(payload) : `<div>${timeFormat("%b %d, %Y")(payload.date)}</div>` + points.map((p) => `<div style="color:${p.color}">${p.name}: ${yTickFormat(p.value)}</div>`).join("");
-        const [px, py] = pointer_default(event, this.container);
-        this._tooltip.show(px, py, html2);
-      };
-      this.overlay.on("mousemove", (event) => {
-        const [mx] = pointer_default(event, this.overlay.node());
-        setCross(mx, event);
-      }).on("mouseleave", () => {
-        this.crossLine.attr("opacity", 0);
-        this.gCrossDots.selectAll(".rc-cross-dot").attr("opacity", 0);
-        this._tooltip.hide();
+      renderMarkers(this.gMarkers, this._series, x4, () => y4, globalMarkers, globalShape, globalSize, t);
+      this._crosshair.bind({
+        W,
+        H,
+        x: x4,
+        series: this._series,
+        enabled: o.crosshair ?? true,
+        scaleFor: () => y4,
+        formatFor: (_s, v2) => yTickFormat(v2),
+        tooltipFmt: o.tooltipFormat
       });
     }
   };
@@ -17504,7 +17790,7 @@ var RareCharts = (() => {
       this._bindZoomPan();
       this._bindHover();
     }
-    // ── Public API ────────────────────────────────
+    // ── Public API ────────────────────────────────────────────────────────────
     setData(data) {
       this._data = data;
       this._viewExtent = null;
@@ -17526,7 +17812,7 @@ var RareCharts = (() => {
       this._onViewChangeCb = fn;
       return this;
     }
-    // ── Init ──────────────────────────────────────
+    // ── Init ──────────────────────────────────────────────────────────────────
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
@@ -17540,18 +17826,18 @@ var RareCharts = (() => {
       this.gPaths = this.gArea.append("g");
       this.gAxisX = this.g.append("g").attr("class", "rc-axis");
       this.gAxisY = this.g.append("g").attr("class", "rc-axis");
-      this.crossX = this.g.append("line").attr("class", "rc-crosshair").style("opacity", 0);
-      this.crossY = this.g.append("line").attr("class", "rc-crosshair").style("opacity", 0);
+      this.crossX = this.g.append("line").style("opacity", 0);
+      this.crossY = this.g.append("line").style("opacity", 0);
       this.overlay = this.g.append("rect").attr("fill", "none").attr("pointer-events", "all");
     }
-    // ── Render ────────────────────────────────────
+    // ── Render ────────────────────────────────────────────────────────────────
     render() {
       if (!this._data.length) return;
       const W = this.width, H = this.height;
       if (W <= 0 || H <= 0) return;
+      const t = this.theme;
       this.clipRect.attr("width", W).attr("height", H + 4).attr("y", -4);
       this.overlay.attr("width", W).attr("height", H);
-      const t = this.theme;
       const fullExtent = extent(this._data, (d) => d.date);
       const viewExtent = this._viewExtent ?? fullExtent;
       const visible = this._data.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
@@ -17560,33 +17846,35 @@ var RareCharts = (() => {
       const yMin = min(visible, (d) => d.value) * 0.99;
       const yMax = max(visible, (d) => d.value) * 1.01;
       this.yScale = linear3().domain([yMin, yMax]).range([H, 0]);
-      this.gGrid.call(axisLeft(this.yScale).ticks(5).tickSize(-W).tickFormat("")).attr("transform", `translate(${W},0)`).call((g) => {
+      this.gGrid.attr("transform", `translate(${W},0)`).call(axisLeft(this.yScale).ticks(5).tickSize(-W).tickFormat("")).call((g) => {
         g.selectAll("line").attr("stroke", t.grid).attr("stroke-width", 1);
         g.select(".domain").remove();
       });
       const area = area_default5().x((d) => this.xScale(d.date)).y0(H).y1((d) => this.yScale(d.value)).curve(monotoneX);
       const line = line_default2().x((d) => this.xScale(d.date)).y((d) => this.yScale(d.value)).curve(monotoneX);
-      if (this.svg.select("#rc-grad").empty()) {
-        const g = this.svg.select("defs").append("linearGradient").attr("id", "rc-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
-        g.append("stop").attr("offset", "0%").attr("stop-color", t.accent).attr("stop-opacity", 0.25);
-        g.append("stop").attr("offset", "100%").attr("stop-color", t.accent).attr("stop-opacity", 0);
+      let grad = this.svg.select("#rc-ts-grad");
+      if (grad.empty()) {
+        grad = this.svg.select("defs").append("linearGradient").attr("id", "rc-ts-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
+        grad.append("stop").attr("offset", "0%").attr("stop-opacity", 0.22);
+        grad.append("stop").attr("offset", "100%").attr("stop-opacity", 0);
       }
-      this.gPaths.selectAll(".rc-area").data([visible]).join("path").attr("class", "rc-area").attr("d", area).attr("fill", "url(#rc-grad)");
-      this.gPaths.selectAll(".rc-line").data([visible]).join("path").attr("class", "rc-line").attr("d", line).attr("fill", "none").attr("stroke", t.accent).attr("stroke-width", 1.5);
+      grad.selectAll("stop").attr("stop-color", t.accent);
+      this.gPaths.selectAll(".rc-ts-area").data([visible]).join("path").attr("class", "rc-ts-area").attr("d", area).attr("fill", "url(#rc-ts-grad)");
+      this.gPaths.selectAll(".rc-ts-line").data([visible]).join("path").attr("class", "rc-ts-line").attr("d", line).attr("fill", "none").attr("stroke", t.accent).attr("stroke-width", t.strokeWidth ?? 1.5);
       this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(this.xScale).ticks(Math.max(2, Math.floor(W / 100))).tickSize(4)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px");
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", "10px");
         g.selectAll("line").attr("stroke", t.border);
         g.select(".domain").attr("stroke", t.border);
       });
       this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(this.yScale).ticks(5).tickFormat((d) => "$" + format(",.0f")(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px");
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", "10px");
         g.selectAll("line,path").remove();
       });
       [this.crossX, this.crossY].forEach(
-        (l) => l.attr("stroke", "#444").attr("stroke-width", 1).attr("stroke-dasharray", "4 4")
+        (l) => l.attr("stroke", t.crosshair).attr("stroke-width", 1).attr("stroke-dasharray", "3 3")
       );
     }
-    // ── Zoom & Pan (через d3.zoom) ────────────────
+    // ── Zoom & Pan ────────────────────────────────────────────────────────────
     _bindZoomPan() {
       this._zoom = zoom_default2().scaleExtent([1, 500]).on("zoom", (event) => {
         if (!this._data.length) return;
@@ -17603,7 +17891,7 @@ var RareCharts = (() => {
       });
       this.svg.call(this._zoom);
     }
-    // ── Hover / Crosshair ─────────────────────────
+    // ── Hover / Crosshair ─────────────────────────────────────────────────────
     _bindHover() {
       this.overlay.on("mousemove", (event) => {
         if (!this._visible?.length) return;
@@ -17621,11 +17909,7 @@ var RareCharts = (() => {
         this.crossX.attr("x1", cx).attr("x2", cx).attr("y1", 0).attr("y2", H).style("opacity", 1);
         this.crossY.attr("x1", 0).attr("x2", W).attr("y1", cy).attr("y2", cy).style("opacity", 1);
         const html2 = this.options.tooltipFormat ? this.options.tooltipFormat(d) : this._defaultTooltip(d);
-        this._tooltip.show(
-          cx + this.margin.left,
-          cy + this.margin.top,
-          html2
-        );
+        this._tooltip.show(cx + this.margin.left, cy + this.margin.top, html2);
       }).on("mouseleave", () => {
         this.crossX.style("opacity", 0);
         this.crossY.style("opacity", 0);
@@ -17717,8 +18001,8 @@ var RareCharts = (() => {
         ...options
       });
       this._data = [];
-      this._tooltip = new Tooltip(this.container, this.theme);
       this._didAnimateIn = false;
+      this._tooltip = new Tooltip(this.container, this.theme);
       this._initSVG();
     }
     setData(data) {
@@ -17736,11 +18020,13 @@ var RareCharts = (() => {
       this.gAxisX = this.g.append("g");
       this.gAxisY = this.g.append("g");
     }
-    // Truncate label to maxLength, preserving full text for tooltip
     _formatLabel(label) {
       const max5 = this.options.labelMaxLength;
       if (!max5 || label.length <= max5) return label;
       return label.slice(0, max5).trimEnd() + "\u2026";
+    }
+    _tooltipHtml(d) {
+      return this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label}</div><div>${format(",")(d.value)}</div>`;
     }
     render() {
       if (!this._data.length) return;
@@ -17751,130 +18037,319 @@ var RareCharts = (() => {
       const animate = (this.options.animate ?? true) && !this._didAnimateIn;
       const duration = this.options.duration ?? 500;
       const stagger = this.options.stagger ?? 0;
-      const easeName = this.options.ease ?? "cubicOut";
-      const ease = easeName === "linear" ? linear2 : easeName === "cubicInOut" ? cubicInOut : cubicOut;
-      const barFill = this.options.barColor ?? (t.bar ?? t.accent);
-      if (horizontal) {
-        const y4 = band().domain(this._data.map((d) => d.label)).range([0, H]).padding(0.25);
-        const x4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([0, W]);
-        const xTickFormat = this.options.xTickFormat ?? ((d) => format(".2s")(d));
-        const showValues = this.options.showValues ?? false;
-        const valueOffset = this.options.valueOffset ?? 6;
-        const valueInsideGap = this.options.valueInsideGap ?? 42;
-        const valueFormat = this.options.valueFormat ?? ((d) => format(",.0f")(d.value));
-        this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickSize(-H).tickFormat("")).call((g) => {
-          g.selectAll("line").attr("stroke", t.grid);
-          g.select(".domain").remove();
-          g.selectAll("text").remove();
-        });
-        const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
-          (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", 0).attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth()).attr("width", animate ? 0 : (d) => x4(d.value)).style("fill", barFill),
-          (update) => update,
-          (exit) => exit.remove()
-        ).on("mouseover", (event, d) => {
-          select_default2(event.currentTarget).attr("opacity", 0.8);
-          const [mx, my] = pointer_default(event, this.container);
-          const html2 = this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label}</div>
-               <div>${format(",.0f")(d.value)}</div>`;
-          this._tooltip.show(mx, my, html2);
-        }).on("mouseout", (event) => {
-          select_default2(event.currentTarget).attr("opacity", 1).style("fill", barFill);
-          this._tooltip.hide();
-        });
-        if (animate) {
-          bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("width", (d) => x4(d.value)).on("end", (d, i, nodes) => {
-            if (i === nodes.length - 1) this._didAnimateIn = true;
-          });
-        } else {
-          bars.attr("width", (d) => x4(d.value));
-          this._didAnimateIn = true;
-        }
-        if (showValues) {
-          const values = this.gBars.selectAll(".rc-bar-value").data(this._data, (d) => d.label).join("text").attr("class", "rc-bar-value").attr("y", (d) => y4(d.label) + y4.bandwidth() / 2).attr("dy", "0.35em").attr("opacity", animate ? 0 : 1).text((d) => valueFormat(d));
-          const placeValue = (sel) => {
-            sel.each((d, i, nodes) => {
-              const end = x4(d.value);
-              const placeInside = W - end < valueInsideGap;
-              select_default2(nodes[i]).attr("x", placeInside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset)).attr("text-anchor", placeInside ? "end" : "start").attr("fill", placeInside ? t.bg : t.text);
-            });
-          };
-          if (animate) {
-            values.attr("x", valueOffset);
-            values.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("opacity", 1).on("start", function() {
-            }).on("end", function(d, i, nodes) {
-              placeValue(select_default2(nodes[i]));
-            });
-            setTimeout(() => placeValue(values), duration + (this._data.length - 1) * stagger + 10);
-          } else {
-            placeValue(values);
-          }
-        } else {
-          this.gBars.selectAll(".rc-bar-value").remove();
-        }
-        this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").attr("stroke", t.border);
-          g.selectAll(".tick text").style("cursor", "default").on("mouseover", (event, fullLabel) => {
-            const shown = this._formatLabel(fullLabel);
-            if (shown === fullLabel) return;
-            const [mx, my] = pointer_default(event, this.container);
-            this._tooltip.show(mx, my, `<div>${fullLabel}</div>`);
-          }).on("mouseout", () => this._tooltip.hide());
-        });
-        this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickFormat(xTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.text);
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
+      const ease = resolveEase(this.options.ease ?? "cubicOut");
+      const barFill = this.options.barColor ?? t.accent;
+      const onBarOver = (event, d) => {
+        select_default2(event.currentTarget).attr("opacity", 0.75);
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, this._tooltipHtml(d));
+      };
+      const onBarOut = (event) => {
+        select_default2(event.currentTarget).attr("opacity", 1);
+        this._tooltip.hide();
+      };
+      horizontal ? this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) : this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+    }
+    // ─── Horizontal ───────────────────────────────────────────────────────────
+    _renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
+      const y4 = band().domain(this._data.map((d) => d.label)).range([0, H]).padding(0.25);
+      const x4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([0, W]);
+      const xTickFormat = this.options.xTickFormat ?? ((d) => format(".2s")(d));
+      const showValues = this.options.showValues ?? false;
+      const valueOffset = this.options.valueOffset ?? 6;
+      const valueInsideGap = this.options.valueInsideGap ?? 42;
+      const valueFormat = this.options.valueFormat ?? ((d) => format(",.0f")(d.value));
+      this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickSize(-H).tickFormat("")).call((g) => {
+        g.selectAll("line").attr("stroke", t.grid);
+        g.select(".domain").remove();
+        g.selectAll("text").remove();
+      });
+      const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
+        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", 0).attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth()).attr("width", animate ? 0 : (d) => x4(d.value)).attr("fill", barFill),
+        (update) => update,
+        (exit) => exit.remove()
+      ).on("mouseover", onBarOver).on("mouseout", onBarOut);
+      if (animate) {
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("width", (d) => x4(d.value)).on("end", (d, i, nodes) => {
+          if (i === nodes.length - 1) this._didAnimateIn = true;
         });
       } else {
-        const x4 = band().domain(this._data.map((d) => d.label)).range([0, W]).padding(0.25);
-        const y4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([H, 0]);
-        const prefix = this.options.yPrefix ?? "";
-        const suffix = this.options.ySuffix ?? "";
-        const yTickFormat = this.options.yTickFormat ?? ((d) => `${prefix}${format(".2s")(d)}${suffix}`);
-        this.gGrid.attr("transform", "translate(0,0)").call(axisLeft(y4).ticks(4).tickSize(-W).tickFormat("")).call((g) => {
-          g.selectAll("line").attr("stroke", t.grid);
-          g.select(".domain").remove();
-          g.selectAll("text").remove();
-        });
-        const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
-          (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth()).attr("y", animate ? H : (d) => y4(d.value)).attr("height", animate ? 0 : (d) => H - y4(d.value)).style("fill", barFill),
-          (update) => update,
-          (exit) => exit.remove()
-        ).on("mouseover", (event, d) => {
-          select_default2(event.currentTarget).attr("opacity", 0.8);
-          const [mx, my] = pointer_default(event, this.container);
-          const html2 = this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label}</div>
-               <div>${format(",.0f")(d.value)}</div>`;
-          this._tooltip.show(mx, my, html2);
-        }).on("mouseout", (event) => {
-          select_default2(event.currentTarget).attr("opacity", 1).style("fill", barFill);
-          this._tooltip.hide();
-        });
-        if (animate) {
-          bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value)).on("end", (d, i, nodes) => {
-            if (i === nodes.length - 1) this._didAnimateIn = true;
-          });
-        } else {
-          bars.attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value));
-          this._didAnimateIn = true;
-        }
-        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").attr("stroke", t.border);
-          g.selectAll(".tick text").style("cursor", "default").on("mouseover", (event, fullLabel) => {
-            const shown = this._formatLabel(fullLabel);
-            if (shown === fullLabel) return;
-            const [mx, my] = pointer_default(event, this.container);
-            this._tooltip.show(mx, my, `<div>${fullLabel}</div>`);
-          }).on("mouseout", () => this._tooltip.hide());
-        });
-        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).ticks(4).tickFormat(yTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.text);
-          g.select(".domain").attr("stroke", t.border);
-          g.selectAll("line").remove();
-        });
+        bars.attr("width", (d) => x4(d.value));
+        this._didAnimateIn = true;
       }
+      if (showValues) {
+        const placeValue = (sel) => {
+          sel.each((d, i, nodes) => {
+            const end = x4(d.value);
+            const inside = W - end < valueInsideGap;
+            select_default2(nodes[i]).attr("x", inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset)).attr("text-anchor", inside ? "end" : "start").attr("fill", inside ? t.bg : t.text);
+          });
+        };
+        const values = this.gBars.selectAll(".rc-bar-value").data(this._data, (d) => d.label).join("text").attr("class", "rc-bar-value").attr("y", (d) => y4(d.label) + y4.bandwidth() / 2).attr("dy", "0.35em").style("font-family", t.numericFont).style("font-size", t.fontSize).attr("opacity", animate ? 0 : 1).text((d) => valueFormat(d));
+        if (animate) {
+          values.attr("x", valueOffset).transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("opacity", 1).on("end", (d, i, nodes) => placeValue(select_default2(nodes[i])));
+          setTimeout(() => placeValue(values), duration + (this._data.length - 1) * stagger + 10);
+        } else {
+          placeValue(values);
+        }
+      } else {
+        this.gBars.selectAll(".rc-bar-value").remove();
+      }
+      this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font);
+        g.select(".domain").attr("stroke", t.border);
+        this._bindLabelTooltips(g, "left");
+      });
+      this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickFormat(xTickFormat)).call((g) => {
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont);
+        g.select(".domain").remove();
+        g.selectAll("line").remove();
+      });
+    }
+    // ─── Vertical ─────────────────────────────────────────────────────────────
+    _renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
+      const x4 = band().domain(this._data.map((d) => d.label)).range([0, W]).padding(0.25);
+      const y4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([H, 0]);
+      const prefix = this.options.yPrefix ?? "";
+      const suffix = this.options.ySuffix ?? "";
+      const yTickFormat = this.options.yTickFormat ?? ((d) => `${prefix}${format(".2s")(d)}${suffix}`);
+      renderGrid(this.gGrid, y4, W, 4, t);
+      const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
+        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth()).attr("y", animate ? H : (d) => y4(d.value)).attr("height", animate ? 0 : (d) => H - y4(d.value)).attr("fill", barFill),
+        (update) => update,
+        (exit) => exit.remove()
+      ).on("mouseover", onBarOver).on("mouseout", onBarOut);
+      if (animate) {
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value)).on("end", (d, i, nodes) => {
+          if (i === nodes.length - 1) this._didAnimateIn = true;
+        });
+      } else {
+        bars.attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value));
+        this._didAnimateIn = true;
+      }
+      this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font);
+        g.select(".domain").attr("stroke", t.border);
+        this._bindLabelTooltips(g, "bottom");
+      });
+      this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).ticks(4).tickFormat(yTickFormat)).call((g) => {
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont);
+        g.select(".domain").remove();
+        g.selectAll("line").remove();
+      });
+    }
+    // ─── Label tooltip on truncated axis labels ────────────────────────────────
+    _bindLabelTooltips(g, side) {
+      g.selectAll(".tick text").style("cursor", "default").on("mouseover", (event, fullLabel) => {
+        if (this._formatLabel(fullLabel) === fullLabel) return;
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, `<div>${fullLabel}</div>`);
+      }).on("mouseout", () => this._tooltip.hide());
+    }
+  };
+
+  // assets/charts/src/charts/DualAxes.js
+  var DualAxes = class extends Chart {
+    constructor(selector, options = {}) {
+      const hasAxisTitles = !!(options.y1Title || options.y2Title);
+      const topDefault = options.margin?.top ?? 10;
+      super(selector, {
+        height: 280,
+        margin: {
+          top: hasAxisTitles ? Math.max(topDefault, 30) : topDefault,
+          right: options.margin?.right ?? 92,
+          bottom: options.margin?.bottom ?? 18,
+          left: options.margin?.left ?? 64
+        },
+        ...options
+      });
+      this._series = [];
+      this._didAnimateIn = false;
+      const tooltip = new Tooltip(this.container, this.theme);
+      this._initSVG(tooltip);
+    }
+    // ─── Data ─────────────────────────────────────────────────────────────────
+    setData(series) {
+      const colors = this.theme.colors ?? [];
+      this._series = (series ?? []).map((s2, idx) => ({
+        name: s2.name ?? `Series ${idx + 1}`,
+        axis: s2.axis === "y2" ? "y2" : "y1",
+        type: s2.type === "bar" ? "bar" : "line",
+        color: s2.color ?? (colors[idx % (colors.length || 1)] ?? this.theme.accent),
+        curve: s2.curve,
+        area: s2.area,
+        areaOpacity: s2.areaOpacity,
+        areaBaseline: s2.areaBaseline,
+        strokeWidth: Number.isFinite(+s2.strokeWidth) ? +s2.strokeWidth : 2,
+        values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
+      })).filter((s2) => s2.values.length);
+      this.render();
+      return this;
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG(tooltip) {
+      this.container.style.height = this.options.height + "px";
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      const { left: left2, top: top2 } = this.margin;
+      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this.gGrid = this.g.append("g").attr("class", "rc-grid");
+      this.gBars = this.g.append("g").attr("class", "rc-bars");
+      this.gLines = this.g.append("g").attr("class", "rc-lines");
+      this.gAxisX = this.g.append("g").attr("class", "rc-axis rc-axis-x");
+      this.gAxisY1 = this.g.append("g").attr("class", "rc-axis rc-axis-y1");
+      this.gAxisY2 = this.g.append("g").attr("class", "rc-axis rc-axis-y2");
+      this.gAxisTitles = this.g.append("g").attr("class", "rc-axis-titles");
+      this.gEnds = this.g.append("g").attr("class", "rc-end-labels");
+      this.gMarkers = this.g.append("g").attr("class", "rc-markers");
+      this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
+      const gCross = this.g.append("g").attr("class", "rc-crosshair");
+      const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
+      this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
+    }
+    // ─── Bars ─────────────────────────────────────────────────────────────────
+    _renderBars({ bars, allValues, x: x4, y1: y12, y2: y22, barOpacity, barWidthRatio, barGrouping, animate, duration, ease }) {
+      const barItems = bars.flatMap(
+        (s2) => s2.values.map((v2) => ({
+          key: `${s2.name}|${+v2.date}`,
+          series: s2.name,
+          axis: s2.axis,
+          color: s2.color,
+          date: v2.date,
+          value: v2.value
+        }))
+      );
+      const uniqueDates = Array.from(new Set(allValues.map((d) => +d.date))).sort((a4, b) => a4 - b);
+      const step = uniqueDates.length > 1 ? Math.max(6, x4(new Date(uniqueDates[1])) - x4(new Date(uniqueDates[0]))) : 12;
+      const baseBarW = Math.max(4, step * barWidthRatio);
+      const barSeriesNames = Array.from(new Set(bars.map((b) => b.name)));
+      const clusterCount = barGrouping === "cluster" ? Math.max(1, barSeriesNames.length) : 1;
+      const barW = barGrouping === "cluster" ? baseBarW / clusterCount : baseBarW;
+      const xOffset = (seriesName) => {
+        if (barGrouping !== "cluster") return 0;
+        const i = barSeriesNames.indexOf(seriesName);
+        return ((i < 0 ? 0 : i) - (clusterCount - 1) / 2) * (baseBarW / clusterCount);
+      };
+      const scaleFor = (d) => d.axis === "y2" ? y22 : y12;
+      const barsSel = this.gBars.selectAll(".rc-dual-bar").data(barItems, (d) => d.key).join(
+        (enter) => enter.append("rect").attr("class", "rc-dual-bar").attr("x", (d) => x4(d.date) - barW / 2 + xOffset(d.series)).attr("width", barW).attr("fill", (d) => d.color).attr("opacity", barOpacity).attr("y", (d) => animate ? scaleFor(d)(0) : scaleFor(d)(Math.max(0, d.value))).attr("height", (d) => animate ? 0 : Math.abs(scaleFor(d)(d.value) - scaleFor(d)(0))),
+        (update) => update,
+        (exit) => exit.remove()
+      );
+      barsSel.call((sel) => {
+        const apply = (sel2) => sel2.attr("y", (d) => scaleFor(d)(Math.max(0, d.value))).attr("height", (d) => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(0)));
+        if (animate && barItems.length) {
+          apply(sel.transition().duration(duration).ease(ease));
+        } else {
+          apply(sel);
+        }
+      });
+    }
+    // ─── Lines ────────────────────────────────────────────────────────────────
+    _renderLines({ lines, x: x4, y1: y12, y2: y22, defaultCurve, tension, globalDash, animate, duration, ease }) {
+      const globalArea = this.options.area ?? false;
+      const globalAreaOp = this.options.areaOpacity ?? 0.12;
+      const globalAreaBase = this.options.areaBaseline ?? "zero";
+      const yFor = (s2) => s2.axis === "y2" ? y22 : y12;
+      const areaSeries = lines.filter((s2) => (s2.area ?? globalArea) === true);
+      this.gLines.selectAll(".rc-dual-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-dual-area").attr("d", (s2) => areaPath(s2, x4, yFor(s2), defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
+      const paths = this.gLines.selectAll(".rc-dual-line").data(lines, (s2) => s2.name).join("path").attr("class", "rc-dual-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, yFor(s2), defaultCurve, tension));
+      if (animate && lines.length) {
+        const solidPaths = paths.filter((s2) => !resolveStrokeDash(s2.strokeDash ?? globalDash));
+        const dashedPaths = paths.filter((s2) => resolveStrokeDash(s2.strokeDash ?? globalDash));
+        dashedPaths.attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("stroke-dashoffset", null);
+        animateLines(solidPaths, duration, ease, () => {
+          this._didAnimateIn = true;
+        });
+        if (solidPaths.empty()) this._didAnimateIn = true;
+      } else {
+        paths.attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("stroke-dashoffset", null);
+        this._didAnimateIn = true;
+      }
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    render() {
+      if (!this._series.length) return;
+      const W = this.width, H = this.height;
+      if (W <= 0 || H <= 0) return;
+      const o = this.options;
+      const t = this.theme;
+      const animate = (o.animate ?? true) && !this._didAnimateIn;
+      const duration = o.duration ?? 650;
+      const ease = resolveEase(o.ease ?? "cubicOut");
+      const defaultCurve = o.curve ?? "linear";
+      const tension = o.curveTension ?? 0;
+      const xPad = o.xPad ?? 8;
+      const lines = this._series.filter((s2) => s2.type === "line");
+      const bars = this._series.filter((s2) => s2.type === "bar");
+      const allValues = this._series.flatMap((s2) => s2.values);
+      const allY1 = this._series.filter((s2) => s2.axis === "y1").flatMap((s2) => s2.values);
+      const allY2 = this._series.filter((s2) => s2.axis === "y2").flatMap((s2) => s2.values);
+      const x4 = time().domain(extent(allValues, (d) => d.date)).range([xPad, W - xPad]);
+      const y1Auto = allY1.length ? extent(allY1, (d) => d.value) : extent(allY2, (d) => d.value);
+      const y2Auto = allY2.length ? extent(allY2, (d) => d.value) : extent(allY1, (d) => d.value);
+      const y12 = linear3().domain(Array.isArray(o.y1Domain) ? o.y1Domain : y1Auto).nice(4).range([H, 0]);
+      const y22 = linear3().domain(Array.isArray(o.y2Domain) ? o.y2Domain : y2Auto).nice(4).range([H, 0]);
+      const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
+      const y1TickFormat = o.y1TickFormat ?? ((v2) => format(",.2f")(v2));
+      const y2TickFormat = o.y2TickFormat ?? ((v2) => Math.abs(v2) < 1e-6 ? "0" : format("+.2f")(v2));
+      renderGrid(this.gGrid, y22, W, o.y2Ticks ?? 4, t);
+      renderZeroBaseline(this.gZero, y22, W, t);
+      renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
+      renderAxisYRight(this.gAxisY1, y12, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
+      renderAxisYLeft(this.gAxisY2, y22, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+      renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t);
+      if (bars.length) {
+        this._renderBars({
+          bars,
+          allValues,
+          x: x4,
+          y1: y12,
+          y2: y22,
+          barOpacity: o.barOpacity ?? 0.35,
+          barWidthRatio: o.barWidthRatio ?? 0.65,
+          barGrouping: o.barGrouping ?? "overlap",
+          animate,
+          duration,
+          ease
+        });
+      } else {
+        this.gBars.selectAll("*").remove();
+      }
+      if (lines.length) {
+        this._renderLines({ lines, x: x4, y1: y12, y2: y22, defaultCurve, tension, globalDash: o.strokeDash ?? null, animate, duration, ease });
+      } else {
+        this.gLines.selectAll("*").remove();
+        this._didAnimateIn = true;
+      }
+      if (o.endLabels ?? true) {
+        const endAxis = o.endLabelsAxis ?? "y1";
+        const endSeries = this._series.filter((s2) => s2.axis === endAxis);
+        const endScale = endAxis === "y2" ? y22 : y12;
+        const endFmt = endAxis === "y2" ? y2TickFormat : y1TickFormat;
+        renderEndLabels(this.gEnds, endSeries, endScale, W, endFmt, t);
+      } else {
+        this.gEnds.selectAll("*").remove();
+      }
+      renderMarkers(
+        this.gMarkers,
+        this._series,
+        x4,
+        (s2) => s2.axis === "y2" ? y22 : y12,
+        o.markers ?? false,
+        o.markerShape ?? "circle",
+        o.markerSize ?? 4,
+        t
+      );
+      this._crosshair.bind({
+        W,
+        H,
+        x: x4,
+        series: this._series,
+        enabled: o.crosshair ?? true,
+        scaleFor: (s2) => s2.axis === "y2" ? y22 : y12,
+        formatFor: (s2, v2) => s2.axis === "y2" ? y2TickFormat(v2) : y1TickFormat(v2),
+        tooltipFmt: o.tooltipFormat
+      });
     }
   };
 
@@ -17882,48 +18357,394 @@ var RareCharts = (() => {
   var Donut = class extends Chart {
     constructor(selector, options = {}) {
       super(selector, {
-        height: 180,
-        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        height: 280,
+        margin: { top: 8, right: 8, bottom: 8, left: 8 },
         ...options
       });
       this._data = [];
+      this._didAnimateIn = false;
+      this._tooltip = new Tooltip(this.container, this.theme);
       this._initSVG();
     }
+    // ─── Data ─────────────────────────────────────────────────────────────────
     setData(data) {
-      this._data = data;
+      this._data = (data ?? []).filter((d) => Number.isFinite(+d.value) && +d.value > 0);
       this.render();
       return this;
     }
+    // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      this.gSlices = this.svg.append("g").attr("class", "rc-donut-slices");
+      this.gLabels = this.svg.append("g").attr("class", "rc-donut-labels");
+      this.gCenter = this.svg.append("g").attr("class", "rc-donut-center");
     }
+    // ─── Render ───────────────────────────────────────────────────────────────
     render() {
       if (!this._data.length) return;
-      const t = this.theme;
       const W = this.container.clientWidth;
       const H = this.options.height;
-      this.svg.selectAll("*").remove();
-      const radius = Math.min(W * 0.38, H * 0.42);
-      const cx = W * 0.33, cy = H / 2;
-      const g = this.svg.append("g").attr("transform", `translate(${cx},${cy})`);
-      const pie = pie_default().value((d) => d.value).sort(null).padAngle(0.025);
-      const arc = arc_default().innerRadius(radius * 0.58).outerRadius(radius);
-      const arcHover = arc_default().innerRadius(radius * 0.54).outerRadius(radius * 1.05);
-      const total = sum(this._data, (d) => d.value);
-      g.selectAll(".rc-slice").data(pie(this._data)).join("g").attr("class", "rc-slice").append("path").attr("d", arc).attr("fill", (d, i) => t.colors[i % t.colors.length]).attr("opacity", 0.85).on("mouseover", function() {
-        select_default2(this).attr("d", arcHover).attr("opacity", 1);
-      }).on("mouseout", function() {
-        select_default2(this).attr("d", arc).attr("opacity", 0.85);
+      if (W <= 0 || H <= 0) return;
+      const o = this.options;
+      const t = this.theme;
+      const animate = (o.animate ?? true) && !this._didAnimateIn;
+      const duration = o.duration ?? 650;
+      const ease = resolveEase(o.ease ?? "cubicOut");
+      const isPie = (o.innerRadius ?? 0.58) === 0;
+      const innerFrac = isPie ? 0 : o.innerRadius ?? 0.58;
+      const padAngle = o.padAngle ?? (isPie ? 8e-3 : 0.018);
+      const cornerR = o.cornerRadius ?? (isPie ? 1 : 3);
+      const showLabels = o.showLabels ?? false;
+      const showCenter = o.showCenter ?? !isPie;
+      const cx = W / 2;
+      const cy = H / 2;
+      const labelRoom = showLabels ? 32 : 0;
+      const outerR = Math.min(cx, cy) - labelRoom - 4;
+      const innerR = outerR * innerFrac;
+      const total = sum(this._data, (d) => +d.value);
+      const valueFmt = o.valueFormat ?? ((v2) => format(",")(v2));
+      const percentFmt = o.percentFormat ?? ((p) => format(".1%")(p));
+      const palette = t.colors ?? [];
+      const colorFor = (d, i) => d.color ?? palette[i % palette.length] ?? t.accent;
+      const arc = arc_default().innerRadius(innerR).outerRadius(outerR).padAngle(padAngle).cornerRadius(cornerR);
+      const arcHover = arc_default().innerRadius(innerR).outerRadius(outerR + 6).padAngle(padAngle).cornerRadius(cornerR);
+      const arcLabel = arc_default().innerRadius(outerR + 10).outerRadius(outerR + 10);
+      const pie = pie_default().value((d) => +d.value).sort(null).padAngle(padAngle);
+      const arcs = pie(this._data);
+      this.gSlices.attr("transform", `translate(${cx},${cy})`);
+      this.gLabels.attr("transform", `translate(${cx},${cy})`);
+      this.gCenter.attr("transform", `translate(${cx},${cy})`);
+      const slices = this.gSlices.selectAll(".rc-donut-slice").data(arcs, (d) => d.data.label).join(
+        (enter) => enter.append("path").attr("class", "rc-donut-slice").attr("fill", (d, i) => colorFor(d.data, i)).attr(
+          "d",
+          animate ? (d) => arc({ ...d, endAngle: d.startAngle }) : (d) => arc(d)
+        ),
+        (update) => update,
+        (exit) => exit.transition().duration(duration / 2).ease(ease).attr("d", (d) => arc({ ...d, endAngle: d.startAngle })).remove()
+      ).on("mouseover", (event, d) => {
+        select_default2(event.currentTarget).transition().duration(120).ease(quadOut).attr("d", arcHover(d));
+        const i = arcs.indexOf(d);
+        const pct = d.data.value / total;
+        const html2 = o.tooltipFormat ? o.tooltipFormat({ label: d.data.label, value: d.data.value, percent: pct, color: colorFor(d.data, i) }) : `<div style="color:${colorFor(d.data, i)}">${d.data.label}</div>
+             <div>${valueFmt(d.data.value)}</div>
+             <div style="color:${t.muted}">${percentFmt(pct)}</div>`;
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, html2);
+      }).on("mouseout", (event, d) => {
+        select_default2(event.currentTarget).transition().duration(180).ease(quadOut).attr("d", arc(d));
+        this._tooltip.hide();
       });
-      g.append("text").attr("text-anchor", "middle").attr("dy", "-0.3em").attr("fill", t.muted).style("font-family", t.font).style("font-size", "9px").text("TOTAL");
-      g.append("text").attr("text-anchor", "middle").attr("dy", "1em").attr("fill", t.text).style("font-family", t.font).style("font-size", "15px").text(this.options.centerFormat ? this.options.centerFormat(total) : format(",.0f")(total));
-      const legend = this.svg.append("g").attr("transform", `translate(${cx + radius + 18}, ${cy - this._data.length * 10})`);
-      this._data.forEach((d, i) => {
-        const row = legend.append("g").attr("transform", `translate(0,${i * 20})`);
-        row.append("rect").attr("width", 8).attr("height", 8).attr("y", -8).attr("fill", t.colors[i % t.colors.length]);
-        row.append("text").attr("x", 12).attr("fill", t.muted).style("font-family", t.font).style("font-size", "9px").text(`${d.label}  ${Math.round(d.value / total * 100)}%`);
+      if (animate) {
+        slices.transition().duration(duration).ease(ease).attrTween("d", function(d) {
+          const i = value_default({ startAngle: d.startAngle, endAngle: d.startAngle }, d);
+          return (t4) => arc(i(t4));
+        }).on("end", (d, i, nodes) => {
+          if (i === nodes.length - 1) this._didAnimateIn = true;
+        });
+      } else {
+        slices.attr("d", (d) => arc(d));
+        this._didAnimateIn = true;
+      }
+      this.gLabels.selectAll(".rc-donut-label").remove();
+      if (showLabels) {
+        this.gLabels.selectAll(".rc-donut-label").data(arcs).join("text").attr("class", "rc-donut-label").attr("transform", (d) => `translate(${arcLabel.centroid(d)})`).attr("text-anchor", (d) => arcLabel.centroid(d)[0] > 0 ? "start" : "end").attr("dominant-baseline", "middle").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize).text((d) => {
+          const pct = d.data.value / total;
+          return pct < 0.04 ? "" : `${d.data.label} ${percentFmt(pct)}`;
+        });
+      }
+      this.gCenter.selectAll("*").remove();
+      if (showCenter && innerR > 0) {
+        const rawCenter = o.centerText;
+        const centerVal = typeof rawCenter === "function" ? rawCenter(this._data) : rawCenter ?? valueFmt(total);
+        const centerLabel = o.centerLabel ?? "Total";
+        this.gCenter.append("text").attr("class", "rc-donut-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", centerLabel ? -10 : 0).attr("fill", t.text).style("font-family", t.numericFont).style("font-size", `${Math.max(14, innerR * 0.28)}px`).style("font-weight", "bold").text(centerVal);
+        if (centerLabel) {
+          this.gCenter.append("text").attr("class", "rc-donut-center-label").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize).text(centerLabel);
+        }
+      }
+    }
+  };
+
+  // assets/charts/src/charts/presets/linkPresets.js
+  var personal = {
+    professional: { color: "#00aaff", dash: null, label: "Professional" },
+    family: { color: "#00c97a", dash: null, label: "Family" },
+    friendship: { color: "#ffcc00", dash: "5,4", label: "Friendship" },
+    investment: { color: "#ff6200", dash: null, label: "Investment" },
+    philanthropy: { color: "#cc44ff", dash: "2,4", label: "Philanthropy" },
+    education: { color: "#aaaaaa", dash: "8,4", label: "Education" }
+  };
+  var knowledge = {
+    prerequisite: { color: "#ff6200", dash: null, label: "Prerequisite" },
+    related: { color: "#00aaff", dash: "5,4", label: "Related" },
+    partOf: { color: "#00c97a", dash: null, label: "Part of" },
+    example: { color: "#ffcc00", dash: "2,4", label: "Example" },
+    contradicts: { color: "#ff3b5c", dash: "3,3", label: "Contradicts" },
+    extends: { color: "#cc44ff", dash: null, label: "Extends" }
+  };
+  var org = {
+    subsidiary: { color: "#00aaff", dash: null, label: "Subsidiary" },
+    investment: { color: "#ff6200", dash: null, label: "Investment" },
+    board: { color: "#00c97a", dash: "5,4", label: "Board member" },
+    partnership: { color: "#ffcc00", dash: null, label: "Partnership" },
+    acquisition: { color: "#cc44ff", dash: null, label: "Acquisition" },
+    competitor: { color: "#ff3b5c", dash: "3,3", label: "Competitor" }
+  };
+  var tech = {
+    depends: { color: "#00aaff", dash: null, label: "Depends on" },
+    calls: { color: "#ff6200", dash: null, label: "Calls" },
+    dataFlow: { color: "#00c97a", dash: "5,4", label: "Data flow" },
+    inherits: { color: "#cc44ff", dash: null, label: "Inherits" },
+    optional: { color: "#aaaaaa", dash: "3,3", label: "Optional dep" }
+  };
+  var causal = {
+    causes: { color: "#ff6200", dash: null, label: "Causes" },
+    enables: { color: "#00c97a", dash: null, label: "Enables" },
+    blocks: { color: "#ff3b5c", dash: "4,3", label: "Blocks" },
+    correlates: { color: "#00aaff", dash: "5,4", label: "Correlates" },
+    weakens: { color: "#ffcc00", dash: "2,3", label: "Weakens" }
+  };
+  var linkPresets = { personal, knowledge, org, tech, causal };
+
+  // assets/charts/src/charts/Graph.js
+  var Graph = class extends Chart {
+    constructor(selector, options = {}) {
+      super(selector, {
+        height: 520,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        ...options
       });
+      this._nodes = [];
+      this._links = [];
+      this._simulation = null;
+      this._focused = null;
+      this._tooltip = new Tooltip(this.container, this.theme);
+      this._linkTypes = options.linkTypes ?? {
+        default: { color: "#888888", dash: null, label: "Connection" }
+      };
+      this._initSVG();
+    }
+    // ─── Data ─────────────────────────────────────────────────────────────────
+    setData({ nodes = [], links = [] } = {}) {
+      this._nodes = nodes.map((n) => ({ ...n }));
+      this._links = links.map((l) => ({ ...l }));
+      this._focused = null;
+      this._stopSimulation();
+      this.render();
+      return this;
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG() {
+      this.container.style.height = this.options.height + "px";
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%").style("cursor", "grab");
+      this._defs = this.svg.append("defs");
+      this.gRoot = this.svg.append("g").attr("class", "rc-graph-root");
+      this.gZoom = this.gRoot.append("g").attr("class", "rc-graph-zoom");
+      this.gLinks = this.gZoom.append("g").attr("class", "rc-graph-links");
+      this.gLabels = this.gZoom.append("g").attr("class", "rc-graph-link-labels");
+      this.gNodes = this.gZoom.append("g").attr("class", "rc-graph-nodes");
+      this.gLegend = this.svg.append("g").attr("class", "rc-graph-legend");
+      if (this.options.zoom !== false) {
+        this._zoom = zoom_default2().scaleExtent([0.2, 4]).on("zoom", (event) => {
+          this.gZoom.attr("transform", event.transform);
+        });
+        this.svg.call(this._zoom).on("dblclick.zoom", null);
+      }
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    render() {
+      if (!this._nodes.length) return;
+      const W = this.width;
+      const H = this.height;
+      const offsetY = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
+      if (W <= 0 || H <= 0) return;
+      const t = this.theme;
+      const o = this.options;
+      const baseR = o.nodeRadius ?? 22;
+      const linkDist = o.linkDistance ?? 120;
+      const charge = o.chargeStrength ?? -400;
+      const focusMode = o.focusOnClick !== false;
+      const palette = t.colors ?? [];
+      const typesInUse = Array.from(new Set(this._links.map((l) => l.type ?? "professional")));
+      this._defs.selectAll(".rc-arrow").remove();
+      typesInUse.forEach((type2) => {
+        const cfg = this._linkTypes[type2] ?? { color: t.muted };
+        this._defs.append("marker").attr("id", `rc-arrow-${type2}`).attr("class", "rc-arrow").attr("viewBox", "0 -4 8 8").attr("refX", 8).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").append("path").attr("d", "M0,-4L8,0L0,4").attr("fill", cfg.color);
+      });
+      const groupIndex = {};
+      this._nodes.forEach((n) => {
+        if (!(n.group in groupIndex)) {
+          groupIndex[n.group] = Object.keys(groupIndex).length;
+        }
+      });
+      const nodeColor = (n, i) => n.color ?? palette[groupIndex[n.group] % palette.length] ?? t.accent;
+      const nodeR = (n) => baseR * Math.min(3, Math.max(0.6, n.size ?? 1));
+      const linkSel = this.gLinks.selectAll(".rc-graph-link").data(this._links, (d) => `${d.source?.id ?? d.source}\u2192${d.target?.id ?? d.target}`).join("line").attr("class", "rc-graph-link").attr("stroke", (d) => (this._linkTypes[d.type ?? "professional"] ?? {}).color ?? t.muted).attr("stroke-width", (d) => Math.max(1, 2.5 * (d.strength ?? 0.5))).attr("stroke-dasharray", (d) => (this._linkTypes[d.type ?? "professional"] ?? {}).dash ?? null).attr("stroke-opacity", 0.7).attr("marker-end", (d) => `url(#rc-arrow-${d.type ?? "professional"})`);
+      const nodeSel = this.gNodes.selectAll(".rc-graph-node").data(this._nodes, (d) => d.id).join(
+        (enter) => {
+          const g = enter.append("g").attr("class", "rc-graph-node").style("cursor", "pointer").call(this._dragBehavior());
+          g.append("circle").attr("class", "rc-graph-node-ring").attr("r", (d) => nodeR(d) + 4).attr("fill", "none").attr("stroke-width", 2).attr("opacity", 0);
+          g.append("circle").attr("class", "rc-graph-node-circle").attr("r", (d) => nodeR(d)).attr("fill", (d, i) => nodeColor(d, i)).attr("stroke", t.bg).attr("stroke-width", 2);
+          g.filter((d) => !!d.image).append("image").attr("class", "rc-graph-node-image").attr("href", (d) => d.image).attr("x", (d) => -nodeR(d) + 2).attr("y", (d) => -nodeR(d) + 2).attr("width", (d) => (nodeR(d) - 2) * 2).attr("height", (d) => (nodeR(d) - 2) * 2).attr("clip-path", (d) => `circle(${nodeR(d) - 2}px at center)`).style("pointer-events", "none");
+          g.append("text").attr("class", "rc-graph-node-label").attr("text-anchor", "middle").attr("dominant-baseline", "hanging").attr("y", (d) => nodeR(d) + 5).attr("fill", t.text).style("font-family", t.font).style("font-size", "11px").style("pointer-events", "none").style("user-select", "none").text((d) => d.label);
+          return g;
+        },
+        (update) => update,
+        (exit) => exit.remove()
+      );
+      nodeSel.on("mouseover", (event, d) => {
+        select_default2(event.currentTarget).select(".rc-graph-node-ring").attr("stroke", nodeColor(d)).attr("opacity", 0.4);
+        const nodeLinks = this._links.filter(
+          (l) => (l.source?.id ?? l.source) === d.id || (l.target?.id ?? l.target) === d.id
+        );
+        const html2 = o.tooltipFormat ? o.tooltipFormat({ node: d, links: nodeLinks }) : this._defaultTooltip(d, nodeLinks);
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, html2);
+      }).on("mouseout", (event) => {
+        select_default2(event.currentTarget).select(".rc-graph-node-ring").attr("opacity", 0);
+        this._tooltip.hide();
+      });
+      if (focusMode) {
+        nodeSel.on("click", (event, d) => {
+          event.stopPropagation();
+          this._focused = this._focused?.id === d.id ? null : d;
+          this._applyFocus(nodeSel, linkSel);
+        });
+        this.svg.on("click", () => {
+          this._focused = null;
+          this._applyFocus(nodeSel, linkSel);
+        });
+      }
+      this._renderLegend(typesInUse, W, H, t);
+      const groups2 = Array.from(new Set(this._nodes.map((n) => n.group ?? "default")));
+      const clusterR = Math.min(W, H) * 0.28;
+      const clusterX = {};
+      const clusterY = {};
+      groups2.forEach((g, i) => {
+        const angle2 = i / groups2.length * 2 * Math.PI - Math.PI / 2;
+        clusterX[g] = W / 2 + clusterR * Math.cos(angle2);
+        clusterY[g] = H / 2 + clusterR * Math.sin(angle2);
+      });
+      const pad3 = baseR * 3;
+      const clamp = (v2, lo, hi) => Math.max(lo, Math.min(hi, v2));
+      this._simulation = simulation_default(this._nodes).force(
+        "link",
+        link_default(this._links).id((d) => d.id).distance((l) => linkDist * (1.2 / (l.strength ?? 0.5))).strength((l) => (l.strength ?? 0.5) * 0.7)
+      ).force("charge", manyBody_default().strength(charge).distanceMax(W * 0.6)).force("center", center_default(W / 2, H / 2).strength(0.04)).force("collide", collide_default().radius((d) => nodeR(d) + 12).strength(0.8)).force("clusterX", x_default2((d) => clusterX[d.group ?? "default"] ?? W / 2).strength(0.12)).force("clusterY", y_default2((d) => clusterY[d.group ?? "default"] ?? H / 2).strength(0.12)).on("tick", () => {
+        this._nodes.forEach((d) => {
+          d.x = clamp(d.x, pad3, W - pad3);
+          d.y = clamp(d.y, pad3, H - pad3);
+        });
+        linkSel.attr("x1", (d) => d.source.x).attr("y1", (d) => d.source.y).attr("x2", (d) => {
+          const r = nodeR(d.target) + 8;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.target.x - dx / len * r;
+        }).attr("y2", (d) => {
+          const r = nodeR(d.target) + 8;
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const len = Math.sqrt(dx * dx + dy * dy) || 1;
+          return d.target.y - dy / len * r;
+        });
+        nodeSel.attr("transform", (d) => `translate(${d.x},${d.y})`);
+      });
+      if (this._nodes.length > 60) {
+        this._simulation.alphaDecay(0.025);
+      }
+    }
+    // ─── Focus dim/highlight ──────────────────────────────────────────────────
+    _applyFocus(nodeSel, linkSel) {
+      const f = this._focused;
+      if (!f) {
+        nodeSel.attr("opacity", 1);
+        linkSel.attr("opacity", 0.7);
+        return;
+      }
+      const connectedIds = /* @__PURE__ */ new Set([f.id]);
+      this._links.forEach((l) => {
+        const s2 = l.source?.id ?? l.source;
+        const t = l.target?.id ?? l.target;
+        if (s2 === f.id) connectedIds.add(t);
+        if (t === f.id) connectedIds.add(s2);
+      });
+      nodeSel.attr("opacity", (d) => connectedIds.has(d.id) ? 1 : 0.12);
+      linkSel.attr("opacity", (l) => {
+        const s2 = l.source?.id ?? l.source;
+        const t = l.target?.id ?? l.target;
+        return s2 === f.id || t === f.id ? 1 : 0.04;
+      });
+    }
+    // ─── Drag ─────────────────────────────────────────────────────────────────
+    _dragBehavior() {
+      return drag_default().on("start", (event, d) => {
+        if (!event.active) this._simulation?.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+        select_default2(event.sourceEvent.target.closest(".rc-graph-node")).style("cursor", "grabbing");
+      }).on("drag", (event, d) => {
+        d.fx = event.x;
+        d.fy = event.y;
+      }).on("end", (event, d) => {
+        if (!event.active) this._simulation?.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+        select_default2(event.sourceEvent.target.closest(".rc-graph-node")).style("cursor", "pointer");
+      });
+    }
+    // ─── Legend ───────────────────────────────────────────────────────────────
+    _renderLegend(typesInUse, W, H, t) {
+      this.gLegend.selectAll("*").remove();
+      const items = typesInUse.map((type2) => ({ type: type2, ...this._linkTypes[type2] ?? { color: t.muted, label: type2 } }));
+      const itemH = 20;
+      const padX = 16;
+      const padY = 12;
+      const totalH = items.length * itemH + padY * 2;
+      const boxW = 148;
+      this.gLegend.append("rect").attr("x", padX).attr("y", H - totalH - padX).attr("width", boxW).attr("height", totalH).attr("rx", 4).attr("fill", t.surface ?? "#f5f5f5").attr("opacity", 0.92);
+      items.forEach((item, i) => {
+        const y4 = H - totalH - padX + padY + i * itemH + itemH / 2;
+        const x4 = padX + 12;
+        this.gLegend.append("line").attr("x1", x4).attr("x2", x4 + 20).attr("y1", y4).attr("y2", y4).attr("stroke", item.color).attr("stroke-width", 2).attr("stroke-dasharray", item.dash ?? null);
+        this.gLegend.append("text").attr("x", x4 + 26).attr("y", y4).attr("dominant-baseline", "middle").attr("fill", t.text).style("font-family", t.font).style("font-size", "11px").text(item.label ?? item.type);
+      });
+    }
+    // ─── Tooltip ──────────────────────────────────────────────────────────────
+    _defaultTooltip(node, nodeLinks) {
+      const t = this.theme;
+      const byType = {};
+      nodeLinks.forEach((l) => {
+        const type2 = l.type ?? "professional";
+        if (!byType[type2]) byType[type2] = [];
+        const other = (l.source?.id ?? l.source) === node.id ? l.target?.label ?? l.target?.id ?? l.target : l.source?.label ?? l.source?.id ?? l.source;
+        byType[type2].push(other);
+      });
+      const cfg = (type2) => this._linkTypes[type2] ?? { color: t.muted };
+      const rows = Object.entries(byType).map(
+        ([type2, names]) => `<div style="margin-top:4px">
+        <span style="color:${cfg(type2).color};font-size:10px;text-transform:uppercase;
+                     letter-spacing:0.06em">${cfg(type2).label ?? type2}</span>
+        <div style="color:${t.text}">${names.join(", ")}</div>
+       </div>`
+      ).join("");
+      return `
+      <div style="font-weight:bold;margin-bottom:2px">${node.label}</div>
+      ${node.group ? `<div style="color:${t.muted};font-size:10px;margin-bottom:4px">${node.group}</div>` : ""}
+      ${rows}
+    `;
+    }
+    // ─── Cleanup ──────────────────────────────────────────────────────────────
+    _stopSimulation() {
+      if (this._simulation) {
+        this._simulation.stop();
+        this._simulation = null;
+      }
+    }
+    destroy() {
+      this._stopSimulation();
+      super.destroy();
     }
   };
 
@@ -17969,7 +18790,8 @@ var RareCharts = (() => {
     style.textContent = cssText;
     document.head.appendChild(style);
   }
-  injectCssOnce("rc-chart-base-styles", charts_default);
+  injectCssOnce("rc-base-styles", charts_default);
+  injectCssOnce("rc-price-chart-styles", price_chart_default);
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;

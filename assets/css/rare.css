@@ -18153,6 +18153,12 @@ section {
   color: var(--gray-light);
 }
 
+.card-dashboard-bordered {
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+
 .relative {
   position: relative;
 }

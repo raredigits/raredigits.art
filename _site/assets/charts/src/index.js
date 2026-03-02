@@ -3,9 +3,10 @@
 // Подключается одной строкой: <script src="/assets/charts/rare-charts.js"></script>
 // В будущем — через CDN: <script src="https://cdn.raredigits.io/charts/v1.0.0/rare-charts.js"></script>
 
-// IMPORTANT: this import assumes esbuild is configured to load .css as text.
-// See build note: loader { '.css': 'text' } or CLI flag --loader:.css=text
-import baseCssText from './core/charts.css';
+// IMPORTANT: imports assume esbuild is configured to load .css as text.
+// CLI flag: --loader:.css=text  or  build config: loader: { '.css': 'text' }
+import baseCssText       from './core/charts.css';
+import priceChartCssText from './charts/price-chart.css';
 
 function injectCssOnce(id, cssText) {
   if (typeof document === 'undefined') return;
@@ -16,15 +17,19 @@ function injectCssOnce(id, cssText) {
   document.head.appendChild(style);
 }
 
-injectCssOnce('rc-chart-base-styles', baseCssText);
+injectCssOnce('rc-base-styles',        baseCssText);
+injectCssOnce('rc-price-chart-styles', priceChartCssText);
 
 export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';
 export { Overview   } from './charts/Overview.js';
 export { Bar        } from './charts/Bar.js';
+export { DualAxes   } from './charts/DualAxes.js';
 export { Donut      } from './charts/Donut.js';
+export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut с innerRadius: 0
+export { Graph, linkPresets } from './charts/Graph.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
-export { defaultTheme, createTheme } from './core/Theme.js';
+export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
 
 // Вспомогательный генератор данных для демо и тестов
 export function generateMockPrices(days = 365, startPrice = 150) {

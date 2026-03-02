@@ -298,16 +298,7 @@
           
             <li>
               
-                <a href="/charts/pie/">Pie</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/donut/">Donut</a>
+                <a href="/charts/dual-axes/">Dual Axes</a>
               
               
               
@@ -325,16 +316,7 @@
           
             <li>
               
-                <a href="/charts/radial/">Radial</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/dots/">Dots</a>
+                <a href="/charts/pie-and-donut/">Pie and Donut</a>
               
               
               
@@ -344,6 +326,33 @@
             <li>
               
                 <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
               
               
               
@@ -364,18 +373,53 @@
     <article>
       <p>Bar charts are the simplest and most reliable way to compare things. If you have categories and numbers, and you want people to understand the difference between them without decoding a visual puzzle, you use bars. Revenue by month. Product sales. Survey answers. Demographics. Anything where the question is basically “how much?” or “which one is bigger?”</p>
 <p>The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.</p>
-<p>There are two types: vertical and horizontal.</p>
-<p>Vertical bar charts are the classic version. Categories sit on the X axis, values on the Y axis, and bars grow upward. This works well when labels are short — months, quarters, small names — and when the order of categories matters, for example over time.</p>
 <div>
     <div id="bar-chart-revenue"></div>
 </div>
-<p>Horizontal bar charts are often more practical. Categories sit on the Y axis, values on the X axis, and bars grow from left to right. This layout gives more space to long labels and is especially useful when you are comparing named groups, survey responses, or ranked items. If your labels are longer than a couple of words, horizontal bars usually feel cleaner and easier to read.</p>
+<p>Orientation and reading comfort</p>
+<p>The Bar chart supports two orientations: <code>vertical</code> (default) and <code>horizontal</code>. Vertical bars work well for short labels and compact comparisons. Horizontal bars are usually the better default when labels are long or when you want the chart to read like a ranked list.</p>
+<p>In horizontal mode, the category axis is on the left and values run along the bottom. In vertical mode, categories sit at the bottom and values are on the right, which matches how most business dashboards place numeric scales.</p>
 <div class="text-content-width">
     <div id="bar-chart-coder-gender"></div>
 </div>
-<p>Each chart can be configured locally without changing the global theme. You can switch the orientation, control the height and margins, and truncate long category labels with an ellipsis while still showing the full text in a tooltip. Axis values can be formatted with custom functions, or simply extended with a prefix or suffix like “$” or “%”.</p>
-<p>You can also override the bar color for a single chart, without touching the rest of the system. For horizontal charts, you can display numeric values directly at the end of each bar, with control over formatting and placement, so users don’t have to hover to see the numbers.</p>
-<p>Animation is optional and subtle. Bars can rise into place or slide in from the left on first render. It’s there to make the chart feel alive, not to distract from the data.</p>
+<h3>Data format</h3>
+<p>Bar expects a simple dataset:</p>
+<pre><code>[
+    { label: 'Sales', value: 128000 },
+    { label: 'Marketing', value: 76000 },
+    { label: 'R&D', value: 154000 }
+]</code></pre>
+<p>The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.</p>
+<h3>Long labels (without ruining the axis)</h3>
+<p>Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports <code>labelMaxLength</code>, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.</p>
+<p>This is one of those details you only miss when you do not have it.</p>
+<h3>Value formatting and units</h3>
+<p>In vertical mode, the Y axis uses <code>yTickFormat</code>. If you do not provide it, Bar falls back to a compact number formatter and supports <code>yPrefix</code> and <code>ySuffix</code> for units.</p>
+<p>In horizontal mode, the X axis uses <code>xTickFormat</code> (again, compact by default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”.</p>
+<p>Tooltips can be customized via <code>tooltipFormat (d) =&gt; html</code>, where <code>d</code> is <code>{ label, value }</code>. By default it shows the label and the value with comma formatting.</p>
+<h3>Showing values on bars (horizontal)</h3>
+<p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
+<p>This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.</p>
+<h3>Animation (if you must)</h3>
+<p>Bar can animate on first render (<code>animate: true</code> by default). The timing is controlled by duration, per-bar delay by stagger, and easing via <code>ease</code> (<code>cubicOut</code>, <code>cubicInOut</code>, or <code>linear</code>). The chart only animates once per instance by design, so it does not turn normal updates into a circus.</p>
+<h3>Options summary (what you can pass)</h3>
+<p>Bar supports the following options in its constructor. They are all optional.</p>
+<ul>
+<li>Orientation and labels: <code>orientation</code>, <code>labelMaxLength</code></li>
+<li>Color and motion: <code>barColor</code>, <code>animate</code>, <code>duration</code>, <code>stagger</code>, <code>ease</code></li>
+<li>Horizontal value labels: <code>showValues</code>, <code>valueFormat</code>, <code>valueOffset</code>, <code>valueInsideGap</code></li>
+<li>Formatting: <code>yTickFormat</code>, <code>yPrefix</code>, <code>ySuffix</code>, <code>xTickFormat</code>, <code>tooltipFormat</code></li>
+<li>Layout: <code>height</code>, <code>margin</code> (with smart defaults depending on orientation)</li>
+</ul>
+<p>Example:</p>
+<pre><code>new RareCharts.Bar('#chart', {
+  orientation: 'horizontal',
+  height: 260,
+  labelMaxLength: 18,
+  showValues: true,
+  valueFormat: d => d3.format(',.0f')(d.value),
+  xTickFormat: d => d3.format('.2s')(d),
+}).setData(data);</code></pre>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-revenue.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-coder-gender.js"></script>
