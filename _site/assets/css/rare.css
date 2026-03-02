@@ -1324,6 +1324,7 @@ main {
 @media screen and (max-width: 768px) {
   .page-title {
     grid-row: 2;
+    height: fit-content;
   }
 }
 
@@ -17145,7 +17146,7 @@ ins {
   font-size: var(--font-size-sm);
   line-height: 1.4em;
   color: var(--text-color-light);
-  padding-top: var(--space-sm);
+  padding-top: var(--space-xs);
   position: relative;
 }
 .sidenote-wrapper .sidenote a {
@@ -17217,6 +17218,17 @@ ins {
 
 .sidenote-memory::before {
   content: "cognition";
+}
+
+.sidenote > .rc-chart {
+  margin-top: calc(var(--space-xs) * -1);
+  color: var(--text-color-light);
+}
+.sidenote > .rc-chart .rc-chart-header,
+.sidenote > .rc-chart .rc-chart-subtitle,
+.sidenote > .rc-chart .rc-legend,
+.sidenote > .rc-chart .rc-chart-source {
+  color: var(--text-color-light);
 }
 
 :root {
@@ -17395,7 +17407,7 @@ pre {
   line-height: var(--line-height-sm);
   background-color: var(--gray-mid-light);
   color: var(--gray-dark);
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-radius: var(--space-sm);
   overflow-x: auto;
   margin-bottom: 1em;

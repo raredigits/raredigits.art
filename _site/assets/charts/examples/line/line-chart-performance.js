@@ -67,6 +67,6 @@
     },
     xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
-    curve: 'linear', // см. ниже
+    curve: 'linear',
   }).setData(series);
 })();

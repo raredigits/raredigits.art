@@ -58,7 +58,9 @@
       { "title": "Pie and Donut", "url": "/charts/pie-and-donut/" },
       { "title": "Graph", "url": "/charts/graph/" },
       { "title": "Installation", "url": "/charts/installation/" },
+      { "title": "Data Import", "url": "/charts/data-import/" },
       { "title": "Settings", "url": "/charts/settings/" },
+      { "title": "Styles", "url": "/charts/styles/" },
       { "title": "Backlog", "url": "/charts/backlog/" }
       ]
     },

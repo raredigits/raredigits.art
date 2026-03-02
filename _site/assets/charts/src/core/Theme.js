@@ -23,12 +23,12 @@ export const defaultTheme = {
   // ── Semantic (P&L, deltas, signals) ────────────────────────────────────────
   positive: '#00c97a',    // gains, up moves
   negative: '#ff3b5c',    // losses, down moves
-  accent:   '#ff6200',    // Bloomberg orange — highlights, single-series default
+  accent:   '#00aaff',    // highlights, single-series default
 
   // ── Series palette ─────────────────────────────────────────────────────────
   // Used in order for multi-series charts; override the full array or per-series.
   colors: [
-    '#ff6200',  // orange  — primary
+    '#ff6200',  // orange
     '#00aaff',  // blue
     '#00c97a',  // green
     '#ffcc00',  // yellow
@@ -42,7 +42,7 @@ export const defaultTheme = {
 
   // Separate monospace font for numbers on axes and in tooltips.
   // Falls back through a chain of common tabular fonts.
-  numericFont: 'var(--numeric-font, "IBM Plex Mono", "Roboto Mono", ui-monospace, monospace)',
+  numericFont: 'var(--primary-font, monospace)',
 
   // ── Sizing defaults ────────────────────────────────────────────────────────
   // Charts use these as fallbacks when options are not passed explicitly.
@@ -72,7 +72,7 @@ export const darkTheme = createTheme({
   text:    '#e8e8e8',
   muted:   '#888888',
   accent:  '#ff6200',
-  numericFont: '"IBM Plex Mono", "Roboto Mono", ui-monospace, monospace',
+  numericFont: 'var(--primary-font, monospace)',
   tooltip: {
     bg:     '#1a1a1a',
     border: '#2e2e2e',

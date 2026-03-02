@@ -6,7 +6,6 @@
 // IMPORTANT: imports assume esbuild is configured to load .css as text.
 // CLI flag: --loader:.css=text  or  build config: loader: { '.css': 'text' }
 import baseCssText       from './core/charts.css';
-import priceChartCssText from './charts/price-chart.css';
 
 function injectCssOnce(id, cssText) {
   if (typeof document === 'undefined') return;
@@ -18,7 +17,6 @@ function injectCssOnce(id, cssText) {
 }
 
 injectCssOnce('rc-base-styles',        baseCssText);
-injectCssOnce('rc-price-chart-styles', priceChartCssText);
 
 export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';

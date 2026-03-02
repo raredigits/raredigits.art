@@ -359,7 +359,25 @@
           
             <li>
               
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
               
               
               
@@ -425,7 +443,7 @@
 </ul>
 <p>Opacity is controlled via <code>areaOpacity</code>.</p>
 <p>Example:</p>
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   area: true,
   areaBaseline: 'zero',
   areaOpacity: 0.12
@@ -434,9 +452,9 @@
 <h3>Markers</h3>
 <p>Markers highlight individual data points. They are disabled by default because dense time series do not need extra noise.</p>
 <p>When enabled:</p>
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   markers: true,
-  markerShape: 'diamond',  // available: circle | square | diamond | triangle | cross
+  markerShape: 'diamond',  <span class="code-comment">// available: circle | square | diamond | triangle | cross</span>
   markerSize: 4
 }).setData(series);</code></pre>
 <p>Markers are useful when data is sparse, exact sampling points matter and the chart is presented statically (e.g. in a PDF). They are usually unnecessary for dense daily or intraday data.</p>
@@ -444,7 +462,7 @@
 <p>All visual options can be combined. The demo above regenerates the chart and shows the corresponding configuration snippet. This mirrors how the library is typically used: you define options once, pass data, and let the chart instance handle rendering.</p>
 <h3>Notes on Formatting</h3>
 <p>In the example, the Y axis uses a custom formatter:</p>
-<pre><code>yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1)</code></pre>
+<pre class="text-content-caption"><code>yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1)</code></pre>
 <p>This is intentional. In performance-style charts, sign clarity matters. The library allows full control over tick formatting so you can enforce business-specific conventions without rewriting rendering logic.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-lines-options.js"></script>

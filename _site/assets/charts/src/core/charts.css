@@ -7,7 +7,6 @@
 .rc-chart {
   display: flex;
   flex-direction: column;
-  margin: var(--font-size-sm) 0 var(--space-lg);
   position: relative; /* нужен для absolute-позиционирования tooltip */
 }
 
@@ -17,7 +16,15 @@
 
 .rc-chart > svg {
   font-family: var(--primary-font);
+  font-size: var(--font-size-sm);
   overflow: visible; /* иначе end labels и crosshair dots обрезаются */
+}
+
+.rc-chart-header,
+.rc-chart-subtitle,
+.rc-legend,
+.rc-chart-source {
+  color: var(--primary-color);
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────── */
@@ -54,11 +61,12 @@
 .rc-chart-source {
   font-style: normal;
   font-size: var(--font-size-sm);
+  font-weight: initial;
   margin: var(--space-sm) 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--muted-color, #666);
+  text-align: left;
 }
 
 /* ─── Legend ─────────────────────────────────────────────────────────────── */
@@ -116,34 +124,28 @@
   opacity: 1;
 }
 
-/* ─── Demo page controls ─────────────────────────────────────────────────── */
-
-.rc-demo-intro {
-  font-size: var(--font-size-sm);
-  color: var(--muted-color, #666);
-  margin: 0 0 var(--space-lg);
-  max-width: 56ch;
-}
+/* ─── Demo page controls ────── */
 
 .rc-demo-controls {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md) var(--space-lg);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
 }
 
 .rc-demo-group {
+  width: 48%;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-sm);
+  padding: var(--space-sm);
 }
 
 .rc-demo-group-label {
-  font-size: var(--font-size-xs, 11px);
-  font-weight: 600;
+  padding-left: var(--space-sm);
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--muted-color, #888);
   user-select: none;
 }
 
@@ -177,20 +179,95 @@
   color: var(--bg-color, #fff);
 }
 
-/* Code snippet */
-
-.rc-demo-code-wrap {
-  margin-top: var(--space-lg);
-  border-top: 1px solid var(--border-color, #e0e0e0);
-  padding-top: var(--space-md);
+@media  (max-width: 768px) {
+    .rc-demo-group {
+        width: 100%;
+    }
 }
 
-.rc-demo-code {
-  font-family: var(--numeric-font, "IBM Plex Mono", monospace);
+/* ─── Price Chart ─── */
+
+.price-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.price-chart-ticker {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.price-chart-price {
+  font-size: var(--font-size-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change {
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change.up   { color: var(--positive-color, #00c97a); }
+.price-chart-change.down { color: var(--negative-color, #ff3b5c); }
+
+/* ─── Stats row ──────────────────────────────────────────────────────────── */
+
+.price-chart-stats {
+  display: flex;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.price-chart-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price-chart-stat-label {
+  color: var(--muted-color, #666);
   font-size: var(--font-size-sm);
-  line-height: 1.6;
-  color: var(--muted-color, #555);
-  margin: 0;
-  white-space: pre;
-  overflow-x: auto;
+}
+
+.price-chart-stat-value {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Range bar ──────────────────────────────────────────────────────────── */
+
+.price-chart-range-bar {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  width: fit-content;
+  padding: var(--space-sm);
+  margin: var(--space-sm) 0;
+  border-radius: var(--space-sm);
+  background-color: var(--surface-color, #f5f5f5);
+}
+
+.range-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  font-size: var(--font-size-sm);
+  font-family: var(--primary-font);
+  border-radius: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background-color 0.1s, border-color 0.1s;
+  color: inherit;
+}
+
+.range-btn:hover {
+  background-color: var(--surface-color, #f5f5f5);
+}
+
+.range-btn.active {
+  background-color: var(--surface-color, #f5f5f5);
+  border-color: var(--text-color, #000);
 }

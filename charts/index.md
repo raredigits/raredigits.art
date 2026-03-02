@@ -12,30 +12,40 @@ RareCharts is a charting library for professional data presentation. It is b
 
 Text can be precise. Tables can be structured. But both require sequential reading and mental calculation. A chart compresses that process. It turns numbers into shape, direction, magnitude and change — things the brain reads almost instantly.
 
+If you write: “Revenue grew from 1.2M to 2.8M, with <em>a dip</em> in March and <em>acceleration</em> in Q4”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
+
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-demo-revenue"></div>
 </div>
 
-If you write: “Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
-
-### RareCharts
+## RareCharts
 
 <div class="sidenote-wrapper">
   <div>
-    <p>RareCharts is part of Rare Styles, our design system for professional interfaces. This means its visual language, typography and spacing are aligned with a broader system. At the same time, the library can work independently in any project without requiring the rest of Rare Styles.</p>
+    <p>RareCharts is part of <a href="/styles/">Rare Styles</a>, professional design system for business interfaces. This means its visual language, typography and spacing are aligned with a broader system. At the same time, the library <strong>can work independently</strong> in any project without requiring the rest of Rare Styles.</p>
   </div>
   <div class="sidenote">
     <h5>Built on D3</h5>
-    <p>RareCharts is built on top of D3.js, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
+    <p>RareCharts is built on top of <a href="https://d3js.org">D3.js</a>, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
   </div>
   <div>
     <p>You can integrate it into an existing product, an internal dashboard, a reporting tool, or a public-facing analytics page. Architecturally it does not impose a design ideology. It provides a structured base.</p>
-    <p><strong>The library includes</strong>: line charts, bar charts, pie charts, network graphs and combined charts. The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.</p>
-    <p>This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.</p>
+    <p>The library includes:</p>
+    <ul>
+      <li>Line with different visual options</li> 
+      <li>Bars</li>
+      <li>Pie and Donut</li>
+      <li>Network graphs</li>
+      <li>Combined charts</li>
+    </ul>
   </div>
 </div>
 
-<h3>Standard Structure</h3>
+The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.
+
+This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.
+
+<h2>Standard Structure</h2>
 
 Every chart follows a consistent composition: title, subtitle, legend, chart area and data source. These elements are configurable. They can be provided, extended, overridden or omitted entirely.
 
@@ -55,11 +65,17 @@ There are no hidden layout “surprises”. Control remains with the developer.
 
 ### Professional Considerations
 
-RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.
-
-These are not cosmetic concerns. In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.
-
-The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.
+<div class="sidenote-wrapper">
+  <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
+  <div class="sidenote">
+    <div id="bar-chart-understanding"></div>
+  </div>
+  <div>
+    <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>
+    <p>The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.</p>
+  </div>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/bar/bar-chart-understanding.js"></script>
 <script src="/assets/charts/examples/line/line-chart-revenue.js"></script>

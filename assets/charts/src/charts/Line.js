@@ -45,6 +45,7 @@ import {
   renderZeroBaseline,
   renderAxisX,
   renderAxisYRight,
+  renderAxisYLeft,
   renderEndLabels,
   animateLines,
   renderMarkers,
@@ -56,9 +57,9 @@ export class Line extends Chart {
       height: 240,
       margin: {
         top:    options.margin?.top    ?? 10,
-        right:  options.margin?.right  ?? 60,
         bottom: options.margin?.bottom ?? 18,
-        left:   options.margin?.left   ?? 0,
+        right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 60),
+        left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 60 : 0),
       },
       ...options,
     });
@@ -205,7 +206,11 @@ export class Line extends Chart {
     renderGrid(this.gGrid, y, W, yTicks, t);
     renderZeroBaseline(this.gZero, y, W, t);
     renderAxisX(this.gAxisX, x, H, xTickFormat, t);
-    renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t);
+    if ((o.yAxisPosition ?? 'right') === 'left') {
+      renderAxisYLeft(this.gAxisY, y, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+    } else {
+      renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+    }
 
     // Areas
     const areaSeries = this._series.filter(s => (s.area ?? globalArea) === true);

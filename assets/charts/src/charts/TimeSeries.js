@@ -1,17 +1,21 @@
 // RareCharts — TimeSeries
-// Линейный график с zoom (wheel), pan (drag), crosshair и mini-map.
+// Price time series with zoom (wheel), pan (drag), crosshair and mini-map support.
 //
-// Ожидаемый формат данных:
-// [{ date: Date, value: number }, ...]
+// Expected data format:
+// [{ date: Date, value: number, open?, high?, low?, volume? }, ...]
 //
-// Опции:
-//   height        — высота в px (default: 340)
-//   tooltipFormat — fn(d) => html-строка для тултипа
-//   theme         — объект с переопределением цветов
+// Options:
+//   height        — px (default: 340)
+//   tooltipFormat — fn(d) => HTML string for tooltip
+//   theme         — theme override object
+//   curve         — 'linear'|'monotone'|'basis'|'cardinal'|'step'|'stepBefore'|'stepAfter' (default: 'monotone')
+//   yLabelsOnly   — hide Y axis line/ticks (default: true)
+//   yTicks        — Y tick count (default: 5)
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
+import { renderGrid, renderAxisX, renderAxisYRight } from '../core/renderHelpers.js';
 
 export class TimeSeries extends Chart {
   constructor(selector, options = {}) {
@@ -69,7 +73,7 @@ export class TimeSeries extends Chart {
     const { top, left } = this.margin;
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
 
-    // Clip path — линия не выходит за края при zoom
+    // Clip path — keep the line inside the plot area while zooming
     const clipId = 'rc-clip-' + Math.random().toString(36).slice(2);
     this.clipRect = this.svg.append('defs').append('clipPath')
       .attr('id', clipId).append('rect');
@@ -81,7 +85,7 @@ export class TimeSeries extends Chart {
     this.gAxisX = this.g.append('g').attr('class', 'rc-axis');
     this.gAxisY = this.g.append('g').attr('class', 'rc-axis');
 
-    // Crosshair: X (вертикаль) + Y (горизонталь)
+    // Crosshair: vertical (X) + horizontal (Y)
     this.crossX = this.g.append('line').style('opacity', 0);
     this.crossY = this.g.append('line').style('opacity', 0);
 
@@ -112,21 +116,27 @@ export class TimeSeries extends Chart {
     this.yScale = d3.scaleLinear().domain([yMin, yMax]).range([H, 0]);
 
     // Grid
-    this.gGrid
-      .attr('transform', `translate(${W},0)`)
-      .call(d3.axisLeft(this.yScale).ticks(5).tickSize(-W).tickFormat(''))
-      .call(g => {
-        g.selectAll('line').attr('stroke', t.grid).attr('stroke-width', 1);
-        g.select('.domain').remove();
-      });
+    renderGrid(this.gGrid, this.yScale, W, (this.options.yTicks ?? 5), t);
+
+    const curveName = this.options.curve ?? 'monotone';
+    const curveMap = {
+      linear: d3.curveLinear,
+      monotone: d3.curveMonotoneX,
+      basis: d3.curveBasis,
+      cardinal: d3.curveCardinal,
+      step: d3.curveStep,
+      stepBefore: d3.curveStepBefore,
+      stepAfter: d3.curveStepAfter,
+    };
+    const curve = curveMap[curveName] ?? d3.curveMonotoneX;
 
     // Area + line paths
     const area = d3.area()
       .x(d => this.xScale(d.date)).y0(H).y1(d => this.yScale(d.value))
-      .curve(d3.curveMonotoneX);
+      .curve(curve);
     const line = d3.line()
       .x(d => this.xScale(d.date)).y(d => this.yScale(d.value))
-      .curve(d3.curveMonotoneX);
+      .curve(curve);
 
     // Gradient — создаём один раз, потом только обновляем цвет
     let grad = this.svg.select('#rc-ts-grad');
@@ -152,28 +162,23 @@ export class TimeSeries extends Chart {
       .attr('stroke', t.accent)
       .attr('stroke-width', t.strokeWidth ?? 1.5);
 
-    // Axis X — D3 сам подбирает формат под текущий zoom-уровень
-    this.gAxisX.attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(this.xScale).ticks(Math.max(2, Math.floor(W / 100))).tickSize(4))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.numericFont)
-          .style('font-size', '10px');
-        g.selectAll('line').attr('stroke', t.border);
-        g.select('.domain').attr('stroke', t.border);
-      });
+    // X axis
+    const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%b')(d));
+    renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
 
-    // Axis Y
-    this.gAxisY.attr('transform', `translate(${W},0)`)
-      .call(d3.axisRight(this.yScale).ticks(5).tickFormat(d => '$' + d3.format(',.0f')(d)))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.numericFont)
-          .style('font-size', '10px');
-        g.selectAll('line,path').remove();
-      });
+    // Y axis
+    const yTicks = this.options.yTicks ?? 5;
+    const yTickFormat = this.options.yTickFormat ?? (v => '$' + d3.format(',.0f')(v));
+    renderAxisYRight(
+      this.gAxisY,
+      this.yScale,
+      W,
+      yTicks,
+      yTickFormat,
+      (this.options.yLabelsOnly ?? true),
+      t,
+      this.options.yTickValues ?? null
+    );
 
     // Crosshair styling — из темы, без хардкодов
     [this.crossX, this.crossY].forEach(l =>
@@ -248,7 +253,7 @@ export class TimeSeries extends Chart {
     const t    = this.theme;
     const date = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
     return `
-      <div style="color:${t.muted};font-size:10px;margin-bottom:4px">${date}</div>
+      <div style="color:${t.muted};font-size:${t.fontSize};margin-bottom:4px">${date}</div>
       <div style="color:${t.accent};font-size:14px;font-weight:bold">
         ${typeof d.value === 'number' ? '$' + d3.format(',.2f')(d.value) : d.value}
       </div>

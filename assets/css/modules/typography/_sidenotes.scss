@@ -70,7 +70,7 @@
         font-size: var(--font-size-sm);
         line-height: 1.4em;
         color: var(--text-color-light);
-        padding-top: var(--space-sm);
+        padding-top: var(--space-xs);
         position: relative;
     }
 
@@ -145,4 +145,16 @@
 
 .sidenote-memory::before {
   content: "cognition";
+}
+
+.sidenote > .rc-chart {
+    margin-top: calc(var(--space-xs) * -1);
+    color: var(--text-color-light);
+
+    & .rc-chart-header,
+    .rc-chart-subtitle,
+    .rc-legend,
+    .rc-chart-source {
+    color: var(--text-color-light);
+    }
 }

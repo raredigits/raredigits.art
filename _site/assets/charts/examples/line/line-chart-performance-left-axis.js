@@ -46,7 +46,7 @@
     },
   ];
 
-  new RareCharts.Line('#line-chart-demo', {
+  new RareCharts.Line('#line-chart-left-axis-demo', {
     height: 320,
     title: 'Sales Reps Performance',
     subtitle: 'Values relative to the previous period',
@@ -60,6 +60,7 @@
     endLabels: false,
     yLabelsOnly: true,
     crosshair: true,
+    yAxisPosition: 'left',
 
     yTickFormat: v => {
       if (Math.abs(v) < 1e-6) return '0';
@@ -67,6 +68,6 @@
     },
     xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
-    curve: 'linear',
+    curve: 'linear', // см. ниже
   }).setData(series);
 })();

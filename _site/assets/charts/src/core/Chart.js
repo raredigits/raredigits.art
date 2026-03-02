@@ -26,14 +26,6 @@ export class Chart {
       left:   options.margin?.left   ?? 0,
     };
 
-    // Bind theme values into CSS custom properties for header/footer styling
-    this.container.style.setProperty('--rc-font',      this.theme.font);
-    this.container.style.setProperty('--rc-muted',     this.theme.muted);
-    this.container.style.setProperty('--rc-border',    this.theme.border);
-    this.container.style.setProperty('--rc-accent',    this.theme.accent);
-    this.container.style.setProperty('--rc-font-size', this.theme.fontSize);
-    this.container.style.setProperty('--rc-text',      this.theme.text);
-
     this._headerEl   = null;
     this._titleEl    = null;
     this._subtitleEl = null;

@@ -32,8 +32,7 @@
     source: 'Source: Internal accounting data',
 
     endLabels: false,
-    yLabelsOnly: true,
-    crosshair: true,
+    yTickValues: [1, 2, 3],
 
     yTickFormat: v => {
       if (Math.abs(v) < 1e-6) return '0';

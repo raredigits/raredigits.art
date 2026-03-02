@@ -8,7 +8,7 @@
 //   mainChart.onViewChange(extent => overview.setBrush(extent));
 
 import * as d3 from 'd3';
-import { defaultTheme } from '../core/Theme.js';
+import { defaultTheme } from '../core/theme.js';
 
 export class Overview {
   constructor(selector, options = {}) {

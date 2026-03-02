@@ -68,7 +68,8 @@ export function renderAxisX(g, scale, H, tickFormat, theme) {
       sel.selectAll('text')
         .attr('fill', theme.muted)
         .attr('dy', '1.2em')
-        .style('font-family', theme.numericFont);
+        .style('font-family', theme.numericFont)
+        .style('font-size', theme.fontSize);
       sel.select('.domain').remove();
       sel.selectAll('line').remove();
     });
@@ -87,15 +88,19 @@ export function renderAxisX(g, scale, H, tickFormat, theme) {
  * @param {boolean}      labelsOnly — hide axis line (default true)
  * @param {object}       theme
  */
-export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = true, theme) {
+export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = true, theme, tickValues = null) {
+  const axis = tickValues
+    ? d3.axisRight(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
+    : d3.axisRight(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
   g.attr('transform', `translate(${W},0)`)
-    .call(d3.axisRight(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat))
+    .call(axis)
     .call(sel => {
       sel.selectAll('text')
-        .attr('fill', theme.text ?? theme.muted)
+        .attr('fill', theme.muted)
         .attr('text-anchor', 'start')
         .attr('x', 8)
         .style('font-family', theme.numericFont)
+        .style('font-size', theme.fontSize)
         .style('font-variant-numeric', 'tabular-nums');
 
       if (labelsOnly) {
@@ -120,14 +125,19 @@ export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = tr
  * @param {boolean}      labelsOnly — hide axis line (default true)
  * @param {object}       theme
  */
-export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, theme) {
+export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, theme, tickValues = null) {
+  const axis = tickValues
+    ? d3.axisLeft(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
+    : d3.axisLeft(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
   g.attr('transform', 'translate(0,0)')
-    .call(d3.axisLeft(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat))
+    .call(axis)
     .call(sel => {
       sel.selectAll('text')
-        .attr('fill', theme.text ?? theme.muted)
+        .attr('fill', theme.muted)
         .attr('text-anchor', 'end')
         .attr('x', -8)
+        .style('font-family', theme.numericFont)
+        .style('font-size', theme.fontSize)
         .style('font-variant-numeric', 'tabular-nums');
 
       if (labelsOnly) {

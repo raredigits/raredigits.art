@@ -41,10 +41,7 @@ var RareCharts = (() => {
   });
 
   // assets/charts/src/core/charts.css
-  var charts_default = '/* RareCharts \u2014 charts.css\n   \u0421\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435.\n   \u0426\u0432\u0435\u0442\u0430 \u2014 \u0447\u0435\u0440\u0435\u0437 theme (JS), \u043D\u0435 \u0447\u0435\u0440\u0435\u0437 CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  margin: var(--font-size-sm) 0 var(--space-lg);\n  position: relative; /* \u043D\u0443\u0436\u0435\u043D \u0434\u043B\u044F absolute-\u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F tooltip */\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-chart > svg              { order: 1; }\n.rc-chart > .rc-chart-footer { order: 2; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  overflow: visible; /* \u0438\u043D\u0430\u0447\u0435 end labels \u0438 crosshair dots \u043E\u0431\u0440\u0435\u0437\u0430\u044E\u0442\u0441\u044F */\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  color: var(--muted-color, #666);\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* \u041B\u0438\u043D\u0438\u044F \u2014 \u0434\u043B\u044F line \u0441\u0435\u0440\u0438\u0439 */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* \u0422\u043E\u0447\u043A\u0430 \u2014 \u0434\u043B\u044F bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* \u0422\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 transition.\n   bg, border, shadow \u2014 Tooltip.js \u0441\u0442\u0430\u0432\u0438\u0442 \u0438\u043D\u043B\u0430\u0439\u043D \u0438\u0437 theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-md) var(--space-lg);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 1;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-intro {\n  font-size: var(--font-size-sm);\n  color: var(--muted-color, #666);\n  margin: 0 0 var(--space-lg);\n  max-width: 56ch;\n}\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md) var(--space-lg);\n  margin-bottom: var(--space-lg);\n}\n\n.rc-demo-group {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  font-size: var(--font-size-xs, 11px);\n  font-weight: 600;\n  text-transform: uppercase;\n  letter-spacing: 0.08em;\n  color: var(--muted-color, #888);\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n/* Code snippet */\n\n.rc-demo-code-wrap {\n  margin-top: var(--space-lg);\n  border-top: 1px solid var(--border-color, #e0e0e0);\n  padding-top: var(--space-md);\n}\n\n.rc-demo-code {\n  font-family: var(--numeric-font, "IBM Plex Mono", monospace);\n  font-size: var(--font-size-sm);\n  line-height: 1.6;\n  color: var(--muted-color, #555);\n  margin: 0;\n  white-space: pre;\n  overflow-x: auto;\n}\n';
-
-  // assets/charts/src/charts/price-chart.css
-  var price_chart_default = "/* RareCharts \u2014 price-chart.css\n   \u0421\u0442\u0438\u043B\u0438 \u0441\u043F\u0435\u0446\u0438\u0444\u0438\u0447\u043D\u044B\u0435 \u0434\u043B\u044F Price Line Chart (\u0442\u0438\u043A\u0435\u0440, \u0446\u0435\u043D\u0430, range bar). */\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #00c97a); }\n.price-chart-change.down { color: var(--negative-color, #ff3b5c); }\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  display: flex;\n  gap: var(--space-lg);\n  flex-wrap: wrap;\n}\n\n.price-chart-stat {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-value {\n  font-size: var(--font-size-sm);\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-sm);\n  align-items: center;\n  width: fit-content;\n  padding: var(--space-sm);\n  margin: var(--space-sm) 0;\n  border-radius: var(--space-sm);\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn {\n  background: none;\n  border: 1px solid var(--border-color);\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: inherit;\n}\n\n.range-btn:hover {\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn.active {\n  background-color: var(--surface-color, #f5f5f5);\n  border-color: var(--text-color, #000);\n}\n";
+  var charts_default = "/* RareCharts \u2014 charts.css\n   \u0421\u0442\u0440\u0443\u043A\u0442\u0443\u0440\u0430 \u0438 \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435.\n   \u0426\u0432\u0435\u0442\u0430 \u2014 \u0447\u0435\u0440\u0435\u0437 theme (JS), \u043D\u0435 \u0447\u0435\u0440\u0435\u0437 CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative; /* \u043D\u0443\u0436\u0435\u043D \u0434\u043B\u044F absolute-\u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F tooltip */\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-chart > svg              { order: 1; }\n.rc-chart > .rc-chart-footer { order: 2; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* \u0438\u043D\u0430\u0447\u0435 end labels \u0438 crosshair dots \u043E\u0431\u0440\u0435\u0437\u0430\u044E\u0442\u0441\u044F */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* \u041B\u0438\u043D\u0438\u044F \u2014 \u0434\u043B\u044F line \u0441\u0435\u0440\u0438\u0439 */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* \u0422\u043E\u0447\u043A\u0430 \u2014 \u0434\u043B\u044F bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* \u0422\u043E\u043B\u044C\u043A\u043E \u043F\u043E\u0437\u0438\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435 \u0438 transition.\n   bg, border, shadow \u2014 Tooltip.js \u0441\u0442\u0430\u0432\u0438\u0442 \u0438\u043D\u043B\u0430\u0439\u043D \u0438\u0437 theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-md) var(--space-lg);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 1;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #00c97a); }\n.price-chart-change.down { color: var(--negative-color, #ff3b5c); }\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  display: flex;\n  gap: var(--space-lg);\n  flex-wrap: wrap;\n}\n\n.price-chart-stat {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-value {\n  font-size: var(--font-size-sm);\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-sm);\n  align-items: center;\n  width: fit-content;\n  padding: var(--space-sm);\n  margin: var(--space-sm) 0;\n  border-radius: var(--space-sm);\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn {\n  background: none;\n  border: 1px solid var(--border-color);\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: inherit;\n}\n\n.range-btn:hover {\n  background-color: var(--surface-color, #f5f5f5);\n}\n\n.range-btn.active {\n  background-color: var(--surface-color, #f5f5f5);\n  border-color: var(--text-color, #000);\n}\n";
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -17140,13 +17137,13 @@ var RareCharts = (() => {
     // gains, up moves
     negative: "#ff3b5c",
     // losses, down moves
-    accent: "#ff6200",
-    // Bloomberg orange — highlights, single-series default
+    accent: "#00aaff",
+    // highlights, single-series default
     // ── Series palette ─────────────────────────────────────────────────────────
     // Used in order for multi-series charts; override the full array or per-series.
     colors: [
       "#ff6200",
-      // orange  — primary
+      // orange
       "#00aaff",
       // blue
       "#00c97a",
@@ -17163,7 +17160,7 @@ var RareCharts = (() => {
     fontSize: "var(--font-size-sm)",
     // Separate monospace font for numbers on axes and in tooltips.
     // Falls back through a chain of common tabular fonts.
-    numericFont: 'var(--numeric-font, "IBM Plex Mono", "Roboto Mono", ui-monospace, monospace)',
+    numericFont: "var(--primary-font, monospace)",
     // ── Sizing defaults ────────────────────────────────────────────────────────
     // Charts use these as fallbacks when options are not passed explicitly.
     strokeWidth: 2,
@@ -17190,7 +17187,7 @@ var RareCharts = (() => {
     text: "#e8e8e8",
     muted: "#888888",
     accent: "#ff6200",
-    numericFont: '"IBM Plex Mono", "Roboto Mono", ui-monospace, monospace',
+    numericFont: "var(--primary-font, monospace)",
     tooltip: {
       bg: "#1a1a1a",
       border: "#2e2e2e",
@@ -17226,12 +17223,6 @@ var RareCharts = (() => {
         bottom: options.margin?.bottom ?? 16,
         left: options.margin?.left ?? 0
       };
-      this.container.style.setProperty("--rc-font", this.theme.font);
-      this.container.style.setProperty("--rc-muted", this.theme.muted);
-      this.container.style.setProperty("--rc-border", this.theme.border);
-      this.container.style.setProperty("--rc-accent", this.theme.accent);
-      this.container.style.setProperty("--rc-font-size", this.theme.fontSize);
-      this.container.style.setProperty("--rc-text", this.theme.text);
       this._headerEl = null;
       this._titleEl = null;
       this._subtitleEl = null;
@@ -17556,14 +17547,15 @@ var RareCharts = (() => {
   }
   function renderAxisX(g, scale2, H, tickFormat2, theme) {
     g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(6).tickSize(0).tickFormat(tickFormat2)).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "1.2em").style("font-family", theme.numericFont);
+      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "1.2em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
       sel.select(".domain").remove();
       sel.selectAll("line").remove();
     });
   }
-  function renderAxisYRight(g, scale2, W, ticks2, tickFormat2, labelsOnly = true, theme) {
-    g.attr("transform", `translate(${W},0)`).call(axisRight(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2)).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.text ?? theme.muted).attr("text-anchor", "start").attr("x", 8).style("font-family", theme.numericFont).style("font-variant-numeric", "tabular-nums");
+  function renderAxisYRight(g, scale2, W, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
+    const axis2 = tickValues ? axisRight(scale2).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisRight(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
+    g.attr("transform", `translate(${W},0)`).call(axis2).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "start").attr("x", 8).style("font-family", theme.numericFont).style("font-size", theme.fontSize).style("font-variant-numeric", "tabular-nums");
       if (labelsOnly) {
         sel.select(".domain").remove();
         sel.selectAll("line").remove();
@@ -17573,9 +17565,10 @@ var RareCharts = (() => {
       }
     });
   }
-  function renderAxisYLeft(g, scale2, ticks2, tickFormat2, labelsOnly = true, theme) {
-    g.attr("transform", "translate(0,0)").call(axisLeft(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2)).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.text ?? theme.muted).attr("text-anchor", "end").attr("x", -8).style("font-variant-numeric", "tabular-nums");
+  function renderAxisYLeft(g, scale2, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
+    const axis2 = tickValues ? axisLeft(scale2).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisLeft(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
+    g.attr("transform", "translate(0,0)").call(axis2).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "end").attr("x", -8).style("font-family", theme.numericFont).style("font-size", theme.fontSize).style("font-variant-numeric", "tabular-nums");
       if (labelsOnly) {
         sel.select(".domain").remove();
         sel.selectAll("line").remove();
@@ -17642,9 +17635,9 @@ var RareCharts = (() => {
         height: 240,
         margin: {
           top: options.margin?.top ?? 10,
-          right: options.margin?.right ?? 60,
           bottom: options.margin?.bottom ?? 18,
-          left: options.margin?.left ?? 0
+          right: options.margin?.right ?? (options.yAxisPosition === "left" ? 0 : 60),
+          left: options.margin?.left ?? (options.yAxisPosition === "left" ? 60 : 0)
         },
         ...options
       });
@@ -17739,7 +17732,11 @@ var RareCharts = (() => {
       renderGrid(this.gGrid, y4, W, yTicks, t);
       renderZeroBaseline(this.gZero, y4, W, t);
       renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
-      renderAxisYRight(this.gAxisY, y4, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t);
+      if ((o.yAxisPosition ?? "right") === "left") {
+        renderAxisYLeft(this.gAxisY, y4, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+      } else {
+        renderAxisYRight(this.gAxisY, y4, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+      }
       const areaSeries = this._series.filter((s2) => (s2.area ?? globalArea) === true);
       this.gLines.selectAll(".rc-line-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-line-area").attr("d", (s2) => areaPath(s2, x4, y4, defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
       const paths = this.gLines.selectAll(".rc-line").data(this._series, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
@@ -17846,12 +17843,20 @@ var RareCharts = (() => {
       const yMin = min(visible, (d) => d.value) * 0.99;
       const yMax = max(visible, (d) => d.value) * 1.01;
       this.yScale = linear3().domain([yMin, yMax]).range([H, 0]);
-      this.gGrid.attr("transform", `translate(${W},0)`).call(axisLeft(this.yScale).ticks(5).tickSize(-W).tickFormat("")).call((g) => {
-        g.selectAll("line").attr("stroke", t.grid).attr("stroke-width", 1);
-        g.select(".domain").remove();
-      });
-      const area = area_default5().x((d) => this.xScale(d.date)).y0(H).y1((d) => this.yScale(d.value)).curve(monotoneX);
-      const line = line_default2().x((d) => this.xScale(d.date)).y((d) => this.yScale(d.value)).curve(monotoneX);
+      renderGrid(this.gGrid, this.yScale, W, this.options.yTicks ?? 5, t);
+      const curveName = this.options.curve ?? "monotone";
+      const curveMap = {
+        linear: linear_default,
+        monotone: monotoneX,
+        basis: basis_default2,
+        cardinal: cardinal_default,
+        step: step_default,
+        stepBefore,
+        stepAfter
+      };
+      const curve = curveMap[curveName] ?? monotoneX;
+      const area = area_default5().x((d) => this.xScale(d.date)).y0(H).y1((d) => this.yScale(d.value)).curve(curve);
+      const line = line_default2().x((d) => this.xScale(d.date)).y((d) => this.yScale(d.value)).curve(curve);
       let grad = this.svg.select("#rc-ts-grad");
       if (grad.empty()) {
         grad = this.svg.select("defs").append("linearGradient").attr("id", "rc-ts-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
@@ -17861,15 +17866,20 @@ var RareCharts = (() => {
       grad.selectAll("stop").attr("stop-color", t.accent);
       this.gPaths.selectAll(".rc-ts-area").data([visible]).join("path").attr("class", "rc-ts-area").attr("d", area).attr("fill", "url(#rc-ts-grad)");
       this.gPaths.selectAll(".rc-ts-line").data([visible]).join("path").attr("class", "rc-ts-line").attr("d", line).attr("fill", "none").attr("stroke", t.accent).attr("stroke-width", t.strokeWidth ?? 1.5);
-      this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(this.xScale).ticks(Math.max(2, Math.floor(W / 100))).tickSize(4)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", "10px");
-        g.selectAll("line").attr("stroke", t.border);
-        g.select(".domain").attr("stroke", t.border);
-      });
-      this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(this.yScale).ticks(5).tickFormat((d) => "$" + format(",.0f")(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", "10px");
-        g.selectAll("line,path").remove();
-      });
+      const xTickFormat = this.options.xTickFormat ?? ((d) => timeFormat("%b")(d));
+      renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
+      const yTicks = this.options.yTicks ?? 5;
+      const yTickFormat = this.options.yTickFormat ?? ((v2) => "$" + format(",.0f")(v2));
+      renderAxisYRight(
+        this.gAxisY,
+        this.yScale,
+        W,
+        yTicks,
+        yTickFormat,
+        this.options.yLabelsOnly ?? true,
+        t,
+        this.options.yTickValues ?? null
+      );
       [this.crossX, this.crossY].forEach(
         (l) => l.attr("stroke", t.crosshair).attr("stroke-width", 1).attr("stroke-dasharray", "3 3")
       );
@@ -17920,7 +17930,7 @@ var RareCharts = (() => {
       const t = this.theme;
       const date2 = d.date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
       return `
-      <div style="color:${t.muted};font-size:10px;margin-bottom:4px">${date2}</div>
+      <div style="color:${t.muted};font-size:${t.fontSize};margin-bottom:4px">${date2}</div>
       <div style="color:${t.accent};font-size:14px;font-weight:bold">
         ${typeof d.value === "number" ? "$" + format(",.2f")(d.value) : d.value}
       </div>
@@ -18059,7 +18069,7 @@ var RareCharts = (() => {
       const valueOffset = this.options.valueOffset ?? 6;
       const valueInsideGap = this.options.valueInsideGap ?? 42;
       const valueFormat = this.options.valueFormat ?? ((d) => format(",.0f")(d.value));
-      this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickSize(-H).tickFormat("")).call((g) => {
+      this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat("")).call((g) => {
         g.selectAll("line").attr("stroke", t.grid);
         g.select(".domain").remove();
         g.selectAll("text").remove();
@@ -18096,12 +18106,12 @@ var RareCharts = (() => {
         this.gBars.selectAll(".rc-bar-value").remove();
       }
       this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font);
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
         g.select(".domain").attr("stroke", t.border);
         this._bindLabelTooltips(g, "left");
       });
-      this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(4).tickFormat(xTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont);
+      this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(this.options.xTickValues ?? null).ticks(this.options.xTicks ?? 4).tickFormat(xTickFormat)).call((g) => {
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
         g.select(".domain").remove();
         g.selectAll("line").remove();
       });
@@ -18128,12 +18138,12 @@ var RareCharts = (() => {
         this._didAnimateIn = true;
       }
       this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font);
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
         g.select(".domain").attr("stroke", t.border);
         this._bindLabelTooltips(g, "bottom");
       });
       this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).ticks(4).tickFormat(yTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont);
+        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
         g.select(".domain").remove();
         g.selectAll("line").remove();
       });
@@ -18791,7 +18801,6 @@ var RareCharts = (() => {
     document.head.appendChild(style);
   }
   injectCssOnce("rc-base-styles", charts_default);
-  injectCssOnce("rc-price-chart-styles", price_chart_default);
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;

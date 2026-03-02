@@ -134,7 +134,7 @@ export class Bar extends Chart {
     // Grid — vertical lines at the bottom
     this.gGrid
       .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x).ticks(4).tickSize(-H).tickFormat(''))
+      .call(d3.axisBottom(x).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat(''))
       .call(g => {
         g.selectAll('line').attr('stroke', t.grid);
         g.select('.domain').remove();
@@ -211,7 +211,8 @@ export class Bar extends Chart {
       .call(g => {
         g.selectAll('text')
           .attr('fill', t.muted)
-          .style('font-family', t.font);
+          .style('font-family', t.font)
+          .style('font-size', t.fontSize);
         g.select('.domain').attr('stroke', t.border);
         this._bindLabelTooltips(g, 'left');
       });
@@ -219,11 +220,15 @@ export class Bar extends Chart {
     // X axis — values at the bottom
     this.gAxisY
       .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x).ticks(4).tickFormat(xTickFormat))
+      .call(d3.axisBottom(x)
+        .tickValues(this.options.xTickValues ?? null)
+        .ticks(this.options.xTicks ?? 4)
+        .tickFormat(xTickFormat))
       .call(g => {
         g.selectAll('text')
           .attr('fill', t.muted)
-          .style('font-family', t.numericFont);
+          .style('font-family', t.numericFont)
+          .style('font-size', t.fontSize);
         g.select('.domain').remove();
         g.selectAll('line').remove();
       });
@@ -282,7 +287,8 @@ export class Bar extends Chart {
       .call(g => {
         g.selectAll('text')
           .attr('fill', t.muted)
-          .style('font-family', t.font);
+          .style('font-family', t.font)
+          .style('font-size', t.fontSize);
         g.select('.domain').attr('stroke', t.border);
         this._bindLabelTooltips(g, 'bottom');
       });
@@ -294,7 +300,8 @@ export class Bar extends Chart {
       .call(g => {
         g.selectAll('text')
           .attr('fill', t.muted)
-          .style('font-family', t.numericFont);
+          .style('font-family', t.numericFont)
+          .style('font-size', t.fontSize);
         g.select('.domain').remove();
         g.selectAll('line').remove();
       });

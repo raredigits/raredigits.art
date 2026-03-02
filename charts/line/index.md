@@ -18,7 +18,7 @@ Data can be passed either as a single series or as multiple named series.
 
 **Single series format**
 
-<pre><code>chart.setData([
+<pre class="text-content-caption"><code>chart.setData([
     { date: '2026-01-01', value: 1.00 },
     { date: '2026-01-02', value: 2.5 },
     { date: '2026-01-03', value: -0.6 },
@@ -29,7 +29,7 @@ When you pass data like this, the library will use options.seriesName (default: 
 
 **Multi-series format**
 
-<pre><code>chart.setData([
+<pre class="text-content-caption"><code>chart.setData([
     {
         name: 'Portfolio A',
         color: '#00c97a',
@@ -51,11 +51,15 @@ When you pass data like this, the library will use options.seriesName (default: 
 
 Dates are parsed via `parseDate (…)`, so strings, timestamps, and Date objects are accepted as long as they can be converted to a valid date.
 
-### Styling and Themes
+## Styling and Themes
 
-RareCharts inherits its look from the active theme (and aligns with Rare Styles when used together). You can still override per-series colors directly, and you can tune presentation without rewriting chart logic.
-
-Two practical defaults matter here. First, the **SVG width is always 100%** of the parent container. Second, height is explicit and controlled per chart instance (`height, default 240`). That combination keeps layouts stable: the chart stretches horizontally with the page, and you decide how much vertical “reading room” it gets.
+<div class="sidenote-wrapper">
+    <p>RareCharts inherits its look from the active theme (and aligns with Rare Styles when used together). You can still override per-series colors directly, and you can tune presentation without rewriting chart logic.</p>
+    <div class="sidenote">
+        <p>By default, the primary vertical axis is positioned on the right. This ensures consistent alignment across the layout and contributes to a professional dashboard appearance.</p>
+    </div>
+    <p>Two practical defaults matter here. First, <strong>the SVG width is always 100%</strong> of the parent container. Second, height is explicit and controlled per chart instance (<code>height, default 240</code>). That combination keeps layouts stable: the chart stretches horizontally with the page, and you decide how much vertical “reading room” it gets.</p>
+</div>
 
 ### Configuration
 
@@ -71,19 +75,29 @@ Animation is enabled on the first render by default (`animate: true`). You ca
 
 RareCharts can format the Y axis automatically or explicitly.
 
-`yFormat` supports `auto` (default), `percent`, and `number`. In `auto` mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes 12%). If you already store values as “real numbers” and still happen to be below 1, you probably want to force `number` to avoid accidental percent formatting.
+`yFormat` supports `auto` (default), `percent`, and `number`. In `auto` mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes 12%). If you already store values as real numbers and still happen to be below 1, you probably want to force `number` to avoid accidental percent formatting.
 
-Zero is treated carefully: values with `|v| < zeroEpsilon` are printed as `zero` (default `1e-6`). This is there to stop the classic “-0.00%” or “+0.00%” nonsense that makes charts look haunted.
+Zero is treated carefully: values with `|v| < zeroEpsilon` are printed as `0` (default `1e-6`). This prevents the classic “-0.00%” or “+0.00%” artifacts that make charts look broken even when the data is correct.
 
-You can also add `yPrefix` and `ySuffix` for units. If you need full control, provide `yTickFormat: (value) => string` and ignore all of the above.
+You can also add `yPrefix` and `ySuffix` for units. If you need full control, provide `yTickFormat: (value) => string` and ignore the automatic formatting entirely.
 
-Tick density is controlled by `yTicks` (default 4). For minimalist displays, `yLabelsOnly` can be enabled (default true), keeping the right axis clean.
+Tick density is controlled by `yTicks` (default 4). For minimalist displays, `yLabelsOnly` can be enabled (default true), keeping the axis visually restrained.
+
+By default, the Y axis is rendered on the right side of the chart. If your layout or design system requires a left-aligned axis, you can override this behavior by setting:
+
+<pre class="text-content-caption"><code>yAxisPosition: 'left'</code></pre>
+
+This moves the Y axis to the left while preserving all formatting and scaling logic.
+
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="line-chart-left-axis-demo"></div>
+</div>
 
 ### X axis formatting
 
 `xTickFormat` is a function `(date) => string`. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:
 
-<pre><code>xTickFormat: d3.timeFormat('%b %d')   // Jan 05
+<pre class="text-content-caption"><code>xTickFormat: d3.timeFormat('%b %d')   // Jan 05
 // or
 xTickFormat: d3.timeFormat('%Y-%m')   // 2026-01
 ]);</code>
@@ -105,7 +119,7 @@ If you disable it, the chart clears that layer.
 
 You can override tooltip content via:
 
-<pre><code>tooltipFormat: ({ date, points: [{ name, value, color }, …] }) => html</code></pre>
+<pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, value, color }, …] }) => html</code></pre>
 
 If you need a plain-text tooltip, return simple HTML with minimal markup, or keep the default and let the library handle it.
 
@@ -121,9 +135,11 @@ Markers (point dots) are supported via `markers` (default false), with `markerSh
 
 In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include `curve`, `strokeWidth`, `area`, `areaOpacity`, and `areaBaseline`. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.
 
-### What’s covered next
-
-This section describes the core behavior and configuration surface of the Line chart. Detailed examples (performance charts, percent vs number pitfalls, custom tick formatters, tooltip templates, and style presets) belong in the next subsections, where we can show realistic datasets and the exact options used to render them.
+<div class="teaser-bottom">
+    <p>Next:</p>
+    <h3><a href="/charts/line/visual-options/">Detailed visual options examples</a></h3>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance.js"></script>
+<script src="/assets/charts/examples/line/line-chart-performance-left-axis.js"></script>

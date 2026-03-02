@@ -56,7 +56,7 @@ When enabled, the baseline can be controlled via areaBaseline:
 Opacity is controlled via `areaOpacity`.
 
 Example:
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   area: true,
   areaBaseline: 'zero',
   areaOpacity: 0.12
@@ -70,9 +70,9 @@ Markers highlight individual data points. They are disabled by default because 
 
 When enabled:
 
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   markers: true,
-  markerShape: 'diamond',  // available: circle | square | diamond | triangle | cross
+  markerShape: 'diamond',  <span class="code-comment">// available: circle | square | diamond | triangle | cross</span>
   markerSize: 4
 }).setData(series);</code></pre>
 
@@ -86,7 +86,7 @@ All visual options can be combined. The demo above regenerates the chart and sh
 
 In the example, the Y axis uses a custom formatter:
 
-<pre><code>yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1)</code></pre>
+<pre class="text-content-caption"><code>yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1)</code></pre>
 
 This is intentional. In performance-style charts, sign clarity matters. The library allows full control over tick formatting so you can enforce business-specific conventions without rewriting rendering logic.
 
