@@ -9,6 +9,7 @@
 //   tooltipFormat — fn(d) => HTML string for tooltip
 //   theme         — theme override object
 //   curve         — 'linear'|'monotone'|'basis'|'cardinal'|'step'|'stepBefore'|'stepAfter' (default: 'monotone')
+//   area          — show area fill under line (default: true)
 //   yLabelsOnly   — hide Y axis line/ticks (default: true)
 //   yTicks        — Y tick count (default: 5)
 
@@ -131,29 +132,48 @@ export class TimeSeries extends Chart {
     const curve = curveMap[curveName] ?? d3.curveMonotoneX;
 
     // Area + line paths
-    const area = d3.area()
-      .x(d => this.xScale(d.date)).y0(H).y1(d => this.yScale(d.value))
-      .curve(curve);
     const line = d3.line()
       .x(d => this.xScale(d.date)).y(d => this.yScale(d.value))
       .curve(curve);
 
-    // Gradient — создаём один раз, потом только обновляем цвет
-    let grad = this.svg.select('#rc-ts-grad');
-    if (grad.empty()) {
-      grad = this.svg.select('defs').append('linearGradient')
-        .attr('id', 'rc-ts-grad')
-        .attr('x1', '0').attr('x2', '0').attr('y1', '0').attr('y2', '1');
-      grad.append('stop').attr('offset', '0%').attr('stop-opacity', 0.22);
-      grad.append('stop').attr('offset', '100%').attr('stop-opacity', 0);
-    }
-    grad.selectAll('stop')
-      .attr('stop-color', t.accent);
+    const areaOpt = this.options.area;
 
-    this.gPaths.selectAll('.rc-ts-area').data([visible]).join('path')
-      .attr('class', 'rc-ts-area')
-      .attr('d', area)
-      .attr('fill', 'url(#rc-ts-grad)');
+    if (areaOpt !== false) {
+      const area = d3.area()
+        .x(d => this.xScale(d.date)).y0(H).y1(d => this.yScale(d.value))
+        .curve(curve);
+
+      const solidOpacity = typeof areaOpt === 'number' ? areaOpt : null;
+      const areaColor    = this.options.areaColor ?? t.accent;
+
+      if (solidOpacity !== null) {
+        // Solid fill — area: 0.12 (number = opacity)
+        this.gPaths.selectAll('.rc-ts-area').data([visible]).join('path')
+          .attr('class', 'rc-ts-area')
+          .attr('d', area)
+          .attr('fill', areaColor)
+          .attr('fill-opacity', solidOpacity);
+      } else {
+        // Gradient — area: true (default)
+        let grad = this.svg.select('#rc-ts-grad');
+        if (grad.empty()) {
+          grad = this.svg.select('defs').append('linearGradient')
+            .attr('id', 'rc-ts-grad')
+            .attr('x1', '0').attr('x2', '0').attr('y1', '0').attr('y2', '1');
+          grad.append('stop').attr('offset', '0%').attr('stop-opacity', 0.22);
+          grad.append('stop').attr('offset', '100%').attr('stop-opacity', 0);
+        }
+        grad.selectAll('stop').attr('stop-color', areaColor);
+
+        this.gPaths.selectAll('.rc-ts-area').data([visible]).join('path')
+          .attr('class', 'rc-ts-area')
+          .attr('d', area)
+          .attr('fill', 'url(#rc-ts-grad)')
+          .attr('fill-opacity', 1);
+      }
+    } else {
+      this.gPaths.selectAll('.rc-ts-area').remove();
+    }
 
     this.gPaths.selectAll('.rc-ts-line').data([visible]).join('path')
       .attr('class', 'rc-ts-line')
@@ -180,7 +200,7 @@ export class TimeSeries extends Chart {
       this.options.yTickValues ?? null
     );
 
-    // Crosshair styling — из темы, без хардкодов
+    // Crosshair styling — from theme, no hardcoded values
     [this.crossX, this.crossY].forEach(l =>
       l.attr('stroke', t.crosshair)
        .attr('stroke-width', 1)

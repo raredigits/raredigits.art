@@ -1,5 +1,5 @@
 // RareCharts — Donut / Pie
-// Круговая диаграмма. Pie = Donut с innerRadius: 0.
+// Circular chart. Pie = Donut with innerRadius: 0.
 //
 // Expected data format:
 // [{ label: string, value: number, color?: string }, ...]
@@ -14,14 +14,14 @@
 //   duration     — animation duration ms (default: 650)
 //   ease         — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //
-//   showLabels   — show slice labels outside the ring (default: false)
-//   showCenter   — show total/custom text in the center hole (default: true for donut)
+//   showLabels   — show slice labels with leader lines outside the chart (default: false)
+//   labelMinPct  — hide label when slice is smaller than this fraction (default: 0.04)
+//   showCenter   — show text in the center hole (default: true for donut)
 //   centerText   — string | function(data) => string (default: formatted total)
 //   centerLabel  — secondary line below centerText (default: 'Total')
 //
-//   valueFormat  — function(d) => string for tooltip and labels (default: locale number)
+//   valueFormat  — function(v) => string (default: locale number)
 //   percentFormat— function(pct) => string (default: '12.3%')
-//
 //   tooltipFormat— function({label, value, percent, color}) => html
 
 import * as d3 from 'd3';
@@ -72,8 +72,10 @@ export class Donut extends Chart {
   render() {
     if (!this._data.length) return;
 
-    const W = this.container.clientWidth;
-    const H = this.options.height;
+    // Use this.width (subtracts margins + legend-aside width) and add margins back
+    // to get the actual SVG content width. Same pattern for height.
+    const W = this.width + this.margin.left + this.margin.right;
+    const H = this.height + this.margin.top + this.margin.bottom;
     if (W <= 0 || H <= 0) return;
 
     const o = this.options;
@@ -90,22 +92,22 @@ export class Donut extends Chart {
     const showLabels = o.showLabels   ?? false;
     const showCenter = o.showCenter   ?? !isPie;
 
-    // Centre of chart (SVG coords — no margin translate needed)
+    // Center in SVG space
     const cx = W / 2;
     const cy = H / 2;
 
-    // Outer radius: fit inside the smaller dimension, leave room for labels
-    const labelRoom  = showLabels ? 32 : 0;
-    const outerR     = Math.min(cx, cy) - labelRoom - 4;
-    const innerR     = outerR * innerFrac;
+    // Outer radius — reserve only enough for the polyline itself (text overflows via SVG overflow:visible)
+    const labelRoom = showLabels ? 36 : 0;
+    const outerR    = Math.min(cx, cy) - labelRoom - 4;
+    const innerR    = outerR * innerFrac;
 
     // Formatters
-    const total       = d3.sum(this._data, d => +d.value);
-    const valueFmt    = o.valueFormat   ?? (v => d3.format(',')(v));
-    const percentFmt  = o.percentFormat ?? (p => d3.format('.1%')(p));
+    const total      = d3.sum(this._data, d => +d.value);
+    const valueFmt   = o.valueFormat   ?? (v => d3.format(',')(v));
+    const percentFmt = o.percentFormat ?? (p => d3.format('.1%')(p));
 
-    // Colors — per-item or from palette
-    const palette = t.colors ?? [];
+    // Colors — per-item override, then palette, then accent fallback
+    const palette  = t.colors ?? [];
     const colorFor = (d, i) => d.color ?? palette[i % palette.length] ?? t.accent;
 
     // Arc generators
@@ -121,24 +123,21 @@ export class Donut extends Chart {
       .padAngle(padAngle)
       .cornerRadius(cornerR);
 
-    const arcLabel = d3.arc()
-      .innerRadius(outerR + 10)
-      .outerRadius(outerR + 10);
-
-    // Pie layout
+    // Pie layout — preserve input order
     const pie = d3.pie()
       .value(d => +d.value)
-      .sort(null)         // preserve input order
+      .sort(null)
       .padAngle(padAngle);
 
     const arcs = pie(this._data);
 
-    // ── Centre group ──
+    // Position all layers at the chart center
     this.gSlices.attr('transform', `translate(${cx},${cy})`);
     this.gLabels.attr('transform', `translate(${cx},${cy})`);
     this.gCenter.attr('transform', `translate(${cx},${cy})`);
 
-    // ── Slices ──
+    // ── Slices ────────────────────────────────────────────────────────────────
+
     const slices = this.gSlices.selectAll('.rc-donut-slice')
       .data(arcs, d => d.data.label)
       .join(
@@ -179,7 +178,6 @@ export class Donut extends Chart {
       });
 
     if (animate) {
-      // Interpolate arc angles for draw animation
       slices
         .transition().duration(duration).ease(ease)
         .attrTween('d', function (d) {
@@ -194,27 +192,92 @@ export class Donut extends Chart {
       this._didAnimateIn = true;
     }
 
-    // ── Outer labels ──
-    this.gLabels.selectAll('.rc-donut-label').remove();
-
-    if (showLabels) {
-      this.gLabels.selectAll('.rc-donut-label')
-        .data(arcs)
-        .join('text')
-        .attr('class',        'rc-donut-label')
-        .attr('transform',    d => `translate(${arcLabel.centroid(d)})`)
-        .attr('text-anchor',  d => (arcLabel.centroid(d)[0] > 0 ? 'start' : 'end'))
-        .attr('dominant-baseline', 'middle')
-        .attr('fill',         t.muted)
-        .style('font-family', t.font)
-        .style('font-size',   t.fontSize)
-        .text(d => {
-          const pct = d.data.value / total;
-          return pct < 0.04 ? '' : `${d.data.label} ${percentFmt(pct)}`;
-        });
+    // ── Sync legend indicator colors ──────────────────────────────────────────
+    // Legend items are built by Chart base class before render() — colors from
+    // the palette are not known at that point. Re-apply correct colors here.
+    if (this._legendEl) {
+      const indicators = this._legendEl.querySelectorAll('.rc-legend-dot, .rc-legend-line');
+      arcs.forEach((arcDatum, i) => {
+        if (indicators[i]) indicators[i].style.background = colorFor(arcDatum.data, i);
+      });
     }
 
-    // ── Center text (donut only) ──
+    // ── Outer labels (Bloomberg-style: polyline leader + two-line text) ───────
+    this.gLabels.selectAll('*').remove();
+
+    if (showLabels) {
+      const lineLen     = 14;
+      const tickLen     = 12;
+      const labelGap    = 3;
+      const lineH       = 14;                           // line height between label rows
+      const labelMinPct = o.labelMinPct ?? 0.04;
+
+      // labelContent: 'both' (default) | 'label' | 'percent'
+      const content   = o.labelContent ?? 'both';
+      const showName  = content !== 'percent';
+      const showPct   = content !== 'label';
+      const lineCount = (showName ? 1 : 0) + (showPct ? 1 : 0);
+
+      arcs.forEach((d) => {
+        const pct = d.data.value / total;
+        if (pct < labelMinPct) return;
+
+        const mid     = (d.startAngle + d.endAngle) / 2;
+        const isRight = Math.sin(mid) >= 0;
+
+        // Three points of the leader polyline:
+        //   [x1,y1] — on the outer arc edge
+        //   [x2,y2] — radially further out
+        //   [x3,y3] — horizontal tick end
+        const x1 = Math.sin(mid) * outerR;
+        const y1 = -Math.cos(mid) * outerR;
+        const x2 = Math.sin(mid) * (outerR + lineLen);
+        const y2 = -Math.cos(mid) * (outerR + lineLen);
+        const x3 = x2 + (isRight ? tickLen : -tickLen);
+        const y3 = y2;
+
+        this.gLabels.append('polyline')
+          .attr('class', 'rc-donut-leader')
+          .attr('points', `${x1},${y1} ${x2},${y2} ${x3},${y3}`)
+          .attr('fill', 'none')
+          .attr('stroke', t.border)
+          .attr('stroke-width', 1);
+
+        const tx     = x3 + (isRight ? labelGap : -labelGap);
+        const anchor = isRight ? 'start' : 'end';
+
+        // Center the text block around y3 regardless of line count
+        const topY = y3 - ((lineCount - 1) * lineH) / 2;
+
+        let lineIdx = 0;
+        if (showName) {
+          this.gLabels.append('text')
+            .attr('class', 'rc-donut-label')
+            .attr('x', tx)
+            .attr('y', topY + lineIdx++ * lineH)
+            .attr('text-anchor', anchor)
+            .attr('dominant-baseline', 'middle')
+            .attr('fill', t.text)
+            .style('font-family', t.font)
+            .style('font-size', t.fontSize)
+            .text(d.data.label);
+        }
+        if (showPct) {
+          this.gLabels.append('text')
+            .attr('class', 'rc-donut-label-pct')
+            .attr('x', tx)
+            .attr('y', topY + lineIdx++ * lineH)
+            .attr('text-anchor', anchor)
+            .attr('dominant-baseline', 'middle')
+            .attr('fill', t.muted)
+            .style('font-family', t.numericFont)
+            .style('font-size', t.fontSize)
+            .text(percentFmt(pct));
+        }
+      });
+    }
+
+    // ── Center text (donut only) ──────────────────────────────────────────────
     this.gCenter.selectAll('*').remove();
 
     if (showCenter && innerR > 0) {
@@ -226,23 +289,23 @@ export class Donut extends Chart {
       const centerLabel = o.centerLabel ?? 'Total';
 
       this.gCenter.append('text')
-        .attr('class',            'rc-donut-center-value')
-        .attr('text-anchor',      'middle')
-        .attr('dominant-baseline','middle')
-        .attr('y',      centerLabel ? -10 : 0)
-        .attr('fill',   t.text)
-        .style('font-family',  t.numericFont)
-        .style('font-size',    `${Math.max(14, innerR * 0.28)}px`)
-        .style('font-weight',  'bold')
+        .attr('class',             'rc-donut-center-value')
+        .attr('text-anchor',       'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('y',     centerLabel ? -10 : 0)
+        .attr('fill',  t.text)
+        .style('font-family', t.numericFont)
+        .style('font-size',   `${Math.max(14, innerR * 0.28)}px`)
+        .style('font-weight', 'bold')
         .text(centerVal);
 
       if (centerLabel) {
         this.gCenter.append('text')
-          .attr('class',            'rc-donut-center-label')
-          .attr('text-anchor',      'middle')
-          .attr('dominant-baseline','middle')
-          .attr('y',      14)
-          .attr('fill',   t.muted)
+          .attr('class',             'rc-donut-center-label')
+          .attr('text-anchor',       'middle')
+          .attr('dominant-baseline', 'middle')
+          .attr('y',    14)
+          .attr('fill', t.muted)
           .style('font-family', t.font)
           .style('font-size',   t.fontSize)
           .text(centerLabel);

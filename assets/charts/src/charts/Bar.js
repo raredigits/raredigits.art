@@ -158,6 +158,9 @@ export class Bar extends Chart {
       .on('mouseover', onBarOver)
       .on('mouseout',  onBarOut);
 
+    // Always reposition on resize — y/height depend on the current scale
+    bars.attr('y', d => y(d.label)).attr('height', y.bandwidth());
+
     if (animate) {
       bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease)
         .attr('width', d => x(d.value))
@@ -269,6 +272,9 @@ export class Bar extends Chart {
       )
       .on('mouseover', onBarOver)
       .on('mouseout',  onBarOut);
+
+    // Always reposition on resize — x/width depend on the current scale
+    bars.attr('x', d => x(d.label)).attr('width', x.bandwidth());
 
     if (animate) {
       bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease)

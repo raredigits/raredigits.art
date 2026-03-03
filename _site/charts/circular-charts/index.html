@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building Blocks | Rare Digits Art</title>
+    <title>Circular Charts | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -53,14 +53,14 @@
         
         <li>
             <a href="/styles/"
-               class="current">
+               class="">
               Styles
             </a>
         </li>
         
         <li>
             <a href="/charts/"
-               class="">
+               class="current">
               Charts
             </a>
         </li>
@@ -272,7 +272,7 @@
     
       <h5 class="sidebar-header">
           
-            <a href="/styles/">Styles</a>
+            <a href="/charts/">Charts</a>
           
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -280,7 +280,7 @@
           
             <li>
               
-                <a href="/styles/idea/">The Idea</a>
+                <a href="/charts/line/">Line</a>
               
               
               
@@ -289,7 +289,7 @@
           
             <li>
               
-                <a href="/styles/usage/">Usage</a>
+                <a href="/charts/bar/">Bar</a>
               
               
               
@@ -298,7 +298,7 @@
           
             <li>
               
-                <a href="/styles/modules/">Modules</a>
+                <a href="/charts/dual-axes/">Dual Axes</a>
               
               
               
@@ -307,7 +307,7 @@
           
             <li>
               
-                <a href="/styles/layout/">Layout</a>
+                <a href="/charts/combined/">Combined</a>
               
               
               
@@ -316,7 +316,7 @@
           
             <li>
               
-                <a href="/styles/typography/">Typography</a>
+                <a href="/charts/circular/">Circular</a>
               
               
               
@@ -325,7 +325,7 @@
           
             <li>
               
-                <a href="/styles/colors/">Colors</a>
+                <a href="/charts/graph/">Graph</a>
               
               
               
@@ -334,7 +334,7 @@
           
             <li>
               
-                <span class="bold">Bricks</span>
+                <a href="/charts/installation/">Installation</a>
               
               
               
@@ -343,7 +343,7 @@
           
             <li>
               
-                <a href="/styles/alignment/">Alignment</a>
+                <a href="/charts/data-import/">Data Import</a>
               
               
               
@@ -352,7 +352,7 @@
           
             <li>
               
-                <a href="/styles/navigation/">Navigation</a>
+                <a href="/charts/settings/">Settings</a>
               
               
               
@@ -361,7 +361,7 @@
           
             <li>
               
-                <a href="/styles/decorations/">Decorations</a>
+                <a href="/charts/styles/">Styles</a>
               
               
               
@@ -370,25 +370,7 @@
           
             <li>
               
-                <a href="/styles/special/">Special</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/styles/utilities/">Utilities</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/styles/themes/">Themes</a>
+                <a href="/charts/backlog/">Backlog</a>
               
               
               
@@ -403,134 +385,281 @@
     
     
   <section class="page-title">
-    <h1>Building Blocks</h1>
+    <h1>Circular Charts</h1>
   </section>
 
     <article>
-      
-<div class="meta-info">
-    css/modules/bricks/
+      <p>RareCharts provides three circular chart types that share a common API and theme system: <strong>Donut</strong>, <strong>Pie</strong>, and <strong>Gauge</strong>. Each answers a different question.</p>
+<h2>Donut</h2>
+<p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-donut"></div>
 </div>
-<section>
-    <p>Like pieces in a construction kit, the style system uses a minimal set of semantic building blocks to represent content: <code>&lt;section&gt;</code>, <code>.card</code>, and <code>&lt;space&gt;</code>.
-    </p>
-    <p>These foundational elements combine with typography, whitespace, and basic decorative elements to solve any content presentation challenge—no matter how complex the hierarchy.
-    </p>
-</section>
+<div class="air-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  title:       'Revenue by Product',
+  source:      'Source: Internal accounting',
+  legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
+  height:      300,
+  centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
+  centerLabel: 'Revenue',
+}).setData(segments);</code></pre>
+<h3>Legend to the right</h3>
+<p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-donut-legend-right"></div>
+</div>
+<div class="air-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
+  legendPosition: 'right',
+  height:         260,
+}).setData(segments);</code></pre>
+<h2>Pie</h2>
+<p>A pie is a donut with <code>innerRadius: 0</code>. The class name is <code>Donut</code> — <code>Pie</code> is an alias. Same API, same options, same behavior.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-pie"></div>
+</div>
+<p>A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.</p>
+<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
+  height:     300,
+  showLabels: true,
+}).setData(segments);</code></pre>
+<h3>Outer labels</h3>
+<p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically.</p>
+<p>Control what appears with <code>labelContent</code>:</p>
+<ul>
+<li><code>'both'</code> — category name + percentage (default)</li>
+<li><code>'label'</code> — category name only</li>
+<li><code>'percent'</code> — percentage only</li>
+</ul>
+<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
+  showLabels:   true,
+  labelContent: 'percent',   // just percentages
+  labelMinPct:  0.05,        // hide labels below 5%
+}).setData(segments);</code></pre>
+<h2>Gauge</h2>
+<p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
+<div class="rc-demo-controls" style="gap: var(--space-lg);">
+  <div class="text-content-caption card-dashboard-bordered" style="flex: 1">
+    <div id="chart-gauge-progress"></div>
+  </div>
+  <div class="text-content-caption card-dashboard-bordered" style="flex: 1">
+    <div id="chart-gauge-target"></div>
+  </div>
+  <div class="text-content-caption card-dashboard-bordered" style="flex: 1">
+    <div id="chart-gauge-thin"></div>
+  </div>
+</div>
+<p><code>setData()</code> accepts a plain number, or an object to override <code>max</code> and <code>min</code> per render:</p>
+<pre class="text-content-caption"><code>// 73 out of 100 (default max)
+new RareCharts.Gauge('#chart', {
+  centerLabel: 'Complete',
+}).setData(73);
 
-<section>
-    <h2>Section</h2>
-    <div class="meta-info">css/modules/bricks/_sections.scss</div>
-    <p>The section serves as the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set.</p>
-    <p>Visually separated with <code>margin-bottom: var(--space-lg)</code>:</p>
-    <div class="card text-content-caption padding-lg gap-sm">
-        <div class="text-content-width column gap-xs">
-            <div class="skeleton-row"></div>
-            <div class="skeleton-row"></div>
-        </div>
-        <div class="bordered text-content-width padding-t-xs padding-b-lg column gap-xs">
-            Section
-            <div class="width-100 column gap-xs">
-                <div class="skeleton-row"></div>
-                <div class="skeleton-row"></div>
-                <div class="gray-bg width-50 padding-y-sm"></div>
-            </div>
-        </div>
-        <div class="text-content-width column gap-xs">
-            <div class="skeleton-row"></div>
-            <div class="skeleton-row"></div>
-            <div class="skeleton-row"></div>
-        </div>
-    </div>
-</section>
+// 50 achieved out of 80 plan — fills to 62.5%
+new RareCharts.Gauge('#chart', {
+  max:         80,
+  color:       '#00c97a',
+  centerText:  (value, max) => `${value}/${max}`,
+  centerLabel: 'achieved',
+}).setData(50);
 
-<section>
-    <h2>Card</h2>
-    <div class="meta-info">css/modules/bricks/_cards.scss</div>
-    <p>Cards provide more distinct content separation, allowing you to create complex hierarchies and group related elements. By default, they stand out through background color.
-    </p>
-    <p>From a markup perspective, cards have a default <em>flex column</em> layout.</p>
-    <div class="card center-center padding-lg">
-       .card
-    </div>
-    <p>Consider cards as your versatile connector pieces—they can take on any visual style: sizes, colors, margins, paddings, alignment, and borders.</p>
-    <p>Content-wise, cards can function as simple containers or develop their own complex hierarchy and structure. They can hold any content type, blocks, or interactive elements.</p>
-    <div class="card text-content-width stretched">
-        <div class="card-header padding-md">.card-header</div>
-        <div class="column gap-sm padding-md">
-            <div class="width-50 skeleton-row"></div>
-            <div class="skeleton-row width-100"></div>
-        </div>
-    </div>
-    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>.</p>
-</section>
-
-<section>
-    <h3>Card Deck</h3>
-    <p>Just as you would combine building blocks to create larger structures, cards can be assembled into unified semantic constructions without limitations.</p>
-    <div class="card-inverted padding-b-lg text-content-width">
-        <div>
-            <img src="/assets/img/illustrations/poker.jpg" alt="">
-        </div>
-        <div class="card-header padding-md">
-            <h4>Card Deck Example</h4>
-        </div>
-        <div class="padding-x-md">
-            <p>
-                „Card Deck” isn’t a standalone selector. Block-level parent elements like <code>&lt;div&gt;</code>, <code>.card</code>, or <code>&lt;section&gt;</code> can serve as wrappers.
-            </p>
-            <div class="card center-center padding-lg black">
-                .card .center-center .padding-lg
-            </div>
-            <div class="divider-lg"></div>
-            <p>Remember that cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
-        </div>
-        <cite class="absolute right-md bottom-md">.card-inverted</cite>
-    </div>
-</section>
-
-<section>
-    <h3>Helper Selectors</h3>
-    <p>The stylesheet includes several preset helper selectors for styling cards. Their combinations can satisfy virtually any design requirement—like specialized adapter pieces that help connect your building blocks in unique ways.</p>
-    <div class="grid grid-cols-3 gap-md">
-        <div class="card rounded-sm gray-bg col-span-2 center-center">
-            <code>.rounded</code>
-        </div>
-        <div class="card circle width-xxl col-span-1">
-            <code>.circle</code>
-        </div>
-        <div class="shadow-sm col-span-1 center-center">
-            <code>.shadow</code>
-        </div>
-        <div class="card card-hover col-span-1 center-center">
-            <code>.card-hover</code>
-        </div>
-        <div class="card-inverted col-span-1 padding-sm note">
-            <div>
-                Reference Modules:<br>
-                <a class="gray-light-link" href="/styles/decorations/">Decorations</a><br>
-                <a class="gray-light-link" href="/styles/colors/">Colors</a><br>
-                <a class="gray-light-link" href="/styles/layout/spacing/">Spacing</a>
-            </div>
-        </div>
-        <div class="card padding-lg col-span-3 bordered center-center overflow-hidden">
-            <div class="card absolute uppercase bold padding-x-lg padding-y-md left-0 top-md z-index-4">
-                Special Offer: Buy 1 Get All Free!
-            </div>
-            <div class="card width-30 square rounded-sm shadow z-index-3">
-                <code>.square</code>
-            </div>
-            <div class="width-25 square pink-bg absolute left-20 top-10 z-index-2"></div>
-            <div class="width-25 square ocean-bg absolute right-20 top-10 z-index-2""></div>
-            <div class="width-25 square orange-bg absolute left-5 top-5 z-index-1"></div>
-            <div class="width-25 square purple-bg absolute right-5 top-5 z-index-1"></div>
-            <div class="width-25 square green-bg absolute z-index-0" style="left: -5%; top: -10%;"></div>
-            <div class="width-25 square yellow-bg absolute z-index-0" style="right: -5%; top: -10%;"></div>
-            <h3 class="padding-t-md">Rare Card Deck</h3>
-            <cite class="absolute right-md bottom-md">.bordered</cite>
-        </div>
-    </div>
-</section>
+// Override max at render time
+gauge.setData({ value: 50, max: 80 });</code></pre>
+<p>The arc geometry is fully configurable:</p>
+<pre class="text-content-caption"><code>new RareCharts.Gauge('#chart', {
+  startAngle:   -Math.PI * 0.75,   // -135° (default)
+  endAngle:      Math.PI * 0.75,   // +135° (default, 270° sweep)
+  thickness:    0.18,              // ring thickness as fraction of radius
+  cornerRadius: 6,
+  trackColor:   '#e8e8e8',         // background arc
+  color:        '#ff3b5c',         // fill arc
+});</code></pre>
+<h2>Data format</h2>
+<p>All three types use the same segment data structure:</p>
+<pre class="text-content-caption"><code>[
+  { label: 'Subscriptions', value: 42000, color: '#00c97a' },
+  { label: 'Services',      value: 18000 },
+  { label: 'Other',         value:  6000 }
+]</code></pre>
+<p>Only positive finite values are rendered. Zero and negative values are filtered out.</p>
+<p>Colors can be provided per item. If omitted, the chart uses the active theme palette in order.</p>
+<h2>Slice geometry</h2>
+<p><code>padAngle</code> controls the gap between slices (a small default keeps separation without turning the chart into a flower). <code>cornerRadius</code> rounds slice corners. Both have sensible defaults and adjust slightly between Pie and Donut mode.</p>
+<p>Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ label, value, percent, color }) => `
+  &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
+  &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
+  &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
+`</code></pre>
+<h2>Options summary</h2>
+<p><strong>Donut / Pie</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>height</code></td>
+<td><code>280</code></td>
+<td>Chart height px</td>
+</tr>
+<tr>
+<td><code>innerRadius</code></td>
+<td><code>0.58</code></td>
+<td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
+</tr>
+<tr>
+<td><code>padAngle</code></td>
+<td><code>0.018</code></td>
+<td>Gap between slices (radians)</td>
+</tr>
+<tr>
+<td><code>cornerRadius</code></td>
+<td><code>3</code></td>
+<td>Rounded slice corners px</td>
+</tr>
+<tr>
+<td><code>showLabels</code></td>
+<td><code>false</code></td>
+<td>Show outer leader-line labels</td>
+</tr>
+<tr>
+<td><code>labelContent</code></td>
+<td><code>'both'</code></td>
+<td><code>'both'</code> / <code>'label'</code> / <code>'percent'</code></td>
+</tr>
+<tr>
+<td><code>labelMinPct</code></td>
+<td><code>0.04</code></td>
+<td>Hide label when slice &lt; this fraction</td>
+</tr>
+<tr>
+<td><code>legendPosition</code></td>
+<td><code>—</code></td>
+<td><code>'right'</code> to place legend in vertical aside</td>
+</tr>
+<tr>
+<td><code>showCenter</code></td>
+<td><code>true</code> (donut)</td>
+<td>Show center text hole</td>
+</tr>
+<tr>
+<td><code>centerText</code></td>
+<td>formatted total</td>
+<td>String or <code>function(data) =&gt; string</code></td>
+</tr>
+<tr>
+<td><code>centerLabel</code></td>
+<td><code>'Total'</code></td>
+<td>Secondary line below center text</td>
+</tr>
+<tr>
+<td><code>animate</code></td>
+<td><code>true</code></td>
+<td>Animate on first render</td>
+</tr>
+<tr>
+<td><code>duration</code></td>
+<td><code>650</code></td>
+<td>Animation duration ms</td>
+</tr>
+<tr>
+<td><code>tooltipFormat</code></td>
+<td>built-in</td>
+<td><code>function({label, value, percent, color}) =&gt; html</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Gauge</strong></p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>height</code></td>
+<td><code>220</code></td>
+<td>Chart height px</td>
+</tr>
+<tr>
+<td><code>min</code></td>
+<td><code>0</code></td>
+<td>Minimum value</td>
+</tr>
+<tr>
+<td><code>max</code></td>
+<td><code>100</code></td>
+<td>Maximum value</td>
+</tr>
+<tr>
+<td><code>startAngle</code></td>
+<td><code>-¾π</code></td>
+<td>Arc start (radians, clockwise from top)</td>
+</tr>
+<tr>
+<td><code>endAngle</code></td>
+<td><code>+¾π</code></td>
+<td>Arc end (270° sweep by default)</td>
+</tr>
+<tr>
+<td><code>thickness</code></td>
+<td><code>0.18</code></td>
+<td>Ring thickness as fraction of outer radius</td>
+</tr>
+<tr>
+<td><code>cornerRadius</code></td>
+<td><code>6</code></td>
+<td>Arc end rounding px</td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td><code>theme.accent</code></td>
+<td>Fill arc color</td>
+</tr>
+<tr>
+<td><code>trackColor</code></td>
+<td><code>theme.grid</code></td>
+<td>Background arc color</td>
+</tr>
+<tr>
+<td><code>showCenter</code></td>
+<td><code>true</code></td>
+<td>Show center text</td>
+</tr>
+<tr>
+<td><code>centerText</code></td>
+<td><code>'63%'</code></td>
+<td>String or <code>function(value, max, min) =&gt; string</code></td>
+</tr>
+<tr>
+<td><code>centerLabel</code></td>
+<td><code>—</code></td>
+<td>Secondary line below center text</td>
+</tr>
+<tr>
+<td><code>animate</code></td>
+<td><code>true</code></td>
+<td>Animate fill on first render</td>
+</tr>
+<tr>
+<td><code>tooltipFormat</code></td>
+<td>built-in</td>
+<td><code>function({value, max, min, percent}) =&gt; html</code></td>
+</tr>
+</tbody>
+</table>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>
 
     </article>
   </div>

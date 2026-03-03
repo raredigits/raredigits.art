@@ -10,7 +10,7 @@ Bar charts are the simplest and most reliable way to compare things. If you ha
 
 The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.
 
-<div>
+<div class="text-content-caption card-dashboard-bordered">
     <div id="bar-chart-revenue"></div>
 </div>
 
@@ -27,7 +27,7 @@ In horizontal mode, the category axis is on the left and values run along the
 ### Data format
 
 Bar expects a simple dataset:
-<pre><code>[
+<pre class="text-content-caption"><code>[
     { label: 'Sales', value: 128000 },
     { label: 'Marketing', value: 76000 },
     { label: 'R&D', value: 154000 }
@@ -70,7 +70,8 @@ Bar supports the following options in its constructor. They are all optional.
 - Layout: `height`, `margin` (with smart defaults depending on orientation)
 
 Example:
-<pre><code>new RareCharts.Bar('#chart', {
+
+<pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
   orientation: 'horizontal',
   height: 260,
   labelMaxLength: 18,

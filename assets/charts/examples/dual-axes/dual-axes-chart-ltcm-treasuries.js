@@ -42,9 +42,9 @@
 
   new RareCharts.DualAxes('#dual-chart-ltcm-treasuries', {
     height: 380,
-    title: 'TREASURY CONVERGENCE (DEMO)',
+    title: 'Treasury Bills Convergence',
     subtitle: 'On-the-run vs off-the-run: prices converge, spread mean-reverts',
-    source: 'Source: synthetic demo data (illustration only)',
+    source: 'Source: Synthetic Demo Data',
 
     legend: [
       { label: 'UST 10Y (on-the-run)', color: '#00aaff' },
@@ -56,8 +56,8 @@
     crosshair: true,
     endLabels: false,
 
-    y1Title: 'PRICE',
-    y2Title: 'SPREAD',
+    y1Title: 'Price',
+    y2Title: 'Spread',
 
     // Force visual range for spread axis
     y1Domain: [97, 103],

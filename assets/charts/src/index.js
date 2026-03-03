@@ -1,11 +1,11 @@
 // RareCharts — Entry Point
-// После сборки esbuild создаёт rare-charts.js в корне assets/charts/
-// Подключается одной строкой: <script src="/assets/charts/rare-charts.js"></script>
-// В будущем — через CDN: <script src="https://cdn.raredigits.io/charts/v1.0.0/rare-charts.js"></script>
+// esbuild compiles this to rare-charts.js in the assets/charts/ root.
+// Include with a single tag: <script src="/assets/charts/rare-charts.js"></script>
+// Future CDN: <script src="https://cdn.raredigits.io/charts/v1.0.0/rare-charts.js"></script>
 
 // IMPORTANT: imports assume esbuild is configured to load .css as text.
 // CLI flag: --loader:.css=text  or  build config: loader: { '.css': 'text' }
-import baseCssText       from './core/charts.css';
+import baseCssText       from '../rare-charts.css';
 
 function injectCssOnce(id, cssText) {
   if (typeof document === 'undefined') return;
@@ -24,12 +24,13 @@ export { Overview   } from './charts/Overview.js';
 export { Bar        } from './charts/Bar.js';
 export { DualAxes   } from './charts/DualAxes.js';
 export { Donut      } from './charts/Donut.js';
-export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut с innerRadius: 0
+export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut with innerRadius: 0
+export { Gauge      } from './charts/Gauge.js';
 export { Graph, linkPresets } from './charts/Graph.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
 export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
 
-// Вспомогательный генератор данных для демо и тестов
+// Helper data generator for demos and tests
 export function generateMockPrices(days = 365, startPrice = 150) {
   const data = [];
   let price = startPrice;

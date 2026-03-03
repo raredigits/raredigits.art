@@ -26,12 +26,13 @@ export class Chart {
       left:   options.margin?.left   ?? 0,
     };
 
-    this._headerEl   = null;
-    this._titleEl    = null;
-    this._subtitleEl = null;
-    this._legendEl   = null;
-    this._footerEl   = null;
-    this._sourceEl   = null;
+    this._headerEl     = null;
+    this._titleEl      = null;
+    this._subtitleEl   = null;
+    this._legendEl     = null;
+    this._legendAsideEl = null;   // set when legendPosition: 'right'
+    this._footerEl     = null;
+    this._sourceEl     = null;
 
     this._renderHeader();
     this._renderFooter();
@@ -46,31 +47,11 @@ export class Chart {
     const hasTitle    = !!this.options.title;
     const hasSubtitle = !!this.options.subtitle;
     const hasLegend   = this.options.legend != null;
+    const legendRight = this.options.legendPosition === 'right';
 
     if (!hasTitle && !hasSubtitle && !hasLegend) return;
 
-    if (this._headerEl?.parentNode) this._headerEl.remove();
-
-    this._headerEl = document.createElement('div');
-    this._headerEl.className = 'rc-chart-header';
-
-    // Title
-    if (hasTitle) {
-      this._titleEl = document.createElement('h5');
-      this._titleEl.className = 'rc-chart-title';
-      this._titleEl.textContent = this.options.title;
-      this._headerEl.appendChild(this._titleEl);
-    }
-
-    // Subtitle
-    if (hasSubtitle) {
-      this._subtitleEl = document.createElement('p');
-      this._subtitleEl.className = 'rc-chart-subtitle';
-      this._subtitleEl.textContent = this.options.subtitle;
-      this._headerEl.appendChild(this._subtitleEl);
-    }
-
-    // Legend
+    // ── Build legend element (shared logic regardless of position) ──────────
     if (hasLegend) {
       this._legendEl = document.createElement('div');
       this._legendEl.className = 'rc-legend';
@@ -82,7 +63,7 @@ export class Chart {
           const el = document.createElement('div');
           el.className = 'rc-legend-item';
 
-          // Line indicator for line-type series; dot for everything else
+          // Line indicator for line series; dot for everything else
           const indicator = document.createElement('span');
           if (item.type === 'bar' || item.type === 'dot') {
             indicator.className = 'rc-legend-dot';
@@ -105,11 +86,47 @@ export class Chart {
       } else {
         this._legendEl.textContent = String(legend);
       }
-
-      this._headerEl.appendChild(this._legendEl);
     }
 
-    this.container.insertBefore(this._headerEl, this.container.firstChild);
+    // ── Legend aside (right column) ─────────────────────────────────────────
+    if (hasLegend && legendRight) {
+      if (this._legendAsideEl?.parentNode) this._legendAsideEl.remove();
+
+      this._legendAsideEl = document.createElement('div');
+      this._legendAsideEl.className = 'rc-chart-legend-aside';
+      this._legendAsideEl.appendChild(this._legendEl);
+
+      this.container.classList.add('rc-chart--legend-right');
+      this.container.appendChild(this._legendAsideEl);
+    }
+
+    // ── Header block (title, subtitle, inline legend) ────────────────────────
+    if (hasTitle || hasSubtitle || (hasLegend && !legendRight)) {
+      if (this._headerEl?.parentNode) this._headerEl.remove();
+
+      this._headerEl = document.createElement('div');
+      this._headerEl.className = 'rc-chart-header';
+
+      if (hasTitle) {
+        this._titleEl = document.createElement('h5');
+        this._titleEl.className = 'rc-chart-title';
+        this._titleEl.textContent = this.options.title;
+        this._headerEl.appendChild(this._titleEl);
+      }
+
+      if (hasSubtitle) {
+        this._subtitleEl = document.createElement('p');
+        this._subtitleEl.className = 'rc-chart-subtitle';
+        this._subtitleEl.textContent = this.options.subtitle;
+        this._headerEl.appendChild(this._subtitleEl);
+      }
+
+      if (hasLegend && !legendRight) {
+        this._headerEl.appendChild(this._legendEl);
+      }
+
+      this.container.insertBefore(this._headerEl, this.container.firstChild);
+    }
   }
 
   // ── Footer (Source) ───────────────────────────────────────────────────────
@@ -140,7 +157,9 @@ export class Chart {
   // ── Dimensions ────────────────────────────────────────────────────────────
 
   get width() {
-    return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
+    // When legend is in a right-side column, subtract its width from the total
+    const legendW = this._legendAsideEl ? this._legendAsideEl.offsetWidth : 0;
+    return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right - legendW);
   }
 
   get height() {
@@ -161,11 +180,12 @@ export class Chart {
   destroy() {
     this._resizeObserver.disconnect();
     this.container.innerHTML = '';
-    this._headerEl   = null;
-    this._titleEl    = null;
-    this._subtitleEl = null;
-    this._legendEl   = null;
-    this._footerEl   = null;
-    this._sourceEl   = null;
+    this._headerEl     = null;
+    this._titleEl      = null;
+    this._subtitleEl   = null;
+    this._legendEl     = null;
+    this._legendAsideEl = null;
+    this._footerEl     = null;
+    this._sourceEl     = null;
   }
 }

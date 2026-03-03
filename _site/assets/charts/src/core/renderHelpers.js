@@ -45,9 +45,7 @@ export function renderZeroBaseline(g, scale, W, theme) {
     .attr('class', 'rc-zero-line')
     .attr('x1', 0).attr('x2', W)
     .attr('y1', scale(0)).attr('y2', scale(0))
-    .attr('stroke', theme.border)
-    .attr('stroke-width', 1.5)
-    .attr('opacity', 0.9);
+    .attr('stroke', theme.border);
 }
 
 // ─── X axis ──────────────────────────────────────────────────────────────────
@@ -100,8 +98,7 @@ export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = tr
         .attr('text-anchor', 'start')
         .attr('x', 8)
         .style('font-family', theme.numericFont)
-        .style('font-size', theme.fontSize)
-        .style('font-variant-numeric', 'tabular-nums');
+        .style('font-size', theme.fontSize);
 
       if (labelsOnly) {
         sel.select('.domain').remove();
@@ -137,8 +134,7 @@ export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, 
         .attr('text-anchor', 'end')
         .attr('x', -8)
         .style('font-family', theme.numericFont)
-        .style('font-size', theme.fontSize)
-        .style('font-variant-numeric', 'tabular-nums');
+        .style('font-size', theme.fontSize);
 
       if (labelsOnly) {
         sel.select('.domain').remove();
@@ -182,7 +178,6 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
     .attr('fill', d => d.color)
     .style('font-family', theme.numericFont)
     .style('font-size', theme.fontSize)
-    .style('font-variant-numeric', 'tabular-nums')
     .text(d => tickFormat(d.value));
 }
 
@@ -208,13 +203,9 @@ export function renderAxisTitles(g, W, y1Title, y2Title, theme) {
     .attr('class', d => `rc-axis-title rc-axis-title-${d.axis}`)
     .attr('x', d => (d.axis === 'y1' ? W + 8 : -8))
     .attr('y', -28)
-    .attr('text-anchor', d => (d.axis === 'y1' ? 'start' : 'end'))
-    .attr('dominant-baseline', 'hanging')
     .attr('fill', theme.muted)
     .style('font-family', theme.font)
     .style('font-size', theme.fontSize)
-    .style('font-weight', 'bold')
-    .style('text-transform', 'uppercase')
     .text(d => d.text);
 }
 
@@ -304,9 +295,8 @@ export function renderMarkers(g, series, x, scaleFor, globalMarkers = false, glo
     .attr('cx',           d => d.cx)
     .attr('cy',           d => d.cy)
     .attr('r',            d => d.size)
-    .attr('fill',         d => d.fill)
-    .attr('stroke',       d => d.stroke)
-    .attr('stroke-width', 1.5);
+    .attr('fill',   d => d.fill)
+    .attr('stroke', d => d.stroke);
 
   g.selectAll('.rc-marker-shape')
     .data(shapes, d => d.key)
@@ -314,7 +304,6 @@ export function renderMarkers(g, series, x, scaleFor, globalMarkers = false, glo
     .attr('class',        'rc-marker-shape')
     .attr('transform',    d => `translate(${d.cx},${d.cy})`)
     .attr('d',            d => d.path)
-    .attr('fill',         d => d.fill)
-    .attr('stroke',       d => d.stroke)
-    .attr('stroke-width', 1.5);
+    .attr('fill',   d => d.fill)
+    .attr('stroke', d => d.stroke);
 }

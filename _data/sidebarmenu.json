@@ -55,7 +55,7 @@
       { "title": "Bar", "url": "/charts/bar/" },
       { "title": "Dual Axes", "url": "/charts/dual-axes/" },
       { "title": "Combined", "url": "/charts/combined/" },
-      { "title": "Pie and Donut", "url": "/charts/pie-and-donut/" },
+      { "title": "Circular", "url": "/charts/circular/" },
       { "title": "Graph", "url": "/charts/graph/" },
       { "title": "Installation", "url": "/charts/installation/" },
       { "title": "Data Import", "url": "/charts/data-import/" },

@@ -21,8 +21,8 @@ export const defaultTheme = {
   muted: '#666666',       // axis tick labels, secondary text
 
   // ── Semantic (P&L, deltas, signals) ────────────────────────────────────────
-  positive: '#00c97a',    // gains, up moves
-  negative: '#ff3b5c',    // losses, down moves
+  positive: '#389e0d',    // gains, up moves
+  negative: '#ff0000',    // losses, down moves
   accent:   '#00aaff',    // highlights, single-series default
 
   // ── Series palette ─────────────────────────────────────────────────────────
@@ -33,7 +33,7 @@ export const defaultTheme = {
     '#00c97a',  // green
     '#ffcc00',  // yellow
     '#cc44ff',  // violet
-    '#ff3b5c',  // red
+    '#ff0000',  // red
   ],
 
   // ── Typography ─────────────────────────────────────────────────────────────

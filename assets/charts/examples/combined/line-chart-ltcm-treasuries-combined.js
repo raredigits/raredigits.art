@@ -33,29 +33,30 @@
       name: 'Spread',
       axis: 'y2',
       type: 'bar',
-      color: '#000000',
+      color: '#888888',
       values: dates.map((dt, i) => ({ date: dt, value: spread[i] })),
     },
   ];
 
   new RareCharts.DualAxes('#dual-chart-ltcm-treasuries-combined', {
     height: 380,
-    title: 'TREASURY CONVERGENCE (DEMO)',
+    title: 'Treasury Bills Convergence',
     subtitle: 'On-the-run vs off-the-run: prices converge, spread mean-reverts',
-    source: 'Source: synthetic demo data (illustration only)',
+    source: 'Source: Synthetic Demo Data',
 
     legend: [
       { label: 'UST 10Y (on-the-run)', color: '#00aaff' },
       { label: 'UST 10Y (off-the-run)', color: '#ff3b5c' },
-      { label: 'Spread', color: '#000000' },
+      { label: 'Spread', color: '#888888' },
     ],
 
     curve: 'linear',
     crosshair: true,
     endLabels: false,
+    barOpacity: 1,
 
-    y1Title: 'PRICE',
-    y2Title: 'SPREAD',
+    y1Title: 'Price',
+    y2Title: 'Spread',
 
     // Force visual range for spread axis
     y1Domain: [97, 103],

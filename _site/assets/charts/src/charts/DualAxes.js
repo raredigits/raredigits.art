@@ -194,6 +194,8 @@ export class DualAxes extends Chart {
     barsSel
       .call(sel => {
         const apply = (sel) => sel
+          .attr('x',      d => x(d.date) - barW / 2 + xOffset(d.series))
+          .attr('width',  barW)
           .attr('y',      d => scaleFor(d)(Math.max(0, d.value)))
           .attr('height', d => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(0)));
 

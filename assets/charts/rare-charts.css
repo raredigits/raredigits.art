@@ -1,110 +1,350 @@
-/* assets/charts/src/core/charts.css */
+/* RareCharts — charts.css
+   Structure and positioning.
+   Colors — via theme (JS), not CSS. */
+
+/* ─── Chart wrapper ──────────────────────────────────────────────────────── */
+
 .rc-chart {
   display: flex;
   flex-direction: column;
+  position: relative; /* needed for absolute positioning of tooltip */
 }
-.rc-chart > .rc-chart-header {
-  order: 0;
-}
+
+.rc-chart > .rc-chart-header { order: 0; }
+.rc-chart > svg              { order: 1; }
+.rc-chart > .rc-chart-footer { order: 2; }
+
 .rc-chart > svg {
-  order: 1;
+  font-family: var(--primary-font);
+  font-size: var(--font-size-sm);
+  overflow: visible; /* otherwise end labels and crosshair dots are clipped */
 }
-.rc-chart > .rc-chart-footer {
-  order: 2;
+
+.rc-chart-header,
+.rc-chart-subtitle,
+.rc-legend,
+.rc-chart-source {
+  color: var(--primary-color);
 }
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+
 .rc-chart-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  padding-right: 2px;
+  flex-direction: column;
   user-select: none;
 }
-.rc-chart-header-left {
-  min-width: 0;
-  flex: 1 1 auto;
-}
-h5.chart-title {
+
+.rc-chart-title {
   margin: 0;
-  font-family: var(--rc-font);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-family: var(--primary-font);
   text-transform: uppercase;
-  color: var(--rc-muted);
-  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-chart-subtitle {
+  font-size: var(--font-size-sm);
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-p.chart-subtitle {
-  margin: 2px 0 6px 0;
-  font-family: var(--rc-font);
-  font-size: 12px;
-  font-weight: 400;
-  letter-spacing: 0.2px;
-  color: var(--rc-muted);
-  opacity: 0.9;
-  line-height: 1.2;
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.rc-chart-footer {
+  user-select: none;
+}
+
+.rc-chart-source {
+  font-style: normal;
+  font-size: var(--font-size-sm);
+  font-weight: initial;
+  margin: var(--space-sm) 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: left;
 }
-.chart-legend {
+
+/* ─── Legend ─────────────────────────────────────────────────────────────── */
+
+.rc-legend {
+  padding: var(--space-sm) 0;
   display: flex;
-  flex: 0 0 auto;
   flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-  justify-content: flex-end;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+  user-select: none;
 }
-.chart-legend-item {
+
+.rc-legend-item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--rc-font);
-  font-size: 11px;
-  color: var(--rc-muted);
   white-space: nowrap;
+  cursor: default;
 }
-.chart-legend-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
+
+/* Line — for line series */
+.rc-legend-line {
+  width: 16px;
+  height: 2px;
   display: inline-block;
-  background: var(--rc-accent);
-  border: 1px solid var(--rc-border);
-  box-sizing: border-box;
+  border-radius: 1px;
+  flex-shrink: 0;
 }
-.rc-chart-footer {
-  user-select: none;
-  padding-right: 2px;
+
+/* Dot — for bar / donut / scatter */
+.rc-legend-dot {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
-cite.chart-source {
-  display: block;
-  margin-top: 6px;
-  font-family: var(--rc-font);
-  font-size: 11px;
-  color: var(--rc-muted);
-  opacity: 0.85;
-  font-style: normal;
-}
+
+/* ─── Tooltip ────────────────────────────────────────────────────────────── */
+/* Only positioning and transition. */
+/* bg, border, shadow — Tooltip.js sets inline from theme.tooltip */
+
 .rc-tooltip {
   position: absolute;
   pointer-events: none;
-  background: #fff;
-  border: 1px solid var(--rc-border);
-  padding: 8px 16px;
-  font-family: var(--rc-font);
-  font-size: 14px;
-  color: var(--rc-text);
+  padding: var(--space-md) var(--space-lg);
   opacity: 0;
   transition: opacity 0.1s;
   white-space: nowrap;
   z-index: 100;
 }
-.rc-crosshair {
-  stroke: #444;
-  stroke-width: 1;
-  stroke-dasharray: 4 4;
+
+.rc-tooltip.is-visible {
+  opacity: 1;
+}
+
+/* ─── SVG elements ───────────────────────────────────────────────────────── */
+
+/* Zero baseline — visible only when domain crosses zero */
+.rc-zero-line {
+  stroke-width: 1.5;
+  opacity: 0.9;
+}
+
+/* Axis tick labels */
+.rc-axis text {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Axis titles (used in DualAxes) */
+.rc-axis-title {
+  text-transform: uppercase;
+  dominant-baseline: hanging;
+}
+
+.rc-axis-title-y1 { text-anchor: start; }
+.rc-axis-title-y2 { text-anchor: end; }
+
+/* End labels — last-value labels on the right edge */
+.rc-end-label {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Markers */
+.rc-marker-circle,
+.rc-marker-shape {
+  stroke-width: 1.5;
+}
+
+/* ─── Legend aside (right column layout) ────────────────────────────────── */
+/*
+ * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
+ * because the DOM order is: header → aside → footer → svg (aside is appended
+ * before _initSVG runs). Explicit rows fix placement regardless of DOM order.
+ */
+
+.rc-chart--legend-right {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;  /* header | chart | footer */
+}
+
+/* Pin each element to its row — overrides DOM insertion order */
+.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
+.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }
+
+/* Aside spans all three rows in column 2 */
+.rc-chart--legend-right > .rc-chart-legend-aside {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  display: flex;
+  align-items: center;
+  padding-left: var(--space-lg);
+}
+
+/* Stack legend items vertically when in aside */
+.rc-chart-legend-aside .rc-legend {
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0;
+}
+
+/* ─── Demo page controls ────── */
+
+.rc-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.rc-demo-group {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-sm);
+  padding: var(--space-sm);
+}
+
+.rc-demo-group-label {
+  padding-left: var(--space-sm);
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.rc-demo-btn-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.rc-demo-btn {
+  background: none;
+  border: 1px solid var(--border-color, #ccc);
+  font-family: var(--primary-font);
+  font-size: var(--font-size-sm);
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: inherit;
+  transition: background 0.08s, border-color 0.08s, color 0.08s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.rc-demo-btn:hover {
+  border-color: var(--text-color, #000);
+}
+
+.rc-demo-btn.is-active {
+  background: var(--text-color, #000);
+  border-color: var(--text-color, #000);
+  color: var(--bg-color, #fff);
+}
+
+@media  (max-width: 768px) {
+    .rc-demo-group {
+        width: 100%;
+    }
+}
+
+/* ─── Price Chart ─── */
+
+.price-chart-header {
+  width: calc(100% - 60px);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.price-chart-ticker {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.price-chart-price {
+  font-size: var(--font-size-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change {
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change.up   { color: var(--positive-color, #389e0d); }
+.price-chart-change.down { color: var(--negative-color, #ff0000); }
+
+/* ─── Range bar ──────────────────────────────────────────────────────────── */
+
+.price-chart-range-bar {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  width: fit-content;
+  margin: var(--space-sm) 0;
+}
+
+.range-btn {
+  background: none;
+  font-size: var(--font-size-sm);
+  font-family: var(--primary-font);
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background-color 0.1s, border-color 0.1s;
+  color: var(--text-color-light);
+}
+
+.range-btn:hover {
+  color: var(--primary-text-color);
+  border-color: var(--primary-color);
+}
+
+.range-btn.active {
+  color: var(--primary-text-color);
+  background-color: var(--white);
+  border-color: var(--primary-color);
+}
+
+/* ─── Stats row ──────────────────────────────────────────────────────────── */
+
+.price-chart-stats {
+  width: calc(100% - 56px);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  margin-left: -8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+
+.price-chart-stat {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-align: center;
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+}
+
+.price-chart-stats > .price-chart-stat:not(:last-child) {
+  border-right: 1px solid var(--border-color);
+}
+
+.price-chart-stat-label {
+  color: var(--muted-color, #666);
+}
+
+.price-chart-stat-value {
+  font-variant-numeric: tabular-nums;
 }

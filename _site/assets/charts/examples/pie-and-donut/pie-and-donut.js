@@ -1,12 +1,10 @@
 /**
- * RareCharts — Donut & Pie examples
- *
- * Donut:  new RareCharts.Donut(...)  — innerRadius: 0.58 по умолчанию
- * Pie:    new RareCharts.Pie(...)    — алиас Donut с innerRadius: 0
+ * RareCharts — Circular Charts examples
+ * Covers: Donut, Pie (alias with innerRadius:0), Gauge
  */
 
 (function () {
-  const { Donut, Pie, d3 } = RareCharts;
+  const { Donut, Pie, Gauge, d3 } = RareCharts;
 
   const segments = [
     { label: 'Atlas ERP',    value: 42 },
@@ -16,7 +14,7 @@
     { label: 'Other',        value: 4  },
   ];
 
-  // ── Donut (default) ──────────────────────────────────────────────────────
+  // ── Donut (default) ────────────────────────────────────────────────────────
   new Donut('#chart-donut', {
     title:       'Revenue by Product',
     subtitle:    'Share of total revenue, 2024',
@@ -33,28 +31,56 @@
     `,
   }).setData(segments);
 
-  // ── Pie ──────────────────────────────────────────────────────────────────
+  // ── Donut with legend on the right ────────────────────────────────────────
+  new Donut('#chart-donut-legend-right', {
+    title:          'Revenue by Product',
+    subtitle:       'Legend positioned to the right',
+    source:         'Source: Internal accounting',
+    legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
+    legendPosition: 'right',
+    height:         260,
+    centerText:     data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
+    centerLabel:    'Revenue',
+  }).setData(segments);
+
+  // ── Pie ───────────────────────────────────────────────────────────────────
   new Pie('#chart-pie', {
     title:       'Revenue by Product',
     subtitle:    'Same data as Pie (innerRadius: 0)',
     height:      300,
-    innerRadius: 0,      // ← это и делает его pie
-    showLabels:  true,   // подписи снаружи
+    innerRadius: 0,
+    showLabels:  true,
     valueFormat: v => '$' + d3.format(',.0f')(v) + 'K',
   }).setData(segments);
 
-  // ── Donut с кастомным центром ─────────────────────────────────────────────
-  new Donut('#chart-donut-custom', {
+  // ── Gauge: goal progress ──────────────────────────────────────────────────
+  new Gauge('#chart-gauge-progress', {
     title:       'Goal Progress',
-    height:      260,
-    innerRadius: 0.65,   // тонкое кольцо
-    padAngle:    0.03,
-    cornerRadius: 4,
-    centerText:  '73%',
+    height:      220,
     centerLabel: 'Complete',
-  }).setData([
-    { label: 'Done',      value: 73, color: '#00c97a' },
-    { label: 'Remaining', value: 27, color: '#e8e8e8' },
-  ]);
+  }).setData(73);
+
+  // ── Gauge: value vs target ────────────────────────────────────────────────
+  // Plan: 80, Achieved: 50 — arc fills to 50/80 = 62.5%
+  new Gauge('#chart-gauge-target', {
+    title:       'Budget Execution',
+    subtitle:    'Achieved vs Plan',
+    height:      220,
+    max:         80,
+    color:       '#00c97a',
+    centerText:  (value, max) => `${value}/${max}`,
+    centerLabel: 'achieved',
+  }).setData(50);
+
+  // ── Gauge: thin ring, custom angles ───────────────────────────────────────
+  new Gauge('#chart-gauge-thin', {
+    title:       'Disk Usage',
+    height:      200,
+    thickness:   0.10,
+    cornerRadius: 8,
+    color:       '#ff3b5c',
+    centerText:  v => d3.format('.0%')(v / 100),
+    centerLabel: 'used',
+  }).setData(78);
 
 })();

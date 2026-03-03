@@ -14,7 +14,7 @@ In RareCharts, DualAxes is exactly that: a time-based chart with two vertical
 
 To illustrate a real-world use case, this example uses a finance-native story: a convergence (arbitrage) strategy based on the idea that two similar instruments that temporarily diverged in price will later converge again.
 
-<div class="card-dashboard-bordered">
+<div class="text-content-caption card-dashboard-bordered">
     <div id="dual-chart-ltcm-treasuries"></div>
 </div>
 

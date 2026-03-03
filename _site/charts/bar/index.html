@@ -59,16 +59,16 @@
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
-              Scripts
+            <a href="/charts/"
+               class="current">
+              Charts
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
-              Charts
+            <a href="/scripts/"
+               class="">
+              Scripts
             </a>
         </li>
         
@@ -316,7 +316,7 @@
           
             <li>
               
-                <a href="/charts/pie-and-donut/">Pie and Donut</a>
+                <a href="/charts/circular/">Circular</a>
               
               
               
@@ -391,7 +391,7 @@
     <article>
       <p>Bar charts are the simplest and most reliable way to compare things. If you have categories and numbers, and you want people to understand the difference between them without decoding a visual puzzle, you use bars. Revenue by month. Product sales. Survey answers. Demographics. Anything where the question is basically “how much?” or “which one is bigger?”</p>
 <p>The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.</p>
-<div>
+<div class="text-content-caption card-dashboard-bordered">
     <div id="bar-chart-revenue"></div>
 </div>
 <p>Orientation and reading comfort</p>
@@ -402,7 +402,7 @@
 </div>
 <h3>Data format</h3>
 <p>Bar expects a simple dataset:</p>
-<pre><code>[
+<pre class="text-content-caption"><code>[
     { label: 'Sales', value: 128000 },
     { label: 'Marketing', value: 76000 },
     { label: 'R&D', value: 154000 }
@@ -430,7 +430,7 @@
 <li>Layout: <code>height</code>, <code>margin</code> (with smart defaults depending on orientation)</li>
 </ul>
 <p>Example:</p>
-<pre><code>new RareCharts.Bar('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
   orientation: 'horizontal',
   height: 260,
   labelMaxLength: 18,

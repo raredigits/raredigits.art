@@ -6,61 +6,67 @@ displaySidebar: true
 permalink: '/charts/line/time-series/'
 ---
 
+<spn class="meta-info">/examples/line/line-chart-time-series.js</spn>
+
 The Time Series chart is built for price-like data: long sequences, frequent updates, and the kind of “read the move” workflow where you do not want to zoom with your brain. It combines a main chart for detailed inspection with a compact overview chart that acts as a timeline navigator.
 
 The main job of Time Series chart is to make long histories readable and to make navigation trivial: you should be able to focus on the last month, the last year, or “everything” without re-rendering the page or rebuilding the chart.
 
-<!-- ── Header ─────────────────────── -->
-<div class="price-chart-header">
-    <div>
-        <span class="price-chart-ticker">RARE</span>
-        <span class="price-chart-price"  id="hd-price">—</span>
-        <span class="price-chart-change" id="hd-change">—</span>
+<div>
+  <!-- ── Header ─────────────────────── -->
+  <div class="price-chart-header">
+      <div>
+          <span class="price-chart-ticker">RARE</span>
+          <span class="price-chart-price"  id="hd-price">—</span>
+          <span class="price-chart-change" id="hd-change">—</span>
+      </div>
+      <!-- ── Range buttons ──────────────── -->
+      <div class="price-chart-range-bar" id="rangeBar">
+          <button class="range-btn" data-range="1M">1M</button>
+          <button class="range-btn" data-range="3M">3M</button>
+          <button class="range-btn" data-range="6M">6M</button>
+          <button class="range-btn active" data-range="1Y">1Y</button>
+          <button class="range-btn" data-range="2Y">2Y</button>
+          <button class="range-btn" data-range="ALL">ALL</button>
+      </div>
+  </div>
+  
+  <!-- ── Main chart ─────────────────── -->
+  <div class="rc-chart" id="mainChart"></div>
+  
+  <!-- ── Overview ───────────────────── -->
+  <div class="rc-chart" id="overview"></div>
+  
+  <!-- ── Stats ─────────────────────── -->
+  <div class="price-chart-stats">
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">OPEN</div>
+      <div class="price-chart-stat-value" id="s-open">—</div>
     </div>
-    <!-- ── Range buttons ──────────────── -->
-    <div class="price-chart-range-bar" id="rangeBar">
-        <button class="range-btn" data-range="1M">1M</button>
-        <button class="range-btn" data-range="3M">3M</button>
-        <button class="range-btn" data-range="6M">6M</button>
-        <button class="range-btn active" data-range="1Y">1Y</button>
-        <button class="range-btn" data-range="2Y">2Y</button>
-        <button class="range-btn" data-range="ALL">ALL</button>
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">HIGH</div>
+      <div class="price-chart-stat-value" id="s-high">—</div>
     </div>
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">LOW</div>
+      <div class="price-chart-stat-value" id="s-low">—</div>
+    </div>
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">VOLUME</div>
+      <div class="price-chart-stat-value" id="s-vol">—</div>
+    </div>
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">52W HIGH</div>
+      <div class="price-chart-stat-value" id="s-52h">—</div>
+    </div>
+    <div class="price-chart-stat">
+      <div class="price-chart-stat-label">52W LOW</div>
+      <div class="price-chart-stat-value" id="s-52l">—</div>
+    </div>
+  </div>
 </div>
 
-<!-- ── Main chart ─────────────────── -->
-<div class="rc-chart" id="mainChart"></div>
-
-<!-- ── Overview ───────────────────── -->
-<div class="rc-chart" id="overview"></div>
-
-<!-- ── Stats ─────────────────────── -->
-<div class="price-chart-stats">
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">OPEN</div>
-    <div class="price-chart-stat-value" id="s-open">—</div>
-  </div>
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">HIGH</div>
-    <div class="price-chart-stat-value" id="s-high">—</div>
-  </div>
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">LOW</div>
-    <div class="price-chart-stat-value" id="s-low">—</div>
-  </div>
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">VOLUME</div>
-    <div class="price-chart-stat-value" id="s-vol">—</div>
-  </div>
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">52W HIGH</div>
-    <div class="price-chart-stat-value" id="s-52h">—</div>
-  </div>
-  <div class="price-chart-stat">
-    <div class="price-chart-stat-label">52W LOW</div>
-    <div class="price-chart-stat-value" id="s-52l">—</div>
-  </div>
-</div>
+<div class="air-md"></div>
 
 The chart also supports business-style formatting and presentation: clear positive/negative color logic, compact numeric formats for volume, and tooltips that can show more than one number without turning into a tooltip novel.
 
@@ -87,4 +93,4 @@ This is the kind of thing that separates “a chart” from “a chart compo
 Time Series is an example of how RareCharts scales from simple chart primitives to composed, business-ready chart modules. You still work with the same core principles (explicit options, explicit data, consistent styling), but you get a higher-level component that solves a real workflow: navigating history, inspecting values, and presenting context around the chart.
 
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/line/line-chart-price.js"></script>
+<script src="/assets/charts/examples/line/line-chart-time-series.js"></script>

@@ -26,14 +26,15 @@
   const mainChart = new RareCharts.TimeSeries('#mainChart', {
     height: 340,
     curve: 'linear',
+    area: false,
     tooltipFormat: d => {
       const c     = d.value - d.open;
       const p     = (c / d.open * 100).toFixed(2);
       const color = c >= 0 ? RareCharts.defaultTheme.positive : RareCharts.defaultTheme.negative;
       return `
-        <div class="rc-tooltip-date">${d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-        <div class="rc-tooltip-price" style="color:${color}">$${d.value.toFixed(2)}</div>
-        <div class="rc-tooltip-sub">${c >= 0 ? '+' : ''}${c.toFixed(2)} (${p}%)  VOL ${d3.format('.2s')(d.volume)}</div>
+        <div>${d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+        <div style="color:${color}">$${d.value.toFixed(2)}</div>
+        <div>${c >= 0 ? '+' : ''}${c.toFixed(2)} (${p}%)  VOL ${d3.format('.2s')(d.volume)}</div>
       `;
     },
   });
@@ -41,7 +42,12 @@
   mainChart.setData(data);
 
   // ── Overview ───────────────────────────────
-  const overview = new RareCharts.Overview('#overview', { height: 56 });
+  const overview = new RareCharts.Overview('#overview', { 
+    height: 56,
+    color: '#666666',
+    area: 1, 
+    areaColor: '#cccccc' 
+  });
   overview.setData(data, extent => mainChart.setView(extent));
   mainChart.onViewChange(extent => overview.setBrush(extent));
 

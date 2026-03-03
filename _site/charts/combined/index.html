@@ -59,16 +59,16 @@
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
-              Scripts
+            <a href="/charts/"
+               class="current">
+              Charts
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
-              Charts
+            <a href="/scripts/"
+               class="">
+              Scripts
             </a>
         </li>
         
@@ -316,7 +316,7 @@
           
             <li>
               
-                <a href="/charts/pie-and-donut/">Pie and Donut</a>
+                <a href="/charts/circular-charts/">Circular Charts</a>
               
               
               
@@ -391,7 +391,7 @@
     <article>
       <p>Combined charts in RareCharts do not require a separate class. They are built on top of <code>DualAxes</code>, which provides two vertical scales and allows each series to define its own rendering type. This makes it a natural foundation for mixing lines and bars within the same time-based chart.</p>
 <p>To create a combined chart, you only need to specify the <code>type</code> for a particular series. All other series remain lines by default.</p>
-<pre><code>{
+<pre class="text-content-caption card-dashboard-bordered"><code>{
     name: 'Spread',
     axis: 'y2',
     type: 'bar',            // switch this series to bar
@@ -404,7 +404,7 @@
 </div>
 <p>Each series explicitly declares two things: which axis it belongs to (<code>y1</code> or <code>y2</code>) and how it should be rendered (<code>line</code> or <code>bar</code>). By design, Y1 is the right axis and Y2 is the left. You can mix any number of series in any configuration — multiple lines on one axis, multiple bars on the other, or both combined.</p>
 <p>Per-series visual overrides continue to work exactly as in <code>DualAxes</code>. For example:</p>
-<pre><code>{
+<pre class="text-content-caption card-dashboard-bordered"><code>{
     name:        'Forecast',
     axis:        'y1',
     type:        'line',

@@ -8,6 +8,8 @@
 
   new RareCharts.Bar('#bar-chart-coder-gender', {
     title: 'Coder gender',
+    subtitle: 'Gender distribution among software developers',
+    height: 300,
     source: 'Source: Stack Overflow’s 2015 developer survey',
     orientation: 'horizontal',
     labelMaxLength: 8,
