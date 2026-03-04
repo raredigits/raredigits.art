@@ -13,7 +13,7 @@ To create a combined chart, you only need to specify the `type` for a partic
 <pre class="text-content-caption card-dashboard-bordered"><code>{
     name: 'Spread',
     axis: 'y2',
-    type: 'bar',            // switch this series to bar
+    type: 'bar',            <span class="code-comment">// switch this series to bar</span>
     color: '#000000',
     values: dates.map((dt, i) => ({ date: dt, value: spread[i] })),
 }</code></pre>
@@ -33,10 +33,10 @@ Per-series visual overrides continue to work exactly as in `DualAxes`. For ex
     axis:        'y1',
     type:        'line',
     color:       '#00c97a',
-    strokeDash:  'dashed',    // dashed line
+    strokeDash:  'dashed',    <span class="code-comment">// dashed line</span>
     strokeWidth: 1.5,
-    area:        true,        // fill under the line
-    markers:     true,        // point markers
+    area:        true,        <span class="code-comment">// fill under the line</span>
+    markers:     true,        <span class="code-comment">// point markers</span>
     markerShape: 'diamond',
     values: [...],
 }</code></pre>
@@ -45,115 +45,103 @@ All standard DualAxes capabilities remain available in combined mode. This incl
 
 If you only need bars and do not require a second scale, simply assign all series to `y1` and omit `y2TickFormat`. `DualAxes` will automatically calculate the appropriate domain for the active axis.
 
-<div class="card collapsible-container">
-    <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">
-            Options reference
-            <span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span>
-        </span>
-    </p>
-    <div class="collapsible-content">
-        <p>
-            Combined charts are <code>DualAxes</code> — all chart-level options are identical.
-            See the full list on the
-            <a href="/charts/dual-axes/#options-reference">Dual Axes</a> page.
-        </p>
-        <h3>Per-series fields</h3>
-        <p>
-            The only thing that makes a chart “combined” is the <code>type</code> field on each series object:
-        </p>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Field</th>
-                    <th>Type</th>
-                    <th>Default</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>name</code></td>
-                    <td>string</td>
-                    <td><code>'Series N'</code></td>
-                    <td>Series name — appears in legend and tooltip.</td>
-                </tr>
-                <tr>
-                    <td><code>axis</code></td>
-                    <td><code>'y1'</code> | <code>'y2'</code></td>
-                    <td><code>'y1'</code></td>
-                    <td>
-                        Which Y axis this series plots against.<br>
-                        Y1 is right, Y2 is left.
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>type</code></td>
-                    <td><code>'line'</code> | <code>'bar'</code></td>
-                    <td><code>'line'</code></td>
-                    <td>
-                        <strong>The key field.</strong><br>
-                        Set to <code>'bar'</code> to render this series as bars instead of a line.
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>color</code></td>
-                    <td>CSS color</td>
-                    <td>theme palette</td>
-                    <td>Series color — applies to both lines and bars.</td>
-                </tr>
-                <tr>
-                    <td><code>strokeWidth</code></td>
-                    <td>number</td>
-                    <td><code>2</code></td>
-                    <td>Line thickness in px (lines only).</td>
-                </tr>
-                <tr>
-                    <td><code>strokeDash</code></td>
-                    <td>string</td>
-                    <td>—</td>
-                    <td>
-                        SVG <code>stroke-dasharray</code> for this series (lines only).<br>
-                        E.g. <code>'dashed'</code>, <code>'4,3'</code>.
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>curve</code></td>
-                    <td>string</td>
-                    <td>global <code>curve</code></td>
-                    <td>Curve type override for this series (lines only).</td>
-                </tr>
-                <tr>
-                    <td><code>area</code></td>
-                    <td>boolean</td>
-                    <td>global <code>area</code></td>
-                    <td>Fill area under this series (lines only).</td>
-                </tr>
-                <tr>
-                    <td><code>areaOpacity</code></td>
-                    <td>number</td>
-                    <td>global <code>areaOpacity</code></td>
-                    <td>Per-series area opacity (lines only).</td>
-                </tr>
-                <tr>
-                    <td><code>areaBaseline</code></td>
-                    <td>string | number</td>
-                    <td>global <code>areaBaseline</code></td>
-                    <td>Area baseline anchor (lines only).</td>
-                </tr>
-                <tr>
-                    <td><code>values</code></td>
-                    <td>array</td>
-                    <td>—</td>
-                    <td>
-                        <code>[{date, value}, ...]</code> — the data points.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+## Combined chart options
+
+Combined charts are <code>DualAxes</code> — all chart-level options are identical. See the full list on the <a href="/charts/dual-axes/#options-reference">Dual Axes</a> page.
+
+### Per-series fields
+
+The only thing that makes a chart “combined” is the <code>type</code> field on each series object:
+
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>name</code></td>
+            <td>string</td>
+            <td><code>'Series N'</code></td>
+            <td>Series name — appears in legend and tooltip.</td>
+        </tr>
+        <tr>
+            <td><code>axis</code></td>
+            <td><code>'y1'</code> | <code>'y2'</code></td>
+            <td><code>'y1'</code></td>
+            <td>
+                Which Y axis this series plots against.<br>
+                Y1 is right, Y2 is left.
+            </td>
+        </tr>
+        <tr>
+            <td><code>type</code></td>
+            <td><code>'line'</code> | <code>'bar'</code></td>
+            <td><code>'line'</code></td>
+            <td>
+                <strong>The key field.</strong><br>
+                Set to <code>'bar'</code> to render this series as bars instead of a line.
+            </td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td>theme palette</td>
+            <td>Series color — applies to both lines and bars.</td>
+        </tr>
+        <tr>
+            <td><code>strokeWidth</code></td>
+            <td>number</td>
+            <td><code>2</code></td>
+            <td>Line thickness in px (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>
+                SVG <code>stroke-dasharray</code> for this series (lines only).<br>
+                E.g. <code>'dashed'</code>, <code>'4,3'</code>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>curve</code></td>
+            <td>string</td>
+            <td>global <code>curve</code></td>
+            <td>Curve type override for this series (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>area</code></td>
+            <td>boolean</td>
+            <td>global <code>area</code></td>
+            <td>Fill area under this series (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>areaOpacity</code></td>
+            <td>number</td>
+            <td>global <code>areaOpacity</code></td>
+            <td>Per-series area opacity (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>areaBaseline</code></td>
+            <td>string | number</td>
+            <td>global <code>areaBaseline</code></td>
+            <td>Area baseline anchor (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>values</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>
+                <code>[{date, value}, ...]</code> — the data points.
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/combined/line-chart-ltcm-treasuries-combined.js"></script>

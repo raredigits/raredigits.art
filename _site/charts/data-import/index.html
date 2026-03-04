@@ -438,44 +438,47 @@ chart.setData(data);</code></pre>
 <h2>Real-world example: mining stats from a provider export</h2>
 <p>The chart below was built from a plain XLS file downloaded from a mining pool. The file was converted to JSON and dropped into the project — no server, no pipeline, no fuss.</p>
 <div id="mining-hashrate-profit"></div>
-<p>Three series, one source array. Hashrate as bars on the left axis, USD profit and BTC profit as lines on the right. The BTC values (≈ 0.00014 BTC/day) are multiplied by 100,000 before plotting so they land on the same numeric scale as USD — when the two lines track each other closely, BTC price is near $100k; when they diverge, it's moved. The tooltip shows the actual unscaled values.</p>
+<p>Three series, one source array. The right axis (orange line) tracks the BTC spot price. The left axis shows two things at once: the gray bars are daily BTC output scaled by $100,000, and the green line is actual USD earnings. When the line sits above the bars, the BTC price was above $100k and pushed USD revenue higher. When they converge, price is close to the $100k anchor. The tooltip shows actual unscaled BTC values.</p>
 <pre><code>(async function () {
   const d3 = RareCharts.d3;
-  const BTC_SCALE = 100_000;  // ×100k brings BTC values (~0.00014) to dollar scale (~14)
 
-  // fromJson auto-detects the array-at-root shape and applies the mapping to each row
+  // BTC profit ≈ 0.00014 BTC/day. Scale by $100k to match USD profit ≈ $14/day.
+  // Line above bars = BTC price > $100k. The gap IS the price effect.
+  const BTC_SCALE = 100_000;
+
   const raw = await RareCharts.fromJson('/assets/charts/data/btc_mining.json', {
-    date:        row => new Date(row.date),
-    value:       row => +row.hashrate_th,
-    hashrate_th: row => +row.hashrate_th,
-    profit_usd:  row => +row.profit_usd,
-    profit_btc:  row => +row.profit_btc,
+    date:       row => new Date(row.date),
+    value:      row => +row.profit_usd,
+    profit_usd: row => +row.profit_usd,
+    profit_btc: row => +row.profit_btc,
+    price_usd:  row => +row.price_usd,
   });
 
   const series = [
     {
-      name: 'Hashrate', axis: 'y2', type: 'bar', color: '#cccccc',
-      values: raw.map(r => ({ date: r.date, value: r.hashrate_th })),
+      name: 'BTC Price', axis: 'y1', type: 'line', color: '#f7931a',
+      strokeWidth: 1.5,
+      values: raw.map(r => ({ date: r.date, value: r.price_usd })),
     },
     {
-      name: 'USD Profit', axis: 'y1', type: 'line', color: '#00c97a',
-      values: raw.map(r => ({ date: r.date, value: r.profit_usd })),
-    },
-    {
-      name: 'BTC Profit', axis: 'y1', type: 'line', color: '#f7931a',
-      strokeDash: '5,3',
+      name: 'BTC Output', axis: 'y2', type: 'bar', color: '#cccccc',
       values: raw.map(r => ({ date: r.date, value: r.profit_btc * BTC_SCALE })),
+    },
+    {
+      name: 'USD Profit', axis: 'y2', type: 'line', color: '#00c97a',
+      strokeWidth: 2,
+      values: raw.map(r => ({ date: r.date, value: r.profit_usd })),
     },
   ];
 
   new RareCharts.DualAxes('#mining-hashrate-profit', {
     height: 380, curve: 'linear', crosshair: true, endLabels: false,
-    y2Domain: [0, 280], y1Domain: [0, 16],
-    y2TickFormat: v => d3.format('.0f')(v),
-    y1TickFormat: v => '$' + d3.format(',.1f')(v),
+    y1Title: 'BTC Price', y2Title: '$/day',
+    y1TickFormat: v => '$' + d3.format(',.0f')(v),
+    y2TickFormat: v => '$' + d3.format(',.1f')(v),
     xTickFormat:  d => d3.timeFormat('%b')(d),
     tooltipFormat: ({ date, points }) => {
-      // Show actual BTC value (un-scale it back in the formatter)
+      // Show actual BTC output (un-scale back to real BTC in the formatter)
       ...
     },
   }).setData(series);

@@ -146,174 +146,165 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
   &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
 `</code></pre>
 
-<div class="card collapsible-container">
-    <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">
-            Options summary
-            <span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span>
-        </span>
-    </p>
-    <div class="collapsible-content">
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Option</th>
-                    <th>Default</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="3"><h5>Donut / Pie</h5></td>
-                </tr>
-                <tr>
-                    <td><code>height</code></td>
-                    <td><code>280</code></td>
-                    <td>Chart height px</td>
-                </tr>
-                <tr>
-                    <td><code>innerRadius</code></td>
-                    <td><code>0.58</code></td>
-                    <td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
-                </tr>
-                <tr>
-                    <td><code>padAngle</code></td>
-                    <td><code>0.018</code></td>
-                    <td>Gap between slices (radians)</td>
-                </tr>
-                <tr>
-                    <td><code>cornerRadius</code></td>
-                    <td><code>3</code></td>
-                    <td>Rounded slice corners px</td>
-                </tr>
-                <tr>
-                    <td><code>showLabels</code></td>
-                    <td><code>false</code></td>
-                    <td>Show outer leader-line labels</td>
-                </tr>
-                <tr>
-                    <td><code>labelContent</code></td>
-                    <td><code>'both'</code></td>
-                    <td><code>'both'</code> / <code>'label'</code> / <code>'percent'</code></td>
-                </tr>
-                <tr>
-                    <td><code>labelMinPct</code></td>
-                    <td><code>0.04</code></td>
-                    <td>Hide label when slice &lt; this fraction</td>
-                </tr>
-                <tr>
-                    <td><code>legendPosition</code></td>
-                    <td>—</td>
-                    <td><code>'right'</code> to place legend in vertical aside</td>
-                </tr>
-                <tr>
-                    <td><code>showCenter</code></td>
-                    <td><code>true</code> (donut)</td>
-                    <td>Show center text hole</td>
-                </tr>
-                <tr>
-                    <td><code>centerText</code></td>
-                    <td>formatted total</td>
-                    <td>String or <code>function(data) =&gt; string</code></td>
-                </tr>
-                <tr>
-                    <td><code>centerLabel</code></td>
-                    <td><code>'Total'</code></td>
-                    <td>Secondary line below center text</td>
-                </tr>
-                <tr>
-                    <td><code>animate</code></td>
-                    <td><code>true</code></td>
-                    <td>Animate on first render</td>
-                </tr>
-                <tr>
-                    <td><code>duration</code></td>
-                    <td><code>650</code></td>
-                    <td>Animation duration ms</td>
-                </tr>
-                <tr>
-                    <td><code>tooltipFormat</code></td>
-                    <td>built-in</td>
-                    <td><code>function({label, value, percent, color}) =&gt; html</code></td>
-                </tr>
-                <tr>
-                    <td colspan="3"><h5>Gauge</h5></td>
-                </tr>
-                <tr>
-                    <td><code>height</code></td>
-                    <td><code>220</code></td>
-                    <td>Chart height px</td>
-                </tr>
-                <tr>
-                    <td><code>min</code></td>
-                    <td><code>0</code></td>
-                    <td>Minimum value</td>
-                </tr>
-                <tr>
-                    <td><code>max</code></td>
-                    <td><code>100</code></td>
-                    <td>Maximum value</td>
-                </tr>
-                <tr>
-                    <td><code>startAngle</code></td>
-                    <td><code>-¾π</code></td>
-                    <td>Arc start (radians, clockwise from top)</td>
-                </tr>
-                <tr>
-                    <td><code>endAngle</code></td>
-                    <td><code>+¾π</code></td>
-                    <td>Arc end (270° sweep by default)</td>
-                </tr>
-                <tr>
-                    <td><code>thickness</code></td>
-                    <td><code>0.18</code></td>
-                    <td>Ring thickness as fraction of outer radius</td>
-                </tr>
-                <tr>
-                    <td><code>cornerRadius</code></td>
-                    <td><code>6</code></td>
-                    <td>Arc end rounding px</td>
-                </tr>
-                <tr>
-                    <td><code>color</code></td>
-                    <td><code>theme.accent</code></td>
-                    <td>Fill arc color</td>
-                </tr>
-                <tr>
-                    <td><code>trackColor</code></td>
-                    <td><code>theme.grid</code></td>
-                    <td>Background arc color</td>
-                </tr>
-                <tr>
-                    <td><code>showCenter</code></td>
-                    <td><code>true</code></td>
-                    <td>Show center text</td>
-                </tr>
-                <tr>
-                    <td><code>centerText</code></td>
-                    <td><code>'63%'</code></td>
-                    <td>String or <code>function(value, max, min) =&gt; string</code></td>
-                </tr>
-                <tr>
-                    <td><code>centerLabel</code></td>
-                    <td>—</td>
-                    <td>Secondary line below center text</td>
-                </tr>
-                <tr>
-                    <td><code>animate</code></td>
-                    <td><code>true</code></td>
-                    <td>Animate fill on first render</td>
-                </tr>
-                <tr>
-                    <td><code>tooltipFormat</code></td>
-                    <td>built-in</td>
-                    <td><code>function({value, max, min, percent}) =&gt; html</code></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+## Circular charts options
+
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="3"><h5>Donut / Pie</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td><code>280</code></td>
+            <td>Chart height px</td>
+        </tr>
+        <tr>
+            <td><code>innerRadius</code></td>
+            <td><code>0.58</code></td>
+            <td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
+        </tr>
+        <tr>
+            <td><code>padAngle</code></td>
+            <td><code>0.018</code></td>
+            <td>Gap between slices (radians)</td>
+        </tr>
+        <tr>
+            <td><code>cornerRadius</code></td>
+            <td><code>3</code></td>
+            <td>Rounded slice corners px</td>
+        </tr>
+        <tr>
+            <td><code>showLabels</code></td>
+            <td><code>false</code></td>
+            <td>Show outer leader-line labels</td>
+        </tr>
+        <tr>
+            <td><code>labelContent</code></td>
+            <td><code>'both'</code></td>
+            <td><code>'both'</code> / <code>'label'</code> / <code>'percent'</code></td>
+        </tr>
+        <tr>
+            <td><code>labelMinPct</code></td>
+            <td><code>0.04</code></td>
+            <td>Hide label when slice &lt; this fraction</td>
+        </tr>
+        <tr>
+            <td><code>legendPosition</code></td>
+            <td>—</td>
+            <td><code>'right'</code> to place legend in vertical aside</td>
+        </tr>
+        <tr>
+            <td><code>showCenter</code></td>
+            <td><code>true</code> (donut)</td>
+            <td>Show center text hole</td>
+        </tr>
+        <tr>
+            <td><code>centerText</code></td>
+            <td>formatted total</td>
+            <td>String or <code>function(data) =&gt; string</code></td>
+        </tr>
+        <tr>
+            <td><code>centerLabel</code></td>
+            <td><code>'Total'</code></td>
+            <td>Secondary line below center text</td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td><code>true</code></td>
+            <td>Animate on first render</td>
+        </tr>
+        <tr>
+            <td><code>duration</code></td>
+            <td><code>650</code></td>
+            <td>Animation duration ms</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>built-in</td>
+            <td><code>function({label, value, percent, color}) =&gt; html</code></td>
+        </tr>
+        <tr>
+            <td colspan="3"><h5>Gauge</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td><code>220</code></td>
+            <td>Chart height px</td>
+        </tr>
+        <tr>
+            <td><code>min</code></td>
+            <td><code>0</code></td>
+            <td>Minimum value</td>
+        </tr>
+        <tr>
+            <td><code>max</code></td>
+            <td><code>100</code></td>
+            <td>Maximum value</td>
+        </tr>
+        <tr>
+            <td><code>startAngle</code></td>
+            <td><code>-¾π</code></td>
+            <td>Arc start (radians, clockwise from top)</td>
+        </tr>
+        <tr>
+            <td><code>endAngle</code></td>
+            <td><code>+¾π</code></td>
+            <td>Arc end (270° sweep by default)</td>
+        </tr>
+        <tr>
+            <td><code>thickness</code></td>
+            <td><code>0.18</code></td>
+            <td>Ring thickness as fraction of outer radius</td>
+        </tr>
+        <tr>
+            <td><code>cornerRadius</code></td>
+            <td><code>6</code></td>
+            <td>Arc end rounding px</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td><code>theme.accent</code></td>
+            <td>Fill arc color</td>
+        </tr>
+        <tr>
+            <td><code>trackColor</code></td>
+            <td><code>theme.grid</code></td>
+            <td>Background arc color</td>
+        </tr>
+        <tr>
+            <td><code>showCenter</code></td>
+            <td><code>true</code></td>
+            <td>Show center text</td>
+        </tr>
+        <tr>
+            <td><code>centerText</code></td>
+            <td><code>'63%'</code></td>
+            <td>String or <code>function(value, max, min) =&gt; string</code></td>
+        </tr>
+        <tr>
+            <td><code>centerLabel</code></td>
+            <td>—</td>
+            <td>Secondary line below center text</td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td><code>true</code></td>
+            <td>Animate fill on first render</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>built-in</td>
+            <td><code>function({value, max, min, percent}) =&gt; html</code></td>
+        </tr>
+    </tbody>
+</table>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>

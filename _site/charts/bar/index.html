@@ -429,186 +429,172 @@
   valueFormat: d => d3.format(',.0f')(d.value),
   xTickFormat: d => d3.format('.2s')(d),
 }).setData(data);</code></pre>
-<div class="card collapsible-container">
-    <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">
-            Options reference
-            <span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span>
-        </span>
-    </p>
-    <div class="collapsible-content">
-        <p>
-            Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>)
-            are documented on the <a href="/charts/settings/">Settings</a> page.
-        </p>
-        <br>
-        <table class="table-bordered">
-            <thead>
-                <tr>
-                    <th>Option</th>
-                    <th>Type</th>
-                    <th>Default</th>
-                    <th>Description</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="4"><h5>Layout</h5></td>
-                </tr>
-                <tr>
-                    <td><code>height</code></td>
-                    <td>number</td>
-                    <td><code>200</code></td>
-                    <td>Chart height in px. Width is always 100% of the container.</td>
-                </tr>
-                <tr>
-                    <td><code>margin</code></td>
-                    <td>object</td>
-                    <td>—</td>
-                    <td>
-                        Inner padding <code>{top, right, bottom, left}</code>.<br>
-                        Adjusts automatically by orientation — left is wider in horizontal mode, right is wider in vertical.
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>orientation</code></td>
-                    <td><code>'vertical'</code> | <code>'horizontal'</code></td>
-                    <td><code>'vertical'</code></td>
-                    <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><h5>Bar style</h5></td>
-                </tr>
-                <tr>
-                    <td><code>barColor</code></td>
-                    <td>CSS color</td>
-                    <td>theme accent</td>
-                    <td>Uniform fill color for all bars.</td>
-                </tr>
-                <tr>
-                    <td><code>labelMaxLength</code></td>
-                    <td>number</td>
-                    <td>—</td>
-                    <td>
-                        Truncate axis labels to N characters and add an ellipsis.<br>
-                        The full label is still shown in the tooltip on hover.
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4"><h5>Animation</h5></td>
-                </tr>
-                <tr>
-                    <td><code>animate</code></td>
-                    <td>boolean</td>
-                    <td><code>true</code></td>
-                    <td>Animate bars on first render. Plays only once per chart instance.</td>
-                </tr>
-                <tr>
-                    <td><code>duration</code></td>
-                    <td>number</td>
-                    <td><code>500</code></td>
-                    <td>Animation duration in ms.</td>
-                </tr>
-                <tr>
-                    <td><code>stagger</code></td>
-                    <td>number</td>
-                    <td><code>0</code></td>
-                    <td>Per-bar delay in ms — creates a staggered cascade effect.</td>
-                </tr>
-                <tr>
-                    <td><code>ease</code></td>
-                    <td>string</td>
-                    <td><code>'cubicOut'</code></td>
-                    <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><h5>Value labels (horizontal mode only)</h5></td>
-                </tr>
-                <tr>
-                    <td><code>showValues</code></td>
-                    <td>boolean</td>
-                    <td><code>false</code></td>
-                    <td>Print numeric labels at bar ends.</td>
-                </tr>
-                <tr>
-                    <td><code>valueFormat</code></td>
-                    <td>function</td>
-                    <td>—</td>
-                    <td>
-                        <code>(d) =&gt; string</code> where <code>d</code> is <code>{label, value}</code>.<br>
-                        Default: comma-formatted integer.
-                    </td>
-                </tr>
-                <tr>
-                    <td><code>valueOffset</code></td>
-                    <td>number</td>
-                    <td><code>6</code></td>
-                    <td>Distance in px between the bar end and the label.</td>
-                </tr>
-                <tr>
-                    <td><code>valueInsideGap</code></td>
-                    <td>number</td>
-                    <td><code>42</code></td>
-                    <td>
-                        When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4"><h5>Axis formatting</h5></td>
-                </tr>
-                <tr>
-                    <td><code>yTickFormat</code></td>
-                    <td>function</td>
-                    <td><code>.2s</code></td>
-                    <td><code>(value) =&gt; string</code> — Y axis tick labels in vertical mode.</td>
-                </tr>
-                <tr>
-                    <td><code>yPrefix</code></td>
-                    <td>string</td>
-                    <td><code>''</code></td>
-                    <td>Prefix for default Y labels in vertical mode (e.g. <code>'$'</code>).</td>
-                </tr>
-                <tr>
-                    <td><code>ySuffix</code></td>
-                    <td>string</td>
-                    <td><code>''</code></td>
-                    <td>Suffix for default Y labels in vertical mode.</td>
-                </tr>
-                <tr>
-                    <td><code>xTickFormat</code></td>
-                    <td>function</td>
-                    <td><code>.2s</code></td>
-                    <td><code>(value) =&gt; string</code> — X axis tick labels in horizontal mode.</td>
-                </tr>
-                <tr>
-                    <td><code>xTicks</code></td>
-                    <td>number</td>
-                    <td><code>4</code></td>
-                    <td>Tick count in horizontal mode.</td>
-                </tr>
-                <tr>
-                    <td><code>xTickValues</code></td>
-                    <td>array</td>
-                    <td>—</td>
-                    <td>Explicit X tick positions in horizontal mode.</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><h5>Interaction</h5></td>
-                </tr>
-                <tr>
-                    <td><code>tooltipFormat</code></td>
-                    <td>function</td>
-                    <td>—</td>
-                    <td>
-                        <code>(d) =&gt; html</code> where <code>d</code> is <code>{label, value}</code>.<br>
-                        Default shows label and comma-formatted value.
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<h2>Bar chart options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>200</code></td>
+            <td>Chart height in px. Width is always 100% of the container.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>
+                Inner padding <code>{top, right, bottom, left}</code>.<br>
+                Adjusts automatically by orientation — left is wider in horizontal mode, right is wider in vertical.
+            </td>
+        </tr>
+        <tr>
+            <td><code>orientation</code></td>
+            <td><code>'vertical'</code> | <code>'horizontal'</code></td>
+            <td><code>'vertical'</code></td>
+            <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
+        </tr>
+        <tr>
+            <td colspan="4"><h5>Bar style</h5></td>
+        </tr>
+        <tr>
+            <td><code>barColor</code></td>
+            <td>CSS color</td>
+            <td>theme accent</td>
+            <td>Uniform fill color for all bars.</td>
+        </tr>
+        <tr>
+            <td><code>labelMaxLength</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>
+                Truncate axis labels to N characters and add an ellipsis.<br>
+                The full label is still shown in the tooltip on hover.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><h5>Animation</h5></td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Animate bars on first render. Plays only once per chart instance.</td>
+        </tr>
+        <tr>
+            <td><code>duration</code></td>
+            <td>number</td>
+            <td><code>500</code></td>
+            <td>Animation duration in ms.</td>
+        </tr>
+        <tr>
+            <td><code>stagger</code></td>
+            <td>number</td>
+            <td><code>0</code></td>
+            <td>Per-bar delay in ms — creates a staggered cascade effect.</td>
+        </tr>
+        <tr>
+            <td><code>ease</code></td>
+            <td>string</td>
+            <td><code>'cubicOut'</code></td>
+            <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
+        </tr>
+        <tr>
+            <td colspan="4"><h5>Value labels (horizontal mode only)</h5></td>
+        </tr>
+        <tr>
+            <td><code>showValues</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Print numeric labels at bar ends.</td>
+        </tr>
+        <tr>
+            <td><code>valueFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>
+                <code>(d) =&gt; string</code> where <code>d</code> is <code>{label, value}</code>.<br>
+                Default: comma-formatted integer.
+            </td>
+        </tr>
+        <tr>
+            <td><code>valueOffset</code></td>
+            <td>number</td>
+            <td><code>6</code></td>
+            <td>Distance in px between the bar end and the label.</td>
+        </tr>
+        <tr>
+            <td><code>valueInsideGap</code></td>
+            <td>number</td>
+            <td><code>42</code></td>
+            <td>
+                When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4"><h5>Axis formatting</h5></td>
+        </tr>
+        <tr>
+            <td><code>yTickFormat</code></td>
+            <td>function</td>
+            <td><code>.2s</code></td>
+            <td><code>(value) =&gt; string</code> — Y axis tick labels in vertical mode.</td>
+        </tr>
+        <tr>
+            <td><code>yPrefix</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Prefix for default Y labels in vertical mode (e.g. <code>'$'</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ySuffix</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Suffix for default Y labels in vertical mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTickFormat</code></td>
+            <td>function</td>
+            <td><code>.2s</code></td>
+            <td><code>(value) =&gt; string</code> — X axis tick labels in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTicks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Tick count in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTickValues</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Explicit X tick positions in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>
+                <code>(d) =&gt; html</code> where <code>d</code> is <code>{label, value}</code>.<br>
+                Default shows label and comma-formatted value.
+            </td>
+        </tr>
+    </tbody>
+</table>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-revenue.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-coder-gender.js"></script>
