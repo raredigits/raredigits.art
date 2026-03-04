@@ -122,6 +122,49 @@ Three series, one source array. The right axis (orange line) tracks the BTC spot
   }).setData(series);
 })();</code></pre>
 
+The mapping isn't just for field names — you can compute derived values inline. The chart below uses the same data file but adds a pre-processing step: a 7-day rolling average over USD profit, then both series normalized to 100 at the start date. No extra fetch, just a few lines of JS before `setData()`.
+
+<div id="mining-index"></div>
+
+Both lines start at 100 (Feb 1, 2025). After that, a reading of 120 means the metric is up 20% from the start; 80 means it's down 20%. The gap between them is the difficulty adjustment at work: as more miners join the network, the BTC reward per terahash declines — so even as the spot price rises, individual miner earnings don't follow at the same rate.
+
+<pre><code>// Filter to fully active days, compute rolling average, normalize to 100
+const active     = raw.filter(r => r.profit_usd > 5.0);
+const MA_WINDOW  = 7;
+
+const profitMA = active.map((_, i) => {
+  const slice = active.slice(Math.max(0, i - MA_WINDOW + 1), i + 1);
+  return slice.reduce((sum, r) => sum + r.profit_usd, 0) / slice.length;
+});
+
+const BASE_PRICE  = active[0].price_usd;
+const BASE_PROFIT = profitMA[0];
+
+const series = [
+  {
+    name: 'BTC Price', axis: 'y2', type: 'line', color: '#f7931a',
+    values: active.map(r => ({ date: r.date, value: (r.price_usd / BASE_PRICE) * 100 })),
+  },
+  {
+    name: 'USD Earnings (7d avg)', axis: 'y2', type: 'line', color: '#00c97a',
+    values: active.map((r, i) => ({ date: r.date, value: (profitMA[i] / BASE_PROFIT) * 100 })),
+  },
+];
+
+new RareCharts.DualAxes('#mining-index', {
+  y2Title: 'Index (start = 100)',
+  y2Domain: [35, 165],
+  y2TickFormat: v => d3.format('.0f')(v),
+  tooltipFormat: ({ date, points }) => {
+    const rows = points.map(p => {
+      const delta = p.value - 100;
+      const sign  = delta >= 0 ? '+' : '';
+      return `<div style="color:${p.color}">${p.name}: ${d3.format('.1f')(p.value)} (${sign}${d3.format('.1f')(delta)}%)</div>`;
+    });
+    return `...`;
+  },
+}).setData(series);</code></pre>
+
 ## fromCsv
 
 Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.
@@ -225,3 +268,4 @@ Invalid rows are filtered out automatically:
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/mining/btc-mining-hashrate-profit.js"></script>
+<script src="/assets/charts/examples/mining/btc-mining-index.js"></script>
