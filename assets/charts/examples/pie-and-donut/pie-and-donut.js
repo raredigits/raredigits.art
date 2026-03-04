@@ -18,7 +18,7 @@
   new Donut('#chart-donut', {
     title:       'Revenue by Product',
     subtitle:    'Share of total revenue, 2024',
-    source:      'Source: Internal accounting',
+    source:      'Source: Internal Accounting',
     legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
     height:      300,
     centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
@@ -35,10 +35,10 @@
   new Donut('#chart-donut-legend-right', {
     title:          'Revenue by Product',
     subtitle:       'Legend positioned to the right',
-    source:         'Source: Internal accounting',
+    source:         'Source: Internal Accounting',
     legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
     legendPosition: 'right',
-    height:         260,
+    height:         340,
     centerText:     data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
     centerLabel:    'Revenue',
   }).setData(segments);
@@ -47,6 +47,7 @@
   new Pie('#chart-pie', {
     title:       'Revenue by Product',
     subtitle:    'Same data as Pie (innerRadius: 0)',
+    source:      'Source: Internal Accounting',
     height:      300,
     innerRadius: 0,
     showLabels:  true,
@@ -69,7 +70,7 @@
     max:         80,
     color:       '#00c97a',
     centerText:  (value, max) => `${value}/${max}`,
-    centerLabel: 'achieved',
+    centerLabel: 'Achieved',
   }).setData(50);
 
   // ── Gauge: thin ring, custom angles ───────────────────────────────────────
@@ -80,7 +81,7 @@
     cornerRadius: 8,
     color:       '#ff3b5c',
     centerText:  v => d3.format('.0%')(v / 100),
-    centerLabel: 'used',
+    centerLabel: 'Used',
   }).setData(78);
 
 })();

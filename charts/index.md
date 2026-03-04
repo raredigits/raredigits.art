@@ -1,6 +1,6 @@
 ---
 layout: page.njk
-title: "Charts"
+title: "Rare Charts"
 section: "Charts"
 displaySidebar: true
 permalink: '/charts/'
@@ -12,9 +12,9 @@ RareCharts is a charting library for professional data presentation. It is b
 
 Text can be precise. Tables can be structured. But both require sequential reading and mental calculation. A chart compresses that process. It turns numbers into shape, direction, magnitude and change — things the brain reads almost instantly.
 
-If you write: “Revenue grew from 1.2M to 2.8M, with <em>a dip</em> in March and <em>acceleration</em> in Q4”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
+If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4</em>”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
 
-<div class="text-content-caption card-dashboard-bordered">
+<div class="card text-content-caption card-dashboard-bordered">
     <div id="line-chart-demo-revenue"></div>
 </div>
 
@@ -26,7 +26,7 @@ If you write: “Revenue grew from 1.2M to 2.8M, with <em>a dip</em> in Marc
   </div>
   <div class="sidenote">
     <h5>Built on D3</h5>
-    <p>RareCharts is built on top of <a href="https://d3js.org">D3.js</a>, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
+    <p>RareCharts is built on top of D3.js, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
   </div>
   <div>
     <p>You can integrate it into an existing product, an internal dashboard, a reporting tool, or a public-facing analytics page. Architecturally it does not impose a design ideology. It provides a structured base.</p>
@@ -34,7 +34,7 @@ If you write: “Revenue grew from 1.2M to 2.8M, with <em>a dip</em> in Marc
     <ul>
       <li>Line with different visual options</li> 
       <li>Bars</li>
-      <li>Pie and Donut</li>
+      <li>Circulars</li>
       <li>Network graphs</li>
       <li>Combined charts</li>
     </ul>
@@ -66,13 +66,13 @@ There are no hidden layout “surprises”. Control remains with the developer.
 ### Professional Considerations
 
 <div class="sidenote-wrapper">
-  <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
+  <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
   <div class="sidenote">
     <div id="bar-chart-understanding"></div>
   </div>
   <div>
-    <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>
-    <p>The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.</p>
+    <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>
+    <p>The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.</p>
   </div>
 </div>
 

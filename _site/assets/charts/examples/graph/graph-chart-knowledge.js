@@ -109,8 +109,8 @@
     linkTypes: linkPresets.knowledge,
 
     nodeRadius:     18,
-    linkDistance:   95,
-    chargeStrength: -420,
+    linkDistance:   115,
+    chargeStrength: -620,
   }).setData(data);
 
 })();

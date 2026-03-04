@@ -6,52 +6,121 @@ displaySidebar: true
 permalink: '/charts/installation/'
 ---
 
-RareCharts can be added to a project in two straightforward ways. You can either take the library from GitHub and keep it inside your codebase, or you can load a prebuilt file from a CDN. Both options expose the same API and behave the same at runtime, so the decision is mostly about how you want to manage versions and assets.
+RareCharts ships as a single self-contained JavaScript file. No build step, no package manager, no fifteen dependencies with conflicting peer requirements. You add one script tag and it works.
 
-If you already have a build pipeline and you prefer predictable deployments, GitHub is usually the right choice. If you are building a static site, a documentation page, a prototype, or you simply want the quickest path to a working chart, CDN is often enough.
+D3 is bundled in. You do not need to include it separately.
 
-## Option 1: GitHub
+## Getting the file
 
-If you want full control over the source, pinning, and updates, clone the repository and use the compiled build (or bundle the source, if that’s how your project works).
+**From GitHub** — clone the repo and use the prebuilt file:
 
 <pre><code>git clone https://github.com/raredigits/rare-charts.git</code></pre>
 
-After that you can include the compiled file in your project and reference it as a normal script. When loaded this way, RareCharts exposes a global RareCharts object.
+Copy `dist/rare-charts.js` wherever your project keeps static assets.
 
-<pre><code>&lt;script src="/assets/js/rare-charts.js"&gt;&lt;/script&gt;</code></pre>
-
-This approach keeps everything under your control: you can vendor the exact version you want, review changes before updating, and ship without relying on external delivery.
-
-## Option 2: CDN
-
-If you want minimal setup, you can load RareCharts directly from a CDN. This is especially convenient for demos, documentation pages, and static sites where you do not want a bundler just to render a few charts.
+**From CDN** — load it directly, no download required:
 
 <pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/dist/rare-charts.js"&gt;&lt;/script&gt;</code></pre>
 
-For production, using a fixed version is strongly recommended. “Latest” is fine for experimentation, but reproducibility is what you want when the chart ends up in a report, a dashboard, or anything that people will quote later.
+For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
 <pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@1.0.0/dist/rare-charts.js"&gt;&lt;/script&gt;</code></pre>
 
-Just like with the GitHub build, the CDN file exposes the RareCharts global. You can then use any chart class directly: RareCharts.Line, RareCharts.Bar, RareCharts.DualAxes, RareCharts.Donut, RareCharts.Graph.
+## Where to put the script tag
 
-### Dependencies
+Two standard options, both work fine.
 
-RareCharts includes the D3 modules it needs internally, so you do not have to install or load D3 separately. This is intentional. It reduces setup friction and avoids the classic situation where everything works until one dependency version silently stops matching another.
+**Before `</body>`** — the classic approach. The page renders first, then the script loads. Charts initialize against already-present DOM elements.
 
-### Minimal example
+<pre><code>&lt;body&gt;
+  &lt;div id="chart"&gt;&lt;/div&gt;
+  ...
+  &lt;script src="/assets/rare-charts.js"&gt;&lt;/script&gt;
+  &lt;script&gt;
+    new RareCharts.Line('#chart', { height: 260 }).setData(data);
+  &lt;/script&gt;
+&lt;/body&gt;</code></pre>
 
-Once the script is available on the page, you only need a container element and a chart instance. By default, the chart uses the full width of its parent container, while height is set per chart instance.
+**In `<head>` with `defer`** — loads in parallel, executes after the DOM is ready. Same result, slightly cleaner separation:
+
+<pre><code>&lt;head&gt;
+  &lt;script src="/assets/rare-charts.js" defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="chart"&gt;&lt;/div&gt;
+  &lt;script defer&gt;
+    new RareCharts.Line('#chart', { height: 260 }).setData(data);
+  &lt;/script&gt;
+&lt;/body&gt;</code></pre>
+
+The only rule: your chart initialization code must run after both the library and the container element are in the DOM. Either approach guarantees that.
+
+## Creating a chart
+
+Every chart follows the same three-step pattern.
+
+**1.** Add a container element:
+<pre><code>&lt;div id="my-chart"&gt;&lt;/div&gt;</code></pre>
+
+**2.** Create a chart instance, passing a selector and options:
+<pre><code>const chart = new RareCharts.Line('#my-chart', {
+  title:  'Revenue',
+  height: 300,
+});</code></pre>
+
+**3.** Feed it data:
+<pre><code>chart.setData(data);</code></pre>
+
+Or chain steps 2 and 3:
+<pre><code>new RareCharts.Bar('#my-chart', { height: 300 }).setData(data);</code></pre>
+
+`setData()` can be called multiple times. The chart updates in place — useful for filters, date range selectors, or live data.
+
+## Sizing
+
+**Width** is always 100% of the container. Make the container whatever width you need — the chart fills it and redraws automatically on resize. No `window.addEventListener('resize', ...)` required.
+
+**Height** is set per instance via the `height` option. Each chart type has its own default (240–520px), but you almost always want to set it explicitly.
+
+<pre><code>new RareCharts.Graph('#network', { height: 600 }).setData(data);</code></pre>
+
+## Available chart types
+
+| Class | Use case |
+|-------|----------|
+| `RareCharts.Line` | Time series, trend lines, multi-series performance |
+| `RareCharts.TimeSeries` | OHLCV candlestick / price charts |
+| `RareCharts.Bar` | Category comparisons, ranked lists |
+| `RareCharts.DualAxes` | Two metrics on different scales |
+| `RareCharts.Combined` | Bar + line overlay |
+| `RareCharts.Donut` | Part-to-whole with center label |
+| `RareCharts.Pie` | Part-to-whole, no hole (alias for Donut with `innerRadius: 0`) |
+| `RareCharts.Gauge` | Progress toward a target |
+| `RareCharts.Graph` | Force-directed network of nodes and links |
+
+All types share the same base options (`title`, `subtitle`, `source`, `height`, `theme`) — documented on the [Settings](/charts/settings/) page.
+
+## Using with Rare Styles
+
+If your project uses [Rare Styles](/styles/), RareCharts picks up the CSS custom properties automatically — fonts, colors, and spacing stay consistent with the rest of your UI without extra configuration.
+
+If you are using RareCharts standalone, the built-in defaults take over. Nothing breaks, nothing looks out of place.
+
+## Minimal working example
 
 <pre><code>&lt;div id="chart"&gt;&lt;/div&gt;
 
-&lt;script>
-  const data = [
-    { date: '2026-01-01', value: 10 },
-    { date: '2026-01-02', value: 14 },
-    { date: '2026-01-03', value: 12 }
-  ];
+&lt;script src="/assets/rare-charts.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  new RareCharts.Line('#chart', {
+    title:  'Daily Active Users',
+    source: 'Source: Analytics',
+    height: 280,
+  }).setData([
+    { date: '2026-01-01', value: 1240 },
+    { date: '2026-01-02', value: 1580 },
+    { date: '2026-01-03', value: 1390 },
+  ]);
+&lt;/script&gt;</code></pre>
 
-  new RareCharts.Line('#chart', { height: 260 }).setData(data);
-&lt;/script></code></pre>
-
-That is it. No ceremony, no plugin ecosystems, no “install fifteen packages to draw one line”.
+One file, one div, one chart.

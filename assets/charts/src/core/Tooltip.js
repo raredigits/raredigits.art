@@ -1,6 +1,6 @@
 // RareCharts — Tooltip
-// Универсальный тултип для всех типов графиков.
-// Цвета берутся из theme.tooltip, не хардкодятся.
+// Shared tooltip used by all chart types.
+// Colors come from theme.tooltip — nothing is hardcoded.
 
 export class Tooltip {
   constructor(container, theme) {
@@ -28,7 +28,7 @@ export class Tooltip {
     this.el.innerHTML = html;
     this.el.classList.add('is-visible');
 
-    // Не выходим за правый и нижний края контейнера
+    // Clamp to container bounds — don't let the tooltip bleed outside
     const maxX = this._container.clientWidth  - this.el.offsetWidth  - 12;
     const maxY = this._container.clientHeight - this.el.offsetHeight - 8;
 

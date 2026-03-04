@@ -1,8 +1,8 @@
 // RareCharts — Adapters
-// Приводят любой источник данных к стандартному формату библиотеки.
-// Работают везде: браузер, 11ty, любой фреймворк.
+// Normalize any data source into the format charts expect.
+// Work anywhere: browser, 11ty, any framework.
 //
-// Использование:
+// Usage:
 //   import { fromJson, fromCsv, fromApi } from './adapters/index.js';
 //
 //   const data = await fromJson('/data/prices.json', {
@@ -14,7 +14,7 @@
 import * as d3 from 'd3';
 
 /**
- * Из JSON-файла или URL
+ * From a JSON file or URL
  */
 export async function fromJson(url, mapping) {
   const raw = await d3.json(url);
@@ -22,7 +22,7 @@ export async function fromJson(url, mapping) {
 }
 
 /**
- * Из CSV-файла или URL
+ * From a CSV file or URL
  */
 export async function fromCsv(url, mapping) {
   const raw = await d3.csv(url);
@@ -30,9 +30,9 @@ export async function fromCsv(url, mapping) {
 }
 
 /**
- * Из произвольного REST API
- * options.headers — дополнительные заголовки (Authorization и т.д.)
- * options.transform — fn(response) для нестандартных структур
+ * From an arbitrary REST API
+ * options.headers — additional request headers (Authorization, etc.)
+ * options.transform — fn(response) for non-standard response shapes
  */
 export async function fromApi(url, mapping, options = {}) {
   const res = await fetch(url, { headers: options.headers ?? {} });
@@ -43,13 +43,13 @@ export async function fromApi(url, mapping, options = {}) {
 }
 
 /**
- * Из массива напрямую (если данные уже в памяти)
+ * From an in-memory array (data already available in JS)
  */
 export function fromArray(data, mapping) {
   return applyMapping(data, mapping);
 }
 
-// Применяет маппинг к массиву строк
+// Apply field mapping to an array of rows
 function applyMapping(rows, mapping) {
   return rows
     .map(row => {
@@ -60,7 +60,7 @@ function applyMapping(rows, mapping) {
       return result;
     })
     .filter(row => {
-      // Убираем строки с невалидными значениями
+      // Drop rows with invalid date or value
       const hasDate  = !row.date  || row.date  instanceof Date && !isNaN(row.date);
       const hasValue = !row.value || isFinite(row.value);
       return hasDate && hasValue;

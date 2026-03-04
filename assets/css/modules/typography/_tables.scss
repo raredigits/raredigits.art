@@ -1,35 +1,33 @@
 table {
-    display: block;
     min-width: 100%;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height);
     border-collapse: collapse;
     margin-bottom: var(--space-lg);
-    text-align: center;
     overflow-x: auto;
-    font-family: var(--code-font);
-    font-size: var(--font-size-sm);
 }
 
+thead,
 tbody {
-    display: table;
     width: 100%;
 }
 
-table td:first-child,
-table th:first-child {
+th {
     text-align: left;
-    padding-right: var(--space-sm);
+    vertical-align: bottom;
+    white-space: nowrap;
 }
 
-table td:last-child,
-table th:last-child {
-    text-align: right;
-    padding-left: var(--space-sm);
+th, td {
+    vertical-align: top;
+    padding: var(--space-xs) var(--space-sm);
 }
 
-table td:not(:first-child):not(:last-child),
-table th:not(:first-child):not(:last-child) {
-    text-align: center;
-    padding: 0 var(--space-sm);
+td:first-child,
+th:first-child {
+    text-align: left;
+    padding-left: 0;
+    padding-right: var(--space-md);
 }
 
 .table-striped tbody tr:nth-child(even) {
@@ -37,12 +35,17 @@ table th:not(:first-child):not(:last-child) {
 }
 
 .table-terminal {
-    line-height: var(--line-height);
+    font-family: var(--code-font);
+    text-align: center;
+}
+
+.table-terminal th {
+    text-align: center;
 }
 
 .table-terminal td:last-child,
 .table-terminal th:last-child {
-  text-align: right;
+    text-align: right;
 }
 
 .table-terminal tbody tr:hover,
@@ -57,6 +60,7 @@ table th:not(:first-child):not(:last-child) {
 
 .table-small td {
     vertical-align: top;
+    padding-top: 0;
     padding-bottom: var(--space-sm);
 }
 
@@ -64,4 +68,28 @@ table th:not(:first-child):not(:last-child) {
 .table-small th:last-child,
 .table-small td:last-child {
     text-align: left;
+}
+
+.table-bordered {
+    border: 1px solid var(--border-color);
+
+    & thead {
+        background-color: var(--gray-mid-light);
+    }
+
+    & th, td {
+        padding: var(--space-sm);
+    }
+
+    tr {
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    tr:hover {
+        background-color: var(--gray-lightest);
+    }
+
+    tr td[colspan] {
+        
+    }
 }

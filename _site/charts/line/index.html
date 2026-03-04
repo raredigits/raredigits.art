@@ -488,6 +488,295 @@ xTickFormat: d3.timeFormat('%Y-%m')   // 2026-01
 <p>Markers (point dots) are supported via <code>markers</code> (default false), with <code>markerShape</code> (default <code>circle</code>) and <code>markerSize</code> (default 4). Markers are useful when data is sparse or you want to emphasize sampling points, but they can clutter dense series, so they’re off by default for a reason.</p>
 <h3>Per-series overrides</h3>
 <p>In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include <code>curve</code>, <code>strokeWidth</code>, <code>area</code>, <code>areaOpacity</code>, and <code>areaBaseline</code>. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.</p>
+<div class="card collapsible-container">
+    <p>
+        <span class="section-icon material-icons-outlined">code</span>
+        <span class="collapsible-trigger">Options reference<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
+    </p>
+    <div class="collapsible-content">
+        <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
+        <br>
+        <table class="table-bordered">
+            <thead>
+                <tr>
+                    <th>Option</th>
+                    <th>Type</th>
+                    <th>Default</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4"><h5>Layout</h5></td>
+                </tr>
+                <tr>
+                    <td><code>height</code></td>
+                    <td>number</td>
+                    <td><code>240</code></td>
+                    <td>Chart height in px. Width is always 100% of the container.</td>
+                </tr>
+                <tr>
+                    <td><code>margin</code></td>
+                    <td>object</td>
+                    <td>—</td>
+                    <td>
+                        Inner padding <code>{top, right, bottom, left}</code>.<br>
+                        Right defaults to <code>60</code> (Y axis on right) or <code>0</code> (Y axis on left).
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>yAxisPosition</code></td>
+                    <td><code>'right'</code> | <code>'left'</code></td>
+                    <td><code>'right'</code></td>
+                    <td>Side the Y axis is rendered on.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Y axis</h5></td>
+                </tr>
+                <tr>
+                    <td><code>yFormat</code></td>
+                    <td><code>'auto'</code> | <code>'percent'</code> | <code>'number'</code></td>
+                    <td><code>'auto'</code></td>
+                    <td>In <code>auto</code> mode, values ≤ 1 are treated as percentages. Use <code>'number'</code> to prevent accidental percent formatting.</td>
+                </tr>
+                <tr>
+                    <td><code>yTicks</code></td>
+                    <td>number</td>
+                    <td><code>4</code></td>
+                    <td>Number of Y tick marks.</td>
+                </tr>
+                <tr>
+                    <td><code>yTickFormat</code></td>
+                    <td>function</td>
+                    <td>—</td>
+                    <td><code>(value) =&gt; string</code> — overrides all automatic formatting.</td>
+                </tr>
+                <tr>
+                    <td><code>yTickValues</code></td>
+                    <td>array</td>
+                    <td>—</td>
+                    <td>Explicit tick positions. Overrides <code>yTicks</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>yPrefix</code></td>
+                    <td>string</td>
+                    <td><code>''</code></td>
+                    <td>Prefix added before each tick label (e.g. <code>'$'</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>ySuffix</code></td>
+                    <td>string</td>
+                    <td><code>''</code></td>
+                    <td>Suffix added after each tick label (e.g. <code>'%'</code>).</td>
+                </tr>
+                <tr>
+                    <td><code>yLabelsOnly</code></td>
+                    <td>boolean</td>
+                    <td><code>true</code></td>
+                    <td>Show only tick labels; suppress the axis line and tick marks.</td>
+                </tr>
+                <tr>
+                    <td><code>zeroEpsilon</code></td>
+                    <td>number</td>
+                    <td><code>1e-6</code></td>
+                    <td>Values with <code>|v|</code> below this threshold are printed as <code>0</code>. Prevents <code>+0.00%</code> artifacts.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>X axis</h5></td>
+                </tr>
+                <tr>
+                    <td><code>xTickFormat</code></td>
+                    <td>function</td>
+                    <td><code>'%m/%d'</code></td>
+                    <td><code>(date) =&gt; string</code> — controls X tick labels.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Line style</h5></td>
+                </tr>
+                <tr>
+                    <td><code>curve</code></td>
+                    <td>string</td>
+                    <td><code>'monotone'</code></td>
+                    <td>D3 curve type: <code>'linear'</code>, <code>'monotone'</code>, <code>'basis'</code>, <code>'cardinal'</code>, <code>'step'</code>, etc.</td>
+                </tr>
+                    <tr>
+                    <td><code>curveTension</code></td>
+                    <td>number</td>
+                    <td><code>0</code></td>
+                    <td>Tension for the <code>'cardinal'</code> curve, <code>0</code>–<code>1</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>strokeDash</code></td>
+                    <td>string</td>
+                    <td>—</td>
+                    <td>SVG <code>stroke-dasharray</code> applied to all series globally (e.g. <code>'4,3'</code>).</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Area fill</h5></td>
+                </tr>
+                <tr>
+                    <td><code>area</code></td>
+                    <td>boolean</td>
+                    <td><code>false</code></td>
+                    <td>Fill the area under the line (s).</td>
+                </tr>
+                <tr>
+                    <td><code>areaOpacity</code></td>
+                    <td>number</td>
+                    <td><code>0.12</code></td>
+                    <td>Fill opacity.</td>
+                </tr>
+                <tr>
+                    <td><code>areaBaseline</code></td>
+                    <td><code>'zero'</code> | <code>'min'</code> | number</td>
+                    <td><code>'zero'</code></td>
+                    <td>Where the fill anchors — bottom of chart, minimum data value, or a fixed Y value.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Markers</h5></td>
+                </tr>
+                <tr>
+                    <td><code>markers</code></td>
+                    <td>boolean</td>
+                    <td><code>false</code></td>
+                    <td>Show point markers at each data sample.</td>
+                </tr>
+                <tr>
+                    <td><code>markerShape</code></td>
+                    <td>string</td>
+                    <td><code>'circle'</code></td>
+                    <td>Marker shape. Supported: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>markerSize</code></td>
+                    <td>number</td>
+                    <td><code>4</code></td>
+                    <td>Marker radius in px.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Interaction</h5></td>
+                </tr>
+                <tr>
+                    <td><code>crosshair</code></td>
+                    <td>boolean</td>
+                    <td><code>true</code></td>
+                    <td>Vertical tracker line with dots at nearest data points and a tooltip.</td>
+                </tr>
+                <tr>
+                    <td><code>tooltipFormat</code></td>
+                    <td>function</td>
+                    <td>—</td>
+                    <td><code>({ date, points }) =&gt; html</code> — where <code>points</code> is <code>[{name, value, color}]</code>.</td>
+                </tr>
+                <tr>
+                    <td><code>endLabels</code></td>
+                    <td>boolean</td>
+                    <td><code>true</code></td>
+                    <td>Render the last value of each series at the right edge.</td>
+                </tr>
+                <tr>
+                    <td colspan="4"><h5>Animation</h5></td>
+                </tr>
+                <tr>
+                    <td><code>animate</code></td>
+                    <td>boolean</td>
+                    <td><code>true</code></td>
+                    <td>Animate lines on first render. Plays only once per chart instance.</td>
+                </tr>
+                <tr>
+                    <td><code>duration</code></td>
+                    <td>number</td>
+                    <td><code>650</code></td>
+                    <td>Animation duration in ms.</td>
+                </tr>
+                <tr>
+                    <td><code>ease</code></td>
+                    <td>string</td>
+                    <td><code>'cubicOut'</code></td>
+                    <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <h5>Single-series shortcuts</h5>
+                        <p>These only apply when data is passed as a flat <code>[{date, value}]</code> array:</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>seriesName</code></td>
+                    <td>string</td>
+                    <td><code>'Series'</code></td>
+                    <td>Label used in the tooltip and end label.</td>
+                </tr>
+                <tr>
+                    <td><code>lineColor</code></td>
+                    <td>CSS color</td>
+                    <td>theme accent</td>
+                    <td>Line color.</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <h5>Per-series overrides (multi-series)</h5>
+                        <p>Each series object in the data array can include these fields to override global settings:</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td><code>name</code></td>
+                    <td>string</td>
+                    <td><code>'Series N'</code></td>
+                    <td>Series name — appears in tooltip and legend.</td>
+                </tr>
+                <tr>
+                    <td><code>color</code></td>
+                    <td>CSS color</td>
+                    <td>theme palette</td>
+                    <td>Series line color.</td>
+                </tr>
+                <tr>
+                    <td><code>strokeWidth</code></td>
+                    <td>number</td>
+                    <td><code>2</code></td>
+                    <td>Line thickness in px.</td>
+                </tr>
+                <tr>
+                    <td><code>strokeDash</code></td>
+                    <td>string</td>
+                    <td>—</td>
+                    <td>SVG dash pattern for this series only.</td>
+                </tr>
+                <tr>
+                    <td><code>curve</code></td>
+                    <td>string</td>
+                    <td>global <code>curve</code></td>
+                    <td>Curve type override for this series.</td>
+                </tr>
+                <tr>
+                    <td><code>area</code></td>
+                    <td>boolean</td>
+                    <td>global <code>area</code></td>
+                    <td>Fill area under this series.</td>
+                </tr>
+                <tr>
+                    <td><code>areaOpacity</code></td>
+                    <td>number</td>
+                    <td>global <code>areaOpacity</code></td>
+                    <td>Area fill opacity for this series.</td>
+                </tr>
+                <tr>
+                    <td><code>areaBaseline</code></td>
+                    <td>string | number</td>
+                    <td>global <code>areaBaseline</code></td>
+                    <td>Area baseline for this series.</td>
+                </tr>
+                <tr>
+                    <td><code>values</code></td>
+                    <td>array</td>
+                    <td>—</td>
+                    <td><code>[{date, value}, ...]</code> — the data points.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 <div class="teaser-bottom">
     <p>Next:</p>
     <h3><a href="/charts/line/visual-options/">Detailed visual options examples</a></h3>

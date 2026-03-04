@@ -113,8 +113,8 @@
     linkTypes: linkPresets.personal,
 
     nodeRadius:     18,
-    linkDistance:   90,
-    chargeStrength: -480,
+    linkDistance:   110,
+    chargeStrength: -680,
 
     tooltipFormat: ({ node, links }) => {
       const COLORS = {

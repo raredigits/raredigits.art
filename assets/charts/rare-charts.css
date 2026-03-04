@@ -11,8 +11,9 @@
 }
 
 .rc-chart > .rc-chart-header { order: 0; }
-.rc-chart > svg              { order: 1; }
-.rc-chart > .rc-chart-footer { order: 2; }
+.rc-graph-legend             { order: 1; }
+.rc-chart > svg              { order: 2; }
+.rc-chart > .rc-chart-footer { order: 3; }
 
 .rc-chart > svg {
   font-family: var(--primary-font);
@@ -319,26 +320,12 @@
 
 .price-chart-stats {
   width: calc(100% - 56px);
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
   margin-left: -8px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
 }
 
 .price-chart-stat {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  text-align: center;
   padding: var(--space-xs) var(--space-md);
   font-size: var(--font-size-sm);
-}
-
-.price-chart-stats > .price-chart-stat:not(:last-child) {
-  border-right: 1px solid var(--border-color);
 }
 
 .price-chart-stat-label {

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Import | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Data Import</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Data Import</h1>
+  </section>
+
+    <article>
+      <p>Every chart type accepts data via <code>setData()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
+<h2>Direct data</h2>
+<p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
+<pre><code>new RareCharts.Line('#chart', { height: 280 })
+  .setData([
+    { date: '2026-01-01', value: 142 },
+    { date: '2026-01-02', value: 159 },
+    { date: '2026-01-03', value: 151 },
+  ]);</code></pre>
+<p>Each chart type has its own data format — see the chart's documentation page for the exact shape it expects.</p>
+<h2>Adapters</h2>
+<p>When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for <code>setData()</code>.</p>
+<p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> inside an async function or chain with <code>.then()</code>.</p>
+<p>The adapters are available as <code>RareCharts.fromJson</code>, <code>RareCharts.fromCsv</code>, <code>RareCharts.fromApi</code>, and <code>RareCharts.fromArray</code>.</p>
+<h2>Field mapping</h2>
+<p>Every adapter accepts a <code>mapping</code> object as its second argument. The mapping tells the adapter how to translate your source fields into the fields the chart expects.</p>
+<p>Each key in the mapping is the output field name. The value can be:</p>
+<ul>
+<li><strong>A function</strong> <code>row =&gt; value</code> — for transformations, type coercion, or computed fields</li>
+<li><strong>A string</strong> — a direct field name from the source row (simple rename, no transformation)</li>
+</ul>
+<pre><code>// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
+// Chart expects:         { date: Date, value: number }
+
+const mapping = {
+  date:  row => new Date(row.ts),     // parse string to Date
+  value: row => +row.close,           // coerce string to number
+};</code></pre>
+<p>Rows where <code>date</code> is an invalid Date or <code>value</code> is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.</p>
+<hr>
+<h2>fromJson</h2>
+<p>Fetches a JSON file and applies a mapping.</p>
+<pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
+  date:  row => new Date(row.date),
+  value: row => +row.close,
+});
+
+chart.setData(data);</code></pre>
+<p>The adapter handles three common JSON shapes automatically, without any configuration:</p>
+<ul>
+<li><strong>Array at root</strong> — <code>[{ ... }, { ... }]</code></li>
+<li><strong><code>data</code> property</strong> — <code>{ data: [{ ... }] }</code></li>
+<li><strong>Object of objects</strong> — <code>{ '2026-01': { ... }, '2026-02': { ... } }</code> (iterates values)</li>
+</ul>
+<p>For anything more exotic, use <code>fromApi</code> with a custom <code>transform</code> function.</p>
+<hr>
+<h2>Real-world example: mining stats from a provider export</h2>
+<p>The chart below was built from a plain XLS file downloaded from a mining pool. The file was converted to JSON and dropped into the project — no server, no pipeline, no fuss.</p>
+<div id="mining-hashrate-profit"></div>
+<p>Three series, one source array. Hashrate as bars on the left axis, USD profit and BTC profit as lines on the right. The BTC values (≈ 0.00014 BTC/day) are multiplied by 100,000 before plotting so they land on the same numeric scale as USD — when the two lines track each other closely, BTC price is near $100k; when they diverge, it's moved. The tooltip shows the actual unscaled values.</p>
+<pre><code>(async function () {
+  const d3 = RareCharts.d3;
+  const BTC_SCALE = 100_000;  // ×100k brings BTC values (~0.00014) to dollar scale (~14)
+
+  // fromJson auto-detects the array-at-root shape and applies the mapping to each row
+  const raw = await RareCharts.fromJson('/assets/charts/data/btc_mining.json', {
+    date:        row => new Date(row.date),
+    value:       row => +row.hashrate_th,
+    hashrate_th: row => +row.hashrate_th,
+    profit_usd:  row => +row.profit_usd,
+    profit_btc:  row => +row.profit_btc,
+  });
+
+  const series = [
+    {
+      name: 'Hashrate', axis: 'y2', type: 'bar', color: '#cccccc',
+      values: raw.map(r => ({ date: r.date, value: r.hashrate_th })),
+    },
+    {
+      name: 'USD Profit', axis: 'y1', type: 'line', color: '#00c97a',
+      values: raw.map(r => ({ date: r.date, value: r.profit_usd })),
+    },
+    {
+      name: 'BTC Profit', axis: 'y1', type: 'line', color: '#f7931a',
+      strokeDash: '5,3',
+      values: raw.map(r => ({ date: r.date, value: r.profit_btc * BTC_SCALE })),
+    },
+  ];
+
+  new RareCharts.DualAxes('#mining-hashrate-profit', {
+    height: 380, curve: 'linear', crosshair: true, endLabels: false,
+    y2Domain: [0, 280], y1Domain: [0, 16],
+    y2TickFormat: v => d3.format('.0f')(v),
+    y1TickFormat: v => '$' + d3.format(',.1f')(v),
+    xTickFormat:  d => d3.timeFormat('%b')(d),
+    tooltipFormat: ({ date, points }) => {
+      // Show actual BTC value (un-scale it back in the formatter)
+      ...
+    },
+  }).setData(series);
+})();</code></pre>
+<h2>fromCsv</h2>
+<p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
+<pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
+  date:  row => new Date(row.month),
+  value: row => parseFloat(row.revenue_usd),
+});</code></pre>
+<p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
+<hr>
+<h2>fromApi</h2>
+<p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
+<p><strong>Basic usage:</strong></p>
+<pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
+  date:  row => new Date(row.timestamp),
+  value: row => row.count,
+});</code></pre>
+<p><strong>With authentication:</strong></p>
+<pre><code>const data = await RareCharts.fromApi(
+  'https://api.example.com/private/metrics',
+  { date: row => new Date(row.ts), value: row => row.val },
+  { headers: { 'Authorization': 'Bearer ' + token } }
+);</code></pre>
+<p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can't handle:</p>
+<pre><code>const data = await RareCharts.fromApi(
+  'https://api.example.com/report',
+  { date: row => new Date(row.period), value: row => row.total },
+  {
+    transform: response => response.results.entries,
+  }
+);</code></pre>
+<p><code>transform</code> receives the raw parsed JSON and should return a plain array of row objects.</p>
+<p>If the HTTP response is not OK (4xx, 5xx), <code>fromApi</code> throws an error with the status code. Handle it if you need a graceful fallback:</p>
+<pre><code>try {
+  const data = await RareCharts.fromApi(url, mapping);
+  chart.setData(data);
+} catch (err) {
+  console.error('Failed to load chart data:', err.message);
+}</code></pre>
+<hr>
+<h2>fromArray</h2>
+<p>For data that's already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
+<pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
+
+const data = RareCharts.fromArray(raw, {
+  date:  row => new Date(row.ts),
+  value: row => row.val,
+});
+
+chart.setData(data);</code></pre>
+<p>This is useful when you're pulling data from a state store, another library, or a function that returns a plain array — and the field names don't match what the chart expects.</p>
+<hr>
+<h2>Live updates</h2>
+<p><code>setData()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
+<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
+
+// Initial load
+const data = await RareCharts.fromApi(url, mapping);
+chart.setData(data);
+
+// Refresh every 30 seconds
+setInterval(async () => {
+  const fresh = await RareCharts.fromApi(url, mapping);
+  chart.setData(fresh);
+}, 30_000);</code></pre>
+<hr>
+<h2>Mapping reference</h2>
+<table>
+<thead>
+<tr>
+<th>Value type</th>
+<th>Behavior</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Function</td>
+<td>Called with each row, return value used</td>
+<td><code>row =&gt; new Date(row.ts)</code></td>
+</tr>
+<tr>
+<td>String</td>
+<td>Treated as a field name — <code>row[fieldName]</code></td>
+<td><code>'close_price'</code></td>
+</tr>
+</tbody>
+</table>
+<p>Invalid rows are filtered out automatically:</p>
+<ul>
+<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
+<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
+</ul>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/mining/btc-mining-hashrate-profit.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

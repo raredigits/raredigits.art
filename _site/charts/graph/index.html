@@ -389,76 +389,249 @@
   </section>
 
     <article>
-      <p>The Graph chart renders a force-directed network: nodes connected by typed links. It is meant for relationship-heavy data where the structure is the message: who is connected to whom, how tightly, and by what kind of relationship.</p>
-<p>This is not a “diagram editor”. It is a readable, interactive network view designed for dashboards and reports: clean styling, explicit data model, sensible defaults, and just enough interaction to explore without turning the page into a physics simulator.</p>
+      <p>The Graph chart renders a force-directed network: nodes connected by typed links. Use it when the structure of relationships is the message — who is connected to whom, how tightly, and in what way.</p>
 <div id="knowledge-graph"></div>
-<h3>Data model</h3>
-<p>A graph is passed as { nodes, links }.</p>
-<p>Nodes are objects with a required id and label, and optional visual hints:</p>
-<pre><code>{
-  id: 'a1',
-  label: 'Alice',
-  group: 'person',     // affects clustering and color
-  size: 1.4,           // 0.6..3 (relative multiplier)
-  color: '#ff6200',    // optional override
-  image: '/avatars/alice.png'  // optional avatar inside the node
-}</code></pre>
-<p>Links connect nodes via source and target. Both can be node ids (strings) or node objects, depending on where your data comes from:</p>
-<pre><code>{
-  source: 'a1',
-  target: 'c7',
-  type: 'professional', // used for styling + legend
-  label: 'Worked with', // optional (mainly for your tooltipFormat)
-  strength: 0.7         // 0..1, influences thickness + force strength
-}</code></pre>
-<p>RareCharts deep-copies the input data before passing it into D3, so the simulation can mutate positions freely without corrupting your application state.</p>
-<h3>Link types, arrows, and legend</h3>
-<p>Links are “typed”. The type field controls color, dash style, arrow markers, and legend labels through the linkTypes option.</p>
-<div id="thiel-graph"></div>
-<p>If you do not provide linkTypes, the chart falls back to a single <code>default</code> type. If you do provide it, each link type becomes a first-class visual category. Arrow markers are generated per type automatically, and the legend is built from the types present in the data.</p>
-<p>This is what keeps the graph readable when the network is not just “connected”, but “connected in different ways”.</p>
-<h3>Interaction (the useful kind)</h3>
-<p>The chart supports a few interactions that are practical in real use:</p>
-<p>Zoom and pan are enabled by default (<code>zoom: true</code>). Scroll zoom + drag canvas works as expected, and double-click zoom is intentionally disabled (because it’s almost always accidental).</p>
-<p>Node dragging is supported out of the box. Dragging temporarily increases simulation energy so the layout can relax into a new state, then cools down again.</p>
-<p>Focus on click is enabled by default (<code>focusOnClick: true</code>). Clicking a node dims unrelated nodes and links, keeping only the neighborhood visible. Clicking the background clears focus. This is the fastest way to explore dense graphs without adding a sidebar UI.</p>
-<h3>Tooltip customization</h3>
-<p>Graph includes a tooltip layer and exposes <code>tooltipFormat ({ node, links }) =&gt; html</code>.</p>
-<p>On hover, the chart collects all links connected to the hovered node and passes them into the formatter. If you do not provide one, a default tooltip groups connections by link type and lists connected node names under each type label.</p>
-<p>In other words: you can keep the default for “good enough”, or you can render a rich tooltip that matches your product language.</p>
-<h3>Layout behavior and “clustering”</h3>
-<p>The simulation combines standard forces (link, charge, center, collision) with a small but important addition: nodes are softly pulled toward group anchors arranged in a circle. This makes nodes of the same group naturally cluster without hard-locking the layout.</p>
-<p>It is a subtle effect, but it prevents the classic force-layout problem where a graph looks like spilled rice unless you manually tune everything.</p>
-<p>For larger graphs (more than ~60 nodes), the simulation cools down faster to avoid endless motion.</p>
-<p>Options</p>
-<p>Graph exposes a small set of parameters that actually change behavior:</p>
+<h3>How it works</h3>
+<p>The layout is driven by a physics simulation (D3 force). Each node repels every other node, while links act like springs pulling connected nodes together. The simulation runs until it reaches equilibrium, then stops.</p>
+<p>A few extra forces keep things readable:</p>
 <ul>
-<li><code>height</code> (default 520)</li>
-<li><code>nodeRadius</code> (default 22) and per-node size multiplier</li>
-<li><code>linkDistance</code> (default 120)</li>
-<li><code>chargeStrength</code> (default -400)</li>
-<li><code>animate</code> (run simulation; default true)</li>
-<li><code>focusOnClick</code> (default true)</li>
-<li><code>zoom</code> (default true)</li>
-<li><code>linkTypes</code> (type styling map; can also use presets)</li>
-<li><code>tooltipFormat</code> (custom tooltip renderer)</li>
+<li><strong>Collision</strong> prevents nodes from overlapping</li>
+<li><strong>Clustering</strong> softly pulls nodes of the same <code>group</code> toward a shared anchor point — same-group nodes naturally cluster without hard-locking the layout</li>
+<li><strong>Center</strong> keeps the graph from drifting off-screen</li>
 </ul>
-<p>A minimal example:</p>
+<p>Node size affects how hard it pushes: larger nodes repel stronger, so hubs naturally create space around themselves.</p>
+<h3>Nodes</h3>
+<p>Each node requires <code>id</code> and <code>label</code>. Everything else is optional:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>string</td>
+<td>—</td>
+<td>Unique identifier (required)</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>string</td>
+<td>—</td>
+<td>Display name (required)</td>
+</tr>
+<tr>
+<td><code>group</code></td>
+<td>string</td>
+<td><code>'default'</code></td>
+<td>Affects node color and clustering</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>number</td>
+<td><code>1</code></td>
+<td>Radius multiplier, <code>0.6</code>–<code>3</code></td>
+</tr>
+<tr>
+<td><code>color</code></td>
+<td>string</td>
+<td>group color</td>
+<td>CSS color override</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>string</td>
+<td>—</td>
+<td>Avatar URL, rendered inside the circle</td>
+</tr>
+</tbody>
+</table>
+<h3>Links</h3>
+<p>Each link requires <code>source</code> and <code>target</code> — either node id strings or node objects:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>source</code></td>
+<td>string | node</td>
+<td>—</td>
+<td>Source node id or object (required)</td>
+</tr>
+<tr>
+<td><code>target</code></td>
+<td>string | node</td>
+<td>—</td>
+<td>Target node id or object (required)</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>string</td>
+<td><code>'default'</code></td>
+<td>Controls color, dash style, arrow, and legend label</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>string</td>
+<td>—</td>
+<td>Available in <code>tooltipFormat</code>, not rendered on the graph</td>
+</tr>
+<tr>
+<td><code>strength</code></td>
+<td>number</td>
+<td><code>0.5</code></td>
+<td><code>0</code>–<code>1</code>. Affects link distance and line thickness</td>
+</tr>
+</tbody>
+</table>
+<h3>Link types</h3>
+<p>The <code>type</code> field on a link is resolved against the <code>linkTypes</code> map you pass in. Each entry defines how that type looks:</p>
+<pre><code>{
+  professional: { color: '#00aaff', dash: null, label: 'Professional' },
+  family:       { color: '#00c97a', dash: null, label: 'Family'       },
+}</code></pre>
+<ul>
+<li><code>color</code> — stroke color for the link line and arrow</li>
+<li><code>dash</code> — SVG <code>stroke-dasharray</code> string, or <code>null</code> for solid</li>
+<li><code>label</code> — text shown in the legend</li>
+</ul>
+<p>If a link type is not found in <code>linkTypes</code>, it falls back to <code>t.muted</code> (theme gray).</p>
+<h4>Built-in presets</h4>
+<p>Five presets are available via <code>RareCharts.linkPresets</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Preset</th>
+<th>Types</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>personal</code></td>
+<td>professional, family, friendship, investment, philanthropy, education</td>
+</tr>
+<tr>
+<td><code>knowledge</code></td>
+<td>partOf, causes, related, example, contradicts, prerequisite, extends</td>
+</tr>
+<tr>
+<td><code>org</code></td>
+<td>subsidiary, investment, board, partnership, acquisition, competitor</td>
+</tr>
+<tr>
+<td><code>tech</code></td>
+<td>depends, calls, dataFlow, inherits, optional</td>
+</tr>
+<tr>
+<td><code>causal</code></td>
+<td>causes, enables, blocks, correlates, weakens</td>
+</tr>
+</tbody>
+</table>
+<p>You can use a preset as-is or extend it:</p>
+<pre><code>new RareCharts.Graph('#chart', {
+  linkTypes: {
+    ...RareCharts.linkPresets.knowledge,
+    contradicts: { color: '#ff3b5c', dash: '2,3', label: 'Contradicts' },
+  },
+})</code></pre>
+<div id="thiel-graph"></div>
+<h3>Options</h3>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>height</code></td>
+<td>number</td>
+<td><code>520</code></td>
+<td>Container height in px</td>
+</tr>
+<tr>
+<td><code>nodeRadius</code></td>
+<td>number</td>
+<td><code>22</code></td>
+<td>Base node radius in px. Per-node <code>size</code> multiplies this</td>
+</tr>
+<tr>
+<td><code>linkDistance</code></td>
+<td>number</td>
+<td><code>140</code></td>
+<td>Base spring length in px. Longer = more breathing room</td>
+</tr>
+<tr>
+<td><code>chargeStrength</code></td>
+<td>number</td>
+<td><code>-600</code></td>
+<td>Repulsion force. More negative = nodes push further apart</td>
+</tr>
+<tr>
+<td><code>focusOnClick</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Click a node to dim unrelated nodes and links. Click background to clear</td>
+</tr>
+<tr>
+<td><code>zoom</code></td>
+<td>boolean</td>
+<td><code>true</code></td>
+<td>Enable scroll-to-zoom and drag-to-pan. Double-click zoom is disabled</td>
+</tr>
+<tr>
+<td><code>linkTypes</code></td>
+<td>object</td>
+<td><code>{ default: … }</code></td>
+<td>Type styling map or a preset</td>
+</tr>
+<tr>
+<td><code>tooltipFormat</code></td>
+<td>function</td>
+<td>built-in</td>
+<td><code>({ node, links }) =&gt; html</code> — custom tooltip renderer</td>
+</tr>
+</tbody>
+</table>
+<h3>Interaction</h3>
+<p><strong>Zoom and pan</strong> — scroll to zoom, drag the background to pan. Double-click zoom is intentionally disabled.</p>
+<p><strong>Node drag</strong> — drag any node to reposition it. The simulation briefly wakes up to relax the surrounding layout, then cools down again.</p>
+<p><strong>Focus on click</strong> — click a node to dim everything unrelated to it. Only that node, its direct neighbors, and the links between them stay visible. Click the background to reset.</p>
+<h3>Tooltip</h3>
+<p>The default tooltip groups connections by type and lists connected node names. Override it with <code>tooltipFormat</code>:</p>
+<pre><code>tooltipFormat: ({ node, links }) => `
+  &lt;strong&gt;${node.label}&lt;/strong&gt;
+  &lt;div&gt;${links.length} connections&lt;/div&gt;
+`</code></pre>
+<p><code>links</code> contains all links connected to the hovered node, with full source/target objects resolved by D3.</p>
+<h3>Minimal example</h3>
 <pre><code>new RareCharts.Graph('#chart', {
   height: 520,
-  nodeRadius: 20,
-  linkDistance: 120,
-  chargeStrength: -420,
-  zoom: true,
-  focusOnClick: true,
   linkTypes: RareCharts.linkPresets.personal,
+  chargeStrength: -600,
+  focusOnClick: true,
+  zoom: true,
 }).setData({ nodes, links });</code></pre>
-<h3>Practical notes</h3>
-<p>Graph charts are powerful, but they are not magic. If you have 200 nodes with the same label and random links, the chart will faithfully visualize your chaos. The fastest way to make a graph readable is still the boring one: good grouping, meaningful link types, and sane filtering (top relationships, threshold by strength, or “show neighborhood of X”).</p>
-<p>RareCharts gives you the structure and interaction. The dataset still has to deserve it.</p>
+<h3>Notes</h3>
+<p>Force layout is not magic. If the data is chaotic, the graph will look chaotic. The fastest way to make a graph readable: meaningful groups, typed links, and filtered data (top N connections, or &quot;neighborhood of X&quot;). RareCharts gives you the structure and interaction — the dataset still has to deserve it.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/graph/graph-chart-knowledge.js"></script>
 <script src="/assets/charts/examples/graph/graph-chart-thiel.js"></script>
+
     </article>
   </div>
 </main>

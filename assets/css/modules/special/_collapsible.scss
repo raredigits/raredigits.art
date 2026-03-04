@@ -3,10 +3,11 @@
 .collapsible-container {
     padding: var(--space-md) var(--space-lg);
     margin-left: calc(-1 * var(--space-lg));
+    border-radius: var(--space-sm);
 
     @include bp.mobile {
-        margin-left: calc(-1 * var(--space-md));
-        margin-right: calc(-1 * var(--space-md));
+        margin-left: calc(-1 * var(--space-sm));
+        margin-right: calc(-1 * var(--space-sm));
         padding: var(--space-md);
     }
 }

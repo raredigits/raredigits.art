@@ -203,7 +203,7 @@ export function renderAxisTitles(g, W, y1Title, y2Title, theme) {
     .attr('class', d => `rc-axis-title rc-axis-title-${d.axis}`)
     .attr('x', d => (d.axis === 'y1' ? W + 8 : -8))
     .attr('y', -28)
-    .attr('fill', theme.muted)
+    .attr('fill', theme.text)
     .style('font-family', theme.font)
     .style('font-size', theme.fontSize)
     .text(d => d.text);

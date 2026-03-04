@@ -33,11 +33,12 @@ export const personal = {
 // Concepts, topics, ideas and their relationships.
 
 export const knowledge = {
-  prerequisite: { color: '#ff6200', dash: null,  label: 'Prerequisite' },
-  related:      { color: '#00aaff', dash: '5,4', label: 'Related'      },
   partOf:       { color: '#00c97a', dash: null,  label: 'Part of'      },
+  causes:       { color: '#333333', dash: null,  label: 'causes'       },
+  related:      { color: '#00aaff', dash: '5,4', label: 'Related'      },
   example:      { color: '#ffcc00', dash: '2,4', label: 'Example'      },
   contradicts:  { color: '#ff3b5c', dash: '3,3', label: 'Contradicts'  },
+  prerequisite: { color: '#ff6200', dash: null,  label: 'Prerequisite' },
   extends:      { color: '#cc44ff', dash: null,  label: 'Extends'      },
 };
 

@@ -80,7 +80,8 @@ export class Graph extends Chart {
       .append('svg')
       .attr('width',  '100%')
       .attr('height', '100%')
-      .style('cursor', 'grab');
+      .style('cursor',   'grab')
+      .style('overflow', 'hidden');  // prevent zoomed content from bleeding outside
 
     // Arrow markers per link type
     this._defs = this.svg.append('defs');
@@ -94,8 +95,10 @@ export class Graph extends Chart {
     this.gLabels = this.gZoom.append('g').attr('class', 'rc-graph-link-labels');
     this.gNodes  = this.gZoom.append('g').attr('class', 'rc-graph-nodes');
 
-    // Legend
-    this.gLegend = this.svg.append('g').attr('class', 'rc-graph-legend');
+    // Legend — HTML element, rendered outside SVG so it never overlaps nodes
+    this._legendEl = document.createElement('div');
+    this._legendEl.className = 'rc-graph-legend rc-legend';
+    this.container.appendChild(this._legendEl);
 
     // Zoom
     if (this.options.zoom !== false) {
@@ -125,8 +128,8 @@ export class Graph extends Chart {
     const t          = this.theme;
     const o          = this.options;
     const baseR      = o.nodeRadius    ?? 22;
-    const linkDist   = o.linkDistance  ?? 120;
-    const charge     = o.chargeStrength ?? -400;
+    const linkDist   = o.linkDistance  ?? 140;
+    const charge     = o.chargeStrength ?? -600;
     const focusMode  = o.focusOnClick  !== false;
     const palette    = t.colors ?? [];
 
@@ -211,6 +214,14 @@ export class Graph extends Chart {
             .attr('clip-path',       d => `circle(${nodeR(d) - 2}px at center)`)
             .style('pointer-events', 'none');
 
+          // Label backdrop — improves legibility on busy graphs
+          g.append('rect')
+            .attr('class',            'rc-graph-node-label-bg')
+            .attr('rx',               3)
+            .attr('fill',             t.bg ?? '#ffffff')
+            .attr('opacity',          0.75)
+            .style('pointer-events',  'none');
+
           // Label below
           g.append('text')
             .attr('class',            'rc-graph-node-label')
@@ -223,6 +234,22 @@ export class Graph extends Chart {
             .style('pointer-events',  'none')
             .style('user-select',     'none')
             .text(d => d.label);
+
+          // Size the backdrop rect to match the text bounding box
+          g.each(function () {
+            const grp  = d3.select(this);
+            const txt  = grp.select('.rc-graph-node-label');
+            const bg   = grp.select('.rc-graph-node-label-bg');
+            const node = grp.datum();
+            const tEl  = txt.node();
+            if (!tEl) return;
+            const bbox = tEl.getBBox ? tEl.getBBox() : { x: 0, y: 0, width: 0, height: 0 };
+            const padX = 3, padY = 1;
+            bg.attr('x',      bbox.x - padX)
+              .attr('y',      bbox.y - padY)
+              .attr('width',  bbox.width  + padX * 2)
+              .attr('height', bbox.height + padY * 2);
+          });
 
           return g;
         },
@@ -269,7 +296,7 @@ export class Graph extends Chart {
     }
 
     // ── Legend ──
-    this._renderLegend(typesInUse, W, H, t);
+    this._renderLegend(typesInUse, t);
 
     // ── Group cluster centers ──
     // Arrange group anchors in a circle so related nodes naturally cluster
@@ -283,9 +310,11 @@ export class Graph extends Chart {
       clusterY[g]  = H / 2 + clusterR * Math.sin(angle);
     });
 
-    // Padding so nodes never touch the SVG edge
-    const pad = baseR * 3;
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    // Per-node padding: circle radius + rough label half-width (x) or label height (y)
+    // so labels stay inside the SVG even with overflow: hidden
+    const padX = d => nodeR(d) + Math.ceil((d.label?.length ?? 0) * 3.5) + 8;
+    const padY = d => nodeR(d) + 20;  // label sits ~20px below node center
 
     // ── Force simulation ──
     this._simulation = d3.forceSimulation(this._nodes)
@@ -294,17 +323,22 @@ export class Graph extends Chart {
         .distance(l => linkDist * (1.2 / (l.strength ?? 0.5)))
         .strength(l => (l.strength ?? 0.5) * 0.7)
       )
-      .force('charge',  d3.forceManyBody().strength(charge).distanceMax(W * 0.6))
-      .force('center',  d3.forceCenter(W / 2, H / 2).strength(0.04))
-      .force('collide', d3.forceCollide().radius(d => nodeR(d) + 12).strength(0.8))
-      // Soft pull toward group cluster center
-      .force('clusterX', d3.forceX(d => clusterX[d.group ?? 'default'] ?? W / 2).strength(0.12))
-      .force('clusterY', d3.forceY(d => clusterY[d.group ?? 'default'] ?? H / 2).strength(0.12))
+      // Larger nodes push harder — keeps hubs from being buried by their neighbors
+      .force('charge',  d3.forceManyBody()
+        .strength(d => charge * Math.max(1, (d.size ?? 1) * 0.75))
+        .distanceMax(W * 0.7))
+      .force('center',  d3.forceCenter(W / 2, H / 2).strength(0.03))
+      // +20 padding so labels don't eat into neighboring nodes
+      .force('collide', d3.forceCollide().radius(d => nodeR(d) + 20).strength(0.9))
+      // Weaker cluster pull — repulsion should dominate over grouping
+      .force('clusterX', d3.forceX(d => clusterX[d.group ?? 'default'] ?? W / 2).strength(0.07))
+      .force('clusterY', d3.forceY(d => clusterY[d.group ?? 'default'] ?? H / 2).strength(0.07))
       .on('tick', () => {
-        // Clamp all nodes inside bounds
+        // Clamp nodes so their labels stay inside the SVG bounds
         this._nodes.forEach(d => {
-          d.x = clamp(d.x, pad, W - pad);
-          d.y = clamp(d.y, pad, H - pad);
+          const px = padX(d), py = padY(d);
+          d.x = clamp(d.x, px, W - px);
+          d.y = clamp(d.y, py, H - py);
         });
 
         linkSel
@@ -386,50 +420,22 @@ export class Graph extends Chart {
 
   // ─── Legend ───────────────────────────────────────────────────────────────
 
-  _renderLegend(typesInUse, W, H, t) {
-    this.gLegend.selectAll('*').remove();
+  _renderLegend(typesInUse, t) {
+    if (!this._legendEl) return;
 
     const items = typesInUse
       .map(type => ({ type, ...(this._linkTypes[type] ?? { color: t.muted, label: type }) }));
 
-    const itemH  = 20;
-    const padX   = 16;
-    const padY   = 12;
-    const totalH = items.length * itemH + padY * 2;
-    const boxW   = 148;
-
-    // Background
-    this.gLegend.append('rect')
-      .attr('x',      padX)
-      .attr('y',      H - totalH - padX)
-      .attr('width',  boxW)
-      .attr('height', totalH)
-      .attr('rx',     4)
-      .attr('fill',   t.surface ?? '#f5f5f5')
-      .attr('opacity', 0.92);
-
-    items.forEach((item, i) => {
-      const y = H - totalH - padX + padY + i * itemH + itemH / 2;
-      const x = padX + 12;
-
-      // Line swatch
-      this.gLegend.append('line')
-        .attr('x1', x).attr('x2', x + 20)
-        .attr('y1', y).attr('y2', y)
-        .attr('stroke',           item.color)
-        .attr('stroke-width',     2)
-        .attr('stroke-dasharray', item.dash ?? null);
-
-      // Label
-      this.gLegend.append('text')
-        .attr('x',     x + 26)
-        .attr('y',     y)
-        .attr('dominant-baseline', 'middle')
-        .attr('fill',  t.text)
-        .style('font-family', t.font)
-        .style('font-size',   '11px')
-        .text(item.label ?? item.type);
-    });
+    this._legendEl.innerHTML = items.map(item => {
+      const dash = item.dash ? `stroke-dasharray="${item.dash}"` : '';
+      return `<span class="rc-legend-item">
+        <svg width="22" height="12" style="flex-shrink:0;vertical-align:middle">
+          <line x1="1" y1="6" x2="21" y2="6"
+            stroke="${item.color}" stroke-width="2" ${dash}/>
+        </svg>
+        ${item.label ?? item.type}
+      </span>`;
+    }).join('');
   }
 
   // ─── Tooltip ──────────────────────────────────────────────────────────────
