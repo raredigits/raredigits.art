@@ -14,17 +14,20 @@ D3 is bundled in. You do not need to include it separately.
 
 **From GitHub** — clone the repo and use the prebuilt file:
 
-<pre><code>git clone https://github.com/raredigits/rare-charts.git</code></pre>
+<pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
+<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 Copy `dist/rare-charts.js` wherever your project keeps static assets.
 
 **From CDN** — load it directly, no download required:
 
-<pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/dist/rare-charts.js"&gt;&lt;/script&gt;</code></pre>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/dist/rare-charts.js"&gt;&lt;/script&gt;</code>
+<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
-<pre><code>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@1.0.0/dist/rare-charts.js"&gt;&lt;/script&gt;</code></pre>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@1.0.0/dist/rare-charts.js"&gt;&lt;/script&gt;</code>
+<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 ## Where to put the script tag
 
@@ -86,17 +89,52 @@ Or chain steps 2 and 3:
 
 ## Available chart types
 
-| Class | Use case |
-|-------|----------|
-| `RareCharts.Line` | Time series, trend lines, multi-series performance |
-| `RareCharts.TimeSeries` | OHLCV candlestick / price charts |
-| `RareCharts.Bar` | Category comparisons, ranked lists |
-| `RareCharts.DualAxes` | Two metrics on different scales |
-| `RareCharts.Combined` | Bar + line overlay |
-| `RareCharts.Donut` | Part-to-whole with center label |
-| `RareCharts.Pie` | Part-to-whole, no hole (alias for Donut with `innerRadius: 0`) |
-| `RareCharts.Gauge` | Progress toward a target |
-| `RareCharts.Graph` | Force-directed network of nodes and links |
+<table class="table-bordered card-caption">
+  <thead>
+        <tr>
+            <th>Class</th>
+            <th>Use case</th>
+        </tr>
+    </thead>
+  <tbody>
+    <tr>
+      <td><code>RareCharts.Line</code></td>
+      <td>Time series, trend lines, multi-series performance</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.TimeSeries</code></td>
+      <td>OHLCV candlestick / price charts</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Bar</code></td>
+      <td>Category comparisons, ranked lists</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.DualAxes</code></td>
+      <td>Two metrics on different scales</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Combined</code></td>
+      <td>Bar + line overlay</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Donut</code></td>
+      <td>Part-to-whole with center label</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Pie</code></td>
+      <td>Part-to-whole, no hole (alias for Donut with <code>innerRadius: 0</code>)</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Gauge</code></td>
+      <td>Progress toward a target</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Graph</code></td>
+      <td>Force-directed network of nodes and links</td>
+    </tr>
+  </tbody>
+</table>
 
 All types share the same base options (`title`, `subtitle`, `source`, `height`, `theme`) — documented on the [Settings](/charts/settings/) page.
 
@@ -108,7 +146,7 @@ If you are using RareCharts standalone, the built-in defaults take over. Nothing
 
 ## Minimal working example
 
-<pre><code>&lt;div id="chart"&gt;&lt;/div&gt;
+<pre class="text-content-caption"><code>&lt;div id="chart"&gt;&lt;/div&gt;
 
 &lt;script src="/assets/rare-charts.js"&gt;&lt;/script&gt;
 &lt;script&gt;

@@ -17411,7 +17411,7 @@ pre {
   border-radius: var(--space-sm);
   overflow-x: auto;
   margin-bottom: 1em;
-  margin-left: calc(-1 * var(--space-md));
+  margin-left: calc(-1 * var(--space-lg));
   box-shadow: var(--inner-shadow-sm);
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -17667,6 +17667,16 @@ th:first-child {
 .table-bordered tr:hover {
   background-color: var(--gray-lightest);
 }
+.table-bordered .table-section {
+  border-bottom: none;
+}
+.table-bordered .table-section > td {
+  padding-bottom: var(--space-md);
+}
+.table-bordered .table-section p {
+  margin: 0;
+}
+
 :root {
   --black: #000;
   --white: #fff;
@@ -18213,10 +18223,12 @@ section {
 
 .card-caption {
   margin-left: calc(var(--space-lg) * -1);
+  width: calc(100% + var(--space-lg));
 }
 @media screen and (max-width: 768px) {
   .card-caption {
     margin-left: calc(var(--space-sm) * -1);
+    width: calc(100% + var(--space-sm));
   }
 }
 
@@ -19248,16 +19260,31 @@ details summary {
   display: none;
   padding-top: var(--space-lg);
 }
+.collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
+  margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
+}
+@media screen and (max-width: 768px) {
+  .collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
+    margin-left: calc(-1 * var(--space-sm));
+  }
+}
+.collapsible-content > .card-dashboard-bordered {
+  padding: var(--space-md);
+}
 
 .collapsible-content .caption,
 .collapsible-content .highlight,
-.collapsible-content pre {
+.collapsible-content pre,
+.collapsible-content .text-content-caption,
+.collapsible-content .card-caption {
   margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
 }
 @media screen and (max-width: 768px) {
   .collapsible-content .caption,
   .collapsible-content .highlight,
-  .collapsible-content pre {
+  .collapsible-content pre,
+  .collapsible-content .text-content-caption,
+  .collapsible-content .card-caption {
     margin-left: calc(-1 * var(--space-sm));
   }
 }

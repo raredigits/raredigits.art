@@ -148,7 +148,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
 
 ## Circular charts options
 
-<table class="table-bordered">
+<table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Option</th>
@@ -157,7 +157,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="table-section">
             <td colspan="3"><h5>Donut / Pie</h5></td>
         </tr>
         <tr>
@@ -230,7 +230,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
             <td>built-in</td>
             <td><code>function({label, value, percent, color}) =&gt; html</code></td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="3"><h5>Gauge</h5></td>
         </tr>
         <tr>

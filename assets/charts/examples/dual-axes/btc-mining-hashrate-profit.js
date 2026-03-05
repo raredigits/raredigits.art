@@ -35,7 +35,7 @@
       values: raw.map(r => ({ date: r.date, value: r.profit_btc * BTC_SCALE })),
     },
     {
-      name:        'USD Profit',
+      name:        'Revenue, USD',
       axis:        'y2',
       type:        'line',
       color:       '#00c97a',
@@ -45,15 +45,15 @@
   ];
 
   new RareCharts.DualAxes('#mining-hashrate-profit', {
-    height:   380,
+    height:   450,
     title:    'The Mining Profitability Rat Race',
-    subtitle: 'Feb–Dec 2025 · bars = daily BTC output scaled to $100k · green line = actual USD earnings · right axis = BTC spot price',
+    subtitle: 'Feb—Dec 2025 mining performance',
     source:   'Source: Mining pool daily summary export',
 
     legend: [
-      { label: 'BTC Price',           color: '#f7931a' },
-      { label: 'BTC Output (×$100k)', color: '#cccccc' },
-      { label: 'USD Profit',          color: '#00c97a' },
+      { label: 'BTC Price', color: '#f7931a' },
+      { label: 'BTC Output', color: '#cccccc' },
+      { label: 'Revenue, USD', color: '#00c97a' },
     ],
 
     curve:         'linear',
@@ -63,10 +63,10 @@
     barWidthRatio: 0.85,
 
     y1Title: 'BTC Price',
-    y2Title: '$/day',
+    y2Title: 'Revenue',
 
     y1TickFormat: v => '$' + d3.format(',.0f')(v),
-    y2TickFormat: v => '$' + d3.format(',.1f')(v),
+    y2TickFormat: v => '$' + d3.format(',.0f')(v),
     xTickFormat:  d => d3.timeFormat('%b')(d),
 
     tooltipFormat: ({ date, points }) => {
@@ -74,7 +74,7 @@
         let display;
         if (p.name === 'BTC Price') {
           display = '$' + d3.format(',.0f')(p.value);
-        } else if (p.name === 'USD Profit') {
+        } else if (p.name === 'Revenue, USD') {
           display = '$' + d3.format(',.2f')(p.value) + '/day';
         } else {
           // BTC Output: un-scale to show actual BTC

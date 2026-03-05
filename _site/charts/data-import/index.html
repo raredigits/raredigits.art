@@ -389,16 +389,16 @@
   </section>
 
     <article>
-      <p>Every chart type accepts data via <code>setData()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
+      <p>Every chart type accepts data via <code>setData ()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
 <h2>Direct data</h2>
-<p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
-<pre><code>new RareCharts.Line('#chart', { height: 280 })
+<p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', { height: 280 })
   .setData([
     { date: '2026-01-01', value: 142 },
     { date: '2026-01-02', value: 159 },
     { date: '2026-01-03', value: 151 },
   ]);</code></pre>
-<p>Each chart type has its own data format — see the chart's documentation page for the exact shape it expects.</p>
+<p>Each chart type has its own data format — see the chart’s documentation page for the exact shape it expects.</p>
 <h2>Adapters</h2>
 <p>When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for <code>setData()</code>.</p>
 <p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> inside an async function or chain with <code>.then()</code>.</p>
@@ -410,16 +410,16 @@
 <li><strong>A function</strong> <code>row =&gt; value</code> — for transformations, type coercion, or computed fields</li>
 <li><strong>A string</strong> — a direct field name from the source row (simple rename, no transformation)</li>
 </ul>
-<pre><code>// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
-// Chart expects:         { date: Date, value: number }
+<div class="air-md"></div>
+<pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
+// Chart expects:         { date: Date, value: number }</span>
 
 const mapping = {
   date:  row => new Date(row.ts),     // parse string to Date
   value: row => +row.close,           // coerce string to number
 };</code></pre>
 <p>Rows where <code>date</code> is an invalid Date or <code>value</code> is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.</p>
-<hr>
-<h2>fromJson</h2>
+<h3>fromJson</h3>
 <p>Fetches a JSON file and applies a mapping.</p>
 <pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
   date:  row => new Date(row.date),
@@ -430,108 +430,127 @@ chart.setData(data);</code></pre>
 <p>The adapter handles three common JSON shapes automatically, without any configuration:</p>
 <ul>
 <li><strong>Array at root</strong> — <code>[{ ... }, { ... }]</code></li>
-<li><strong><code>data</code> property</strong> — <code>{ data: [{ ... }] }</code></li>
+<li><strong>Data property</strong> — <code>{ data: [{ ... }] }</code></li>
 <li><strong>Object of objects</strong> — <code>{ '2026-01': { ... }, '2026-02': { ... } }</code> (iterates values)</li>
 </ul>
 <p>For anything more exotic, use <code>fromApi</code> with a custom <code>transform</code> function.</p>
-<hr>
-<h2>Real-world example: mining stats from a provider export</h2>
-<p>The chart below was built from a plain XLS file downloaded from a mining pool. The file was converted to JSON and dropped into the project — no server, no pipeline, no fuss.</p>
-<div id="mining-hashrate-profit"></div>
-<p>Three series, one source array. The right axis (orange line) tracks the BTC spot price. The left axis shows two things at once: the gray bars are daily BTC output scaled by $100,000, and the green line is actual USD earnings. When the line sits above the bars, the BTC price was above $100k and pushed USD revenue higher. When they converge, price is close to the $100k anchor. The tooltip shows actual unscaled BTC values.</p>
-<pre><code>(async function () {
+<div class="card collapsible-container">
+  <p>
+      <span class="section-icon material-icons-outlined">code</span>
+      <span class="collapsible-trigger">Real-world example: mining stats<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
+  </p>
+  <div class="collapsible-content">
+    <p>
+      We get daily stats from a mining pool in a simple JSON format:
+    </p>
+    <pre class="text-content-caption"><code>{
+  "date": "2025-02-01",
+  "hashrate_th": 235.219,
+  "profit_btc": 0.00013751,
+  "price_usd": 102039.29,
+  "profit_usd": 14.03
+}</code></pre>
+    <p>
+      Based on this dataset, we built a chart that shows a miner’s daily earnings alongside the BTC spot price.
+      Same dates, same source array, two axes: price on the right, earnings on the left.
+    </p>
+    <div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+    <p>
+      The idea is simple: price moves, revenue reacts.
+      The right axis (orange line) is BTC spot price. The left axis combines two views of mining output:
+      gray bars are daily BTC output scaled by a $100k anchor, and the green line is actual USD earnings.
+      When the green line sits above the bars, BTC was above $100k and pushed USD revenue higher.
+      When they converge, price is close to the $100k anchor. Tooltip shows the real unscaled BTC output.
+    </p>
+    <pre><code>(async function () {
   const d3 = RareCharts.d3;
-
+<span class="code-comment">
   // BTC profit ≈ 0.00014 BTC/day. Scale by $100k to match USD profit ≈ $14/day.
   // Line above bars = BTC price > $100k. The gap IS the price effect.
+</span>
   const BTC_SCALE = 100_000;
-
-  const raw = await RareCharts.fromJson('/assets/charts/data/btc_mining.json', {
-    date:       row => new Date(row.date),
-    value:      row => +row.profit_usd,
-    profit_usd: row => +row.profit_usd,
-    profit_btc: row => +row.profit_btc,
-    price_usd:  row => +row.price_usd,
-  });
-
-  const series = [
-    {
-      name: 'BTC Price', axis: 'y1', type: 'line', color: '#f7931a',
-      strokeWidth: 1.5,
-      values: raw.map(r => ({ date: r.date, value: r.price_usd })),
-    },
-    {
-      name: 'BTC Output', axis: 'y2', type: 'bar', color: '#cccccc',
-      values: raw.map(r => ({ date: r.date, value: r.profit_btc * BTC_SCALE })),
-    },
-    {
-      name: 'USD Profit', axis: 'y2', type: 'line', color: '#00c97a',
-      strokeWidth: 2,
-      values: raw.map(r => ({ date: r.date, value: r.profit_usd })),
-    },
-  ];
-
-  new RareCharts.DualAxes('#mining-hashrate-profit', {
-    height: 380, curve: 'linear', crosshair: true, endLabels: false,
-    y1Title: 'BTC Price', y2Title: '$/day',
-    y1TickFormat: v => '$' + d3.format(',.0f')(v),
-    y2TickFormat: v => '$' + d3.format(',.1f')(v),
-    xTickFormat:  d => d3.timeFormat('%b')(d),
-    tooltipFormat: ({ date, points }) => {
-      // Show actual BTC output (un-scale back to real BTC in the formatter)
-      ...
-    },
-  }).setData(series);
-})();</code></pre>
-<p>The mapping isn't just for field names — you can compute derived values inline. The chart below uses the same data file but adds a pre-processing step: a 7-day rolling average over USD profit, then both series normalized to 100 at the start date. No extra fetch, just a few lines of JS before <code>setData()</code>.</p>
-<div id="mining-index"></div>
-<p>Both lines start at 100 (Feb 1, 2025). After that, a reading of 120 means the metric is up 20% from the start; 80 means it's down 20%. The gap between them is the difficulty adjustment at work: as more miners join the network, the BTC reward per terahash declines — so even as the spot price rises, individual miner earnings don't follow at the same rate.</p>
-<pre><code>// Filter to fully active days, compute rolling average, normalize to 100
-const active     = raw.filter(r => r.profit_usd > 5.0);
-const MA_WINDOW  = 7;
-
-const profitMA = active.map((_, i) => {
-  const slice = active.slice(Math.max(0, i - MA_WINDOW + 1), i + 1);
-  return slice.reduce((sum, r) => sum + r.profit_usd, 0) / slice.length;
+<p>const raw = await RareCharts.fromJson('/assets/charts/data/btc_mining.json', {
+date:       row =&gt; new Date(row.date),
+value:      row =&gt; +row.profit_usd,
+profit_usd: row =&gt; +row.profit_usd,
+profit_btc: row =&gt; +row.profit_btc,
+price_usd:  row =&gt; +row.price_usd,
+});</p>
+<p>const series = [
+{
+name: 'BTC Price', axis: 'y1', type: 'line', color: '#f7931a',
+strokeWidth: 1.5,
+values: raw.map(r =&gt; ({ date: r.date, value: r.price_usd })),
+},
+{
+name: 'BTC Output', axis: 'y2', type: 'bar', color: '#cccccc',
+values: raw.map(r =&gt; ({ date: r.date, value: r.profit_btc * BTC_SCALE })),
+},
+{
+name: 'USD Profit', axis: 'y2', type: 'line', color: '#00c97a',
+strokeWidth: 2,
+values: raw.map(r =&gt; ({ date: r.date, value: r.profit_usd })),
+},
+];</p>
+<p>new RareCharts.DualAxes('#mining-hashrate-profit', {
+height: 380, curve: 'linear', crosshair: true, endLabels: false,
+y1Title: 'BTC Price', y2Title: '$/day',
+y1TickFormat: v =&gt; '$' + d3.format(',.0f')(v),
+y2TickFormat: v =&gt; '$' + d3.format(',.1f')(v),
+xTickFormat:  d =&gt; d3.timeFormat('%b')(d),
+tooltipFormat: ({ date, points }) =&gt; {
+// Show actual BTC output (un-scale back to real BTC in the formatter)
+...
+},
+}).setData(series);
+})();</code></pre></p>
+<p><p>The mapping isn't just for field names — you can compute derived values inline. The chart below uses the same data file but adds a pre-processing step: a 7-day rolling average over USD profit, then both series normalized to 100 at the start date. No extra fetch, just a few lines of JS before <code>setData()</code>.</p></p>
+<p><div id="mining-index"></div></p>
+<p><p>Both lines start at 100 (Feb 1, 2025). After that, a reading of 120 means the metric is up 20% from the start; 80 means it's down 20%. The gap between them is the difficulty adjustment at work: as more miners join the network, the BTC reward per terahash declines — so even as the spot price rises, individual miner earnings don't follow at the same rate.</p></p>
+<p><pre><code>// Filter to fully active days, compute rolling average, normalize to 100
+const active     = raw.filter(r =&gt; r.profit_usd &gt; 5.0);
+const MA_WINDOW  = 7;</p>
+<p>const profitMA = active.map((_, i) =&gt; {
+const slice = active.slice(Math.max(0, i - MA_WINDOW + 1), i + 1);
+return slice.reduce((sum, r) =&gt; sum + r.profit_usd, 0) / slice.length;
+});</p>
+<p>const BASE_PRICE  = active[0].price_usd;
+const BASE_PROFIT = profitMA[0];</p>
+<p>const series = [
+{
+name: 'BTC Price', axis: 'y2', type: 'line', color: '#f7931a',
+values: active.map(r =&gt; ({ date: r.date, value: (r.price_usd / BASE_PRICE) * 100 })),
+},
+{
+name: 'USD Earnings (7d avg)', axis: 'y2', type: 'line', color: '#00c97a',
+values: active.map((r, i) =&gt; ({ date: r.date, value: (profitMA[i] / BASE_PROFIT) * 100 })),
+},
+];</p>
+<p>new RareCharts.DualAxes('#mining-index', {
+y2Title: 'Index (start = 100)',
+y2Domain: [35, 165],
+y2TickFormat: v =&gt; d3.format('.0f')(v),
+tooltipFormat: ({ date, points }) =&gt; {
+const rows = points.map(p =&gt; {
+const delta = p.value - 100;
+const sign  = delta &gt;= 0 ? '+' : '';
+return <code>&lt;div style=&quot;color:${p.color}&quot;&gt;${p.name}: ${d3.format('.1f')(p.value)} (${sign}${d3.format('.1f')(delta)}%)&lt;/div&gt;</code>;
 });
-
-const BASE_PRICE  = active[0].price_usd;
-const BASE_PROFIT = profitMA[0];
-
-const series = [
-  {
-    name: 'BTC Price', axis: 'y2', type: 'line', color: '#f7931a',
-    values: active.map(r => ({ date: r.date, value: (r.price_usd / BASE_PRICE) * 100 })),
-  },
-  {
-    name: 'USD Earnings (7d avg)', axis: 'y2', type: 'line', color: '#00c97a',
-    values: active.map((r, i) => ({ date: r.date, value: (profitMA[i] / BASE_PROFIT) * 100 })),
-  },
-];
-
-new RareCharts.DualAxes('#mining-index', {
-  y2Title: 'Index (start = 100)',
-  y2Domain: [35, 165],
-  y2TickFormat: v => d3.format('.0f')(v),
-  tooltipFormat: ({ date, points }) => {
-    const rows = points.map(p => {
-      const delta = p.value - 100;
-      const sign  = delta >= 0 ? '+' : '';
-      return `<div style="color:${p.color}">${p.name}: ${d3.format('.1f')(p.value)} (${sign}${d3.format('.1f')(delta)}%)</div>`;
-    });
-    return `...`;
-  },
-}).setData(series);</code></pre>
-<h2>fromCsv</h2>
-<p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
+return <code>...</code>;
+},
+}).setData(series);</code></pre></p>
+  </div>
+</div>
+<div class="air-lg"></div>
+<h3>fromCsv</h3>
+<p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
 <pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
   date:  row => new Date(row.month),
   value: row => parseFloat(row.revenue_usd),
 });</code></pre>
-<p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
-<hr>
-<h2>fromApi</h2>
-<p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
+<p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
+<h3>fromApi</h3>
+<p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
 <p><strong>Basic usage:</strong></p>
 <pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
   date:  row => new Date(row.timestamp),
@@ -543,7 +562,7 @@ new RareCharts.DualAxes('#mining-index', {
   { date: row => new Date(row.ts), value: row => row.val },
   { headers: { 'Authorization': 'Bearer ' + token } }
 );</code></pre>
-<p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can't handle:</p>
+<p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can’t handle:</p>
 <pre><code>const data = await RareCharts.fromApi(
   'https://api.example.com/report',
   { date: row => new Date(row.period), value: row => row.total },
@@ -551,17 +570,16 @@ new RareCharts.DualAxes('#mining-index', {
     transform: response => response.results.entries,
   }
 );</code></pre>
-<p><code>transform</code> receives the raw parsed JSON and should return a plain array of row objects.</p>
-<p>If the HTTP response is not OK (4xx, 5xx), <code>fromApi</code> throws an error with the status code. Handle it if you need a graceful fallback:</p>
+<p><code>transform</code> receives the raw parsed JSON and should return a plain array of row objects.</p>
+<p>If the HTTP response is not OK (4xx, 5xx), <code>fromApi</code> throws an error with the status code. Handle it if you need a graceful fallback:</p>
 <pre><code>try {
   const data = await RareCharts.fromApi(url, mapping);
   chart.setData(data);
 } catch (err) {
   console.error('Failed to load chart data:', err.message);
 }</code></pre>
-<hr>
-<h2>fromArray</h2>
-<p>For data that's already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
+<h3>fromArray</h3>
+<p>For data that’s already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
 <pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
 
 const data = RareCharts.fromArray(raw, {
@@ -570,10 +588,9 @@ const data = RareCharts.fromArray(raw, {
 });
 
 chart.setData(data);</code></pre>
-<p>This is useful when you're pulling data from a state store, another library, or a function that returns a plain array — and the field names don't match what the chart expects.</p>
-<hr>
+<p>This is useful when you’re pulling data from a state store, another library, or a function that returns a plain array — and the field names don’t match what the chart expects.</p>
 <h2>Live updates</h2>
-<p><code>setData()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
+<p><code>setData ()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
 <pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
 
 // Initial load
@@ -585,7 +602,6 @@ setInterval(async () => {
   const fresh = await RareCharts.fromApi(url, mapping);
   chart.setData(fresh);
 }, 30_000);</code></pre>
-<hr>
 <h2>Mapping reference</h2>
 <table>
 <thead>
@@ -599,23 +615,23 @@ setInterval(async () => {
 <tr>
 <td>Function</td>
 <td>Called with each row, return value used</td>
-<td><code>row =&gt; new Date(row.ts)</code></td>
+<td><code>row =&gt; new Date (row.ts)</code></td>
 </tr>
 <tr>
 <td>String</td>
-<td>Treated as a field name — <code>row[fieldName]</code></td>
+<td>Treated as a field name — <code>row[fieldName]</code></td>
 <td><code>'close_price'</code></td>
 </tr>
 </tbody>
 </table>
 <p>Invalid rows are filtered out automatically:</p>
 <ul>
-<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
-<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
+<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
+<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
 </ul>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/mining/btc-mining-hashrate-profit.js"></script>
-<script src="/assets/charts/examples/mining/btc-mining-index.js"></script>
+<script src="/assets/charts/examples/dual-axes/btc-mining-hashrate-profit.js"></script>
+<script src="/assets/charts/examples/dual-axes/btc-mining-index.js"></script>
 
     </article>
   </div>

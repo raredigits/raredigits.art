@@ -139,7 +139,7 @@ In multi-series mode, you can override some style/shape settings per series, wi
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
 
-<table class="table-bordered">
+<table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Option</th>
@@ -149,7 +149,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Layout</h5></td>
         </tr>
         <tr>
@@ -173,7 +173,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'right'</code></td>
             <td>Side the Y axis is rendered on.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Y axis</h5></td>
         </tr>
         <tr>
@@ -224,7 +224,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>1e-6</code></td>
             <td>Values with <code>|v|</code> below this threshold are printed as <code>0</code>. Prevents <code>+0.00%</code> artifacts.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>X axis</h5></td>
         </tr>
         <tr>
@@ -233,7 +233,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'%m/%d'</code></td>
             <td><code>(date) =&gt; string</code> — controls X tick labels.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Line style</h5></td>
         </tr>
         <tr>
@@ -254,7 +254,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>SVG <code>stroke-dasharray</code> applied to all series globally (e.g. <code>'4,3'</code>).</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Area fill</h5></td>
         </tr>
         <tr>
@@ -275,7 +275,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'zero'</code></td>
             <td>Where the fill anchors — bottom of chart, minimum data value, or a fixed Y value.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Markers</h5></td>
         </tr>
         <tr>
@@ -296,7 +296,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>4</code></td>
             <td>Marker radius in px.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>
@@ -317,7 +317,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>true</code></td>
             <td>Render the last value of each series at the right edge.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>
         </tr>
         <tr>
@@ -338,7 +338,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'cubicOut'</code></td>
             <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4">
                 <h5>Single-series shortcuts</h5>
                 <p>These only apply when data is passed as a flat <code>[{date, value}]</code> array:</p>
@@ -356,7 +356,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>theme accent</td>
             <td>Line color.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4">
                 <h5>Per-series overrides (multi-series)</h5>
                 <p>Each series object in the data array can include these fields to override global settings:</p>

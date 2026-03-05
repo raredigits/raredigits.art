@@ -38,7 +38,7 @@ Dual-axis charts are often implemented as a hack: two scales, mismatched forma
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
-<table class="table-bordered">
+<table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Option</th>
@@ -48,7 +48,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Layout</h5></td>
         </tr>
         <tr>
@@ -72,7 +72,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>8</code></td>
             <td>Extra horizontal padding on both ends of the X scale.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4">
                 <h5>Right axis — Y1</h5>
                 <p>Y1 is drawn on the <strong>right</strong> side.</p>
@@ -111,7 +111,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>Axis title, rendered along the right edge.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4">
                 <h5>Left axis — Y2</h5>
                 <p>Y2 is drawn on the <strong>left</strong> side. Grid lines and the zero baseline are keyed to Y2.</p>
@@ -147,7 +147,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>Axis title, rendered along the left edge.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>X axis</h5></td>
         </tr>
         <tr>
@@ -156,7 +156,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'%m/%d'</code></td>
             <td><code>(date) =&gt; string</code> — X tick labels.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Lines</h5></td>
         </tr>
         <tr>
@@ -195,7 +195,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'zero'</code></td>
             <td>Area baseline anchor.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Bars</h5></td>
         </tr>
         <tr>
@@ -216,7 +216,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'overlap'</code></td>
             <td>How multiple bar series are arranged. <code>'cluster'</code> places them side by side.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>End labels and markers</h5></td>
         </tr>
         <tr>
@@ -249,7 +249,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>4</code></td>
             <td>Marker radius in px.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>
@@ -267,7 +267,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
                 <code>points</code> is <code>[{name, value, color, fmt}]</code>.
             </td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>
         </tr>
         <tr>
@@ -288,7 +288,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'cubicOut'</code></td>
             <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4">
                 <h5>Per-series fields</h5>
                 <p>Each object in the series array passed to <code>setData()</code>:</p>

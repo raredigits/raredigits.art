@@ -89,7 +89,14 @@ th:first-child {
         background-color: var(--gray-lightest);
     }
 
-    tr td[colspan] {
-        
+    .table-section {
+        border-bottom: none;
+
+        > td {
+            padding-bottom: var(--space-md);
+        }
+            p {
+                margin: 0;
+            }
     }
 }

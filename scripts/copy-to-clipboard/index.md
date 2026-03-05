@@ -73,7 +73,7 @@ To get a result like this:
 
 <div class="code-block text-content-width">
     <pre><code id="snippet-1">npm i rare-scripts
-# or
+<span class="code-comment"># or</span>
 pnpm add rare-scripts</code></pre>
     <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
 </div>

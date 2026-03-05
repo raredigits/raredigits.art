@@ -2266,19 +2266,5 @@
     "profit_btc": 9.873e-05,
     "price_usd": 88291.5,
     "profit_usd": 8.71
-  },
-  {
-    "date": "2025-12-22",
-    "hashrate_th": 53.621,
-    "profit_btc": 2.185e-05,
-    "price_usd": 89118.0,
-    "profit_usd": 1.94
-  },
-  {
-    "date": "2025-12-29",
-    "hashrate_th": 0.451,
-    "profit_btc": 1.7e-07,
-    "price_usd": 88466.5,
-    "profit_usd": 0.01
   }
 ]

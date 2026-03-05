@@ -74,7 +74,7 @@ Bar can animate on first render (`animate: true` by default). The timing is c
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
-<table class="table-bordered">
+<table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Option</th>
@@ -84,7 +84,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </thead>
     <tbody>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Layout</h5></td>
         </tr>
         <tr>
@@ -108,7 +108,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'vertical'</code></td>
             <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Bar style</h5></td>
         </tr>
         <tr>
@@ -126,7 +126,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
                 The full label is still shown in the tooltip on hover.
             </td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>
         </tr>
         <tr>
@@ -153,7 +153,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'cubicOut'</code></td>
             <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Value labels (horizontal mode only)</h5></td>
         </tr>
         <tr>
@@ -185,7 +185,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
                 When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
             </td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Axis formatting</h5></td>
         </tr>
         <tr>
@@ -224,7 +224,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>Explicit X tick positions in horizontal mode.</td>
         </tr>
-        <tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>

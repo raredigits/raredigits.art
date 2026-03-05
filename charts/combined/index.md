@@ -53,7 +53,7 @@ Combined charts are <code>DualAxes</code> — all chart-level options are identi
 
 The only thing that makes a chart “combined” is the <code>type</code> field on each series object:
 
-<table class="table-bordered">
+<table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Field</th>

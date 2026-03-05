@@ -29,11 +29,25 @@ details summary {
 .collapsible-content {
     display: none;
     padding-top: var(--space-lg);
+
+    > .caption, .highlight, pre, .text-content-caption, .card-caption {
+        margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
+
+        @include bp.mobile {
+            margin-left: calc(-1 * var(--space-sm));
+        }
+    }
+
+    > .card-dashboard-bordered {
+        padding: var(--space-md);
+    }
 }
 
 .collapsible-content .caption,
 .collapsible-content .highlight,
-.collapsible-content pre {
+.collapsible-content pre,
+.collapsible-content .text-content-caption,
+.collapsible-content .card-caption {
     margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
 
     @include bp.mobile {
