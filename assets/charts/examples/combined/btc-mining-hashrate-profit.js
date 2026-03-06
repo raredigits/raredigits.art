@@ -69,6 +69,10 @@
     y2TickFormat: v => '$' + d3.format(',.0f')(v),
     xTickFormat:  d => d3.timeFormat('%b')(d),
 
+    // Force visual range for spread axis
+    y1Domain: [75000, 125000],
+    y2Domain: [8, 15],
+
     tooltipFormat: ({ date, points }) => {
       const rows = points.map(p => {
         let display;

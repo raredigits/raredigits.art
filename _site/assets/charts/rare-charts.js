@@ -17323,13 +17323,17 @@ var RareCharts = (() => {
     // ── Dimensions ────────────────────────────────────────────────────────────
     get width() {
       const legendW = this._legendAsideEl ? this._legendAsideEl.offsetWidth : 0;
-      return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right - legendW);
+      const cs = window.getComputedStyle(this.container);
+      const padH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+      return Math.max(0, this.container.clientWidth - padH - this.margin.left - this.margin.right - legendW);
     }
     get height() {
       const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
       const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
+      const cs = window.getComputedStyle(this.container);
+      const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
       const h = this.options.height ?? this.container.clientHeight;
-      return Math.max(0, h - this.margin.top - this.margin.bottom - headerH - footerH);
+      return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - footerH);
     }
     _onResize() {
       if (this.width > 0 && this.height > 0) this.render();
@@ -18243,8 +18247,13 @@ var RareCharts = (() => {
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
     setData(series) {
+      this._series = this._normalizeData(series);
+      this.render();
+      return this;
+    }
+    _normalizeData(series) {
       const colors = this.theme.colors ?? [];
-      this._series = (series ?? []).map((s2, idx) => ({
+      return (series ?? []).map((s2, idx) => ({
         name: s2.name ?? `Series ${idx + 1}`,
         axis: s2.axis === "y2" ? "y2" : "y1",
         type: s2.type === "bar" ? "bar" : "line",
@@ -18256,8 +18265,6 @@ var RareCharts = (() => {
         strokeWidth: Number.isFinite(+s2.strokeWidth) ? +s2.strokeWidth : 2,
         values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
       })).filter((s2) => s2.values.length);
-      this.render();
-      return this;
     }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG(tooltip) {
@@ -18275,6 +18282,11 @@ var RareCharts = (() => {
       this.gEnds = this.g.append("g").attr("class", "rc-end-labels");
       this.gMarkers = this.g.append("g").attr("class", "rc-markers");
       this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
+      const uid = Math.random().toString(36).slice(2, 8);
+      this._clipId = `rc-clip-${uid}`;
+      this._clipRect = this.svg.append("defs").append("clipPath").attr("id", this._clipId).append("rect");
+      this.gBars.attr("clip-path", `url(#${this._clipId})`);
+      this.gLines.attr("clip-path", `url(#${this._clipId})`);
       const gCross = this.g.append("g").attr("class", "rc-crosshair");
       const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
       this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
@@ -18357,11 +18369,12 @@ var RareCharts = (() => {
       const allValues = this._series.flatMap((s2) => s2.values);
       const allY1 = this._series.filter((s2) => s2.axis === "y1").flatMap((s2) => s2.values);
       const allY2 = this._series.filter((s2) => s2.axis === "y2").flatMap((s2) => s2.values);
+      this._clipRect.attr("x", xPad).attr("y", 0).attr("width", W - 2 * xPad).attr("height", H);
       const x4 = time().domain(extent(allValues, (d) => d.date)).range([xPad, W - xPad]);
       const y1Auto = allY1.length ? extent(allY1, (d) => d.value) : extent(allY2, (d) => d.value);
       const y2Auto = allY2.length ? extent(allY2, (d) => d.value) : extent(allY1, (d) => d.value);
-      const y12 = linear3().domain(Array.isArray(o.y1Domain) ? o.y1Domain : y1Auto).nice(4).range([H, 0]);
-      const y22 = linear3().domain(Array.isArray(o.y2Domain) ? o.y2Domain : y2Auto).nice(4).range([H, 0]);
+      const y12 = Array.isArray(o.y1Domain) ? linear3().domain(o.y1Domain).range([H, 0]) : linear3().domain(y1Auto).nice(4).range([H, 0]);
+      const y22 = Array.isArray(o.y2Domain) ? linear3().domain(o.y2Domain).range([H, 0]) : linear3().domain(y2Auto).nice(4).range([H, 0]);
       const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
       const y1TickFormat = o.y1TickFormat ?? ((v2) => format(",.2f")(v2));
       const y2TickFormat = o.y2TickFormat ?? ((v2) => Math.abs(v2) < 1e-6 ? "0" : format("+.2f")(v2));

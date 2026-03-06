@@ -88,9 +88,15 @@ export class DualAxes extends Chart {
   // ─── Data ─────────────────────────────────────────────────────────────────
 
   setData(series) {
+    this._series = this._normalizeData(series);
+    this.render();
+    return this;
+  }
+
+  _normalizeData(series) {
     const colors = this.theme.colors ?? [];
 
-    this._series = (series ?? [])
+    return (series ?? [])
       .map((s, idx) => ({
         name:         s.name   ?? `Series ${idx + 1}`,
         axis:         s.axis === 'y2' ? 'y2' : 'y1',
@@ -106,9 +112,6 @@ export class DualAxes extends Chart {
           .filter(d => d.date && Number.isFinite(d.value)),
       }))
       .filter(s => s.values.length);
-
-    this.render();
-    return this;
   }
 
   // ─── Init ─────────────────────────────────────────────────────────────────
@@ -134,6 +137,15 @@ export class DualAxes extends Chart {
     this.gEnds        = this.g.append('g').attr('class', 'rc-end-labels');
     this.gMarkers     = this.g.append('g').attr('class', 'rc-markers');
     this.gZero        = this.g.append('g').attr('class', 'rc-zero-layer');
+
+    // Clip bars and lines to the drawing area so bar stubs don't bleed past edges
+    const uid = Math.random().toString(36).slice(2, 8);
+    this._clipId   = `rc-clip-${uid}`;
+    this._clipRect = this.svg.append('defs')
+      .append('clipPath').attr('id', this._clipId)
+      .append('rect');
+    this.gBars.attr('clip-path',  `url(#${this._clipId})`);
+    this.gLines.attr('clip-path', `url(#${this._clipId})`);
 
     const gCross  = this.g.append('g').attr('class', 'rc-crosshair');
     const overlay = this.g.append('rect')
@@ -265,12 +277,15 @@ export class DualAxes extends Chart {
     const o = this.options;
     const t = this.theme;
 
-    const animate     = (o.animate ?? true) && !this._didAnimateIn;
-    const duration    = o.duration ?? 650;
-    const ease        = resolveEase(o.ease ?? 'cubicOut');
-    const defaultCurve= o.curve ?? 'linear';
-    const tension     = o.curveTension ?? 0;
-    const xPad        = o.xPad ?? 8;
+    // Animation
+    const animate  = (o.animate ?? true) && !this._didAnimateIn;
+    const duration = o.duration ?? 650;
+    const ease     = resolveEase(o.ease ?? 'cubicOut');
+
+    // Curve / dash options
+    const defaultCurve = o.curve         ?? 'linear';
+    const tension      = o.curveTension  ?? 0;
+    const xPad         = o.xPad         ?? 8;
 
     const lines = this._series.filter(s => s.type === 'line');
     const bars  = this._series.filter(s => s.type === 'bar');
@@ -278,6 +293,9 @@ export class DualAxes extends Chart {
     const allValues = this._series.flatMap(s => s.values);
     const allY1     = this._series.filter(s => s.axis === 'y1').flatMap(s => s.values);
     const allY2     = this._series.filter(s => s.axis === 'y2').flatMap(s => s.values);
+
+    // Update clip rect to match current drawing area
+    this._clipRect.attr('x', xPad).attr('y', 0).attr('width', W - 2 * xPad).attr('height', H);
 
     // Scales
     const x = d3.scaleTime()
@@ -287,13 +305,13 @@ export class DualAxes extends Chart {
     const y1Auto = allY1.length ? d3.extent(allY1, d => d.value) : d3.extent(allY2, d => d.value);
     const y2Auto = allY2.length ? d3.extent(allY2, d => d.value) : d3.extent(allY1, d => d.value);
 
-    const y1 = d3.scaleLinear()
-      .domain(Array.isArray(o.y1Domain) ? o.y1Domain : y1Auto)
-      .nice(4).range([H, 0]);
+    const y1 = Array.isArray(o.y1Domain)
+      ? d3.scaleLinear().domain(o.y1Domain).range([H, 0])
+      : d3.scaleLinear().domain(y1Auto).nice(4).range([H, 0]);
 
-    const y2 = d3.scaleLinear()
-      .domain(Array.isArray(o.y2Domain) ? o.y2Domain : y2Auto)
-      .nice(4).range([H, 0]);
+    const y2 = Array.isArray(o.y2Domain)
+      ? d3.scaleLinear().domain(o.y2Domain).range([H, 0])
+      : d3.scaleLinear().domain(y2Auto).nice(4).range([H, 0]);
 
     // Formatters
     const xTickFormat  = o.xTickFormat  ?? (d => d3.timeFormat('%m/%d')(d));

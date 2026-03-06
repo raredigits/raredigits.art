@@ -159,14 +159,18 @@ export class Chart {
   get width() {
     // When legend is in a right-side column, subtract its width from the total
     const legendW = this._legendAsideEl ? this._legendAsideEl.offsetWidth : 0;
-    return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right - legendW);
+    const cs  = window.getComputedStyle(this.container);
+    const padH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+    return Math.max(0, this.container.clientWidth - padH - this.margin.left - this.margin.right - legendW);
   }
 
   get height() {
     const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
     const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
+    const cs  = window.getComputedStyle(this.container);
+    const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
     const h = this.options.height ?? this.container.clientHeight;
-    return Math.max(0, h - this.margin.top - this.margin.bottom - headerH - footerH);
+    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - footerH);
   }
 
   _onResize() {

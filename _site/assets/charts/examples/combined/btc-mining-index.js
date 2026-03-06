@@ -89,7 +89,10 @@
     endLabels: false,
 
     y1Title: 'Divergence',
-    y1TickFormat: v => d3.format('+.0f')(v),
+    y1TickFormat: v => {
+      if (Math.abs(v) < 1e-6) return '0';
+      return d3.format('+.0f')(v);
+    },
 
     y2Title: 'Index',
     y2Domain: [40, 145],
