@@ -1,0 +1,49 @@
+name: Sync Charts to rare-charts
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/charts/src/**'
+      - 'assets/charts/examples/**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout raredigits.art
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build charts bundles
+        run: |
+          npm run charts:build
+          npm run charts:build:min
+
+      - name: Clone rare-charts repo
+        run: |
+          git clone https://x-access-token:${{ secrets.RARE_STYLES_PAT }}@github.com/raredigits/rare-charts.git temp-rare-charts
+
+      - name: Copy built files and examples to rare-charts
+        run: |
+          cp assets/charts/rare-charts.js temp-rare-charts/rare-charts.js
+          cp assets/charts/rare-charts.min.js temp-rare-charts/rare-charts.min.js
+          cp -r assets/charts/examples temp-rare-charts/examples
+
+      - name: Commit & Push to rare-charts
+        run: |
+          cd temp-rare-charts
+          git config user.name "Rare Sync Bot"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "Sync charts from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+          git push origin main

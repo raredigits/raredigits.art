@@ -17220,17 +17220,6 @@ ins {
   content: "cognition";
 }
 
-.sidenote > .rc-chart {
-  margin-top: calc(var(--space-xs) * -1);
-  color: var(--text-color-light);
-}
-.sidenote > .rc-chart .rc-chart-header,
-.sidenote > .rc-chart .rc-chart-subtitle,
-.sidenote > .rc-chart .rc-legend,
-.sidenote > .rc-chart .rc-chart-source {
-  color: var(--text-color-light);
-}
-
 :root {
   --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
   --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
