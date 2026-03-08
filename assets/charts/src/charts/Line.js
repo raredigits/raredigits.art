@@ -1,5 +1,5 @@
 // RareCharts — Line
-// Multi-series line chart (Bloomberg-ish) with crosshair.
+// Multi-series line chart with crosshair.
 //
 // Data formats supported:
 // 1) Single series: [{ date: Date|string|number, value: number }, ...]

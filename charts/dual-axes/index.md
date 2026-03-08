@@ -10,7 +10,7 @@ Sometimes you need to plot two things on the same timeline that simply do not
 
 A dual-axis chart solves this by keeping a shared X axis (time) while providing two independent Y axes, so each metric is shown in its natural units. The goal is not to pretend the metrics are comparable. The goal is to compare when they move and how their dynamics relate.
 
-In RareCharts, DualAxes is exactly that: a time-based chart with two vertical scales.
+In RareCharts, `DualAxes` is exactly that: a time-based chart with two vertical scales.
 
 To illustrate a real-world use case, this example uses a finance-native story: a convergence (arbitrage) strategy based on the idea that two similar instruments that temporarily diverged in price will later converge again.
 

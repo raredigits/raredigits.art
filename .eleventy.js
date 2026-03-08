@@ -34,6 +34,11 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addWatchTarget("./assets/charts/rare-charts.js");
 
+  eleventyConfig.setChokidarConfig({
+    usePolling: true,
+    interval: 500
+  });
+
   eleventyConfig.setBrowserSyncConfig({
     files: [
       './_site/assets/css/**/*.css'

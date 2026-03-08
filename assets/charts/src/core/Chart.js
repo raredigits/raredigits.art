@@ -74,6 +74,7 @@ export class Chart {
 
           const text = document.createElement('span');
           text.textContent = item.label ?? item.name ?? '';
+          text.style.color = this.theme.text;
 
           el.appendChild(indicator);
           el.appendChild(text);
@@ -111,6 +112,7 @@ export class Chart {
         this._titleEl = document.createElement('h5');
         this._titleEl.className = 'rc-chart-title';
         this._titleEl.textContent = this.options.title;
+        this._titleEl.style.color = this.theme.text;
         this._headerEl.appendChild(this._titleEl);
       }
 
@@ -118,6 +120,7 @@ export class Chart {
         this._subtitleEl = document.createElement('p');
         this._subtitleEl.className = 'rc-chart-subtitle';
         this._subtitleEl.textContent = this.options.subtitle;
+        this._subtitleEl.style.color = this.theme.text;
         this._headerEl.appendChild(this._subtitleEl);
       }
 
@@ -142,6 +145,7 @@ export class Chart {
 
     this._sourceEl = document.createElement('cite');
     this._sourceEl.className = 'rc-chart-source';
+    this._sourceEl.style.color = this.theme.text;
 
     const src = this.options.source;
     if (src instanceof HTMLElement) {

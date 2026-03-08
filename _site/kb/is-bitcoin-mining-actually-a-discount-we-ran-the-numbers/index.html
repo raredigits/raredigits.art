@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Import | Rare Digits Art</title>
+    <title>Is Bitcoin mining actually a discount? We ran the numbers | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -60,7 +60,7 @@
         
         <li>
             <a href="/charts/"
-               class="current">
+               class="">
               Charts
             </a>
         </li>
@@ -81,7 +81,7 @@
         
         <li>
             <a href="/kb/"
-               class="">
+               class="current">
               101
             </a>
         </li>
@@ -265,272 +265,49 @@
   
 <main>
   <div class="content grid-global">
-    
-      <aside class="sidebar">
-  
-    
-    
+    <aside class="sidebar">
       <h5 class="sidebar-header">
-          
-            <a href="/charts/">Charts</a>
-          
+          <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
-        <ul>
-          
-            <li>
-              
-                <a href="/charts/line/">Line</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/bar/">Bar</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/dual-axes/">Dual Axes</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/combined/">Combined</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/circular/">Circular</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/graph/">Graph</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/installation/">Installation</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <span class="bold">Data Import</span>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/settings/">Settings</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/styles/">Styles</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/backlog/">Backlog</a>
-              
-              
-              
-              
-            </li>
-          
-        </ul>
+        
+          <div class="sidebar-meta">
+            <span class="material-icons" style="top: 0;">subdirectory_arrow_right</span>Chart
+          </div>
+        
+        
+        
+          <div class="sidebar-meta">by Jeeves</div>
+        
+
+        
+          <div class="sidebar-meta">February 09, 2026</div>
+        
+
+        
+          <div class="tags">
+            
+              <span class="tag">#analytics</span>
+            
+          </div>
+        
       </nav>
-    
-  
-</aside>
-    
+    </aside>
     
   <section class="page-title">
-    <h1>Data Import</h1>
+    <h1>Is Bitcoin mining actually a discount? We ran the numbers</h1>
   </section>
 
     <article>
-      <p>Every chart type accepts data via <code>setData ()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
-<h2>Direct data</h2>
-<p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
-<pre class="text-content-caption"><code>new RareCharts.Line('#chart', { height: 280 })
-  .setData([
-    { date: '2026-01-01', value: 142 },
-    { date: '2026-01-02', value: 159 },
-    { date: '2026-01-03', value: 151 },
-  ]);</code></pre>
-<p>Each chart type has its own data format — see the chart’s documentation page for the exact shape it expects.</p>
-<h2>Adapters</h2>
-<p>When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for <code>setData()</code>.</p>
-<p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> inside an async function or chain with <code>.then()</code>.</p>
-<p>The adapters are available as <code>RareCharts.fromJson</code>, <code>RareCharts.fromCsv</code>, <code>RareCharts.fromApi</code>, and <code>RareCharts.fromArray</code>.</p>
-<h2>Field mapping</h2>
-<p>Every adapter accepts a <code>mapping</code> object as its second argument. The mapping tells the adapter how to translate your source fields into the fields the chart expects.</p>
-<p>Each key in the mapping is the output field name. The value can be:</p>
-<ul>
-<li><strong>A function</strong> <code>row =&gt; value</code> — for transformations, type coercion, or computed fields</li>
-<li><strong>A string</strong> — a direct field name from the source row (simple rename, no transformation)</li>
-</ul>
-<div class="air-md"></div>
-<pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
-// Chart expects:         { date: Date, value: number }</span>
-
-const mapping = {
-  date:  row => new Date(row.ts),     // parse string to Date
-  value: row => +row.close,           // coerce string to number
-};</code></pre>
-<p>Rows where <code>date</code> is an invalid Date or <code>value</code> is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.</p>
-<h3>fromJson</h3>
-<p>Fetches a JSON file and applies a mapping.</p>
-<pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
-  date:  row => new Date(row.date),
-  value: row => +row.close,
-});
-
-chart.setData(data);</code></pre>
-<div class="sidenote-wrapper">
-  <div>
-    <p>The adapter handles three common JSON shapes automatically, without any configuration:</p>
-    <ul>
-      <li><strong>Array at root</strong> — <code>[{ ... }, { ... }]</code></li>
-      <li><strong>Data property</strong> — <code>{ data: [{ ... }] }</code></li>
-      <li><strong>Object of objects</strong> — <code>{ '2026-01': { ... }, '2026-02': { ... } }</code> (iterates values)</li>
-    </ul>
-    <p>For anything more exotic, use <code>fromApi</code> with a custom <code>transform</code> function.</p>
-  </div>
-  <div class="sidenote">
-    <p>Example: <a href="/examples/charts/btc-mining-analysis/">Analysing Bitcoin Mining Profit on Charts</a></p>
-  </div>
-</div>
-<h3>fromCsv</h3>
-<p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
-<pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
-  date:  row => new Date(row.month),
-  value: row => parseFloat(row.revenue_usd),
-});</code></pre>
-<p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
-<h3>fromApi</h3>
-<p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
-<p><strong>Basic usage:</strong></p>
-<pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
-  date:  row => new Date(row.timestamp),
-  value: row => row.count,
-});</code></pre>
-<p><strong>With authentication:</strong></p>
-<pre><code>const data = await RareCharts.fromApi(
-  'https://api.example.com/private/metrics',
-  { date: row => new Date(row.ts), value: row => row.val },
-  { headers: { 'Authorization': 'Bearer ' + token } }
-);</code></pre>
-<p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can’t handle:</p>
-<pre><code>const data = await RareCharts.fromApi(
-  'https://api.example.com/report',
-  { date: row => new Date(row.period), value: row => row.total },
-  {
-    transform: response => response.results.entries,
-  }
-);</code></pre>
-<p>In that case <code>transform</code> receives the raw parsed JSON and should return a plain array of row objects.</p>
-<p>If the HTTP response is not OK (4xx, 5xx), <code>fromApi</code> throws an error with the status code. Handle it if you need a graceful fallback:</p>
-<pre><code>try {
-  const data = await RareCharts.fromApi(url, mapping);
-  chart.setData(data);
-} catch (err) {
-  console.error('Failed to load chart data:', err.message);
-}</code></pre>
-<h3>fromArray</h3>
-<p>For data that’s already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
-<pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
-
-const data = RareCharts.fromArray(raw, {
-  date:  row => new Date(row.ts),
-  value: row => row.val,
-});
-
-chart.setData(data);</code></pre>
-<p>This is useful when you’re pulling data from a state store, another library, or a function that returns a plain array — and the field names don’t match what the chart expects.</p>
-<h2>Live updates</h2>
-<p><code>setData ()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
-<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
-
-// Initial load
-const data = await RareCharts.fromApi(url, mapping);
-chart.setData(data);
-
-// Refresh every 30 seconds
-setInterval(async () => {
-  const fresh = await RareCharts.fromApi(url, mapping);
-  chart.setData(fresh);
-}, 30_000);</code></pre>
-<h2>Mapping reference</h2>
-<table>
-<thead>
-<tr>
-<th>Value type</th>
-<th>Behavior</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Function</td>
-<td>Called with each row, return value used</td>
-<td><code>row =&gt; new Date (row.ts)</code></td>
-</tr>
-<tr>
-<td>String</td>
-<td>Treated as a field name — <code>row[fieldName]</code></td>
-<td><code>'close_price'</code></td>
-</tr>
-</tbody>
-</table>
-<p>Invalid rows are filtered out automatically:</p>
-<ul>
-<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
-<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
-</ul>
+      <p>There’s a theory that mining Bitcoin is <em>cleverer</em> than buying it. Instead of paying market price on an exchange, you plug in a machine, feed it electricity, and it manufactures coins for you at a lower cost. The math, in principle, works. Whether it works in practice is a different question.</p>
+<p>We had almost a year of real data to find out: a JSON feed from a mining pool with daily hashrate, revenue, and BTC output — the kind of file that is technically complete and completely unreadable — plus eleven months of actual electricity bills. No model, no projections. Just receipts.</p>
+<div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+<p>Four charts later, the answer is: <strong>sometimes</strong>. The window is real, the discount exists, and then the network difficulty catches up and the window closes. Exactly when, by how much, and what it costs while you wait — <em>that’s what the charts show</em>.</p>
+<p>The mining case is also a worked example of something more general: what it looks like when raw operational data becomes a decision-making tool.</p>
+<p>The same logic applies whether you’re tracking mining margins or any other business with volatile revenue and fixed costs. You already have the data. The question is whether you’re looking at it or just storing it?</p>
+<p>→ <a href="/examples/charts/btc-mining-analysis/">Read the full analysis</a></p>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-hashrate-profit.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-index.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-hashrate-profit.js"></script>
 
     </article>
   </div>

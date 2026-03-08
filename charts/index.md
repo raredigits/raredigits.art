@@ -6,6 +6,14 @@ displaySidebar: true
 permalink: '/charts/'
 ---
 
+<div class="meta-info">
+  /charts/rare-charts.js
+  <p>
+      v.0.9.0 Beta | 
+      <a href="/assets/charts/rare-charts.js">Download</a> <span class="material-icons">file_download</span>
+  </p>
+</div>
+
 RareCharts is a charting library for professional data presentation. It is built for situations where numbers actually matter: financial reporting, KPI dashboards, operational analytics, strategic reviews. This is not a decorative widget and not a playground for “look, animations”.
 
 ### Interpretation time is not abstract. It is cost
@@ -14,7 +22,7 @@ Text can be precise. Tables can be structured. But both require sequential rea
 
 If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4</em>”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
 
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card text-content-caption card-dashboard-bordered black-bg">
     <div id="line-chart-demo-revenue"></div>
 </div>
 

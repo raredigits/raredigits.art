@@ -393,7 +393,7 @@
 <p>This page documents those shared options. Chart-specific options (axis formatting, link types, bar orientation, etc.) are documented on each chart's own page.</p>
 <h2>The constructor</h2>
 <p>All charts are created the same way:</p>
-<pre><code>new RareCharts.ChartType(selector, options)</code></pre>
+<pre class="text-content-caption"><code>new RareCharts.ChartType(selector, options)</code></pre>
 <p><code>selector</code> is a CSS selector string (<code>'#my-chart'</code>) or a direct DOM element reference. If the element is not found, the chart throws immediately — which is better than silently rendering into nothing and leaving you confused for twenty minutes.</p>
 <p><code>options</code> is a plain object. Everything is optional.</p>
 <h2>Header options</h2>
@@ -432,7 +432,7 @@
 <p>If none of these are provided, no header element is created — the chart starts right at the top of the container.</p>
 <h3>Legend format</h3>
 <p>Pass an array of items and the chart renders them as a horizontal row of labeled indicators:</p>
-<pre><code>legend: [
+<pre class="text-content-caption"><code>legend: [
   { label: 'Portfolio A', color: '#00c97a' },
   { label: 'Portfolio B', color: '#ff6200' },
 ]</code></pre>
@@ -461,7 +461,7 @@
 </tr>
 </tbody>
 </table>
-<pre><code>source: 'Source: Bloomberg, Q4 2025'</code></pre>
+<pre class="text-content-caption"><code>source: 'Source: The Truth'</code></pre>
 <h2>Layout</h2>
 <table>
 <thead>
@@ -488,7 +488,7 @@
 </tbody>
 </table>
 <p>The <code>margin</code> defaults are tuned for charts with a right-side Y axis (which is the default for line charts). If you're building something custom or have a left-side axis, you may want to adjust <code>margin.left</code> and <code>margin.right</code>.</p>
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   height: 320,
   margin: { top: 8, right: 50, bottom: 16, left: 40 },
 })</code></pre>
@@ -511,26 +511,82 @@
 </table>
 <p>Pass a theme object to override colors, fonts, or sizing defaults. The full theme system is documented on the <a href="/charts/styles/">Styles</a> page.</p>
 <p>Quick example — apply the built-in dark theme:</p>
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   theme: RareCharts.darkTheme,
 }).setData(data);</code></pre>
 <p>Or override just the accent color:</p>
-<pre><code>new RareCharts.Line('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   theme: { accent: '#ff6200' },
 }).setData(data);</code></pre>
+<h2>Colors</h2>
+<p>Chart colors follow a clear resolution order. Understanding it tells you exactly where to set a color and how overrides interact.</p>
+<p>For each series, the chart resolves color in this order:</p>
+<ol>
+<li><code>color</code> on the individual series object — highest priority</li>
+<li><code>theme.colors[index]</code> — palette array, cycled by series position</li>
+<li><code>theme.accent</code> — single accent fallback</li>
+</ol>
+<p>To change the default color across all single-series charts, override <code>accent</code> in the theme. To define a full multi-series palette, override <code>theme.colors</code>.</p>
+<p>For multi-series charts, set <code>color</code> directly on each series in the data array:</p>
+<pre class="text-content-caption"><code>chart.setData([
+  { name: 'Revenue', color: '#00aaff', values: [...] },
+  { name: 'Costs',   color: '#ff6200', values: [...] },
+]);</code></pre>
+<p>For single-series Line charts, <code>lineColor</code> is a shortcut that avoids wrapping flat data in a series object:</p>
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
+  lineColor: '#00c97a',
+}).setData([{ date, value }, ...]);</code></pre>
+<p>Area fills inherit the series <code>color</code>. Their opacity is controlled separately via <code>areaOpacity</code> (default <code>0.12</code>). Bar fill opacity is <code>barOpacity</code> (default <code>0.35</code>). Both can be set as chart options or through the theme.</p>
+<h2>Axis labels</h2>
+<p>Y axis tick labels support two levels of customization.</p>
+<p><strong>Prefix and suffix</strong> (Line charts) attach a fixed string before or after each auto-formatted value:</p>
+<pre class="text-content-caption"><code>yPrefix: '$'    <span class="code-comment">// → $1.2M</span>
+ySuffix: '%'    <span class="code-comment">// → 12.5%</span></code></pre>
+<p><strong>Full format override</strong> replaces automatic formatting entirely and works on all chart types:</p>
+<pre class="text-content-caption"><code>yTickFormat: v => d3.format(',.0f')(v) + ' units'</code></pre>
+<p>DualAxes has independent formatters for each axis — no prefix/suffix shortcuts, use <code>y1TickFormat</code> / <code>y2TickFormat</code> directly:</p>
+<pre class="text-content-caption"><code>y1TickFormat: v => '$' + d3.format(',.2f')(v),
+y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
+<p>When <code>yTickFormat</code> is provided, <code>yPrefix</code>, <code>ySuffix</code>, and <code>yFormat</code> are all ignored — the format function takes full ownership.</p>
+<h2>Crosshair and tooltip</h2>
+<p>The crosshair is a vertical tracker that follows the cursor, snaps to the nearest data point on each series, and shows a tooltip. It is enabled by default on Line, TimeSeries, and DualAxes charts.</p>
+<p>To disable it entirely (removes both the tracker line and the tooltip):</p>
+<pre class="text-content-caption"><code>crosshair: false</code></pre>
+<h3>Custom tooltip</h3>
+<p><code>tooltipFormat</code> replaces the default tooltip with your own HTML:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ date, points }) => {
+  const d = d3.timeFormat('%b %d, %Y')(date);
+  return `&lt;div&gt;${d}&lt;/div&gt;` +
+    points.map(p =>
+      `&lt;div style="color:${p.color}"&gt;${p.name}: ${p.fmt}&lt;/div&gt;`
+    ).join('');
+}</code></pre>
+<p><code>points</code> is an array of <code>{ name, value, color, fmt }</code> — one entry per series. <code>fmt</code> is the value already run through <code>yTickFormat</code> (or the default formatter), so you don't need to reformat it yourself.</p>
+<h3>Tooltip styling</h3>
+<p>Tooltip colors and shadow are controlled through <code>theme.tooltip</code>:</p>
+<pre class="text-content-caption"><code>theme: {
+  tooltip: {
+    bg:     '#1a1a1a',
+    border: '#333333',
+    text:   '#e8e8e8',
+    muted:  '#888888',
+    shadow: '0 2px 12px rgba(0,0,0,0.5)',
+  }
+}</code></pre>
+<p>For structural changes (padding, border-radius, font size), target the <code>.rc-tooltip</code> CSS class directly. The crosshair line uses <code>.rc-cross-line</code>.</p>
 <h2>setData()</h2>
 <p>All charts expose a <code>setData(data)</code> method that accepts the chart-specific data format and triggers a render. You can call it multiple times — the chart will update in place without re-initializing.</p>
-<pre><code>const chart = new RareCharts.Bar('#chart', options);
+<pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', options);
 
 chart.setData(initialData);
 
-// Later — same chart, new data, no flicker
+<span class="code-comment">// Later — same chart, new data, no flicker</span>
 chart.setData(updatedData);</code></pre>
 <h2>destroy()</h2>
 <p>Cleans up the chart: disconnects the resize observer and clears the container. Call this when removing a chart from the page to avoid memory leaks.</p>
-<pre><code>chart.destroy();</code></pre>
+<pre class="text-content-caption"><code>chart.destroy();</code></pre>
 <h2>Complete example</h2>
-<pre><code>new RareCharts.Line('#revenue-chart', {
+<pre class="text-content-caption"><code>new RareCharts.Line('#revenue-chart', {
   title:          'Monthly Revenue',
   subtitle:       'USD, last 12 months',
   source:         'Source: Internal accounting',

@@ -6,4 +6,10 @@ displaySidebar: false
 permalink: '/examples/'
 ---
 
-{% include "special/construction-notice.njk" %}
+## Charts
+
+<div class="feed-list">
+    <div class="feed-list__item">
+        <a href="/examples/charts/btc-mining-analysis/">Analysing Bitcoin Mining Profit on Charts</a>
+    </div>
+</div>

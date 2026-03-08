@@ -44,7 +44,7 @@
       name:        'Revenue',
       axis:        'y1',
       type:        'line',
-      color:       '#f7931a',
+      color:       '#00aaff',
       strokeWidth: 1.5,
       values: data.map(r => ({ date: r.date, value: r.revenue })),
     },
@@ -53,7 +53,8 @@
       name:        'Electricity',
       axis:        'y1',
       type:        'line',
-      color:       '#ff4455',
+      area:         true,
+      color:       '#ff00f5',
       curve:       'stepAfter',
       strokeWidth: 3,
       values: data.map(r => ({ date: r.date, value: r.elec })),
@@ -62,18 +63,18 @@
 
   new RareCharts.DualAxes('#mining-net-profit', {
     height:   450,
-    title:    'Mining vs the Electric Bill',
-    subtitle: 'Feb–Dec 2025: revenue, electricity cost, and net daily profit',
-    source:   'Source: Mining pool daily summary export',
+    title:    'Mining vs the Electric Bills',
+    subtitle: 'Compounding revenue with electricity costs to find net profit/loss per day',
+    source:   'Source: Mining pool summary export, Electricity bills',
 
     legend: [
-      { label: 'Revenue',     color: '#f7931a' },
-      { label: 'Electricity', color: '#ff4455' },
+      { label: 'Electricity Cost', color: '#ff00f5' },
+      { label: 'Revenue',     color: '#00aaff' },
       { label: 'Gain',        color: '#00c97a', type: 'bar' },
       { label: 'Loss',        color: '#ff4455', type: 'bar' },
     ],
 
-    margin:        { left: 10 },
+    margin:        { left: 0 },
 
     curve:         'linear',
     crosshair:     true,

@@ -36,16 +36,21 @@ th:first-child {
 
 .table-terminal {
     font-family: var(--code-font);
-    text-align: center;
-}
 
-.table-terminal th {
-    text-align: center;
-}
+    th,
+    td {
+        text-align: center;
+    }
 
-.table-terminal td:last-child,
-.table-terminal th:last-child {
-    text-align: right;
+    th:first-child,
+    td:first-child {
+        text-align: left;
+    }
+
+    th:last-child,
+    td:last-child {
+        text-align: right;
+    }
 }
 
 .table-terminal tbody tr:hover,

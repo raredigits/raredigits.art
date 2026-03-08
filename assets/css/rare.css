@@ -17618,15 +17618,17 @@ th:first-child {
 
 .table-terminal {
   font-family: var(--code-font);
+}
+.table-terminal th,
+.table-terminal td {
   text-align: center;
 }
-
-.table-terminal th {
-  text-align: center;
+.table-terminal th:first-child,
+.table-terminal td:first-child {
+  text-align: left;
 }
-
-.table-terminal td:last-child,
-.table-terminal th:last-child {
+.table-terminal th:last-child,
+.table-terminal td:last-child {
   text-align: right;
 }
 

@@ -103,7 +103,7 @@ Or chain steps 2 and 3:
     </tr>
     <tr>
       <td><code>RareCharts.TimeSeries</code></td>
-      <td>OHLCV candlestick / price charts</td>
+      <td>Price time series with OHLCV data support</td>
     </tr>
     <tr>
       <td><code>RareCharts.Bar</code></td>

@@ -61,7 +61,7 @@
       },
       {
         name: 'Electricity Cost to Mine 1 BTC',
-        color: '#ff4d4d',
+        color: '#00aaff',
         strokeWidth: 2,
         values: costSeries
       }
@@ -72,14 +72,14 @@
       height: 450,
 
       title: 'Cost to Mine 1 BTC vs Market Price',
-      subtitle: 'Feb–Dec 2025 · electricity-only production cost',
+      subtitle: 'Electricity-only production cost',
 
       legend: [
-        { label: 'BTC Market Price', color: '#f7931a' },
-        { label: 'Electricity Cost to Mine 1 BTC', color: '#ff4d4d' }
+        { label: 'Electricity Cost to Mine 1 BTC', color: '#00aaff' },
+        { label: 'BTC Market Price', color: '#f7931a' }
       ],
 
-      source: 'Source: mining pool daily summary export',
+      source: 'Source: Mining pool summary export, Electricity bills',
 
       endLabels: false,
 

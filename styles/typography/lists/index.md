@@ -118,7 +118,11 @@ Tabular data forms a crucial part of business information presentation. Tables
             </tr>
             <tr>
                 <td><code>.table-small</code></td>
-                <td>Used for small tables</td>
+                <td>Used for small undecorated tables</td>
+            </tr>
+            <tr>
+                <td><code>.table-bordered </code></td>
+                <td>Bordered table</td>
             </tr>
         </table>
     </div>

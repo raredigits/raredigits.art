@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Import | Rare Digits Art</title>
+    <title>Analysing Bitcoin Mining Profit | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -60,7 +60,7 @@
         
         <li>
             <a href="/charts/"
-               class="current">
+               class="">
               Charts
             </a>
         </li>
@@ -74,7 +74,7 @@
         
         <li>
             <a href="/examples/"
-               class="">
+               class="current">
               Examples
             </a>
         </li>
@@ -266,271 +266,92 @@
 <main>
   <div class="content grid-global">
     
-      <aside class="sidebar">
-  
-    
-    
-      <h5 class="sidebar-header">
-          
-            <a href="/charts/">Charts</a>
-          
-      </h5>
-      <nav class="sidebar-nav no-scrollbar">
-        <ul>
-          
-            <li>
-              
-                <a href="/charts/line/">Line</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/bar/">Bar</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/dual-axes/">Dual Axes</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/combined/">Combined</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/circular/">Circular</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/graph/">Graph</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/installation/">Installation</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <span class="bold">Data Import</span>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/settings/">Settings</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/styles/">Styles</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/backlog/">Backlog</a>
-              
-              
-              
-              
-            </li>
-          
-        </ul>
-      </nav>
-    
-  
-</aside>
-    
     
   <section class="page-title">
-    <h1>Data Import</h1>
+    <h1>Analysing Bitcoin Mining Profit</h1>
   </section>
 
     <article>
-      <p>Every chart type accepts data via <code>setData ()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
-<h2>Direct data</h2>
-<p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
-<pre class="text-content-caption"><code>new RareCharts.Line('#chart', { height: 280 })
-  .setData([
-    { date: '2026-01-01', value: 142 },
-    { date: '2026-01-02', value: 159 },
-    { date: '2026-01-03', value: 151 },
-  ]);</code></pre>
-<p>Each chart type has its own data format — see the chart’s documentation page for the exact shape it expects.</p>
-<h2>Adapters</h2>
-<p>When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for <code>setData()</code>.</p>
-<p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> inside an async function or chain with <code>.then()</code>.</p>
-<p>The adapters are available as <code>RareCharts.fromJson</code>, <code>RareCharts.fromCsv</code>, <code>RareCharts.fromApi</code>, and <code>RareCharts.fromArray</code>.</p>
-<h2>Field mapping</h2>
-<p>Every adapter accepts a <code>mapping</code> object as its second argument. The mapping tells the adapter how to translate your source fields into the fields the chart expects.</p>
-<p>Each key in the mapping is the output field name. The value can be:</p>
-<ul>
-<li><strong>A function</strong> <code>row =&gt; value</code> — for transformations, type coercion, or computed fields</li>
-<li><strong>A string</strong> — a direct field name from the source row (simple rename, no transformation)</li>
-</ul>
-<div class="air-md"></div>
-<pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
-// Chart expects:         { date: Date, value: number }</span>
-
-const mapping = {
-  date:  row => new Date(row.ts),     // parse string to Date
-  value: row => +row.close,           // coerce string to number
-};</code></pre>
-<p>Rows where <code>date</code> is an invalid Date or <code>value</code> is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.</p>
-<h3>fromJson</h3>
-<p>Fetches a JSON file and applies a mapping.</p>
-<pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
-  date:  row => new Date(row.date),
-  value: row => +row.close,
-});
-
-chart.setData(data);</code></pre>
-<div class="sidenote-wrapper">
-  <div>
-    <p>The adapter handles three common JSON shapes automatically, without any configuration:</p>
-    <ul>
-      <li><strong>Array at root</strong> — <code>[{ ... }, { ... }]</code></li>
-      <li><strong>Data property</strong> — <code>{ data: [{ ... }] }</code></li>
-      <li><strong>Object of objects</strong> — <code>{ '2026-01': { ... }, '2026-02': { ... } }</code> (iterates values)</li>
-    </ul>
-    <p>For anything more exotic, use <code>fromApi</code> with a custom <code>transform</code> function.</p>
-  </div>
-  <div class="sidenote">
-    <p>Example: <a href="/examples/charts/btc-mining-analysis/">Analysing Bitcoin Mining Profit on Charts</a></p>
-  </div>
-</div>
-<h3>fromCsv</h3>
-<p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
-<pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
-  date:  row => new Date(row.month),
-  value: row => parseFloat(row.revenue_usd),
-});</code></pre>
-<p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
-<h3>fromApi</h3>
-<p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
-<p><strong>Basic usage:</strong></p>
-<pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
-  date:  row => new Date(row.timestamp),
-  value: row => row.count,
-});</code></pre>
-<p><strong>With authentication:</strong></p>
-<pre><code>const data = await RareCharts.fromApi(
-  'https://api.example.com/private/metrics',
-  { date: row => new Date(row.ts), value: row => row.val },
-  { headers: { 'Authorization': 'Bearer ' + token } }
-);</code></pre>
-<p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can’t handle:</p>
-<pre><code>const data = await RareCharts.fromApi(
-  'https://api.example.com/report',
-  { date: row => new Date(row.period), value: row => row.total },
-  {
-    transform: response => response.results.entries,
-  }
-);</code></pre>
-<p>In that case <code>transform</code> receives the raw parsed JSON and should return a plain array of row objects.</p>
-<p>If the HTTP response is not OK (4xx, 5xx), <code>fromApi</code> throws an error with the status code. Handle it if you need a graceful fallback:</p>
-<pre><code>try {
-  const data = await RareCharts.fromApi(url, mapping);
-  chart.setData(data);
-} catch (err) {
-  console.error('Failed to load chart data:', err.message);
+      <p>Bitcoin mining is sometimes described as a <em>clever way to buy Bitcoin at a discount</em>. The argument goes roughly like this: instead of purchasing BTC on the market, you run a machine that converts electricity into coins. There may be periods when mining looks barely profitable — or even unprofitable — but over a longer horizon the economics can still work out well.</p>
+<p>That idea sounds plausible. But it is also something we can test.</p>
+<p>Okay, let’s imagine we decide to start mining Bitcoin. The story sounds simple enough: you plug in a miner, it runs, and it makes money. What could possibly go wrong?</p>
+<p>Mining pools publish daily statistics for each worker. We receive daily stats in a simple JSON format:</p>
+<pre class="text-content-caption"><code>{
+  "date": "2025-02-01",
+  "hashrate_th": 235.219,
+  "profit_btc": 0.00013751,
+  "price_usd": 102039.29,
+  "profit_usd": 14.03
 }</code></pre>
-<h3>fromArray</h3>
-<p>For data that’s already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
-<pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
+<p>To a human, this is not particularly illuminating. A date, a hashrate, a handful of numbers. Repeat for three hundred days and you have a spreadsheet that tells you nothing at a glance.</p>
+<p>So let’s draw a chart instead.</p>
+<h2>Drawing the chart</h2>
+<p>The numbers we care about are revenue and price. One tells you what the miner earned; the other tells you why. To show both on the same timeline without one overwhelming the other, we use a <a href="/charts/combined/">combined</a> <code>DualAxes</code> chart — earnings on the left axis, BTC spot price on the right. Same dates, same source array, two scales.</p>
+<p>One <code>setData()</code> call and the mechanical feed becomes something you can actually read.</p>
+<div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+<p>The first thing the chart tells you is that the miner is losing ground. Not dramatically, but <strong>steadily</strong>. The gray bars track daily BTC output, and they slope downward for the entire year. From roughly 0.00013 BTC per day in February to around 0.00009 by December. The machine is doing the same work. The network is just getting more competitive, and the miner’s share of the reward keeps shrinking. This is not a bad week. This is physics.</p>
+<p>Dollar revenue, meanwhile, <em>mostly</em> tracks the BTC price — which is exactly what you’d expect. Bitcoin goes up, earnings go up. Bitcoin goes down, earnings go down. So far, so intuitive.</p>
+<p>Except <em>it’s not quite that clean</em>. Once the BTC price climbs past roughly $105k, something starts to slip. Revenue rises, but not as fast as the price. The two lines that were moving together <em>begin to drift apart</em>. The asset is appreciating. The miner’s cut of it is not keeping up.</p>
+<h2>Calculating the divergence</h2>
+<p>Divergence, in this context, is simple: BTC price goes up by X%, miner revenue goes up by less than X%. The gap between those two numbers is what network difficulty quietly takes off the table.</p>
+<p>To make it visible, we index both series to 100 on day one and let them run. Whatever distance opens up between the two lines is the structural drag — difficulty compounding in real time.</p>
+<details>
+<summary>How-to Index</summary>
+<p>The mechanics are straightforward. We apply a 7-day rolling average to smooth daily settlement noise, pin both series to their starting values, and divide everything through:</p>
+<pre><code class="language-js">const BASE_PRICE  = active[0].price_usd;
+const BASE_PROFIT = profitMA[0];
 
-const data = RareCharts.fromArray(raw, {
-  date:  row => new Date(row.ts),
-  value: row => row.val,
-});
-
-chart.setData(data);</code></pre>
-<p>This is useful when you’re pulling data from a state store, another library, or a function that returns a plain array — and the field names don’t match what the chart expects.</p>
-<h2>Live updates</h2>
-<p><code>setData ()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
-<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
-
-// Initial load
-const data = await RareCharts.fromApi(url, mapping);
-chart.setData(data);
-
-// Refresh every 30 seconds
-setInterval(async () => {
-  const fresh = await RareCharts.fromApi(url, mapping);
-  chart.setData(fresh);
-}, 30_000);</code></pre>
-<h2>Mapping reference</h2>
-<table>
-<thead>
-<tr>
-<th>Value type</th>
-<th>Behavior</th>
-<th>Example</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Function</td>
-<td>Called with each row, return value used</td>
-<td><code>row =&gt; new Date (row.ts)</code></td>
-</tr>
-<tr>
-<td>String</td>
-<td>Treated as a field name — <code>row[fieldName]</code></td>
-<td><code>'close_price'</code></td>
-</tr>
-</tbody>
-</table>
-<p>Invalid rows are filtered out automatically:</p>
-<ul>
-<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
-<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
-</ul>
+const priceIndex  = active.map(r =&gt; (r.price_usd  / BASE_PRICE)  * 100);
+const profitIndex = active.map((_, i) =&gt; (profitMA[i] / BASE_PROFIT) * 100);
+</code></pre>
+<p>The divergence series is just the difference between the two — how many index points of price appreciation the miner failed to capture. Then a single <code>.setData ()</code> call handles the rest.</p>
+</details>
+<div class="air-md"></div>
+<div class="card-dashboard-bordered card-caption" id="mining-index"></div>
+<p>The indexed chart makes the structure hard to ignore.</p>
+<p>BTC price and miner earnings start at the same point and <em>immediately</em> begin to separate. The price runs ahead; earnings follow, <em>but at a discount</em>. That discount is not random noise — it is network difficulty, converting every price rally into a slightly smaller reward for everyone still mining.</p>
+<p>The asymmetry is what matters. When Bitcoin rises, the miner participates, <strong>just less than you’d hope</strong>. When Bitcoin falls, the miner participates <em>fully</em>. Difficulty does not fall as fast as the price does.</p>
+<div class="highlight">Mining behaves a bit like a trade with capped upside and uncapped downside.</div>
+<p>Which is an <em>uncomfortable</em> thing to notice. But there’s a second problem we haven’t looked at yet.</p>
+<p>Everything above is revenue. <em>Revenue is not profit.</em> The machine runs on electricity, and electricity costs money regardless of what Bitcoin is doing. The real question isn’t how much the miner earns — it’s how much is left after
+the power bill arrives.</p>
+<h2>Adding a new dataset</h2>
+<p>To find out, we pull in one more variable: estimated daily electricity cost.</p>
+<pre><code><span class="code-comment">// Daily electricity cost by month ($/day, actual billed consumption)</span>
+const ELEC = {
+  2: 10.936,  3: 10.877,  4: 12.180,  5: 12.577,
+  6: 12.680,  7: 12.419,  8: 12.577,  9: 12.077,
+  10: 12.577, 11: 12.270, 12: 12.423,
+};</code></pre>
+<p>Plotted against revenue, it draws a fixed line across the chart, and everything below that line is loss.</p>
+<div class="card-dashboard-bordered card-caption" id="mining-net-profit"></div>
+<p>The pink line is electricity. It doesn’t care about Bitcoin.</p>
+<p>It just sits there — flat, occasionally stepped upward when the rate changes, and waits for the revenue line to clear it. For roughly half the year, the revenue line doesn’t bother.</p>
+<p>When it does, <strong>the margin is thin</strong>. On the best days the operation clears $1–2 on $13–14 in revenue — call it 10–15%. That is not a business; that is a savings account that requires a warehouse, a cooling system, and someone who knows what a terahash is. A <nobr>T-bill</nobr> would have been less work and paid about the same. A money market fund would have paid more. And nobody monitors a money market fund at 2am.</p>
+<p>From October onward, <em>even that stops</em>. The red bars widen, the green ones disappear, and the operation settles into a steady, metronomic loss. Not a blowup — just arithmetic. Fixed costs, declining revenue, no exit button.</p>
+<p>Which brings us back to the original premise.</p>
+<h2>What did one Bitcoin actually cost?</h2>
+<p>We started from the idea that mining could be perceived as buying Bitcoin at a discount. The idea being that you convert cheap electricity into coins rather than buying them at market price. It’s a reasonable theory. <em>Let’s check the receipts.</em></p>
+<p>For each day in the dataset we know two things: how much electricity the miner consumed, and how much Bitcoin it produced. Dividing one by the other gives the <em>implied acquisition cost</em> — the electricity price of one BTC.</p>
+<pre class="text-content-caption"><code>const costPerBTC = electricity / r.profit_btc;</code></pre>
+<p>Plotted against the market price, it answers a simple question: was the miner <em>actually</em> getting a discount?</p>
+<div class="card-dashboard-bordered card-caption" id="btc-mining-cost"></div>
+<p>In February, the orange line sits above the blue one. The market price of Bitcoin is higher than what it costs in electricity to produce it. This is the scenario the mining optimists describe: you’re buying Bitcoin at a discount, just via a <em>power outlet</em>, a 3,500-watt ASIC, and a willingness to receive your Bitcoin in daily increments of 0.00013. <strong>It’s real</strong>, and for a while it’s quite good.</p>
+<p>Then the lines converge. Then they cross.</p>
+<p>By autumn, the blue line — the electricity cost of one coin — is running persistently above the market price. The miner is no longer buying Bitcoin at a discount. <strong>The miner is buying Bitcoin at a premium</strong>, through a process that involves significant capital expenditure, industrial electricity consumption, and considerable optimism.</p>
+<p>Mining is sometimes a clever way to acquire Bitcoin below market price. But “sometimes” is doing <em>a lot of work</em> in that sentence. The window is real. It is also not guaranteed to be open when you arrive, and it has a tendency to close
+faster than the hardware depreciates.</p>
+<h2>Bottom line</h2>
+<p>None of this was meant to talk you out of Bitcoin mining. Maybe you have cheap electricity. Maybe you have better hardware. Maybe you have a very high tolerance for watching a gray line sit above an orange one for months at a time.</p>
+<p>The point was never the mining. The point was what happens when you stop reading a JSON feed and start looking at it.</p>
+<p>Four charts. One dataset. Each one asking a slightly different question — and each one returning an answer that the raw numbers wouldn’t give you in a decade of staring at them. That’s not analysis. That’s just visualization doing its job.</p>
+<p><a href="/charts/">RareCharts</a> is built for exactly this: taking the data you already have and turning it into something a room full of people can read in ten seconds and argue about for the next twenty minutes. Dashboards for the metrics that actually move your business. Signals that don’t require a data scientist to interpret. Charts that look good enough to put in a boardroom and honest enough to trust.</p>
+<p>The electricity bill was always there in the data. It just needed a line drawn through it.</p>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-hashrate-profit.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-index.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-hashrate-profit.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-index.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-net-profit.js"></script>
+<script src="/assets/charts/examples/line/btc-mining-cost.js"></script>
 
     </article>
   </div>
