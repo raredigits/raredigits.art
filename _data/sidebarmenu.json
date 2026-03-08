@@ -44,31 +44,31 @@
     "Charts": {
       "url": "/charts/",
       "items": [
-      { "title": "Line", "url": "/charts/line/" },
-      { "title": "Area", "url": "/charts/area/" },
+      { 
+          "title": "Line", 
+          "url": "/charts/line/",
+          "subitems": [
+            { "title": "Visual Options", "url": "/charts/line/visual-options/" },
+            { "title": "Time Series", "url": "/charts/line/time-series/" }
+          ]
+      },
       { "title": "Bar", "url": "/charts/bar/" },
-      { "title": "Pie", "url": "/charts/pie/" },
-      { "title": "Donut", "url": "/charts/donut/" },
-      { "title": "Radial", "url": "/charts/radial/" },
-      { "title": "Dots", "url": "/charts/dots/" },
-      { "title": "Graph", "url": "/charts/graph/" }
+      { "title": "Dual Axes", "url": "/charts/dual-axes/" },
+      { "title": "Combined", "url": "/charts/combined/" },
+      { "title": "Circular", "url": "/charts/circular/" },
+      { "title": "Graph", "url": "/charts/graph/" },
+      { "title": "Installation", "url": "/charts/installation/" },
+      { "title": "Data Import", "url": "/charts/data-import/" },
+      { "title": "Settings", "url": "/charts/settings/" },
+      { "title": "Styles", "url": "/charts/styles/" },
+      { "title": "Backlog", "url": "/charts/backlog/" }
       ]
     },
     "Scripts": {
       "url": "/scripts/",
       "items": [
       { "title": "Hamburger", "url": "/scripts/hamburger/" },
-      { "title": "Tabs", "url": "/scripts/tabs/" },
-      { "title": "Dropdown", "url": "/scripts/dropdown/" },
       { "title": "Collapsible", "url": "/scripts/collapsible/" },
-      { "title": "Switch", "url": "/scripts/switch/" },  
-      { "title": "Tooltip", "url": "/scripts/tooltip/" },
-      { "title": "Modal", "url": "/scripts/modal/" },
-      { "title": "Scroll", "url": "/scripts/scroll/" },
-      { "title": "Alert", "url": "/scripts/alert/" },
-      { "title": "Popover", "url": "/scripts/popover/" },
-      { "title": "Progress", "url": "/scripts/progress/" },
-      { "title": "Carousel", "url": "/scripts/carousel/" },
       { "title": "Search", "url": "/scripts/search/" },
       { "title": "Cookies", "url": "/scripts/cookies/" },
       { "title": "Copy", "url": "/scripts/copy-to-clipboard/" }

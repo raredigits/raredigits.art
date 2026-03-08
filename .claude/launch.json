@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "raredigits",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "eleventy-serve"],
+      "port": 8081
+    }
+  ]
+}

@@ -39,6 +39,7 @@ main {
 
     @include bp.mobile {
         grid-row: 2;
+        height: fit-content;
     }
 }
 

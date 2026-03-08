@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bar Charts | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Bar</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Bar Charts</h1>
+  </section>
+
+    <article>
+      <p>Bar charts are the simplest and most reliable way to compare things. If you have categories and numbers, and you want people to understand the difference between them without decoding a visual puzzle, you use bars. Revenue by month. Product sales. Survey answers. Demographics. Anything where the question is basically “how much?” or “which one is bigger?”</p>
+<p>The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="bar-chart-revenue"></div>
+</div>
+<p>Orientation and reading comfort</p>
+<p>The Bar chart supports two orientations: <code>vertical</code> (default) and <code>horizontal</code>. Vertical bars work well for short labels and compact comparisons. Horizontal bars are usually the better default when labels are long or when you want the chart to read like a ranked list.</p>
+<p>In horizontal mode, the category axis is on the left and values run along the bottom. In vertical mode, categories sit at the bottom and values are on the right, which matches how most business dashboards place numeric scales.</p>
+<div class="text-content-width">
+    <div id="bar-chart-coder-gender"></div>
+</div>
+<h3>Data format</h3>
+<p>Bar expects a simple dataset:</p>
+<pre class="text-content-caption"><code>[
+    { label: 'Sales', value: 128000 },
+    { label: 'Marketing', value: 76000 },
+    { label: 'R&D', value: 154000 }
+]</code></pre>
+<p>The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.</p>
+<h3>Long labels (without ruining the axis)</h3>
+<p>Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports <code>labelMaxLength</code>, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.</p>
+<p>This is one of those details you only miss when you do not have it.</p>
+<h3>Value formatting and units</h3>
+<p>In vertical mode, the Y axis uses <code>yTickFormat</code>. If you do not provide it, Bar falls back to a compact number formatter and supports <code>yPrefix</code> and <code>ySuffix</code> for units.</p>
+<p>In horizontal mode, the X axis uses <code>xTickFormat</code> (again, compact by default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”.</p>
+<p>Tooltips can be customized via <code>tooltipFormat (d) =&gt; html</code>, where <code>d</code> is <code>{ label, value }</code>. By default it shows the label and the value with comma formatting.</p>
+<h3>Showing values on bars (horizontal)</h3>
+<p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
+<p>This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.</p>
+<h3>Animation (if you must)</h3>
+<p>Bar can animate on first render (<code>animate: true</code> by default). The timing is controlled by duration, per-bar delay by stagger, and easing via <code>ease</code> (<code>cubicOut</code>, <code>cubicInOut</code>, or <code>linear</code>). The chart only animates once per instance by design, so it does not turn normal updates into a circus.</p>
+<h3>Quick example</h3>
+<pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
+  orientation: 'horizontal',
+  height: 260,
+  labelMaxLength: 18,
+  showValues: true,
+  valueFormat: d => d3.format(',.0f')(d.value),
+  xTickFormat: d => d3.format('.2s')(d),
+}).setData(data);</code></pre>
+<h2>Bar chart options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>200</code></td>
+            <td>Chart height in px. Width is always 100% of the container.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>
+                Inner padding <code>{top, right, bottom, left}</code>.<br>
+                Adjusts automatically by orientation — left is wider in horizontal mode, right is wider in vertical.
+            </td>
+        </tr>
+        <tr>
+            <td><code>orientation</code></td>
+            <td><code>'vertical'</code> | <code>'horizontal'</code></td>
+            <td><code>'vertical'</code></td>
+            <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Bar style</h5></td>
+        </tr>
+        <tr>
+            <td><code>barColor</code></td>
+            <td>CSS color</td>
+            <td>theme accent</td>
+            <td>Uniform fill color for all bars.</td>
+        </tr>
+        <tr>
+            <td><code>labelMaxLength</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>
+                Truncate axis labels to N characters and add an ellipsis.<br>
+                The full label is still shown in the tooltip on hover.
+            </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Animation</h5></td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Animate bars on first render. Plays only once per chart instance.</td>
+        </tr>
+        <tr>
+            <td><code>duration</code></td>
+            <td>number</td>
+            <td><code>500</code></td>
+            <td>Animation duration in ms.</td>
+        </tr>
+        <tr>
+            <td><code>stagger</code></td>
+            <td>number</td>
+            <td><code>0</code></td>
+            <td>Per-bar delay in ms — creates a staggered cascade effect.</td>
+        </tr>
+        <tr>
+            <td><code>ease</code></td>
+            <td>string</td>
+            <td><code>'cubicOut'</code></td>
+            <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Value labels (horizontal mode only)</h5></td>
+        </tr>
+        <tr>
+            <td><code>showValues</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Print numeric labels at bar ends.</td>
+        </tr>
+        <tr>
+            <td><code>valueFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>
+                <code>(d) =&gt; string</code> where <code>d</code> is <code>{label, value}</code>.<br>
+                Default: comma-formatted integer.
+            </td>
+        </tr>
+        <tr>
+            <td><code>valueOffset</code></td>
+            <td>number</td>
+            <td><code>6</code></td>
+            <td>Distance in px between the bar end and the label.</td>
+        </tr>
+        <tr>
+            <td><code>valueInsideGap</code></td>
+            <td>number</td>
+            <td><code>42</code></td>
+            <td>
+                When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
+            </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Axis formatting</h5></td>
+        </tr>
+        <tr>
+            <td><code>yTickFormat</code></td>
+            <td>function</td>
+            <td><code>.2s</code></td>
+            <td><code>(value) =&gt; string</code> — Y axis tick labels in vertical mode.</td>
+        </tr>
+        <tr>
+            <td><code>yPrefix</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Prefix for default Y labels in vertical mode (e.g. <code>'$'</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ySuffix</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Suffix for default Y labels in vertical mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTickFormat</code></td>
+            <td>function</td>
+            <td><code>.2s</code></td>
+            <td><code>(value) =&gt; string</code> — X axis tick labels in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTicks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Tick count in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td><code>xTickValues</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Explicit X tick positions in horizontal mode.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>
+                <code>(d) =&gt; html</code> where <code>d</code> is <code>{label, value}</code>.<br>
+                Default shows label and comma-formatted value.
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/bar/bar-chart-revenue.js"></script>
+<script src="/assets/charts/examples/bar/bar-chart-coder-gender.js"></script>
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

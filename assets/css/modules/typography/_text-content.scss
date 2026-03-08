@@ -170,11 +170,11 @@ pre {
     line-height: var(--line-height-sm);
     background-color: var(--gray-mid-light);
     color: var(--gray-dark);
-    padding: var(--space-md);
+    padding: var(--space-md) var(--space-lg);
     border-radius: var(--space-sm);
     overflow-x: auto;
     margin-bottom: 1em;
-    margin-left: calc(-1 * var(--space-md));
+    margin-left: calc(-1 * var(--space-lg));
     box-shadow: var(--inner-shadow-sm);
     scrollbar-width: none; 
     -ms-overflow-style: none;

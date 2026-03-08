@@ -54,7 +54,7 @@ Knowledge Base feed example:
     
 Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.
 
-<table class="table-striped">
+<table class="table-terminal table-striped">
     <tr>
         <th>Library</th>
         <th>Versatility</th>
@@ -118,7 +118,11 @@ Tabular data forms a crucial part of business information presentation. Tables
             </tr>
             <tr>
                 <td><code>.table-small</code></td>
-                <td>Used for small tables</td>
+                <td>Used for small undecorated tables</td>
+            </tr>
+            <tr>
+                <td><code>.table-bordered </code></td>
+                <td>Bordered table</td>
             </tr>
         </table>
     </div>
