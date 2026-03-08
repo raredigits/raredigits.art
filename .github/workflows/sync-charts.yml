@@ -38,6 +38,8 @@ jobs:
           cp assets/charts/rare-charts.js temp-rare-charts/rare-charts.js
           cp assets/charts/rare-charts.min.js temp-rare-charts/rare-charts.min.js
           cp -r assets/charts/examples temp-rare-charts/examples
+          cp assets/charts/README.md temp-rare-charts/README.md
+          cp assets/charts/LICENSE temp-rare-charts/LICENSE
 
       - name: Commit & Push to rare-charts
         run: |
