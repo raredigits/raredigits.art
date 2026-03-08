@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Charts | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Circular</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Circular Charts</h1>
+  </section>
+
+    <article>
+      <p>RareCharts provides three circular chart types that share a common API and theme system: <strong>Donut</strong>, <strong>Pie</strong>, and <strong>Gauge</strong>. Each answers a different question.</p>
+<h2>Donut</h2>
+<p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-donut"></div>
+</div>
+<div class="air-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  title:       'Revenue by Product',
+  source:      'Source: Internal accounting',
+  legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
+  height:      300,
+  centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
+  centerLabel: 'Revenue',
+}).setData(segments);</code></pre>
+<h3>Legend to the right</h3>
+<p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-donut-legend-right"></div>
+</div>
+<div class="air-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
+  legendPosition: 'right',
+  height:         340,
+}).setData(segments);</code></pre>
+<h2>Pie</h2>
+<p>A pie is a donut with <code>innerRadius: 0</code>. The class name is <code>Donut</code> — <code>Pie</code> is an alias. Same API, same options, same behavior.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="chart-pie"></div>
+</div>
+<p>A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.</p>
+<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
+  height:     300,
+  showLabels: true,
+}).setData(segments);</code></pre>
+<h3>Outer labels</h3>
+<p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically.</p>
+<p>Control what appears with <code>labelContent</code>:</p>
+<ul>
+<li><code>'both'</code> — category name + percentage (default)</li>
+<li><code>'label'</code> — category name only</li>
+<li><code>'percent'</code> — percentage only</li>
+</ul>
+<div class="air-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
+  showLabels:   true,
+  labelContent: 'percent',   <span class="code-comment">// just percentages</span>
+  labelMinPct:  0.05,        <span class="code-comment">// hide labels below 5%</span>
+}).setData(segments);</code></pre>
+<h2>Gauge</h2>
+<p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
+<div class="card-row-bordered card-caption">
+  <div class="card-row-bordered-item">
+    <div id="chart-gauge-progress"></div>
+  </div>
+  <div class="card-row-bordered-item">
+    <div id="chart-gauge-target"></div>
+  </div>
+  <div class="card-row-bordered-item">
+    <div id="chart-gauge-thin"></div>
+  </div>
+</div>
+<p><code>setData()</code> accepts a plain number, or an object to override <code>max</code> and <code>min</code> per render:</p>
+<pre class="text-content-caption"><code><span class="code-comment">// 73 out of 100 (default max)</span>
+new RareCharts.Gauge('#chart', {
+  centerLabel: 'Complete',
+}).setData(73);
+
+<span class="code-comment">// 50 achieved out of 80 plan — fills to 62.5%</span>
+new RareCharts.Gauge('#chart', {
+  max:         80,
+  color:       '#00c97a',
+  centerText:  (value, max) => `${value}/${max}`,
+  centerLabel: 'Achieved',
+}).setData(50);
+
+<span class="code-comment">// Override max at render time</span>
+gauge.setData({ value: 50, max: 80 });</code></pre>
+<p>The arc geometry is fully configurable:</p>
+<pre class="text-content-caption"><code>new RareCharts.Gauge('#chart', {
+  startAngle:   -Math.PI * 0.75,   <span class="code-comment">// -135° (default)</span>
+  endAngle:      Math.PI * 0.75,   <span class="code-comment">// +135° (default, 270° sweep)</span>
+  thickness:    0.18,              <span class="code-comment">// ring thickness as fraction of radius</span>
+  cornerRadius: 6,
+  trackColor:   '#e8e8e8',         <span class="code-comment">// background arc</span>
+  color:        '#ff3b5c',         <span class="code-comment">// fill arc</span>
+});</code></pre>
+<h2>Data format</h2>
+<p>All three types use the same segment data structure:</p>
+<pre class="text-content-caption"><code>[
+  { label: 'Subscriptions', value: 42000, color: '#00c97a' },
+  { label: 'Services',      value: 18000 },
+  { label: 'Other',         value:  6000 }
+]</code></pre>
+<p>Only positive finite values are rendered. Zero and negative values are filtered out.</p>
+<p>Colors can be provided per item. If omitted, the chart uses the active theme palette in order.</p>
+<h2>Slice geometry</h2>
+<p><code>padAngle</code> controls the gap between slices (a small default keeps separation without turning the chart into a flower). <code>cornerRadius</code> rounds slice corners. Both have sensible defaults and adjust slightly between Pie and Donut mode.</p>
+<p>Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ label, value, percent, color }) => `
+  &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
+  &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
+  &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
+`</code></pre>
+<h2>Circular charts options</h2>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="3"><h5>Donut / Pie</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td><code>280</code></td>
+            <td>Chart height px</td>
+        </tr>
+        <tr>
+            <td><code>innerRadius</code></td>
+            <td><code>0.58</code></td>
+            <td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
+        </tr>
+        <tr>
+            <td><code>padAngle</code></td>
+            <td><code>0.018</code></td>
+            <td>Gap between slices (radians)</td>
+        </tr>
+        <tr>
+            <td><code>cornerRadius</code></td>
+            <td><code>3</code></td>
+            <td>Rounded slice corners px</td>
+        </tr>
+        <tr>
+            <td><code>showLabels</code></td>
+            <td><code>false</code></td>
+            <td>Show outer leader-line labels</td>
+        </tr>
+        <tr>
+            <td><code>labelContent</code></td>
+            <td><code>'both'</code></td>
+            <td><code>'both'</code> / <code>'label'</code> / <code>'percent'</code></td>
+        </tr>
+        <tr>
+            <td><code>labelMinPct</code></td>
+            <td><code>0.04</code></td>
+            <td>Hide label when slice &lt; this fraction</td>
+        </tr>
+        <tr>
+            <td><code>legendPosition</code></td>
+            <td>—</td>
+            <td><code>'right'</code> to place legend in vertical aside</td>
+        </tr>
+        <tr>
+            <td><code>showCenter</code></td>
+            <td><code>true</code> (donut)</td>
+            <td>Show center text hole</td>
+        </tr>
+        <tr>
+            <td><code>centerText</code></td>
+            <td>formatted total</td>
+            <td>String or <code>function(data) =&gt; string</code></td>
+        </tr>
+        <tr>
+            <td><code>centerLabel</code></td>
+            <td><code>'Total'</code></td>
+            <td>Secondary line below center text</td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td><code>true</code></td>
+            <td>Animate on first render</td>
+        </tr>
+        <tr>
+            <td><code>duration</code></td>
+            <td><code>650</code></td>
+            <td>Animation duration ms</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>built-in</td>
+            <td><code>function({label, value, percent, color}) =&gt; html</code></td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="3"><h5>Gauge</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td><code>220</code></td>
+            <td>Chart height px</td>
+        </tr>
+        <tr>
+            <td><code>min</code></td>
+            <td><code>0</code></td>
+            <td>Minimum value</td>
+        </tr>
+        <tr>
+            <td><code>max</code></td>
+            <td><code>100</code></td>
+            <td>Maximum value</td>
+        </tr>
+        <tr>
+            <td><code>startAngle</code></td>
+            <td><code>-¾π</code></td>
+            <td>Arc start (radians, clockwise from top)</td>
+        </tr>
+        <tr>
+            <td><code>endAngle</code></td>
+            <td><code>+¾π</code></td>
+            <td>Arc end (270° sweep by default)</td>
+        </tr>
+        <tr>
+            <td><code>thickness</code></td>
+            <td><code>0.18</code></td>
+            <td>Ring thickness as fraction of outer radius</td>
+        </tr>
+        <tr>
+            <td><code>cornerRadius</code></td>
+            <td><code>6</code></td>
+            <td>Arc end rounding px</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td><code>theme.accent</code></td>
+            <td>Fill arc color</td>
+        </tr>
+        <tr>
+            <td><code>trackColor</code></td>
+            <td><code>theme.grid</code></td>
+            <td>Background arc color</td>
+        </tr>
+        <tr>
+            <td><code>showCenter</code></td>
+            <td><code>true</code></td>
+            <td>Show center text</td>
+        </tr>
+        <tr>
+            <td><code>centerText</code></td>
+            <td><code>'63%'</code></td>
+            <td>String or <code>function(value, max, min) =&gt; string</code></td>
+        </tr>
+        <tr>
+            <td><code>centerLabel</code></td>
+            <td>—</td>
+            <td>Secondary line below center text</td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td><code>true</code></td>
+            <td>Animate fill on first render</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>built-in</td>
+            <td><code>function({value, max, min, percent}) =&gt; html</code></td>
+        </tr>
+    </tbody>
+</table>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

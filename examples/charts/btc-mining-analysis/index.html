@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysing Bitcoin Mining Profit | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="current">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+    
+  <section class="page-title">
+    <h1>Analysing Bitcoin Mining Profit</h1>
+  </section>
+
+    <article>
+      <p>Bitcoin mining is sometimes described as a <em>clever way to buy Bitcoin at a discount</em>. The argument goes roughly like this: instead of purchasing BTC on the market, you run a machine that converts electricity into coins. There may be periods when mining looks barely profitable — or even unprofitable — but over a longer horizon the economics can still work out well.</p>
+<p>That idea sounds plausible. But it is also something we can test.</p>
+<p>Okay, let’s imagine we decide to start mining Bitcoin. The story sounds simple enough: you plug in a miner, it runs, and it makes money. What could possibly go wrong?</p>
+<p>Mining pools publish daily statistics for each worker. We receive daily stats in a simple JSON format:</p>
+<pre class="text-content-caption"><code>{
+  "date": "2025-02-01",
+  "hashrate_th": 235.219,
+  "profit_btc": 0.00013751,
+  "price_usd": 102039.29,
+  "profit_usd": 14.03
+}</code></pre>
+<p>To a human, this is not particularly illuminating. A date, a hashrate, a handful of numbers. Repeat for three hundred days and you have a spreadsheet that tells you nothing at a glance.</p>
+<p>So let’s draw a chart instead.</p>
+<h2>Drawing the chart</h2>
+<p>The numbers we care about are revenue and price. One tells you what the miner earned; the other tells you why. To show both on the same timeline without one overwhelming the other, we use a <a href="/charts/combined/">combined</a> <code>DualAxes</code> chart — earnings on the left axis, BTC spot price on the right. Same dates, same source array, two scales.</p>
+<p>One <code>setData()</code> call and the mechanical feed becomes something you can actually read.</p>
+<div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+<p>The first thing the chart tells you is that the miner is losing ground. Not dramatically, but <strong>steadily</strong>. The gray bars track daily BTC output, and they slope downward for the entire year. From roughly 0.00013 BTC per day in February to around 0.00009 by December. The machine is doing the same work. The network is just getting more competitive, and the miner’s share of the reward keeps shrinking. This is not a bad week. This is physics.</p>
+<p>Dollar revenue, meanwhile, <em>mostly</em> tracks the BTC price — which is exactly what you’d expect. Bitcoin goes up, earnings go up. Bitcoin goes down, earnings go down. So far, so intuitive.</p>
+<p>Except <em>it’s not quite that clean</em>. Once the BTC price climbs past roughly $105k, something starts to slip. Revenue rises, but not as fast as the price. The two lines that were moving together <em>begin to drift apart</em>. The asset is appreciating. The miner’s cut of it is not keeping up.</p>
+<h2>Calculating the divergence</h2>
+<p>Divergence, in this context, is simple: BTC price goes up by X%, miner revenue goes up by less than X%. The gap between those two numbers is what network difficulty quietly takes off the table.</p>
+<p>To make it visible, we index both series to 100 on day one and let them run. Whatever distance opens up between the two lines is the structural drag — difficulty compounding in real time.</p>
+<details>
+<summary>How-to Index</summary>
+<p>The mechanics are straightforward. We apply a 7-day rolling average to smooth daily settlement noise, pin both series to their starting values, and divide everything through:</p>
+<pre><code class="language-js">const BASE_PRICE  = active[0].price_usd;
+const BASE_PROFIT = profitMA[0];
+
+const priceIndex  = active.map(r =&gt; (r.price_usd  / BASE_PRICE)  * 100);
+const profitIndex = active.map((_, i) =&gt; (profitMA[i] / BASE_PROFIT) * 100);
+</code></pre>
+<p>The divergence series is just the difference between the two — how many index points of price appreciation the miner failed to capture. Then a single <code>.setData ()</code> call handles the rest.</p>
+</details>
+<div class="air-md"></div>
+<div class="card-dashboard-bordered card-caption" id="mining-index"></div>
+<p>The indexed chart makes the structure hard to ignore.</p>
+<p>BTC price and miner earnings start at the same point and <em>immediately</em> begin to separate. The price runs ahead; earnings follow, <em>but at a discount</em>. That discount is not random noise — it is network difficulty, converting every price rally into a slightly smaller reward for everyone still mining.</p>
+<p>The asymmetry is what matters. When Bitcoin rises, the miner participates, <strong>just less than you’d hope</strong>. When Bitcoin falls, the miner participates <em>fully</em>. Difficulty does not fall as fast as the price does.</p>
+<div class="highlight">Mining behaves a bit like a trade with capped upside and uncapped downside.</div>
+<p>Which is an <em>uncomfortable</em> thing to notice. But there’s a second problem we haven’t looked at yet.</p>
+<p>Everything above is revenue. <em>Revenue is not profit.</em> The machine runs on electricity, and electricity costs money regardless of what Bitcoin is doing. The real question isn’t how much the miner earns — it’s how much is left after
+the power bill arrives.</p>
+<h2>Adding a new dataset</h2>
+<p>To find out, we pull in one more variable: estimated daily electricity cost.</p>
+<pre><code><span class="code-comment">// Daily electricity cost by month ($/day, actual billed consumption)</span>
+const ELEC = {
+  2: 10.936,  3: 10.877,  4: 12.180,  5: 12.577,
+  6: 12.680,  7: 12.419,  8: 12.577,  9: 12.077,
+  10: 12.577, 11: 12.270, 12: 12.423,
+};</code></pre>
+<p>Plotted against revenue, it draws a fixed line across the chart, and everything below that line is loss.</p>
+<div class="card-dashboard-bordered card-caption" id="mining-net-profit"></div>
+<p>The pink line is electricity. It doesn’t care about Bitcoin.</p>
+<p>It just sits there — flat, occasionally stepped upward when the rate changes, and waits for the revenue line to clear it. For roughly half the year, the revenue line doesn’t bother.</p>
+<p>When it does, <strong>the margin is thin</strong>. On the best days the operation clears $1–2 on $13–14 in revenue — call it 10–15%. That is not a business; that is a savings account that requires a warehouse, a cooling system, and someone who knows what a terahash is. A <nobr>T-bill</nobr> would have been less work and paid about the same. A money market fund would have paid more. And nobody monitors a money market fund at 2am.</p>
+<p>From October onward, <em>even that stops</em>. The red bars widen, the green ones disappear, and the operation settles into a steady, metronomic loss. Not a blowup — just arithmetic. Fixed costs, declining revenue, no exit button.</p>
+<p>Which brings us back to the original premise.</p>
+<h2>What did one Bitcoin actually cost?</h2>
+<p>We started from the idea that mining could be perceived as buying Bitcoin at a discount. The idea being that you convert cheap electricity into coins rather than buying them at market price. It’s a reasonable theory. <em>Let’s check the receipts.</em></p>
+<p>For each day in the dataset we know two things: how much electricity the miner consumed, and how much Bitcoin it produced. Dividing one by the other gives the <em>implied acquisition cost</em> — the electricity price of one BTC.</p>
+<pre class="text-content-caption"><code>const costPerBTC = electricity / r.profit_btc;</code></pre>
+<p>Plotted against the market price, it answers a simple question: was the miner <em>actually</em> getting a discount?</p>
+<div class="card-dashboard-bordered card-caption" id="btc-mining-cost"></div>
+<p>In February, the orange line sits above the blue one. The market price of Bitcoin is higher than what it costs in electricity to produce it. This is the scenario the mining optimists describe: you’re buying Bitcoin at a discount, just via a <em>power outlet</em>, a 3,500-watt ASIC, and a willingness to receive your Bitcoin in daily increments of 0.00013. <strong>It’s real</strong>, and for a while it’s quite good.</p>
+<p>Then the lines converge. Then they cross.</p>
+<p>By autumn, the blue line — the electricity cost of one coin — is running persistently above the market price. The miner is no longer buying Bitcoin at a discount. <strong>The miner is buying Bitcoin at a premium</strong>, through a process that involves significant capital expenditure, industrial electricity consumption, and considerable optimism.</p>
+<p>Mining is sometimes a clever way to acquire Bitcoin below market price. But “sometimes” is doing <em>a lot of work</em> in that sentence. The window is real. It is also not guaranteed to be open when you arrive, and it has a tendency to close
+faster than the hardware depreciates.</p>
+<h2>Bottom line</h2>
+<p>None of this was meant to talk you out of Bitcoin mining. Maybe you have cheap electricity. Maybe you have better hardware. Maybe you have a very high tolerance for watching a gray line sit above an orange one for months at a time.</p>
+<p>The point was never the mining. The point was what happens when you stop reading a JSON feed and start looking at it.</p>
+<p>Four charts. One dataset. Each one asking a slightly different question — and each one returning an answer that the raw numbers wouldn’t give you in a decade of staring at them. That’s not analysis. That’s just visualization doing its job.</p>
+<p><a href="/charts/">RareCharts</a> is built for exactly this: taking the data you already have and turning it into something a room full of people can read in ten seconds and argue about for the next twenty minutes. Dashboards for the metrics that actually move your business. Signals that don’t require a data scientist to interpret. Charts that look good enough to put in a boardroom and honest enough to trust.</p>
+<p>The electricity bill was always there in the data. It just needed a line drawn through it.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-hashrate-profit.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-index.js"></script>
+<script src="/assets/charts/examples/combined/btc-mining-net-profit.js"></script>
+<script src="/assets/charts/examples/line/btc-mining-cost.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

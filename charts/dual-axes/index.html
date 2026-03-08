@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dual Axes Charts | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Dual Axes</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Dual Axes Charts</h1>
+  </section>
+
+    <article>
+      <p>Sometimes you need to plot two things on the same timeline that simply do not belong to the same scale. Revenue and headcount. Inflation and GDP. Price and spread. If you force them onto one axis, one series becomes unreadable, and the chart turns into a polite lie.</p>
+<p>A dual-axis chart solves this by keeping a shared X axis (time) while providing two independent Y axes, so each metric is shown in its natural units. The goal is not to pretend the metrics are comparable. The goal is to compare when they move and how their dynamics relate.</p>
+<p>In RareCharts, <code>DualAxes</code> is exactly that: a time-based chart with two vertical scales.</p>
+<p>To illustrate a real-world use case, this example uses a finance-native story: a convergence (arbitrage) strategy based on the idea that two similar instruments that temporarily diverged in price will later converge again.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="dual-chart-ltcm-treasuries"></div>
+</div>
+<p>One concrete version of this story exists in government bonds, where a newly issued “on-the-run” Treasury can trade slightly richer than the previous “off-the-run” issue for a period of time. Traders may position for convergence by going long the cheaper issue and hedging the richer one, expecting the price gap to compress as the market normalizes.</p>
+<p>In the chart, the right axis (Y1) shows the price index of the two instruments over time. The left axis (Y2) shows the spread between them. Prices and spread are different categories, so they get different axes. The chart stays readable, and the relationship stays visible.</p>
+<h3>Axis behavior and formatting</h3>
+<p>Both axes are configured independently. You can set titles (<code>y1Title</code>, <code>y2Title</code>), control tick formatting (<code>y1TickFormat</code>, <code>y2TickFormat</code>), and, when needed, override the visible ranges (<code>y1Domain</code>, <code>y2Domain</code>) to keep the chart stable and comparable across screenshots, reports, or multiple panels.</p>
+<p>In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine.</p>
+<h3>Interaction</h3>
+<p>Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through <code>tooltipFormat ({ date, points })</code>, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.</p>
+<p>Dual-axis charts are often implemented as a hack: two scales, mismatched formatting, confusing labels, and tooltips that quietly mix units. This component exists to make the dual-axis case predictable, explicit, and safe for real reporting: independent scales, consistent structure, and controlled formatting.</p>
+<h2>Dual Axes chart options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>280</code></td>
+            <td>Chart height in px.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>
+                Inner padding <code>{top, right, bottom, left}</code>.<br>
+                Right defaults to <code>92</code>, left to <code>64</code> to give both axes room.
+            </td>
+        </tr>
+        <tr>
+            <td><code>xPad</code></td>
+            <td>number</td>
+            <td><code>8</code></td>
+            <td>Extra horizontal padding on both ends of the X scale.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4">
+                <h5>Right axis — Y1</h5>
+                <p>Y1 is drawn on the <strong>right</strong> side.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><code>y1Domain</code></td>
+            <td><code>[min, max]</code></td>
+            <td>auto</td>
+            <td>
+                Override the Y1 scale domain.<br>
+                Useful for keeping charts comparable across snapshots.
+            </td>
+        </tr>
+        <tr>
+            <td><code>y1Ticks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Tick count on Y1.</td>
+        </tr>
+        <tr>
+            <td><code>y1TickFormat</code></td>
+            <td>function</td>
+            <td><code>,.2f</code></td>
+            <td><code>(value) =&gt; string</code> — Y1 tick labels.</td>
+        </tr>
+        <tr>
+            <td><code>y1LabelsOnly</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show only tick labels; suppress the axis line.</td>
+        </tr>
+        <tr>
+            <td><code>y1Title</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>Axis title, rendered along the right edge.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4">
+                <h5>Left axis — Y2</h5>
+                <p>Y2 is drawn on the <strong>left</strong> side. Grid lines and the zero baseline are keyed to Y2.</p>
+            </td>
+        </tr>
+        <tr>
+            <td><code>y2Domain</code></td>
+            <td><code>[min, max]</code></td>
+            <td>auto</td>
+            <td>Override the Y2 scale domain.</td>
+        </tr>
+        <tr>
+            <td><code>y2Ticks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Tick count on Y2.</td>
+        </tr>
+        <tr>
+            <td><code>y2TickFormat</code></td>
+            <td>function</td>
+            <td><code>+.2f</code></td>
+            <td><code>(value) =&gt; string</code> — Y2 tick labels.</td>
+        </tr>
+        <tr>
+            <td><code>y2LabelsOnly</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show only tick labels; suppress the axis line.</td>
+        </tr>
+        <tr>
+            <td><code>y2Title</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>Axis title, rendered along the left edge.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>X axis</h5></td>
+        </tr>
+        <tr>
+            <td><code>xTickFormat</code></td>
+            <td>function</td>
+            <td><code>'%m/%d'</code></td>
+            <td><code>(date) =&gt; string</code> — X tick labels.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Lines</h5></td>
+        </tr>
+        <tr>
+            <td><code>curve</code></td>
+            <td>string</td>
+            <td><code>'linear'</code></td>
+            <td>D3 curve type for line series: <code>'linear'</code>, <code>'monotone'</code>, <code>'step'</code>, etc.</td>
+        </tr>
+        <tr>
+            <td><code>curveTension</code></td>
+            <td>number</td>
+            <td><code>0</code></td>
+            <td>Tension for the <code>'cardinal'</code> curve, <code>0</code>–<code>1</code>.</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>SVG <code>stroke-dasharray</code> applied to all line series globally.</td>
+        </tr>
+        <tr>
+            <td><code>area</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Fill area under line series.</td>
+        </tr>
+        <tr>
+            <td><code>areaOpacity</code></td>
+            <td>number</td>
+            <td><code>0.12</code></td>
+            <td>Area fill opacity.</td>
+        </tr>
+        <tr>
+            <td><code>areaBaseline</code></td>
+            <td><code>'zero'</code> | <code>'min'</code> | number</td>
+            <td><code>'zero'</code></td>
+            <td>Area baseline anchor.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Bars</h5></td>
+        </tr>
+        <tr>
+            <td><code>barOpacity</code></td>
+            <td>number</td>
+            <td><code>0.35</code></td>
+            <td>Bar fill opacity.</td>
+        </tr>
+        <tr>
+            <td><code>barWidthRatio</code></td>
+            <td>number</td>
+            <td><code>0.65</code></td>
+            <td>Bar width as a fraction of the time step width.</td>
+        </tr>
+        <tr>
+            <td><code>barGrouping</code></td>
+            <td><code>'overlap'</code> | <code>'cluster'</code></td>
+            <td><code>'overlap'</code></td>
+            <td>How multiple bar series are arranged. <code>'cluster'</code> places them side by side.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>End labels and markers</h5></td>
+        </tr>
+        <tr>
+            <td><code>endLabels</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show last-value labels at the right edge for line series.</td>
+        </tr>
+        <tr>
+            <td><code>endLabelsAxis</code></td>
+            <td><code>'y1'</code> | <code>'y2'</code></td>
+            <td><code>'y1'</code></td>
+            <td>Which axis to use when formatting end labels.</td>
+        </tr>
+        <tr>
+            <td><code>markers</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Point markers at each data sample on line series.</td>
+        </tr>
+        <tr>
+            <td><code>markerShape</code></td>
+            <td>string</td>
+            <td><code>'circle'</code></td>
+            <td>Marker shape: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>.</td>
+        </tr>
+        <tr>
+            <td><code>markerSize</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Marker radius in px.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>crosshair</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Vertical tracker with dots at data points and a tooltip on hover.</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>
+                <code>({ date, points }) =&gt; html</code> — where
+                <code>points</code> is <code>[{name, value, color, fmt}]</code>.
+            </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Animation</h5></td>
+        </tr>
+        <tr>
+            <td><code>animate</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Animate on first render.</td>
+        </tr>
+        <tr>
+            <td><code>duration</code></td>
+            <td>number</td>
+            <td><code>650</code></td>
+            <td>Animation duration in ms.</td>
+        </tr>
+        <tr>
+            <td><code>ease</code></td>
+            <td>string</td>
+            <td><code>'cubicOut'</code></td>
+            <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4">
+                <h5>Per-series fields</h5>
+                <p>Each object in the series array passed to <code>setData()</code>:</p>
+            </td>
+        </tr>
+        <tr>
+            <td><code>name</code></td>
+            <td>string</td>
+            <td><code>'Series N'</code></td>
+            <td>Series name — used in legend and tooltip.</td>
+        </tr>
+        <tr>
+            <td><code>axis</code></td>
+            <td><code>'y1'</code> | <code>'y2'</code></td>
+            <td><code>'y1'</code></td>
+            <td>Which Y axis to plot against.</td>
+        </tr>
+        <tr>
+            <td><code>type</code></td>
+            <td><code>'line'</code> | <code>'bar'</code></td>
+            <td><code>'line'</code></td>
+            <td>Rendering type for this series.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td>theme palette</td>
+            <td>Series color.</td>
+        </tr>
+        <tr>
+            <td><code>strokeWidth</code></td>
+            <td>number</td>
+            <td><code>2</code></td>
+            <td>Line thickness in px (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>SVG dash pattern for this series only.</td>
+        </tr>
+        <tr>
+            <td><code>curve</code></td>
+            <td>string</td>
+            <td>global <code>curve</code></td>
+            <td>Curve override for this series.</td>
+        </tr>
+        <tr>
+            <td><code>area</code></td>
+            <td>boolean</td>
+            <td>global <code>area</code></td>
+            <td>Fill area under this series.</td>
+        </tr>
+        <tr>
+            <td><code>areaOpacity</code></td>
+            <td>number</td>
+            <td>global <code>areaOpacity</code></td>
+            <td>Per-series area opacity.</td>
+        </tr>
+        <tr>
+            <td><code>areaBaseline</code></td>
+            <td>string | number</td>
+            <td>global <code>areaBaseline</code></td>
+            <td>Per-series area baseline.</td>
+        </tr>
+        <tr>
+            <td><code>values</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td><code>[{date, value}, ...]</code> — the data points.</td>
+        </tr>
+    </tbody>
+</table>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/dual-axes/dual-axes-chart-ltcm-treasuries.js"></script>
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

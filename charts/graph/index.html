@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph (Network) | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Graph</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Graph (Network)</h1>
+  </section>
+
+    <article>
+      <p>The Graph chart renders a force-directed network: nodes connected by typed links. Use it when the structure of relationships is the message — who is connected to whom, how tightly, and in what way.</p>
+<div id="knowledge-graph"></div>
+<h3>How it works</h3>
+<p>The layout is driven by a physics simulation (D3 force). Each node repels every other node, while links act like springs pulling connected nodes together. The simulation runs until it reaches equilibrium, then stops.</p>
+<p>A few extra forces keep things readable:</p>
+<ul>
+<li><strong>Collision</strong> prevents nodes from overlapping</li>
+<li><strong>Clustering</strong> softly pulls nodes of the same <code>group</code> toward a shared anchor point — same-group nodes naturally cluster without hard-locking the layout</li>
+<li><strong>Center</strong> keeps the graph from drifting off-screen</li>
+</ul>
+<p>Node size affects how hard it pushes: larger nodes repel stronger, so hubs naturally create space around themselves.</p>
+<h3>Nodes</h3>
+<p>Each node requires <code>id</code> and <code>label</code>. Everything else is optional:</p>
+<table class="table-bordered card-caption">
+  <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+  <tbody>
+    <tr>
+      <td><code>id</code></td>
+      <td>string</td>
+      <td>—</td>
+      <td>Unique identifier (required)</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td>string</td>
+      <td>—</td>
+      <td>Display name (required)</td>
+    </tr>
+    <tr>
+      <td><code>group</code></td>
+      <td>string</td>
+      <td><code>default</code></td>
+      <td>Affects node color and clustering</td>
+    </tr>
+    <tr>
+      <td><code>size</code></td>
+      <td>number</td>
+      <td><code>1</code></td>
+      <td>Radius multiplier, <code>0.6</code>–<code>3</code></td>
+    </tr>
+    <tr>
+      <td><code>color</code></td>
+      <td>string</td>
+      <td>group color</td>
+      <td>CSS color override</td>
+    </tr>
+    <tr>
+      <td><code>image</code></td>
+      <td>string</td>
+      <td>—</td>
+      <td>Avatar URL, rendered inside the circle</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Links</h3>
+<p>Each link requires <code>source</code> and <code>target</code> — either node id strings or node objects:</p>
+<table class="table-bordered card-caption">
+  <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+  <tbody>
+    <tr>
+      <td><code>source</code></td>
+      <td>string \| node</td>
+      <td>—</td>
+      <td>Source node id or object (required)</td>
+    </tr>
+    <tr>
+      <td><code>target</code></td>
+      <td>string \| node</td>
+      <td>—</td>
+      <td>Target node id or object (required)</td>
+    </tr>
+    <tr>
+      <td><code>type</code></td>
+      <td>string</td>
+      <td><code>'default'</code></td>
+      <td>Controls color, dash style, arrow, and legend label</td>
+    </tr>
+    <tr>
+      <td><code>label</code></td>
+      <td>string</td>
+      <td>—</td>
+      <td>Available in <code>tooltipFormat</code>, not rendered on the graph</td>
+    </tr>
+    <tr>
+      <td><code>strength</code></td>
+      <td>number</td>
+      <td><code>0.5</code></td>
+      <td><code>0</code>–<code>1</code>. Affects link distance and line thickness</td>
+    </tr>
+  </tbody>
+</table>
+<h3>Link types</h3>
+<p>The <code>type</code> field on a link is resolved against the <code>linkTypes</code> map you pass in. Each entry defines how that type looks:</p>
+<pre class="text-content-caption"><code>{
+  professional: { color: '#00aaff', dash: null, label: 'Professional' },
+  family:       { color: '#00c97a', dash: null, label: 'Family'       },
+}</code></pre>
+<ul>
+<li><code>color</code> — stroke color for the link line and arrow</li>
+<li><code>dash</code> — SVG <code>stroke-dasharray</code> string, or <code>null</code> for solid</li>
+<li><code>label</code> — text shown in the legend</li>
+</ul>
+<p>If a link type is not found in <code>linkTypes</code>, it falls back to <code>t.muted</code> (theme gray).</p>
+<h4>Built-in presets</h4>
+<p>Five presets are available via <code>RareCharts.linkPresets</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Preset</th>
+<th>Types</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>personal</code></td>
+<td>professional, family, friendship, investment, philanthropy, education</td>
+</tr>
+<tr>
+<td><code>knowledge</code></td>
+<td>partOf, causes, related, example, contradicts, prerequisite, extends</td>
+</tr>
+<tr>
+<td><code>org</code></td>
+<td>subsidiary, investment, board, partnership, acquisition, competitor</td>
+</tr>
+<tr>
+<td><code>tech</code></td>
+<td>depends, calls, dataFlow, inherits, optional</td>
+</tr>
+<tr>
+<td><code>causal</code></td>
+<td>causes, enables, blocks, correlates, weakens</td>
+</tr>
+</tbody>
+</table>
+<p>You can use a preset as-is or extend it:</p>
+<pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
+  linkTypes: {
+    ...RareCharts.linkPresets.knowledge,
+    contradicts: { color: '#ff3b5c', dash: '2,3', label: 'Contradicts' },
+  },
+})</code></pre>
+<div id="thiel-graph"></div>
+<h3>Options</h3>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>520</code></td>
+            <td>Container height in px</td>
+        </tr>
+        <tr>
+            <td><code>nodeRadius</code></td>
+            <td>number</td>
+            <td><code>22</code></td>
+            <td>Base node radius in px. Per-node <code>size</code> multiplies this</td>
+        </tr>
+        <tr>
+            <td><code>linkDistance</code></td>
+            <td>number</td>
+            <td><code>140</code></td>
+            <td>Base spring length in px. Longer = more breathing room</td>
+        </tr>
+        <tr>
+            <td><code>chargeStrength</code></td>
+            <td>number</td>
+            <td><code>-600</code></td>
+            <td>Repulsion force. More negative = nodes push further apart</td>
+        </tr>
+        <tr>
+            <td><code>focusOnClick</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>
+                Click a node to dim unrelated nodes and links.<br>
+                Click background to clear
+            </td>
+        </tr>
+        <tr>
+            <td><code>zoom</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>
+                Enable scroll-to-zoom and drag-to-pan.<br>
+                Double-click zoom is disabled
+            </td>
+        </tr>
+        <tr>
+            <td><code>linkTypes</code></td>
+            <td>object</td>
+            <td><code>{ default: … }</code></td>
+            <td>Type styling map or a preset</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ node, links }) =&gt; html</code> — custom tooltip renderer</td>
+        </tr>
+    </tbody>
+</table>
+<h3>Interaction</h3>
+<p><strong>Zoom and pan</strong> — scroll to zoom, drag the background to pan. Double-click zoom is intentionally disabled.</p>
+<p><strong>Node drag</strong> — drag any node to reposition it. The simulation briefly wakes up to relax the surrounding layout, then cools down again.</p>
+<p><strong>Focus on click</strong> — click a node to dim everything unrelated to it. Only that node, its direct neighbors, and the links between them stay visible. Click the background to reset.</p>
+<h3>Tooltip</h3>
+<p>The default tooltip groups connections by type and lists connected node names. Override it with <code>tooltipFormat</code>:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ node, links }) => `
+  &lt;strong&gt;${node.label}&lt;/strong&gt;
+  &lt;div&gt;${links.length} connections&lt;/div&gt;
+`</code></pre>
+<p><code>links</code> contains all links connected to the hovered node, with full source/target objects resolved by D3.</p>
+<h3>Minimal example</h3>
+<pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
+  height: 520,
+  linkTypes: RareCharts.linkPresets.personal,
+  chargeStrength: -600,
+  focusOnClick: true,
+  zoom: true,
+}).setData({ nodes, links });</code></pre>
+<h3>Notes</h3>
+<p>Force layout is not magic. If the data is chaotic, the graph will look chaotic. The fastest way to make a graph readable: meaningful groups, typed links, and filtered data (top N connections, or &quot;neighborhood of X&quot;). RareCharts gives you the structure and interaction — the dataset still has to deserve it.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/graph/graph-chart-knowledge.js"></script>
+<script src="/assets/charts/examples/graph/graph-chart-thiel.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

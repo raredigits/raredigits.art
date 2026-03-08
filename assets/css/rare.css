@@ -1324,6 +1324,7 @@ main {
 @media screen and (max-width: 768px) {
   .page-title {
     grid-row: 2;
+    height: fit-content;
   }
 }
 
@@ -17145,7 +17146,7 @@ ins {
   font-size: var(--font-size-sm);
   line-height: 1.4em;
   color: var(--text-color-light);
-  padding-top: var(--space-sm);
+  padding-top: var(--space-xs);
   position: relative;
 }
 .sidenote-wrapper .sidenote a {
@@ -17395,11 +17396,11 @@ pre {
   line-height: var(--line-height-sm);
   background-color: var(--gray-mid-light);
   color: var(--gray-dark);
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-radius: var(--space-sm);
   overflow-x: auto;
   margin-bottom: 1em;
-  margin-left: calc(-1 * var(--space-md));
+  margin-left: calc(-1 * var(--space-lg));
   box-shadow: var(--inner-shadow-sm);
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -17569,37 +17570,35 @@ pre code {
 }
 
 table {
-  display: block;
   min-width: 100%;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height);
   border-collapse: collapse;
   margin-bottom: var(--space-lg);
-  text-align: center;
   overflow-x: auto;
-  font-family: var(--code-font);
-  font-size: var(--font-size-sm);
 }
 
+thead,
 tbody {
-  display: table;
   width: 100%;
 }
 
-table td:first-child,
-table th:first-child {
+th {
   text-align: left;
-  padding-right: var(--space-sm);
+  vertical-align: bottom;
+  white-space: nowrap;
 }
 
-table td:last-child,
-table th:last-child {
-  text-align: right;
-  padding-left: var(--space-sm);
+th, td {
+  vertical-align: top;
+  padding: var(--space-xs) var(--space-sm);
 }
 
-table td:not(:first-child):not(:last-child),
-table th:not(:first-child):not(:last-child) {
-  text-align: center;
-  padding: 0 var(--space-sm);
+td:first-child,
+th:first-child {
+  text-align: left;
+  padding-left: 0;
+  padding-right: var(--space-md);
 }
 
 .table-striped tbody tr:nth-child(even) {
@@ -17607,11 +17606,18 @@ table th:not(:first-child):not(:last-child) {
 }
 
 .table-terminal {
-  line-height: var(--line-height);
+  font-family: var(--code-font);
 }
-
-.table-terminal td:last-child,
-.table-terminal th:last-child {
+.table-terminal th,
+.table-terminal td {
+  text-align: center;
+}
+.table-terminal th:first-child,
+.table-terminal td:first-child {
+  text-align: left;
+}
+.table-terminal th:last-child,
+.table-terminal td:last-child {
   text-align: right;
 }
 
@@ -17627,6 +17633,7 @@ table th:not(:first-child):not(:last-child) {
 
 .table-small td {
   vertical-align: top;
+  padding-top: 0;
   padding-bottom: var(--space-sm);
 }
 
@@ -17634,6 +17641,31 @@ table th:not(:first-child):not(:last-child) {
 .table-small th:last-child,
 .table-small td:last-child {
   text-align: left;
+}
+
+.table-bordered {
+  border: 1px solid var(--border-color);
+}
+.table-bordered thead {
+  background-color: var(--gray-mid-light);
+}
+.table-bordered th, .table-bordered td {
+  padding: var(--space-sm);
+}
+.table-bordered tr {
+  border-bottom: 1px solid var(--border-color);
+}
+.table-bordered tr:hover {
+  background-color: var(--gray-lightest);
+}
+.table-bordered .table-section {
+  border-bottom: none;
+}
+.table-bordered .table-section > td {
+  padding-bottom: var(--space-md);
+}
+.table-bordered .table-section p {
+  margin: 0;
 }
 
 :root {
@@ -18151,6 +18183,44 @@ section {
 
 .card-inverted a {
   color: var(--gray-light);
+}
+
+.card-dashboard-bordered {
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+
+.card-row-bordered {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+
+.card-row-bordered-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.card-row-bordered > .card-row-bordered-item:not(:last-child) {
+  border-right: 1px solid var(--border-color);
+}
+
+.card-caption {
+  margin-left: calc(var(--space-lg) * -1);
+  width: calc(100% + var(--space-lg));
+}
+@media screen and (max-width: 768px) {
+  .card-caption {
+    margin-left: calc(var(--space-sm) * -1);
+    width: calc(100% + var(--space-sm));
+  }
 }
 
 .relative {
@@ -18765,6 +18835,7 @@ button,
   display: block;
   width: fit-content;
   background: var(--bg-color-light);
+  color: var(--primary-color);
   border-radius: var(--space-lg);
   border: 1px solid var(--bg-color-light);
   text-decoration: none;
@@ -18773,7 +18844,6 @@ button,
 }
 button:hover,
 .button:hover {
-  color: var(--primary-color);
   background: var(--bg-color);
   border: 1px solid var(--primary-color);
 }
@@ -19153,11 +19223,12 @@ img {
 .collapsible-container {
   padding: var(--space-md) var(--space-lg);
   margin-left: calc(-1 * var(--space-lg));
+  border-radius: var(--space-sm);
 }
 @media screen and (max-width: 768px) {
   .collapsible-container {
-    margin-left: calc(-1 * var(--space-md));
-    margin-right: calc(-1 * var(--space-md));
+    margin-left: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--space-sm));
     padding: var(--space-md);
   }
 }
@@ -19180,16 +19251,31 @@ details summary {
   display: none;
   padding-top: var(--space-lg);
 }
+.collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
+  margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
+}
+@media screen and (max-width: 768px) {
+  .collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
+    margin-left: calc(-1 * var(--space-sm));
+  }
+}
+.collapsible-content > .card-dashboard-bordered {
+  padding: var(--space-md);
+}
 
 .collapsible-content .caption,
 .collapsible-content .highlight,
-.collapsible-content pre {
+.collapsible-content pre,
+.collapsible-content .text-content-caption,
+.collapsible-content .card-caption {
   margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
 }
 @media screen and (max-width: 768px) {
   .collapsible-content .caption,
   .collapsible-content .highlight,
-  .collapsible-content pre {
+  .collapsible-content pre,
+  .collapsible-content .text-content-caption,
+  .collapsible-content .card-caption {
     margin-left: calc(-1 * var(--space-sm));
   }
 }
