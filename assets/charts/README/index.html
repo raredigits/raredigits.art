@@ -1,0 +1,75 @@
+<h1>RareCharts</h1>
+<p>A lightweight D3-based charting library for professional data presentation. Built for financial reporting, KPI dashboards, and operational analytics — where numbers actually matter.</p>
+<h2>CDN</h2>
+<pre><code class="language-html">&lt;!-- Minified (recommended for production) --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;!-- Readable --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<p>Pin to a specific version to avoid unexpected updates:</p>
+<pre><code class="language-html">&lt;script src=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.0/rare-charts.min.js&quot;&gt;&lt;/script&gt;
+</code></pre>
+<h2>Quick start</h2>
+<pre><code class="language-html">&lt;div id=&quot;my-chart&quot;&gt;&lt;/div&gt;
+
+&lt;script src=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+  new RareCharts.Line('#my-chart', {
+    title:    'Revenue',
+    subtitle: 'USD, last 12 months',
+    height:   300,
+  }).setData([
+    { date: '2025-01-01', value: 1.2 },
+    { date: '2025-04-01', value: 0.8 },
+    { date: '2025-07-01', value: 1.5 },
+    { date: '2025-10-01', value: 2.1 },
+    { date: '2026-01-01', value: 2.8 },
+  ]);
+&lt;/script&gt;
+</code></pre>
+<h2>Chart types</h2>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RareCharts.Line</code></td>
+<td>Multi-series line chart with crosshair and tooltip</td>
+</tr>
+<tr>
+<td><code>RareCharts.TimeSeries</code></td>
+<td>Price time series with zoom, pan, and OHLCV data support</td>
+</tr>
+<tr>
+<td><code>RareCharts.Bar</code></td>
+<td>Vertical and horizontal bar charts</td>
+</tr>
+<tr>
+<td><code>RareCharts.DualAxes</code></td>
+<td>Two metrics on independent Y axes, supports bar + line overlay</td>
+</tr>
+<tr>
+<td><code>RareCharts.Donut</code></td>
+<td>Part-to-whole with center label</td>
+</tr>
+<tr>
+<td><code>RareCharts.Gauge</code></td>
+<td>Progress toward a target</td>
+</tr>
+<tr>
+<td><code>RareCharts.Graph</code></td>
+<td>Force-directed network visualization</td>
+</tr>
+</tbody>
+</table>
+<h2>Documentation</h2>
+<p>Full documentation, configuration reference, and live examples:
+<strong><a href="https://raredigits.art/charts/">raredigits.art/charts</a></strong></p>
+<h2>License</h2>
+<p>MIT — free to use in any project, including commercial. Attribution required.
+See <a href="LICENSE">LICENSE</a> for full terms.</p>
