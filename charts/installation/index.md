@@ -26,7 +26,7 @@ Copy `dist/rare-charts.js` wherever your project keeps static assets.
 
 For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.0/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 ## Where to put the script tag

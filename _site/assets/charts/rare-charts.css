@@ -7,7 +7,8 @@
 .rc-chart {
   display: flex;
   flex-direction: column;
-  position: relative; /* needed for absolute positioning of tooltip */
+  position: relative;
+  overflow: hidden;
 }
 
 .rc-chart > .rc-chart-header { order: 0; }

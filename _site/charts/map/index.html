@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-icons">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-icons icon-menu">menu</span>
+          <span class="material-icons icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-y">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/quality/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience is came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p> 
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                        <div class="list">
+                            <span class="list-title">Settings</span>
+                            <ul class="nav-list">
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Modules</span>
+                            <ul class="nav-list">
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Componets</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Layouts</span>
+                            <ul class="nav-list">
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Components</span>
+                            <ul class="nav-list">
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Decorations</span>
+                            <ul class="nav-list">
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="list">
+                            <span class="list-title">Usage</span>
+                            <ul class="nav-list">
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgtp.com">Ask GPT</a>
+                    <p class="font-size-xs">Actualy, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Map</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Map</h1>
+  </section>
+
+    <article>
+      <p>The Map chart renders geographic data as a choropleth or region-highlight map. In practice this usually means one simple thing: you have data tied to places and you want to show it on a map.</p>
+<p>Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="map-europe-visited"></div>
+</div>
+<p>Map charts combine two ingredients:</p>
+<ol>
+<li><strong>Geographic shapes</strong> — the borders of regions (<code>GeoJSON</code> or <code>TopoJSON</code>).</li>
+<li><strong>Value data</strong> — an array of items that match those regions by ID.</li>
+</ol>
+<p>The map provides the geometry; your data decides what gets highlighted.</p>
+<h2>Geographic data</h2>
+<p>Pass a URL to fetch, or an inline object — whichever fits your pipeline.</p>
+<pre class="text-content-caption"><code><span class="code-comment">// TopoJSON from a local file</span>
+new RareCharts.Map('#chart', {
+    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoObject: 'countries',  <span class="code-comment">// named object inside the topology</span>
+});
+
+<span class="code-comment">// GeoJSON fetched from a URL</span>
+new RareCharts.Map('#chart', {
+    geoUrl: '/data/europe.geojson',
+});
+
+<span class="code-comment">// Inline GeoJSON FeatureCollection</span>
+new RareCharts.Map('#chart', {
+    geoData: myFeatureCollection,
+});</code></pre>
+<p>RareCharts supports both <strong>GeoJSON</strong> and <strong>TopoJSON</strong>.</p>
+<p>In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.</p>
+<h2>Value data</h2>
+<p>Each item in the data array identifies a geographic feature and optionally carries a value and color:</p>
+<pre class="text-content-caption"><code>chart.setData([
+    { id: '250', label: 'France',  color: '#00aaff' },
+    { id: '276', label: 'Germany', color: '#00aaff' },
+    { id: '380', label: 'Italy',   value: 42 },
+]);</code></pre>
+<p>The <code>id</code> field must match either <code>feature.id</code> or a property inside <code>feature.properties</code>.</p>
+<p>For example:</p>
+<ul>
+<li><strong>world-atlas TopoJSON</strong> uses numeric ISO 3166-1 country codes as <code>feature.id</code></li>
+<li>other datasets often store identifiers inside <code>feature.properties</code></li>
+</ul>
+<p>If needed, use the <code>idField</code> option to tell the chart which property should be used.</p>
+<h2>Projections</h2>
+<p>RareCharts supports four projections:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'naturalEarth1'</code></td>
+<td>Default. Balanced projection suitable for most maps</td>
+</tr>
+<tr>
+<td><code>'mercator'</code></td>
+<td>Familiar web-map projection. Often used for regional maps</td>
+</tr>
+<tr>
+<td><code>'equalEarth'</code></td>
+<td>Equal-area projection. Useful when region size matters</td>
+</tr>
+<tr>
+<td><code>'orthographic'</code></td>
+<td>Globe view. Mostly for visual context</td>
+</tr>
+</tbody>
+</table>
+<p>The chart automatically fits the projection to the loaded features using <code>fitExtent</code>, so you normally do not need to set scale or center manually.</p>
+<h2>Coloring</h2>
+<p>Regions are colored in three ways, in order of priority:</p>
+<ol>
+<li><strong>Per-item <code>color</code></strong> — explicit CSS color on a data item.</li>
+<li><strong><code>matchFill</code></strong> — applied to matched regions without their own color.</li>
+<li><strong><code>defaultFill</code></strong> — applied to regions that have no matching data.</li>
+</ol>
+<p>For a simple highlight map (visited countries, market presence), a single <code>matchFill</code> is usually enough.</p>
+<p>For a choropleth map, you will typically compute colors yourself using a scale and pass them through the <code>color</code> field.</p>
+<p>Default colors used by the chart come from the RareCharts theme. They are defined in: <code>/src/core/theme.js</code>. The map section of the theme defines values such as <code>matchFill</code>, <code>unmatchedFill</code>, <code>border</code>, and hover behavior. In most cases it is better to adjust those defaults in the theme rather than overriding colors in every chart instance.</p>
+<h2>Tooltip</h2>
+<p>The default tooltip shows the region name and, if present, the <code>value</code>.</p>
+<p>If you need something more specific, override it:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ feature, item }) => `
+    &lt;strong&gt;${item?.label ?? feature.properties.name}&lt;/strong&gt;
+    &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
+`</code></pre>
+<p>The formatter receives both the raw <code>feature</code> and the matched <code>item</code>, so you can display whatever makes sense.</p>
+<h2>Map chart options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>400</code></td>
+            <td>Container height in px. Width is always 100% of the container.</td>
+        </tr>
+        <tr>
+            <td><code>fitPadding</code></td>
+            <td>number</td>
+            <td><code>20</code></td>
+            <td>Padding in px around the feature bounds when fitting the projection.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Geographic data</h5></td>
+        </tr>
+        <tr>
+            <td><code>geoUrl</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>URL of a GeoJSON FeatureCollection to fetch via <code>d3.json()</code>.</td>
+        </tr>
+        <tr>
+            <td><code>geoData</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>Inline GeoJSON FeatureCollection or single Feature.</td>
+        </tr>
+        <tr>
+            <td><code>topoUrl</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>URL of a TopoJSON topology to fetch.</td>
+        </tr>
+        <tr>
+            <td><code>topoData</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>Inline TopoJSON topology object.</td>
+        </tr>
+        <tr>
+            <td><code>topoObject</code></td>
+            <td>string</td>
+            <td>first object</td>
+            <td>
+                Named object inside the topology to extract.<br>
+                Defaults to the first key in <code>topology.objects</code>.
+            </td>
+        </tr>
+        <tr>
+            <td><code>idField</code></td>
+            <td>string</td>
+            <td><code>'id'</code></td>
+            <td>
+                Feature property used as ID when <code>feature.id</code> is absent.<br>
+                Falls back through <code>iso_a2</code>, <code>iso_a3</code>, <code>ISO_A2</code>, <code>ISO_A3</code> automatically.
+            </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Projection</h5></td>
+        </tr>
+        <tr>
+            <td><code>projection</code></td>
+            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code></td>
+            <td><code>'naturalEarth1'</code></td>
+            <td>D3 geo projection to use for rendering.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Colors</h5></td>
+        </tr>
+        <tr>
+            <td><code>defaultFill</code></td>
+            <td>CSS color</td>
+            <td><code>theme.surface</code></td>
+            <td>Fill for regions with no matching data item.</td>
+        </tr>
+        <tr>
+            <td><code>matchFill</code></td>
+            <td>CSS color</td>
+            <td><code>theme.accent</code></td>
+            <td>Fill for matched regions that have no explicit <code>color</code> field.</td>
+        </tr>
+        <tr>
+            <td><code>hoverFill</code></td>
+            <td>CSS color</td>
+            <td>auto</td>
+            <td>Fill on mouse-over. Defaults to a lighter version of <code>matchFill</code>.</td>
+        </tr>
+        <tr>
+            <td><code>oceanColor</code></td>
+            <td>CSS color</td>
+            <td><code>'transparent'</code></td>
+            <td>SVG background fill (the "ocean" behind land features).</td>
+        </tr>
+        <tr>
+            <td><code>borderColor</code></td>
+            <td>CSS color</td>
+            <td><code>theme.border</code></td>
+            <td>Stroke color for feature borders.</td>
+        </tr>
+        <tr>
+            <td><code>borderWidth</code></td>
+            <td>number</td>
+            <td><code>0.5</code></td>
+            <td>Border stroke-width in px.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>zoom</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Enable scroll-to-zoom and drag-to-pan. Scale range: 0.5×–8×.</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for matched regions.</td>
+        </tr>
+    </tbody>
+</table>
+<p><strong>Data fields</strong></p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td>string | number</td>
+            <td>Required. Must match <code>feature.id</code> or the resolved <code>idField</code> property.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td>Display name used in the tooltip. Falls back to <code>feature.properties.name</code>.</td>
+        </tr>
+        <tr>
+            <td><code>value</code></td>
+            <td>number</td>
+            <td>Optional numeric value. Shown in the default tooltip; available in <code>tooltipFormat</code>.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td>Explicit fill for this region. Overrides <code>matchFill</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<h3>Minimal example</h3>
+<pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
+    title:      'Market Presence',
+    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoObject: 'countries',
+    height:     400,
+    matchFill:  '#00aaff',
+    zoom:       true,
+}).setData([
+    { id: '840', label: 'United States' },
+    { id: '276', label: 'Germany'       },
+    { id: '392', label: 'Japan'         },
+]);</code></pre>
+<p>In practice the workflow is usually straightforward:</p>
+<ol>
+<li>Load a geographic file, usually TopoJSON.</li>
+<li>Match your data to regions by ID.</li>
+<li>Decide which regions should be highlighted.</li>
+<li>Leave the projection and fitting to the chart unless you have a specific reason not to.</li>
+</ol>
+<p>For most use cases, that is enough. The difficult part is rarely drawing the map itself. It is usually getting the region IDs to line up, finding a geography file that does not look terrible, and resisting the temptation to turn a simple highlight map into a geopolitical event.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/map/map-chart-europe-visited.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

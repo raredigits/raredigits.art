@@ -57,6 +57,7 @@
       { "title": "Combined", "url": "/charts/combined/" },
       { "title": "Circular", "url": "/charts/circular/" },
       { "title": "Graph", "url": "/charts/graph/" },
+      { "title": "Map", "url": "/charts/map/" },
       { "title": "Installation", "url": "/charts/installation/" },
       { "title": "Data Import", "url": "/charts/data-import/" },
       { "title": "Settings", "url": "/charts/settings/" },

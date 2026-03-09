@@ -7,6 +7,7 @@ on:
     paths:
       - 'assets/charts/src/**'
       - 'assets/charts/examples/**'
+      - 'assets/charts/data/**'
 
 jobs:
   sync:
@@ -35,9 +36,10 @@ jobs:
 
       - name: Copy built files and examples to rare-charts
         run: |
+          rsync -av --delete assets/charts/examples/ temp-rare-charts/examples/
+          rsync -av --delete assets/charts/data/ temp-rare-charts/data/
           cp assets/charts/rare-charts.js temp-rare-charts/rare-charts.js
           cp assets/charts/rare-charts.min.js temp-rare-charts/rare-charts.min.js
-          cp -r assets/charts/examples temp-rare-charts/examples
           cp assets/charts/README.md temp-rare-charts/README.md
           cp assets/charts/LICENSE temp-rare-charts/LICENSE
 
@@ -47,5 +49,5 @@ jobs:
           git config user.name "Rare Sync Bot"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Sync charts from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
+          git commit -m "Update charts from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
           git push origin main

@@ -27,6 +27,7 @@ export { Donut      } from './charts/Donut.js';
 export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut with innerRadius: 0
 export { Gauge      } from './charts/Gauge.js';
 export { Graph, linkPresets } from './charts/Graph.js';
+export { Map        } from './charts/Map.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
 export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
 
