@@ -26,6 +26,7 @@ var RareCharts = (() => {
     Gauge: () => Gauge,
     Graph: () => Graph,
     Line: () => Line,
+    Map: () => Map2,
     Overview: () => Overview,
     Pie: () => Donut,
     TimeSeries: () => TimeSeries,
@@ -42,7 +43,7 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative; /* needed for absolute positioning of tooltip */\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 1; }\n.rc-chart > svg              { order: 2; }\n.rc-chart > .rc-chart-footer { order: 3; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto;  /* header | chart | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }\n\n/* Aside spans all three rows in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 4;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-xs);\n  align-items: center;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
+  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 1; }\n.rc-chart > svg              { order: 2; }\n.rc-chart > .rc-chart-footer { order: 3; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto;  /* header | chart | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }\n\n/* Aside spans all three rows in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 4;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-xs);\n  align-items: center;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -7561,9 +7562,9 @@ var RareCharts = (() => {
     }).join(",") + "}");
   }
   function customConverter(columns, f) {
-    var object2 = objectConverter(columns);
+    var object3 = objectConverter(columns);
     return function(row, i) {
-      return f(object2(row), i, columns);
+      return f(object3(row), i, columns);
     };
   }
   function inferColumns(rows) {
@@ -7690,9 +7691,9 @@ var RareCharts = (() => {
   var tsvFormatValue = tsv.formatValue;
 
   // node_modules/d3-dsv/src/autoType.js
-  function autoType(object2) {
-    for (var key in object2) {
-      var value = object2[key].trim(), number5, m3;
+  function autoType(object3) {
+    for (var key in object3) {
+      var value = object3[key].trim(), number5, m3;
       if (!value) value = null;
       else if (value === "true") value = true;
       else if (value === "false") value = false;
@@ -7702,9 +7703,9 @@ var RareCharts = (() => {
         if (fixtz && !!m3[4] && !m3[7]) value = value.replace(/-/g, "/").replace(/T/, " ");
         value = new Date(value);
       } else continue;
-      object2[key] = value;
+      object3[key] = value;
     }
-    return object2;
+    return object3;
   }
   var fixtz = (/* @__PURE__ */ new Date("2019-01-01T00:00")).getHours() || (/* @__PURE__ */ new Date("2019-07-01T00:00")).getHours();
 
@@ -8862,42 +8863,42 @@ var RareCharts = (() => {
     }
   }
   var streamObjectType = {
-    Feature: function(object2, stream) {
-      streamGeometry(object2.geometry, stream);
+    Feature: function(object3, stream) {
+      streamGeometry(object3.geometry, stream);
     },
-    FeatureCollection: function(object2, stream) {
-      var features = object2.features, i = -1, n = features.length;
+    FeatureCollection: function(object3, stream) {
+      var features = object3.features, i = -1, n = features.length;
       while (++i < n) streamGeometry(features[i].geometry, stream);
     }
   };
   var streamGeometryType = {
-    Sphere: function(object2, stream) {
+    Sphere: function(object3, stream) {
       stream.sphere();
     },
-    Point: function(object2, stream) {
-      object2 = object2.coordinates;
-      stream.point(object2[0], object2[1], object2[2]);
+    Point: function(object3, stream) {
+      object3 = object3.coordinates;
+      stream.point(object3[0], object3[1], object3[2]);
     },
-    MultiPoint: function(object2, stream) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
-      while (++i < n) object2 = coordinates2[i], stream.point(object2[0], object2[1], object2[2]);
+    MultiPoint: function(object3, stream) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
+      while (++i < n) object3 = coordinates2[i], stream.point(object3[0], object3[1], object3[2]);
     },
-    LineString: function(object2, stream) {
-      streamLine(object2.coordinates, stream, 0);
+    LineString: function(object3, stream) {
+      streamLine(object3.coordinates, stream, 0);
     },
-    MultiLineString: function(object2, stream) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
+    MultiLineString: function(object3, stream) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
       while (++i < n) streamLine(coordinates2[i], stream, 0);
     },
-    Polygon: function(object2, stream) {
-      streamPolygon(object2.coordinates, stream);
+    Polygon: function(object3, stream) {
+      streamPolygon(object3.coordinates, stream);
     },
-    MultiPolygon: function(object2, stream) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
+    MultiPolygon: function(object3, stream) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
       while (++i < n) streamPolygon(coordinates2[i], stream);
     },
-    GeometryCollection: function(object2, stream) {
-      var geometries = object2.geometries, i = -1, n = geometries.length;
+    GeometryCollection: function(object3, stream) {
+      var geometries = object3.geometries, i = -1, n = geometries.length;
       while (++i < n) streamGeometry(geometries[i], stream);
     }
   };
@@ -8913,11 +8914,11 @@ var RareCharts = (() => {
     while (++i < n) streamLine(coordinates2[i], stream, 1);
     stream.polygonEnd();
   }
-  function stream_default(object2, stream) {
-    if (object2 && streamObjectType.hasOwnProperty(object2.type)) {
-      streamObjectType[object2.type](object2, stream);
+  function stream_default(object3, stream) {
+    if (object3 && streamObjectType.hasOwnProperty(object3.type)) {
+      streamObjectType[object3.type](object3, stream);
     } else {
-      streamGeometry(object2, stream);
+      streamGeometry(object3, stream);
     }
   }
 
@@ -8966,9 +8967,9 @@ var RareCharts = (() => {
     areaRingSum.add(atan2(v2, u4));
     lambda0 = lambda, cosPhi0 = cosPhi, sinPhi0 = sinPhi;
   }
-  function area_default2(object2) {
+  function area_default2(object3) {
     areaSum = new Adder();
-    stream_default(object2, areaStream);
+    stream_default(object3, areaStream);
     return areaSum * 2;
   }
 
@@ -9118,11 +9119,11 @@ var RareCharts = (() => {
   function rangeContains(range4, x4) {
     return range4[0] <= range4[1] ? range4[0] <= x4 && x4 <= range4[1] : x4 < range4[0] || range4[1] < x4;
   }
-  function bounds_default(feature) {
+  function bounds_default(feature2) {
     var i, n, a4, b, merged, deltaMax, delta;
     phi1 = lambda1 = -(lambda02 = phi0 = Infinity);
     ranges = [];
-    stream_default(feature, boundsStream);
+    stream_default(feature2, boundsStream);
     if (n = ranges.length) {
       ranges.sort(rangeCompare);
       for (i = 1, a4 = ranges[0], merged = [a4]; i < n; ++i) {
@@ -9238,12 +9239,12 @@ var RareCharts = (() => {
     Z1 += w * (z0 + (z0 = z));
     centroidPointCartesian(x0, y0, z0);
   }
-  function centroid_default(object2) {
+  function centroid_default(object3) {
     W0 = W1 = X0 = Y0 = Z0 = X1 = Y1 = Z1 = 0;
     X2 = new Adder();
     Y2 = new Adder();
     Z2 = new Adder();
-    stream_default(object2, centroidStream);
+    stream_default(object3, centroidStream);
     var x4 = +X2, y4 = +Y2, z = +Z2, m3 = hypot(x4, y4, z);
     if (m3 < epsilon22) {
       x4 = X1, y4 = Y1, z = Z1;
@@ -9998,9 +9999,9 @@ var RareCharts = (() => {
     lengthSum.add(atan2(sqrt(x4 * x4 + y4 * y4), z));
     lambda03 = lambda, sinPhi02 = sinPhi, cosPhi02 = cosPhi;
   }
-  function length_default(object2) {
+  function length_default(object3) {
     lengthSum = new Adder();
-    stream_default(object2, lengthStream);
+    stream_default(object3, lengthStream);
     return +lengthSum;
   }
 
@@ -10015,11 +10016,11 @@ var RareCharts = (() => {
 
   // node_modules/d3-geo/src/contains.js
   var containsObjectType = {
-    Feature: function(object2, point6) {
-      return containsGeometry(object2.geometry, point6);
+    Feature: function(object3, point6) {
+      return containsGeometry(object3.geometry, point6);
     },
-    FeatureCollection: function(object2, point6) {
-      var features = object2.features, i = -1, n = features.length;
+    FeatureCollection: function(object3, point6) {
+      var features = object3.features, i = -1, n = features.length;
       while (++i < n) if (containsGeometry(features[i].geometry, point6)) return true;
       return false;
     }
@@ -10028,32 +10029,32 @@ var RareCharts = (() => {
     Sphere: function() {
       return true;
     },
-    Point: function(object2, point6) {
-      return containsPoint(object2.coordinates, point6);
+    Point: function(object3, point6) {
+      return containsPoint(object3.coordinates, point6);
     },
-    MultiPoint: function(object2, point6) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
+    MultiPoint: function(object3, point6) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
       while (++i < n) if (containsPoint(coordinates2[i], point6)) return true;
       return false;
     },
-    LineString: function(object2, point6) {
-      return containsLine(object2.coordinates, point6);
+    LineString: function(object3, point6) {
+      return containsLine(object3.coordinates, point6);
     },
-    MultiLineString: function(object2, point6) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
+    MultiLineString: function(object3, point6) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
       while (++i < n) if (containsLine(coordinates2[i], point6)) return true;
       return false;
     },
-    Polygon: function(object2, point6) {
-      return containsPolygon(object2.coordinates, point6);
+    Polygon: function(object3, point6) {
+      return containsPolygon(object3.coordinates, point6);
     },
-    MultiPolygon: function(object2, point6) {
-      var coordinates2 = object2.coordinates, i = -1, n = coordinates2.length;
+    MultiPolygon: function(object3, point6) {
+      var coordinates2 = object3.coordinates, i = -1, n = coordinates2.length;
       while (++i < n) if (containsPolygon(coordinates2[i], point6)) return true;
       return false;
     },
-    GeometryCollection: function(object2, point6) {
-      var geometries = object2.geometries, i = -1, n = geometries.length;
+    GeometryCollection: function(object3, point6) {
+      var geometries = object3.geometries, i = -1, n = geometries.length;
       while (++i < n) if (containsGeometry(geometries[i], point6)) return true;
       return false;
     }
@@ -10087,8 +10088,8 @@ var RareCharts = (() => {
   function pointRadians(point6) {
     return [point6[0] * radians2, point6[1] * radians2];
   }
-  function contains_default2(object2, point6) {
-    return (object2 && containsObjectType.hasOwnProperty(object2.type) ? containsObjectType[object2.type] : containsGeometry)(object2, point6);
+  function contains_default2(object3, point6) {
+    return (object3 && containsObjectType.hasOwnProperty(object3.type) ? containsObjectType[object3.type] : containsGeometry)(object3, point6);
   }
 
   // node_modules/d3-geo/src/graticule.js
@@ -10522,27 +10523,27 @@ var RareCharts = (() => {
   // node_modules/d3-geo/src/path/index.js
   function path_default(projection2, context) {
     let digits = 3, pointRadius = 4.5, projectionStream, contextStream;
-    function path2(object2) {
-      if (object2) {
+    function path2(object3) {
+      if (object3) {
         if (typeof pointRadius === "function") contextStream.pointRadius(+pointRadius.apply(this, arguments));
-        stream_default(object2, projectionStream(contextStream));
+        stream_default(object3, projectionStream(contextStream));
       }
       return contextStream.result();
     }
-    path2.area = function(object2) {
-      stream_default(object2, projectionStream(area_default3));
+    path2.area = function(object3) {
+      stream_default(object3, projectionStream(area_default3));
       return area_default3.result();
     };
-    path2.measure = function(object2) {
-      stream_default(object2, projectionStream(measure_default));
+    path2.measure = function(object3) {
+      stream_default(object3, projectionStream(measure_default));
       return measure_default.result();
     };
-    path2.bounds = function(object2) {
-      stream_default(object2, projectionStream(bounds_default2));
+    path2.bounds = function(object3) {
+      stream_default(object3, projectionStream(bounds_default2));
       return bounds_default2.result();
     };
-    path2.centroid = function(object2) {
-      stream_default(object2, projectionStream(centroid_default2));
+    path2.centroid = function(object3) {
+      stream_default(object3, projectionStream(centroid_default2));
       return centroid_default2.result();
     };
     path2.projection = function(_) {
@@ -10614,35 +10615,35 @@ var RareCharts = (() => {
   };
 
   // node_modules/d3-geo/src/projection/fit.js
-  function fit(projection2, fitBounds, object2) {
+  function fit(projection2, fitBounds, object3) {
     var clip = projection2.clipExtent && projection2.clipExtent();
     projection2.scale(150).translate([0, 0]);
     if (clip != null) projection2.clipExtent(null);
-    stream_default(object2, projection2.stream(bounds_default2));
+    stream_default(object3, projection2.stream(bounds_default2));
     fitBounds(bounds_default2.result());
     if (clip != null) projection2.clipExtent(clip);
     return projection2;
   }
-  function fitExtent(projection2, extent2, object2) {
+  function fitExtent(projection2, extent2, object3) {
     return fit(projection2, function(b) {
       var w = extent2[1][0] - extent2[0][0], h = extent2[1][1] - extent2[0][1], k2 = Math.min(w / (b[1][0] - b[0][0]), h / (b[1][1] - b[0][1])), x4 = +extent2[0][0] + (w - k2 * (b[1][0] + b[0][0])) / 2, y4 = +extent2[0][1] + (h - k2 * (b[1][1] + b[0][1])) / 2;
       projection2.scale(150 * k2).translate([x4, y4]);
-    }, object2);
+    }, object3);
   }
-  function fitSize(projection2, size, object2) {
-    return fitExtent(projection2, [[0, 0], size], object2);
+  function fitSize(projection2, size, object3) {
+    return fitExtent(projection2, [[0, 0], size], object3);
   }
-  function fitWidth(projection2, width, object2) {
+  function fitWidth(projection2, width, object3) {
     return fit(projection2, function(b) {
       var w = +width, k2 = w / (b[1][0] - b[0][0]), x4 = (w - k2 * (b[1][0] + b[0][0])) / 2, y4 = -k2 * b[0][1];
       projection2.scale(150 * k2).translate([x4, y4]);
-    }, object2);
+    }, object3);
   }
-  function fitHeight(projection2, height, object2) {
+  function fitHeight(projection2, height, object3) {
     return fit(projection2, function(b) {
       var h = +height, k2 = h / (b[1][1] - b[0][1]), x4 = -k2 * b[0][0], y4 = (h - k2 * (b[1][1] + b[0][1])) / 2;
       projection2.scale(150 * k2).translate([x4, y4]);
-    }, object2);
+    }, object3);
   }
 
   // node_modules/d3-geo/src/projection/resample.js
@@ -10813,17 +10814,17 @@ var RareCharts = (() => {
     projection2.precision = function(_) {
       return arguments.length ? (projectResample = resample_default(projectTransform, delta2 = _ * _), reset()) : sqrt(delta2);
     };
-    projection2.fitExtent = function(extent2, object2) {
-      return fitExtent(projection2, extent2, object2);
+    projection2.fitExtent = function(extent2, object3) {
+      return fitExtent(projection2, extent2, object3);
     };
-    projection2.fitSize = function(size, object2) {
-      return fitSize(projection2, size, object2);
+    projection2.fitSize = function(size, object3) {
+      return fitSize(projection2, size, object3);
     };
-    projection2.fitWidth = function(width, object2) {
-      return fitWidth(projection2, width, object2);
+    projection2.fitWidth = function(width, object3) {
+      return fitWidth(projection2, width, object3);
     };
-    projection2.fitHeight = function(height, object2) {
-      return fitHeight(projection2, height, object2);
+    projection2.fitHeight = function(height, object3) {
+      return fitHeight(projection2, height, object3);
     };
     function recenter() {
       var center2 = scaleTranslateRotate(k2, 0, 0, sx, sy, alpha).apply(null, project(lambda, phi2)), transform2 = scaleTranslateRotate(k2, x4 - center2[0], y4 - center2[1], sx, sy, alpha);
@@ -10954,17 +10955,17 @@ var RareCharts = (() => {
       hawaiiPoint = hawaii.translate([x4 - 0.205 * k2, y4 + 0.212 * k2]).clipExtent([[x4 - 0.214 * k2 + epsilon7, y4 + 0.166 * k2 + epsilon7], [x4 - 0.115 * k2 - epsilon7, y4 + 0.234 * k2 - epsilon7]]).stream(pointStream);
       return reset();
     };
-    albersUsa.fitExtent = function(extent2, object2) {
-      return fitExtent(albersUsa, extent2, object2);
+    albersUsa.fitExtent = function(extent2, object3) {
+      return fitExtent(albersUsa, extent2, object3);
     };
-    albersUsa.fitSize = function(size, object2) {
-      return fitSize(albersUsa, size, object2);
+    albersUsa.fitSize = function(size, object3) {
+      return fitSize(albersUsa, size, object3);
     };
-    albersUsa.fitWidth = function(width, object2) {
-      return fitWidth(albersUsa, width, object2);
+    albersUsa.fitWidth = function(width, object3) {
+      return fitWidth(albersUsa, width, object3);
     };
-    albersUsa.fitHeight = function(height, object2) {
-      return fitHeight(albersUsa, height, object2);
+    albersUsa.fitHeight = function(height, object3) {
+      return fitHeight(albersUsa, height, object3);
     };
     function reset() {
       cache = cacheStream = null;
@@ -11201,17 +11202,17 @@ var RareCharts = (() => {
     projection2.reflectY = function(_) {
       return arguments.length ? (sy = _ ? -1 : 1, reset()) : sy < 0;
     };
-    projection2.fitExtent = function(extent2, object2) {
-      return fitExtent(projection2, extent2, object2);
+    projection2.fitExtent = function(extent2, object3) {
+      return fitExtent(projection2, extent2, object3);
     };
-    projection2.fitSize = function(size, object2) {
-      return fitSize(projection2, size, object2);
+    projection2.fitSize = function(size, object3) {
+      return fitSize(projection2, size, object3);
     };
-    projection2.fitWidth = function(width, object2) {
-      return fitWidth(projection2, width, object2);
+    projection2.fitWidth = function(width, object3) {
+      return fitWidth(projection2, width, object3);
     };
-    projection2.fitHeight = function(height, object2) {
-      return fitHeight(projection2, height, object2);
+    projection2.fitHeight = function(height, object3) {
+      return fitHeight(projection2, height, object3);
     };
     return projection2;
   }
@@ -17170,6 +17171,14 @@ var RareCharts = (() => {
     markerSize: 4,
     // per-point marker size
     barOpacity: 0.35,
+    map: {
+      matchFill: "#00aaff",
+      unmatchedFill: "#e8e8e8",
+      ocean: "var(--bg-color)",
+      border: "#ffffff",
+      hoverBrighten: 1.3,
+      graticule: "rgba(0,0,0,0.08)"
+    },
     // ── Tooltip ────────────────────────────────────────────────────────────────
     tooltip: {
       bg: "#ffffff",
@@ -17195,6 +17204,14 @@ var RareCharts = (() => {
       text: "#e8e8e8",
       muted: "#888888",
       shadow: "0 2px 12px rgba(0,0,0,0.55)"
+    },
+    map: {
+      matchFill: "#ff6200",
+      unmatchedFill: "#1e1e2e",
+      ocean: "var(--bg-color)",
+      border: "#444455",
+      hoverBrighten: 1.2,
+      graticule: "rgba(255,255,255,0.06)"
     }
   });
   function createTheme(overrides = {}) {
@@ -17204,6 +17221,10 @@ var RareCharts = (() => {
       tooltip: {
         ...defaultTheme.tooltip,
         ...overrides.tooltip ?? {}
+      },
+      map: {
+        ...defaultTheme.map,
+        ...overrides.map ?? {}
       }
     };
   }
@@ -18978,6 +18999,316 @@ var RareCharts = (() => {
     }
     destroy() {
       this._stopSimulation();
+      super.destroy();
+    }
+  };
+
+  // node_modules/topojson-client/src/identity.js
+  function identity_default6(x4) {
+    return x4;
+  }
+
+  // node_modules/topojson-client/src/transform.js
+  function transform_default2(transform2) {
+    if (transform2 == null) return identity_default6;
+    var x06, y06, kx2 = transform2.scale[0], ky2 = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+    return function(input, i) {
+      if (!i) x06 = y06 = 0;
+      var j = 2, n = input.length, output = new Array(n);
+      output[0] = (x06 += input[0]) * kx2 + dx;
+      output[1] = (y06 += input[1]) * ky2 + dy;
+      while (j < n) output[j] = input[j], ++j;
+      return output;
+    };
+  }
+
+  // node_modules/topojson-client/src/reverse.js
+  function reverse_default2(array4, n) {
+    var t, j = array4.length, i = j - n;
+    while (i < --j) t = array4[i], array4[i++] = array4[j], array4[j] = t;
+  }
+
+  // node_modules/topojson-client/src/feature.js
+  function feature_default(topology, o) {
+    if (typeof o === "string") o = topology.objects[o];
+    return o.type === "GeometryCollection" ? { type: "FeatureCollection", features: o.geometries.map(function(o2) {
+      return feature(topology, o2);
+    }) } : feature(topology, o);
+  }
+  function feature(topology, o) {
+    var id2 = o.id, bbox = o.bbox, properties = o.properties == null ? {} : o.properties, geometry = object2(topology, o);
+    return id2 == null && bbox == null ? { type: "Feature", properties, geometry } : bbox == null ? { type: "Feature", id: id2, properties, geometry } : { type: "Feature", id: id2, bbox, properties, geometry };
+  }
+  function object2(topology, o) {
+    var transformPoint = transform_default2(topology.transform), arcs = topology.arcs;
+    function arc(i, points) {
+      if (points.length) points.pop();
+      for (var a4 = arcs[i < 0 ? ~i : i], k2 = 0, n = a4.length; k2 < n; ++k2) {
+        points.push(transformPoint(a4[k2], k2));
+      }
+      if (i < 0) reverse_default2(points, n);
+    }
+    function point6(p) {
+      return transformPoint(p);
+    }
+    function line(arcs2) {
+      var points = [];
+      for (var i = 0, n = arcs2.length; i < n; ++i) arc(arcs2[i], points);
+      if (points.length < 2) points.push(points[0]);
+      return points;
+    }
+    function ring(arcs2) {
+      var points = line(arcs2);
+      while (points.length < 4) points.push(points[0]);
+      return points;
+    }
+    function polygon(arcs2) {
+      return arcs2.map(ring);
+    }
+    function geometry(o2) {
+      var type2 = o2.type, coordinates2;
+      switch (type2) {
+        case "GeometryCollection":
+          return { type: type2, geometries: o2.geometries.map(geometry) };
+        case "Point":
+          coordinates2 = point6(o2.coordinates);
+          break;
+        case "MultiPoint":
+          coordinates2 = o2.coordinates.map(point6);
+          break;
+        case "LineString":
+          coordinates2 = line(o2.arcs);
+          break;
+        case "MultiLineString":
+          coordinates2 = o2.arcs.map(line);
+          break;
+        case "Polygon":
+          coordinates2 = polygon(o2.arcs);
+          break;
+        case "MultiPolygon":
+          coordinates2 = o2.arcs.map(polygon);
+          break;
+        default:
+          return null;
+      }
+      return { type: type2, coordinates: coordinates2 };
+    }
+    return geometry(o);
+  }
+
+  // assets/charts/src/charts/Map.js
+  var Map2 = class extends Chart {
+    constructor(selector, options = {}) {
+      super(selector, {
+        height: 400,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        ...options
+      });
+      this._features = [];
+      this._dataMap = new globalThis.Map();
+      this._tooltip = new Tooltip(this.container, this.theme);
+      this._geoReady = false;
+      this._activeTooltipHtml = null;
+      this._zoomTransform = identity5;
+      this._initSVG();
+      this._loadGeo();
+    }
+    // ─── Public API ───────────────────────────────────────────────────────────
+    setData(items = []) {
+      this._dataMap.clear();
+      items.forEach((item) => {
+        if (item?.id != null) {
+          this._dataMap.set(String(item.id), item);
+        }
+      });
+      if (this._geoReady) this.render();
+      return this;
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG() {
+      this.container.style.overflow = "hidden";
+      this.svg = create_default("svg").attr("class", "rc-map-svg").style("display", "block").style("overflow", "hidden");
+      if (this._footerEl && this._footerEl.parentNode === this.container) {
+        this.container.insertBefore(this.svg.node(), this._footerEl);
+      } else {
+        this.container.appendChild(this.svg.node());
+      }
+      this._bgRect = this.svg.append("rect").attr("class", "rc-map-ocean");
+      this._clipId = `rc-map-clip-${Math.random().toString(36).slice(2, 10)}`;
+      this._defs = this.svg.append("defs");
+      this._clipRect = this._defs.append("clipPath").attr("id", this._clipId).append("rect");
+      this.gZoom = this.svg.append("g").attr("class", "rc-map-zoom").attr("clip-path", `url(#${this._clipId})`);
+      this.gPaths = this.gZoom.append("g").attr("class", "rc-map-paths");
+      if (this.options.zoom) {
+        this._zoom = zoom_default2().scaleExtent(this.options.zoomExtent ?? [0.8, 12]).translateExtent([[-2e3, -2e3], [4e3, 4e3]]).on("zoom", (event) => {
+          this._zoomTransform = event.transform;
+          this.gZoom.attr("transform", event.transform);
+        });
+        this.svg.call(this._zoom).on("dblclick.zoom", null);
+      }
+    }
+    // ─── Load geographic data ─────────────────────────────────────────────────
+    async _loadGeo() {
+      try {
+        const o = this.options;
+        let data;
+        if (o.geoData) data = o.geoData;
+        else if (o.topoData) data = o.topoData;
+        else if (o.geoUrl) data = await json_default(o.geoUrl);
+        else if (o.topoUrl) data = await json_default(o.topoUrl);
+        else return;
+        const features = this._extractFeatures(data, o.topoObject);
+        this._features = this._prepareFeatures(features);
+        this._geoReady = true;
+        this.render();
+      } catch (err) {
+        console.error("RareCharts Map: failed to load geographic data", err);
+      }
+    }
+    _prepareFeatures(features) {
+      return this._clipFeatures(this._applyFilter(features));
+    }
+    _applyFilter(features) {
+      const fn = this.options.featureFilter;
+      return typeof fn === "function" ? features.filter(fn) : features;
+    }
+    _extractFeatures(data, topoObject) {
+      if (data?.type === "Topology") {
+        const objName = topoObject ?? Object.keys(data.objects ?? {})[0];
+        if (!objName || !data.objects?.[objName]) return [];
+        return feature_default(data, data.objects[objName]).features;
+      }
+      if (data?.type === "FeatureCollection") return data.features ?? [];
+      if (data?.type === "Feature") return [data];
+      return [];
+    }
+    // ─── Geographic clipping ──────────────────────────────────────────────────
+    _clipFeatures(features) {
+      const clip = this.options.clipExtent;
+      if (!clip) return features;
+      const [[minLon, minLat], [maxLon, maxLat]] = clip;
+      const intersects2 = ([[x06, y06], [x12, y12]]) => !(x12 < minLon || x06 > maxLon || y12 < minLat || y06 > maxLat);
+      const clipGeom = (geom) => {
+        if (!geom) return null;
+        if (geom.type === "Polygon") {
+          const b = bounds_default({ type: "Feature", geometry: geom });
+          return intersects2(b) ? geom : null;
+        }
+        if (geom.type === "MultiPolygon") {
+          const polys = geom.coordinates.filter((c6) => {
+            const b = bounds_default({
+              type: "Feature",
+              geometry: { type: "Polygon", coordinates: c6 }
+            });
+            return intersects2(b);
+          });
+          if (!polys.length) return null;
+          return polys.length === 1 ? { type: "Polygon", coordinates: polys[0] } : { type: "MultiPolygon", coordinates: polys };
+        }
+        return geom;
+      };
+      return features.map((f) => {
+        const g = clipGeom(f.geometry);
+        return g ? { ...f, geometry: g } : null;
+      }).filter(Boolean);
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    render() {
+      if (!this._geoReady || !this._features.length) return;
+      const W = this.width;
+      const H = this.height;
+      if (W <= 0 || H <= 0) return;
+      const t = this.theme;
+      const tm = t.map ?? {};
+      const o = this.options;
+      const pad3 = o.fitPadding ?? 20;
+      const idField = o.idField ?? "id";
+      this.svg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`).attr("preserveAspectRatio", "xMidYMid meet");
+      const oceanColor = o.oceanColor ?? tm.ocean ?? "transparent";
+      this._bgRect.attr("width", W).attr("height", H).attr("fill", oceanColor);
+      this._clipRect.attr("x", 0).attr("y", 0).attr("width", W).attr("height", H);
+      const proj = this._buildProjection(o.projection ?? "naturalEarth1");
+      proj.fitExtent(
+        [[pad3, pad3], [W - pad3, H - pad3]],
+        {
+          type: "FeatureCollection",
+          features: this._features
+        }
+      );
+      const path2 = path_default(proj);
+      const defaultFill = o.defaultFill ?? tm.unmatchedFill ?? t.surface ?? "#e8e8e8";
+      const matchFill = o.matchFill ?? tm.matchFill ?? t.accent ?? "#00aaff";
+      const borderColor = o.borderColor ?? tm.border ?? t.border ?? "#ffffff";
+      const hoverFill = o.hoverFill ?? rgb_default(matchFill, "#ffffff")(0.16);
+      const fillFor = (feature2) => {
+        const fid = this._featureId(feature2, idField);
+        if (fid == null) return defaultFill;
+        const item = this._dataMap.get(fid);
+        if (!item) return defaultFill;
+        return item.color ?? matchFill;
+      };
+      const hasTooltip = typeof o.tooltipFormat === "function";
+      this.gPaths.selectAll(".rc-map-feature").data(
+        this._features,
+        (d) => this._featureId(d, idField) ?? d.id ?? JSON.stringify(d.geometry)
+      ).join("path").attr("class", "rc-map-feature").attr("d", path2).attr("fill", fillFor).attr("stroke", borderColor).attr("stroke-width", o.borderWidth ?? 0.5).attr("vector-effect", "non-scaling-stroke").style("cursor", hasTooltip ? "pointer" : "default").on("mouseover", (event, d) => {
+        const fid = this._featureId(d, idField);
+        const item = fid != null ? this._dataMap.get(fid) : null;
+        if (item) {
+          select_default2(event.currentTarget).attr("fill", hoverFill);
+        }
+        const html2 = o.tooltipFormat ? o.tooltipFormat({ feature: d, item }) : this._defaultTooltip(d, item);
+        this._activeTooltipHtml = html2;
+        if (html2) {
+          const [mx, my] = pointer_default(event, this.container);
+          this._tooltip.show(mx, my, html2);
+        }
+      }).on("mousemove", (event) => {
+        if (!this._activeTooltipHtml) return;
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, this._activeTooltipHtml);
+      }).on("mouseout", (event, d) => {
+        select_default2(event.currentTarget).attr("fill", fillFor(d));
+        this._activeTooltipHtml = null;
+        this._tooltip.hide();
+      });
+      if (this._zoom) {
+        this._zoom.translateExtent([[-W * 2, -H * 2], [W * 3, H * 3]]);
+      }
+    }
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+    _featureId(feature2, idField) {
+      if (feature2?.id != null) return String(feature2.id);
+      if (feature2?.properties) {
+        const v2 = feature2.properties[idField] ?? feature2.properties.iso_a2 ?? feature2.properties.iso_a3 ?? feature2.properties.ISO_A2 ?? feature2.properties.ISO_A3;
+        if (v2 != null) return String(v2);
+      }
+      return null;
+    }
+    _buildProjection(name) {
+      switch (name) {
+        case "mercator":
+          return mercator_default();
+        case "equalEarth":
+          return equalEarth_default();
+        case "orthographic":
+          return orthographic_default();
+        default:
+          return naturalEarth1_default();
+      }
+    }
+    _defaultTooltip(feature2, item) {
+      const t = this.theme;
+      const name = item?.label ?? feature2?.properties?.name ?? feature2?.properties?.NAME ?? feature2?.id ?? "\u2014";
+      const valueRow = item?.value != null ? `<div style="color:${t.muted ?? "#888"}; margin-top:2px;">${item.value}</div>` : "";
+      return `<div style="font-weight:600">${name}</div>${valueRow}`;
+    }
+    // ─── Resize & Destroy ─────────────────────────────────────────────────────
+    _onResize() {
+      if (this._geoReady) this.render();
+    }
+    destroy() {
+      this._tooltip?.hide?.();
       super.destroy();
     }
   };

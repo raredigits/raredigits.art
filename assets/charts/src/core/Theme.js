@@ -51,6 +51,15 @@ export const defaultTheme = {
   markerSize:  4,         // per-point marker size
   barOpacity:  0.35,
 
+  map: {
+    matchFill:      '#00aaff',
+    unmatchedFill:  '#e8e8e8',
+    ocean:          'var(--bg-color)',
+    border:         '#ffffff',
+    hoverBrighten:  1.3,
+    graticule:      'rgba(0,0,0,0.08)',
+  },
+
   // ── Tooltip ────────────────────────────────────────────────────────────────
   tooltip: {
     bg:     '#ffffff',
@@ -80,6 +89,14 @@ export const darkTheme = createTheme({
     muted:  '#888888',
     shadow: '0 2px 12px rgba(0,0,0,0.55)',
   },
+  map: {
+    matchFill:      '#ff6200',
+    unmatchedFill:  '#1e1e2e',
+    ocean:          'var(--bg-color)',
+    border:         '#444455',
+    hoverBrighten:  1.2,
+    graticule:      'rgba(255,255,255,0.06)',
+  },
 });
 
 // ─── Factory ──────────────────────────────────────────────────────────────────
@@ -98,6 +115,10 @@ export function createTheme(overrides = {}) {
     tooltip: {
       ...defaultTheme.tooltip,
       ...(overrides.tooltip ?? {}),
+    },
+    map: {
+      ...defaultTheme.map,
+      ...(overrides.map ?? {}),
     },
   };
 }

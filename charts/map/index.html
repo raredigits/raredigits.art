@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charts Backlog | Rare Digits Art</title>
+    <title>Map | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -334,7 +334,7 @@
           
             <li>
               
-                <a href="/charts/map/">Map</a>
+                <span class="bold">Map</span>
               
               
               
@@ -379,7 +379,7 @@
           
             <li>
               
-                <span class="bold">Backlog</span>
+                <a href="/charts/backlog/">Backlog</a>
               
               
               
@@ -394,134 +394,294 @@
     
     
   <section class="page-title">
-    <h1>Charts Backlog</h1>
+    <h1>Map</h1>
   </section>
 
     <article>
-      <p>Features and chart types planned for future releases.</p>
+      <p>The Map chart renders geographic data as a choropleth or region-highlight map. In practice this usually means one simple thing: you have data tied to places and you want to show it on a map.</p>
+<p>Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="map-europe-visited"></div>
+</div>
+<p>Map charts combine two ingredients:</p>
+<ol>
+<li><strong>Geographic shapes</strong> — the borders of regions (<code>GeoJSON</code> or <code>TopoJSON</code>).</li>
+<li><strong>Value data</strong> — an array of items that match those regions by ID.</li>
+</ol>
+<p>The map provides the geometry; your data decides what gets highlighted.</p>
+<h2>Geographic data</h2>
+<p>Pass a URL to fetch, or an inline object — whichever fits your pipeline.</p>
+<pre class="text-content-caption"><code><span class="code-comment">// TopoJSON from a local file</span>
+new RareCharts.Map('#chart', {
+    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoObject: 'countries',  <span class="code-comment">// named object inside the topology</span>
+});
+
+<span class="code-comment">// GeoJSON fetched from a URL</span>
+new RareCharts.Map('#chart', {
+    geoUrl: '/data/europe.geojson',
+});
+
+<span class="code-comment">// Inline GeoJSON FeatureCollection</span>
+new RareCharts.Map('#chart', {
+    geoData: myFeatureCollection,
+});</code></pre>
+<p>RareCharts supports both <strong>GeoJSON</strong> and <strong>TopoJSON</strong>.</p>
+<p>In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.</p>
+<h2>Value data</h2>
+<p>Each item in the data array identifies a geographic feature and optionally carries a value and color:</p>
+<pre class="text-content-caption"><code>chart.setData([
+    { id: '250', label: 'France',  color: '#00aaff' },
+    { id: '276', label: 'Germany', color: '#00aaff' },
+    { id: '380', label: 'Italy',   value: 42 },
+]);</code></pre>
+<p>The <code>id</code> field must match either <code>feature.id</code> or a property inside <code>feature.properties</code>.</p>
+<p>For example:</p>
+<ul>
+<li><strong>world-atlas TopoJSON</strong> uses numeric ISO 3166-1 country codes as <code>feature.id</code></li>
+<li>other datasets often store identifiers inside <code>feature.properties</code></li>
+</ul>
+<p>If needed, use the <code>idField</code> option to tell the chart which property should be used.</p>
+<h2>Projections</h2>
+<p>RareCharts supports four projections:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>'naturalEarth1'</code></td>
+<td>Default. Balanced projection suitable for most maps</td>
+</tr>
+<tr>
+<td><code>'mercator'</code></td>
+<td>Familiar web-map projection. Often used for regional maps</td>
+</tr>
+<tr>
+<td><code>'equalEarth'</code></td>
+<td>Equal-area projection. Useful when region size matters</td>
+</tr>
+<tr>
+<td><code>'orthographic'</code></td>
+<td>Globe view. Mostly for visual context</td>
+</tr>
+</tbody>
+</table>
+<p>The chart automatically fits the projection to the loaded features using <code>fitExtent</code>, so you normally do not need to set scale or center manually.</p>
+<h2>Coloring</h2>
+<p>Regions are colored in three ways, in order of priority:</p>
+<ol>
+<li><strong>Per-item <code>color</code></strong> — explicit CSS color on a data item.</li>
+<li><strong><code>matchFill</code></strong> — applied to matched regions without their own color.</li>
+<li><strong><code>defaultFill</code></strong> — applied to regions that have no matching data.</li>
+</ol>
+<p>For a simple highlight map (visited countries, market presence), a single <code>matchFill</code> is usually enough.</p>
+<p>For a choropleth map, you will typically compute colors yourself using a scale and pass them through the <code>color</code> field.</p>
+<p>Default colors used by the chart come from the RareCharts theme. They are defined in: <code>/src/core/theme.js</code>. The map section of the theme defines values such as <code>matchFill</code>, <code>unmatchedFill</code>, <code>border</code>, and hover behavior. In most cases it is better to adjust those defaults in the theme rather than overriding colors in every chart instance.</p>
+<h2>Tooltip</h2>
+<p>The default tooltip shows the region name and, if present, the <code>value</code>.</p>
+<p>If you need something more specific, override it:</p>
+<pre class="text-content-caption"><code>tooltipFormat: ({ feature, item }) => `
+    &lt;strong&gt;${item?.label ?? feature.properties.name}&lt;/strong&gt;
+    &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
+`</code></pre>
+<p>The formatter receives both the raw <code>feature</code> and the matched <code>item</code>, so you can display whatever makes sense.</p>
+<h2>Map chart options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
 <table class="table-bordered card-caption">
     <thead>
         <tr>
-            <th>Feature</th>
-            <th>API sketch</th>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
             <th>Description</th>
         </tr>
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="3">
-                <h5>Annotations</h5>
-                <p>Options for marking up the chart area with reference context</p>
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>400</code></td>
+            <td>Container height in px. Width is always 100% of the container.</td>
+        </tr>
+        <tr>
+            <td><code>fitPadding</code></td>
+            <td>number</td>
+            <td><code>20</code></td>
+            <td>Padding in px around the feature bounds when fitting the projection.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Geographic data</h5></td>
+        </tr>
+        <tr>
+            <td><code>geoUrl</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>URL of a GeoJSON FeatureCollection to fetch via <code>d3.json()</code>.</td>
+        </tr>
+        <tr>
+            <td><code>geoData</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>Inline GeoJSON FeatureCollection or single Feature.</td>
+        </tr>
+        <tr>
+            <td><code>topoUrl</code></td>
+            <td>string</td>
+            <td>—</td>
+            <td>URL of a TopoJSON topology to fetch.</td>
+        </tr>
+        <tr>
+            <td><code>topoData</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>Inline TopoJSON topology object.</td>
+        </tr>
+        <tr>
+            <td><code>topoObject</code></td>
+            <td>string</td>
+            <td>first object</td>
+            <td>
+                Named object inside the topology to extract.<br>
+                Defaults to the first key in <code>topology.objects</code>.
             </td>
         </tr>
         <tr>
-            <td>Reference lines</td>
-            <td><code>referenceLines: [{ value, axis, label, color, strokeDash }]</code></td>
-            <td>Horizontal lines at specified Y values (or vertical at X values) with optional label. <code>axis: 'x' | 'y'</code>, defaults to <code>'y'</code>.</td>
+            <td><code>idField</code></td>
+            <td>string</td>
+            <td><code>'id'</code></td>
+            <td>
+                Feature property used as ID when <code>feature.id</code> is absent.<br>
+                Falls back through <code>iso_a2</code>, <code>iso_a3</code>, <code>ISO_A2</code>, <code>ISO_A3</code> automatically.
+            </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Projection</h5></td>
         </tr>
         <tr>
-            <td>Callouts and overlays</td>
-            <td><code>annotations: [{ x, y, text, image }]</code></td>
-            <td>Text callouts and image overlays anchored to data coordinates or pixel position on the chart area.</td>
+            <td><code>projection</code></td>
+            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code></td>
+            <td><code>'naturalEarth1'</code></td>
+            <td>D3 geo projection to use for rendering.</td>
         </tr>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Chart structure</h5>
-<p>Extensions to the shared base layout rendered above and below the SVG area</p>
-</td>
-</tr>
-<tr>
-<td>Notes for charts</td>
-<td><code>note</code></td>
-<td>Renders a <code>&lt;p class=&quot;rc-chart-note&quot;&gt;</code> below the source line, styled with <code>theme.muted</code>. Intended for disclaimers, data caveats, and editorial context. Accepts string or <code>HTMLElement</code>.</td>
-</tr>
-<tr>
-<td>Interactive data source</td>
-<td><code>source</code></td>
-<td>Allow <code>source</code> to accept <code>{ text, href }</code> in addition to plain string, rendering as an <code>&lt;a&gt;</code> tag for data attribution links.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>New chart types</h5>
-</td>
-</tr>
-<tr>
-<td>Candlestick</td>
-<td><code>RareCharts.Candlestick</code></td>
-<td>OHLCV candlestick chart for price and financial data visualization.</td>
-</tr>
-<tr>
-<td>Hierarchies</td>
-<td><code>RareCharts.Hierarchies</code></td>
-<td>Hierarchical data views such as tree, treemap, cluster, pack, or related structures for nested datasets and ownership-style breakdowns.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Bar series</h5>
-</td>
-</tr>
-<tr>
-<td>Bar value labels</td>
-<td><code>barLabels: true</code></td>
-<td>Renders formatted value labels above positive bars and below negative bars. Uses <code>yTickFormat</code> for formatting. Available on Bar and DualAxes.</td>
-</tr>
-<tr>
-<td>Bar width control</td>
-<td><code>barWidth: number</code></td>
-<td>Absolute bar width in px as an alternative to the proportional <code>barWidthRatio</code>. Supports per-series override.</td>
-</tr>
-<tr>
-<td>Diverging bar chart</td>
-<td><code>RareCharts.DivergingBar</code></td>
-<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Map</h5>
-</td>
-</tr>
-<tr>
-<td>Map overlays and labels</td>
-<td><code>layers: [{ type, data, ... }]</code></td>
-<td>Add overlay layers to maps for extra information such as points, routes, bubbles, labels, markers, or other contextual geographic annotations.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Graph</h5>
-</td>
-</tr>
-<tr>
-<td>Graph refactor</td>
-<td><code>RareCharts.Graph</code></td>
-<td>Rework the Graph class: fix layout and rendering issues, improve animation, and add support for nested or grouped graph structures.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Interactivity</h5>
-</td>
-</tr>
-<tr>
-<td>Legend series isolation</td>
-<td><code>legendInteractive: true</code></td>
-<td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series.</td>
-</tr>
-<tr>
-<td>Tooltip header style</td>
-<td><code>theme.tooltip.header</code></td>
-<td>Dedicated theme token for the tooltip header row (date label). Allows independent control of header background and text color, separate from <code>tooltip.bg</code> and <code>tooltip.text</code>.</td>
-</tr></p>
-<p><tr class="table-section">
-<td colspan="3">
-<h5>Branding</h5>
-</td>
-</tr>
-<tr>
-<td>Branding API</td>
-<td><code>RareCharts.setBrand(config)</code></td>
-<td>Global brand configuration applied to all chart instances: logo image (rendered as a watermark), accent color, and font family. Eliminates per-chart theme repetition in multi-chart dashboards.</td>
-</tr>
-</tbody></p>
+        <tr class="table-section">
+            <td colspan="4"><h5>Colors</h5></td>
+        </tr>
+        <tr>
+            <td><code>defaultFill</code></td>
+            <td>CSS color</td>
+            <td><code>theme.surface</code></td>
+            <td>Fill for regions with no matching data item.</td>
+        </tr>
+        <tr>
+            <td><code>matchFill</code></td>
+            <td>CSS color</td>
+            <td><code>theme.accent</code></td>
+            <td>Fill for matched regions that have no explicit <code>color</code> field.</td>
+        </tr>
+        <tr>
+            <td><code>hoverFill</code></td>
+            <td>CSS color</td>
+            <td>auto</td>
+            <td>Fill on mouse-over. Defaults to a lighter version of <code>matchFill</code>.</td>
+        </tr>
+        <tr>
+            <td><code>oceanColor</code></td>
+            <td>CSS color</td>
+            <td><code>'transparent'</code></td>
+            <td>SVG background fill (the "ocean" behind land features).</td>
+        </tr>
+        <tr>
+            <td><code>borderColor</code></td>
+            <td>CSS color</td>
+            <td><code>theme.border</code></td>
+            <td>Stroke color for feature borders.</td>
+        </tr>
+        <tr>
+            <td><code>borderWidth</code></td>
+            <td>number</td>
+            <td><code>0.5</code></td>
+            <td>Border stroke-width in px.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>zoom</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Enable scroll-to-zoom and drag-to-pan. Scale range: 0.5×–8×.</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for matched regions.</td>
+        </tr>
+    </tbody>
 </table>
+<p><strong>Data fields</strong></p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>id</code></td>
+            <td>string | number</td>
+            <td>Required. Must match <code>feature.id</code> or the resolved <code>idField</code> property.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td>Display name used in the tooltip. Falls back to <code>feature.properties.name</code>.</td>
+        </tr>
+        <tr>
+            <td><code>value</code></td>
+            <td>number</td>
+            <td>Optional numeric value. Shown in the default tooltip; available in <code>tooltipFormat</code>.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td>Explicit fill for this region. Overrides <code>matchFill</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<h3>Minimal example</h3>
+<pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
+    title:      'Market Presence',
+    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoObject: 'countries',
+    height:     400,
+    matchFill:  '#00aaff',
+    zoom:       true,
+}).setData([
+    { id: '840', label: 'United States' },
+    { id: '276', label: 'Germany'       },
+    { id: '392', label: 'Japan'         },
+]);</code></pre>
+<p>In practice the workflow is usually straightforward:</p>
+<ol>
+<li>Load a geographic file, usually TopoJSON.</li>
+<li>Match your data to regions by ID.</li>
+<li>Decide which regions should be highlighted.</li>
+<li>Leave the projection and fitting to the chart unless you have a specific reason not to.</li>
+</ol>
+<p>For most use cases, that is enough. The difficult part is rarely drawing the map itself. It is usually getting the region IDs to line up, finding a geography file that does not look terrible, and resisting the temptation to turn a simple highlight map into a geopolitical event.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/map/map-chart-europe-visited.js"></script>
+
     </article>
   </div>
 </main>
