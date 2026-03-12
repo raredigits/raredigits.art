@@ -18,6 +18,9 @@ function injectCssOnce(id, cssText) {
 
 injectCssOnce('rc-base-styles',        baseCssText);
 
+// Public docs URL for CDN consumers and console discovery.
+export const DOCS_URL = 'https://raredigits.art/charts';
+
 export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';
 export { Overview   } from './charts/Overview.js';

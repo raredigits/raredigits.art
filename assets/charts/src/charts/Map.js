@@ -31,6 +31,7 @@
 //   featureFilter — function(feature) => boolean
 //   clipExtent    — [[minLon, minLat], [maxLon, maxLat]] used to keep only polygons intersecting that bbox
 //   tooltipFormat — function({ feature, item }) => html string
+//   rotate        — [lambda, phi, gamma] rotation angles passed to projection.rotate()
 
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
@@ -155,7 +156,8 @@ export class Map extends Chart {
     if (data?.type === 'Topology') {
       const objName = topoObject ?? Object.keys(data.objects ?? {})[0];
       if (!objName || !data.objects?.[objName]) return [];
-      return topojson.feature(data, data.objects[objName]).features;
+      const fc = topojson.feature(data, data.objects[objName]);
+      return fc.type === 'FeatureCollection' ? (fc.features ?? []) : [fc];
     }
 
     if (data?.type === 'FeatureCollection') return data.features ?? [];
@@ -274,8 +276,6 @@ export class Map extends Chart {
       return item.color ?? matchFill;
     };
 
-    const hasTooltip = typeof o.tooltipFormat === 'function';
-
     this.gPaths.selectAll('.rc-map-feature')
       .data(
         this._features,
@@ -288,7 +288,6 @@ export class Map extends Chart {
       .attr('stroke', borderColor)
       .attr('stroke-width', o.borderWidth ?? 0.5)
       .attr('vector-effect', 'non-scaling-stroke')
-      .style('cursor', hasTooltip ? 'pointer' : 'default')
       .on('mouseover', (event, d) => {
         const fid = this._featureId(d, idField);
         const item = fid != null ? this._dataMap.get(fid) : null;
@@ -343,12 +342,18 @@ export class Map extends Chart {
   }
 
   _buildProjection(name) {
+    let proj;
     switch (name) {
-      case 'mercator':     return d3.geoMercator();
-      case 'equalEarth':   return d3.geoEqualEarth();
-      case 'orthographic': return d3.geoOrthographic();
-      default:             return d3.geoNaturalEarth1();
+      case 'mercator':     proj = d3.geoMercator(); break;
+      case 'equalEarth':   proj = d3.geoEqualEarth(); break;
+      case 'orthographic': proj = d3.geoOrthographic(); break;
+      case 'identity':     proj = d3.geoIdentity().reflectY(this.options.reflectY ?? false); break;
+      default:             proj = d3.geoNaturalEarth1();
     }
+    if (this.options.rotate && typeof proj.rotate === 'function') {
+      proj.rotate(this.options.rotate);
+    }
+    return proj;
   }
 
   _defaultTooltip(feature, item) {

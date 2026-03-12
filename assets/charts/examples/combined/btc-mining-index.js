@@ -2,7 +2,7 @@
   const d3 = RareCharts.d3;
 
   const raw = await RareCharts.fromJson(
-    '/assets/charts/data/btc_mining.json',
+    '/assets/charts/data/examples/btc_mining.json',
     {
       date:       row => new Date(row.date),
       profit_usd: row => +row.profit_usd,

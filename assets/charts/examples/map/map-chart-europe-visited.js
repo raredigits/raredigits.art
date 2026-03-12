@@ -31,7 +31,7 @@
     subtitle: '15 countries across Europe',
     source: 'Source: Personal travel log',
 
-    topoUrl: '/assets/charts/data/countries-50m.json',
+    topoUrl: '/assets/charts/data/maps/world/level-0/world-atlas/countries-50m.json',
     topoObject: 'countries',
 
     featureFilter: feature => europeIds.has(+feature.id),

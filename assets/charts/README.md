@@ -48,8 +48,10 @@ Pin to a specific version to avoid unexpected updates:
 | `RareCharts.Bar` | Vertical and horizontal bar charts |
 | `RareCharts.DualAxes` | Two metrics on independent Y axes, supports bar + line overlay |
 | `RareCharts.Donut` | Part-to-whole with center label |
+| `RareCharts.Pie` | Pie chart alias for Donut with `innerRadius: 0` |
 | `RareCharts.Gauge` | Progress toward a target |
 | `RareCharts.Graph` | Force-directed network visualization |
+| `RareCharts.Map` | Choropleth and region-highlight geographic maps |
 
 ## Documentation
 

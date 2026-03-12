@@ -1,0 +1,2270 @@
+[
+    {
+        "date": "2025-02-01",
+        "hashrate_th": 235.219,
+        "profit_btc": 0.00013751,
+        "price_usd": 102039.29,
+        "profit_usd": 14.03
+    },
+    {
+        "date": "2025-02-02",
+        "hashrate_th": 240.578,
+        "profit_btc": 0.00014115,
+        "price_usd": 99955.52,
+        "profit_usd": 14.1
+    },
+    {
+        "date": "2025-02-03",
+        "hashrate_th": 240.973,
+        "profit_btc": 0.00014105,
+        "price_usd": 94603.58,
+        "profit_usd": 13.34
+    },
+    {
+        "date": "2025-02-04",
+        "hashrate_th": 241.66,
+        "profit_btc": 0.00014219,
+        "price_usd": 99807.64,
+        "profit_usd": 14.19
+    },
+    {
+        "date": "2025-02-05",
+        "hashrate_th": 240.949,
+        "profit_btc": 0.00014091,
+        "price_usd": 97896.52,
+        "profit_usd": 13.79
+    },
+    {
+        "date": "2025-02-06",
+        "hashrate_th": 240.254,
+        "profit_btc": 0.00013998,
+        "price_usd": 98185.57,
+        "profit_usd": 13.74
+    },
+    {
+        "date": "2025-02-07",
+        "hashrate_th": 239.338,
+        "profit_btc": 0.00013906,
+        "price_usd": 97403.66,
+        "profit_usd": 13.54
+    },
+    {
+        "date": "2025-02-08",
+        "hashrate_th": 240.006,
+        "profit_btc": 0.00013908,
+        "price_usd": 96412.58,
+        "profit_usd": 13.4
+    },
+    {
+        "date": "2025-02-09",
+        "hashrate_th": 238.982,
+        "profit_btc": 0.00013634,
+        "price_usd": 96762.17,
+        "profit_usd": 13.19
+    },
+    {
+        "date": "2025-02-10",
+        "hashrate_th": 238.351,
+        "profit_btc": 0.00013039,
+        "price_usd": 96759.5,
+        "profit_usd": 12.61
+    },
+    {
+        "date": "2025-02-11",
+        "hashrate_th": 239.33,
+        "profit_btc": 0.00013015,
+        "price_usd": 97862.58,
+        "profit_usd": 12.73
+    },
+    {
+        "date": "2025-02-12",
+        "hashrate_th": 238.603,
+        "profit_btc": 0.00012995,
+        "price_usd": 95765.91,
+        "profit_usd": 12.44
+    },
+    {
+        "date": "2025-02-13",
+        "hashrate_th": 238.827,
+        "profit_btc": 0.00012924,
+        "price_usd": 96812.56,
+        "profit_usd": 12.51
+    },
+    {
+        "date": "2025-02-14",
+        "hashrate_th": 239.48,
+        "profit_btc": 0.00012638,
+        "price_usd": 96779.92,
+        "profit_usd": 12.23
+    },
+    {
+        "date": "2025-02-15",
+        "hashrate_th": 240.232,
+        "profit_btc": 0.00012664,
+        "price_usd": 97725.43,
+        "profit_usd": 12.37
+    },
+    {
+        "date": "2025-02-16",
+        "hashrate_th": 240.602,
+        "profit_btc": 0.00012677,
+        "price_usd": 97341.08,
+        "profit_usd": 12.33
+    },
+    {
+        "date": "2025-02-17",
+        "hashrate_th": 241.245,
+        "profit_btc": 0.00012798,
+        "price_usd": 96164.97,
+        "profit_usd": 12.3
+    },
+    {
+        "date": "2025-02-18",
+        "hashrate_th": 241.716,
+        "profit_btc": 0.0001287,
+        "price_usd": 95898.14,
+        "profit_usd": 12.34
+    },
+    {
+        "date": "2025-02-19",
+        "hashrate_th": 238.909,
+        "profit_btc": 0.00012591,
+        "price_usd": 96057.09,
+        "profit_usd": 12.09
+    },
+    {
+        "date": "2025-02-20",
+        "hashrate_th": 240.607,
+        "profit_btc": 0.00012664,
+        "price_usd": 97240.39,
+        "profit_usd": 12.31
+    },
+    {
+        "date": "2025-02-21",
+        "hashrate_th": 241.531,
+        "profit_btc": 0.00012816,
+        "price_usd": 98335.89,
+        "profit_usd": 12.6
+    },
+    {
+        "date": "2025-02-22",
+        "hashrate_th": 241.006,
+        "profit_btc": 0.00012798,
+        "price_usd": 96403.02,
+        "profit_usd": 12.33
+    },
+    {
+        "date": "2025-02-23",
+        "hashrate_th": 239.079,
+        "profit_btc": 0.00012639,
+        "price_usd": 96280.82,
+        "profit_usd": 12.16
+    },
+    {
+        "date": "2025-02-24",
+        "hashrate_th": 239.847,
+        "profit_btc": 0.00013258,
+        "price_usd": 95719.53,
+        "profit_usd": 12.69
+    },
+    {
+        "date": "2025-02-25",
+        "hashrate_th": 239.896,
+        "profit_btc": 0.00013324,
+        "price_usd": 90313.01,
+        "profit_usd": 12.03
+    },
+    {
+        "date": "2025-02-26",
+        "hashrate_th": 239.834,
+        "profit_btc": 0.00013278,
+        "price_usd": 89141.59,
+        "profit_usd": 11.83
+    },
+    {
+        "date": "2025-02-27",
+        "hashrate_th": 241.627,
+        "profit_btc": 0.00013315,
+        "price_usd": 85652.77,
+        "profit_usd": 11.4
+    },
+    {
+        "date": "2025-02-28",
+        "hashrate_th": 239.474,
+        "profit_btc": 0.00013157,
+        "price_usd": 80412.93,
+        "profit_usd": 10.57
+    },
+    {
+        "date": "2025-03-01",
+        "hashrate_th": 242.283,
+        "profit_btc": 0.00013237,
+        "price_usd": 85057.92,
+        "profit_usd": 11.25
+    },
+    {
+        "date": "2025-03-02",
+        "hashrate_th": 239.099,
+        "profit_btc": 0.00013231,
+        "price_usd": 85857.75,
+        "profit_usd": 11.35
+    },
+    {
+        "date": "2025-03-03",
+        "hashrate_th": 239.474,
+        "profit_btc": 0.00013093,
+        "price_usd": 92894.07,
+        "profit_usd": 12.16
+    },
+    {
+        "date": "2025-03-04",
+        "hashrate_th": 241.296,
+        "profit_btc": 0.00013148,
+        "price_usd": 83943.48,
+        "profit_usd": 11.03
+    },
+    {
+        "date": "2025-03-05",
+        "hashrate_th": 241.375,
+        "profit_btc": 0.00013109,
+        "price_usd": 88703.3,
+        "profit_usd": 11.62
+    },
+    {
+        "date": "2025-03-06",
+        "hashrate_th": 242.223,
+        "profit_btc": 0.00013199,
+        "price_usd": 91548.84,
+        "profit_usd": 12.08
+    },
+    {
+        "date": "2025-03-07",
+        "hashrate_th": 241.622,
+        "profit_btc": 0.0001323,
+        "price_usd": 88253.98,
+        "profit_usd": 11.67
+    },
+    {
+        "date": "2025-03-08",
+        "hashrate_th": 241.363,
+        "profit_btc": 0.00013153,
+        "price_usd": 86149.75,
+        "profit_usd": 11.33
+    },
+    {
+        "date": "2025-03-09",
+        "hashrate_th": 241.22,
+        "profit_btc": 0.0001308,
+        "price_usd": 85447.49,
+        "profit_usd": 11.17
+    },
+    {
+        "date": "2025-03-10",
+        "hashrate_th": 241.647,
+        "profit_btc": 0.00012982,
+        "price_usd": 82258.15,
+        "profit_usd": 10.67
+    },
+    {
+        "date": "2025-03-11",
+        "hashrate_th": 239.497,
+        "profit_btc": 0.00012822,
+        "price_usd": 80587.62,
+        "profit_usd": 10.33
+    },
+    {
+        "date": "2025-03-12",
+        "hashrate_th": 241.603,
+        "profit_btc": 0.0001303,
+        "price_usd": 82442.94,
+        "profit_usd": 10.74
+    },
+    {
+        "date": "2025-03-13",
+        "hashrate_th": 238.568,
+        "profit_btc": 0.00012894,
+        "price_usd": 83465.93,
+        "profit_usd": 10.76
+    },
+    {
+        "date": "2025-03-14",
+        "hashrate_th": 241.01,
+        "profit_btc": 0.00012952,
+        "price_usd": 82622.87,
+        "profit_usd": 10.7
+    },
+    {
+        "date": "2025-03-15",
+        "hashrate_th": 239.022,
+        "profit_btc": 0.00012867,
+        "price_usd": 84238.6,
+        "profit_usd": 10.83
+    },
+    {
+        "date": "2025-03-16",
+        "hashrate_th": 241.895,
+        "profit_btc": 0.00012967,
+        "price_usd": 83825.02,
+        "profit_usd": 10.86
+    },
+    {
+        "date": "2025-03-17",
+        "hashrate_th": 240.025,
+        "profit_btc": 0.00012867,
+        "price_usd": 83272.77,
+        "profit_usd": 10.71
+    },
+    {
+        "date": "2025-03-18",
+        "hashrate_th": 238.646,
+        "profit_btc": 0.00012781,
+        "price_usd": 83071.36,
+        "profit_usd": 10.61
+    },
+    {
+        "date": "2025-03-19",
+        "hashrate_th": 242.762,
+        "profit_btc": 0.00013021,
+        "price_usd": 83162.88,
+        "profit_usd": 10.82
+    },
+    {
+        "date": "2025-03-20",
+        "hashrate_th": 237.541,
+        "profit_btc": 0.00012791,
+        "price_usd": 85609.53,
+        "profit_usd": 10.95
+    },
+    {
+        "date": "2025-03-21",
+        "hashrate_th": 241.463,
+        "profit_btc": 0.0001292,
+        "price_usd": 84404.01,
+        "profit_usd": 10.9
+    },
+    {
+        "date": "2025-03-22",
+        "hashrate_th": 238.555,
+        "profit_btc": 0.00012812,
+        "price_usd": 84295.16,
+        "profit_usd": 10.79
+    },
+    {
+        "date": "2025-03-23",
+        "hashrate_th": 241.195,
+        "profit_btc": 0.00013057,
+        "price_usd": 84350.21,
+        "profit_usd": 11.01
+    },
+    {
+        "date": "2025-03-24",
+        "hashrate_th": 241.566,
+        "profit_btc": 0.00012817,
+        "price_usd": 86825.35,
+        "profit_usd": 11.12
+    },
+    {
+        "date": "2025-03-25",
+        "hashrate_th": 242.825,
+        "profit_btc": 0.00012975,
+        "price_usd": 86999.16,
+        "profit_usd": 11.28
+    },
+    {
+        "date": "2025-03-26",
+        "hashrate_th": 240.673,
+        "profit_btc": 0.0001304,
+        "price_usd": 87764.53,
+        "profit_usd": 11.44
+    },
+    {
+        "date": "2025-03-27",
+        "hashrate_th": 241.356,
+        "profit_btc": 0.00012962,
+        "price_usd": 87374.73,
+        "profit_usd": 11.32
+    },
+    {
+        "date": "2025-03-28",
+        "hashrate_th": 239.527,
+        "profit_btc": 0.00012698,
+        "price_usd": 85958.01,
+        "profit_usd": 10.91
+    },
+    {
+        "date": "2025-03-29",
+        "hashrate_th": 239.119,
+        "profit_btc": 0.00012676,
+        "price_usd": 83382.03,
+        "profit_usd": 10.56
+    },
+    {
+        "date": "2025-03-30",
+        "hashrate_th": 241.031,
+        "profit_btc": 0.00012715,
+        "price_usd": 83224.73,
+        "profit_usd": 10.58
+    },
+    {
+        "date": "2025-03-31",
+        "hashrate_th": 241.428,
+        "profit_btc": 0.00012788,
+        "price_usd": 82046.92,
+        "profit_usd": 10.49
+    },
+    {
+        "date": "2025-04-01",
+        "hashrate_th": 241.953,
+        "profit_btc": 0.0001286,
+        "price_usd": 83622.77,
+        "profit_usd": 10.75
+    },
+    {
+        "date": "2025-04-02",
+        "hashrate_th": 242.159,
+        "profit_btc": 0.00012843,
+        "price_usd": 84809.22,
+        "profit_usd": 10.89
+    },
+    {
+        "date": "2025-04-03",
+        "hashrate_th": 241.439,
+        "profit_btc": 0.00012767,
+        "price_usd": 83487.35,
+        "profit_usd": 10.65
+    },
+    {
+        "date": "2025-04-04",
+        "hashrate_th": 234.831,
+        "profit_btc": 0.00012469,
+        "price_usd": 82745.92,
+        "profit_usd": 10.31
+    },
+    {
+        "date": "2025-04-05",
+        "hashrate_th": 244.197,
+        "profit_btc": 0.00012867,
+        "price_usd": 83787.53,
+        "profit_usd": 10.78
+    },
+    {
+        "date": "2025-04-06",
+        "hashrate_th": 248.508,
+        "profit_btc": 0.00012274,
+        "price_usd": 83056.19,
+        "profit_usd": 10.19
+    },
+    {
+        "date": "2025-04-07",
+        "hashrate_th": 242.977,
+        "profit_btc": 0.00012028,
+        "price_usd": 77724.67,
+        "profit_usd": 9.34
+    },
+    {
+        "date": "2025-04-08",
+        "hashrate_th": 242.826,
+        "profit_btc": 0.0001204,
+        "price_usd": 79455.82,
+        "profit_usd": 9.56
+    },
+    {
+        "date": "2025-04-09",
+        "hashrate_th": 244.982,
+        "profit_btc": 0.00012193,
+        "price_usd": 76417.13,
+        "profit_usd": 9.31
+    },
+    {
+        "date": "2025-04-10",
+        "hashrate_th": 243.97,
+        "profit_btc": 0.00012084,
+        "price_usd": 81951.33,
+        "profit_usd": 9.9
+    },
+    {
+        "date": "2025-04-11",
+        "hashrate_th": 244.041,
+        "profit_btc": 0.00012173,
+        "price_usd": 81483.82,
+        "profit_usd": 9.91
+    },
+    {
+        "date": "2025-04-12",
+        "hashrate_th": 244.282,
+        "profit_btc": 0.00012153,
+        "price_usd": 83100.25,
+        "profit_usd": 10.09
+    },
+    {
+        "date": "2025-04-13",
+        "hashrate_th": 246.745,
+        "profit_btc": 0.00012202,
+        "price_usd": 84983.5,
+        "profit_usd": 10.36
+    },
+    {
+        "date": "2025-04-14",
+        "hashrate_th": 245.04,
+        "profit_btc": 0.00012292,
+        "price_usd": 84876.61,
+        "profit_usd": 10.43
+    },
+    {
+        "date": "2025-04-15",
+        "hashrate_th": 244.814,
+        "profit_btc": 0.00012174,
+        "price_usd": 85401.57,
+        "profit_usd": 10.39
+    },
+    {
+        "date": "2025-04-16",
+        "hashrate_th": 243.995,
+        "profit_btc": 0.00012077,
+        "price_usd": 83905.32,
+        "profit_usd": 10.13
+    },
+    {
+        "date": "2025-04-17",
+        "hashrate_th": 245.435,
+        "profit_btc": 0.00012225,
+        "price_usd": 84279.09,
+        "profit_usd": 10.3
+    },
+    {
+        "date": "2025-04-18",
+        "hashrate_th": 245.215,
+        "profit_btc": 0.00012215,
+        "price_usd": 84714.37,
+        "profit_usd": 10.34
+    },
+    {
+        "date": "2025-04-19",
+        "hashrate_th": 242.933,
+        "profit_btc": 0.00012046,
+        "price_usd": 84973.51,
+        "profit_usd": 10.23
+    },
+    {
+        "date": "2025-04-20",
+        "hashrate_th": 245.494,
+        "profit_btc": 0.00012023,
+        "price_usd": 84689.57,
+        "profit_usd": 10.18
+    },
+    {
+        "date": "2025-04-21",
+        "hashrate_th": 234.363,
+        "profit_btc": 0.00011506,
+        "price_usd": 87332.67,
+        "profit_usd": 10.04
+    },
+    {
+        "date": "2025-04-22",
+        "hashrate_th": 245.102,
+        "profit_btc": 0.00012003,
+        "price_usd": 88320.21,
+        "profit_usd": 10.6
+    },
+    {
+        "date": "2025-04-23",
+        "hashrate_th": 244.956,
+        "profit_btc": 0.00012058,
+        "price_usd": 93284.63,
+        "profit_usd": 11.24
+    },
+    {
+        "date": "2025-04-24",
+        "hashrate_th": 243.836,
+        "profit_btc": 0.0001229,
+        "price_usd": 92801.26,
+        "profit_usd": 11.4
+    },
+    {
+        "date": "2025-04-25",
+        "hashrate_th": 243.564,
+        "profit_btc": 0.00011877,
+        "price_usd": 93275.15,
+        "profit_usd": 11.07
+    },
+    {
+        "date": "2025-04-26",
+        "hashrate_th": 244.804,
+        "profit_btc": 0.00011978,
+        "price_usd": 94610.36,
+        "profit_usd": 11.33
+    },
+    {
+        "date": "2025-04-27",
+        "hashrate_th": 244.767,
+        "profit_btc": 0.00012,
+        "price_usd": 94148.83,
+        "profit_usd": 11.29
+    },
+    {
+        "date": "2025-04-28",
+        "hashrate_th": 243.367,
+        "profit_btc": 0.00011989,
+        "price_usd": 94305.85,
+        "profit_usd": 11.3
+    },
+    {
+        "date": "2025-04-29",
+        "hashrate_th": 244.869,
+        "profit_btc": 0.00012045,
+        "price_usd": 94680.59,
+        "profit_usd": 11.4
+    },
+    {
+        "date": "2025-04-30",
+        "hashrate_th": 242.381,
+        "profit_btc": 0.00011887,
+        "price_usd": 94772.45,
+        "profit_usd": 11.26
+    },
+    {
+        "date": "2025-05-01",
+        "hashrate_th": 243.721,
+        "profit_btc": 0.00011957,
+        "price_usd": 95449.86,
+        "profit_usd": 11.41
+    },
+    {
+        "date": "2025-05-02",
+        "hashrate_th": 243.692,
+        "profit_btc": 0.00011914,
+        "price_usd": 96895.35,
+        "profit_usd": 11.54
+    },
+    {
+        "date": "2025-05-03",
+        "hashrate_th": 245.696,
+        "profit_btc": 0.00011997,
+        "price_usd": 96213.35,
+        "profit_usd": 11.54
+    },
+    {
+        "date": "2025-05-04",
+        "hashrate_th": 247.14,
+        "profit_btc": 0.00012357,
+        "price_usd": 95652.08,
+        "profit_usd": 11.81
+    },
+    {
+        "date": "2025-05-05",
+        "hashrate_th": 243.965,
+        "profit_btc": 0.00012274,
+        "price_usd": 94173.59,
+        "profit_usd": 11.55
+    },
+    {
+        "date": "2025-05-06",
+        "hashrate_th": 243.192,
+        "profit_btc": 0.00012285,
+        "price_usd": 94104.76,
+        "profit_usd": 11.56
+    },
+    {
+        "date": "2025-05-07",
+        "hashrate_th": 243.117,
+        "profit_btc": 0.00012283,
+        "price_usd": 96797.34,
+        "profit_usd": 11.88
+    },
+    {
+        "date": "2025-05-08",
+        "hashrate_th": 244.801,
+        "profit_btc": 0.00012447,
+        "price_usd": 99214.7,
+        "profit_usd": 12.34
+    },
+    {
+        "date": "2025-05-09",
+        "hashrate_th": 245.364,
+        "profit_btc": 0.00012431,
+        "price_usd": 102963.42,
+        "profit_usd": 12.79
+    },
+    {
+        "date": "2025-05-10",
+        "hashrate_th": 246.171,
+        "profit_btc": 0.00012449,
+        "price_usd": 103351.62,
+        "profit_usd": 12.86
+    },
+    {
+        "date": "2025-05-11",
+        "hashrate_th": 245.798,
+        "profit_btc": 0.00012411,
+        "price_usd": 104160.53,
+        "profit_usd": 12.92
+    },
+    {
+        "date": "2025-05-12",
+        "hashrate_th": 244.654,
+        "profit_btc": 0.0001235,
+        "price_usd": 104158.5,
+        "profit_usd": 12.86
+    },
+    {
+        "date": "2025-05-13",
+        "hashrate_th": 244.81,
+        "profit_btc": 0.00012529,
+        "price_usd": 102775.23,
+        "profit_usd": 12.87
+    },
+    {
+        "date": "2025-05-14",
+        "hashrate_th": 245.456,
+        "profit_btc": 0.00012378,
+        "price_usd": 103704.7,
+        "profit_usd": 12.83
+    },
+    {
+        "date": "2025-05-15",
+        "hashrate_th": 244.32,
+        "profit_btc": 0.00012393,
+        "price_usd": 102401.28,
+        "profit_usd": 12.69
+    },
+    {
+        "date": "2025-05-16",
+        "hashrate_th": 243.531,
+        "profit_btc": 0.00012297,
+        "price_usd": 103974.7,
+        "profit_usd": 12.78
+    },
+    {
+        "date": "2025-05-17",
+        "hashrate_th": 244.301,
+        "profit_btc": 0.00012505,
+        "price_usd": 103048.79,
+        "profit_usd": 12.88
+    },
+    {
+        "date": "2025-05-18",
+        "hashrate_th": 246.305,
+        "profit_btc": 0.00012217,
+        "price_usd": 103560.67,
+        "profit_usd": 12.65
+    },
+    {
+        "date": "2025-05-19",
+        "hashrate_th": 244.082,
+        "profit_btc": 0.00012118,
+        "price_usd": 103766.94,
+        "profit_usd": 12.57
+    },
+    {
+        "date": "2025-05-20",
+        "hashrate_th": 244.93,
+        "profit_btc": 0.00012173,
+        "price_usd": 105530.51,
+        "profit_usd": 12.84
+    },
+    {
+        "date": "2025-05-21",
+        "hashrate_th": 244.755,
+        "profit_btc": 0.00012171,
+        "price_usd": 106576.86,
+        "profit_usd": 12.97
+    },
+    {
+        "date": "2025-05-22",
+        "hashrate_th": 243.518,
+        "profit_btc": 0.0001206,
+        "price_usd": 110604.92,
+        "profit_usd": 13.33
+    },
+    {
+        "date": "2025-05-23",
+        "hashrate_th": 243.916,
+        "profit_btc": 0.00012067,
+        "price_usd": 111119.13,
+        "profit_usd": 13.4
+    },
+    {
+        "date": "2025-05-24",
+        "hashrate_th": 247.661,
+        "profit_btc": 0.00012286,
+        "price_usd": 108435.56,
+        "profit_usd": 13.32
+    },
+    {
+        "date": "2025-05-25",
+        "hashrate_th": 245.122,
+        "profit_btc": 0.00012111,
+        "price_usd": 107422.35,
+        "profit_usd": 13.0
+    },
+    {
+        "date": "2025-05-26",
+        "hashrate_th": 244.399,
+        "profit_btc": 0.00012085,
+        "price_usd": 109477.01,
+        "profit_usd": 13.23
+    },
+    {
+        "date": "2025-05-27",
+        "hashrate_th": 244.074,
+        "profit_btc": 0.00012119,
+        "price_usd": 108920.11,
+        "profit_usd": 13.2
+    },
+    {
+        "date": "2025-05-28",
+        "hashrate_th": 244.22,
+        "profit_btc": 0.00012111,
+        "price_usd": 108749.24,
+        "profit_usd": 13.17
+    },
+    {
+        "date": "2025-05-29",
+        "hashrate_th": 243.647,
+        "profit_btc": 0.00012102,
+        "price_usd": 108582.43,
+        "profit_usd": 13.14
+    },
+    {
+        "date": "2025-05-30",
+        "hashrate_th": 242.837,
+        "profit_btc": 0.00011997,
+        "price_usd": 105951.51,
+        "profit_usd": 12.71
+    },
+    {
+        "date": "2025-05-31",
+        "hashrate_th": 244.364,
+        "profit_btc": 0.00011763,
+        "price_usd": 103278.12,
+        "profit_usd": 12.14
+    },
+    {
+        "date": "2025-06-01",
+        "hashrate_th": 243.646,
+        "profit_btc": 0.00011557,
+        "price_usd": 104031.53,
+        "profit_usd": 12.02
+    },
+    {
+        "date": "2025-06-02",
+        "hashrate_th": 244.13,
+        "profit_btc": 0.00011557,
+        "price_usd": 104709.9,
+        "profit_usd": 12.1
+    },
+    {
+        "date": "2025-06-03",
+        "hashrate_th": 242.515,
+        "profit_btc": 0.0001148,
+        "price_usd": 105421.3,
+        "profit_usd": 12.1
+    },
+    {
+        "date": "2025-06-04",
+        "hashrate_th": 243.653,
+        "profit_btc": 0.0001157,
+        "price_usd": 105564.45,
+        "profit_usd": 12.21
+    },
+    {
+        "date": "2025-06-05",
+        "hashrate_th": 243.763,
+        "profit_btc": 0.00011635,
+        "price_usd": 104821.68,
+        "profit_usd": 12.19
+    },
+    {
+        "date": "2025-06-06",
+        "hashrate_th": 244.313,
+        "profit_btc": 0.00011649,
+        "price_usd": 102933.86,
+        "profit_usd": 11.99
+    },
+    {
+        "date": "2025-06-07",
+        "hashrate_th": 205.753,
+        "profit_btc": 9.718e-05,
+        "price_usd": 104833.97,
+        "profit_usd": 10.18
+    },
+    {
+        "date": "2025-06-08",
+        "hashrate_th": 242.436,
+        "profit_btc": 0.00011433,
+        "price_usd": 105412.31,
+        "profit_usd": 12.05
+    },
+    {
+        "date": "2025-06-09",
+        "hashrate_th": 242.447,
+        "profit_btc": 0.00011549,
+        "price_usd": 106356.14,
+        "profit_usd": 12.28
+    },
+    {
+        "date": "2025-06-10",
+        "hashrate_th": 246.136,
+        "profit_btc": 0.00011742,
+        "price_usd": 109452.31,
+        "profit_usd": 12.85
+    },
+    {
+        "date": "2025-06-11",
+        "hashrate_th": 245.925,
+        "profit_btc": 0.00011727,
+        "price_usd": 109482.95,
+        "profit_usd": 12.83
+    },
+    {
+        "date": "2025-06-12",
+        "hashrate_th": 247.134,
+        "profit_btc": 0.00011709,
+        "price_usd": 107850.0,
+        "profit_usd": 12.62
+    },
+    {
+        "date": "2025-06-13",
+        "hashrate_th": 245.058,
+        "profit_btc": 0.00011663,
+        "price_usd": 104247.79,
+        "profit_usd": 12.15
+    },
+    {
+        "date": "2025-06-14",
+        "hashrate_th": 241.539,
+        "profit_btc": 0.00011514,
+        "price_usd": 105178.25,
+        "profit_usd": 12.11
+    },
+    {
+        "date": "2025-06-15",
+        "hashrate_th": 228.295,
+        "profit_btc": 0.00010825,
+        "price_usd": 105304.32,
+        "profit_usd": 11.39
+    },
+    {
+        "date": "2025-06-16",
+        "hashrate_th": 228.525,
+        "profit_btc": 0.00010844,
+        "price_usd": 106272.86,
+        "profit_usd": 11.52
+    },
+    {
+        "date": "2025-06-17",
+        "hashrate_th": 244.801,
+        "profit_btc": 0.00011777,
+        "price_usd": 106696.71,
+        "profit_usd": 12.56
+    },
+    {
+        "date": "2025-06-18",
+        "hashrate_th": 239.947,
+        "profit_btc": 0.00011425,
+        "price_usd": 104593.41,
+        "profit_usd": 11.94
+    },
+    {
+        "date": "2025-06-19",
+        "hashrate_th": 243.953,
+        "profit_btc": 0.00011634,
+        "price_usd": 104823.74,
+        "profit_usd": 12.19
+    },
+    {
+        "date": "2025-06-20",
+        "hashrate_th": 245.268,
+        "profit_btc": 0.00011719,
+        "price_usd": 105276.55,
+        "profit_usd": 12.33
+    },
+    {
+        "date": "2025-06-21",
+        "hashrate_th": 243.069,
+        "profit_btc": 0.00011563,
+        "price_usd": 103650.03,
+        "profit_usd": 11.98
+    },
+    {
+        "date": "2025-06-22",
+        "hashrate_th": 244.459,
+        "profit_btc": 0.00011618,
+        "price_usd": 102418.94,
+        "profit_usd": 11.89
+    },
+    {
+        "date": "2025-06-23",
+        "hashrate_th": 244.408,
+        "profit_btc": 0.00011639,
+        "price_usd": 101354.47,
+        "profit_usd": 11.79
+    },
+    {
+        "date": "2025-06-24",
+        "hashrate_th": 243.164,
+        "profit_btc": 0.00011665,
+        "price_usd": 105006.97,
+        "profit_usd": 12.24
+    },
+    {
+        "date": "2025-06-25",
+        "hashrate_th": 244.886,
+        "profit_btc": 0.00011708,
+        "price_usd": 106769.41,
+        "profit_usd": 12.5
+    },
+    {
+        "date": "2025-06-26",
+        "hashrate_th": 244.502,
+        "profit_btc": 0.00011766,
+        "price_usd": 107648.88,
+        "profit_usd": 12.66
+    },
+    {
+        "date": "2025-06-27",
+        "hashrate_th": 240.622,
+        "profit_btc": 0.00011444,
+        "price_usd": 107107.25,
+        "profit_usd": 12.25
+    },
+    {
+        "date": "2025-06-28",
+        "hashrate_th": 243.739,
+        "profit_btc": 0.00011658,
+        "price_usd": 107180.85,
+        "profit_usd": 12.49
+    },
+    {
+        "date": "2025-06-29",
+        "hashrate_th": 241.897,
+        "profit_btc": 0.00011917,
+        "price_usd": 107710.15,
+        "profit_usd": 12.83
+    },
+    {
+        "date": "2025-06-30",
+        "hashrate_th": 235.216,
+        "profit_btc": 0.00012063,
+        "price_usd": 108048.67,
+        "profit_usd": 13.03
+    },
+    {
+        "date": "2025-07-01",
+        "hashrate_th": 240.509,
+        "profit_btc": 0.0001243,
+        "price_usd": 106766.44,
+        "profit_usd": 13.27
+    },
+    {
+        "date": "2025-07-02",
+        "hashrate_th": 242.593,
+        "profit_btc": 0.00012455,
+        "price_usd": 106831.88,
+        "profit_usd": 13.3
+    },
+    {
+        "date": "2025-07-03",
+        "hashrate_th": 199.303,
+        "profit_btc": 0.00010312,
+        "price_usd": 109240.88,
+        "profit_usd": 11.26
+    },
+    {
+        "date": "2025-07-04",
+        "hashrate_th": 152.805,
+        "profit_btc": 7.828e-05,
+        "price_usd": 109036.59,
+        "profit_usd": 8.53
+    },
+    {
+        "date": "2025-07-05",
+        "hashrate_th": 173.188,
+        "profit_btc": 8.869e-05,
+        "price_usd": 108068.84,
+        "profit_usd": 9.58
+    },
+    {
+        "date": "2025-07-06",
+        "hashrate_th": 242.921,
+        "profit_btc": 0.00012497,
+        "price_usd": 108012.4,
+        "profit_usd": 13.49
+    },
+    {
+        "date": "2025-07-07",
+        "hashrate_th": 211.433,
+        "profit_btc": 0.00010865,
+        "price_usd": 109020.33,
+        "profit_usd": 11.84
+    },
+    {
+        "date": "2025-07-08",
+        "hashrate_th": 241.311,
+        "profit_btc": 0.0001237,
+        "price_usd": 108264.6,
+        "profit_usd": 13.39
+    },
+    {
+        "date": "2025-07-09",
+        "hashrate_th": 242.245,
+        "profit_btc": 0.00012482,
+        "price_usd": 108725.0,
+        "profit_usd": 13.57
+    },
+    {
+        "date": "2025-07-10",
+        "hashrate_th": 242.191,
+        "profit_btc": 0.0001257,
+        "price_usd": 111102.49,
+        "profit_usd": 13.96
+    },
+    {
+        "date": "2025-07-11",
+        "hashrate_th": 242.273,
+        "profit_btc": 0.00012523,
+        "price_usd": 117274.6,
+        "profit_usd": 14.68
+    },
+    {
+        "date": "2025-07-12",
+        "hashrate_th": 241.293,
+        "profit_btc": 0.00012042,
+        "price_usd": 117805.42,
+        "profit_usd": 14.18
+    },
+    {
+        "date": "2025-07-13",
+        "hashrate_th": 243.168,
+        "profit_btc": 0.00011591,
+        "price_usd": 117674.74,
+        "profit_usd": 13.63
+    },
+    {
+        "date": "2025-07-14",
+        "hashrate_th": 243.04,
+        "profit_btc": 0.00011553,
+        "price_usd": 120744.78,
+        "profit_usd": 13.94
+    },
+    {
+        "date": "2025-07-15",
+        "hashrate_th": 242.046,
+        "profit_btc": 0.00011511,
+        "price_usd": 117653.23,
+        "profit_usd": 13.54
+    },
+    {
+        "date": "2025-07-16",
+        "hashrate_th": 241.545,
+        "profit_btc": 0.00011513,
+        "price_usd": 117990.56,
+        "profit_usd": 13.58
+    },
+    {
+        "date": "2025-07-17",
+        "hashrate_th": 241.265,
+        "profit_btc": 0.00011608,
+        "price_usd": 118304.69,
+        "profit_usd": 13.73
+    },
+    {
+        "date": "2025-07-18",
+        "hashrate_th": 241.185,
+        "profit_btc": 0.00011534,
+        "price_usd": 119652.16,
+        "profit_usd": 13.8
+    },
+    {
+        "date": "2025-07-19",
+        "hashrate_th": 243.037,
+        "profit_btc": 0.00011581,
+        "price_usd": 118299.79,
+        "profit_usd": 13.7
+    },
+    {
+        "date": "2025-07-20",
+        "hashrate_th": 241.099,
+        "profit_btc": 0.00011498,
+        "price_usd": 117903.43,
+        "profit_usd": 13.55
+    },
+    {
+        "date": "2025-07-21",
+        "hashrate_th": 243.534,
+        "profit_btc": 0.00011595,
+        "price_usd": 118336.46,
+        "profit_usd": 13.72
+    },
+    {
+        "date": "2025-07-22",
+        "hashrate_th": 242.28,
+        "profit_btc": 0.0001157,
+        "price_usd": 117974.93,
+        "profit_usd": 13.64
+    },
+    {
+        "date": "2025-07-23",
+        "hashrate_th": 240.152,
+        "profit_btc": 0.00011411,
+        "price_usd": 118682.5,
+        "profit_usd": 13.54
+    },
+    {
+        "date": "2025-07-24",
+        "hashrate_th": 240.53,
+        "profit_btc": 0.00011539,
+        "price_usd": 118628.43,
+        "profit_usd": 13.68
+    },
+    {
+        "date": "2025-07-25",
+        "hashrate_th": 239.44,
+        "profit_btc": 0.00011575,
+        "price_usd": 116359.84,
+        "profit_usd": 13.46
+    },
+    {
+        "date": "2025-07-26",
+        "hashrate_th": 242.213,
+        "profit_btc": 0.00011465,
+        "price_usd": 117709.3,
+        "profit_usd": 13.49
+    },
+    {
+        "date": "2025-07-27",
+        "hashrate_th": 243.301,
+        "profit_btc": 0.00011414,
+        "price_usd": 118222.02,
+        "profit_usd": 13.49
+    },
+    {
+        "date": "2025-07-28",
+        "hashrate_th": 244.172,
+        "profit_btc": 0.00011496,
+        "price_usd": 119066.74,
+        "profit_usd": 13.68
+    },
+    {
+        "date": "2025-07-29",
+        "hashrate_th": 245.478,
+        "profit_btc": 0.00011677,
+        "price_usd": 118197.39,
+        "profit_usd": 13.8
+    },
+    {
+        "date": "2025-07-30",
+        "hashrate_th": 240.848,
+        "profit_btc": 0.00011345,
+        "price_usd": 117985.18,
+        "profit_usd": 13.38
+    },
+    {
+        "date": "2025-07-31",
+        "hashrate_th": 244.614,
+        "profit_btc": 0.0001156,
+        "price_usd": 118443.84,
+        "profit_usd": 13.69
+    },
+    {
+        "date": "2025-08-01",
+        "hashrate_th": 245.528,
+        "profit_btc": 0.0001156,
+        "price_usd": 115353.3,
+        "profit_usd": 13.33
+    },
+    {
+        "date": "2025-08-02",
+        "hashrate_th": 246.577,
+        "profit_btc": 0.00011702,
+        "price_usd": 113606.43,
+        "profit_usd": 13.29
+    },
+    {
+        "date": "2025-08-03",
+        "hashrate_th": 241.951,
+        "profit_btc": 0.00011355,
+        "price_usd": 113655.63,
+        "profit_usd": 12.9
+    },
+    {
+        "date": "2025-08-04",
+        "hashrate_th": 245.621,
+        "profit_btc": 0.00011529,
+        "price_usd": 114517.53,
+        "profit_usd": 13.2
+    },
+    {
+        "date": "2025-08-05",
+        "hashrate_th": 242.236,
+        "profit_btc": 0.00011439,
+        "price_usd": 114766.69,
+        "profit_usd": 13.12
+    },
+    {
+        "date": "2025-08-06",
+        "hashrate_th": 241.392,
+        "profit_btc": 0.00011347,
+        "price_usd": 113815.45,
+        "profit_usd": 12.91
+    },
+    {
+        "date": "2025-08-07",
+        "hashrate_th": 242.057,
+        "profit_btc": 0.00011508,
+        "price_usd": 115442.94,
+        "profit_usd": 13.28
+    },
+    {
+        "date": "2025-08-08",
+        "hashrate_th": 243.684,
+        "profit_btc": 0.00011491,
+        "price_usd": 116593.99,
+        "profit_usd": 13.39
+    },
+    {
+        "date": "2025-08-09",
+        "hashrate_th": 245.089,
+        "profit_btc": 0.00011478,
+        "price_usd": 116895.68,
+        "profit_usd": 13.41
+    },
+    {
+        "date": "2025-08-10",
+        "hashrate_th": 245.287,
+        "profit_btc": 0.00011365,
+        "price_usd": 117644.57,
+        "profit_usd": 13.37
+    },
+    {
+        "date": "2025-08-11",
+        "hashrate_th": 245.887,
+        "profit_btc": 0.00011412,
+        "price_usd": 121494.48,
+        "profit_usd": 13.86
+    },
+    {
+        "date": "2025-08-12",
+        "hashrate_th": 243.776,
+        "profit_btc": 0.00011369,
+        "price_usd": 118747.54,
+        "profit_usd": 13.5
+    },
+    {
+        "date": "2025-08-13",
+        "hashrate_th": 242.242,
+        "profit_btc": 0.00011252,
+        "price_usd": 119994.5,
+        "profit_usd": 13.5
+    },
+    {
+        "date": "2025-08-14",
+        "hashrate_th": 243.384,
+        "profit_btc": 0.00011373,
+        "price_usd": 122295.5,
+        "profit_usd": 13.9
+    },
+    {
+        "date": "2025-08-15",
+        "hashrate_th": 245.085,
+        "profit_btc": 0.00011427,
+        "price_usd": 118802.5,
+        "profit_usd": 13.57
+    },
+    {
+        "date": "2025-08-16",
+        "hashrate_th": 246.313,
+        "profit_btc": 0.00011435,
+        "price_usd": 117428.0,
+        "profit_usd": 13.42
+    },
+    {
+        "date": "2025-08-17",
+        "hashrate_th": 242.998,
+        "profit_btc": 0.00011239,
+        "price_usd": 117952.0,
+        "profit_usd": 13.25
+    },
+    {
+        "date": "2025-08-18",
+        "hashrate_th": 245.604,
+        "profit_btc": 0.00011364,
+        "price_usd": 115262.0,
+        "profit_usd": 13.09
+    },
+    {
+        "date": "2025-08-19",
+        "hashrate_th": 243.594,
+        "profit_btc": 0.00011293,
+        "price_usd": 115569.0,
+        "profit_usd": 13.05
+    },
+    {
+        "date": "2025-08-20",
+        "hashrate_th": 244.229,
+        "profit_btc": 0.00011313,
+        "price_usd": 113629.5,
+        "profit_usd": 12.85
+    },
+    {
+        "date": "2025-08-21",
+        "hashrate_th": 244.851,
+        "profit_btc": 0.00011325,
+        "price_usd": 113668.0,
+        "profit_usd": 12.87
+    },
+    {
+        "date": "2025-08-22",
+        "hashrate_th": 246.012,
+        "profit_btc": 0.00011372,
+        "price_usd": 112840.0,
+        "profit_usd": 12.83
+    },
+    {
+        "date": "2025-08-23",
+        "hashrate_th": 245.521,
+        "profit_btc": 0.00011375,
+        "price_usd": 115756.0,
+        "profit_usd": 13.16
+    },
+    {
+        "date": "2025-08-24",
+        "hashrate_th": 243.147,
+        "profit_btc": 0.0001121,
+        "price_usd": 114910.5,
+        "profit_usd": 12.88
+    },
+    {
+        "date": "2025-08-25",
+        "hashrate_th": 244.108,
+        "profit_btc": 0.00011274,
+        "price_usd": 112230.5,
+        "profit_usd": 12.65
+    },
+    {
+        "date": "2025-08-26",
+        "hashrate_th": 243.72,
+        "profit_btc": 0.00011272,
+        "price_usd": 109951.5,
+        "profit_usd": 12.39
+    },
+    {
+        "date": "2025-08-27",
+        "hashrate_th": 245.549,
+        "profit_btc": 0.00011386,
+        "price_usd": 111062.5,
+        "profit_usd": 12.64
+    },
+    {
+        "date": "2025-08-28",
+        "hashrate_th": 242.942,
+        "profit_btc": 0.00011218,
+        "price_usd": 112276.5,
+        "profit_usd": 12.59
+    },
+    {
+        "date": "2025-08-29",
+        "hashrate_th": 246.204,
+        "profit_btc": 0.00011385,
+        "price_usd": 110730.0,
+        "profit_usd": 12.6
+    },
+    {
+        "date": "2025-08-30",
+        "hashrate_th": 243.748,
+        "profit_btc": 0.00011287,
+        "price_usd": 108103.0,
+        "profit_usd": 12.2
+    },
+    {
+        "date": "2025-08-31",
+        "hashrate_th": 244.606,
+        "profit_btc": 0.00011274,
+        "price_usd": 108867.0,
+        "profit_usd": 12.27
+    },
+    {
+        "date": "2025-09-01",
+        "hashrate_th": 244.78,
+        "profit_btc": 0.00011377,
+        "price_usd": 108065.5,
+        "profit_usd": 12.29
+    },
+    {
+        "date": "2025-09-02",
+        "hashrate_th": 244.408,
+        "profit_btc": 0.00011498,
+        "price_usd": 110243.0,
+        "profit_usd": 12.67
+    },
+    {
+        "date": "2025-09-03",
+        "hashrate_th": 246.674,
+        "profit_btc": 0.00011417,
+        "price_usd": 111396.0,
+        "profit_usd": 12.71
+    },
+    {
+        "date": "2025-09-04",
+        "hashrate_th": 238.556,
+        "profit_btc": 0.00011171,
+        "price_usd": 111026.5,
+        "profit_usd": 12.4
+    },
+    {
+        "date": "2025-09-05",
+        "hashrate_th": 245.043,
+        "profit_btc": 0.00011097,
+        "price_usd": 111796.5,
+        "profit_usd": 12.4
+    },
+    {
+        "date": "2025-09-06",
+        "hashrate_th": 245.619,
+        "profit_btc": 0.00010924,
+        "price_usd": 110952.0,
+        "profit_usd": 12.12
+    },
+    {
+        "date": "2025-09-07",
+        "hashrate_th": 243.148,
+        "profit_btc": 0.00010723,
+        "price_usd": 110921.0,
+        "profit_usd": 11.89
+    },
+    {
+        "date": "2025-09-08",
+        "hashrate_th": 244.791,
+        "profit_btc": 0.00010829,
+        "price_usd": 111623.5,
+        "profit_usd": 12.08
+    },
+    {
+        "date": "2025-09-09",
+        "hashrate_th": 244.2,
+        "profit_btc": 0.00010821,
+        "price_usd": 112019.0,
+        "profit_usd": 12.12
+    },
+    {
+        "date": "2025-09-10",
+        "hashrate_th": 245.637,
+        "profit_btc": 0.00010845,
+        "price_usd": 111812.5,
+        "profit_usd": 12.12
+    },
+    {
+        "date": "2025-09-11",
+        "hashrate_th": 243.92,
+        "profit_btc": 0.00010754,
+        "price_usd": 113926.5,
+        "profit_usd": 12.25
+    },
+    {
+        "date": "2025-09-12",
+        "hashrate_th": 244.692,
+        "profit_btc": 0.00010775,
+        "price_usd": 115132.0,
+        "profit_usd": 12.4
+    },
+    {
+        "date": "2025-09-13",
+        "hashrate_th": 243.02,
+        "profit_btc": 0.00010735,
+        "price_usd": 115884.5,
+        "profit_usd": 12.44
+    },
+    {
+        "date": "2025-09-14",
+        "hashrate_th": 242.588,
+        "profit_btc": 0.00010722,
+        "price_usd": 115917.5,
+        "profit_usd": 12.42
+    },
+    {
+        "date": "2025-09-15",
+        "hashrate_th": 245.332,
+        "profit_btc": 0.00010831,
+        "price_usd": 115029.5,
+        "profit_usd": 12.45
+    },
+    {
+        "date": "2025-09-16",
+        "hashrate_th": 242.254,
+        "profit_btc": 0.00010742,
+        "price_usd": 115194.0,
+        "profit_usd": 12.37
+    },
+    {
+        "date": "2025-09-17",
+        "hashrate_th": 242.455,
+        "profit_btc": 0.00010721,
+        "price_usd": 116526.0,
+        "profit_usd": 12.49
+    },
+    {
+        "date": "2025-09-18",
+        "hashrate_th": 243.64,
+        "profit_btc": 0.00010682,
+        "price_usd": 117018.5,
+        "profit_usd": 12.49
+    },
+    {
+        "date": "2025-09-19",
+        "hashrate_th": 244.838,
+        "profit_btc": 0.0001032,
+        "price_usd": 116800.0,
+        "profit_usd": 12.05
+    },
+    {
+        "date": "2025-09-20",
+        "hashrate_th": 244.04,
+        "profit_btc": 0.00010262,
+        "price_usd": 115648.0,
+        "profit_usd": 11.86
+    },
+    {
+        "date": "2025-09-21",
+        "hashrate_th": 246.049,
+        "profit_btc": 0.00010362,
+        "price_usd": 115593.0,
+        "profit_usd": 11.97
+    },
+    {
+        "date": "2025-09-22",
+        "hashrate_th": 242.108,
+        "profit_btc": 0.00010217,
+        "price_usd": 113493.0,
+        "profit_usd": 11.59
+    },
+    {
+        "date": "2025-09-23",
+        "hashrate_th": 243.916,
+        "profit_btc": 0.00010273,
+        "price_usd": 112405.0,
+        "profit_usd": 11.54
+    },
+    {
+        "date": "2025-09-24",
+        "hashrate_th": 242.693,
+        "profit_btc": 0.00010249,
+        "price_usd": 112491.5,
+        "profit_usd": 11.52
+    },
+    {
+        "date": "2025-09-25",
+        "hashrate_th": 244.809,
+        "profit_btc": 0.0001034,
+        "price_usd": 112261.5,
+        "profit_usd": 11.6
+    },
+    {
+        "date": "2025-09-26",
+        "hashrate_th": 245.918,
+        "profit_btc": 0.00010366,
+        "price_usd": 109234.5,
+        "profit_usd": 11.32
+    },
+    {
+        "date": "2025-09-27",
+        "hashrate_th": 243.472,
+        "profit_btc": 0.00010269,
+        "price_usd": 109402.5,
+        "profit_usd": 11.23
+    },
+    {
+        "date": "2025-09-28",
+        "hashrate_th": 245.038,
+        "profit_btc": 0.00010306,
+        "price_usd": 109394.0,
+        "profit_usd": 11.27
+    },
+    {
+        "date": "2025-09-29",
+        "hashrate_th": 244.472,
+        "profit_btc": 0.0001029,
+        "price_usd": 111902.0,
+        "profit_usd": 11.51
+    },
+    {
+        "date": "2025-09-30",
+        "hashrate_th": 244.277,
+        "profit_btc": 0.00010336,
+        "price_usd": 113673.5,
+        "profit_usd": 11.74
+    },
+    {
+        "date": "2025-10-01",
+        "hashrate_th": 243.38,
+        "profit_btc": 0.0001026,
+        "price_usd": 115260.5,
+        "profit_usd": 11.82
+    },
+    {
+        "date": "2025-10-02",
+        "hashrate_th": 244.298,
+        "profit_btc": 9.827e-05,
+        "price_usd": 118661.0,
+        "profit_usd": 11.66
+    },
+    {
+        "date": "2025-10-03",
+        "hashrate_th": 243.958,
+        "profit_btc": 9.763e-05,
+        "price_usd": 120290.5,
+        "profit_usd": 11.74
+    },
+    {
+        "date": "2025-10-04",
+        "hashrate_th": 245.405,
+        "profit_btc": 9.813e-05,
+        "price_usd": 121973.5,
+        "profit_usd": 11.96
+    },
+    {
+        "date": "2025-10-05",
+        "hashrate_th": 245.711,
+        "profit_btc": 9.789e-05,
+        "price_usd": 123519.5,
+        "profit_usd": 12.09
+    },
+    {
+        "date": "2025-10-06",
+        "hashrate_th": 241.249,
+        "profit_btc": 9.582e-05,
+        "price_usd": 124043.0,
+        "profit_usd": 11.88
+    },
+    {
+        "date": "2025-10-07",
+        "hashrate_th": 244.81,
+        "profit_btc": 9.8e-05,
+        "price_usd": 124258.5,
+        "profit_usd": 12.17
+    },
+    {
+        "date": "2025-10-08",
+        "hashrate_th": 243.838,
+        "profit_btc": 9.718e-05,
+        "price_usd": 122467.0,
+        "profit_usd": 11.9
+    },
+    {
+        "date": "2025-10-09",
+        "hashrate_th": 204.139,
+        "profit_btc": 8.119e-05,
+        "price_usd": 121880.0,
+        "profit_usd": 9.89
+    },
+    {
+        "date": "2025-10-10",
+        "hashrate_th": 244.226,
+        "profit_btc": 9.71e-05,
+        "price_usd": 121285.5,
+        "profit_usd": 11.77
+    },
+    {
+        "date": "2025-10-11",
+        "hashrate_th": 244.352,
+        "profit_btc": 9.737e-05,
+        "price_usd": 112656.0,
+        "profit_usd": 10.96
+    },
+    {
+        "date": "2025-10-12",
+        "hashrate_th": 245.238,
+        "profit_btc": 9.736e-05,
+        "price_usd": 110871.5,
+        "profit_usd": 10.79
+    },
+    {
+        "date": "2025-10-13",
+        "hashrate_th": 245.436,
+        "profit_btc": 9.76e-05,
+        "price_usd": 115078.0,
+        "profit_usd": 11.23
+    },
+    {
+        "date": "2025-10-14",
+        "hashrate_th": 246.13,
+        "profit_btc": 9.782e-05,
+        "price_usd": 112131.5,
+        "profit_usd": 10.96
+    },
+    {
+        "date": "2025-10-15",
+        "hashrate_th": 243.486,
+        "profit_btc": 9.663e-05,
+        "price_usd": 112549.0,
+        "profit_usd": 10.87
+    },
+    {
+        "date": "2025-10-16",
+        "hashrate_th": 243.579,
+        "profit_btc": 9.853e-05,
+        "price_usd": 111486.5,
+        "profit_usd": 10.98
+    },
+    {
+        "date": "2025-10-17",
+        "hashrate_th": 242.006,
+        "profit_btc": 9.904e-05,
+        "price_usd": 106866.5,
+        "profit_usd": 10.58
+    },
+    {
+        "date": "2025-10-18",
+        "hashrate_th": 243.267,
+        "profit_btc": 9.951e-05,
+        "price_usd": 106753.0,
+        "profit_usd": 10.62
+    },
+    {
+        "date": "2025-10-19",
+        "hashrate_th": 246.263,
+        "profit_btc": 0.00010044,
+        "price_usd": 107346.5,
+        "profit_usd": 10.78
+    },
+    {
+        "date": "2025-10-20",
+        "hashrate_th": 245.449,
+        "profit_btc": 0.00010008,
+        "price_usd": 109743.5,
+        "profit_usd": 10.98
+    },
+    {
+        "date": "2025-10-21",
+        "hashrate_th": 243.526,
+        "profit_btc": 9.963e-05,
+        "price_usd": 108993.0,
+        "profit_usd": 10.85
+    },
+    {
+        "date": "2025-10-22",
+        "hashrate_th": 244.902,
+        "profit_btc": 0.00010006,
+        "price_usd": 107950.5,
+        "profit_usd": 10.8
+    },
+    {
+        "date": "2025-10-23",
+        "hashrate_th": 242.513,
+        "profit_btc": 9.956e-05,
+        "price_usd": 108913.0,
+        "profit_usd": 10.84
+    },
+    {
+        "date": "2025-10-24",
+        "hashrate_th": 240.914,
+        "profit_btc": 9.834e-05,
+        "price_usd": 110831.0,
+        "profit_usd": 10.89
+    },
+    {
+        "date": "2025-10-25",
+        "hashrate_th": 243.516,
+        "profit_btc": 9.935e-05,
+        "price_usd": 111294.0,
+        "profit_usd": 11.05
+    },
+    {
+        "date": "2025-10-26",
+        "hashrate_th": 244.009,
+        "profit_btc": 9.936e-05,
+        "price_usd": 111947.0,
+        "profit_usd": 11.12
+    },
+    {
+        "date": "2025-10-27",
+        "hashrate_th": 243.266,
+        "profit_btc": 9.933e-05,
+        "price_usd": 115148.5,
+        "profit_usd": 11.43
+    },
+    {
+        "date": "2025-10-28",
+        "hashrate_th": 242.19,
+        "profit_btc": 9.875e-05,
+        "price_usd": 114269.5,
+        "profit_usd": 11.28
+    },
+    {
+        "date": "2025-10-29",
+        "hashrate_th": 240.392,
+        "profit_btc": 9.66e-05,
+        "price_usd": 112751.5,
+        "profit_usd": 10.89
+    },
+    {
+        "date": "2025-10-30",
+        "hashrate_th": 241.439,
+        "profit_btc": 9.281e-05,
+        "price_usd": 110539.0,
+        "profit_usd": 10.25
+    },
+    {
+        "date": "2025-10-31",
+        "hashrate_th": 244.496,
+        "profit_btc": 9.385e-05,
+        "price_usd": 109322.0,
+        "profit_usd": 10.25
+    },
+    {
+        "date": "2025-11-01",
+        "hashrate_th": 242.476,
+        "profit_btc": 9.329e-05,
+        "price_usd": 109943.5,
+        "profit_usd": 10.25
+    },
+    {
+        "date": "2025-11-02",
+        "hashrate_th": 242.827,
+        "profit_btc": 9.327e-05,
+        "price_usd": 110226.5,
+        "profit_usd": 10.28
+    },
+    {
+        "date": "2025-11-03",
+        "hashrate_th": 242.436,
+        "profit_btc": 9.336e-05,
+        "price_usd": 107968.5,
+        "profit_usd": 10.07
+    },
+    {
+        "date": "2025-11-04",
+        "hashrate_th": 243.706,
+        "profit_btc": 9.381e-05,
+        "price_usd": 105162.0,
+        "profit_usd": 9.86
+    },
+    {
+        "date": "2025-11-05",
+        "hashrate_th": 243.226,
+        "profit_btc": 9.388e-05,
+        "price_usd": 101530.5,
+        "profit_usd": 9.53
+    },
+    {
+        "date": "2025-11-06",
+        "hashrate_th": 244.896,
+        "profit_btc": 9.433e-05,
+        "price_usd": 103239.5,
+        "profit_usd": 9.73
+    },
+    {
+        "date": "2025-11-07",
+        "hashrate_th": 242.127,
+        "profit_btc": 9.306e-05,
+        "price_usd": 101327.5,
+        "profit_usd": 9.42
+    },
+    {
+        "date": "2025-11-08",
+        "hashrate_th": 244.465,
+        "profit_btc": 9.38e-05,
+        "price_usd": 102660.5,
+        "profit_usd": 9.62
+    },
+    {
+        "date": "2025-11-09",
+        "hashrate_th": 245.311,
+        "profit_btc": 9.405e-05,
+        "price_usd": 101745.5,
+        "profit_usd": 9.56
+    },
+    {
+        "date": "2025-11-10",
+        "hashrate_th": 245.021,
+        "profit_btc": 9.406e-05,
+        "price_usd": 105987.5,
+        "profit_usd": 9.96
+    },
+    {
+        "date": "2025-11-11",
+        "hashrate_th": 240.173,
+        "profit_btc": 9.237e-05,
+        "price_usd": 105907.5,
+        "profit_usd": 9.78
+    },
+    {
+        "date": "2025-11-12",
+        "hashrate_th": 243.129,
+        "profit_btc": 9.333e-05,
+        "price_usd": 104011.0,
+        "profit_usd": 9.7
+    },
+    {
+        "date": "2025-11-13",
+        "hashrate_th": 243.161,
+        "profit_btc": 9.55e-05,
+        "price_usd": 102525.0,
+        "profit_usd": 9.79
+    },
+    {
+        "date": "2025-11-14",
+        "hashrate_th": 243.838,
+        "profit_btc": 9.586e-05,
+        "price_usd": 98192.5,
+        "profit_usd": 9.41
+    },
+    {
+        "date": "2025-11-15",
+        "hashrate_th": 243.928,
+        "profit_btc": 9.589e-05,
+        "price_usd": 96204.0,
+        "profit_usd": 9.22
+    },
+    {
+        "date": "2025-11-16",
+        "hashrate_th": 234.173,
+        "profit_btc": 9.196e-05,
+        "price_usd": 96191.0,
+        "profit_usd": 8.84
+    },
+    {
+        "date": "2025-11-17",
+        "hashrate_th": 244.101,
+        "profit_btc": 9.595e-05,
+        "price_usd": 95294.0,
+        "profit_usd": 9.14
+    },
+    {
+        "date": "2025-11-18",
+        "hashrate_th": 242.66,
+        "profit_btc": 9.584e-05,
+        "price_usd": 91229.5,
+        "profit_usd": 8.74
+    },
+    {
+        "date": "2025-11-19",
+        "hashrate_th": 242.137,
+        "profit_btc": 9.542e-05,
+        "price_usd": 91941.5,
+        "profit_usd": 8.77
+    },
+    {
+        "date": "2025-11-20",
+        "hashrate_th": 245.857,
+        "profit_btc": 9.676e-05,
+        "price_usd": 92172.5,
+        "profit_usd": 8.91
+    },
+    {
+        "date": "2025-11-21",
+        "hashrate_th": 246.046,
+        "profit_btc": 9.7e-05,
+        "price_usd": 84082.0,
+        "profit_usd": 8.15
+    },
+    {
+        "date": "2025-11-22",
+        "hashrate_th": 241.527,
+        "profit_btc": 9.506e-05,
+        "price_usd": 84102.5,
+        "profit_usd": 7.99
+    },
+    {
+        "date": "2025-11-23",
+        "hashrate_th": 245.583,
+        "profit_btc": 9.643e-05,
+        "price_usd": 86040.5,
+        "profit_usd": 8.29
+    },
+    {
+        "date": "2025-11-24",
+        "hashrate_th": 243.916,
+        "profit_btc": 9.597e-05,
+        "price_usd": 86773.0,
+        "profit_usd": 8.32
+    },
+    {
+        "date": "2025-11-25",
+        "hashrate_th": 242.321,
+        "profit_btc": 9.578e-05,
+        "price_usd": 87633.0,
+        "profit_usd": 8.39
+    },
+    {
+        "date": "2025-11-26",
+        "hashrate_th": 242.92,
+        "profit_btc": 9.599e-05,
+        "price_usd": 87327.5,
+        "profit_usd": 8.38
+    },
+    {
+        "date": "2025-11-27",
+        "hashrate_th": 245.589,
+        "profit_btc": 9.792e-05,
+        "price_usd": 91496.5,
+        "profit_usd": 8.95
+    },
+    {
+        "date": "2025-11-28",
+        "hashrate_th": 243.236,
+        "profit_btc": 9.755e-05,
+        "price_usd": 91438.0,
+        "profit_usd": 8.91
+    },
+    {
+        "date": "2025-11-29",
+        "hashrate_th": 246.421,
+        "profit_btc": 9.898e-05,
+        "price_usd": 90680.5,
+        "profit_usd": 8.97
+    },
+    {
+        "date": "2025-11-30",
+        "hashrate_th": 243.499,
+        "profit_btc": 9.77e-05,
+        "price_usd": 91002.5,
+        "profit_usd": 8.89
+    },
+    {
+        "date": "2025-12-01",
+        "hashrate_th": 243.319,
+        "profit_btc": 9.754e-05,
+        "price_usd": 86681.5,
+        "profit_usd": 8.45
+    },
+    {
+        "date": "2025-12-02",
+        "hashrate_th": 245.619,
+        "profit_btc": 9.89e-05,
+        "price_usd": 86910.5,
+        "profit_usd": 8.59
+    },
+    {
+        "date": "2025-12-03",
+        "hashrate_th": 244.07,
+        "profit_btc": 9.802e-05,
+        "price_usd": 92847.5,
+        "profit_usd": 9.1
+    },
+    {
+        "date": "2025-12-04",
+        "hashrate_th": 243.015,
+        "profit_btc": 9.805e-05,
+        "price_usd": 93581.5,
+        "profit_usd": 9.17
+    },
+    {
+        "date": "2025-12-05",
+        "hashrate_th": 241.669,
+        "profit_btc": 9.737e-05,
+        "price_usd": 91888.0,
+        "profit_usd": 8.94
+    },
+    {
+        "date": "2025-12-06",
+        "hashrate_th": 242.291,
+        "profit_btc": 9.742e-05,
+        "price_usd": 89434.5,
+        "profit_usd": 8.71
+    },
+    {
+        "date": "2025-12-07",
+        "hashrate_th": 242.421,
+        "profit_btc": 9.718e-05,
+        "price_usd": 89437.0,
+        "profit_usd": 8.69
+    },
+    {
+        "date": "2025-12-08",
+        "hashrate_th": 242.24,
+        "profit_btc": 9.72e-05,
+        "price_usd": 91733.5,
+        "profit_usd": 8.91
+    },
+    {
+        "date": "2025-12-09",
+        "hashrate_th": 244.697,
+        "profit_btc": 9.829e-05,
+        "price_usd": 90159.5,
+        "profit_usd": 8.86
+    },
+    {
+        "date": "2025-12-10",
+        "hashrate_th": 244.612,
+        "profit_btc": 9.845e-05,
+        "price_usd": 92385.5,
+        "profit_usd": 9.09
+    },
+    {
+        "date": "2025-12-11",
+        "hashrate_th": 243.668,
+        "profit_btc": 9.828e-05,
+        "price_usd": 90185.5,
+        "profit_usd": 8.86
+    },
+    {
+        "date": "2025-12-12",
+        "hashrate_th": 243.264,
+        "profit_btc": 9.872e-05,
+        "price_usd": 92524.0,
+        "profit_usd": 9.13
+    },
+    {
+        "date": "2025-12-13",
+        "hashrate_th": 242.393,
+        "profit_btc": 9.789e-05,
+        "price_usd": 90412.5,
+        "profit_usd": 8.85
+    },
+    {
+        "date": "2025-12-14",
+        "hashrate_th": 244.027,
+        "profit_btc": 9.843e-05,
+        "price_usd": 90047.0,
+        "profit_usd": 8.86
+    },
+    {
+        "date": "2025-12-15",
+        "hashrate_th": 243.167,
+        "profit_btc": 9.834e-05,
+        "price_usd": 89569.0,
+        "profit_usd": 8.8
+    },
+    {
+        "date": "2025-12-16",
+        "hashrate_th": 244.61,
+        "profit_btc": 9.891e-05,
+        "price_usd": 86474.0,
+        "profit_usd": 8.55
+    },
+    {
+        "date": "2025-12-17",
+        "hashrate_th": 244.698,
+        "profit_btc": 9.892e-05,
+        "price_usd": 87032.0,
+        "profit_usd": 8.6
+    },
+    {
+        "date": "2025-12-18",
+        "hashrate_th": 243.513,
+        "profit_btc": 9.922e-05,
+        "price_usd": 86991.5,
+        "profit_usd": 8.63
+    },
+    {
+        "date": "2025-12-19",
+        "hashrate_th": 242.422,
+        "profit_btc": 9.803e-05,
+        "price_usd": 86957.0,
+        "profit_usd": 8.52
+    },
+    {
+        "date": "2025-12-20",
+        "hashrate_th": 243.086,
+        "profit_btc": 9.847e-05,
+        "price_usd": 88175.0,
+        "profit_usd": 8.68
+    },
+    {
+        "date": "2025-12-21",
+        "hashrate_th": 244.39,
+        "profit_btc": 9.873e-05,
+        "price_usd": 88291.5,
+        "profit_usd": 8.71
+    }
+]

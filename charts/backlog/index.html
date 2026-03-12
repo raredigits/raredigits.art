@@ -454,6 +454,11 @@
 <td>Hierarchies</td>
 <td><code>RareCharts.Hierarchies</code></td>
 <td>Hierarchical data views such as tree, treemap, cluster, pack, or related structures for nested datasets and ownership-style breakdowns.</td>
+</tr>
+<tr>
+<td>Multi-chart container</td>
+<td><code>RareCharts.MultiChart</code></td>
+<td>Single chart block that composes up to several child charts under one shared title, subtitle, source, and legend. Intended for dashboard-style layouts where multiple chart types belong to one narrative unit.</td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -471,6 +476,11 @@
 <td>Absolute bar width in px as an alternative to the proportional <code>barWidthRatio</code>. Supports per-series override.</td>
 </tr>
 <tr>
+<td>Per-bar color override</td>
+<td><code>data: [{ label, value, color }]</code></td>
+<td>Allow an individual bar to specify its own fill color without redefining the full chart palette. Useful for highlighting a selected category, outlier, or benchmark item.</td>
+</tr>
+<tr>
 <td>Diverging bar chart</td>
 <td><code>RareCharts.DivergingBar</code></td>
 <td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts.</td>
@@ -484,6 +494,11 @@
 <td>Map overlays and labels</td>
 <td><code>layers: [{ type, data, ... }]</code></td>
 <td>Add overlay layers to maps for extra information such as points, routes, bubbles, labels, markers, or other contextual geographic annotations.</td>
+</tr>
+<tr>
+<td>Clickable map regions</td>
+<td><code>onRegionClick: ({ feature, item, event }) =&gt; void</code> or <code>item.href</code></td>
+<td>Allow clicking a region to trigger navigation or custom actions. Intended for drill-down flows, region detail pages, dashboards, and linked geographic navigation.</td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -509,6 +524,11 @@
 <td>Tooltip header style</td>
 <td><code>theme.tooltip.header</code></td>
 <td>Dedicated theme token for the tooltip header row (date label). Allows independent control of header background and text color, separate from <code>tooltip.bg</code> and <code>tooltip.text</code>.</td>
+</tr>
+<tr>
+<td>Arbitrary in-chart labels</td>
+<td><code>labels: [{ x, y, text, dx, dy, color }]</code> or per-series <code>labelFormat</code></td>
+<td>Render custom text labels directly inside the chart area for lines, bars, and highlighted values. Intended for editorial annotations, direct labeling, and reducing reliance on legends or tooltips.</td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -522,6 +542,7 @@
 </tr>
 </tbody></p>
 </table>
+
     </article>
   </div>
 </main>
