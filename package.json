@@ -10,9 +10,9 @@
     "sass-watch-readable": "sass --watch assets/css/rare.scss:assets/css/rare.css",
     "sass-watch-minified": "sass --watch assets/css/rare.scss:assets/css/rare.min.css --style=compressed",
     "sass-build": "sass assets/css/rare.scss assets/css/rare.css && sass assets/css/rare.scss assets/css/rare.min.css --style=compressed",
-    "charts:build": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --outfile=assets/charts/rare-charts.js",
-    "charts:build:min": "esbuild assets/charts/src/index.js --bundle --minify --format=iife --global-name=RareCharts --loader:.css=text --outfile=assets/charts/rare-charts.min.js",
-    "charts:watch": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --outfile=assets/charts/rare-charts.js --watch",
+    "charts:build": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts | Docs: https://raredigits.art/charts */\" --outfile=assets/charts/rare-charts.js",
+    "charts:build:min": "esbuild assets/charts/src/index.js --bundle --minify --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts | Docs: https://raredigits.art/charts */\" --outfile=assets/charts/rare-charts.min.js",
+    "charts:watch": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts | Docs: https://raredigits.art/charts */\" --outfile=assets/charts/rare-charts.js --watch",
     "eleventy-serve": "eleventy --serve",
     "pagefind:build": "pagefind --site _site"
   },

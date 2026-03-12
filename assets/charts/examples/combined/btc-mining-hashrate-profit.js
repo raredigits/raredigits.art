@@ -8,7 +8,7 @@
   const BTC_SCALE = 100_000;
 
   const raw = await RareCharts.fromJson(
-    '/assets/charts/data/btc_mining.json',
+    '/assets/charts/data/examples/btc_mining.json',
     {
       date:       row => new Date(row.date),
       value:      row => +row.profit_usd,

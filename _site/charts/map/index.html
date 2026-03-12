@@ -428,6 +428,37 @@ new RareCharts.Map('#chart', {
 });</code></pre>
 <p>RareCharts supports both <strong>GeoJSON</strong> and <strong>TopoJSON</strong>.</p>
 <p>In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.</p>
+<h3>Open geographic datasets</h3>
+<p>A convenient public source of world map data is the <strong>world-atlas</strong> dataset: <a href="https://cdn.jsdelivr.net/npm/world-atlas@2/">https://cdn.jsdelivr.net/npm/world-atlas@2/</a>.</p>
+<p>It provides several ready-to-use TopoJSON files that differ only by geometric detail:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>countries-110m.json</code></td>
+<td>Smallest dataset. Best for dashboards and simple maps (~100 Kb)</td>
+</tr>
+<tr>
+<td><code>countries-50m.json</code></td>
+<td>Medium detail. Good default for most projects (~750 Kb)</td>
+</tr>
+<tr>
+<td><code>countries-10m.json</code></td>
+<td>High detail. Suitable for zoomable or full-screen maps (~3.5 Mb)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
+    topoUrl: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json',
+    topoObject: 'countries'
+});</code></pre>
+<p>These files use <a href="https://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric country codes</a> as <code>feature.id</code>, which makes them easy to match with data items.</p>
 <h2>Value data</h2>
 <p>Each item in the data array identifies a geographic feature and optionally carries a value and color:</p>
 <pre class="text-content-caption"><code>chart.setData([

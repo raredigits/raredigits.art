@@ -45,6 +45,27 @@ RareCharts supports both **GeoJSON** and **TopoJSON**.
 
 In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.
 
+### Open geographic datasets
+
+A convenient public source of world map data is the **world-atlas** dataset: <a href="https://cdn.jsdelivr.net/npm/world-atlas@2/">https://cdn.jsdelivr.net/npm/world-atlas@2/</a>.
+
+It provides several ready-to-use TopoJSON files that differ only by geometric detail:
+
+| File | Description |
+|-----|-------------|
+| `countries-110m.json` | Smallest dataset. Best for dashboards and simple maps (~100 Kb) |
+| `countries-50m.json` | Medium detail. Good default for most projects (~750 Kb) |
+| `countries-10m.json` | High detail. Suitable for zoomable or full-screen maps (~3.5 Mb) |
+
+Example:
+
+<pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
+    topoUrl: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json',
+    topoObject: 'countries'
+});</code></pre>
+
+These files use <a href="https://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric country codes</a> as `feature.id`, which makes them easy to match with data items.
+
 ## Value data
 
 Each item in the data array identifies a geographic feature and optionally carries a value and color:
@@ -66,7 +87,7 @@ If needed, use the `idField` option to tell the chart which property should be
 
 ## Projections
 
-RareCharts supports four projections:
+RareCharts supports five projections:
 
 | Name | Description |
 |------|-------------|
@@ -74,6 +95,7 @@ RareCharts supports four projections:
 | `'mercator'` | Familiar web-map projection. Often used for regional maps |
 | `'equalEarth'` | Equal-area projection. Useful when region size matters |
 | `'orthographic'` | Globe view. Mostly for visual context |
+| `'identity'` | No geographic projection. Useful when your GeoJSON is already in screen coordinates or a custom planar space |
 
 The chart automatically fits the projection to the loaded features using `fitExtent`, so you normally do not need to set scale or center manually.
 
@@ -93,7 +115,7 @@ Default colors used by the chart come from the RareCharts theme. They are defin
 
 ## Tooltip
 
-The default tooltip shows the region name and, if present, the `value`.
+The default tooltip shows the region name and, if present, the `value` for every region on the map, including regions with no matching data item.
 
 If you need something more specific, override it:
 
@@ -102,7 +124,7 @@ If you need something more specific, override it:
     &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
 `</code></pre>
 
-The formatter receives both the raw `feature` and the matched `item`, so you can display whatever makes sense.
+The formatter receives both the raw `feature` and the matched `item`, so you can display whatever makes sense. For unmatched regions, `item` will be `null`.
 
 ## Map chart options
 
@@ -170,6 +192,18 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             </td>
         </tr>
         <tr>
+            <td><code>featureFilter</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>Optional filter applied to extracted features before rendering. Receives <code>feature</code> and should return <code>true</code> to keep it.</td>
+        </tr>
+        <tr>
+            <td><code>clipExtent</code></td>
+            <td><code>[[lon, lat], [lon, lat]]</code></td>
+            <td>—</td>
+            <td>Geographic bounding box used to keep only polygons intersecting that extent.</td>
+        </tr>
+        <tr>
             <td><code>idField</code></td>
             <td>string</td>
             <td><code>'id'</code></td>
@@ -183,9 +217,15 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         </tr>
         <tr>
             <td><code>projection</code></td>
-            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code></td>
+            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code> | <code>'identity'</code></td>
             <td><code>'naturalEarth1'</code></td>
             <td>D3 geo projection to use for rendering.</td>
+        </tr>
+        <tr>
+            <td><code>rotate</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Optional projection rotation passed to <code>projection.rotate([lambda, phi, gamma])</code> when supported by the chosen projection.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Colors</h5></td>
@@ -233,13 +273,19 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td><code>zoom</code></td>
             <td>boolean</td>
             <td><code>false</code></td>
-            <td>Enable scroll-to-zoom and drag-to-pan. Scale range: 0.5×–8×.</td>
+            <td>Enable scroll-to-zoom and drag-to-pan.</td>
+        </tr>
+        <tr>
+            <td><code>zoomExtent</code></td>
+            <td>array</td>
+            <td><code>[0.8, 12]</code></td>
+            <td>Minimum and maximum zoom scale used when <code>zoom</code> is enabled.</td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>built-in</td>
-            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for matched regions.</td>
+            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for any region. <code>item</code> is <code>null</code> when no data item matches.</td>
         </tr>
     </tbody>
 </table>

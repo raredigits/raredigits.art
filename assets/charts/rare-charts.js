@@ -1,3 +1,4 @@
+/*! RareCharts | Docs: https://raredigits.art/charts */
 var RareCharts = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -21,6 +22,7 @@ var RareCharts = (() => {
   var index_exports = {};
   __export(index_exports, {
     Bar: () => Bar,
+    DOCS_URL: () => DOCS_URL,
     Donut: () => Donut,
     DualAxes: () => DualAxes,
     Gauge: () => Gauge,
@@ -19176,7 +19178,8 @@ var RareCharts = (() => {
       if (data?.type === "Topology") {
         const objName = topoObject ?? Object.keys(data.objects ?? {})[0];
         if (!objName || !data.objects?.[objName]) return [];
-        return feature_default(data, data.objects[objName]).features;
+        const fc = feature_default(data, data.objects[objName]);
+        return fc.type === "FeatureCollection" ? fc.features ?? [] : [fc];
       }
       if (data?.type === "FeatureCollection") return data.features ?? [];
       if (data?.type === "Feature") return [data];
@@ -19247,11 +19250,10 @@ var RareCharts = (() => {
         if (!item) return defaultFill;
         return item.color ?? matchFill;
       };
-      const hasTooltip = typeof o.tooltipFormat === "function";
       this.gPaths.selectAll(".rc-map-feature").data(
         this._features,
         (d) => this._featureId(d, idField) ?? d.id ?? JSON.stringify(d.geometry)
-      ).join("path").attr("class", "rc-map-feature").attr("d", path2).attr("fill", fillFor).attr("stroke", borderColor).attr("stroke-width", o.borderWidth ?? 0.5).attr("vector-effect", "non-scaling-stroke").style("cursor", hasTooltip ? "pointer" : "default").on("mouseover", (event, d) => {
+      ).join("path").attr("class", "rc-map-feature").attr("d", path2).attr("fill", fillFor).attr("stroke", borderColor).attr("stroke-width", o.borderWidth ?? 0.5).attr("vector-effect", "non-scaling-stroke").on("mouseover", (event, d) => {
         const fid = this._featureId(d, idField);
         const item = fid != null ? this._dataMap.get(fid) : null;
         if (item) {
@@ -19286,16 +19288,27 @@ var RareCharts = (() => {
       return null;
     }
     _buildProjection(name) {
+      let proj;
       switch (name) {
         case "mercator":
-          return mercator_default();
+          proj = mercator_default();
+          break;
         case "equalEarth":
-          return equalEarth_default();
+          proj = equalEarth_default();
+          break;
         case "orthographic":
-          return orthographic_default();
+          proj = orthographic_default();
+          break;
+        case "identity":
+          proj = identity_default4().reflectY(this.options.reflectY ?? false);
+          break;
         default:
-          return naturalEarth1_default();
+          proj = naturalEarth1_default();
       }
+      if (this.options.rotate && typeof proj.rotate === "function") {
+        proj.rotate(this.options.rotate);
+      }
+      return proj;
     }
     _defaultTooltip(feature2, item) {
       const t = this.theme;
@@ -19356,6 +19369,7 @@ var RareCharts = (() => {
     document.head.appendChild(style);
   }
   injectCssOnce("rc-base-styles", rare_charts_default);
+  var DOCS_URL = "https://raredigits.art/charts";
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;

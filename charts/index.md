@@ -9,7 +9,7 @@ permalink: '/charts/'
 <div class="meta-info">
   /charts/rare-charts.js
   <p>
-      v.0.9.1 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1/rare-charts.min.js">CDN</a> | 
+      v.0.9.1_1 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1/rare-charts.min.js">CDN</a> | 
       <a href="/assets/charts/rare-charts.js">Download</a> <span class="material-icons">file_download</span>
   </p>
 </div>
@@ -40,11 +40,11 @@ If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and
     <p>You can integrate it into an existing product, an internal dashboard, a reporting tool, or a public-facing analytics page. Architecturally it does not impose a design ideology. It provides a structured base.</p>
     <p>The library includes:</p>
     <ul>
-      <li>Line with different visual options</li> 
-      <li>Bars</li>
-      <li>Circulars</li>
+      <li>Line and time-series charts</li>
+      <li>Bars and dual-axis combinations</li>
+      <li>Circulars: donut, pie, gauge</li>
+      <li>Geographic maps</li>
       <li>Network graphs</li>
-      <li>Combined charts</li>
     </ul>
   </div>
 </div>

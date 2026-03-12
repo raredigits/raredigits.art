@@ -17,16 +17,16 @@ D3 is bundled in. You do not need to include it separately.
 <pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
-Copy `dist/rare-charts.js` wherever your project keeps static assets.
+Copy `rare-charts.js` wherever your project keeps static assets.
 
 **From CDN** — load it directly, no download required:
 
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/dist/rare-charts.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1_1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 ## Where to put the script tag
@@ -114,8 +114,8 @@ Or chain steps 2 and 3:
       <td>Two metrics on different scales</td>
     </tr>
     <tr>
-      <td><code>RareCharts.Combined</code></td>
-      <td>Bar + line overlay</td>
+      <td><code>RareCharts.DualAxes</code> with mixed series</td>
+      <td>Bar + line overlay (combined charts are built on top of <code>DualAxes</code>)</td>
     </tr>
     <tr>
       <td><code>RareCharts.Donut</code></td>
@@ -132,6 +132,10 @@ Or chain steps 2 and 3:
     <tr>
       <td><code>RareCharts.Graph</code></td>
       <td>Force-directed network of nodes and links</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Map</code></td>
+      <td>Choropleth and region-highlight geographic maps</td>
     </tr>
   </tbody>
 </table>

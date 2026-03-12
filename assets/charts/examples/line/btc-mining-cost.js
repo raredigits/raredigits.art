@@ -4,7 +4,7 @@
   (async function () {
 
     const raw = await RareCharts.fromJson(
-      '/assets/charts/data/btc_mining.json',
+      '/assets/charts/data/examples/btc_mining.json',
       {
         date:       row => new Date(row.date),
         profit_btc: row => +row.profit_btc,
