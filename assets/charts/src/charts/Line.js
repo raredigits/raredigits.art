@@ -20,6 +20,9 @@
 //   yPrefix / ySuffix
 //
 //   yLabelsOnly    — show only Y tick labels (default: true)
+//   showGrid       — show grid lines (default: true)
+//   showXAxis      — show X axis (default: true)
+//   showYAxis      — show Y axis (default: true)
 //   endLabels      — show last value labels on the right (default: true)
 //
 //   crosshair      — enable crosshair + dots + tooltip (default: true)
@@ -38,7 +41,7 @@ import * as d3 from 'd3';
 import { Chart }             from '../core/Chart.js';
 import { Tooltip }           from '../core/Tooltip.js';
 import { Crosshair }         from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, niceTickValues } from '../core/utils.js';
 import { linePath, areaPath }     from '../core/seriesPath.js';
 import {
   renderGrid,
@@ -165,16 +168,19 @@ export class Line extends Chart {
       .domain(d3.extent(all, d => d.date))
       .range([xPad, W - xPad]);
 
+    // Formatters
+    const yTicks   = o.yTicks ?? 4;
+
     const maxY = d3.max(all, d => d.value);
     const minY = d3.min(all, d => d.value);
     const pad  = (maxY - minY) * 0.08 || 1;
-    const y    = d3.scaleLinear()
-      .domain([minY - pad, maxY + pad])
-      .nice(4)
-      .range([H, 0]);
 
-    // Formatters
-    const yTicks   = o.yTicks ?? 4;
+    // Compute ticks from the raw padded range — no .nice() to avoid double-expansion.
+    // Domain top = max(rawHi, last tick) so ticks never overshoot the chart area.
+    const resolvedYTickValues = o.yTickValues ?? niceTickValues(minY - pad, maxY + pad, yTicks);
+    const y    = d3.scaleLinear()
+      .domain([minY - pad, Math.max(maxY + pad, resolvedYTickValues[resolvedYTickValues.length - 1])])
+      .range([H, 0]);
     const absMax   = d3.max(all, d => Math.abs(d.value)) ?? 0;
     const usePercent = (o.yFormat ?? 'auto') === 'percent' ||
                        ((o.yFormat ?? 'auto') === 'auto' && absMax <= 1);
@@ -203,13 +209,28 @@ export class Line extends Chart {
     const globalSize      = o.markerSize    ?? 4;
 
     // ── Render helpers ──
-    renderGrid(this.gGrid, y, W, yTicks, t);
-    renderZeroBaseline(this.gZero, y, W, t);
-    renderAxisX(this.gAxisX, x, H, xTickFormat, t);
-    if ((o.yAxisPosition ?? 'right') === 'left') {
-      renderAxisYLeft(this.gAxisY, y, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+    if (o.showGrid ?? true) {
+      renderGrid(this.gGrid, y, W, yTicks, t, resolvedYTickValues);
     } else {
-      renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+      this.gGrid.selectAll('*').remove();
+    }
+
+    renderZeroBaseline(this.gZero, y, W, t);
+
+    if (o.showXAxis ?? true) {
+      renderAxisX(this.gAxisX, x, H, xTickFormat, t, o.xTicks ?? 6);
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
+
+    if (o.showYAxis ?? true) {
+      if ((o.yAxisPosition ?? 'right') === 'left') {
+        renderAxisYLeft(this.gAxisY, y, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
+      } else {
+        renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
+      }
+    } else {
+      this.gAxisY.selectAll('*').remove();
     }
 
     // Areas

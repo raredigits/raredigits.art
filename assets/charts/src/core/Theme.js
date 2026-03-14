@@ -10,6 +10,7 @@ export const defaultTheme = {
   // ── Backgrounds ────────────────────────────────────────────────────────────
   bg:      'var(--bg-color)',
   surface: '#f5f5f5',     // tooltip bg, panel fills
+  service:  '#ffffff',     // used for map borders and tooltip bg in light theme
 
   // ── Structure ──────────────────────────────────────────────────────────────
   grid:      '#e8e8e8',   // horizontal grid lines

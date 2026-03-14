@@ -29,6 +29,7 @@ var RareCharts = (() => {
     Graph: () => Graph,
     Line: () => Line,
     Map: () => Map2,
+    MultiChart: () => MultiChart,
     Overview: () => Overview,
     Pie: () => Donut,
     TimeSeries: () => TimeSeries,
@@ -45,7 +46,7 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 1; }\n.rc-chart > svg              { order: 2; }\n.rc-chart > .rc-chart-footer { order: 3; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: normal;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto;  /* header | chart | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }\n\n/* Aside spans all three rows in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 4;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-xs);\n  align-items: center;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
+  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 1; }\n.rc-chart > svg              { order: 2; }\n.rc-chart > .rc-chart-footer { order: 3; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto;  /* header | chart | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }\n\n/* Aside spans all three rows in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 4;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-xs);\n  align-items: center;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -17124,6 +17125,8 @@ var RareCharts = (() => {
     bg: "var(--bg-color)",
     surface: "#f5f5f5",
     // tooltip bg, panel fills
+    service: "#ffffff",
+    // used for map borders and tooltip bg in light theme
     // ── Structure ──────────────────────────────────────────────────────────────
     grid: "#e8e8e8",
     // horizontal grid lines
@@ -17242,7 +17245,7 @@ var RareCharts = (() => {
       this.theme = createTheme(options.theme ?? {});
       this.options = options;
       this.margin = {
-        top: options.margin?.top ?? 16,
+        top: options.margin?.top ?? 8,
         right: options.margin?.right ?? 70,
         bottom: options.margin?.bottom ?? 16,
         left: options.margin?.left ?? 0
@@ -17552,6 +17555,16 @@ var RareCharts = (() => {
         return null;
     }
   }
+  function niceTickValues(lo, hi, count3) {
+    if (count3 < 2 || lo === hi) return [lo];
+    const rawStep = (hi - lo) / (count3 - 1);
+    const exp2 = Math.floor(Math.log10(rawStep));
+    const frac = rawStep / Math.pow(10, exp2);
+    const m3 = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+    const step = m3 * Math.pow(10, exp2);
+    const start2 = Math.ceil(lo / step) * step;
+    return Array.from({ length: count3 }, (_, i) => +(start2 + step * i).toPrecision(10));
+  }
   function resolveEase(name) {
     switch (name) {
       case "cubicInOut":
@@ -17581,8 +17594,9 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/core/renderHelpers.js
-  function renderGrid(g, scale2, W, ticks2, theme) {
-    g.call(axisLeft(scale2).ticks(ticks2).tickSize(-W).tickFormat("")).call((sel) => {
+  function renderGrid(g, scale2, W, ticks2, theme, tickValues = null) {
+    const axis2 = tickValues ? axisLeft(scale2).tickValues(tickValues).tickSize(-W).tickFormat("") : axisLeft(scale2).ticks(ticks2).tickSize(-W).tickFormat("");
+    g.call(axis2).call((sel) => {
       sel.selectAll("line").attr("stroke", theme.grid);
       sel.select(".domain").remove();
       sel.selectAll("text").remove();
@@ -17593,8 +17607,8 @@ var RareCharts = (() => {
     const hasZero = lo < 0 && hi > 0;
     g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale2(0)).attr("y2", scale2(0)).attr("stroke", theme.border);
   }
-  function renderAxisX(g, scale2, H, tickFormat2, theme) {
-    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(6).tickSize(0).tickFormat(tickFormat2)).call((sel) => {
+  function renderAxisX(g, scale2, H, tickFormat2, theme, ticks2 = 6) {
+    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(ticks2).tickSize(0).tickFormat(tickFormat2)).call((sel) => {
       sel.selectAll("text").attr("fill", theme.muted).attr("dy", "1.2em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
       sel.select(".domain").remove();
       sel.selectAll("line").remove();
@@ -17632,7 +17646,14 @@ var RareCharts = (() => {
       const d = s2.values[s2.values.length - 1];
       return { name: s2.name, color: s2.color, value: d.value };
     });
-    g.selectAll(".rc-end-label").data(points, (d) => d.name).join("text").attr("class", "rc-end-label").attr("x", W + 10).attr("y", (d) => yScale(d.value)).attr("dy", "0.35em").attr("fill", (d) => d.color).style("font-family", theme.numericFont).style("font-size", theme.fontSize).text((d) => tickFormat2(d.value));
+    const groups2 = g.selectAll(".rc-end-label-g").data(points, (d) => d.name).join("g").attr("class", "rc-end-label-g").attr("transform", (d) => `translate(${W + 10},${yScale(d.value)})`);
+    groups2.append("rect").attr("class", "rc-end-label-bg").attr("fill", theme.service);
+    groups2.append("text").attr("class", "rc-end-label").attr("dy", "0.35em").attr("fill", (d) => d.color).style("font-family", theme.numericFont).style("font-size", theme.fontSize).text((d) => tickFormat2(d.value));
+    groups2.each(function() {
+      const bbox = select_default2(this).select("text").node().getBBox();
+      const px = 2, py = 0;
+      select_default2(this).select("rect").attr("x", bbox.x - px).attr("y", bbox.y - py).attr("width", bbox.width + px * 4).attr("height", bbox.height + py * 8);
+    });
   }
   function renderAxisTitles(g, W, y1Title, y2Title, theme) {
     const titles = [];
@@ -17752,11 +17773,12 @@ var RareCharts = (() => {
       const all = this._series.flatMap((s2) => s2.values);
       const xPad = 8;
       const x4 = time().domain(extent(all, (d) => d.date)).range([xPad, W - xPad]);
+      const yTicks = o.yTicks ?? 4;
       const maxY2 = max(all, (d) => d.value);
       const minY = min(all, (d) => d.value);
       const pad3 = (maxY2 - minY) * 0.08 || 1;
-      const y4 = linear3().domain([minY - pad3, maxY2 + pad3]).nice(4).range([H, 0]);
-      const yTicks = o.yTicks ?? 4;
+      const resolvedYTickValues = o.yTickValues ?? niceTickValues(minY - pad3, maxY2 + pad3, yTicks);
+      const y4 = linear3().domain([minY - pad3, Math.max(maxY2 + pad3, resolvedYTickValues[resolvedYTickValues.length - 1])]).range([H, 0]);
       const absMax = max(all, (d) => Math.abs(d.value)) ?? 0;
       const usePercent = (o.yFormat ?? "auto") === "percent" || (o.yFormat ?? "auto") === "auto" && absMax <= 1;
       const prefix = o.yPrefix ?? "";
@@ -17777,13 +17799,25 @@ var RareCharts = (() => {
       const globalMarkers = o.markers ?? false;
       const globalShape = o.markerShape ?? "circle";
       const globalSize = o.markerSize ?? 4;
-      renderGrid(this.gGrid, y4, W, yTicks, t);
-      renderZeroBaseline(this.gZero, y4, W, t);
-      renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
-      if ((o.yAxisPosition ?? "right") === "left") {
-        renderAxisYLeft(this.gAxisY, y4, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+      if (o.showGrid ?? true) {
+        renderGrid(this.gGrid, y4, W, yTicks, t, resolvedYTickValues);
       } else {
-        renderAxisYRight(this.gAxisY, y4, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, o.yTickValues ?? null);
+        this.gGrid.selectAll("*").remove();
+      }
+      renderZeroBaseline(this.gZero, y4, W, t);
+      if (o.showXAxis ?? true) {
+        renderAxisX(this.gAxisX, x4, H, xTickFormat, t, o.xTicks ?? 6);
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (o.showYAxis ?? true) {
+        if ((o.yAxisPosition ?? "right") === "left") {
+          renderAxisYLeft(this.gAxisY, y4, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
+        } else {
+          renderAxisYRight(this.gAxisY, y4, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
+        }
+      } else {
+        this.gAxisY.selectAll("*").remove();
       }
       const areaSeries = this._series.filter((s2) => (s2.area ?? globalArea) === true);
       this.gLines.selectAll(".rc-line-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-line-area").attr("d", (s2) => areaPath(s2, x4, y4, defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
@@ -18096,7 +18130,7 @@ var RareCharts = (() => {
         height: 200,
         margin: {
           top: options.margin?.top ?? 12,
-          right: options.margin?.right ?? (options.orientation === "horizontal" ? 16 : 65),
+          right: options.margin?.right ?? (options.orientation === "horizontal" ? 0 : 65),
           left: options.margin?.left ?? (options.orientation === "horizontal" ? 65 : 0),
           bottom: options.margin?.bottom ?? (options.orientation === "horizontal" ? 16 : 8)
         },
@@ -18161,11 +18195,18 @@ var RareCharts = (() => {
       const valueOffset = this.options.valueOffset ?? 6;
       const valueInsideGap = this.options.valueInsideGap ?? 42;
       const valueFormat = this.options.valueFormat ?? ((d) => format(",.0f")(d.value));
-      this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat("")).call((g) => {
-        g.selectAll("line").attr("stroke", t.grid);
-        g.select(".domain").remove();
-        g.selectAll("text").remove();
-      });
+      const showGrid = this.options.showGrid ?? true;
+      const showXAxis = this.options.showXAxis ?? true;
+      const showYAxis = this.options.showYAxis ?? true;
+      if (showGrid) {
+        this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat("")).call((g) => {
+          g.selectAll("line").attr("stroke", t.grid);
+          g.select(".domain").remove();
+          g.selectAll("text").remove();
+        });
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
       const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
         (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", 0).attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth()).attr("width", animate ? 0 : (d) => x4(d.value)).attr("fill", barFill),
         (update) => update,
@@ -18198,25 +18239,43 @@ var RareCharts = (() => {
       } else {
         this.gBars.selectAll(".rc-bar-value").remove();
       }
-      this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
-        g.select(".domain").attr("stroke", t.border);
-        this._bindLabelTooltips(g, "left");
-      });
-      this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(this.options.xTickValues ?? null).ticks(this.options.xTicks ?? 4).tickFormat(xTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
-        g.select(".domain").remove();
-        g.selectAll("line").remove();
-      });
+      if (showYAxis) {
+        this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
+          g.select(".domain").attr("stroke", t.border);
+          this._bindLabelTooltips(g, "left");
+        });
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (showXAxis) {
+        this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(this.options.xTickValues ?? null).ticks(this.options.xTicks ?? 4).tickFormat(xTickFormat)).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.select(".domain").remove();
+          g.selectAll("line").remove();
+        });
+      } else {
+        this.gAxisY.selectAll("*").remove();
+      }
     }
     // ─── Vertical ─────────────────────────────────────────────────────────────
     _renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
       const x4 = band().domain(this._data.map((d) => d.label)).range([0, W]).padding(0.25);
-      const y4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([H, 0]);
+      const maxVal = max(this._data, (d) => d.value);
+      const yTicks = this.options.yTicks ?? 4;
+      const y4 = linear3().domain([0, maxVal * 1.1]).nice(yTicks).range([H, 0]);
+      const resolvedYTickValues = this.options.yTickValues ?? y4.ticks(yTicks);
       const prefix = this.options.yPrefix ?? "";
       const suffix = this.options.ySuffix ?? "";
       const yTickFormat = this.options.yTickFormat ?? ((d) => `${prefix}${format(".2s")(d)}${suffix}`);
-      renderGrid(this.gGrid, y4, W, 4, t);
+      const showGrid = this.options.showGrid ?? true;
+      const showXAxis = this.options.showXAxis ?? true;
+      const showYAxis = this.options.showYAxis ?? true;
+      if (showGrid) {
+        renderGrid(this.gGrid, y4, W, yTicks, t, resolvedYTickValues);
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
       const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
         (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth()).attr("y", animate ? H : (d) => y4(d.value)).attr("height", animate ? 0 : (d) => H - y4(d.value)).attr("fill", barFill),
         (update) => update,
@@ -18231,16 +18290,24 @@ var RareCharts = (() => {
         bars.attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value));
         this._didAnimateIn = true;
       }
-      this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
-        g.select(".domain").attr("stroke", t.border);
-        this._bindLabelTooltips(g, "bottom");
-      });
-      this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).ticks(4).tickFormat(yTickFormat)).call((g) => {
-        g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
-        g.select(".domain").remove();
-        g.selectAll("line").remove();
-      });
+      if (showXAxis) {
+        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
+          g.select(".domain").attr("stroke", t.border);
+          this._bindLabelTooltips(g, "bottom");
+        });
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (showYAxis) {
+        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.select(".domain").remove();
+          g.selectAll("line").remove();
+        });
+      } else {
+        this.gAxisY.selectAll("*").remove();
+      }
     }
     // ─── Label tooltip on truncated axis labels ────────────────────────────────
     _bindLabelTooltips(g, side) {
@@ -18405,11 +18472,27 @@ var RareCharts = (() => {
       const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
       const y1TickFormat = o.y1TickFormat ?? ((v2) => format(",.2f")(v2));
       const y2TickFormat = o.y2TickFormat ?? ((v2) => Math.abs(v2) < 1e-6 ? "0" : format("+.2f")(v2));
-      renderGrid(this.gGrid, y22, W, o.y2Ticks ?? 4, t);
+      if (o.showGrid ?? true) {
+        renderGrid(this.gGrid, y22, W, o.y2Ticks ?? 4, t);
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
       renderZeroBaseline(this.gZero, y22, W, t);
-      renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
-      renderAxisYRight(this.gAxisY1, y12, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
-      renderAxisYLeft(this.gAxisY2, y22, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+      if (o.showXAxis ?? true) {
+        renderAxisX(this.gAxisX, x4, H, xTickFormat, t);
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (o.showY1Axis ?? true) {
+        renderAxisYRight(this.gAxisY1, y12, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
+      } else {
+        this.gAxisY1.selectAll("*").remove();
+      }
+      if (o.showY2Axis ?? true) {
+        renderAxisYLeft(this.gAxisY2, y22, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+      } else {
+        this.gAxisY2.selectAll("*").remove();
+      }
       renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t);
       if (bars.length) {
         this._renderBars({
@@ -19001,6 +19084,145 @@ var RareCharts = (() => {
     }
     destroy() {
       this._stopSimulation();
+      super.destroy();
+    }
+  };
+
+  // assets/charts/src/charts/MultiChart.js
+  var TYPE_MAP = { Line, Bar };
+  var MultiChart = class extends Chart {
+    constructor(selector, options = {}) {
+      super(selector, {
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        ...options
+      });
+      this.charts = [];
+      this._cells = [];
+      this._isMobile = false;
+      this._buildGrid();
+    }
+    // ── Grid ───────────────────────────────────────────────────────────────────
+    _currentColumns() {
+      const breakpoint = this.options.mobileBreakpoint ?? 480;
+      const mobileCols = this.options.mobileColumns ?? 1;
+      const desktopCols = Math.min(Math.max(this.options.columns ?? 2, 1), 4);
+      const w = this.container.clientWidth;
+      return w > 0 && w <= breakpoint ? mobileCols : desktopCols;
+    }
+    _buildGrid() {
+      const { charts = [], gap, chartHeight = 200 } = this.options;
+      const cols = this._currentColumns();
+      this._isMobile = cols <= (this.options.mobileColumns ?? 1) && this.container.clientWidth > 0;
+      this._gridEl = document.createElement("div");
+      this._gridEl.className = "rc-multichart-grid";
+      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      if (gap != null) {
+        this._gridEl.style.gap = typeof gap === "number" ? `${gap}px` : gap;
+      }
+      if (this._footerEl?.parentNode) {
+        this.container.insertBefore(this._gridEl, this._footerEl);
+      } else {
+        this.container.appendChild(this._gridEl);
+      }
+      charts.forEach((cfg) => {
+        const cell = document.createElement("div");
+        cell.className = "rc-multichart-cell";
+        if (cfg.span && cfg.span > 1 && cols > 1) {
+          cell.style.gridColumn = `span ${cfg.span}`;
+        }
+        if (cfg.title) {
+          const titleEl = document.createElement("div");
+          titleEl.className = "rc-multichart-cell-title";
+          titleEl.style.color = this.theme.text;
+          titleEl.textContent = cfg.title;
+          cell.appendChild(titleEl);
+        }
+        const wrapper = document.createElement("div");
+        wrapper.className = "rc-multichart-chart-wrapper";
+        cell.appendChild(wrapper);
+        this._gridEl.appendChild(cell);
+        this._cells.push(cell);
+        const mobileOverride = this._isMobile && cfg.mobileOptions ? cfg.mobileOptions : {};
+        const ChartClass = TYPE_MAP[cfg.type] ?? Line;
+        const childOpts = {
+          animate: this.options.animate ?? true,
+          height: chartHeight,
+          theme: this.options.theme,
+          // inherit parent theme
+          ...cfg.options,
+          ...mobileOverride,
+          // Deep-merge margin: base → mobileOverride → bottom default
+          margin: {
+            bottom: 26,
+            ...cfg.options?.margin ?? {},
+            ...mobileOverride.margin ?? {}
+          }
+        };
+        const chart = new ChartClass(wrapper, childOpts);
+        this.charts.push(chart);
+        if (cfg.data != null) chart.setData(cfg.data);
+      });
+    }
+    // ── Apply breakpoint options to existing child charts ──────────────────────
+    _applyBreakpointOptions(isMobile) {
+      const charts = this.options.charts ?? [];
+      charts.forEach((cfg, i) => {
+        if (!cfg.mobileOptions) return;
+        const child = this.charts[i];
+        if (!child) return;
+        const keys = Object.keys(cfg.mobileOptions);
+        keys.forEach((key) => {
+          const val = isMobile ? cfg.mobileOptions[key] : (cfg.options ?? {})[key];
+          if (key === "margin") {
+            const defaults = { top: 8, right: 70, bottom: 26, left: 0 };
+            const baseMargin = cfg.options?.margin ?? {};
+            const mobileMargin = cfg.mobileOptions?.margin ?? {};
+            const merged = isMobile ? { ...defaults, ...baseMargin, ...mobileMargin } : { ...defaults, ...baseMargin };
+            child.margin = merged;
+            child.options.margin = merged;
+          } else {
+            child.options[key] = val;
+          }
+        });
+        child.render();
+      });
+    }
+    // ── Public ────────────────────────────────────────────────────────────────
+    /**
+     * Feed data into children by position.
+     * @param {Array} dataArray — each element is passed to the corresponding child's setData()
+     */
+    setData(dataArray) {
+      if (!Array.isArray(dataArray)) return this;
+      dataArray.forEach((data, i) => {
+        if (this.charts[i] && data != null) this.charts[i].setData(data);
+      });
+      return this;
+    }
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    render() {
+    }
+    _onResize() {
+      if (!this._gridEl) return;
+      const cols = this._currentColumns();
+      const isMobile = cols <= (this.options.mobileColumns ?? 1) && this.container.clientWidth > 0;
+      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      (this.options.charts ?? []).forEach((cfg, i) => {
+        if (!cfg.span || cfg.span <= 1) return;
+        const cell = this._cells[i];
+        if (cell) cell.style.gridColumn = cols > 1 ? `span ${cfg.span}` : "";
+      });
+      if (isMobile !== this._isMobile) {
+        this._isMobile = isMobile;
+        this._applyBreakpointOptions(isMobile);
+      }
+    }
+    destroy() {
+      this.charts.forEach((c6) => c6.destroy());
+      this.charts = [];
+      this._cells = [];
+      if (this._gridEl?.parentNode) this._gridEl.remove();
+      this._gridEl = null;
       super.destroy();
     }
   };

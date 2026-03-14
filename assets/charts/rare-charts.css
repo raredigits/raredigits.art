@@ -61,7 +61,7 @@
 }
 
 .rc-chart-source {
-  font-style: normal;
+  font-style: italic;
   font-size: var(--font-size-sm);
   font-weight: initial;
   margin: var(--space-sm) 0;
@@ -151,6 +151,8 @@
 /* End labels — last-value labels on the right edge */
 .rc-end-label {
   font-variant-numeric: tabular-nums;
+  background-color: var(--white);
+  padding: var(--space-xs);
 }
 
 /* Markers */
@@ -191,6 +193,44 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: 0;
+}
+
+/* ─── MultiChart ─────────────────────────────────────────────────────────── */
+
+.rc-multichart-grid {
+  display: grid;
+  gap: var(--space-lg, 16px);
+  order: 1;   /* sits between header (0) and footer (3) in the flex column */
+}
+
+.rc-multichart-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;    /* prevent grid blowout */
+  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */
+}
+
+/* The inner div that receives the child Chart instance.
+   Height is set inline by the child chart constructor — do not override with flex.
+   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */
+.rc-multichart-chart-wrapper {
+  min-width: 0;
+}
+
+.rc-multichart-chart-wrapper.rc-chart {
+  overflow: visible;
+}
+
+.rc-multichart-cell-title {
+  font-family: var(--primary-font);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  margin-bottom: 4px;
 }
 
 /* ─── Demo page controls ────── */
