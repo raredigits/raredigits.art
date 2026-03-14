@@ -217,6 +217,33 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>How multiple bar series are arranged. <code>'cluster'</code> places them side by side.</td>
         </tr>
         <tr class="table-section">
+            <td colspan="4"><h5>Visibility</h5></td>
+        </tr>
+        <tr>
+            <td><code>showGrid</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show horizontal grid lines.</td>
+        </tr>
+        <tr>
+            <td><code>showXAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the X (date) axis at the bottom.</td>
+        </tr>
+        <tr>
+            <td><code>showY1Axis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the Y1 axis on the right.</td>
+        </tr>
+        <tr>
+            <td><code>showY2Axis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the Y2 axis on the left.</td>
+        </tr>
+        <tr class="table-section">
             <td colspan="4"><h5>End labels and markers</h5></td>
         </tr>
         <tr>

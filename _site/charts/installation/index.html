@@ -343,6 +343,15 @@
           
             <li>
               
+                <a href="/charts/multi/">Multi Charts</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <span class="bold">Installation</span>
               
               
@@ -404,12 +413,12 @@
 <p><strong>From GitHub</strong> — clone the repo and use the prebuilt file:</p>
 <pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
-<p>Copy <code>dist/rare-charts.js</code> wherever your project keeps static assets.</p>
+<p>Copy <code>rare-charts.js</code> wherever your project keeps static assets.</p>
 <p><strong>From CDN</strong> — load it directly, no download required:</p>
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/dist/rare-charts.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 <p>For production, pin to a specific version. <code>@latest</code> is fine for prototyping, bad for anything that ships:</p>
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.2/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 <h2>Where to put the script tag</h2>
 <p>Two standard options, both work fine.</p>
@@ -477,8 +486,8 @@
       <td>Two metrics on different scales</td>
     </tr>
     <tr>
-      <td><code>RareCharts.Combined</code></td>
-      <td>Bar + line overlay</td>
+      <td><code>RareCharts.DualAxes</code> with mixed series</td>
+      <td>Bar + line overlay (combined charts are built on top of <code>DualAxes</code>)</td>
     </tr>
     <tr>
       <td><code>RareCharts.Donut</code></td>
@@ -495,6 +504,10 @@
     <tr>
       <td><code>RareCharts.Graph</code></td>
       <td>Force-directed network of nodes and links</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Map</code></td>
+      <td>Choropleth and region-highlight geographic maps</td>
     </tr>
   </tbody>
 </table>

@@ -16,8 +16,11 @@ import { markerPath } from './utils.js';
  * @param {number}       ticks  — tick count
  * @param {object}       theme
  */
-export function renderGrid(g, scale, W, ticks, theme) {
-  g.call(d3.axisLeft(scale).ticks(ticks).tickSize(-W).tickFormat(''))
+export function renderGrid(g, scale, W, ticks, theme, tickValues = null) {
+  const axis = tickValues
+    ? d3.axisLeft(scale).tickValues(tickValues).tickSize(-W).tickFormat('')
+    : d3.axisLeft(scale).ticks(ticks).tickSize(-W).tickFormat('');
+  g.call(axis)
     .call(sel => {
       sel.selectAll('line').attr('stroke', theme.grid);
       sel.select('.domain').remove();
@@ -59,9 +62,9 @@ export function renderZeroBaseline(g, scale, W, theme) {
  * @param {Function}     tickFormat — date formatter
  * @param {object}       theme
  */
-export function renderAxisX(g, scale, H, tickFormat, theme) {
+export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
   g.attr('transform', `translate(0,${H})`)
-    .call(d3.axisBottom(scale).ticks(6).tickSize(0).tickFormat(tickFormat))
+    .call(d3.axisBottom(scale).ticks(ticks).tickSize(0).tickFormat(tickFormat))
     .call(sel => {
       sel.selectAll('text')
         .attr('fill', theme.muted)
@@ -168,17 +171,35 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
       return { name: s.name, color: s.color, value: d.value };
     });
 
-  g.selectAll('.rc-end-label')
+  const groups = g.selectAll('.rc-end-label-g')
     .data(points, d => d.name)
-    .join('text')
+    .join('g')
+    .attr('class', 'rc-end-label-g')
+    .attr('transform', d => `translate(${W + 10},${yScale(d.value)})`);
+
+  // Background rect — sized after text renders via getBBox()
+  groups.append('rect')
+    .attr('class', 'rc-end-label-bg')
+    .attr('fill', theme.service);
+
+  groups.append('text')
     .attr('class', 'rc-end-label')
-    .attr('x', W + 10)
-    .attr('y', d => yScale(d.value))
     .attr('dy', '0.35em')
     .attr('fill', d => d.color)
     .style('font-family', theme.numericFont)
     .style('font-size', theme.fontSize)
     .text(d => tickFormat(d.value));
+
+  // Fit rect to text bounding box with small horizontal padding
+  groups.each(function () {
+    const bbox = d3.select(this).select('text').node().getBBox();
+    const px = 2, py = 0;
+    d3.select(this).select('rect')
+      .attr('x', bbox.x - px)
+      .attr('y', bbox.y - py)
+      .attr('width',  bbox.width  + px * 4)
+      .attr('height', bbox.height + py * 8);
+  });
 }
 
 // ─── Axis titles ─────────────────────────────────────────────────────────────

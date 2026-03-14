@@ -297,6 +297,27 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Marker radius in px.</td>
         </tr>
         <tr class="table-section">
+            <td colspan="4"><h5>Visibility</h5></td>
+        </tr>
+        <tr>
+            <td><code>showGrid</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show horizontal grid lines.</td>
+        </tr>
+        <tr>
+            <td><code>showXAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the X (date) axis at the bottom.</td>
+        </tr>
+        <tr>
+            <td><code>showYAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the Y (value) axis.</td>
+        </tr>
+        <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>

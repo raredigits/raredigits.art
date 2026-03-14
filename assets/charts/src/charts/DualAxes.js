@@ -28,6 +28,10 @@
 //   y1Domain / y2Domain — override auto domains
 //
 //   y1LabelsOnly/y2LabelsOnly — labels only, no axis line (default: true)
+//   showGrid        — show grid lines (default: true)
+//   showXAxis       — show X axis (default: true)
+//   showY1Axis      — show right Y1 axis (default: true)
+//   showY2Axis      — show left Y2 axis (default: true)
 //   endLabels       — show last value labels on the right (default: true)
 //   endLabelsAxis   — which axis to label ('y1' default)
 //
@@ -319,11 +323,32 @@ export class DualAxes extends Chart {
     const y2TickFormat = o.y2TickFormat ?? (v => Math.abs(v) < 1e-6 ? '0' : d3.format('+.2f')(v));
 
     // Axes + grid
-    renderGrid(this.gGrid, y2, W, o.y2Ticks ?? 4, t);
+    if (o.showGrid ?? true) {
+      renderGrid(this.gGrid, y2, W, o.y2Ticks ?? 4, t);
+    } else {
+      this.gGrid.selectAll('*').remove();
+    }
+
     renderZeroBaseline(this.gZero, y2, W, t);
-    renderAxisX(this.gAxisX, x, H, xTickFormat, t);
-    renderAxisYRight(this.gAxisY1, y1, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
-    renderAxisYLeft(this.gAxisY2, y2, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+
+    if (o.showXAxis ?? true) {
+      renderAxisX(this.gAxisX, x, H, xTickFormat, t);
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
+
+    if (o.showY1Axis ?? true) {
+      renderAxisYRight(this.gAxisY1, y1, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
+    } else {
+      this.gAxisY1.selectAll('*').remove();
+    }
+
+    if (o.showY2Axis ?? true) {
+      renderAxisYLeft(this.gAxisY2, y2, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+    } else {
+      this.gAxisY2.selectAll('*').remove();
+    }
+
     renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t);
 
     // Series

@@ -82,6 +82,31 @@ export function markerPath(shape, size = 4) {
   }
 }
 
+// ─── Nice tick values ─────────────────────────────────────────────────────────
+
+/**
+ * Generate exactly `count` evenly-spaced tick values covering [lo, hi],
+ * snapped to a "nice" step (1×, 2×, 5×, or 10× a power of 10).
+ *
+ * The returned array always has exactly `count` elements. If the last tick
+ * exceeds `hi`, the caller should extend the scale domain to match.
+ *
+ * @param {number} lo    — lower bound of the (already-nice) domain
+ * @param {number} hi    — upper bound
+ * @param {number} count — number of tick values to produce (≥ 2)
+ * @returns {number[]}
+ */
+export function niceTickValues(lo, hi, count) {
+  if (count < 2 || lo === hi) return [lo];
+  const rawStep = (hi - lo) / (count - 1);
+  const exp  = Math.floor(Math.log10(rawStep));
+  const frac = rawStep / Math.pow(10, exp);
+  const m    = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+  const step = m * Math.pow(10, exp);
+  const start = Math.ceil(lo / step) * step;
+  return Array.from({ length: count }, (_, i) => +((start + step * i).toPrecision(10)));
+}
+
 // ─── Ease ────────────────────────────────────────────────────────────────────
 
 export function resolveEase(name) {

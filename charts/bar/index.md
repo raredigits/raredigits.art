@@ -59,6 +59,16 @@ This solves a classic annoyance: value labels that collide with the container e
 
 Bar can animate on first render (`animate: true` by default). The timing is controlled by duration, per-bar delay by stagger, and easing via `ease` (`cubicOut`, `cubicInOut`, or `linear`). The chart only animates once per instance by design, so it does not turn normal updates into a circus.
 
+### Hiding axes and grid
+
+Sometimes the cleanest chart is one with less chrome. All three visual layers — grid lines, X axis, and Y axis — can be independently hidden:
+
+<pre class="text-content-caption"><code>showGrid:  false   <span class="code-comment">// no grid lines</span>
+showXAxis: false   <span class="code-comment">// no bottom axis</span>
+showYAxis: false   <span class="code-comment">// no side axis</span></code></pre>
+
+This is especially useful inside a `MultiChart` when panels share the same category labels: suppress the Y axis on panels after the first to eliminate duplication and give bars more horizontal room.
+
 ### Quick example
 
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
@@ -223,6 +233,47 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>array</td>
             <td>—</td>
             <td>Explicit X tick positions in horizontal mode.</td>
+        </tr>
+        <tr>
+            <td><code>yTicks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Number of Y tick marks in vertical mode.</td>
+        </tr>
+        <tr>
+            <td><code>yTickValues</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Explicit Y tick positions in vertical mode. Overrides <code>yTicks</code>.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Visibility</h5></td>
+        </tr>
+        <tr>
+            <td><code>showGrid</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show grid lines.</td>
+        </tr>
+        <tr>
+            <td><code>showXAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>
+                Show the X axis.<br>
+                Horizontal: numeric (value) axis at the bottom.<br>
+                Vertical: category axis at the bottom.
+            </td>
+        </tr>
+        <tr>
+            <td><code>showYAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>
+                Show the Y axis.<br>
+                Horizontal: category labels on the left.<br>
+                Vertical: numeric labels on the right.
+            </td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>

@@ -19,6 +19,10 @@
 //   valueOffset    — px offset from bar end (default: 6)
 //   valueInsideGap — threshold px: label flips inside bar when space is tight (default: 42)
 //
+//   showGrid       — show grid lines (default: true)
+//   showXAxis      — show X axis (default: true)
+//   showYAxis      — show Y axis (default: true)
+//
 //   yTickFormat    — function(value) => string (vertical: Y axis labels)
 //   yPrefix/ySuffix— prefix/suffix for default Y formatter (vertical)
 //   xTickFormat    — function(value) => string (horizontal: X axis labels)
@@ -27,7 +31,7 @@
 import * as d3 from 'd3';
 import { Chart }              from '../core/Chart.js';
 import { Tooltip }            from '../core/Tooltip.js';
-import { resolveEase }        from '../core/utils.js';
+import { resolveEase, niceTickValues } from '../core/utils.js';
 import { renderGrid }         from '../core/renderHelpers.js';
 
 export class Bar extends Chart {
@@ -36,7 +40,7 @@ export class Bar extends Chart {
       height: 200,
       margin: {
         top:    options.margin?.top    ?? 12,
-        right:  options.margin?.right  ?? (options.orientation === 'horizontal' ? 16  : 65),
+        right:  options.margin?.right  ?? (options.orientation === 'horizontal' ? 0  : 65),
         left:   options.margin?.left   ?? (options.orientation === 'horizontal' ? 65  : 0),
         bottom: options.margin?.bottom ?? (options.orientation === 'horizontal' ? 16  : 8),
       },
@@ -130,16 +134,23 @@ export class Bar extends Chart {
     const valueOffset    = this.options.valueOffset    ?? 6;
     const valueInsideGap = this.options.valueInsideGap ?? 42;
     const valueFormat    = this.options.valueFormat    ?? (d => d3.format(',.0f')(d.value));
+    const showGrid       = this.options.showGrid       ?? true;
+    const showXAxis      = this.options.showXAxis      ?? true;
+    const showYAxis      = this.options.showYAxis      ?? true;
 
-    // Grid — vertical lines at the bottom
-    this.gGrid
-      .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat(''))
-      .call(g => {
-        g.selectAll('line').attr('stroke', t.grid);
-        g.select('.domain').remove();
-        g.selectAll('text').remove();
-      });
+    // Grid — vertical lines
+    if (showGrid) {
+      this.gGrid
+        .attr('transform', `translate(0,${H})`)
+        .call(d3.axisBottom(x).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat(''))
+        .call(g => {
+          g.selectAll('line').attr('stroke', t.grid);
+          g.select('.domain').remove();
+          g.selectAll('text').remove();
+        });
+    } else {
+      this.gGrid.selectAll('*').remove();
+    }
 
     // Bars
     const bars = this.gBars.selectAll('.rc-bar')
@@ -208,33 +219,41 @@ export class Bar extends Chart {
     }
 
     // Y axis — category labels on the left
-    this.gAxisX
-      .attr('transform', 'translate(0,0)')
-      .call(d3.axisLeft(y).tickSize(0).tickFormat(d => this._formatLabel(d)))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.font)
-          .style('font-size', t.fontSize);
-        g.select('.domain').attr('stroke', t.border);
-        this._bindLabelTooltips(g, 'left');
-      });
+    if (showYAxis) {
+      this.gAxisX
+        .attr('transform', 'translate(0,0)')
+        .call(d3.axisLeft(y).tickSize(0).tickFormat(d => this._formatLabel(d)))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.font)
+            .style('font-size', t.fontSize);
+          g.select('.domain').attr('stroke', t.border);
+          this._bindLabelTooltips(g, 'left');
+        });
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
 
     // X axis — values at the bottom
-    this.gAxisY
-      .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x)
-        .tickValues(this.options.xTickValues ?? null)
-        .ticks(this.options.xTicks ?? 4)
-        .tickFormat(xTickFormat))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.numericFont)
-          .style('font-size', t.fontSize);
-        g.select('.domain').remove();
-        g.selectAll('line').remove();
-      });
+    if (showXAxis) {
+      this.gAxisY
+        .attr('transform', `translate(0,${H})`)
+        .call(d3.axisBottom(x)
+          .tickValues(this.options.xTickValues ?? null)
+          .ticks(this.options.xTicks ?? 4)
+          .tickFormat(xTickFormat))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.numericFont)
+            .style('font-size', t.fontSize);
+          g.select('.domain').remove();
+          g.selectAll('line').remove();
+        });
+    } else {
+      this.gAxisY.selectAll('*').remove();
+    }
   }
 
   // ─── Vertical ─────────────────────────────────────────────────────────────
@@ -245,16 +264,30 @@ export class Bar extends Chart {
       .range([0, W])
       .padding(0.25);
 
+    const maxVal = d3.max(this._data, d => d.value);
+    const yTicks = this.options.yTicks ?? 4;
+    // For bars (always starting from 0), use d3's .nice() + .ticks() to get
+    // clean tick values without overshooting. niceTickValues() can pick a step
+    // that's 2× too large (e.g. step=100k for max=156k → ticks go to 300k).
     const y = d3.scaleLinear()
-      .domain([0, d3.max(this._data, d => d.value) * 1.1])
+      .domain([0, maxVal * 1.1])
+      .nice(yTicks)
       .range([H, 0]);
+    const resolvedYTickValues = this.options.yTickValues ?? y.ticks(yTicks);
 
     const prefix      = this.options.yPrefix ?? '';
     const suffix      = this.options.ySuffix ?? '';
     const yTickFormat = this.options.yTickFormat ?? (d => `${prefix}${d3.format('.2s')(d)}${suffix}`);
+    const showGrid    = this.options.showGrid  ?? true;
+    const showXAxis   = this.options.showXAxis ?? true;
+    const showYAxis   = this.options.showYAxis ?? true;
 
     // Grid — horizontal lines
-    renderGrid(this.gGrid, y, W, 4, t);
+    if (showGrid) {
+      renderGrid(this.gGrid, y, W, yTicks, t, resolvedYTickValues);
+    } else {
+      this.gGrid.selectAll('*').remove();
+    }
 
     // Bars
     const bars = this.gBars.selectAll('.rc-bar')
@@ -287,30 +320,38 @@ export class Bar extends Chart {
     }
 
     // X axis — category labels at the bottom
-    this.gAxisX
-      .attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(x).tickSize(0).tickFormat(d => this._formatLabel(d)))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.font)
-          .style('font-size', t.fontSize);
-        g.select('.domain').attr('stroke', t.border);
-        this._bindLabelTooltips(g, 'bottom');
-      });
+    if (showXAxis) {
+      this.gAxisX
+        .attr('transform', `translate(0,${H})`)
+        .call(d3.axisBottom(x).tickSize(0).tickFormat(d => this._formatLabel(d)))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.font)
+            .style('font-size', t.fontSize);
+          g.select('.domain').attr('stroke', t.border);
+          this._bindLabelTooltips(g, 'bottom');
+        });
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
 
     // Y axis — values on the right
-    this.gAxisY
-      .attr('transform', `translate(${W},0)`)
-      .call(d3.axisRight(y).ticks(4).tickFormat(yTickFormat))
-      .call(g => {
-        g.selectAll('text')
-          .attr('fill', t.muted)
-          .style('font-family', t.numericFont)
-          .style('font-size', t.fontSize);
-        g.select('.domain').remove();
-        g.selectAll('line').remove();
-      });
+    if (showYAxis) {
+      this.gAxisY
+        .attr('transform', `translate(${W},0)`)
+        .call(d3.axisRight(y).tickValues(resolvedYTickValues).tickFormat(yTickFormat))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.numericFont)
+            .style('font-size', t.fontSize);
+          g.select('.domain').remove();
+          g.selectAll('line').remove();
+        });
+    } else {
+      this.gAxisY.selectAll('*').remove();
+    }
   }
 
   // ─── Label tooltip on truncated axis labels ────────────────────────────────

@@ -343,6 +343,15 @@
           
             <li>
               
+                <a href="/charts/multi/">Multi Charts</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/charts/installation/">Installation</a>
               
               
@@ -474,7 +483,7 @@ new RareCharts.Map('#chart', {
 </ul>
 <p>If needed, use the <code>idField</code> option to tell the chart which property should be used.</p>
 <h2>Projections</h2>
-<p>RareCharts supports four projections:</p>
+<p>RareCharts supports five projections:</p>
 <table>
 <thead>
 <tr>
@@ -499,6 +508,10 @@ new RareCharts.Map('#chart', {
 <td><code>'orthographic'</code></td>
 <td>Globe view. Mostly for visual context</td>
 </tr>
+<tr>
+<td><code>'identity'</code></td>
+<td>No geographic projection. Useful when your GeoJSON is already in screen coordinates or a custom planar space</td>
+</tr>
 </tbody>
 </table>
 <p>The chart automatically fits the projection to the loaded features using <code>fitExtent</code>, so you normally do not need to set scale or center manually.</p>
@@ -513,13 +526,13 @@ new RareCharts.Map('#chart', {
 <p>For a choropleth map, you will typically compute colors yourself using a scale and pass them through the <code>color</code> field.</p>
 <p>Default colors used by the chart come from the RareCharts theme. They are defined in: <code>/src/core/theme.js</code>. The map section of the theme defines values such as <code>matchFill</code>, <code>unmatchedFill</code>, <code>border</code>, and hover behavior. In most cases it is better to adjust those defaults in the theme rather than overriding colors in every chart instance.</p>
 <h2>Tooltip</h2>
-<p>The default tooltip shows the region name and, if present, the <code>value</code>.</p>
+<p>The default tooltip shows the region name and, if present, the <code>value</code> for every region on the map, including regions with no matching data item.</p>
 <p>If you need something more specific, override it:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ feature, item }) => `
     &lt;strong&gt;${item?.label ?? feature.properties.name}&lt;/strong&gt;
     &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
 `</code></pre>
-<p>The formatter receives both the raw <code>feature</code> and the matched <code>item</code>, so you can display whatever makes sense.</p>
+<p>The formatter receives both the raw <code>feature</code> and the matched <code>item</code>, so you can display whatever makes sense. For unmatched regions, <code>item</code> will be <code>null</code>.</p>
 <h2>Map chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
 <table class="table-bordered card-caption">
@@ -584,6 +597,18 @@ new RareCharts.Map('#chart', {
             </td>
         </tr>
         <tr>
+            <td><code>featureFilter</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td>Optional filter applied to extracted features before rendering. Receives <code>feature</code> and should return <code>true</code> to keep it.</td>
+        </tr>
+        <tr>
+            <td><code>clipExtent</code></td>
+            <td><code>[[lon, lat], [lon, lat]]</code></td>
+            <td>—</td>
+            <td>Geographic bounding box used to keep only polygons intersecting that extent.</td>
+        </tr>
+        <tr>
             <td><code>idField</code></td>
             <td>string</td>
             <td><code>'id'</code></td>
@@ -597,9 +622,15 @@ new RareCharts.Map('#chart', {
         </tr>
         <tr>
             <td><code>projection</code></td>
-            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code></td>
+            <td><code>'naturalEarth1'</code> | <code>'mercator'</code> | <code>'equalEarth'</code> | <code>'orthographic'</code> | <code>'identity'</code></td>
             <td><code>'naturalEarth1'</code></td>
             <td>D3 geo projection to use for rendering.</td>
+        </tr>
+        <tr>
+            <td><code>rotate</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Optional projection rotation passed to <code>projection.rotate([lambda, phi, gamma])</code> when supported by the chosen projection.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Colors</h5></td>
@@ -647,13 +678,19 @@ new RareCharts.Map('#chart', {
             <td><code>zoom</code></td>
             <td>boolean</td>
             <td><code>false</code></td>
-            <td>Enable scroll-to-zoom and drag-to-pan. Scale range: 0.5×–8×.</td>
+            <td>Enable scroll-to-zoom and drag-to-pan.</td>
+        </tr>
+        <tr>
+            <td><code>zoomExtent</code></td>
+            <td>array</td>
+            <td><code>[0.8, 12]</code></td>
+            <td>Minimum and maximum zoom scale used when <code>zoom</code> is enabled.</td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>built-in</td>
-            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for matched regions.</td>
+            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for any region. <code>item</code> is <code>null</code> when no data item matches.</td>
         </tr>
     </tbody>
 </table>

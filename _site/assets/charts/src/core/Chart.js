@@ -20,7 +20,7 @@ export class Chart {
     this.options = options;
 
     this.margin = {
-      top:    options.margin?.top    ?? 16,
+      top:    options.margin?.top    ?? 8,
       right:  options.margin?.right  ?? 70,
       bottom: options.margin?.bottom ?? 16,
       left:   options.margin?.left   ?? 0,
