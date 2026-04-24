@@ -61,8 +61,8 @@ export class Line extends Chart {
       margin: {
         top:    options.margin?.top    ?? 10,
         bottom: options.margin?.bottom ?? 18,
-        right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 60),
-        left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 60 : 0),
+        right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 64),
+        left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 64 : 0),
       },
       ...options,
     });

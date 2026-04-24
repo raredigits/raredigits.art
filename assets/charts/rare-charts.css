@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap');
+
 /* RareCharts — charts.css
    Structure and positioning.
    Colors — via theme (JS), not CSS. */
@@ -5,6 +7,10 @@
 /* ─── Chart wrapper ──────────────────────────────────────────────────────── */
 
 .rc-chart {
+  --rc-font-family: "Fira Sans", sans-serif;
+  --rc-font-family-numeric: "Cousine", monospace;
+  --rc-font-size: 16px;
+  --rc-font-size-sm: 14px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -19,8 +25,8 @@
 .rc-chart > .rc-chart-footer { order: 5; }
 
 .rc-chart > svg {
-  font-family: var(--primary-font);
-  font-size: var(--font-size-sm);
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size);
   overflow: visible; /* otherwise end labels and crosshair dots are clipped */
 }
 
@@ -43,7 +49,7 @@
 
 .rc-chart-title {
   margin: 0;
-  font-family: var(--primary-font);
+  font-family: var(--rc-font-family);
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
@@ -51,7 +57,7 @@
 }
 
 .rc-chart-subtitle {
-  font-size: var(--font-size-sm);
+  font-size: var(--rc-font-size-sm);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -66,7 +72,7 @@
 
 .rc-chart-source {
   font-style: italic;
-  font-size: var(--font-size-sm);
+  font-size: var(--rc-font-size-sm);
   font-weight: initial;
   margin: var(--space-sm) 0;
   overflow: hidden;
@@ -91,7 +97,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-md);
-  font-size: var(--font-size-sm);
+  font-size: var(--rc-font-size-sm);
   user-select: none;
 }
 
@@ -237,8 +243,8 @@
 }
 
 .rc-multichart-cell-title {
-  font-family: var(--primary-font);
-  font-size: var(--font-size-sm);
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm);
   font-weight: bold;
   text-transform: uppercase;
   white-space: nowrap;
@@ -268,7 +274,7 @@
 
 .rc-demo-group-label {
   padding-left: var(--space-sm);
-  font-size: var(--font-size-sm);
+  font-size: var(--rc-font-size-sm);
   text-transform: uppercase;
   user-select: none;
 }
@@ -282,8 +288,8 @@
 .rc-demo-btn {
   background: none;
   border: 1px solid var(--border-color, #ccc);
-  font-family: var(--primary-font);
-  font-size: var(--font-size-sm);
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm);
   padding: 3px 10px;
   border-radius: 3px;
   cursor: pointer;
@@ -344,7 +350,7 @@
 .price-chart-range-bar,
 .rc-chart-range-bar {
   position: absolute;
-  right: 64px;
+  right: 60px;
   top: 0;
   display: flex;
   flex-wrap: wrap;
@@ -358,8 +364,8 @@
 .range-btn,
 .rc-range-btn {
   background: none;
-  font-size: var(--font-size-sm);
-  font-family: var(--primary-font);
+  font-size: var(--rc-font-size-sm);
+  font-family: var(--rc-font-family);
   border: 1px solid var(--border-color);
   border-radius: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
@@ -390,7 +396,7 @@
 
 .price-chart-stat {
   padding: var(--space-xs) var(--space-md);
-  font-size: var(--font-size-sm);
+  font-size: var(--rc-font-size-sm);
 }
 
 .price-chart-stat-label {

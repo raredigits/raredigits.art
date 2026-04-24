@@ -38,12 +38,12 @@ export const defaultTheme = {
   ],
 
   // ── Typography ─────────────────────────────────────────────────────────────
-  font:        'var(--primary-font)',
-  fontSize:    'var(--font-size-sm)',
+  font:        'var(--rc-font-family, "Fira Sans", sans-serif)',
+  fontSize:    'var(--rc-font-size-sm, 14px)',
 
   // Separate monospace font for numbers on axes and in tooltips.
   // Falls back through a chain of common tabular fonts.
-  numericFont: 'var(--primary-font, monospace)',
+  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
 
   // ── Sizing defaults ────────────────────────────────────────────────────────
   // Charts use these as fallbacks when options are not passed explicitly.
@@ -82,7 +82,7 @@ export const darkTheme = createTheme({
   text:    '#e8e8e8',
   muted:   '#888888',
   accent:  '#ff6200',
-  numericFont: 'var(--primary-font, monospace)',
+  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
   tooltip: {
     bg:     '#1a1a1a',
     border: '#2e2e2e',

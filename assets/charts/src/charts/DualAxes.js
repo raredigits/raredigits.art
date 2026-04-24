@@ -75,7 +75,7 @@ export class DualAxes extends Chart {
       height: 280,
       margin: {
         top:    hasAxisTitles ? Math.max(topDefault, 30) : topDefault,
-        right:  options.margin?.right  ?? 92,
+        right:  options.margin?.right  ?? 64,
         bottom: options.margin?.bottom ?? 18,
         left:   options.margin?.left   ?? 64,
       },
