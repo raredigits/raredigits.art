@@ -12,6 +12,75 @@ export function parseDate(v) {
   return Number.isNaN(+dt) ? null : dt;
 }
 
+export function clampDateExtent(extent, fullExtent) {
+  if (!Array.isArray(extent) || extent.length < 2) return null;
+
+  const start = parseDate(extent[0]);
+  const end   = parseDate(extent[1]);
+  if (!start || !end) return null;
+
+  const lo = start <= end ? start : end;
+  const hi = start <= end ? end   : start;
+
+  if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) {
+    return [lo, hi];
+  }
+
+  const fullStart = parseDate(fullExtent[0]);
+  const fullEnd   = parseDate(fullExtent[1]);
+  if (!fullStart || !fullEnd) return [lo, hi];
+
+  return [
+    new Date(Math.max(+lo, +fullStart)),
+    new Date(Math.min(+hi, +fullEnd)),
+  ];
+}
+
+export function resolveTimeframeExtent(step, fullExtent) {
+  if (!step || !Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+
+  const fullStart = parseDate(fullExtent[0]);
+  const fullEnd   = parseDate(fullExtent[1]);
+  if (!fullStart || !fullEnd) return null;
+
+  const cfg = typeof step === 'string' ? { key: step, label: step } : step;
+  if (!cfg) return null;
+
+  if (Array.isArray(cfg.range)) {
+    return clampDateExtent(cfg.range, fullExtent);
+  }
+
+  const key = String(cfg.key ?? cfg.label ?? '').trim().toUpperCase();
+  if (!key) return null;
+  if (key === 'ALL' || key === 'MAX') return [fullStart, fullEnd];
+
+  const start = new Date(fullEnd);
+
+  if (key === 'YTD') {
+    start.setMonth(0, 1);
+    start.setHours(0, 0, 0, 0);
+    return clampDateExtent([start, fullEnd], fullExtent);
+  }
+
+  const match = key.match(/^(\d+)\s*([DWMY])$/);
+  if (!match) return null;
+
+  const amount = +match[1];
+  const unit   = match[2];
+
+  if (unit === 'D') start.setDate(start.getDate() - amount);
+  if (unit === 'W') start.setDate(start.getDate() - amount * 7);
+  if (unit === 'M') start.setMonth(start.getMonth() - amount);
+  if (unit === 'Y') start.setFullYear(start.getFullYear() - amount);
+
+  return clampDateExtent([start, fullEnd], fullExtent);
+}
+
+export function extentEquals(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || !a[0] || !a[1] || !b[0] || !b[1]) return false;
+  return +a[0] === +b[0] && +a[1] === +b[1];
+}
+
 // ─── Curve ───────────────────────────────────────────────────────────────────
 
 export function resolveCurve(name, tension = 0) {

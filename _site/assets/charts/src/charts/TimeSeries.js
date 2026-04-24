@@ -41,6 +41,7 @@ export class TimeSeries extends Chart {
   setData(data) {
     this._data       = data;
     this._viewExtent = null;
+    this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
   }
@@ -52,15 +53,12 @@ export class TimeSeries extends Chart {
     return this;
   }
 
-  setView(extent) {
-    this._viewExtent = extent;
-    this.render();
-    return this;
+  _getDataExtent() {
+    return this._data.length ? d3.extent(this._data, d => d.date) : null;
   }
 
-  onViewChange(fn) {
-    this._onViewChangeCb = fn;
-    return this;
+  _getNavigatorData() {
+    return this._data.length ? this._data : null;
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
@@ -105,8 +103,10 @@ export class TimeSeries extends Chart {
     this.clipRect.attr('width', W).attr('height', H + 4).attr('y', -4);
     this.overlay.attr('width', W).attr('height', H);
 
-    const fullExtent = d3.extent(this._data, d => d.date);
-    const viewExtent = this._viewExtent ?? fullExtent;
+    const fullExtent = this._getDataExtent();
+    const viewExtent = this._resolveViewExtent(fullExtent);
+    this._syncTimeframeButtons(fullExtent, viewExtent);
+    this._syncNavigator();
 
     const visible = this._data.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
     this._visible = visible;
@@ -226,6 +226,7 @@ export class TimeSeries extends Chart {
         ];
 
         this._viewExtent = extent;
+        this._syncTimeframeButtons(fullExtent, extent);
         this.render();
         if (this._onViewChangeCb) this._onViewChangeCb(extent);
       });

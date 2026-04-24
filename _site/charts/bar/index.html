@@ -426,6 +426,20 @@
     { label: 'R&D', value: 154000 }
 ]</code></pre>
 <p>The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.</p>
+<p>Bar also supports a time-based vertical mode when you pass <code>{ date, value }</code> points instead of categorical <code>{ label, value }</code> items:</p>
+<pre class="text-content-caption"><code>[
+    { date: '2025-01-01', value: 128000 },
+    { date: '2025-02-01', value: 142500 },
+    { date: '2025-03-01', value: 119000 }
+]</code></pre>
+<p>In that mode the chart uses a time scale on the X axis, which means it can also expose the built-in timeframe controls:</p>
+<pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+});
+
+chart.setData(data);</code></pre>
+<p>Timeframe controls apply only to the date-based vertical mode. They do not apply to ordinary categorical bars or horizontal rank-style bars.</p>
 <h3>Long labels (without ruining the axis)</h3>
 <p>Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports <code>labelMaxLength</code>, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.</p>
 <p>This is one of those details you only miss when you do not have it.</p>
@@ -433,6 +447,22 @@
 <p>In vertical mode, the Y axis uses <code>yTickFormat</code>. If you do not provide it, Bar falls back to a compact number formatter and supports <code>yPrefix</code> and <code>ySuffix</code> for units.</p>
 <p>In horizontal mode, the X axis uses <code>xTickFormat</code> (again, compact by default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”.</p>
 <p>Tooltips can be customized via <code>tooltipFormat (d) =&gt; html</code>, where <code>d</code> is <code>{ label, value }</code>. By default it shows the label and the value with comma formatting.</p>
+<h3>Built-in timeframe controls</h3>
+<p>When the bar chart is running in time-based mode, the shared view API is available:</p>
+<ul>
+<li><code>timeframes</code> renders the built-in range buttons in the chart header.</li>
+<li><code>defaultTimeframe</code> selects the initial visible range and active button.</li>
+<li><code>navigator: true</code> renders the built-in overview strip with a brush under the main chart.</li>
+<li><code>setView([start, end])</code> sets any custom visible date window.</li>
+<li><code>getView()</code> returns the currently visible <code>[start, end]</code>.</li>
+<li><code>onViewChange(fn)</code> lets external controls react to changes in the active date window.</li>
+</ul>
+<p>Example:</p>
+<pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', {
+    timeframes: ['3M', '6M', '1Y', 'ALL'],
+    defaultTimeframe: '1Y',
+    navigator: true,
+});</code></pre>
 <h3>Showing values on bars (horizontal)</h3>
 <p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
 <p>This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.</p>
@@ -488,6 +518,24 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td><code>'vertical'</code> | <code>'horizontal'</code></td>
             <td><code>'vertical'</code></td>
             <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Built-in timeframe buttons for date-based vertical bars. Pass <code>true</code> to use the default set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>. Ignored for categorical and horizontal bars.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used when the chart is in date-based mode.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip with brush selection under date-based vertical bars. Ignored for categorical and horizontal bars.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Bar style</h5></td>
@@ -663,6 +711,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-revenue.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-coder-gender.js"></script>
+
     </article>
   </div>
 </main>

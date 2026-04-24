@@ -421,6 +421,29 @@
 <p>In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine.</p>
 <h3>Interaction</h3>
 <p>Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through <code>tooltipFormat ({ date, points })</code>, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.</p>
+<h3>Built-in timeframe controls</h3>
+<p>Because <code>DualAxes</code> is inherently time-based, it can also render the shared timeframe switcher in its own chart header:</p>
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+});
+
+chart.setData(series);</code></pre>
+<p>Available pieces:</p>
+<ul>
+<li><code>timeframes</code> renders the built-in range buttons in the chart header.</li>
+<li><code>defaultTimeframe</code> selects the initial visible range and active button.</li>
+<li><code>navigator: true</code> renders the built-in overview strip with a brush under the main chart.</li>
+<li><code>setView([start, end])</code> sets any custom visible date window.</li>
+<li><code>getView()</code> returns the currently visible <code>[start, end]</code>.</li>
+<li><code>onViewChange(fn)</code> lets external UI or a linked navigator stay synchronized.</li>
+</ul>
+<p>Example:</p>
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+    navigator: true,
+});</code></pre>
 <p>Dual-axis charts are often implemented as a hack: two scales, mismatched formatting, confusing labels, and tooltips that quietly mix units. This component exists to make the dual-axis case predictable, explicit, and safe for real reporting: independent scales, consistent structure, and controlled formatting.</p>
 <h2>Dual Axes chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
@@ -457,6 +480,24 @@
             <td>number</td>
             <td><code>8</code></td>
             <td>Extra horizontal padding on both ends of the X scale.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Built-in timeframe buttons rendered in the chart header. Pass <code>true</code> to use the default set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>, or pass a custom array.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used on first render when no explicit view has been set.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4">
@@ -777,6 +818,7 @@
 </table>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/dual-axes/dual-axes-chart-ltcm-treasuries.js"></script>
+
     </article>
   </div>
 </main>

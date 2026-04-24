@@ -8,9 +8,15 @@ permalink: '/charts/line/time-series/'
 
 <spn class="meta-info">/examples/line/line-chart-time-series.js</spn>
 
-The Time Series chart is built for price-like data: long sequences, frequent updates, and the kind of “read the move” workflow where you do not want to zoom with your brain. It combines a main chart for detailed inspection with a compact overview chart that acts as a timeline navigator.
+Time Series is the chart for long date-based series where the main problem is navigation, not drawing a line. Price history, balances, revenue, traffic, sensor data: the moment the dataset stops fitting into one comfortable view, you need a way to switch windows without rebuilding the chart by hand.
 
-The main job of Time Series chart is to make long histories readable and to make navigation trivial: you should be able to focus on the last month, the last year, or “everything” without re-rendering the page or rebuilding the chart.
+In RareCharts, this module combines three things:
+
+- a main line chart for the active date window
+- a range bar with preset buttons, if you enable `timeframes`
+- a navigator strip with a brush, if you enable `navigator`
+
+The important bit is that both the buttons and the brush work with the same internal `view`. If the user clicks a range button, the chart updates its visible extent. If the user drags the brush, the chart updates the same visible extent. No duplicated state, no two widgets trying to outsmart each other, no “why is the UI lying to me” moment.
 
 <div>
   <!-- ── Header ─────────────────────── -->
@@ -20,22 +26,10 @@ The main job of Time Series chart is to make long histories readable and to 
           <span class="price-chart-price"  id="hd-price">—</span>
           <span class="price-chart-change" id="hd-change">—</span>
       </div>
-      <!-- ── Range buttons ──────────────── -->
-      <div class="price-chart-range-bar" id="rangeBar">
-          <button class="range-btn" data-range="1M">1M</button>
-          <button class="range-btn" data-range="3M">3M</button>
-          <button class="range-btn" data-range="6M">6M</button>
-          <button class="range-btn active" data-range="1Y">1Y</button>
-          <button class="range-btn" data-range="2Y">2Y</button>
-          <button class="range-btn" data-range="ALL">ALL</button>
-      </div>
   </div>
   
   <!-- ── Main chart ─────────────────── -->
   <div class="rc-chart" id="mainChart"></div>
-  
-  <!-- ── Overview ───────────────────── -->
-  <div class="rc-chart" id="overview"></div>
   
   <!-- ── Stats ─────────────────────── -->
   <div class="card-row-bordered price-chart-stats">
@@ -68,29 +62,259 @@ The main job of Time Series chart is to make long histories readable and to 
 
 <div class="air-md"></div>
 
-The chart also supports business-style formatting and presentation: clear positive/negative color logic, compact numeric formats for volume, and tooltips that can show more than one number without turning into a tooltip novel.
+### What problem it solves
 
-### Anatomy of the example
+The plain `Line` chart is enough when one view is enough. `TimeSeries` exists for the next step: when you want one chart instance to support “show me the last month”, “show me the last year”, and “show me everything” without wiring a second component tree around it.
 
-The demo is composed of three connected parts.
+This example uses:
 
-The first is a main Time Series chart. It renders the selected time window and provides precise inspection via a tooltip that follows the cursor.
+- preset range buttons: `1M`, `3M`, `6M`, `1Y`, `2Y`, `ALL`
+- a built-in navigator strip under the chart
+- a custom tooltip
+- a few stats below the chart
 
-The second is an Overview chart under the main chart. It renders the full history in a compressed form and exposes a brush selection. Dragging or resizing the brush changes the main chart’s view. Likewise, changes in the main chart (for example, when you pick a range) update the brush, so both stay synchronized.
+Only the first two are specific to the module. The tooltip and stats are just ordinary page code around it.
 
-The third is a range button bar (1M / 3M / 6M / 1Y / 2Y / ALL) demonstrates that the chart view is an explicit concept (`setView`) and can be controlled programmatically, which matters when your view range is driven by application state or user preferences.
+### Range buttons
 
-### Tooltip as a template, not a default
+Range buttons are controlled by the `timeframes` option.
 
-This example uses a custom `tooltipFormat` that returns HTML. It shows date, price, and daily change in both absolute and percent terms, and it also prints volume in a compact format. The important point is that tooltips are treated as a rendering layer you control, so you can match your product language and data semantics.
+```js
+const chart = new RareCharts.TimeSeries('#chart', {
+  timeframes: true,
+  defaultTimeframe: '1Y',
+});
+```
 
-### Programmatic control of the view
+`timeframes: true` enables the built-in preset set: `1M`, `3M`, `6M`, `1Y`, `2Y`, `ALL`. If you need a custom set, pass an array instead.
 
-The main chart exposes setView ([start, end]), and the overview exposes a brush that can be driven via `setBrush ([start, end])`. In this demo, the initial state is “last year”, but the same mechanism supports deep-linking, saved presets, and state persistence across page reloads.
+So:
 
-This is the kind of thing that separates “a chart” from “a chart component”.
+- if you omit `timeframes`, there is no range bar
+- if you pass `timeframes: true`, you get the built-in preset set
+- if you pass `['1Y', 'ALL']`, you get exactly those two buttons
 
-Time Series is an example of how RareCharts scales from simple chart primitives to composed, business-ready chart modules. You still work with the same core principles (explicit options, explicit data, consistent styling), but you get a higher-level component that solves a real workflow: navigating history, inspecting values, and presenting context around the chart.
+### Navigator
+
+The gray strip under the chart is controlled by `navigator`.
+
+```js
+const chart = new RareCharts.TimeSeries('#chart', {
+  navigator: true,
+});
+```
+
+Or with options:
+
+```js
+const chart = new RareCharts.TimeSeries('#chart', {
+  navigator: {
+    height: 56,
+    color: '#666666',
+    area: 1,
+    areaColor: '#cccccc',
+  },
+});
+```
+
+If enabled, the navigator always reflects the full dataset and highlights the current `view`. Dragging the brush updates the main chart. Clicking a range button also updates the brush. Same state, two controls, fewer bugs.
+
+### Programmatic control
+
+The visible window is part of the chart API.
+
+```js
+chart.setView([start, end]);
+const current = chart.getView();
+
+chart.onViewChange(extent => {
+  console.log(extent);
+});
+```
+
+This matters when the date range is driven by router state, saved user settings, query params, or another piece of UI that insists on being in charge.
+
+### Custom ranges
+
+If the built-in shortcuts are not enough, you can define your own buttons.
+
+```js
+const end = data[data.length - 1].date;
+
+timeframes: [
+  'ALL',
+  {
+    key: 'SINCE_2025',
+    label: 'Since 2025',
+    range: [new Date('2025-01-01'), end],
+  },
+  {
+    key: 'SINCE_2026',
+    label: 'Since 2026',
+    range: [new Date('2026-01-01'), end],
+  },
+]
+```
+
+Rules:
+
+- `ALL` means the full data extent
+- built-in string shortcuts such as `1M`, `6M`, `1Y`, `YTD`, `ALL` are resolved by the chart
+- custom buttons use `{ key, label, range }`
+- `range` is `[start, end]`
+- the final range is clamped to the real data extent, so overshooting the dataset is safe
+
+## Time Series chart options
+
+Common options shared by all chart types (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) are documented on the [Settings](/charts/settings/) page.
+
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>340</code></td>
+            <td>Chart height in px.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>—</td>
+            <td>Inner padding <code>{top, right, bottom, left}</code>.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Range bar button definitions. Pass <code>true</code> to use the built-in preset set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>. Or pass an array of built-in shortcuts and custom objects with <code>key</code>, <code>label</code>, and <code>range</code>.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used on first render when no explicit <code>view</code> has been set.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Axes</h5></td>
+        </tr>
+        <tr>
+            <td><code>xTickFormat</code></td>
+            <td>function</td>
+            <td><code>'%b'</code></td>
+            <td><code>(date) =&gt; string</code> — formats X axis labels.</td>
+        </tr>
+        <tr>
+            <td><code>yTickFormat</code></td>
+            <td>function</td>
+            <td><code>$,.0f</code></td>
+            <td><code>(value) =&gt; string</code> — formats Y axis labels.</td>
+        </tr>
+        <tr>
+            <td><code>yTicks</code></td>
+            <td>number</td>
+            <td><code>5</code></td>
+            <td>Y axis tick count.</td>
+        </tr>
+        <tr>
+            <td><code>yTickValues</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Explicit Y tick positions. Overrides automatic tick generation.</td>
+        </tr>
+        <tr>
+            <td><code>yLabelsOnly</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show only Y labels and suppress the axis line.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Line and Area</h5></td>
+        </tr>
+        <tr>
+            <td><code>curve</code></td>
+            <td>string</td>
+            <td><code>'monotone'</code></td>
+            <td>D3 curve type: <code>'linear'</code>, <code>'monotone'</code>, <code>'basis'</code>, <code>'cardinal'</code>, <code>'step'</code>, <code>'stepBefore'</code>, <code>'stepAfter'</code>.</td>
+        </tr>
+        <tr>
+            <td><code>area</code></td>
+            <td>boolean | number</td>
+            <td><code>true</code></td>
+            <td>Area fill under the line. <code>true</code> uses a gradient, a number is treated as solid fill opacity, and <code>false</code> disables the area.</td>
+        </tr>
+        <tr>
+            <td><code>areaColor</code></td>
+            <td>CSS color</td>
+            <td>theme accent</td>
+            <td>Area fill color.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td><code>(point) =&gt; html</code> — custom tooltip renderer for the active point.</td>
+        </tr>
+    </tbody>
+</table>
+
+## Time Series instance methods
+
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Signature</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>setData</code></td>
+            <td><code>(data)</code></td>
+            <td>Sets the full dataset and re-renders the chart.</td>
+        </tr>
+        <tr>
+            <td><code>appendPoint</code></td>
+            <td><code>(point)</code></td>
+            <td>Adds one point, re-sorts by date, and re-renders.</td>
+        </tr>
+        <tr>
+            <td><code>setView</code></td>
+            <td><code>([start, end])</code></td>
+            <td>Sets the visible date window explicitly.</td>
+        </tr>
+        <tr>
+            <td><code>getView</code></td>
+            <td><code>()</code></td>
+            <td>Returns the current visible date window.</td>
+        </tr>
+        <tr>
+            <td><code>onViewChange</code></td>
+            <td><code>(fn)</code></td>
+            <td>Registers a callback that runs whenever the visible date window changes.</td>
+        </tr>
+    </tbody>
+</table>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-time-series.js"></script>

@@ -132,7 +132,7 @@ export class Overview {
     this._brush = d3.brushX()
       .extent([[0, 0], [W, H]])
       .on('brush end', (event) => {
-        if (!event.selection) return;
+        if (!event.selection || !event.sourceEvent) return;
         const [x0, x1] = event.selection;
         if (this._onBrush) {
           this._onBrush([this._xScale.invert(x0), this._xScale.invert(x1)]);

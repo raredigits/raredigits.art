@@ -35,6 +35,25 @@ Bar expects a simple dataset:
 
 The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.
 
+Bar also supports a time-based vertical mode when you pass `{ date, value }` points instead of categorical `{ label, value }` items:
+
+<pre class="text-content-caption"><code>[
+    { date: '2025-01-01', value: 128000 },
+    { date: '2025-02-01', value: 142500 },
+    { date: '2025-03-01', value: 119000 }
+]</code></pre>
+
+In that mode the chart uses a time scale on the X axis, which means it can also expose the built-in timeframe controls:
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+});
+
+chart.setData(data);</code></pre>
+
+Timeframe controls apply only to the date-based vertical mode. They do not apply to ordinary categorical bars or horizontal rank-style bars.
+
 ### Long labels (without ruining the axis)
 
 Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports `labelMaxLength`, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.
@@ -48,6 +67,25 @@ In vertical mode, the Y axis uses `yTickFormat`. If you do not provide it, B
 In horizontal mode, the X axis uses `xTickFormat` (again, compact by default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”.
 
 Tooltips can be customized via `tooltipFormat (d) => html`, where `d` is `{ label, value }`. By default it shows the label and the value with comma formatting.
+
+### Built-in timeframe controls
+
+When the bar chart is running in time-based mode, the shared view API is available:
+
+- `timeframes` renders the built-in range buttons in the chart header.
+- `defaultTimeframe` selects the initial visible range and active button.
+- `navigator: true` renders the built-in overview strip with a brush under the main chart.
+- `setView([start, end])` sets any custom visible date window.
+- `getView()` returns the currently visible `[start, end]`.
+- `onViewChange(fn)` lets external controls react to changes in the active date window.
+
+Example:
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', {
+    timeframes: ['3M', '6M', '1Y', 'ALL'],
+    defaultTimeframe: '1Y',
+    navigator: true,
+});</code></pre>
 
 ### Showing values on bars (horizontal)
 
@@ -117,6 +155,24 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'vertical'</code> | <code>'horizontal'</code></td>
             <td><code>'vertical'</code></td>
             <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Built-in timeframe buttons for date-based vertical bars. Pass <code>true</code> to use the default set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>. Ignored for categorical and horizontal bars.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used when the chart is in date-based mode.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip with brush selection under date-based vertical bars. Ignored for categorical and horizontal bars.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Bar style</h5></td>

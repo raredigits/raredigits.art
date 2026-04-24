@@ -93,8 +93,19 @@ export class DualAxes extends Chart {
 
   setData(series) {
     this._series = this._normalizeData(series);
+    this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
+  }
+
+  _getDataExtent() {
+    const all = this._series.flatMap(s => s.values);
+    return all.length ? d3.extent(all, d => d.date) : null;
+  }
+
+  _getNavigatorData() {
+    const preferred = this._series.find(s => s.type === 'line') ?? this._series[0];
+    return preferred?.values?.length ? preferred.values : null;
   }
 
   _normalizeData(series) {
@@ -280,6 +291,15 @@ export class DualAxes extends Chart {
 
     const o = this.options;
     const t = this.theme;
+    const fullExtent = this._getDataExtent();
+    const viewExtent = this._resolveViewExtent(fullExtent);
+    const visibleSeries = this._series
+      .map(s => ({ ...s, values: s.values.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]) }))
+      .filter(s => s.values.length);
+    if (!visibleSeries.length) return;
+
+    this._syncTimeframeButtons(fullExtent, viewExtent);
+    this._syncNavigator();
 
     // Animation
     const animate  = (o.animate ?? true) && !this._didAnimateIn;
@@ -291,19 +311,19 @@ export class DualAxes extends Chart {
     const tension      = o.curveTension  ?? 0;
     const xPad         = o.xPad         ?? 8;
 
-    const lines = this._series.filter(s => s.type === 'line');
-    const bars  = this._series.filter(s => s.type === 'bar');
+    const lines = visibleSeries.filter(s => s.type === 'line');
+    const bars  = visibleSeries.filter(s => s.type === 'bar');
 
-    const allValues = this._series.flatMap(s => s.values);
-    const allY1     = this._series.filter(s => s.axis === 'y1').flatMap(s => s.values);
-    const allY2     = this._series.filter(s => s.axis === 'y2').flatMap(s => s.values);
+    const allValues = visibleSeries.flatMap(s => s.values);
+    const allY1     = visibleSeries.filter(s => s.axis === 'y1').flatMap(s => s.values);
+    const allY2     = visibleSeries.filter(s => s.axis === 'y2').flatMap(s => s.values);
 
     // Update clip rect to match current drawing area
     this._clipRect.attr('x', xPad).attr('y', 0).attr('width', W - 2 * xPad).attr('height', H);
 
     // Scales
     const x = d3.scaleTime()
-      .domain(d3.extent(allValues, d => d.date))
+      .domain(viewExtent)
       .range([xPad, W - xPad]);
 
     const y1Auto = allY1.length ? d3.extent(allY1, d => d.value) : d3.extent(allY2, d => d.value);
@@ -374,7 +394,7 @@ export class DualAxes extends Chart {
     // End labels
     if (o.endLabels ?? true) {
       const endAxis   = o.endLabelsAxis ?? 'y1';
-      const endSeries = this._series.filter(s => s.axis === endAxis);
+      const endSeries = visibleSeries.filter(s => s.axis === endAxis);
       const endScale  = endAxis === 'y2' ? y2 : y1;
       const endFmt    = endAxis === 'y2' ? y2TickFormat : y1TickFormat;
       renderEndLabels(this.gEnds, endSeries, endScale, W, endFmt, t);
@@ -384,7 +404,7 @@ export class DualAxes extends Chart {
 
     // Markers
     renderMarkers(
-      this.gMarkers, this._series, x,
+      this.gMarkers, visibleSeries, x,
       s => (s.axis === 'y2' ? y2 : y1),
       o.markers ?? false,
       o.markerShape ?? 'circle',
@@ -395,7 +415,7 @@ export class DualAxes extends Chart {
     // Crosshair
     this._crosshair.bind({
       W, H, x,
-      series:    this._series,
+      series:    visibleSeries,
       enabled:   o.crosshair ?? true,
       scaleFor:  (s) => (s.axis === 'y2' ? y2 : y1),
       formatFor: (s, v) => (s.axis === 'y2' ? y2TickFormat(v) : y1TickFormat(v)),

@@ -32,6 +32,34 @@ In this example, the spread axis uses a signed format and treats very small va
 
 Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through `tooltipFormat ({ date, points })`, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.
 
+### Built-in timeframe controls
+
+Because `DualAxes` is inherently time-based, it can also render the shared timeframe switcher in its own chart header:
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+});
+
+chart.setData(series);</code></pre>
+
+Available pieces:
+
+- `timeframes` renders the built-in range buttons in the chart header.
+- `defaultTimeframe` selects the initial visible range and active button.
+- `navigator: true` renders the built-in overview strip with a brush under the main chart.
+- `setView([start, end])` sets any custom visible date window.
+- `getView()` returns the currently visible `[start, end]`.
+- `onViewChange(fn)` lets external UI or a linked navigator stay synchronized.
+
+Example:
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+    navigator: true,
+});</code></pre>
+
 Dual-axis charts are often implemented as a hack: two scales, mismatched formatting, confusing labels, and tooltips that quietly mix units. This component exists to make the dual-axis case predictable, explicit, and safe for real reporting: independent scales, consistent structure, and controlled formatting.
 
 ## Dual Axes chart options
@@ -71,6 +99,24 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>number</td>
             <td><code>8</code></td>
             <td>Extra horizontal padding on both ends of the X scale.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Built-in timeframe buttons rendered in the chart header. Pass <code>true</code> to use the default set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>, or pass a custom array.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used on first render when no explicit view has been set.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4">

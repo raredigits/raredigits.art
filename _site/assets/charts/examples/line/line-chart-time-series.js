@@ -27,6 +27,14 @@
     height: 340,
     curve: 'linear',
     area: false,
+    navigator: {
+      height: 56,
+      color: '#666666',
+      area: 1,
+      areaColor: '#cccccc',
+    },
+    timeframes: true,
+    defaultTimeframe: '1Y',
     tooltipFormat: d => {
       const c     = d.value - d.open;
       const p     = (c / d.open * 100).toFixed(2);
@@ -40,44 +48,4 @@
   });
 
   mainChart.setData(data);
-
-  // ── Overview ───────────────────────────────
-  const overview = new RareCharts.Overview('#overview', { 
-    height: 56,
-    color: '#666666',
-    area: 1, 
-    areaColor: '#cccccc' 
-  });
-  overview.setData(data, extent => mainChart.setView(extent));
-  mainChart.onViewChange(extent => overview.setBrush(extent));
-
-  // ── Начальный вид — последний год ──────────
-  const end   = data[data.length - 1].date;
-  const start = new Date(end);
-  start.setFullYear(start.getFullYear() - 1);
-  mainChart.setView([start, end]);
-  overview.setBrush([start, end]);
-
-  // ── Range buttons ──────────────────────────
-  document.getElementById('rangeBar').addEventListener('click', e => {
-    const btn = e.target.closest('.range-btn');
-    if (!btn) return;
-
-    document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const range = btn.dataset.range;
-    const end   = data[data.length - 1].date;
-    const start = new Date(end);
-
-    if      (range === '1M')  start.setMonth(start.getMonth() - 1);
-    else if (range === '3M')  start.setMonth(start.getMonth() - 3);
-    else if (range === '6M')  start.setMonth(start.getMonth() - 6);
-    else if (range === '1Y')  start.setFullYear(start.getFullYear() - 1);
-    else if (range === '2Y')  start.setFullYear(start.getFullYear() - 2);
-    else if (range === 'ALL') start.setTime(data[0].date.getTime());
-
-    mainChart.setView([start, end]);
-    overview.setBrush([start, end]);
-  });
 })();

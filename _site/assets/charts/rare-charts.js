@@ -37,6 +37,7 @@ var RareCharts = (() => {
     d3: () => src_exports,
     darkTheme: () => darkTheme,
     defaultTheme: () => defaultTheme,
+    defaultTimeframes: () => defaultTimeframes,
     fromApi: () => fromApi,
     fromArray: () => fromArray,
     fromCsv: () => fromCsv,
@@ -46,7 +47,7 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 1; }\n.rc-chart > svg              { order: 2; }\n.rc-chart > .rc-chart-footer { order: 3; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto;  /* header | chart | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }\n\n/* Aside spans all three rows in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 4;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar {\n  display: flex;\n  gap: var(--space-xs);\n  align-items: center;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
+  var rare_charts_default = "/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-chart > .rc-chart-range-row { order: 1; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-chart-footer { order: 5; }\n\n.rc-chart > svg {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: flex;\n  flex-direction: column;\n  gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  margin: 0;\n  font-family: var(--primary-font);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  font-size: var(--font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  position: relative;\n  min-height: 40px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--font-size-sm);\n  user-select: none;\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto auto 1fr auto auto;  /* header | range | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > .rc-chart-range-row { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 4; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 6;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--primary-font);\n  font-size: var(--font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  position: absolute;\n  right: 64px;\n  top: 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n  align-self: flex-start;\n  width: fit-content;\n  margin: var(--space-sm) 0;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--font-size-sm);\n  font-family: var(--primary-font);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n";
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -17234,7 +17235,233 @@ var RareCharts = (() => {
     };
   }
 
+  // assets/charts/src/core/utils.js
+  function parseDate(v2) {
+    if (v2 instanceof Date) return v2;
+    if (typeof v2 === "number") return new Date(v2);
+    const dt = new Date(v2);
+    return Number.isNaN(+dt) ? null : dt;
+  }
+  function clampDateExtent(extent2, fullExtent) {
+    if (!Array.isArray(extent2) || extent2.length < 2) return null;
+    const start2 = parseDate(extent2[0]);
+    const end = parseDate(extent2[1]);
+    if (!start2 || !end) return null;
+    const lo = start2 <= end ? start2 : end;
+    const hi = start2 <= end ? end : start2;
+    if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) {
+      return [lo, hi];
+    }
+    const fullStart = parseDate(fullExtent[0]);
+    const fullEnd = parseDate(fullExtent[1]);
+    if (!fullStart || !fullEnd) return [lo, hi];
+    return [
+      new Date(Math.max(+lo, +fullStart)),
+      new Date(Math.min(+hi, +fullEnd))
+    ];
+  }
+  function resolveTimeframeExtent(step, fullExtent) {
+    if (!step || !Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+    const fullStart = parseDate(fullExtent[0]);
+    const fullEnd = parseDate(fullExtent[1]);
+    if (!fullStart || !fullEnd) return null;
+    const cfg = typeof step === "string" ? { key: step, label: step } : step;
+    if (!cfg) return null;
+    if (Array.isArray(cfg.range)) {
+      return clampDateExtent(cfg.range, fullExtent);
+    }
+    const key = String(cfg.key ?? cfg.label ?? "").trim().toUpperCase();
+    if (!key) return null;
+    if (key === "ALL" || key === "MAX") return [fullStart, fullEnd];
+    const start2 = new Date(fullEnd);
+    if (key === "YTD") {
+      start2.setMonth(0, 1);
+      start2.setHours(0, 0, 0, 0);
+      return clampDateExtent([start2, fullEnd], fullExtent);
+    }
+    const match = key.match(/^(\d+)\s*([DWMY])$/);
+    if (!match) return null;
+    const amount = +match[1];
+    const unit2 = match[2];
+    if (unit2 === "D") start2.setDate(start2.getDate() - amount);
+    if (unit2 === "W") start2.setDate(start2.getDate() - amount * 7);
+    if (unit2 === "M") start2.setMonth(start2.getMonth() - amount);
+    if (unit2 === "Y") start2.setFullYear(start2.getFullYear() - amount);
+    return clampDateExtent([start2, fullEnd], fullExtent);
+  }
+  function extentEquals(a4, b) {
+    if (!Array.isArray(a4) || !Array.isArray(b) || !a4[0] || !a4[1] || !b[0] || !b[1]) return false;
+    return +a4[0] === +b[0] && +a4[1] === +b[1];
+  }
+  function resolveCurve(name, tension = 0) {
+    switch (name) {
+      case "monotone":
+        return monotoneX;
+      case "basis":
+        return basis_default2;
+      case "cardinal":
+        return cardinal_default.tension(tension);
+      case "step":
+        return step_default;
+      case "stepBefore":
+        return stepBefore;
+      case "stepAfter":
+        return stepAfter;
+      case "linear":
+      default:
+        return linear_default;
+    }
+  }
+  function resolveStrokeDash(dash) {
+    if (!dash || dash === "solid") return null;
+    if (Array.isArray(dash)) return dash.join(",");
+    switch (dash) {
+      case "dashed":
+        return "6,4";
+      case "dotted":
+        return "2,3";
+      case "dashDot":
+        return "8,4,2,4";
+      case "longDash":
+        return "12,4";
+      default:
+        return null;
+    }
+  }
+  function markerPath(shape, size = 4) {
+    const s2 = size;
+    switch (shape) {
+      case "square":
+        return `M${-s2},${-s2}h${s2 * 2}v${s2 * 2}h${-s2 * 2}z`;
+      case "diamond":
+        return `M0,${-s2}L${s2},0L0,${s2}L${-s2},0z`;
+      case "triangle":
+        return `M0,${-s2}L${s2},${s2}L${-s2},${s2}z`;
+      case "cross": {
+        const t = s2 * 0.35;
+        return `M${-s2},${-t}h${s2 - t}v${-(s2 - t)}h${t * 2}v${s2 - t}h${s2 - t}v${t * 2}h${-(s2 - t)}v${s2 - t}h${-t * 2}v${-(s2 - t)}h${-(s2 - t)}z`;
+      }
+      case "circle":
+      default:
+        return null;
+    }
+  }
+  function niceTickValues(lo, hi, count3) {
+    if (count3 < 2 || lo === hi) return [lo];
+    const rawStep = (hi - lo) / (count3 - 1);
+    const exp2 = Math.floor(Math.log10(rawStep));
+    const frac = rawStep / Math.pow(10, exp2);
+    const m3 = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+    const step = m3 * Math.pow(10, exp2);
+    const start2 = Math.ceil(lo / step) * step;
+    return Array.from({ length: count3 }, (_, i) => +(start2 + step * i).toPrecision(10));
+  }
+  function resolveEase(name) {
+    switch (name) {
+      case "cubicInOut":
+        return cubicInOut;
+      case "linear":
+        return linear2;
+      case "cubicOut":
+      default:
+        return cubicOut;
+    }
+  }
+
+  // assets/charts/src/charts/Overview.js
+  var Overview = class {
+    constructor(selector, options = {}) {
+      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
+      this.theme = { ...defaultTheme, ...options.theme ?? {} };
+      this.opts = {
+        height: options.height ?? 52,
+        area: options.area,
+        areaColor: options.areaColor,
+        brushColor: options.brushColor,
+        color: options.color
+      };
+      this.margin = { top: 6, right: 70, bottom: 16, left: 0 };
+      this._data = [];
+      this._init();
+    }
+    get width() {
+      return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
+    }
+    get height() {
+      return Math.max(0, this.opts.height - this.margin.top - this.margin.bottom);
+    }
+    _init() {
+      this.container.style.height = this.opts.height + "px";
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      const { left: left2, top: top2 } = this.margin;
+      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this.gArea = this.g.append("g");
+      this.gLine = this.g.append("g");
+      this.gBrush = this.g.append("g");
+      this._resizeObserver = new ResizeObserver(() => {
+        if (this._data.length) this._render();
+      });
+      this._resizeObserver.observe(this.container);
+    }
+    destroy() {
+      this._resizeObserver.disconnect();
+      this.container.innerHTML = "";
+    }
+    setData(data, onBrush) {
+      this._data = data;
+      this._onBrush = onBrush;
+      this._render();
+      return this;
+    }
+    setBrush(extent2) {
+      if (!this._xScale || !extent2) return;
+      this._brush.move(this.gBrush, [
+        this._xScale(extent2[0]),
+        this._xScale(extent2[1])
+      ]);
+    }
+    _render() {
+      const W = this.width, H = this.height;
+      const t = this.theme;
+      this._xScale = time().domain(extent(this._data, (d) => d.date)).range([0, W]);
+      const yScale = linear3().domain([min(this._data, (d) => d.value), max(this._data, (d) => d.value)]).range([H, 0]);
+      const line = line_default2().x((d) => this._xScale(d.date)).y((d) => yScale(d.value)).curve(monotoneX);
+      const area = area_default5().x((d) => this._xScale(d.date)).y0(H).y1((d) => yScale(d.value)).curve(monotoneX);
+      const areaOpt = this.opts.area;
+      const solidOpacity = typeof areaOpt === "number" ? areaOpt : null;
+      const lineColor = this.opts.color ?? t.border;
+      const areaColor = this.opts.areaColor ?? t.accent;
+      const brushColor = this.opts.brushColor ?? t.text;
+      if (solidOpacity !== null) {
+        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", areaColor).attr("fill-opacity", solidOpacity);
+      } else {
+        let grad = this.svg.select("#rc-ov-grad");
+        if (grad.empty()) {
+          grad = this.svg.append("defs").append("linearGradient").attr("id", "rc-ov-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
+          grad.append("stop").attr("offset", "0%").attr("stop-opacity", 0.18);
+          grad.append("stop").attr("offset", "100%").attr("stop-opacity", 0);
+        }
+        grad.selectAll("stop").attr("stop-color", areaColor);
+        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", "url(#rc-ov-grad)").attr("fill-opacity", 1);
+      }
+      this.gLine.selectAll(".rc-ov-line").data([this._data]).join("path").attr("class", "rc-ov-line").attr("d", line).attr("fill", "none").attr("stroke", lineColor).attr("stroke-width", 1);
+      this._brush = brushX().extent([[0, 0], [W, H]]).on("brush end", (event) => {
+        if (!event.selection || !event.sourceEvent) return;
+        const [x06, x12] = event.selection;
+        if (this._onBrush) {
+          this._onBrush([this._xScale.invert(x06), this._xScale.invert(x12)]);
+        }
+      });
+      this.gBrush.call(this._brush).call((g) => {
+        g.select(".selection").attr("fill", "rgba(0,0,0,0.05)").attr("stroke", brushColor).attr("stroke-width", 1);
+        g.selectAll(".handle").attr("fill", brushColor).attr("opacity", 0.7);
+        g.select(".overlay").attr("fill", "rgba(0,0,0,0.2)");
+      });
+    }
+  };
+
   // assets/charts/src/core/Chart.js
+  var defaultTimeframes = ["1M", "3M", "6M", "1Y", "2Y", "ALL"];
   var Chart = class {
     constructor(selector, options = {}) {
       this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
@@ -17257,8 +17484,17 @@ var RareCharts = (() => {
       this._legendAsideEl = null;
       this._footerEl = null;
       this._sourceEl = null;
+      this._rangeRowEl = null;
+      this._rangeBarEl = null;
+      this._timeframeButtons = [];
+      this._navigatorEl = null;
+      this._navigator = null;
+      this._viewExtent = null;
+      this._activeTimeframe = null;
+      this._onViewChangeCb = null;
       this._renderHeader();
       this._renderFooter();
+      this._ensureNavigator();
       this._resizeObserver = new ResizeObserver(() => this._onResize());
       this._resizeObserver.observe(this.container);
     }
@@ -17267,8 +17503,9 @@ var RareCharts = (() => {
       const hasTitle = !!this.options.title;
       const hasSubtitle = !!this.options.subtitle;
       const hasLegend = this.options.legend != null;
+      const hasRangeBar = this._getTimeframeOptions().length > 0;
       const legendRight = this.options.legendPosition === "right";
-      if (!hasTitle && !hasSubtitle && !hasLegend) return;
+      if (!hasTitle && !hasSubtitle && !hasLegend && !hasRangeBar) return;
       if (hasLegend) {
         this._legendEl = document.createElement("div");
         this._legendEl.className = "rc-legend";
@@ -17307,7 +17544,7 @@ var RareCharts = (() => {
         this.container.classList.add("rc-chart--legend-right");
         this.container.appendChild(this._legendAsideEl);
       }
-      if (hasTitle || hasSubtitle || hasLegend && !legendRight) {
+      if (hasTitle || hasSubtitle || hasLegend && !legendRight || hasRangeBar) {
         if (this._headerEl?.parentNode) this._headerEl.remove();
         this._headerEl = document.createElement("div");
         this._headerEl.className = "rc-chart-header";
@@ -17329,6 +17566,29 @@ var RareCharts = (() => {
           this._headerEl.appendChild(this._legendEl);
         }
         this.container.insertBefore(this._headerEl, this.container.firstChild);
+      }
+      if (hasRangeBar) {
+        if (this._rangeRowEl?.parentNode) this._rangeRowEl.remove();
+        this._rangeRowEl = document.createElement("div");
+        this._rangeRowEl.className = "rc-chart-range-row";
+        this._rangeBarEl = document.createElement("div");
+        this._rangeBarEl.className = "rc-chart-range-bar";
+        this._timeframeButtons = this._getTimeframeOptions().map((step) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "rc-range-btn";
+          btn.textContent = step.label ?? step.key ?? "";
+          btn.dataset.timeframe = step.key ?? step.label ?? "";
+          btn.addEventListener("click", () => this.setTimeframe(step.key ?? step.label ?? ""));
+          this._rangeBarEl.appendChild(btn);
+          return btn;
+        });
+        this._rangeRowEl.appendChild(this._rangeBarEl);
+        if (this._headerEl?.parentNode === this.container) {
+          this.container.insertBefore(this._rangeRowEl, this._headerEl.nextSibling);
+        } else {
+          this.container.insertBefore(this._rangeRowEl, this.container.firstChild);
+        }
       }
     }
     // ── Footer (Source) ───────────────────────────────────────────────────────
@@ -17359,14 +17619,112 @@ var RareCharts = (() => {
     }
     get height() {
       const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
+      const rangeH = this._rangeRowEl ? this._rangeRowEl.offsetHeight + 8 : 0;
+      const navigatorH = this._navigatorEl ? this._navigatorEl.offsetHeight + 8 : 0;
       const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
       const cs = window.getComputedStyle(this.container);
       const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
       const h = this.options.height ?? this.container.clientHeight;
-      return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - footerH);
+      return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - rangeH - navigatorH - footerH);
     }
     _onResize() {
       if (this.width > 0 && this.height > 0) this.render();
+    }
+    _getTimeframeOptions() {
+      const stepsOpt = this.options.timeframes ?? this.options.viewSteps ?? [];
+      const steps = stepsOpt === true ? defaultTimeframes : stepsOpt;
+      return (Array.isArray(steps) ? steps : []).map((step) => typeof step === "string" ? { key: step, label: step } : step).filter((step) => !!(step?.key ?? step?.label));
+    }
+    _getDataExtent() {
+      return null;
+    }
+    _getNavigatorData() {
+      return null;
+    }
+    _hasNavigatorEnabled() {
+      return this.options.navigator != null && this.options.navigator !== false;
+    }
+    _getNavigatorOptions() {
+      if (this.options.navigator === true) return {};
+      return typeof this.options.navigator === "object" ? this.options.navigator : {};
+    }
+    _ensureNavigator() {
+      if (!this._hasNavigatorEnabled()) return null;
+      if (this._navigatorEl) return this._navigatorEl;
+      this._navigatorEl = document.createElement("div");
+      this._navigatorEl.className = "rc-chart-navigator";
+      if (this._footerEl?.parentNode === this.container) {
+        this.container.insertBefore(this._navigatorEl, this._footerEl);
+      } else {
+        this.container.appendChild(this._navigatorEl);
+      }
+      this._navigator = new Overview(this._navigatorEl, {
+        theme: this.theme,
+        ...this._getNavigatorOptions()
+      });
+      return this._navigatorEl;
+    }
+    _syncNavigator() {
+      if (!this._hasNavigatorEnabled()) return;
+      const data = this._getNavigatorData();
+      if (!Array.isArray(data) || !data.length) {
+        if (this._navigatorEl) this._navigatorEl.style.display = "none";
+        return;
+      }
+      this._ensureNavigator();
+      this._navigatorEl.style.display = "";
+      this._navigator.setData(data, (extent2) => this.setView(extent2, { silent: true }));
+      const view = this.getView();
+      if (view) this._navigator.setBrush(view);
+    }
+    _resolveDefaultView(fullExtent) {
+      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+      if (Array.isArray(this.options.defaultView)) {
+        return clampDateExtent(this.options.defaultView, fullExtent);
+      }
+      if (this.options.defaultTimeframe) {
+        return resolveTimeframeExtent(this.options.defaultTimeframe, fullExtent);
+      }
+      return null;
+    }
+    _resolveViewExtent(fullExtent) {
+      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+      return clampDateExtent(this._viewExtent ?? this._resolveDefaultView(fullExtent) ?? fullExtent, fullExtent);
+    }
+    _syncTimeframeButtons(fullExtent, viewExtent = null) {
+      if (!this._timeframeButtons.length) return;
+      const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
+      const activeKey = this._getTimeframeOptions().find(
+        (step) => extentEquals(resolveTimeframeExtent(step, fullExtent), resolvedView)
+      )?.key ?? null;
+      this._activeTimeframe = activeKey;
+      this._timeframeButtons.forEach((btn) => {
+        btn.classList.toggle("active", btn.dataset.timeframe === activeKey);
+      });
+    }
+    setView(extent2, { silent = false } = {}) {
+      const parsed = Array.isArray(extent2) ? [parseDate(extent2[0]), parseDate(extent2[1])] : null;
+      this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
+      this._syncTimeframeButtons(this._getDataExtent());
+      this.render();
+      this._syncNavigator();
+      const resolved = this._resolveViewExtent(this._getDataExtent());
+      if (!silent && resolved && this._onViewChangeCb) this._onViewChangeCb(resolved);
+      return this;
+    }
+    getView() {
+      return this._resolveViewExtent(this._getDataExtent());
+    }
+    setTimeframe(key, { silent = false } = {}) {
+      const fullExtent = this._getDataExtent();
+      const step = this._getTimeframeOptions().find((item) => (item.key ?? item.label) === key) ?? key;
+      const extent2 = resolveTimeframeExtent(step, fullExtent);
+      if (!extent2) return this;
+      return this.setView(extent2, { silent });
+    }
+    onViewChange(fn) {
+      this._onViewChangeCb = fn;
+      return this;
     }
     render() {
       throw new Error("render() must be implemented");
@@ -17381,6 +17739,12 @@ var RareCharts = (() => {
       this._legendAsideEl = null;
       this._footerEl = null;
       this._sourceEl = null;
+      this._rangeRowEl = null;
+      this._rangeBarEl = null;
+      this._timeframeButtons = [];
+      if (this._navigator) this._navigator.destroy();
+      this._navigator = null;
+      this._navigatorEl = null;
     }
   };
 
@@ -17495,88 +17859,6 @@ var RareCharts = (() => {
     }
   };
 
-  // assets/charts/src/core/utils.js
-  function parseDate(v2) {
-    if (v2 instanceof Date) return v2;
-    if (typeof v2 === "number") return new Date(v2);
-    const dt = new Date(v2);
-    return Number.isNaN(+dt) ? null : dt;
-  }
-  function resolveCurve(name, tension = 0) {
-    switch (name) {
-      case "monotone":
-        return monotoneX;
-      case "basis":
-        return basis_default2;
-      case "cardinal":
-        return cardinal_default.tension(tension);
-      case "step":
-        return step_default;
-      case "stepBefore":
-        return stepBefore;
-      case "stepAfter":
-        return stepAfter;
-      case "linear":
-      default:
-        return linear_default;
-    }
-  }
-  function resolveStrokeDash(dash) {
-    if (!dash || dash === "solid") return null;
-    if (Array.isArray(dash)) return dash.join(",");
-    switch (dash) {
-      case "dashed":
-        return "6,4";
-      case "dotted":
-        return "2,3";
-      case "dashDot":
-        return "8,4,2,4";
-      case "longDash":
-        return "12,4";
-      default:
-        return null;
-    }
-  }
-  function markerPath(shape, size = 4) {
-    const s2 = size;
-    switch (shape) {
-      case "square":
-        return `M${-s2},${-s2}h${s2 * 2}v${s2 * 2}h${-s2 * 2}z`;
-      case "diamond":
-        return `M0,${-s2}L${s2},0L0,${s2}L${-s2},0z`;
-      case "triangle":
-        return `M0,${-s2}L${s2},${s2}L${-s2},${s2}z`;
-      case "cross": {
-        const t = s2 * 0.35;
-        return `M${-s2},${-t}h${s2 - t}v${-(s2 - t)}h${t * 2}v${s2 - t}h${s2 - t}v${t * 2}h${-(s2 - t)}v${s2 - t}h${-t * 2}v${-(s2 - t)}h${-(s2 - t)}z`;
-      }
-      case "circle":
-      default:
-        return null;
-    }
-  }
-  function niceTickValues(lo, hi, count3) {
-    if (count3 < 2 || lo === hi) return [lo];
-    const rawStep = (hi - lo) / (count3 - 1);
-    const exp2 = Math.floor(Math.log10(rawStep));
-    const frac = rawStep / Math.pow(10, exp2);
-    const m3 = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
-    const step = m3 * Math.pow(10, exp2);
-    const start2 = Math.ceil(lo / step) * step;
-    return Array.from({ length: count3 }, (_, i) => +(start2 + step * i).toPrecision(10));
-  }
-  function resolveEase(name) {
-    switch (name) {
-      case "cubicInOut":
-        return cubicInOut;
-      case "linear":
-        return linear2;
-      case "cubicOut":
-      default:
-        return cubicOut;
-    }
-  }
-
   // assets/charts/src/core/seriesPath.js
   function baselineValue(baseline, domain) {
     if (typeof baseline === "number" && Number.isFinite(baseline)) return baseline;
@@ -17608,8 +17890,8 @@ var RareCharts = (() => {
     g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale2(0)).attr("y2", scale2(0)).attr("stroke", theme.border);
   }
   function renderAxisX(g, scale2, H, tickFormat2, theme, ticks2 = 6) {
-    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(ticks2).tickSize(0).tickFormat(tickFormat2)).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "1.2em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
+    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(ticks2).tickSize(0).tickPadding(6).tickFormat(tickFormat2)).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "0.71em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
       sel.select(".domain").remove();
       sel.selectAll("line").remove();
     });
@@ -17718,8 +18000,17 @@ var RareCharts = (() => {
     // ─── Data ─────────────────────────────────────────────────────────────────
     setData(data) {
       this._series = this._normalizeData(data);
+      this._syncTimeframeButtons(this._getDataExtent());
       this.render();
       return this;
+    }
+    _getDataExtent() {
+      const all = this._series.flatMap((s2) => s2.values);
+      return all.length ? extent(all, (d) => d.date) : null;
+    }
+    _getNavigatorData() {
+      const source = this._series[0]?.values ?? [];
+      return source.length ? source : null;
     }
     _normalizeData(data) {
       if (!data) return [];
@@ -17767,12 +18058,18 @@ var RareCharts = (() => {
       if (W <= 0 || H <= 0) return;
       const o = this.options;
       const t = this.theme;
+      const fullExtent = this._getDataExtent();
+      const viewExtent = this._resolveViewExtent(fullExtent);
+      const visibleSeries = this._series.map((s2) => ({ ...s2, values: s2.values.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]) })).filter((s2) => s2.values.length);
+      if (!visibleSeries.length) return;
+      this._syncTimeframeButtons(fullExtent, viewExtent);
+      this._syncNavigator();
       const animate = (o.animate ?? true) && !this._didAnimateIn;
       const duration = o.duration ?? 650;
       const ease = resolveEase(o.ease ?? "cubicOut");
-      const all = this._series.flatMap((s2) => s2.values);
+      const all = visibleSeries.flatMap((s2) => s2.values);
       const xPad = 8;
-      const x4 = time().domain(extent(all, (d) => d.date)).range([xPad, W - xPad]);
+      const x4 = time().domain(viewExtent).range([xPad, W - xPad]);
       const yTicks = o.yTicks ?? 4;
       const maxY2 = max(all, (d) => d.value);
       const minY = min(all, (d) => d.value);
@@ -17819,9 +18116,9 @@ var RareCharts = (() => {
       } else {
         this.gAxisY.selectAll("*").remove();
       }
-      const areaSeries = this._series.filter((s2) => (s2.area ?? globalArea) === true);
+      const areaSeries = visibleSeries.filter((s2) => (s2.area ?? globalArea) === true);
       this.gLines.selectAll(".rc-line-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-line-area").attr("d", (s2) => areaPath(s2, x4, y4, defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
-      const paths = this.gLines.selectAll(".rc-line").data(this._series, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
+      const paths = this.gLines.selectAll(".rc-line").data(visibleSeries, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
       if (animate) {
         const solidPaths = paths.filter((s2) => !resolveStrokeDash(s2.strokeDash ?? globalDash));
         const dashedPaths = paths.filter((s2) => resolveStrokeDash(s2.strokeDash ?? globalDash));
@@ -17835,16 +18132,16 @@ var RareCharts = (() => {
         this._didAnimateIn = true;
       }
       if (o.endLabels ?? true) {
-        renderEndLabels(this.gEnds, this._series, y4, W, yTickFormat, t);
+        renderEndLabels(this.gEnds, visibleSeries, y4, W, yTickFormat, t);
       } else {
         this.gEnds.selectAll("*").remove();
       }
-      renderMarkers(this.gMarkers, this._series, x4, () => y4, globalMarkers, globalShape, globalSize, t);
+      renderMarkers(this.gMarkers, visibleSeries, x4, () => y4, globalMarkers, globalShape, globalSize, t);
       this._crosshair.bind({
         W,
         H,
         x: x4,
-        series: this._series,
+        series: visibleSeries,
         enabled: o.crosshair ?? true,
         scaleFor: () => y4,
         formatFor: (_s, v2) => yTickFormat(v2),
@@ -17873,6 +18170,7 @@ var RareCharts = (() => {
     setData(data) {
       this._data = data;
       this._viewExtent = null;
+      this._syncTimeframeButtons(this._getDataExtent());
       this.render();
       return this;
     }
@@ -17882,14 +18180,11 @@ var RareCharts = (() => {
       this.render();
       return this;
     }
-    setView(extent2) {
-      this._viewExtent = extent2;
-      this.render();
-      return this;
+    _getDataExtent() {
+      return this._data.length ? extent(this._data, (d) => d.date) : null;
     }
-    onViewChange(fn) {
-      this._onViewChangeCb = fn;
-      return this;
+    _getNavigatorData() {
+      return this._data.length ? this._data : null;
     }
     // ── Init ──────────────────────────────────────────────────────────────────
     _initSVG() {
@@ -17917,8 +18212,10 @@ var RareCharts = (() => {
       const t = this.theme;
       this.clipRect.attr("width", W).attr("height", H + 4).attr("y", -4);
       this.overlay.attr("width", W).attr("height", H);
-      const fullExtent = extent(this._data, (d) => d.date);
-      const viewExtent = this._viewExtent ?? fullExtent;
+      const fullExtent = this._getDataExtent();
+      const viewExtent = this._resolveViewExtent(fullExtent);
+      this._syncTimeframeButtons(fullExtent, viewExtent);
+      this._syncNavigator();
       const visible = this._data.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
       this._visible = visible;
       this.xScale = time().domain(viewExtent).range([0, W]);
@@ -17989,6 +18286,7 @@ var RareCharts = (() => {
           min([newX.invert(this.width), fullExtent[1]])
         ];
         this._viewExtent = extent2;
+        this._syncTimeframeButtons(fullExtent, extent2);
         this.render();
         if (this._onViewChangeCb) this._onViewChangeCb(extent2);
       });
@@ -18031,98 +18329,6 @@ var RareCharts = (() => {
     }
   };
 
-  // assets/charts/src/charts/Overview.js
-  var Overview = class {
-    constructor(selector, options = {}) {
-      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
-      this.theme = { ...defaultTheme, ...options.theme ?? {} };
-      this.opts = {
-        height: options.height ?? 52,
-        area: options.area,
-        areaColor: options.areaColor,
-        brushColor: options.brushColor,
-        color: options.color
-      };
-      this.margin = { top: 6, right: 70, bottom: 16, left: 0 };
-      this._data = [];
-      this._init();
-    }
-    get width() {
-      return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
-    }
-    get height() {
-      return Math.max(0, this.opts.height - this.margin.top - this.margin.bottom);
-    }
-    _init() {
-      this.container.style.height = this.opts.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      const { left: left2, top: top2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
-      this.gArea = this.g.append("g");
-      this.gLine = this.g.append("g");
-      this.gBrush = this.g.append("g");
-      this._resizeObserver = new ResizeObserver(() => {
-        if (this._data.length) this._render();
-      });
-      this._resizeObserver.observe(this.container);
-    }
-    destroy() {
-      this._resizeObserver.disconnect();
-      this.container.innerHTML = "";
-    }
-    setData(data, onBrush) {
-      this._data = data;
-      this._onBrush = onBrush;
-      this._render();
-      return this;
-    }
-    setBrush(extent2) {
-      if (!this._xScale || !extent2) return;
-      this._brush.move(this.gBrush, [
-        this._xScale(extent2[0]),
-        this._xScale(extent2[1])
-      ]);
-    }
-    _render() {
-      const W = this.width, H = this.height;
-      const t = this.theme;
-      this._xScale = time().domain(extent(this._data, (d) => d.date)).range([0, W]);
-      const yScale = linear3().domain([min(this._data, (d) => d.value), max(this._data, (d) => d.value)]).range([H, 0]);
-      const line = line_default2().x((d) => this._xScale(d.date)).y((d) => yScale(d.value)).curve(monotoneX);
-      const area = area_default5().x((d) => this._xScale(d.date)).y0(H).y1((d) => yScale(d.value)).curve(monotoneX);
-      const areaOpt = this.opts.area;
-      const solidOpacity = typeof areaOpt === "number" ? areaOpt : null;
-      const lineColor = this.opts.color ?? t.border;
-      const areaColor = this.opts.areaColor ?? t.accent;
-      const brushColor = this.opts.brushColor ?? t.text;
-      if (solidOpacity !== null) {
-        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", areaColor).attr("fill-opacity", solidOpacity);
-      } else {
-        let grad = this.svg.select("#rc-ov-grad");
-        if (grad.empty()) {
-          grad = this.svg.append("defs").append("linearGradient").attr("id", "rc-ov-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
-          grad.append("stop").attr("offset", "0%").attr("stop-opacity", 0.18);
-          grad.append("stop").attr("offset", "100%").attr("stop-opacity", 0);
-        }
-        grad.selectAll("stop").attr("stop-color", areaColor);
-        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", "url(#rc-ov-grad)").attr("fill-opacity", 1);
-      }
-      this.gLine.selectAll(".rc-ov-line").data([this._data]).join("path").attr("class", "rc-ov-line").attr("d", line).attr("fill", "none").attr("stroke", lineColor).attr("stroke-width", 1);
-      this._brush = brushX().extent([[0, 0], [W, H]]).on("brush end", (event) => {
-        if (!event.selection) return;
-        const [x06, x12] = event.selection;
-        if (this._onBrush) {
-          this._onBrush([this._xScale.invert(x06), this._xScale.invert(x12)]);
-        }
-      });
-      this.gBrush.call(this._brush).call((g) => {
-        g.select(".selection").attr("fill", "rgba(0,0,0,0.05)").attr("stroke", brushColor).attr("stroke-width", 1);
-        g.selectAll(".handle").attr("fill", brushColor).attr("opacity", 0.7);
-        g.select(".overlay").attr("fill", "rgba(0,0,0,0.2)");
-      });
-    }
-  };
-
   // assets/charts/src/charts/Bar.js
   var Bar = class extends Chart {
     constructor(selector, options = {}) {
@@ -18137,14 +18343,29 @@ var RareCharts = (() => {
         ...options
       });
       this._data = [];
+      this._isTimeSeries = false;
       this._didAnimateIn = false;
       this._tooltip = new Tooltip(this.container, this.theme);
       this._initSVG();
     }
     setData(data) {
-      this._data = data;
+      const isTimeSeries = Array.isArray(data) && data[0] && "date" in data[0] && "value" in data[0];
+      this._isTimeSeries = isTimeSeries;
+      this._data = isTimeSeries ? data.map((d) => ({
+        ...d,
+        date: parseDate(d.date),
+        value: +d.value,
+        label: d.label ?? ""
+      })).filter((d) => d.date && Number.isFinite(d.value)) : data;
+      this._syncTimeframeButtons(this._getDataExtent());
       this.render();
       return this;
+    }
+    _getDataExtent() {
+      return this._isTimeSeries && this._data.length ? extent(this._data, (d) => d.date) : null;
+    }
+    _getNavigatorData() {
+      return this._isTimeSeries && this._data.length ? this._data : null;
     }
     _initSVG() {
       this.container.style.height = this.options.height + "px";
@@ -18162,7 +18383,7 @@ var RareCharts = (() => {
       return label.slice(0, max5).trimEnd() + "\u2026";
     }
     _tooltipHtml(d) {
-      return this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label}</div><div>${format(",")(d.value)}</div>`;
+      return this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label || timeFormat("%b %d, %Y")(d.date)}</div><div>${format(",")(d.value)}</div>`;
     }
     render() {
       if (!this._data.length) return;
@@ -18184,6 +18405,16 @@ var RareCharts = (() => {
         select_default2(event.currentTarget).attr("opacity", 1);
         this._tooltip.hide();
       };
+      if (!horizontal && this._isTimeSeries) {
+        const fullExtent = this._getDataExtent();
+        const viewExtent = this._resolveViewExtent(fullExtent);
+        const visible = this._data.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
+        if (!visible.length) return;
+        this._syncTimeframeButtons(fullExtent, viewExtent);
+        this._syncNavigator();
+        this._renderTimeSeries({ data: visible, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent });
+        return;
+      }
       horizontal ? this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) : this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
     }
     // ─── Horizontal ───────────────────────────────────────────────────────────
@@ -18309,6 +18540,60 @@ var RareCharts = (() => {
         this.gAxisY.selectAll("*").remove();
       }
     }
+    _renderTimeSeries({ data, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent }) {
+      const xPad = 8;
+      const x4 = time().domain(viewExtent).range([xPad, W - xPad]);
+      const minValue = min(data, (d) => d.value) ?? 0;
+      const maxValue = max(data, (d) => d.value) ?? 0;
+      const yTicks = this.options.yTicks ?? 4;
+      const y4 = linear3().domain([Math.min(0, minValue), Math.max(0, maxValue)]).nice(yTicks).range([H, 0]);
+      const resolvedYTickValues = this.options.yTickValues ?? y4.ticks(yTicks);
+      const yTickFormat = this.options.yTickFormat ?? ((d) => format(".2s")(d));
+      const xTickFormat = this.options.xTickFormat ?? ((d) => timeFormat("%b")(d));
+      const showGrid = this.options.showGrid ?? true;
+      const showXAxis = this.options.showXAxis ?? true;
+      const showYAxis = this.options.showYAxis ?? true;
+      if (showGrid) {
+        renderGrid(this.gGrid, y4, W, yTicks, t, resolvedYTickValues);
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
+      const minStep = data.length > 1 ? min(data.slice(1), (d, i) => x4(d.date) - x4(data[i].date)) : W;
+      const barW = Math.max(2, Math.min(48, (minStep ?? W) * (this.options.barWidthRatio ?? 0.72)));
+      const zeroY = y4(0);
+      const bars = this.gBars.selectAll(".rc-bar").data(data, (d) => +d.date).join(
+        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.date) - barW / 2).attr("width", barW).attr("y", animate ? zeroY : (d) => y4(Math.max(0, d.value))).attr("height", animate ? 0 : (d) => Math.abs(y4(d.value) - zeroY)).attr("fill", barFill),
+        (update) => update,
+        (exit) => exit.remove()
+      ).on("mouseover", onBarOver).on("mouseout", onBarOut);
+      bars.attr("x", (d) => x4(d.date) - barW / 2).attr("width", barW);
+      if (animate) {
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY)).on("end", (d, i, nodes) => {
+          if (i === nodes.length - 1) this._didAnimateIn = true;
+        });
+      } else {
+        bars.attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
+        this._didAnimateIn = true;
+      }
+      if (showXAxis) {
+        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 6).tickSize(0).tickFormat(xTickFormat)).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.select(".domain").remove();
+          g.selectAll("line").remove();
+        });
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (showYAxis) {
+        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
+          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.select(".domain").remove();
+          g.selectAll("line").remove();
+        });
+      } else {
+        this.gAxisY.selectAll("*").remove();
+      }
+    }
     // ─── Label tooltip on truncated axis labels ────────────────────────────────
     _bindLabelTooltips(g, side) {
       g.selectAll(".tick text").style("cursor", "default").on("mouseover", (event, fullLabel) => {
@@ -18342,8 +18627,17 @@ var RareCharts = (() => {
     // ─── Data ─────────────────────────────────────────────────────────────────
     setData(series) {
       this._series = this._normalizeData(series);
+      this._syncTimeframeButtons(this._getDataExtent());
       this.render();
       return this;
+    }
+    _getDataExtent() {
+      const all = this._series.flatMap((s2) => s2.values);
+      return all.length ? extent(all, (d) => d.date) : null;
+    }
+    _getNavigatorData() {
+      const preferred = this._series.find((s2) => s2.type === "line") ?? this._series[0];
+      return preferred?.values?.length ? preferred.values : null;
     }
     _normalizeData(series) {
       const colors = this.theme.colors ?? [];
@@ -18452,19 +18746,25 @@ var RareCharts = (() => {
       if (W <= 0 || H <= 0) return;
       const o = this.options;
       const t = this.theme;
+      const fullExtent = this._getDataExtent();
+      const viewExtent = this._resolveViewExtent(fullExtent);
+      const visibleSeries = this._series.map((s2) => ({ ...s2, values: s2.values.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]) })).filter((s2) => s2.values.length);
+      if (!visibleSeries.length) return;
+      this._syncTimeframeButtons(fullExtent, viewExtent);
+      this._syncNavigator();
       const animate = (o.animate ?? true) && !this._didAnimateIn;
       const duration = o.duration ?? 650;
       const ease = resolveEase(o.ease ?? "cubicOut");
       const defaultCurve = o.curve ?? "linear";
       const tension = o.curveTension ?? 0;
       const xPad = o.xPad ?? 8;
-      const lines = this._series.filter((s2) => s2.type === "line");
-      const bars = this._series.filter((s2) => s2.type === "bar");
-      const allValues = this._series.flatMap((s2) => s2.values);
-      const allY1 = this._series.filter((s2) => s2.axis === "y1").flatMap((s2) => s2.values);
-      const allY2 = this._series.filter((s2) => s2.axis === "y2").flatMap((s2) => s2.values);
+      const lines = visibleSeries.filter((s2) => s2.type === "line");
+      const bars = visibleSeries.filter((s2) => s2.type === "bar");
+      const allValues = visibleSeries.flatMap((s2) => s2.values);
+      const allY1 = visibleSeries.filter((s2) => s2.axis === "y1").flatMap((s2) => s2.values);
+      const allY2 = visibleSeries.filter((s2) => s2.axis === "y2").flatMap((s2) => s2.values);
       this._clipRect.attr("x", xPad).attr("y", 0).attr("width", W - 2 * xPad).attr("height", H);
-      const x4 = time().domain(extent(allValues, (d) => d.date)).range([xPad, W - xPad]);
+      const x4 = time().domain(viewExtent).range([xPad, W - xPad]);
       const y1Auto = allY1.length ? extent(allY1, (d) => d.value) : extent(allY2, (d) => d.value);
       const y2Auto = allY2.length ? extent(allY2, (d) => d.value) : extent(allY1, (d) => d.value);
       const y12 = Array.isArray(o.y1Domain) ? linear3().domain(o.y1Domain).range([H, 0]) : linear3().domain(y1Auto).nice(4).range([H, 0]);
@@ -18519,7 +18819,7 @@ var RareCharts = (() => {
       }
       if (o.endLabels ?? true) {
         const endAxis = o.endLabelsAxis ?? "y1";
-        const endSeries = this._series.filter((s2) => s2.axis === endAxis);
+        const endSeries = visibleSeries.filter((s2) => s2.axis === endAxis);
         const endScale = endAxis === "y2" ? y22 : y12;
         const endFmt = endAxis === "y2" ? y2TickFormat : y1TickFormat;
         renderEndLabels(this.gEnds, endSeries, endScale, W, endFmt, t);
@@ -18528,7 +18828,7 @@ var RareCharts = (() => {
       }
       renderMarkers(
         this.gMarkers,
-        this._series,
+        visibleSeries,
         x4,
         (s2) => s2.axis === "y2" ? y22 : y12,
         o.markers ?? false,
@@ -18540,7 +18840,7 @@ var RareCharts = (() => {
         W,
         H,
         x: x4,
-        series: this._series,
+        series: visibleSeries,
         enabled: o.crosshair ?? true,
         scaleFor: (s2) => s2.axis === "y2" ? y22 : y12,
         formatFor: (s2, v2) => s2.axis === "y2" ? y2TickFormat(v2) : y1TickFormat(v2),

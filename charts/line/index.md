@@ -51,6 +51,38 @@ When you pass data like this, the library will use options.seriesName (default: 
 
 Dates are parsed via `parseDate (…)`, so strings, timestamps, and Date objects are accepted as long as they can be converted to a valid date.
 
+### Built-in timeframe controls
+
+Line charts can expose built-in timeframe buttons directly in the chart header. This is useful when the chart is date-based and you want users to jump between common windows such as one month, six months, one year, or the full history without wiring a separate control bar.
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
+    timeframes: true,
+    defaultTimeframe: '1Y',
+});
+
+chart.setData(data);
+
+chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
+</pre>
+
+Available pieces:
+
+- `timeframes` renders the built-in range buttons in the chart header.
+- `defaultTimeframe` selects the initial visible range and active button.
+- `navigator: true` renders the built-in overview strip with a brush under the main chart.
+- `setView([start, end])` sets any custom visible date window.
+- `getView()` returns the currently visible `[start, end]`.
+- `onViewChange(fn)` lets external UI stay synchronized with the chart’s active date window.
+
+If you want the built-in mini navigator as well, enable it explicitly:
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
+    timeframes: ['1M', '3M', '6M', '1Y', 'ALL'],
+    defaultTimeframe: '1Y',
+    navigator: true,
+});</code>
+</pre>
+
 ## Styling and Themes
 
 <div class="sidenote-wrapper">
@@ -172,6 +204,24 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'right'</code> | <code>'left'</code></td>
             <td><code>'right'</code></td>
             <td>Side the Y axis is rendered on.</td>
+        </tr>
+        <tr>
+            <td><code>timeframes</code></td>
+            <td>boolean | array</td>
+            <td>—</td>
+            <td>Built-in timeframe buttons rendered in the chart header. Pass <code>true</code> to use the default set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>, or pass a custom array of shortcuts and explicit ranges.</td>
+        </tr>
+        <tr>
+            <td><code>defaultTimeframe</code></td>
+            <td>string | object</td>
+            <td>—</td>
+            <td>Initial active timeframe used on first render when no explicit view has been set.</td>
+        </tr>
+        <tr>
+            <td><code>navigator</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Y axis</h5></td>

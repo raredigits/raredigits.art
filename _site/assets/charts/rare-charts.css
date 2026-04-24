@@ -12,9 +12,11 @@
 }
 
 .rc-chart > .rc-chart-header { order: 0; }
-.rc-graph-legend             { order: 1; }
-.rc-chart > svg              { order: 2; }
-.rc-chart > .rc-chart-footer { order: 3; }
+.rc-chart > .rc-chart-range-row { order: 1; }
+.rc-graph-legend             { order: 2; }
+.rc-chart > svg              { order: 3; }
+.rc-chart > .rc-chart-navigator { order: 4; }
+.rc-chart > .rc-chart-footer { order: 5; }
 
 .rc-chart > svg {
   font-family: var(--primary-font);
@@ -34,6 +36,8 @@
 .rc-chart-header {
   display: flex;
   flex-direction: column;
+  gap: var(--space-xs);
+  position: relative;
   user-select: none;
 }
 
@@ -69,6 +73,15 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+}
+
+.rc-chart-navigator {
+  width: 100%;
+}
+
+.rc-chart-range-row {
+  position: relative;
+  min-height: 40px;
 }
 
 /* ─── Legend ─────────────────────────────────────────────────────────────── */
@@ -171,18 +184,20 @@
 .rc-chart--legend-right {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto;  /* header | chart | footer */
+  grid-template-rows: auto auto 1fr auto auto;  /* header | range | chart | navigator | footer */
 }
 
 /* Pin each element to its row — overrides DOM insertion order */
 .rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
-.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 3; }
+.rc-chart--legend-right > .rc-chart-range-row { grid-column: 1; grid-row: 2; }
+.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 3; }
+.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 4; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }
 
-/* Aside spans all three rows in column 2 */
+/* Aside spans the full chart block in column 2 */
 .rc-chart--legend-right > .rc-chart-legend-aside {
   grid-column: 2;
-  grid-row: 1 / 4;
+  grid-row: 1 / 6;
   display: flex;
   align-items: center;
   padding-left: var(--space-lg);
@@ -326,15 +341,22 @@
 
 /* ─── Range bar ──────────────────────────────────────────────────────────── */
 
-.price-chart-range-bar {
+.price-chart-range-bar,
+.rc-chart-range-bar {
+  position: absolute;
+  right: 64px;
+  top: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-xs);
   align-items: center;
+  align-self: flex-start;
   width: fit-content;
   margin: var(--space-sm) 0;
 }
 
-.range-btn {
+.range-btn,
+.rc-range-btn {
   background: none;
   font-size: var(--font-size-sm);
   font-family: var(--primary-font);
@@ -346,12 +368,14 @@
   color: var(--text-color-light);
 }
 
-.range-btn:hover {
+.range-btn:hover,
+.rc-range-btn:hover {
   color: var(--primary-text-color);
   border-color: var(--primary-color);
 }
 
-.range-btn.active {
+.range-btn.active,
+.rc-range-btn.active {
   color: var(--primary-text-color);
   background-color: var(--white);
   border-color: var(--primary-color);

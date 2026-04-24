@@ -34,6 +34,7 @@ export { MultiChart        } from './charts/MultiChart.js';
 export { Map        } from './charts/Map.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
 export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
+export { defaultTimeframes } from './core/Chart.js';
 
 // Helper data generator for demos and tests
 export function generateMockPrices(days = 365, startPrice = 150) {

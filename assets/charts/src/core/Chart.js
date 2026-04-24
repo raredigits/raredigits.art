@@ -3,6 +3,10 @@
 // All chart types extend this class.
 
 import { createTheme } from './theme.js';
+import { clampDateExtent, extentEquals, parseDate, resolveTimeframeExtent } from './utils.js';
+import { Overview } from '../charts/Overview.js';
+
+export const defaultTimeframes = ['1M', '3M', '6M', '1Y', '2Y', 'ALL'];
 
 export class Chart {
   constructor(selector, options = {}) {
@@ -33,9 +37,18 @@ export class Chart {
     this._legendAsideEl = null;   // set when legendPosition: 'right'
     this._footerEl     = null;
     this._sourceEl     = null;
+    this._rangeRowEl   = null;
+    this._rangeBarEl   = null;
+    this._timeframeButtons = [];
+    this._navigatorEl  = null;
+    this._navigator    = null;
+    this._viewExtent   = null;
+    this._activeTimeframe = null;
+    this._onViewChangeCb = null;
 
     this._renderHeader();
     this._renderFooter();
+    this._ensureNavigator();
 
     this._resizeObserver = new ResizeObserver(() => this._onResize());
     this._resizeObserver.observe(this.container);
@@ -47,9 +60,10 @@ export class Chart {
     const hasTitle    = !!this.options.title;
     const hasSubtitle = !!this.options.subtitle;
     const hasLegend   = this.options.legend != null;
+    const hasRangeBar = this._getTimeframeOptions().length > 0;
     const legendRight = this.options.legendPosition === 'right';
 
-    if (!hasTitle && !hasSubtitle && !hasLegend) return;
+    if (!hasTitle && !hasSubtitle && !hasLegend && !hasRangeBar) return;
 
     // ── Build legend element (shared logic regardless of position) ──────────
     if (hasLegend) {
@@ -102,7 +116,7 @@ export class Chart {
     }
 
     // ── Header block (title, subtitle, inline legend) ────────────────────────
-    if (hasTitle || hasSubtitle || (hasLegend && !legendRight)) {
+    if (hasTitle || hasSubtitle || (hasLegend && !legendRight) || hasRangeBar) {
       if (this._headerEl?.parentNode) this._headerEl.remove();
 
       this._headerEl = document.createElement('div');
@@ -129,6 +143,35 @@ export class Chart {
       }
 
       this.container.insertBefore(this._headerEl, this.container.firstChild);
+    }
+
+    if (hasRangeBar) {
+      if (this._rangeRowEl?.parentNode) this._rangeRowEl.remove();
+
+      this._rangeRowEl = document.createElement('div');
+      this._rangeRowEl.className = 'rc-chart-range-row';
+
+      this._rangeBarEl = document.createElement('div');
+      this._rangeBarEl.className = 'rc-chart-range-bar';
+
+      this._timeframeButtons = this._getTimeframeOptions().map(step => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'rc-range-btn';
+        btn.textContent = step.label ?? step.key ?? '';
+        btn.dataset.timeframe = step.key ?? step.label ?? '';
+        btn.addEventListener('click', () => this.setTimeframe(step.key ?? step.label ?? ''));
+        this._rangeBarEl.appendChild(btn);
+        return btn;
+      });
+
+      this._rangeRowEl.appendChild(this._rangeBarEl);
+
+      if (this._headerEl?.parentNode === this.container) {
+        this.container.insertBefore(this._rangeRowEl, this._headerEl.nextSibling);
+      } else {
+        this.container.insertBefore(this._rangeRowEl, this.container.firstChild);
+      }
     }
   }
 
@@ -170,15 +213,147 @@ export class Chart {
 
   get height() {
     const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
+    const rangeH = this._rangeRowEl ? this._rangeRowEl.offsetHeight + 8 : 0;
+    const navigatorH = this._navigatorEl ? this._navigatorEl.offsetHeight + 8 : 0;
     const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
     const cs  = window.getComputedStyle(this.container);
     const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
     const h = this.options.height ?? this.container.clientHeight;
-    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - footerH);
+    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - rangeH - navigatorH - footerH);
   }
 
   _onResize() {
     if (this.width > 0 && this.height > 0) this.render();
+  }
+
+  _getTimeframeOptions() {
+    const stepsOpt = this.options.timeframes ?? this.options.viewSteps ?? [];
+    const steps = stepsOpt === true ? defaultTimeframes : stepsOpt;
+
+    return (Array.isArray(steps) ? steps : [])
+      .map(step => typeof step === 'string' ? { key: step, label: step } : step)
+      .filter(step => !!(step?.key ?? step?.label));
+  }
+
+  _getDataExtent() {
+    return null;
+  }
+
+  _getNavigatorData() {
+    return null;
+  }
+
+  _hasNavigatorEnabled() {
+    return this.options.navigator != null && this.options.navigator !== false;
+  }
+
+  _getNavigatorOptions() {
+    if (this.options.navigator === true) return {};
+    return typeof this.options.navigator === 'object' ? this.options.navigator : {};
+  }
+
+  _ensureNavigator() {
+    if (!this._hasNavigatorEnabled()) return null;
+    if (this._navigatorEl) return this._navigatorEl;
+
+    this._navigatorEl = document.createElement('div');
+    this._navigatorEl.className = 'rc-chart-navigator';
+
+    if (this._footerEl?.parentNode === this.container) {
+      this.container.insertBefore(this._navigatorEl, this._footerEl);
+    } else {
+      this.container.appendChild(this._navigatorEl);
+    }
+
+    this._navigator = new Overview(this._navigatorEl, {
+      theme: this.theme,
+      ...this._getNavigatorOptions(),
+    });
+
+    return this._navigatorEl;
+  }
+
+  _syncNavigator() {
+    if (!this._hasNavigatorEnabled()) return;
+
+    const data = this._getNavigatorData();
+    if (!Array.isArray(data) || !data.length) {
+      if (this._navigatorEl) this._navigatorEl.style.display = 'none';
+      return;
+    }
+
+    this._ensureNavigator();
+    this._navigatorEl.style.display = '';
+    this._navigator.setData(data, extent => this.setView(extent, { silent: true }));
+
+    const view = this.getView();
+    if (view) this._navigator.setBrush(view);
+  }
+
+  _resolveDefaultView(fullExtent) {
+    if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+
+    if (Array.isArray(this.options.defaultView)) {
+      return clampDateExtent(this.options.defaultView, fullExtent);
+    }
+
+    if (this.options.defaultTimeframe) {
+      return resolveTimeframeExtent(this.options.defaultTimeframe, fullExtent);
+    }
+
+    return null;
+  }
+
+  _resolveViewExtent(fullExtent) {
+    if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+    return clampDateExtent(this._viewExtent ?? this._resolveDefaultView(fullExtent) ?? fullExtent, fullExtent);
+  }
+
+  _syncTimeframeButtons(fullExtent, viewExtent = null) {
+    if (!this._timeframeButtons.length) return;
+
+    const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
+    const activeKey = this._getTimeframeOptions().find(step =>
+      extentEquals(resolveTimeframeExtent(step, fullExtent), resolvedView)
+    )?.key ?? null;
+
+    this._activeTimeframe = activeKey;
+
+    this._timeframeButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.timeframe === activeKey);
+    });
+  }
+
+  setView(extent, { silent = false } = {}) {
+    const parsed = Array.isArray(extent)
+      ? [parseDate(extent[0]), parseDate(extent[1])]
+      : null;
+
+    this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
+    this._syncTimeframeButtons(this._getDataExtent());
+    this.render();
+    this._syncNavigator();
+
+    const resolved = this._resolveViewExtent(this._getDataExtent());
+    if (!silent && resolved && this._onViewChangeCb) this._onViewChangeCb(resolved);
+    return this;
+  }
+
+  getView() {
+    return this._resolveViewExtent(this._getDataExtent());
+  }
+
+  setTimeframe(key, { silent = false } = {}) {
+    const fullExtent = this._getDataExtent();
+    const step = this._getTimeframeOptions().find(item => (item.key ?? item.label) === key) ?? key;
+    const extent = resolveTimeframeExtent(step, fullExtent);
+    if (!extent) return this;
+    return this.setView(extent, { silent });
+  }
+
+  onViewChange(fn) {
+    this._onViewChangeCb = fn;
+    return this;
   }
 
   render() {
@@ -195,5 +370,11 @@ export class Chart {
     this._legendAsideEl = null;
     this._footerEl     = null;
     this._sourceEl     = null;
+    this._rangeRowEl   = null;
+    this._rangeBarEl   = null;
+    this._timeframeButtons = [];
+    if (this._navigator) this._navigator.destroy();
+    this._navigator = null;
+    this._navigatorEl = null;
   }
 }
