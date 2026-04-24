@@ -31,7 +31,7 @@
 import * as d3 from 'd3';
 import { Chart }              from '../core/Chart.js';
 import { Tooltip }            from '../core/Tooltip.js';
-import { resolveEase, niceTickValues } from '../core/utils.js';
+import { parseDate, resolveEase, niceTickValues } from '../core/utils.js';
 import { renderGrid }         from '../core/renderHelpers.js';
 
 export class Bar extends Chart {
@@ -48,6 +48,7 @@ export class Bar extends Chart {
     });
 
     this._data          = [];
+    this._isTimeSeries  = false;
     this._didAnimateIn  = false;
     this._tooltip       = new Tooltip(this.container, this.theme);
 
@@ -55,9 +56,33 @@ export class Bar extends Chart {
   }
 
   setData(data) {
-    this._data = data;
+    const isTimeSeries = Array.isArray(data) && data[0] && 'date' in data[0] && 'value' in data[0];
+
+    this._isTimeSeries = isTimeSeries;
+    this._data = isTimeSeries
+      ? data
+        .map(d => ({
+          ...d,
+          date: parseDate(d.date),
+          value: +d.value,
+          label: d.label ?? '',
+        }))
+        .filter(d => d.date && Number.isFinite(d.value))
+      : data;
+
+    this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
+  }
+
+  _getDataExtent() {
+    return this._isTimeSeries && this._data.length
+      ? d3.extent(this._data, d => d.date)
+      : null;
+  }
+
+  _getNavigatorData() {
+    return this._isTimeSeries && this._data.length ? this._data : null;
   }
 
   _initSVG() {
@@ -86,7 +111,7 @@ export class Bar extends Chart {
   _tooltipHtml(d) {
     return this.options.tooltipFormat
       ? this.options.tooltipFormat(d)
-      : `<div>${d.label}</div><div>${d3.format(',')(d.value)}</div>`;
+      : `<div>${d.label || d3.timeFormat('%b %d, %Y')(d.date)}</div><div>${d3.format(',')(d.value)}</div>`;
   }
 
   render() {
@@ -112,6 +137,17 @@ export class Bar extends Chart {
       d3.select(event.currentTarget).attr('opacity', 1);
       this._tooltip.hide();
     };
+
+    if (!horizontal && this._isTimeSeries) {
+      const fullExtent = this._getDataExtent();
+      const viewExtent = this._resolveViewExtent(fullExtent);
+      const visible = this._data.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
+      if (!visible.length) return;
+      this._syncTimeframeButtons(fullExtent, viewExtent);
+      this._syncNavigator();
+      this._renderTimeSeries({ data: visible, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent });
+      return;
+    }
 
     horizontal ? this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut })
                : this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
@@ -337,6 +373,101 @@ export class Bar extends Chart {
     }
 
     // Y axis — values on the right
+    if (showYAxis) {
+      this.gAxisY
+        .attr('transform', `translate(${W},0)`)
+        .call(d3.axisRight(y).tickValues(resolvedYTickValues).tickFormat(yTickFormat))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.numericFont)
+            .style('font-size', t.fontSize);
+          g.select('.domain').remove();
+          g.selectAll('line').remove();
+        });
+    } else {
+      this.gAxisY.selectAll('*').remove();
+    }
+  }
+
+  _renderTimeSeries({ data, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent }) {
+    const xPad = 8;
+    const x = d3.scaleTime()
+      .domain(viewExtent)
+      .range([xPad, W - xPad]);
+
+    const minValue = d3.min(data, d => d.value) ?? 0;
+    const maxValue = d3.max(data, d => d.value) ?? 0;
+    const yTicks = this.options.yTicks ?? 4;
+    const y = d3.scaleLinear()
+      .domain([Math.min(0, minValue), Math.max(0, maxValue)])
+      .nice(yTicks)
+      .range([H, 0]);
+    const resolvedYTickValues = this.options.yTickValues ?? y.ticks(yTicks);
+
+    const yTickFormat = this.options.yTickFormat ?? (d => d3.format('.2s')(d));
+    const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%b')(d));
+    const showGrid    = this.options.showGrid  ?? true;
+    const showXAxis   = this.options.showXAxis ?? true;
+    const showYAxis   = this.options.showYAxis ?? true;
+
+    if (showGrid) {
+      renderGrid(this.gGrid, y, W, yTicks, t, resolvedYTickValues);
+    } else {
+      this.gGrid.selectAll('*').remove();
+    }
+
+    const minStep = data.length > 1
+      ? d3.min(data.slice(1), (d, i) => x(d.date) - x(data[i].date))
+      : W;
+    const barW = Math.max(2, Math.min(48, (minStep ?? W) * (this.options.barWidthRatio ?? 0.72)));
+    const zeroY = y(0);
+
+    const bars = this.gBars.selectAll('.rc-bar')
+      .data(data, d => +d.date)
+      .join(
+        enter => enter.append('rect')
+          .attr('class', 'rc-bar')
+          .attr('x', d => x(d.date) - barW / 2)
+          .attr('width', barW)
+          .attr('y', animate ? zeroY : d => y(Math.max(0, d.value)))
+          .attr('height', animate ? 0 : d => Math.abs(y(d.value) - zeroY))
+          .attr('fill', barFill),
+        update => update,
+        exit => exit.remove()
+      )
+      .on('mouseover', onBarOver)
+      .on('mouseout', onBarOut);
+
+    bars.attr('x', d => x(d.date) - barW / 2).attr('width', barW);
+
+    if (animate) {
+      bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease)
+        .attr('y', d => y(Math.max(0, d.value)))
+        .attr('height', d => Math.abs(y(d.value) - zeroY))
+        .on('end', (d, i, nodes) => { if (i === nodes.length - 1) this._didAnimateIn = true; });
+    } else {
+      bars.attr('y', d => y(Math.max(0, d.value)))
+        .attr('height', d => Math.abs(y(d.value) - zeroY));
+      this._didAnimateIn = true;
+    }
+
+    if (showXAxis) {
+      this.gAxisX
+        .attr('transform', `translate(0,${H})`)
+        .call(d3.axisBottom(x).ticks(this.options.xTicks ?? 6).tickSize(0).tickFormat(xTickFormat))
+        .call(g => {
+          g.selectAll('text')
+            .attr('fill', t.muted)
+            .style('font-family', t.numericFont)
+            .style('font-size', t.fontSize);
+          g.select('.domain').remove();
+          g.selectAll('line').remove();
+        });
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
+
     if (showYAxis) {
       this.gAxisY
         .attr('transform', `translate(${W},0)`)

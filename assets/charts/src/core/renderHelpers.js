@@ -64,11 +64,11 @@ export function renderZeroBaseline(g, scale, W, theme) {
  */
 export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
   g.attr('transform', `translate(0,${H})`)
-    .call(d3.axisBottom(scale).ticks(ticks).tickSize(0).tickFormat(tickFormat))
+    .call(d3.axisBottom(scale).ticks(ticks).tickSize(0).tickPadding(6).tickFormat(tickFormat))
     .call(sel => {
       sel.selectAll('text')
         .attr('fill', theme.muted)
-        .attr('dy', '1.2em')
+        .attr('dy', '0.71em')
         .style('font-family', theme.numericFont)
         .style('font-size', theme.fontSize);
       sel.select('.domain').remove();

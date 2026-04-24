@@ -15,7 +15,7 @@ A lightweight D3-based charting library for professional data presentation. Buil
 Pin to a specific version to avoid unexpected updates:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.0/rare-charts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.3/rare-charts.min.js"></script>
 ```
 
 ## Quick start

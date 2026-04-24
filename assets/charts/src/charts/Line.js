@@ -78,8 +78,19 @@ export class Line extends Chart {
 
   setData(data) {
     this._series = this._normalizeData(data);
+    this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
+  }
+
+  _getDataExtent() {
+    const all = this._series.flatMap(s => s.values);
+    return all.length ? d3.extent(all, d => d.date) : null;
+  }
+
+  _getNavigatorData() {
+    const source = this._series[0]?.values ?? [];
+    return source.length ? source : null;
   }
 
   _normalizeData(data) {
@@ -155,6 +166,15 @@ export class Line extends Chart {
 
     const o = this.options;
     const t = this.theme;
+    const fullExtent = this._getDataExtent();
+    const viewExtent = this._resolveViewExtent(fullExtent);
+    const visibleSeries = this._series
+      .map(s => ({ ...s, values: s.values.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]) }))
+      .filter(s => s.values.length);
+    if (!visibleSeries.length) return;
+
+    this._syncTimeframeButtons(fullExtent, viewExtent);
+    this._syncNavigator();
 
     // Animation
     const animate  = (o.animate ?? true) && !this._didAnimateIn;
@@ -162,10 +182,10 @@ export class Line extends Chart {
     const ease     = resolveEase(o.ease ?? 'cubicOut');
 
     // Scales
-    const all  = this._series.flatMap(s => s.values);
+    const all  = visibleSeries.flatMap(s => s.values);
     const xPad = 8;
     const x    = d3.scaleTime()
-      .domain(d3.extent(all, d => d.date))
+      .domain(viewExtent)
       .range([xPad, W - xPad]);
 
     // Formatters
@@ -234,7 +254,7 @@ export class Line extends Chart {
     }
 
     // Areas
-    const areaSeries = this._series.filter(s => (s.area ?? globalArea) === true);
+    const areaSeries = visibleSeries.filter(s => (s.area ?? globalArea) === true);
     this.gLines.selectAll('.rc-line-area')
       .data(areaSeries, s => s.name)
       .join('path')
@@ -245,7 +265,7 @@ export class Line extends Chart {
 
     // Lines
     const paths = this.gLines.selectAll('.rc-line')
-      .data(this._series, s => s.name)
+      .data(visibleSeries, s => s.name)
       .join('path')
       .attr('class', 'rc-line')
       .attr('fill', 'none')
@@ -276,18 +296,18 @@ export class Line extends Chart {
 
     // End labels
     if (o.endLabels ?? true) {
-      renderEndLabels(this.gEnds, this._series, y, W, yTickFormat, t);
+      renderEndLabels(this.gEnds, visibleSeries, y, W, yTickFormat, t);
     } else {
       this.gEnds.selectAll('*').remove();
     }
 
     // Markers
-    renderMarkers(this.gMarkers, this._series, x, () => y, globalMarkers, globalShape, globalSize, t);
+    renderMarkers(this.gMarkers, visibleSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
 
     // Crosshair
     this._crosshair.bind({
       W, H, x,
-      series:     this._series,
+      series:     visibleSeries,
       enabled:    o.crosshair ?? true,
       scaleFor:   () => y,
       formatFor:  (_s, v) => yTickFormat(v),
