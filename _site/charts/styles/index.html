@@ -417,7 +417,14 @@
 <li>SVG axis label styles, end labels, markers</li>
 </ul>
 <p><strong>Colors are not in CSS.</strong> This is intentional. Every color — grid lines, axis text, tooltips, series fills — is set inline by the chart from the active theme. That makes theming predictable: change the theme object, everything follows. No hunting for overridden CSS variables.</p>
-<p>If you use <a href="/styles/">Rare Styles</a>, the chart CSS picks up your typography and spacing variables automatically (<code>--primary-font</code>, <code>--font-size-sm</code>, <code>--space-md</code>, etc.). If you don't, the library falls back to sensible built-in values.</p>
+<p>RareCharts ships with its own typography defaults. The base stylesheet defines:</p>
+<ul>
+<li><code>--rc-font-family: &quot;Fira Sans&quot;, sans-serif</code></li>
+<li><code>--rc-font-family-numeric: &quot;Cousine&quot;, monospace</code></li>
+<li><code>--rc-font-size: 16px</code></li>
+<li><code>--rc-font-size-sm: 15px</code></li>
+</ul>
+<p>These variables live on <code>.rc-chart</code>, so the charts keep a consistent visual language even when embedded on a third-party site with a completely different type system.</p>
 <h2>Layer 2: JS theme</h2>
 <p>The theme is a plain object that every chart reads at render time. The default theme looks like this:</p>
 <pre><code>const defaultTheme = {
@@ -453,13 +460,13 @@
   ],
 
   <span class="code-comment">// ── Typography ─────────────────────────────────────────────────────────────</span>
-  font:        'var(--primary-font)',
-  fontSize:    'var(--font-size-sm)',
+  font:        'var(--rc-font-family, "Fira Sans", sans-serif)',
+  fontSize:    'var(--rc-font-size-sm, 15px)',
 
   <span class="code-comment">// Separate monospace font for numbers on axes and in tooltips.
   // Falls back through a chain of common tabular fonts.
   </span>
-  numericFont: 'var(--primary-font, monospace)',
+  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
 
   <span class="code-comment">// ── Sizing defaults ────────────────────────────────────────────────────────
   // Charts use these as fallbacks when options are not passed explicitly.
@@ -495,6 +502,7 @@
   accent:  '#e63946',
   colors:  ['#e63946', '#457b9d', '#a8dadc', '#1d3557'],
   font:    '"Inter", sans-serif',
+  numericFont: '"JetBrains Mono", monospace',
   tooltip: {
     bg:     '#1d3557',
     border: '#457b9d',
@@ -600,17 +608,54 @@ new RareCharts.Line('#chart', {
 <tbody>
 <tr>
 <td><code>font</code></td>
-<td><code>var(--primary-font)</code></td>
-<td>All chart labels</td>
+<td><code>var(--rc-font-family, &quot;Fira Sans&quot;, sans-serif)</code></td>
+<td>Titles, legends, labels</td>
+</tr>
+<tr>
+<td><code>fontSize</code></td>
+<td><code>var(--rc-font-size-sm, 15px)</code></td>
+<td>Theme-controlled text size inside SVG and tooltips</td>
 </tr>
 <tr>
 <td><code>numericFont</code></td>
-<td><code>var(--primary-font, monospace)</code></td>
-<td>Axis numbers, tooltips</td>
+<td><code>var(--rc-font-family-numeric, &quot;Cousine&quot;, monospace)</code></td>
+<td>Axis numbers, tooltips, end labels</td>
 </tr>
 </tbody>
 </table>
-<p>If your page uses Rare Styles, <code>--primary-font</code> is already set. Otherwise these fall back to the browser default.</p>
+<p>The chart CSS also defines the following container-level variables:</p>
+<table>
+<thead>
+<tr>
+<th>CSS Variable</th>
+<th>Default</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--rc-font-family</code></td>
+<td><code>&quot;Fira Sans&quot;, sans-serif</code></td>
+<td>Base font for chart UI and SVG</td>
+</tr>
+<tr>
+<td><code>--rc-font-family-numeric</code></td>
+<td><code>&quot;Cousine&quot;, monospace</code></td>
+<td>Numeric font for values and axes</td>
+</tr>
+<tr>
+<td><code>--rc-font-size</code></td>
+<td><code>16px</code></td>
+<td>Base size for SVG text</td>
+</tr>
+<tr>
+<td><code>--rc-font-size-sm</code></td>
+<td><code>15px</code></td>
+<td>Secondary UI text, buttons, captions</td>
+</tr>
+</tbody>
+</table>
+<p>These are RareCharts variables, not host-site variables. If you want a different type system, override them explicitly or pass <code>font</code>, <code>numericFont</code>, and <code>fontSize</code> through <code>theme</code>.</p>
 <h3>Sizing</h3>
 <table>
 <thead>
@@ -679,6 +724,7 @@ new RareCharts.Line('#chart', {
 <p>This separation is useful when you want, say, a dark tooltip on a light chart — just override <code>tooltip.bg</code> and <code>tooltip.text</code> without touching the main colors.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-revenue-black-theme.js"></script>
+
     </article>
   </div>
 </main>

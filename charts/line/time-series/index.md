@@ -18,7 +18,7 @@ In RareCharts, this module combines three things:
 
 The important bit is that both the buttons and the brush work with the same internal `view`. If the user clicks a range button, the chart updates its visible extent. If the user drags the brush, the chart updates the same visible extent. No duplicated state, no two widgets trying to outsmart each other, no “why is the UI lying to me” moment.
 
-<div>
+<div class="padding-y-md">
   <!-- ── Header ─────────────────────── -->
   <div class="price-chart-header">
       <div>

@@ -26,7 +26,7 @@ Copy `rare-charts.js` wherever your project keeps static assets.
 
 For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.3/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v.0.9.4/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
 
 ## Where to put the script tag
@@ -144,9 +144,9 @@ All types share the same base options (`title`, `subtitle`, `source`, `height`, 
 
 ## Using with Rare Styles
 
-If your project uses [Rare Styles](/styles/), RareCharts picks up the CSS custom properties automatically — fonts, colors, and spacing stay consistent with the rest of your UI without extra configuration.
+If your project uses [Rare Styles](/styles/), RareCharts will sit comfortably next to the rest of the UI. But the charts do not depend on host-site font variables anymore: the library ships with its own typography defaults and its own chart-level CSS variables.
 
-If you are using RareCharts standalone, the built-in defaults take over. Nothing breaks, nothing looks out of place.
+If you are using RareCharts standalone, the built-in defaults take over. If you want to change the type system, override the chart theme or the `--rc-*` variables documented on the [Styles](/charts/styles/) page.
 
 ## Minimal working example
 

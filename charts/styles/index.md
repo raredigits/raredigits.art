@@ -19,7 +19,14 @@ RareCharts uses a two-layer styling system. Structure and layout live in CSS. 
 
 **Colors are not in CSS.** This is intentional. Every color — grid lines, axis text, tooltips, series fills — is set inline by the chart from the active theme. That makes theming predictable: change the theme object, everything follows. No hunting for overridden CSS variables.
 
-If you use [Rare Styles](/styles/), the chart CSS picks up your typography and spacing variables automatically (`--primary-font`, `--font-size-sm`, `--space-md`, etc.). If you don't, the library falls back to sensible built-in values.
+RareCharts ships with its own typography defaults. The base stylesheet defines:
+
+- `--rc-font-family: "Fira Sans", sans-serif`
+- `--rc-font-family-numeric: "Cousine", monospace`
+- `--rc-font-size: 16px`
+- `--rc-font-size-sm: 15px`
+
+These variables live on `.rc-chart`, so the charts keep a consistent visual language even when embedded on a third-party site with a completely different type system.
 
 ## Layer 2: JS theme
 
@@ -58,13 +65,13 @@ The theme is a plain object that every chart reads at render time. The default t
   ],
 
   <span class="code-comment">// ── Typography ─────────────────────────────────────────────────────────────</span>
-  font:        'var(--primary-font)',
-  fontSize:    'var(--font-size-sm)',
+  font:        'var(--rc-font-family, "Fira Sans", sans-serif)',
+  fontSize:    'var(--rc-font-size-sm, 15px)',
 
   <span class="code-comment">// Separate monospace font for numbers on axes and in tooltips.
   // Falls back through a chain of common tabular fonts.
   </span>
-  numericFont: 'var(--primary-font, monospace)',
+  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
 
   <span class="code-comment">// ── Sizing defaults ────────────────────────────────────────────────────────
   // Charts use these as fallbacks when options are not passed explicitly.
@@ -110,6 +117,7 @@ The result:
   accent:  '#e63946',
   colors:  ['#e63946', '#457b9d', '#a8dadc', '#1d3557'],
   font:    '"Inter", sans-serif',
+  numericFont: '"JetBrains Mono", monospace',
   tooltip: {
     bg:     '#1d3557',
     border: '#457b9d',
@@ -166,10 +174,20 @@ new RareCharts.Line('#chart', {
 
 | Token | Default | Used for |
 |-------|---------|----------|
-| `font` | `var(--primary-font)` | All chart labels |
-| `numericFont` | `var(--primary-font, monospace)` | Axis numbers, tooltips |
+| `font` | `var(--rc-font-family, "Fira Sans", sans-serif)` | Titles, legends, labels |
+| `fontSize` | `var(--rc-font-size-sm, 15px)` | Theme-controlled text size inside SVG and tooltips |
+| `numericFont` | `var(--rc-font-family-numeric, "Cousine", monospace)` | Axis numbers, tooltips, end labels |
 
-If your page uses Rare Styles, `--primary-font` is already set. Otherwise these fall back to the browser default.
+The chart CSS also defines the following container-level variables:
+
+| CSS Variable | Default | Used for |
+|-------|---------|----------|
+| `--rc-font-family` | `"Fira Sans", sans-serif` | Base font for chart UI and SVG |
+| `--rc-font-family-numeric` | `"Cousine", monospace` | Numeric font for values and axes |
+| `--rc-font-size` | `16px` | Base size for SVG text |
+| `--rc-font-size-sm` | `15px` | Secondary UI text, buttons, captions |
+
+These are RareCharts variables, not host-site variables. If you want a different type system, override them explicitly or pass `font`, `numericFont`, and `fontSize` through `theme`.
 
 ### Sizing
 
