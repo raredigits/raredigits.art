@@ -62,6 +62,9 @@
     barOpacity:    0.45,
     barWidthRatio: 0.85,
 
+    timeframes: ['3M', '6M', 'ALL'],
+    defaultTimeframe: 'ALL',
+
     y1Title: 'BTC Price',
     y2Title: 'Revenue',
 

@@ -44,6 +44,7 @@ export class Chart {
     this._navigator    = null;
     this._viewExtent   = null;
     this._activeTimeframe = null;
+    this._selectedTimeframe = null;
     this._onViewChangeCb = null;
 
     this._renderHeader();
@@ -167,11 +168,7 @@ export class Chart {
 
       this._rangeRowEl.appendChild(this._rangeBarEl);
 
-      if (this._headerEl?.parentNode === this.container) {
-        this.container.insertBefore(this._rangeRowEl, this._headerEl.nextSibling);
-      } else {
-        this.container.insertBefore(this._rangeRowEl, this.container.firstChild);
-      }
+      this._headerEl.appendChild(this._rangeRowEl);
     }
   }
 
@@ -213,13 +210,12 @@ export class Chart {
 
   get height() {
     const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
-    const rangeH = this._rangeRowEl ? this._rangeRowEl.offsetHeight + 8 : 0;
     const navigatorH = this._navigatorEl ? this._navigatorEl.offsetHeight + 8 : 0;
     const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
     const cs  = window.getComputedStyle(this.container);
     const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
     const h = this.options.height ?? this.container.clientHeight;
-    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - rangeH - navigatorH - footerH);
+    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH);
   }
 
   _onResize() {
@@ -313,9 +309,15 @@ export class Chart {
     if (!this._timeframeButtons.length) return;
 
     const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
-    const activeKey = this._getTimeframeOptions().find(step =>
+    const matchingSteps = this._getTimeframeOptions().filter(step =>
       extentEquals(resolveTimeframeExtent(step, fullExtent), resolvedView)
-    )?.key ?? null;
+    );
+
+    const selectedMatch = this._selectedTimeframe
+      ? matchingSteps.find(step => (step.key ?? step.label) === this._selectedTimeframe)
+      : null;
+
+    const activeKey = (selectedMatch ?? matchingSteps[0])?.key ?? null;
 
     this._activeTimeframe = activeKey;
 
@@ -324,12 +326,13 @@ export class Chart {
     });
   }
 
-  setView(extent, { silent = false } = {}) {
+  setView(extent, { silent = false, preserveSelectedTimeframe = false } = {}) {
     const parsed = Array.isArray(extent)
       ? [parseDate(extent[0]), parseDate(extent[1])]
       : null;
 
     this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
+    if (!preserveSelectedTimeframe) this._selectedTimeframe = null;
     this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     this._syncNavigator();
@@ -348,7 +351,8 @@ export class Chart {
     const step = this._getTimeframeOptions().find(item => (item.key ?? item.label) === key) ?? key;
     const extent = resolveTimeframeExtent(step, fullExtent);
     if (!extent) return this;
-    return this.setView(extent, { silent });
+    this._selectedTimeframe = typeof key === 'string' ? key : (step.key ?? step.label ?? null);
+    return this.setView(extent, { silent, preserveSelectedTimeframe: true });
   }
 
   onViewChange(fn) {

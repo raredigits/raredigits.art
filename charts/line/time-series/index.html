@@ -548,6 +548,7 @@ timeframes: [
 <li>custom buttons use <code>{ key, label, range }</code></li>
 <li><code>range</code> is <code>[start, end]</code></li>
 <li>the final range is clamped to the real data extent, so overshooting the dataset is safe</li>
+<li>if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active</li>
 </ul>
 <h2>Time Series chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
