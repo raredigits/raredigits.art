@@ -100,6 +100,7 @@
   justify-self: end;
   align-self: start;
   min-width: max-content;
+  padding-right: 60px;
 }
 
 /* ─── Legend ─────────────────────────────────────────────────────────────── */
@@ -127,6 +128,7 @@
   .rc-chart-range-row {
     justify-self: start;
     min-width: 0;
+    padding-right: 0;
   }
 }
 

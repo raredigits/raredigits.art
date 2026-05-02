@@ -149,6 +149,7 @@ var RareCharts = (() => {
   justify-self: end;
   align-self: start;
   min-width: max-content;
+  padding-right: 60px;
 }
 
 /* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
@@ -176,6 +177,7 @@ var RareCharts = (() => {
   .rc-chart-range-row {
     justify-self: start;
     min-width: 0;
+    padding-right: 0;
   }
 }
 
