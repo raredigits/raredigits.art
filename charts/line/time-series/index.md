@@ -163,6 +163,7 @@ Rules:
 - custom buttons use `{ key, label, range }`
 - `range` is `[start, end]`
 - the final range is clamped to the real data extent, so overshooting the dataset is safe
+- if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active
 
 ## Time Series chart options
 

@@ -9,7 +9,7 @@ permalink: '/charts/'
 <div class="meta-info">
   /charts/rare-charts.js
   <p>
-      v0.9.4 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.3/rare-charts.min.js">CDN</a> | 
+      v0.9.4_1 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.4_1/rare-charts.min.js">CDN</a> | 
       <a href="/assets/charts/rare-charts.js">Download</a> <span class="material-icons">file_download</span>
   </p>
 </div>

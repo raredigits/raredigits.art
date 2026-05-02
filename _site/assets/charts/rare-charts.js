@@ -63,11 +63,12 @@ var RareCharts = (() => {
   display: flex;
   flex-direction: column;
   position: relative;
+  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.
+     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */
   overflow: hidden;
 }
 
 .rc-chart > .rc-chart-header { order: 0; }
-.rc-chart > .rc-chart-range-row { order: 1; }
 .rc-graph-legend             { order: 2; }
 .rc-chart > svg              { order: 3; }
 .rc-chart > .rc-chart-navigator { order: 4; }
@@ -89,14 +90,21 @@ var RareCharts = (() => {
 /* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-chart-header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title range"
+    "subtitle range"
+    "legend legend";
+  column-gap: var(--space-md);
+  row-gap: var(--space-xs);
   position: relative;
   user-select: none;
 }
 
 .rc-chart-title {
+  grid-area: title;
+  min-width: 0;
   margin: 0;
   font-family: var(--rc-font-family);
   text-transform: uppercase;
@@ -106,6 +114,8 @@ var RareCharts = (() => {
 }
 
 .rc-chart-subtitle {
+  grid-area: subtitle;
+  min-width: 0;
   font-size: var(--rc-font-size-sm);
   margin: 0;
   overflow: hidden;
@@ -135,19 +145,38 @@ var RareCharts = (() => {
 }
 
 .rc-chart-range-row {
-  position: relative;
-  min-height: 40px;
+  grid-area: range;
+  justify-self: end;
+  align-self: start;
+  min-width: max-content;
 }
 
 /* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-legend {
+  grid-area: legend;
   padding: var(--space-sm) 0;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-md);
   font-size: var(--rc-font-size-sm);
   user-select: none;
+}
+
+@media (max-width: 768px) {
+  .rc-chart-header {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "subtitle"
+      "range"
+      "legend";
+  }
+
+  .rc-chart-range-row {
+    justify-self: start;
+    min-width: 0;
+  }
 }
 
 .rc-legend-item {
@@ -239,20 +268,19 @@ var RareCharts = (() => {
 .rc-chart--legend-right {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto 1fr auto auto;  /* header | range | chart | navigator | footer */
+  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */
 }
 
 /* Pin each element to its row \u2014 overrides DOM insertion order */
 .rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
-.rc-chart--legend-right > .rc-chart-range-row { grid-column: 1; grid-row: 2; }
-.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 3; }
-.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 4; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }
+.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
+.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }
 
 /* Aside spans the full chart block in column 2 */
 .rc-chart--legend-right > .rc-chart-legend-aside {
   grid-column: 2;
-  grid-row: 1 / 6;
+  grid-row: 1 / 5;
   display: flex;
   align-items: center;
   padding-left: var(--space-lg);
@@ -398,16 +426,10 @@ var RareCharts = (() => {
 
 .price-chart-range-bar,
 .rc-chart-range-bar {
-  position: absolute;
-  right: 60px;
-  top: 0;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-xs);
   align-items: center;
-  align-self: flex-start;
-  width: fit-content;
-  margin: var(--space-sm) 0;
 }
 
 .range-btn,
@@ -17899,6 +17921,7 @@ var RareCharts = (() => {
       this._navigator = null;
       this._viewExtent = null;
       this._activeTimeframe = null;
+      this._selectedTimeframe = null;
       this._onViewChangeCb = null;
       this._renderHeader();
       this._renderFooter();
@@ -17992,11 +18015,7 @@ var RareCharts = (() => {
           return btn;
         });
         this._rangeRowEl.appendChild(this._rangeBarEl);
-        if (this._headerEl?.parentNode === this.container) {
-          this.container.insertBefore(this._rangeRowEl, this._headerEl.nextSibling);
-        } else {
-          this.container.insertBefore(this._rangeRowEl, this.container.firstChild);
-        }
+        this._headerEl.appendChild(this._rangeRowEl);
       }
     }
     // ── Footer (Source) ───────────────────────────────────────────────────────
@@ -18027,13 +18046,12 @@ var RareCharts = (() => {
     }
     get height() {
       const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
-      const rangeH = this._rangeRowEl ? this._rangeRowEl.offsetHeight + 8 : 0;
       const navigatorH = this._navigatorEl ? this._navigatorEl.offsetHeight + 8 : 0;
       const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
       const cs = window.getComputedStyle(this.container);
       const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
       const h = this.options.height ?? this.container.clientHeight;
-      return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - rangeH - navigatorH - footerH);
+      return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH);
     }
     _onResize() {
       if (this.width > 0 && this.height > 0) this.render();
@@ -18102,17 +18120,20 @@ var RareCharts = (() => {
     _syncTimeframeButtons(fullExtent, viewExtent = null) {
       if (!this._timeframeButtons.length) return;
       const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
-      const activeKey = this._getTimeframeOptions().find(
+      const matchingSteps = this._getTimeframeOptions().filter(
         (step) => extentEquals(resolveTimeframeExtent(step, fullExtent), resolvedView)
-      )?.key ?? null;
+      );
+      const selectedMatch = this._selectedTimeframe ? matchingSteps.find((step) => (step.key ?? step.label) === this._selectedTimeframe) : null;
+      const activeKey = (selectedMatch ?? matchingSteps[0])?.key ?? null;
       this._activeTimeframe = activeKey;
       this._timeframeButtons.forEach((btn) => {
         btn.classList.toggle("active", btn.dataset.timeframe === activeKey);
       });
     }
-    setView(extent2, { silent = false } = {}) {
+    setView(extent2, { silent = false, preserveSelectedTimeframe = false } = {}) {
       const parsed = Array.isArray(extent2) ? [parseDate(extent2[0]), parseDate(extent2[1])] : null;
       this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
+      if (!preserveSelectedTimeframe) this._selectedTimeframe = null;
       this._syncTimeframeButtons(this._getDataExtent());
       this.render();
       this._syncNavigator();
@@ -18128,7 +18149,8 @@ var RareCharts = (() => {
       const step = this._getTimeframeOptions().find((item) => (item.key ?? item.label) === key) ?? key;
       const extent2 = resolveTimeframeExtent(step, fullExtent);
       if (!extent2) return this;
-      return this.setView(extent2, { silent });
+      this._selectedTimeframe = typeof key === "string" ? key : step.key ?? step.label ?? null;
+      return this.setView(extent2, { silent, preserveSelectedTimeframe: true });
     }
     onViewChange(fn) {
       this._onViewChangeCb = fn;
