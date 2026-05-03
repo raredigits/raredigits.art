@@ -18414,6 +18414,7 @@ var RareCharts = (() => {
   // assets/charts/src/charts/Line.js
   var Line = class extends Chart {
     constructor(selector, options = {}) {
+      const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 240,
         margin: {
@@ -18422,7 +18423,7 @@ var RareCharts = (() => {
           right: options.margin?.right ?? (options.yAxisPosition === "left" ? 0 : 64),
           left: options.margin?.left ?? (options.yAxisPosition === "left" ? 64 : 0)
         },
-        ...options
+        ...restOptions
       });
       this._series = [];
       this._didAnimateIn = false;
@@ -18585,10 +18586,16 @@ var RareCharts = (() => {
   // assets/charts/src/charts/TimeSeries.js
   var TimeSeries = class extends Chart {
     constructor(selector, options = {}) {
+      const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 340,
-        margin: { top: 16, right: 70, bottom: 28, left: 0 },
-        ...options
+        margin: {
+          top: options.margin?.top ?? 16,
+          right: options.margin?.right ?? 70,
+          bottom: options.margin?.bottom ?? 28,
+          left: options.margin?.left ?? 0
+        },
+        ...restOptions
       });
       this._data = [];
       this._viewExtent = null;
@@ -18764,6 +18771,7 @@ var RareCharts = (() => {
   // assets/charts/src/charts/Bar.js
   var Bar = class extends Chart {
     constructor(selector, options = {}) {
+      const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 200,
         margin: {
@@ -18772,7 +18780,7 @@ var RareCharts = (() => {
           left: options.margin?.left ?? (options.orientation === "horizontal" ? 65 : 0),
           bottom: options.margin?.bottom ?? (options.orientation === "horizontal" ? 16 : 8)
         },
-        ...options
+        ...restOptions
       });
       this._data = [];
       this._isTimeSeries = false;
@@ -19041,6 +19049,7 @@ var RareCharts = (() => {
     constructor(selector, options = {}) {
       const hasAxisTitles = !!(options.y1Title || options.y2Title);
       const topDefault = options.margin?.top ?? 10;
+      const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 280,
         margin: {
@@ -19049,7 +19058,7 @@ var RareCharts = (() => {
           bottom: options.margin?.bottom ?? 18,
           left: options.margin?.left ?? 64
         },
-        ...options
+        ...restOptions
       });
       this._series = [];
       this._didAnimateIn = false;

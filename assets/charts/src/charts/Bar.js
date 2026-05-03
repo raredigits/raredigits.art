@@ -36,6 +36,7 @@ import { renderGrid }         from '../core/renderHelpers.js';
 
 export class Bar extends Chart {
   constructor(selector, options = {}) {
+    const { margin: _margin, ...restOptions } = options;
     super(selector, {
       height: 200,
       margin: {
@@ -44,7 +45,7 @@ export class Bar extends Chart {
         left:   options.margin?.left   ?? (options.orientation === 'horizontal' ? 65  : 0),
         bottom: options.margin?.bottom ?? (options.orientation === 'horizontal' ? 16  : 8),
       },
-      ...options,
+      ...restOptions,
     });
 
     this._data          = [];
