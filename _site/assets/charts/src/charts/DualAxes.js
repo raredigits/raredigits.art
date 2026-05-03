@@ -70,6 +70,7 @@ export class DualAxes extends Chart {
   constructor(selector, options = {}) {
     const hasAxisTitles = !!(options.y1Title || options.y2Title);
     const topDefault    = options.margin?.top ?? 10;
+    const { margin: _margin, ...restOptions } = options;
 
     super(selector, {
       height: 280,
@@ -79,7 +80,7 @@ export class DualAxes extends Chart {
         bottom: options.margin?.bottom ?? 18,
         left:   options.margin?.left   ?? 64,
       },
-      ...options,
+      ...restOptions,
     });
 
     this._series       = [];

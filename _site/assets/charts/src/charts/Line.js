@@ -56,6 +56,7 @@ import {
 
 export class Line extends Chart {
   constructor(selector, options = {}) {
+    const { margin: _margin, ...restOptions } = options;
     super(selector, {
       height: 240,
       margin: {
@@ -64,7 +65,7 @@ export class Line extends Chart {
         right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 64),
         left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 64 : 0),
       },
-      ...options,
+      ...restOptions,
     });
 
     this._series       = [];

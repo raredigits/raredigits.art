@@ -20,10 +20,16 @@ import { renderGrid, renderAxisX, renderAxisYRight } from '../core/renderHelpers
 
 export class TimeSeries extends Chart {
   constructor(selector, options = {}) {
+    const { margin: _margin, ...restOptions } = options;
     super(selector, {
       height: 340,
-      margin: { top: 16, right: 70, bottom: 28, left: 0 },
-      ...options,
+      margin: {
+        top:    options.margin?.top    ?? 16,
+        right:  options.margin?.right  ?? 70,
+        bottom: options.margin?.bottom ?? 28,
+        left:   options.margin?.left   ?? 0,
+      },
+      ...restOptions,
     });
 
     this._data           = [];
