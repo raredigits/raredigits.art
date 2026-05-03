@@ -29,7 +29,7 @@ The important bit is that both the buttons and the brush work with the same inte
   </div>
   
   <!-- ── Main chart ─────────────────── -->
-  <div class="rc-chart" id="mainChart"></div>
+  <div class="rc-chart" id="timeseriesChart"></div>
   
   <!-- ── Stats ─────────────────────── -->
   <div class="card-row-bordered price-chart-stats">

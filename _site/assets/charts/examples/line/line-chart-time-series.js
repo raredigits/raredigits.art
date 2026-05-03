@@ -23,8 +23,9 @@
   document.getElementById('s-52l').textContent  = '$' + d3.min(data, d => d.low).toFixed(2);
 
   // ── TimeSeries ─────────────────────────────
-  const mainChart = new RareCharts.TimeSeries('#mainChart', {
+  const mainChart = new RareCharts.TimeSeries('#timeseriesChart', {
     height: 340,
+    title: 'Rare Share Performance',
     curve: 'linear',
     area: false,
     navigator: {
