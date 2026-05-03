@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'assets/charts/src/**'
+      - 'assets/charts/rare-charts.css'
       - 'assets/charts/examples/**'
       - 'assets/charts/data/**'
 
