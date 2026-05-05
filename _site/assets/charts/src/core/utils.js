@@ -167,13 +167,142 @@ export function markerPath(shape, size = 4) {
  */
 export function niceTickValues(lo, hi, count) {
   if (count < 2 || lo === hi) return [lo];
+
   const rawStep = (hi - lo) / (count - 1);
-  const exp  = Math.floor(Math.log10(rawStep));
-  const frac = rawStep / Math.pow(10, exp);
-  const m    = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
-  const step = m * Math.pow(10, exp);
-  const start = Math.ceil(lo / step) * step;
-  return Array.from({ length: count }, (_, i) => +((start + step * i).toPrecision(10)));
+  const exp     = Math.floor(Math.log10(rawStep));
+  const base    = Math.pow(10, exp);
+
+  // Try a richer multiplier set across two adjacent decades. Pick the step that
+  // (a) covers [lo, hi] with `count` evenly-spaced ticks, and (b) minimizes
+  // the gap between the last tick and `hi` (i.e. avoids domain overshoot like
+  // [50, 100, 150, 200] when data tops at 125).
+  const multipliers = [1, 2, 2.5, 5, 10];
+  const candidates = [];
+  for (const m of multipliers) {
+    candidates.push(m * base);
+    candidates.push(m * base * 10);
+  }
+
+  let best = null;
+  for (const step of candidates) {
+    const start    = Math.ceil(lo / step) * step;
+    const lastTick = start + step * (count - 1);
+    if (lastTick < hi - 1e-9) continue; // doesn't cover data top
+    const overshoot = lastTick - hi;
+    if (!best || overshoot < best.overshoot) {
+      best = { step, start, overshoot };
+    }
+  }
+
+  if (!best) {
+    // Fallback to the original simple choice.
+    const frac  = rawStep / base;
+    const m     = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+    const step  = m * base;
+    const start = Math.ceil(lo / step) * step;
+    best = { step, start };
+  }
+
+  return Array.from({ length: count }, (_, i) => +((best.start + best.step * i).toPrecision(10)));
+}
+
+// ─── Annotations ─────────────────────────────────────────────────────────────
+
+/**
+ * Normalize an array of annotation configs.
+ *
+ * Vertical point:     { date, label?, color?, strokeDash?, labelColor? }
+ * Vertical range:     { from, to, label?, color?, fill?, fillOpacity?, strokeDash?, labelColor? }
+ * Horizontal line:    { value, axis?, label?, color?, strokeDash?, labelColor?, labelPosition? }
+ * Horizontal band:    { yFrom, yTo, axis?, label?, color?, fill?, fillOpacity?, strokeDash?, labelColor?, labelPosition? }
+ *
+ * `axis` is 'y1' (default) or 'y2' — only relevant for DualAxes.
+ * `labelPosition` is 'left' (default) or 'right' for horizontal annotations.
+ *
+ * Invalid entries (bad dates / numbers, missing required fields) are dropped.
+ *
+ * @param {Array} list — raw annotation configs from chart options
+ * @returns {Array} normalized annotations
+ */
+export function normalizeAnnotations(list) {
+  if (!Array.isArray(list)) return [];
+
+  return list
+    .map(a => {
+      if (!a || typeof a !== 'object') return null;
+
+      const axisKey       = a.axis === 'y2' ? 'y2' : 'y1';
+      const labelPosition = a.labelPosition === 'right' ? 'right' : 'left';
+
+      // Horizontal band — { yFrom, yTo }
+      if (a.yFrom != null || a.yTo != null) {
+        const yFrom = +a.yFrom;
+        const yTo   = +a.yTo;
+        if (!Number.isFinite(yFrom) || !Number.isFinite(yTo)) return null;
+        return {
+          kind:          'hRange',
+          yFrom:         Math.min(yFrom, yTo),
+          yTo:           Math.max(yFrom, yTo),
+          axis:          axisKey,
+          label:         a.label ?? '',
+          color:         a.color ?? null,
+          fill:          a.fill ?? null,
+          fillOpacity:   Number.isFinite(+a.fillOpacity) ? +a.fillOpacity : 0.08,
+          strokeDash:    a.strokeDash ?? 'dashed',
+          labelColor:    a.labelColor ?? null,
+          labelPosition,
+        };
+      }
+
+      // Horizontal line — { value }
+      if (a.value != null) {
+        const v = +a.value;
+        if (!Number.isFinite(v)) return null;
+        return {
+          kind:          'hPoint',
+          value:         v,
+          axis:          axisKey,
+          label:         a.label ?? '',
+          color:         a.color ?? null,
+          strokeDash:    a.strokeDash ?? 'dashed',
+          labelColor:    a.labelColor ?? null,
+          labelPosition,
+        };
+      }
+
+      // Vertical range — { from, to }
+      if (a.from != null || a.to != null) {
+        const from = parseDate(a.from);
+        const to   = parseDate(a.to);
+        if (!from || !to) return null;
+        const lo = from <= to ? from : to;
+        const hi = from <= to ? to   : from;
+        return {
+          kind:        'range',
+          from:        lo,
+          to:          hi,
+          label:       a.label ?? '',
+          color:       a.color ?? null,
+          fill:        a.fill ?? null,
+          fillOpacity: Number.isFinite(+a.fillOpacity) ? +a.fillOpacity : 0.08,
+          strokeDash:  a.strokeDash ?? 'dashed',
+          labelColor:  a.labelColor ?? null,
+        };
+      }
+
+      // Vertical point — { date }
+      const date = parseDate(a.date);
+      if (!date) return null;
+      return {
+        kind:       'point',
+        date,
+        label:      a.label ?? '',
+        color:      a.color ?? null,
+        strokeDash: a.strokeDash ?? 'dashed',
+        labelColor: a.labelColor ?? null,
+      };
+    })
+    .filter(Boolean);
 }
 
 // ─── Ease ────────────────────────────────────────────────────────────────────

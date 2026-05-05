@@ -211,6 +211,25 @@
   stroke-width: 1.5;
 }
 
+/* Annotations — vertical (event markers) and horizontal (reference levels) */
+.rc-annotation-line,
+.rc-annotation-range-edge,
+.rc-annotation-h-line,
+.rc-annotation-h-range-edge {
+  stroke-width: 1;
+}
+
+.rc-annotation-label,
+.rc-annotation-h-label {
+  font-size: var(--rc-font-size-sm);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.rc-annotation-h-label {
+  dominant-baseline: text-after-edge;
+}
+
 /* ─── Legend aside (right column layout) ────────────────────────────────── */
 /*
  * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)

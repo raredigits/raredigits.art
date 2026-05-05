@@ -165,6 +165,10 @@ Rules:
 - the final range is clamped to the real data extent, so overshooting the dataset is safe
 - if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active
 
+### Annotations
+
+Time Series supports event markers and reference levels via the `annotations` option — useful for marking halvings, earnings dates, or product releases on a long-running price feed, and for placing horizontal levels (break-even, cost basis, target) on top of the area. Annotations stay in sync with zoom and pan: out-of-range entries are skipped, range bands are clamped to the visible window. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.
+
 ## Time Series chart options
 
 Common options shared by all chart types (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) are documented on the [Settings](/charts/settings/) page.
@@ -274,6 +278,21 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td>function</td>
             <td>—</td>
             <td><code>(point) =&gt; html</code> — custom tooltip renderer for the active point.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Annotations</h5></td>
+        </tr>
+        <tr>
+            <td><code>annotations</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Event markers and reference levels. Vertical (<code>date</code>, <code>from</code>/<code>to</code>) and horizontal (<code>value</code>, <code>yFrom</code>/<code>yTo</code>) entries are mixed in the same array. Stay in sync with zoom and pan. See <a href="/charts/line/annotations/">Annotations</a>.</td>
+        </tr>
+        <tr>
+            <td><code>annotationLabelHeight</code></td>
+            <td>number</td>
+            <td><code>22</code></td>
+            <td>Pixels reserved above the chart for vertical annotation labels.</td>
         </tr>
     </tbody>
 </table>

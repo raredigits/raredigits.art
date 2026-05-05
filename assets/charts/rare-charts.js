@@ -260,6 +260,25 @@ var RareCharts = (() => {
   stroke-width: 1.5;
 }
 
+/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */
+.rc-annotation-line,
+.rc-annotation-range-edge,
+.rc-annotation-h-line,
+.rc-annotation-h-range-edge {
+  stroke-width: 1;
+}
+
+.rc-annotation-label,
+.rc-annotation-h-label {
+  font-size: var(--rc-font-size-sm);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.rc-annotation-h-label {
+  dominant-baseline: text-after-edge;
+}
+
 /* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 /*
  * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
@@ -17782,11 +17801,99 @@ var RareCharts = (() => {
     if (count3 < 2 || lo === hi) return [lo];
     const rawStep = (hi - lo) / (count3 - 1);
     const exp2 = Math.floor(Math.log10(rawStep));
-    const frac = rawStep / Math.pow(10, exp2);
-    const m3 = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
-    const step = m3 * Math.pow(10, exp2);
-    const start2 = Math.ceil(lo / step) * step;
-    return Array.from({ length: count3 }, (_, i) => +(start2 + step * i).toPrecision(10));
+    const base = Math.pow(10, exp2);
+    const multipliers = [1, 2, 2.5, 5, 10];
+    const candidates = [];
+    for (const m3 of multipliers) {
+      candidates.push(m3 * base);
+      candidates.push(m3 * base * 10);
+    }
+    let best = null;
+    for (const step of candidates) {
+      const start2 = Math.ceil(lo / step) * step;
+      const lastTick = start2 + step * (count3 - 1);
+      if (lastTick < hi - 1e-9) continue;
+      const overshoot2 = lastTick - hi;
+      if (!best || overshoot2 < best.overshoot) {
+        best = { step, start: start2, overshoot: overshoot2 };
+      }
+    }
+    if (!best) {
+      const frac = rawStep / base;
+      const m3 = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
+      const step = m3 * base;
+      const start2 = Math.ceil(lo / step) * step;
+      best = { step, start: start2 };
+    }
+    return Array.from({ length: count3 }, (_, i) => +(best.start + best.step * i).toPrecision(10));
+  }
+  function normalizeAnnotations(list) {
+    if (!Array.isArray(list)) return [];
+    return list.map((a4) => {
+      if (!a4 || typeof a4 !== "object") return null;
+      const axisKey = a4.axis === "y2" ? "y2" : "y1";
+      const labelPosition = a4.labelPosition === "right" ? "right" : "left";
+      if (a4.yFrom != null || a4.yTo != null) {
+        const yFrom = +a4.yFrom;
+        const yTo = +a4.yTo;
+        if (!Number.isFinite(yFrom) || !Number.isFinite(yTo)) return null;
+        return {
+          kind: "hRange",
+          yFrom: Math.min(yFrom, yTo),
+          yTo: Math.max(yFrom, yTo),
+          axis: axisKey,
+          label: a4.label ?? "",
+          color: a4.color ?? null,
+          fill: a4.fill ?? null,
+          fillOpacity: Number.isFinite(+a4.fillOpacity) ? +a4.fillOpacity : 0.08,
+          strokeDash: a4.strokeDash ?? "dashed",
+          labelColor: a4.labelColor ?? null,
+          labelPosition
+        };
+      }
+      if (a4.value != null) {
+        const v2 = +a4.value;
+        if (!Number.isFinite(v2)) return null;
+        return {
+          kind: "hPoint",
+          value: v2,
+          axis: axisKey,
+          label: a4.label ?? "",
+          color: a4.color ?? null,
+          strokeDash: a4.strokeDash ?? "dashed",
+          labelColor: a4.labelColor ?? null,
+          labelPosition
+        };
+      }
+      if (a4.from != null || a4.to != null) {
+        const from = parseDate(a4.from);
+        const to = parseDate(a4.to);
+        if (!from || !to) return null;
+        const lo = from <= to ? from : to;
+        const hi = from <= to ? to : from;
+        return {
+          kind: "range",
+          from: lo,
+          to: hi,
+          label: a4.label ?? "",
+          color: a4.color ?? null,
+          fill: a4.fill ?? null,
+          fillOpacity: Number.isFinite(+a4.fillOpacity) ? +a4.fillOpacity : 0.08,
+          strokeDash: a4.strokeDash ?? "dashed",
+          labelColor: a4.labelColor ?? null
+        };
+      }
+      const date2 = parseDate(a4.date);
+      if (!date2) return null;
+      return {
+        kind: "point",
+        date: date2,
+        label: a4.label ?? "",
+        color: a4.color ?? null,
+        strokeDash: a4.strokeDash ?? "dashed",
+        labelColor: a4.labelColor ?? null
+      };
+    }).filter(Boolean);
   }
   function resolveEase(name) {
     switch (name) {
@@ -18322,11 +18429,35 @@ var RareCharts = (() => {
     g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale2(0)).attr("y2", scale2(0)).attr("stroke", theme.border);
   }
   function renderAxisX(g, scale2, H, tickFormat2, theme, ticks2 = 6) {
-    g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(ticks2).tickSize(0).tickPadding(6).tickFormat(tickFormat2)).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("dy", "0.71em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
-      sel.select(".domain").remove();
-      sel.selectAll("line").remove();
-    });
+    const apply = (n) => {
+      g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(n).tickSize(0).tickPadding(6).tickFormat(tickFormat2)).call((sel) => {
+        sel.selectAll("text").attr("fill", theme.muted).attr("dy", "0.71em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
+        sel.select(".domain").remove();
+        sel.selectAll("line").remove();
+      });
+    };
+    apply(ticks2);
+    if (typeof ticks2 !== "number") return;
+    const minGap = 8;
+    let attempts = 5;
+    while (attempts-- > 0) {
+      const labels = g.selectAll("text").nodes();
+      if (labels.length <= 2) break;
+      let overlap = false;
+      let prev = labels[0].getBoundingClientRect();
+      for (let i = 1; i < labels.length; i++) {
+        const cur = labels[i].getBoundingClientRect();
+        if (cur.left < prev.right + minGap) {
+          overlap = true;
+          break;
+        }
+        prev = cur;
+      }
+      if (!overlap) break;
+      const newCount = Math.max(2, Math.floor(labels.length / 2));
+      if (newCount === labels.length) break;
+      apply(newCount);
+    }
   }
   function renderAxisYRight(g, scale2, W, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
     const axis2 = tickValues ? axisRight(scale2).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisRight(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
@@ -18410,15 +18541,126 @@ var RareCharts = (() => {
     g.selectAll(".rc-marker-circle").data(circles, (d) => d.key).join("circle").attr("class", "rc-marker-circle").attr("cx", (d) => d.cx).attr("cy", (d) => d.cy).attr("r", (d) => d.size).attr("fill", (d) => d.fill).attr("stroke", (d) => d.stroke);
     g.selectAll(".rc-marker-shape").data(shapes, (d) => d.key).join("path").attr("class", "rc-marker-shape").attr("transform", (d) => `translate(${d.cx},${d.cy})`).attr("d", (d) => d.path).attr("fill", (d) => d.fill).attr("stroke", (d) => d.stroke);
   }
+  function renderAnnotations(g, annotations, x4, yScaleFor, H, labelHeight, theme) {
+    g.selectAll("*").remove();
+    if (!annotations?.length) return;
+    const [xLo, xHi] = x4.domain();
+    const xLoT = +xLo, xHiT = +xHi;
+    const xR0 = x4.range()[0];
+    const xR1 = x4.range()[1];
+    const ranges2 = annotations.filter((a4) => a4.kind === "range" && +a4.to >= xLoT && +a4.from <= xHiT).map((a4) => {
+      const fromClamped = new Date(Math.max(+a4.from, xLoT));
+      const toClamped = new Date(Math.min(+a4.to, xHiT));
+      return { ...a4, x1: x4(fromClamped), x2: x4(toClamped) };
+    });
+    const points = annotations.filter((a4) => a4.kind === "point" && +a4.date >= xLoT && +a4.date <= xHiT).map((a4) => ({ ...a4, cx: x4(a4.date) }));
+    const hRanges = annotations.filter((a4) => a4.kind === "hRange").map((a4) => {
+      const yScale = yScaleFor(a4.axis);
+      if (!yScale) return null;
+      const yA = yScale(a4.yFrom);
+      const yB = yScale(a4.yTo);
+      return { ...a4, yA, yB, yScale };
+    }).filter(Boolean);
+    const hPoints = annotations.filter((a4) => a4.kind === "hPoint").map((a4) => {
+      const yScale = yScaleFor(a4.axis);
+      if (!yScale) return null;
+      return { ...a4, cy: yScale(a4.value), yScale };
+    }).filter(Boolean);
+    const gHRanges = g.append("g").attr("class", "rc-annotation-h-ranges");
+    const hRangeGroups = gHRanges.selectAll(".rc-annotation-h-range").data(hRanges, (_, i) => `hr${i}`).join("g").attr("class", "rc-annotation-h-range");
+    hRangeGroups.append("rect").attr("class", "rc-annotation-h-range-fill").attr("x", xR0).attr("y", (d) => Math.min(d.yA, d.yB)).attr("width", xR1 - xR0).attr("height", (d) => Math.abs(d.yB - d.yA)).attr("fill", (d) => d.fill ?? d.color ?? theme.muted).attr("opacity", (d) => d.fillOpacity);
+    hRangeGroups.each(function(d) {
+      const sel = select_default2(this);
+      const dash = resolveStrokeDash(d.strokeDash);
+      const stroke = d.color ?? theme.muted;
+      [d.yA, d.yB].forEach((yPx) => {
+        sel.append("line").attr("class", "rc-annotation-h-range-edge").attr("x1", xR0).attr("x2", xR1).attr("y1", yPx).attr("y2", yPx).attr("stroke", stroke).attr("stroke-dasharray", dash);
+      });
+    });
+    const gHPoints = g.append("g").attr("class", "rc-annotation-h-points");
+    gHPoints.selectAll(".rc-annotation-h-line").data(hPoints, (_, i) => `hp${i}`).join("line").attr("class", "rc-annotation-h-line").attr("x1", xR0).attr("x2", xR1).attr("y1", (d) => d.cy).attr("y2", (d) => d.cy).attr("stroke", (d) => d.color ?? theme.muted).attr("stroke-dasharray", (d) => resolveStrokeDash(d.strokeDash));
+    const gRanges = g.append("g").attr("class", "rc-annotation-ranges");
+    const rangeGroups = gRanges.selectAll(".rc-annotation-range").data(ranges2, (_, i) => `r${i}`).join("g").attr("class", "rc-annotation-range");
+    rangeGroups.append("rect").attr("class", "rc-annotation-range-fill").attr("x", (d) => Math.min(d.x1, d.x2)).attr("y", 0).attr("width", (d) => Math.abs(d.x2 - d.x1)).attr("height", H).attr("fill", (d) => d.fill ?? d.color ?? theme.muted).attr("opacity", (d) => d.fillOpacity);
+    rangeGroups.each(function(d) {
+      const sel = select_default2(this);
+      const dash = resolveStrokeDash(d.strokeDash);
+      const stroke = d.color ?? theme.muted;
+      if (+d.from >= xLoT) {
+        sel.append("line").attr("class", "rc-annotation-range-edge").attr("x1", d.x1).attr("x2", d.x1).attr("y1", 0).attr("y2", H).attr("stroke", stroke).attr("stroke-dasharray", dash);
+      }
+      if (+d.to <= xHiT) {
+        sel.append("line").attr("class", "rc-annotation-range-edge").attr("x1", d.x2).attr("x2", d.x2).attr("y1", 0).attr("y2", H).attr("stroke", stroke).attr("stroke-dasharray", dash);
+      }
+    });
+    const gPoints = g.append("g").attr("class", "rc-annotation-points");
+    gPoints.selectAll(".rc-annotation-line").data(points, (_, i) => `p${i}`).join("line").attr("class", "rc-annotation-line").attr("x1", (d) => d.cx).attr("x2", (d) => d.cx).attr("y1", 0).attr("y2", H).attr("stroke", (d) => d.color ?? theme.muted).attr("stroke-dasharray", (d) => resolveStrokeDash(d.strokeDash));
+    const vLabelData = [
+      ...points.map((d) => ({
+        key: `p:${d.label}|${+d.date}`,
+        cx: d.cx,
+        label: d.label,
+        color: d.labelColor ?? d.color ?? theme.muted
+      })),
+      ...ranges2.map((d, i) => ({
+        key: `r:${i}:${d.label}`,
+        cx: (d.x1 + d.x2) / 2,
+        label: d.label,
+        color: d.labelColor ?? d.color ?? theme.muted
+      }))
+    ].filter((d) => d.label);
+    const gVLabels = g.append("g").attr("class", "rc-annotation-labels");
+    const vLabelGroups = gVLabels.selectAll(".rc-annotation-label-g").data(vLabelData, (d) => d.key).join("g").attr("class", "rc-annotation-label-g").attr("transform", (d) => `translate(${d.cx},${-labelHeight + 2})`);
+    vLabelGroups.append("rect").attr("class", "rc-annotation-label-bg").attr("fill", theme.bg);
+    vLabelGroups.append("text").attr("class", "rc-annotation-label").attr("text-anchor", "middle").attr("dy", "0.71em").attr("fill", (d) => d.color).style("font-family", theme.font).style("font-size", theme.fontSize).text((d) => d.label);
+    vLabelGroups.each(function() {
+      const node = select_default2(this);
+      const bbox = node.select("text").node().getBBox();
+      const px = 4, py = 1;
+      node.select("rect").attr("x", bbox.x - px).attr("y", bbox.y - py).attr("width", bbox.width + px * 2).attr("height", bbox.height + py * 2);
+    });
+    const hLabelData = [
+      ...hPoints.map((d, i) => ({
+        key: `hp:${i}:${d.label}`,
+        cy: d.cy - 4,
+        labelPosition: d.labelPosition,
+        label: d.label,
+        color: d.labelColor ?? d.color ?? theme.muted
+      })),
+      ...hRanges.map((d, i) => ({
+        key: `hr:${i}:${d.label}`,
+        cy: Math.min(d.yA, d.yB) - 4,
+        labelPosition: d.labelPosition,
+        label: d.label,
+        color: d.labelColor ?? d.color ?? theme.muted
+      }))
+    ].filter((d) => d.label);
+    const gHLabels = g.append("g").attr("class", "rc-annotation-h-labels");
+    const hLabelGroups = gHLabels.selectAll(".rc-annotation-h-label-g").data(hLabelData, (d) => d.key).join("g").attr("class", "rc-annotation-h-label-g").attr("transform", (d) => {
+      const tx = d.labelPosition === "right" ? xR1 - 4 : xR0 + 4;
+      return `translate(${tx},${d.cy})`;
+    });
+    hLabelGroups.append("rect").attr("class", "rc-annotation-h-label-bg").attr("fill", theme.bg);
+    hLabelGroups.append("text").attr("class", "rc-annotation-h-label").attr("text-anchor", (d) => d.labelPosition === "right" ? "end" : "start").attr("fill", (d) => d.color).style("font-family", theme.font).style("font-size", theme.fontSize).text((d) => d.label);
+    hLabelGroups.each(function() {
+      const node = select_default2(this);
+      const bbox = node.select("text").node().getBBox();
+      const px = 4, py = 1;
+      node.select("rect").attr("x", bbox.x - px).attr("y", bbox.y - py).attr("width", bbox.width + px * 2).attr("height", bbox.height + py * 2);
+    });
+  }
 
   // assets/charts/src/charts/Line.js
   var Line = class extends Chart {
     constructor(selector, options = {}) {
       const { margin: _margin, ...restOptions } = options;
+      const annotations = normalizeAnnotations(options.annotations);
+      const annLabelHeight = options.annotationLabelHeight ?? 22;
+      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
       super(selector, {
         height: 240,
         margin: {
-          top: options.margin?.top ?? 10,
+          top: options.margin?.top ?? Math.max(10, annTopReserve),
           bottom: options.margin?.bottom ?? 18,
           right: options.margin?.right ?? (options.yAxisPosition === "left" ? 0 : 64),
           left: options.margin?.left ?? (options.yAxisPosition === "left" ? 64 : 0)
@@ -18427,6 +18669,8 @@ var RareCharts = (() => {
       });
       this._series = [];
       this._didAnimateIn = false;
+      this._annotations = annotations;
+      this._annLabelHeight = annLabelHeight;
       const tooltip = new Tooltip(this.container, this.theme);
       this._initSVG(tooltip);
     }
@@ -18480,6 +18724,7 @@ var RareCharts = (() => {
       this.gEnds = this.g.append("g").attr("class", "rc-end-labels");
       this.gMarkers = this.g.append("g").attr("class", "rc-markers");
       this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
+      this.gAnnotations = this.g.append("g").attr("class", "rc-annotations");
       const gCross = this.g.append("g").attr("class", "rc-crosshair");
       const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
       this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
@@ -18570,6 +18815,7 @@ var RareCharts = (() => {
         this.gEnds.selectAll("*").remove();
       }
       renderMarkers(this.gMarkers, visibleSeries, x4, () => y4, globalMarkers, globalShape, globalSize, t);
+      renderAnnotations(this.gAnnotations, this._annotations, x4, () => y4, H, this._annLabelHeight, t);
       this._crosshair.bind({
         W,
         H,
@@ -18586,11 +18832,14 @@ var RareCharts = (() => {
   // assets/charts/src/charts/TimeSeries.js
   var TimeSeries = class extends Chart {
     constructor(selector, options = {}) {
+      const annotations = normalizeAnnotations(options.annotations);
+      const annLabelHeight = options.annotationLabelHeight ?? 22;
+      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
       const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 340,
         margin: {
-          top: options.margin?.top ?? 16,
+          top: Math.max(options.margin?.top ?? 16, annTopReserve),
           right: options.margin?.right ?? 70,
           bottom: options.margin?.bottom ?? 28,
           left: options.margin?.left ?? 0
@@ -18601,6 +18850,8 @@ var RareCharts = (() => {
       this._viewExtent = null;
       this._onViewChangeCb = null;
       this._tooltip = new Tooltip(this.container, this.theme);
+      this._annotations = annotations;
+      this._annLabelHeight = annLabelHeight;
       this._initSVG();
       this._bindZoomPan();
       this._bindHover();
@@ -18637,6 +18888,7 @@ var RareCharts = (() => {
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
       this.gArea = this.g.append("g").attr("clip-path", `url(#${clipId})`);
       this.gPaths = this.gArea.append("g");
+      this.gAnnotations = this.g.append("g").attr("class", "rc-annotations");
       this.gAxisX = this.g.append("g").attr("class", "rc-axis");
       this.gAxisY = this.g.append("g").attr("class", "rc-axis");
       this.crossX = this.g.append("line").style("opacity", 0);
@@ -18708,6 +18960,15 @@ var RareCharts = (() => {
         this.options.yLabelsOnly ?? true,
         t,
         this.options.yTickValues ?? null
+      );
+      renderAnnotations(
+        this.gAnnotations,
+        this._annotations,
+        this.xScale,
+        () => this.yScale,
+        H,
+        this._annLabelHeight,
+        t
       );
       [this.crossX, this.crossY].forEach(
         (l) => l.attr("stroke", t.crosshair).attr("stroke-width", 1).attr("stroke-dasharray", "3 3")
@@ -19049,11 +19310,14 @@ var RareCharts = (() => {
     constructor(selector, options = {}) {
       const hasAxisTitles = !!(options.y1Title || options.y2Title);
       const topDefault = options.margin?.top ?? 10;
+      const annotations = normalizeAnnotations(options.annotations);
+      const annLabelHeight = options.annotationLabelHeight ?? 22;
+      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
       const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 280,
         margin: {
-          top: hasAxisTitles ? Math.max(topDefault, 30) : topDefault,
+          top: Math.max(hasAxisTitles ? Math.max(topDefault, 30) : topDefault, annTopReserve),
           right: options.margin?.right ?? 64,
           bottom: options.margin?.bottom ?? 18,
           left: options.margin?.left ?? 64
@@ -19062,6 +19326,8 @@ var RareCharts = (() => {
       });
       this._series = [];
       this._didAnimateIn = false;
+      this._annotations = annotations;
+      this._annLabelHeight = annLabelHeight;
       const tooltip = new Tooltip(this.container, this.theme);
       this._initSVG(tooltip);
     }
@@ -19111,6 +19377,7 @@ var RareCharts = (() => {
       this.gEnds = this.g.append("g").attr("class", "rc-end-labels");
       this.gMarkers = this.g.append("g").attr("class", "rc-markers");
       this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
+      this.gAnnotations = this.g.append("g").attr("class", "rc-annotations");
       const uid = Math.random().toString(36).slice(2, 8);
       this._clipId = `rc-clip-${uid}`;
       this._clipRect = this.svg.append("defs").append("clipPath").attr("id", this._clipId).append("rect");
@@ -19275,6 +19542,15 @@ var RareCharts = (() => {
         o.markers ?? false,
         o.markerShape ?? "circle",
         o.markerSize ?? 4,
+        t
+      );
+      renderAnnotations(
+        this.gAnnotations,
+        this._annotations,
+        x4,
+        (axis2) => axis2 === "y2" ? y22 : y12,
+        H,
+        this._annLabelHeight,
         t
       );
       this._crosshair.bind({

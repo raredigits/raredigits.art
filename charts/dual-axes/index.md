@@ -62,6 +62,10 @@ Example:
 
 Dual-axis charts are often implemented as a hack: two scales, mismatched formatting, confusing labels, and tooltips that quietly mix units. This component exists to make the dual-axis case predictable, explicit, and safe for real reporting: independent scales, consistent structure, and controlled formatting.
 
+### Annotations
+
+DualAxes supports the full annotation API — vertical date markers (point and range) and horizontal reference levels (line and band) on either Y axis. Horizontal entries take an explicit `axis: 'y1' | 'y2'` so the value is mapped to the correct scale. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.
+
 ## Dual Axes chart options
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
@@ -339,6 +343,21 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
                 <code>({ date, points }) =&gt; html</code> — where
                 <code>points</code> is <code>[{name, value, color, fmt}]</code>.
             </td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Annotations</h5></td>
+        </tr>
+        <tr>
+            <td><code>annotations</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Event markers and reference levels. Horizontal entries accept <code>axis: 'y1' | 'y2'</code> to choose the scale. See <a href="/charts/line/annotations/">Annotations</a>.</td>
+        </tr>
+        <tr>
+            <td><code>annotationLabelHeight</code></td>
+            <td>number</td>
+            <td><code>22</code></td>
+            <td>Pixels reserved above the chart for vertical annotation labels.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>

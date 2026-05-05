@@ -28,6 +28,13 @@
 //   crosshair      — enable crosshair + dots + tooltip (default: true)
 //   tooltipFormat  — function({date, points:[{name,value,color}]}) => html
 //
+//   annotations    — event markers. Vertical (point/range) and horizontal (line/band).
+//                    point:  { date, label?, color?, strokeDash?, labelColor? }
+//                    range:  { from, to, label?, color?, fill?, fillOpacity?, strokeDash? }
+//                    hPoint: { value, label?, color?, strokeDash?, labelPosition? }
+//                    hRange: { yFrom, yTo, label?, color?, fill?, fillOpacity?, strokeDash? }
+//   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22)
+//
 //   curve          — 'linear'|'monotone'|'basis'|'cardinal'|'step'|... (default: 'monotone')
 //   curveTension   — 0..1 for 'cardinal' (default: 0)
 //   area           — fill area under line(s) (default: false)
@@ -41,7 +48,7 @@ import * as d3 from 'd3';
 import { Chart }             from '../core/Chart.js';
 import { Tooltip }           from '../core/Tooltip.js';
 import { Crosshair }         from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash, niceTickValues } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, niceTickValues, normalizeAnnotations } from '../core/utils.js';
 import { linePath, areaPath }     from '../core/seriesPath.js';
 import {
   renderGrid,
@@ -52,15 +59,20 @@ import {
   renderEndLabels,
   animateLines,
   renderMarkers,
+  renderAnnotations,
 } from '../core/renderHelpers.js';
 
 export class Line extends Chart {
   constructor(selector, options = {}) {
     const { margin: _margin, ...restOptions } = options;
+    const annotations    = normalizeAnnotations(options.annotations);
+    const annLabelHeight = options.annotationLabelHeight ?? 22;
+    const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
+
     super(selector, {
       height: 240,
       margin: {
-        top:    options.margin?.top    ?? 10,
+        top:    options.margin?.top    ?? Math.max(10, annTopReserve),
         bottom: options.margin?.bottom ?? 18,
         right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 64),
         left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 64 : 0),
@@ -68,8 +80,10 @@ export class Line extends Chart {
       ...restOptions,
     });
 
-    this._series       = [];
-    this._didAnimateIn = false;
+    this._series          = [];
+    this._didAnimateIn    = false;
+    this._annotations     = annotations;
+    this._annLabelHeight  = annLabelHeight;
 
     const tooltip = new Tooltip(this.container, this.theme);
     this._initSVG(tooltip);
@@ -147,6 +161,7 @@ export class Line extends Chart {
     this.gEnds    = this.g.append('g').attr('class', 'rc-end-labels');
     this.gMarkers = this.g.append('g').attr('class', 'rc-markers');
     this.gZero  = this.g.append('g').attr('class', 'rc-zero-layer');
+    this.gAnnotations = this.g.append('g').attr('class', 'rc-annotations');
 
     const gCross  = this.g.append('g').attr('class', 'rc-crosshair');
     const overlay = this.g.append('rect')
@@ -304,6 +319,9 @@ export class Line extends Chart {
 
     // Markers
     renderMarkers(this.gMarkers, visibleSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
+
+    // Annotations
+    renderAnnotations(this.gAnnotations, this._annotations, x, () => y, H, this._annLabelHeight, t);
 
     // Crosshair
     this._crosshair.bind({

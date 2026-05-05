@@ -167,6 +167,10 @@ Markers (point dots) are supported via `markers` (default false), with `markerSh
 
 In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include `curve`, `strokeWidth`, `area`, `areaOpacity`, and `areaBaseline`. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.
 
+### Annotations
+
+Line charts support event markers and reference levels via the `annotations` option — vertical lines and bands for date events (halvings, releases, freeze windows), horizontal lines and bands for reference levels (break-even, KPI targets, support zones). See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API and behavior.
+
 ## Line chart options
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
@@ -387,6 +391,21 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>boolean</td>
             <td><code>true</code></td>
             <td>Render the last value of each series at the right edge.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Annotations</h5></td>
+        </tr>
+        <tr>
+            <td><code>annotations</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Event markers and reference levels. Vertical (<code>date</code>, <code>from</code>/<code>to</code>) and horizontal (<code>value</code>, <code>yFrom</code>/<code>yTo</code>) entries are mixed in the same array. See <a href="/charts/line/annotations/">Annotations</a>.</td>
+        </tr>
+        <tr>
+            <td><code>annotationLabelHeight</code></td>
+            <td>number</td>
+            <td><code>22</code></td>
+            <td>Pixels reserved above the chart for vertical annotation labels.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>

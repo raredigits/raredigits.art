@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time Series | Rare Digits Art</title>
+    <title>Annotations | Rare Digits Art</title>
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -294,13 +294,13 @@
                   
                     <li>
                       
-                        <span class="bold">Time Series</span>
+                        <a href="/charts/line/time-series/">Time Series</a>
                       
                     </li>
                   
                     <li>
                       
-                        <a href="/charts/line/annotations/">Annotations</a>
+                        <span class="bold">Annotations</span>
                       
                     </li>
                   
@@ -425,141 +425,287 @@
     
     
   <section class="page-title">
-    <h1>Time Series</h1>
+    <h1>Annotations</h1>
   </section>
 
     <article>
-      <p><spn class="meta-info">/examples/line/line-chart-time-series.js</spn></p>
-<p>Time Series is the chart for long date-based series where the main problem is navigation, not drawing a line. Price history, balances, revenue, traffic, sensor data: the moment the dataset stops fitting into one comfortable view, you need a way to switch windows without rebuilding the chart by hand.</p>
-<p>In RareCharts, this module combines three things:</p>
+      <p>A line chart shows the trend. Annotations explain <em>why</em> the trend bent — and what it should be measured against. They are reference markers placed on the chart’s axes: a halving date, a product release, a break-even level, a target band. Without them, the reader is left to guess which kink in the line corresponds to which event, or whether the current value is good or bad.</p>
+<p>RareCharts supports four kinds of annotations within a single <code>annotations</code> array:</p>
 <ul>
-<li>a main line chart for the active date window</li>
-<li>a range bar with preset buttons, if you enable <code>timeframes</code></li>
-<li>a navigator strip with a brush, if you enable <code>navigator</code></li>
+<li><strong>Point</strong> — a single date with a label. Drawn as a vertical line spanning the full plot height, with the label in the reserved area above the chart.</li>
+<li><strong>Range</strong> — a date range with optional fill. Drawn as a translucent band between two boundary lines. Useful for periods (a bear market, a freeze window, an A/B test).</li>
+<li><strong>Horizontal line</strong> — a reference level at a Y value. Drawn as a horizontal line spanning the full plot width, with an inline label. Useful for break-even, targets, KPI thresholds.</li>
+<li><strong>Horizontal band</strong> — a Y-value range with optional fill. Useful for tolerance windows or “acceptable range” bands.</li>
 </ul>
-<p>The important bit is that both the buttons and the brush work with the same internal <code>view</code>. If the user clicks a range button, the chart updates its visible extent. If the user drags the brush, the chart updates the same visible extent. No duplicated state, no two widgets trying to outsmart each other, no “why is the UI lying to me” moment.</p>
-<div class="padding-y-md">
-  <!-- ── Header ─────────────────────── -->
-  <div class="price-chart-header">
-      <div>
-          <span class="price-chart-ticker">RARE</span>
-          <span class="price-chart-price"  id="hd-price">—</span>
-          <span class="price-chart-change" id="hd-change">—</span>
-      </div>
-  </div>
-  <!-- ── Main chart ─────────────────── -->
-  <div class="rc-chart" id="timeseriesChart"></div>
-  <!-- ── Stats ─────────────────────── -->
-  <div class="card-row-bordered price-chart-stats">
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">OPEN</div>
-      <div class="price-chart-stat-value" id="s-open">—</div>
-    </div>
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">HIGH</div>
-      <div class="price-chart-stat-value" id="s-high">—</div>
-    </div>
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">LOW</div>
-      <div class="price-chart-stat-value" id="s-low">—</div>
-    </div>
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">VOLUME</div>
-      <div class="price-chart-stat-value" id="s-vol">—</div>
-    </div>
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">52W HIGH</div>
-      <div class="price-chart-stat-value" id="s-52h">—</div>
-    </div>
-    <div class="card-row-bordered-item price-chart-stat">
-      <div class="price-chart-stat-label">52W LOW</div>
-      <div class="price-chart-stat-value" id="s-52l">—</div>
-    </div>
-  </div>
+<p>Annotations are supported on <code>Line</code>, <code>DualAxes</code>, and <code>TimeSeries</code> charts. The kind is inferred from which fields are present — <code>date</code>, <code>from/to</code>, <code>value</code>, or <code>yFrom/yTo</code>.</p>
+<div class="card-dashboard-bordered text-content-caption">
+    <div id="btc-price-chart"></div>
 </div>
-<div class="air-md"></div>
-<h3>What problem it solves</h3>
-<p>The plain <code>Line</code> chart is enough when one view is enough. <code>TimeSeries</code> exists for the next step: when you want one chart instance to support “show me the last month”, “show me the last year”, and “show me everything” without wiring a second component tree around it.</p>
-<p>This example uses:</p>
-<ul>
-<li>preset range buttons: <code>1M</code>, <code>3M</code>, <code>6M</code>, <code>1Y</code>, <code>2Y</code>, <code>ALL</code></li>
-<li>a built-in navigator strip under the chart</li>
-<li>a custom tooltip</li>
-<li>a few stats below the chart</li>
-</ul>
-<p>Only the first two are specific to the module. The tooltip and stats are just ordinary page code around it.</p>
-<h3>Range buttons</h3>
-<p>Range buttons are controlled by the <code>timeframes</code> option.</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
-  timeframes: true,
-  defaultTimeframe: '1Y',
-});
-</code></pre>
-<p><code>timeframes: true</code> enables the built-in preset set: <code>1M</code>, <code>3M</code>, <code>6M</code>, <code>1Y</code>, <code>2Y</code>, <code>ALL</code>. If you need a custom set, pass an array instead.</p>
-<p>So:</p>
-<ul>
-<li>if you omit <code>timeframes</code>, there is no range bar</li>
-<li>if you pass <code>timeframes: true</code>, you get the built-in preset set</li>
-<li>if you pass <code>['1Y', 'ALL']</code>, you get exactly those two buttons</li>
-</ul>
-<h3>Navigator</h3>
-<p>The gray strip under the chart is controlled by <code>navigator</code>.</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
-  navigator: true,
-});
-</code></pre>
-<p>Or with options:</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
-  navigator: {
-    height: 56,
-    color: '#666666',
-    area: 1,
-    areaColor: '#cccccc',
-  },
-});
-</code></pre>
-<p>If enabled, the navigator always reflects the full dataset and highlights the current <code>view</code>. Dragging the brush updates the main chart. Clicking a range button also updates the brush. Same state, two controls, fewer bugs.</p>
-<h3>Programmatic control</h3>
-<p>The visible window is part of the chart API.</p>
-<pre><code class="language-js">chart.setView([start, end]);
-const current = chart.getView();
-
-chart.onViewChange(extent =&gt; {
-  console.log(extent);
-});
-</code></pre>
-<p>This matters when the date range is driven by router state, saved user settings, query params, or another piece of UI that insists on being in charge.</p>
-<h3>Custom ranges</h3>
-<p>If the built-in shortcuts are not enough, you can define your own buttons.</p>
-<pre><code class="language-js">const end = data[data.length - 1].date;
-
-timeframes: [
-  'ALL',
-  {
-    key: 'SINCE_2025',
-    label: 'Since 2025',
-    range: [new Date('2025-01-01'), end],
-  },
-  {
-    key: 'SINCE_2026',
-    label: 'Since 2026',
-    range: [new Date('2026-01-01'), end],
-  },
-]
-</code></pre>
-<p>Rules:</p>
-<ul>
-<li><code>ALL</code> means the full data extent</li>
-<li>built-in string shortcuts such as <code>1M</code>, <code>6M</code>, <code>1Y</code>, <code>YTD</code>, <code>ALL</code> are resolved by the chart</li>
-<li>custom buttons use <code>{ key, label, range }</code></li>
-<li><code>range</code> is <code>[start, end]</code></li>
-<li>the final range is clamped to the real data extent, so overshooting the dataset is safe</li>
-<li>if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active</li>
-</ul>
-<h3>Annotations</h3>
-<p>Time Series supports event markers and reference levels via the <code>annotations</code> option — useful for marking halvings, earnings dates, or product releases on a long-running price feed, and for placing horizontal levels (break-even, cost basis, target) on top of the area. Annotations stay in sync with zoom and pan: out-of-range entries are skipped, range bands are clamped to the visible window. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.</p>
-<h2>Time Series chart options</h2>
-<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<p>The chart above combines all three common cases: a point annotation on the 4th BTC halving (2024-04-19), a range annotation for the post-election rally window, and a horizontal line at the $100k psychological level. All three are out-of-the-box visuals — no custom SVG, no overlays. The chart automatically reserves vertical space above the plot for the date labels.</p>
+<h3>Configuration</h3>
+<p>Pass an <code>annotations</code> array on the chart options. Each entry is one of four kinds, inferred from its fields:</p>
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
+    height: 360,
+    annotations: [
+        // Point — vertical line at a date
+        {
+            date:  '2024-04-19',
+            label: '4th Halving',
+            color: '#888',
+        },
+        // Range — vertical band between two dates
+        {
+            from:        '2024-11-05',
+            to:          '2025-01-20',
+            label:       'Post-election rally',
+            color:       '#00c97a',
+            fillOpacity: 0.06,
+        },
+        // Horizontal line — reference level at a Y value
+        {
+            value:         100_000,
+            label:         '$100k',
+            color:         '#fa8c16',
+            labelPosition: 'left',
+        },
+        // Horizontal band — between two Y values
+        {
+            yFrom:       80_000,
+            yTo:         100_000,
+            label:       'Support zone',
+            fillOpacity: 0.05,
+        },
+    ],
+}).setData(values);</code></pre>
+<p>Dates accept any format understood by the chart’s date parser: ISO strings, timestamps, or <code>Date</code> objects. Y values are plain numbers in the same units as the data series.</p>
+<h3>Horizontal annotations vs. constant series</h3>
+<p>The classic way to draw a reference level is to add a series with a constant value. That works, but it has costs: the constant series stretches the Y domain (a far-out break-even pulls the axis), shows up in the crosshair tooltip on every point, and clutters the legend.</p>
+<p>Horizontal annotations sidestep all of that. They’re purely visual — they don’t participate in domain calculation, they don’t appear in the tooltip, and they don’t belong to the legend. Use them for break-even lines, KPI targets, support/resistance levels, tolerance bands.</p>
+<h3>DualAxes — choosing an axis</h3>
+<p>For a <code>DualAxes</code> chart, horizontal annotations need to specify which Y axis they reference:</p>
+<pre class="text-content-caption"><code>new RareCharts.DualAxes('#chart', {
+    annotations: [
+        { value: 14.50, axis: 'y2', label: 'Break-even, USD' },
+        { value: 100_000, axis: 'y1', label: 'BTC $100k' },
+    ],
+});</code></pre>
+<p><code>axis</code> defaults to <code>'y1'</code>. Vertical (date-based) annotations don’t need this — they span both axes by definition.</p>
+<h3>Layout</h3>
+<p>Labels are rendered <em>above</em> the plot area. The chart automatically pushes its top margin down by <code>annotationLabelHeight + 4</code> pixels when at least one annotation is configured, so labels never collide with the line. The default height is <code>22</code>. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:</p>
+<pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
+    annotations: [{ date: '2024-04-19', label: '4th Halving' }],
+    annotationLabelHeight: 28,
+});</code></pre>
+<p>If you provide an explicit <code>margin.top</code> it will be respected — but you must reserve enough room yourself.</p>
+<h3>View clipping</h3>
+<p>Annotations whose date(s) fall outside the visible X extent are skipped automatically. This is the expected behavior when used together with <code>timeframes</code>, <code>navigator</code>, or <code>setView()</code>: as the user zooms or pans, in-range annotations appear and out-of-range ones disappear. For range annotations partially visible, the fill is clamped to the visible portion and only the boundary line(s) inside the extent are drawn.</p>
+<h3>Styling</h3>
+<p>Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Point annotation</h5></td>
+        </tr>
+        <tr>
+            <td><code>date</code></td>
+            <td>Date | string | number</td>
+            <td>—</td>
+            <td>Required. The X position of the marker.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Text rendered above the chart. Empty string suppresses the label, line stays visible.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td><code>theme.muted</code></td>
+            <td>Stroke color of the vertical line and default label color.</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td><code>'dashed'</code></td>
+            <td>Line pattern: <code>'solid'</code>, <code>'dashed'</code>, <code>'dotted'</code>, <code>'dashDot'</code>, <code>'longDash'</code>.</td>
+        </tr>
+        <tr>
+            <td><code>labelColor</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Label text color, when you want it different from the line.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Range annotation</h5></td>
+        </tr>
+        <tr>
+            <td><code>from</code></td>
+            <td>Date | string | number</td>
+            <td>—</td>
+            <td>Required. Range start.</td>
+        </tr>
+        <tr>
+            <td><code>to</code></td>
+            <td>Date | string | number</td>
+            <td>—</td>
+            <td>Required. Range end. If <code>to &lt; from</code>, they are swapped.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Text rendered above the chart, centered over the visible portion of the range.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td><code>theme.muted</code></td>
+            <td>Boundary line color and default fill color.</td>
+        </tr>
+        <tr>
+            <td><code>fill</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Background fill of the band when you want it independent from the boundary color.</td>
+        </tr>
+        <tr>
+            <td><code>fillOpacity</code></td>
+            <td>number</td>
+            <td><code>0.08</code></td>
+            <td>Opacity of the fill band, <code>0</code>–<code>1</code>.</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td><code>'dashed'</code></td>
+            <td>Boundary line pattern.</td>
+        </tr>
+        <tr>
+            <td><code>labelColor</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Label text color override.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Horizontal line</h5></td>
+        </tr>
+        <tr>
+            <td><code>value</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>Required. The Y position of the reference line.</td>
+        </tr>
+        <tr>
+            <td><code>axis</code></td>
+            <td><code>'y1'</code> | <code>'y2'</code></td>
+            <td><code>'y1'</code></td>
+            <td>Which Y axis the value belongs to. Only relevant for <code>DualAxes</code>.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Text rendered inline next to the line.</td>
+        </tr>
+        <tr>
+            <td><code>labelPosition</code></td>
+            <td><code>'left'</code> | <code>'right'</code></td>
+            <td><code>'left'</code></td>
+            <td>Which end of the line the label is anchored to. Pick <code>'right'</code> if your Y axis is on the left and the right edge is free.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td><code>theme.muted</code></td>
+            <td>Stroke color and default label color.</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td><code>'dashed'</code></td>
+            <td>Line pattern.</td>
+        </tr>
+        <tr>
+            <td><code>labelColor</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Label text color override.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Horizontal band</h5></td>
+        </tr>
+        <tr>
+            <td><code>yFrom</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>Required. Lower Y value of the band.</td>
+        </tr>
+        <tr>
+            <td><code>yTo</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>Required. Upper Y value. Order is normalized.</td>
+        </tr>
+        <tr>
+            <td><code>axis</code></td>
+            <td><code>'y1'</code> | <code>'y2'</code></td>
+            <td><code>'y1'</code></td>
+            <td>Which Y axis the values belong to.</td>
+        </tr>
+        <tr>
+            <td><code>label</code></td>
+            <td>string</td>
+            <td><code>''</code></td>
+            <td>Text rendered inline at the top edge of the band.</td>
+        </tr>
+        <tr>
+            <td><code>labelPosition</code></td>
+            <td><code>'left'</code> | <code>'right'</code></td>
+            <td><code>'left'</code></td>
+            <td>Which end of the band the label is anchored to.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td><code>theme.muted</code></td>
+            <td>Boundary line color and default fill color.</td>
+        </tr>
+        <tr>
+            <td><code>fill</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Background fill of the band when independent from the boundary color.</td>
+        </tr>
+        <tr>
+            <td><code>fillOpacity</code></td>
+            <td>number</td>
+            <td><code>0.08</code></td>
+            <td>Opacity of the fill band, <code>0</code>–<code>1</code>.</td>
+        </tr>
+        <tr>
+            <td><code>strokeDash</code></td>
+            <td>string</td>
+            <td><code>'dashed'</code></td>
+            <td>Boundary line pattern.</td>
+        </tr>
+        <tr>
+            <td><code>labelColor</code></td>
+            <td>CSS color</td>
+            <td>same as <code>color</code></td>
+            <td>Label text color override.</td>
+        </tr>
+    </tbody>
+</table>
+<h3>Chart-level options</h3>
 <table class="table-bordered card-caption">
     <thead>
         <tr>
@@ -570,158 +716,30 @@ timeframes: [
         </tr>
     </thead>
     <tbody>
-        <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
-        </tr>
-        <tr>
-            <td><code>height</code></td>
-            <td>number</td>
-            <td><code>340</code></td>
-            <td>Chart height in px.</td>
-        </tr>
-        <tr>
-            <td><code>margin</code></td>
-            <td>object</td>
-            <td>—</td>
-            <td>Inner padding <code>{top, right, bottom, left}</code>.</td>
-        </tr>
-        <tr>
-            <td><code>timeframes</code></td>
-            <td>boolean | array</td>
-            <td>—</td>
-            <td>Range bar button definitions. Pass <code>true</code> to use the built-in preset set <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>. Or pass an array of built-in shortcuts and custom objects with <code>key</code>, <code>label</code>, and <code>range</code>.</td>
-        </tr>
-        <tr>
-            <td><code>defaultTimeframe</code></td>
-            <td>string | object</td>
-            <td>—</td>
-            <td>Initial active timeframe used on first render when no explicit <code>view</code> has been set.</td>
-        </tr>
-        <tr>
-            <td><code>navigator</code></td>
-            <td>boolean | object</td>
-            <td>—</td>
-            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
-        </tr>
-        <tr class="table-section">
-            <td colspan="4"><h5>Axes</h5></td>
-        </tr>
-        <tr>
-            <td><code>xTickFormat</code></td>
-            <td>function</td>
-            <td><code>'%b'</code></td>
-            <td><code>(date) =&gt; string</code> — formats X axis labels.</td>
-        </tr>
-        <tr>
-            <td><code>yTickFormat</code></td>
-            <td>function</td>
-            <td><code>$,.0f</code></td>
-            <td><code>(value) =&gt; string</code> — formats Y axis labels.</td>
-        </tr>
-        <tr>
-            <td><code>yTicks</code></td>
-            <td>number</td>
-            <td><code>5</code></td>
-            <td>Y axis tick count.</td>
-        </tr>
-        <tr>
-            <td><code>yTickValues</code></td>
-            <td>array</td>
-            <td>—</td>
-            <td>Explicit Y tick positions. Overrides automatic tick generation.</td>
-        </tr>
-        <tr>
-            <td><code>yLabelsOnly</code></td>
-            <td>boolean</td>
-            <td><code>true</code></td>
-            <td>Show only Y labels and suppress the axis line.</td>
-        </tr>
-        <tr class="table-section">
-            <td colspan="4"><h5>Line and Area</h5></td>
-        </tr>
-        <tr>
-            <td><code>curve</code></td>
-            <td>string</td>
-            <td><code>'monotone'</code></td>
-            <td>D3 curve type: <code>'linear'</code>, <code>'monotone'</code>, <code>'basis'</code>, <code>'cardinal'</code>, <code>'step'</code>, <code>'stepBefore'</code>, <code>'stepAfter'</code>.</td>
-        </tr>
-        <tr>
-            <td><code>area</code></td>
-            <td>boolean | number</td>
-            <td><code>true</code></td>
-            <td>Area fill under the line. <code>true</code> uses a gradient, a number is treated as solid fill opacity, and <code>false</code> disables the area.</td>
-        </tr>
-        <tr>
-            <td><code>areaColor</code></td>
-            <td>CSS color</td>
-            <td>theme accent</td>
-            <td>Area fill color.</td>
-        </tr>
-        <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
-        </tr>
-        <tr>
-            <td><code>tooltipFormat</code></td>
-            <td>function</td>
-            <td>—</td>
-            <td><code>(point) =&gt; html</code> — custom tooltip renderer for the active point.</td>
-        </tr>
-        <tr class="table-section">
-            <td colspan="4"><h5>Annotations</h5></td>
-        </tr>
         <tr>
             <td><code>annotations</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Event markers and reference levels. Vertical (<code>date</code>, <code>from</code>/<code>to</code>) and horizontal (<code>value</code>, <code>yFrom</code>/<code>yTo</code>) entries are mixed in the same array. Stay in sync with zoom and pan. See <a href="/charts/line/annotations/">Annotations</a>.</td>
+            <td>Array of point and/or range annotations. Mixed entries are allowed.</td>
         </tr>
         <tr>
             <td><code>annotationLabelHeight</code></td>
             <td>number</td>
             <td><code>22</code></td>
-            <td>Pixels reserved above the chart for vertical annotation labels.</td>
+            <td>Pixels reserved above the chart for annotation labels. Increase if labels are clipped, decrease for a tighter layout.</td>
         </tr>
     </tbody>
 </table>
-<h2>Time Series instance methods</h2>
-<table class="table-bordered card-caption">
-    <thead>
-        <tr>
-            <th>Method</th>
-            <th>Signature</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><code>setData</code></td>
-            <td><code>(data)</code></td>
-            <td>Sets the full dataset and re-renders the chart.</td>
-        </tr>
-        <tr>
-            <td><code>appendPoint</code></td>
-            <td><code>(point)</code></td>
-            <td>Adds one point, re-sorts by date, and re-renders.</td>
-        </tr>
-        <tr>
-            <td><code>setView</code></td>
-            <td><code>([start, end])</code></td>
-            <td>Sets the visible date window explicitly.</td>
-        </tr>
-        <tr>
-            <td><code>getView</code></td>
-            <td><code>()</code></td>
-            <td>Returns the current visible date window.</td>
-        </tr>
-        <tr>
-            <td><code>onViewChange</code></td>
-            <td><code>(fn)</code></td>
-            <td>Registers a callback that runs whenever the visible date window changes.</td>
-        </tr>
-    </tbody>
-</table>
+<h3>When to use them</h3>
+<p>Annotations are content, not decoration. A good annotation answers a question the chart raises:</p>
+<ul>
+<li>“Why did hashrate drop in April 2024?” → halving annotation.</li>
+<li>“Why did revenue plateau in Q3?” → range covering the marketing freeze.</li>
+<li>“When did the new pricing roll out?” → point on launch day.</li>
+</ul>
+<p>Avoid annotating every minor event. The chart starts to look like a footnote index, and the reader stops reading them. Three or four well-chosen markers are usually enough — the rest belongs in the article body.</p>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/line/line-chart-time-series.js"></script>
+<script src="/assets/charts/examples/line/btc-price-chart.js"></script>
 
     </article>
   </div>

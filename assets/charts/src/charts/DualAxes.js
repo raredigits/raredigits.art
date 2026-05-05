@@ -41,6 +41,14 @@
 //   barWidthRatio   — width ratio vs time step (default: 0.65)
 //   barGrouping     — 'overlap' (default) | 'cluster'
 //
+//   annotations     — event markers. Vertical (point/range) and horizontal (line/band).
+//                     Horizontal entries take `axis: 'y1'|'y2'` (default 'y1') for DualAxes.
+//                     point:  { date, label?, color?, strokeDash?, labelColor? }
+//                     range:  { from, to, label?, color?, fill?, fillOpacity?, strokeDash? }
+//                     hPoint: { value, axis?, label?, color?, strokeDash?, labelPosition? }
+//                     hRange: { yFrom, yTo, axis?, label?, color?, fill?, fillOpacity?, strokeDash? }
+//   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22)
+//
 //   crosshair       — vertical crosshair + dots + tooltip (default: true)
 //   tooltipFormat   — function({date, points:[{...}]}) => html
 //
@@ -52,7 +60,7 @@ import * as d3 from 'd3';
 import { Chart }                  from '../core/Chart.js';
 import { Tooltip }                from '../core/Tooltip.js';
 import { Crosshair }              from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations } from '../core/utils.js';
 import { linePath, areaPath }     from '../core/seriesPath.js';
 import {
   renderGrid,
@@ -64,18 +72,22 @@ import {
   renderAxisTitles,
   animateLines,
   renderMarkers,
+  renderAnnotations,
 } from '../core/renderHelpers.js';
 
 export class DualAxes extends Chart {
   constructor(selector, options = {}) {
     const hasAxisTitles = !!(options.y1Title || options.y2Title);
     const topDefault    = options.margin?.top ?? 10;
+    const annotations    = normalizeAnnotations(options.annotations);
+    const annLabelHeight = options.annotationLabelHeight ?? 22;
+    const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
     const { margin: _margin, ...restOptions } = options;
 
     super(selector, {
       height: 280,
       margin: {
-        top:    hasAxisTitles ? Math.max(topDefault, 30) : topDefault,
+        top:    Math.max(hasAxisTitles ? Math.max(topDefault, 30) : topDefault, annTopReserve),
         right:  options.margin?.right  ?? 64,
         bottom: options.margin?.bottom ?? 18,
         left:   options.margin?.left   ?? 64,
@@ -83,8 +95,10 @@ export class DualAxes extends Chart {
       ...restOptions,
     });
 
-    this._series       = [];
-    this._didAnimateIn = false;
+    this._series          = [];
+    this._didAnimateIn    = false;
+    this._annotations     = annotations;
+    this._annLabelHeight  = annLabelHeight;
 
     const tooltip = new Tooltip(this.container, this.theme);
     this._initSVG(tooltip);
@@ -153,6 +167,7 @@ export class DualAxes extends Chart {
     this.gEnds        = this.g.append('g').attr('class', 'rc-end-labels');
     this.gMarkers     = this.g.append('g').attr('class', 'rc-markers');
     this.gZero        = this.g.append('g').attr('class', 'rc-zero-layer');
+    this.gAnnotations = this.g.append('g').attr('class', 'rc-annotations');
 
     // Clip bars and lines to the drawing area so bar stubs don't bleed past edges
     const uid = Math.random().toString(36).slice(2, 8);
@@ -411,6 +426,13 @@ export class DualAxes extends Chart {
       o.markerShape ?? 'circle',
       o.markerSize  ?? 4,
       t
+    );
+
+    // Annotations
+    renderAnnotations(
+      this.gAnnotations, this._annotations, x,
+      axis => axis === 'y2' ? y2 : y1,
+      H, this._annLabelHeight, t
     );
 
     // Crosshair
