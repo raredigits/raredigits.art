@@ -298,6 +298,12 @@
                       
                     </li>
                   
+                    <li>
+                      
+                        <a href="/charts/line/annotations/">Annotations</a>
+                      
+                    </li>
+                  
                 </ul>
               
               
@@ -533,6 +539,8 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
 <p>Markers (point dots) are supported via <code>markers</code> (default false), with <code>markerShape</code> (default <code>circle</code>) and <code>markerSize</code> (default 4). Markers are useful when data is sparse or you want to emphasize sampling points, but they can clutter dense series, so they’re off by default for a reason.</p>
 <h3>Per-series overrides</h3>
 <p>In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include <code>curve</code>, <code>strokeWidth</code>, <code>area</code>, <code>areaOpacity</code>, and <code>areaBaseline</code>. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.</p>
+<h3>Annotations</h3>
+<p>Line charts support event markers and reference levels via the <code>annotations</code> option — vertical lines and bands for date events (halvings, releases, freeze windows), horizontal lines and bands for reference levels (break-even, KPI targets, support zones). See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API and behavior.</p>
 <h2>Line chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
 <table class="table-bordered card-caption">
@@ -751,6 +759,21 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>boolean</td>
             <td><code>true</code></td>
             <td>Render the last value of each series at the right edge.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Annotations</h5></td>
+        </tr>
+        <tr>
+            <td><code>annotations</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Event markers and reference levels. Vertical (<code>date</code>, <code>from</code>/<code>to</code>) and horizontal (<code>value</code>, <code>yFrom</code>/<code>yTo</code>) entries are mixed in the same array. See <a href="/charts/line/annotations/">Annotations</a>.</td>
+        </tr>
+        <tr>
+            <td><code>annotationLabelHeight</code></td>
+            <td>number</td>
+            <td><code>22</code></td>
+            <td>Pixels reserved above the chart for vertical annotation labels.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>

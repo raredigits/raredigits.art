@@ -12,19 +12,30 @@
 //   area          — show area fill under line (default: true)
 //   yLabelsOnly   — hide Y axis line/ticks (default: true)
 //   yTicks        — Y tick count (default: 5)
+//   annotations   — event markers. Vertical (point/range) and horizontal (line/band).
+//                   point:  { date, label?, color?, strokeDash?, labelColor? }
+//                   range:  { from, to, label?, color?, fill?, fillOpacity?, strokeDash? }
+//                   hPoint: { value, label?, color?, strokeDash?, labelPosition? }
+//                   hRange: { yFrom, yTo, label?, color?, fill?, fillOpacity?, strokeDash? }
+//   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22)
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
-import { renderGrid, renderAxisX, renderAxisYRight } from '../core/renderHelpers.js';
+import { renderGrid, renderAxisX, renderAxisYRight, renderAnnotations } from '../core/renderHelpers.js';
+import { normalizeAnnotations } from '../core/utils.js';
 
 export class TimeSeries extends Chart {
   constructor(selector, options = {}) {
+    const annotations    = normalizeAnnotations(options.annotations);
+    const annLabelHeight = options.annotationLabelHeight ?? 22;
+    const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
     const { margin: _margin, ...restOptions } = options;
+
     super(selector, {
       height: 340,
       margin: {
-        top:    options.margin?.top    ?? 16,
+        top:    Math.max(options.margin?.top ?? 16, annTopReserve),
         right:  options.margin?.right  ?? 70,
         bottom: options.margin?.bottom ?? 28,
         left:   options.margin?.left   ?? 0,
@@ -36,6 +47,8 @@ export class TimeSeries extends Chart {
     this._viewExtent     = null;
     this._onViewChangeCb = null;
     this._tooltip        = new Tooltip(this.container, this.theme);
+    this._annotations    = annotations;
+    this._annLabelHeight = annLabelHeight;
 
     this._initSVG();
     this._bindZoomPan();
@@ -84,11 +97,12 @@ export class TimeSeries extends Chart {
       .attr('id', clipId).append('rect');
     this.clipId = clipId;
 
-    this.gGrid  = this.g.append('g').attr('class', 'rc-grid');
-    this.gArea  = this.g.append('g').attr('clip-path', `url(#${clipId})`);
-    this.gPaths = this.gArea.append('g');
-    this.gAxisX = this.g.append('g').attr('class', 'rc-axis');
-    this.gAxisY = this.g.append('g').attr('class', 'rc-axis');
+    this.gGrid        = this.g.append('g').attr('class', 'rc-grid');
+    this.gArea        = this.g.append('g').attr('clip-path', `url(#${clipId})`);
+    this.gPaths       = this.gArea.append('g');
+    this.gAnnotations = this.g.append('g').attr('class', 'rc-annotations');
+    this.gAxisX       = this.g.append('g').attr('class', 'rc-axis');
+    this.gAxisY       = this.g.append('g').attr('class', 'rc-axis');
 
     // Crosshair: vertical (X) + horizontal (Y)
     this.crossX = this.g.append('line').style('opacity', 0);
@@ -204,6 +218,13 @@ export class TimeSeries extends Chart {
       (this.options.yLabelsOnly ?? true),
       t,
       this.options.yTickValues ?? null
+    );
+
+    // Annotations
+    renderAnnotations(
+      this.gAnnotations, this._annotations, this.xScale,
+      () => this.yScale,
+      H, this._annLabelHeight, t
     );
 
     // Crosshair styling — from theme, no hardcoded values

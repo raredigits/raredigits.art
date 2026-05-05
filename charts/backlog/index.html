@@ -420,18 +420,18 @@
         <tr class="table-section">
             <td colspan="3">
                 <h5>Annotations</h5>
-                <p>Options for marking up the chart area with reference context</p>
+                <p>Options for marking up the chart area with reference context. The base <code>annotations</code> API (vertical and horizontal point/range markers) ships in v0.9.5 — see <a href="/charts/line/annotations/">Annotations</a>. Items below are follow-ups.</p>
             </td>
         </tr>
         <tr>
-            <td>Reference lines</td>
-            <td><code>referenceLines: [{ value, axis, label, color, strokeDash }]</code></td>
-            <td>Horizontal lines at specified Y values (or vertical at X values) with optional label. <code>axis: 'x' | 'y'</code>, defaults to <code>'y'</code>.</td>
+            <td>Annotations on Bar (time-series mode)</td>
+            <td><code>annotations</code> on <code>RareCharts.Bar</code></td>
+            <td>Wire the same <code>annotations</code> API into <code>Bar</code> when its data has a <code>date</code> field. Useful for marking events on daily volume or transaction-count bars.</td>
         </tr>
         <tr>
-            <td>Callouts and overlays</td>
-            <td><code>annotations: [{ x, y, text, image }]</code></td>
-            <td>Text callouts and image overlays anchored to data coordinates or pixel position on the chart area.</td>
+            <td>Callouts and image overlays</td>
+            <td><code>callouts: [{ x, y, text, image, dx, dy }]</code></td>
+            <td>Text callouts and image overlays anchored to data coordinates or pixel positions inside the chart area. Distinct from <code>annotations</code>: callouts are free-form content at arbitrary <code>(x, y)</code> rather than axis-aligned markers.</td>
         </tr>
 <p><tr class="table-section">
 <td colspan="3">
