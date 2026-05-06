@@ -31,6 +31,10 @@
 | `CSS-008` | bug | `modules/utilities/_display.scss:32` | `.text-wrap { white-space: wrap }` — `wrap` is not a valid value for `white-space`; should be `normal`. | S |
 | `CSS-009` | bug | `modules/align/_align.scss:31, 41` | `.top { text-align: top }`, `.bottom { text-align: bottom }` — `text-align` does not accept `top`/`bottom`. Classes do nothing. | S |
 | `CSS-010` | bug | `modules/align/_align.scss:14, 35` | `.center-y` is declared twice with different definitions; the second overrides the first. | S |
+| `CSS-011` | bug | `modules/layout/_grid.scss:46` | `.grid-mobile { gap: var(--global-grid-gap) }` — `--global-grid-gap` is undefined; likely meant `--grid-gap-global`. | S |
+| `CSS-012` | bug | `modules/typography/_sidenotes.scss:11` | `.remarked > :first-child { min-width: var(--content-max-width) }` — `--content-max-width` is undefined, so sidenote layout can collapse unpredictably. | S |
+| `CSS-013` | bug | `modules/navigation/header/_search.scss:21–23` | Search input removes `outline` with no replacement focus style. Keyboard focus becomes invisible. | S |
+| `CSS-014` | bug | `modules/colors/_base.scss:64`, `modules/colors/_blue.scss:22` | Sass warns about interpolating unquoted color names (`black`, `white`, `blue`, etc.) into selectors. Generator is fragile and may emit invalid selectors. | S |
 
 ## Quality infrastructure (P0–P1)
 
@@ -60,6 +64,12 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 |---|---|---|---|
 | `CSS-030` | perf | Move Google Fonts out of `@import url()` into the page `<head>`: `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` + non-blocking stylesheet load. | S |
 | `CSS-031` | perf | Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400. | S |
+
+## Distribution hygiene (P0)
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to `https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css` (immutable, edge-cached, SRI-able). Tag `v0.6.9` retroactively so anyone still on the old state can pin to it. Announce the deprecation in the README of `rare-styles` repo. | S |
 
 ---
 
@@ -164,13 +174,44 @@ Compact layout, sans-serif everywhere, denser spacing scale, panel/grid componen
 | ID | Type | Task | Estimate |
 |---|---|---|---|
 | `CSS-200` | docs | `README.md`: what the library is, how to install (CDN / npm / SCSS source), quick start, module map. | M |
-| `CSS-201` | docs | `STYLEGUIDE.md`: naming conventions, utilities vs components, how to add a new module, how to add a new token. | M |
+| `CSS-201` | docs | `STYLEGUIDE.md`: hand-written conventions doc — naming, utilities vs components, how to add a new module, how to add a new token, breaking-change policy. | M |
 | `CSS-202` | docs | Single-page demo (`assets/css/examples/index.html`) showing every component and utility. Doubles as a visual smoke test. | L |
 | `CSS-203` | docs | Per-module live examples: typography, grid, cards, forms, buttons, navigation, colors, themes. | L |
 | `CSS-204` | docs | `CHANGELOG.md` starting at `0.7.0`, [Keep a Changelog](https://keepachangelog.com/) format. | S |
-| `CSS-205` | docs | `CONTRIBUTING.md`: forking, PRs, running the linter. | S |
+| `CSS-205` | docs | **`CONTRIBUTING.md`** — full contributor guide. Sections: quick start (clone/install/dev server), project structure (link to STYLEGUIDE), branching model, [Conventional Commits](https://www.conventionalcommits.org/) convention, PR process (one concern per PR, backlog-ID in title, CHANGELOG update), **public API definition** (which classes / CSS variables / SCSS exports / theme names / dist filenames are public — i.e. require MAJOR bump to break), bug-report template, feature-proposal template, **release process for maintainers** (version bump → CHANGELOG → git tag → GitHub Release → npm publish), link to `CODE_OF_CONDUCT.md`. | M |
 | `CSS-206` | docs | `LICENSE` (MIT recommended) at the repo root. | S |
 | `CSS-207` | docs | **Theming guide** (`THEMING.md`): how to build a custom theme by overriding base color tokens. Show a worked dark-theme example via `:root { --bg-color: #111; --primary-color: #f0f0f0; ... }` overrides — no built-in dark mode, just a recipe. | M |
+| `CSS-208` | docs | `CODE_OF_CONDUCT.md` — Contributor Covenant 2.1 (verbatim). Linked from `CONTRIBUTING.md`. | S |
+
+## Documentation infrastructure — KSS + auto-extracted reference (P0)
+
+Hundreds of classes already exist; hand-written docs would rot immediately. The plan: **annotate sources with [KSS](https://github.com/kss-node/kss-node)-style comments**, generate the class reference automatically, and pair it with hand-curated examples. Token reference is fully auto-generated from `:root` (see “Token pipeline” below).
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-260` | dx | Set up the docs site. Recommended stack: **kss-node** for class extraction + **Eleventy** (or Astro) shell for layout, navigation, search, theming with `theme-story`. Output to `docs/` (separate from `dist/`). Dev server with hot reload. | L |
+| `CSS-261` | docs | KSS-annotate `colors` module (base, brand, supporting, blue). Each color group gets one comment block with sample swatches. | S |
+| `CSS-262` | docs | KSS-annotate `typography` module (fonts, headings, body, lists, sidenotes, text-content, tables). | M |
+| `CSS-263` | docs | KSS-annotate `layout` module (grid, containers, spacing). Spacing utilities documented as **one table per family** (margin, padding, gap, …) — 200+ classes don’t need 200 entries. | M |
+| `CSS-264` | docs | KSS-annotate `elements` (buttons, forms) and `bricks` (cards, sections). | M |
+| `CSS-265` | docs | KSS-annotate `navigation` (header, sidebar, tags, links) and `decorations` (borders, shadows, separators, icons, images, skeleton). | M |
+| `CSS-266` | docs | KSS-annotate `align` (flex, position, align), `utilities` (display, resets, breakpoints), and `special` (collapsible, cookie-consent, construction, mockups). | S |
+| `CSS-267` | docs | KSS-annotate themes (`theme-story`, `theme-dashboard`) with side-by-side previews. | M |
+| `CSS-268` | dx | Docs site CI: build on every PR, deploy on tag to GitHub Pages at `https://raredigits.github.io/rare-styles/docs/`. Versioned URL per release (`/docs/v0.9.0/`, `/docs/latest/`). | M |
+| `CSS-269` | docs | KSS authoring conventions in `STYLEGUIDE.md`: required fields, `Markup:` block format, modifier-class syntax, `Style guide:` hierarchy. So contributors annotate consistently. | S |
+
+## Token pipeline (P0)
+
+The library is already token-driven (CSS custom properties in `:root`). Formalize the pipeline so tokens can be auto-documented, exported to other formats, and validated against orphan references.
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-270` | feat | **Token extractor**: parse `:root { --* }` blocks across `modules/**/*.scss`, emit `dist/tokens.json` in [W3C Design Tokens (DTCG)](https://www.designtokens.org/) format with categories (color / spacing / typography / motion / shadow / surface). Run as part of `build:css`. | M |
+| `CSS-271` | docs | Auto-generate the token reference page in the docs site from `dist/tokens.json` — searchable table with name, value, category, computed sample (color swatch / spacing bar / shadow preview). | M |
+| `CSS-272` | dx | **Token validator**: scan all SCSS for `var(--foo)` usages and fail the build if `--foo` is not declared anywhere. Catches the `--text-color` / `--warning-color` / `--grey-lightest` class of bugs at compile time. | S |
+| `CSS-273` | feat | Multi-format token export via [Style Dictionary](https://amzn.github.io/style-dictionary/): emit `dist/tokens.scss` (SCSS map), `dist/tokens.js` (ES module), `dist/tokens.css` (standalone CSS file). Lets non-CSS consumers (JS charts, native apps) read the same source of truth. | M |
+| `CSS-274` | docs | Token versioning policy section in `CONTRIBUTING.md`: renaming or removing a public token is a MAJOR bump; adding new tokens is MINOR; changing a value is MINOR (visual change) or PATCH (correction). | S |
+| `CSS-275` | dx | Token diff tool: compare `dist/tokens.json` between two refs, output a human-readable changelog of token changes. Used for release notes. | S |
 
 ## Sibling-library integration (P0)
 
@@ -240,11 +281,13 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 - [ ] `theme-story` and `theme-dashboard` documented and demoed
 - [ ] Cascade layers in place; no `!important`
 - [ ] Sibling-library integration finalized for `scripts/` and `charts/`
-- [ ] README + STYLEGUIDE + THEMING + CHANGELOG + LICENSE + demo page
+- [ ] README + STYLEGUIDE + CONTRIBUTING + CODE_OF_CONDUCT + THEMING + CHANGELOG + LICENSE + demo page
 - [ ] Theming guide includes a worked dark-theme example
+- [ ] Docs site (KSS + Eleventy) deployed; every module is annotated; token reference auto-generated from `dist/tokens.json`
+- [ ] Token pipeline complete: `dist/tokens.json` + Style Dictionary exports + token validator in CI
 - [ ] Bundle after purge ≤ 30 KB
 - [ ] CDN + npm package published (`CSS-T01` complete)
-- [ ] CI green: lint + visual regression + lighthouse
+- [ ] CI green: lint + token validator + visual regression + lighthouse
 - [ ] `v1.0.0` tagged in git, GitHub Release notes published
 
 ---
@@ -270,8 +313,8 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 | Version | Codename | Scope |
 |---|---|---|
 | `0.6.9` | _current_ | Architecture, grid, typography, cards, navigation — bugs inside |
-| `0.7.0` | Stabilization | Bug fixes `CSS-001..010`, stylelint, build pipeline, fonts, real button system |
+| `0.7.0` | Stabilization | Bug fixes `CSS-001..010`, stylelint, build pipeline, fonts, real button system, jsDelivr migration |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens, `@layer`, `theme-story`, `theme-dashboard` |
-| `0.9.0` | Release Prep | Docs, demo, theming guide, scripts/charts integration, purge, CI |
+| `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |
 | `CSS-T01` | (parallel) | CDN + npm distribution |
 | `1.0.0` | Public Release | Stable public API |
