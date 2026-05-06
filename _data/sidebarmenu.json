@@ -4,6 +4,7 @@
       "url": "/manifesto/",
       "items": [
       { "title": "Manifesto", "url": "/manifesto/" },
+      { "title": "Value", "url": "/manifesto/value/" },
       { "title": "Principles", "url": "/manifesto/principles/" },
       { "title": "Rarified Tips", "url": "/manifesto/tips/" }
       ]

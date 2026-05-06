@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 .nav-list,
 .list-unstyled {
     list-style-type: none;
@@ -59,4 +61,84 @@
 .feed-list__item-meta .tag {
     color: var(--text-color-light);
     font-size: var(--font-size-xs);
+}
+
+// List packing — sequential CSS multi-column flow for groups of unbreakable
+// blocks (named lists, link groups, definition pairs). Short groups pack
+// together inside a column; tall groups naturally claim a column on their
+// own. Built on `column-fill: auto` so columns fill in source order without
+// the height-balancing "holes" that `column-fill: balance` produces with
+// `break-inside: avoid`.
+//
+// Requires a column height — `column-fill: auto` only engages when the
+// container is height-constrained. Set the height with any height utility
+// from the spacing scale (e.g. `.height-xxxl`, `.height-xxxxl`) or via
+// inline `style`. The minimum column width is configurable via
+// `--list-pack-min` (default 12rem).
+//
+// On mobile the utility falls back to a 3-column balanced layout so column
+// widths stay readable; any explicit height utility is reset to auto. The
+// host markup should give the section title its own row on mobile (e.g.
+// `mobile:col-span-full`) so the lists get the full container width.
+
+.list-pack {
+    column-width: var(--list-pack-min, 12rem);
+    column-fill: auto;
+    column-gap: var(--grid-gap);
+
+    > * {
+        break-inside: avoid;
+    }
+
+    @include bp.mobile {
+        column-width: auto;
+        column-count: 3;
+        column-fill: balance;
+        height: auto;
+    }
+}
+
+// DEFINITION LISTS
+// Default styling matches the "named principle" pattern: each term reads as
+// a strong, distinct label without becoming a full heading. Use a plain <dl>
+// for principle-style content (manifesto principles, glossary entries,
+// labeled feature blocks). For horizontal key:value metadata, opt in to
+// `.dl-inline`.
+
+dl {
+    max-width: var(--text-content-width);
+    margin: var(--space-md) 0;
+}
+
+dt {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+}
+
+dd + dt {
+    margin-top: var(--space-md);
+}
+
+// Inline modifier — horizontal key:value pairs for metadata,
+// KPI rows, settings summaries, etc. Term renders bold without
+// underline; definition flows on the same line.
+
+.dl-inline {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
+
+    dt {
+        margin: 0;
+        color: var(--text-color-light);
+        
+        > code {
+            font-weight: var(--font-weight-normal);
+        }
+    }
+
+    dd {
+        margin: 0;
+    }
 }

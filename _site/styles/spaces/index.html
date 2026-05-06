@@ -166,10 +166,10 @@
         </div>
         <div class="padding-md">
             <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
-                <div class="col-span-1 uppercase padding-b-md">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                <div class="col-span-11 mobile:col-span-full list-pack" style="--list-pack-height: var(--space-xxxxl);">
                         <div class="list">
                             <span class="list-title">Settings</span>
                             <ul class="nav-list">
@@ -408,27 +408,94 @@
 
     <article>
       
-<section>
-    <h3>Общая сетка</h3>
-    <p>Общая сетка сайта состоит из 12 колонок и межблочным расстоянием 8px.</p>
-</section>
+<div class="meta-info">/assets/css/modules/layout/_spacing.scss</div>
 
-<section>
-    <h3>Ключевые элементы</h3>
-    <p>Для позиционирования второстепенных элементов рассчитываются ключевые:</p>
-    <div class="card">
-        Фракция
-    </div>
-    <div class="card">
-        Сайдбар
-    </div>
-    <div class="card">
-        Текстовый блок
-    </div>
-    <div class="card">
-        Полноширинный блок
-    </div>
-</section>
+<p>Spacing in Rare Styles is derived from a single base unit. Every margin, padding, gap and container width is a multiple of one number. The result is rhythm: blocks align, edges echo, scrolling feels predictable. Nothing is random.</p>
+
+<h2>Base Unit</h2>
+
+<p>The base unit is <strong>16px</strong>, exposed as <code>--base-unit</code>. It matches the browser default font size and anchors every spacing token, every grid gap, and several layout primitives — grid columns, header height, <code>fr</code> fractions.</p>
+
+<p>To re-tune the entire system, override <code>--base-unit</code> at <code>:root</code>. All derived sizes scale proportionally without forking the library.</p>
+
+<pre><code>:root { --base-unit: 14px; }   /* tighter scale across the entire site */</code></pre>
+
+<h2>Scale</h2>
+
+<p>The scale is intentionally non-linear: small steps for micro-adjustments inside components, wider doublings for layout-scale spacing. Each step carries a semantic shift, not a gradual visual nudge.</p>
+
+<table>
+  <thead>
+    <tr><th>Token</th><th>Multiplier</th><th>Default value</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>--space-px</code></td>    <td>—</td>    <td>1px</td></tr>
+    <tr><td><code>--space-xs</code></td>    <td>0.25×</td><td>4px</td></tr>
+    <tr><td><code>--space-sm</code></td>    <td>0.5×</td> <td>8px</td></tr>
+    <tr><td><code>--space-md</code></td>    <td>1×</td>   <td>16px</td></tr>
+    <tr><td><code>--space-ml</code></td>    <td>1.5×</td> <td>24px</td></tr>
+    <tr><td><code>--space-lg</code></td>    <td>2×</td>   <td>32px</td></tr>
+    <tr><td><code>--space-xl</code></td>    <td>3×</td>   <td>48px</td></tr>
+    <tr><td><code>--space-xxl</code></td>   <td>6×</td>   <td>96px</td></tr>
+    <tr><td><code>--space-xxxl</code></td>  <td>12×</td>  <td>192px / 12rem</td></tr>
+    <tr><td><code>--space-xxxxl</code></td> <td>24×</td>  <td>384px / 24rem</td></tr>
+    <tr><td><code>--space-fr</code></td>    <td>—</td>    <td>one column of the global grid</td></tr>
+  </tbody>
+</table>
+
+<p>Special values: <code>--space-0</code> (0), <code>--space-auto</code> (auto), and percentage tokens for layout sizing — <code>--space-5</code>, <code>--space-10</code>, <code>--space-25</code>, <code>--space-50</code>, <code>--space-100</code>, and the rest in between.</p>
+
+<h2>Utility classes</h2>
+
+<p>For every token in the scale, the library generates utility classes for the common spacing properties. Replace <code>{token}</code> with any value from the scale (<code>xs</code>, <code>md</code>, <code>xxl</code>, <code>50</code>, …).</p>
+
+<dl class="dl-inline">
+  <dt><code>.padding-{token}</code></dt>            <dd>padding on all four sides</dd>
+  <dt><code>.padding-x-{token}</code></dt>          <dd>padding-left and -right</dd>
+  <dt><code>.padding-y-{token}</code></dt>          <dd>padding-top and -bottom</dd>
+  <dt><code>.padding-t/r/b/l-{token}</code></dt>    <dd>per-side padding</dd>
+  <dt><code>.margin-...</code></dt>                 <dd>same shape, for margin</dd>
+  <dt><code>.gap-...</code></dt>                    <dd>same shape, for flex / grid gap</dd>
+  <dt><code>.width-{token}</code></dt>              <dd>fixed width</dd>
+  <dt><code>.height-{token}</code></dt>             <dd>fixed height</dd>
+  <dt><code>.top/.right/.bottom/.left-{token}</code></dt> <dd>positional offsets</dd>
+</dl>
+
+<pre><code>&lt;div class="padding-md gap-x-lg margin-y-xl"&gt;</code></pre>
+
+<h2>Responsive prefixes</h2>
+
+<p>Every spacing utility is available with breakpoint prefixes: <code>mobile:</code>, <code>tablet:</code>, <code>desktop:</code>. Prefixed utilities apply only inside the named breakpoint and override the unprefixed value.</p>
+
+<pre><code>&lt;div class="padding-md mobile:padding-sm desktop:padding-lg"&gt;</code></pre>
+
+<h2>Aliases</h2>
+
+<p>Shorter aliases are available for the most-used spacing utilities, intended for finer typographic control inside content blocks. Each alias is one step smaller than its core counterpart — useful when the literal name would interrupt the reading flow of inline class lists.</p>
+
+<dl class="dl-inline">
+  <dt><code>.p-s</code></dt>   <dd>= <code>.padding-xs</code> (4px)</dd>
+  <dt><code>.p-m</code></dt>   <dd>= <code>.padding-sm</code> (8px)</dd>
+  <dt><code>.p-l</code></dt>   <dd>= <code>.padding-md</code> (16px)</dd>
+  <dt><code>.p-xl</code></dt>  <dd>= <code>.padding-lg</code> (32px)</dd>
+  <dt><code>.p-xxl</code></dt> <dd>= <code>.padding-xl</code> (48px)</dd>
+</dl>
+
+<p>The same shape works for <code>.m-*</code> (margin), <code>.gap-*</code>, <code>.w-*</code> (width), <code>.h-*</code> (height), with all per-side variants (<code>.pt-s</code>, <code>.mx-l</code>, <code>.gy-xl</code>, …).</p>
+
+<h2>Override</h2>
+
+<p>To customize a single token without forking the library, override it at <code>:root</code> or on a specific element:</p>
+
+<pre><code>:root {
+  --space-md: 20px;            /* tighten or expand the base step */
+  --space-xxxxl: 32rem;        /* taller list-pack columns */
+}</code></pre>
+
+<p>Components that consume tokens via custom properties accept inline overrides too:</p>
+
+<pre><code>&lt;div class="list-pack" style="--list-pack-height: var(--space-xxxxl);"&gt;</code></pre>
+
     </article>
   </div>
 </main>

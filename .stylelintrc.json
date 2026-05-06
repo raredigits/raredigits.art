@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss"
+  ],
+  "customSyntax": "postcss-scss",
+  "ignoreFiles": [
+    "assets/css/*.css",
+    "assets/css/*.css.map",
+    "assets/css/examples/**/*.css"
+  ],
+  "rules": {
+    "no-descending-specificity": null,
+    "selector-class-pattern": null,
+    "custom-property-pattern": null,
+    "scss/dollar-variable-pattern": null
+  }
+}

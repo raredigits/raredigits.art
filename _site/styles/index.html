@@ -166,10 +166,10 @@
         </div>
         <div class="padding-md">
             <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
-                <div class="col-span-1 uppercase padding-b-md">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:grid-cols-6 columns columns-6 mobile:columns-3">
+                <div class="col-span-11 mobile:col-span-full list-pack height-xxxxl">
                         <div class="list">
                             <span class="list-title">Settings</span>
                             <ul class="nav-list">
@@ -407,23 +407,47 @@
   </section>
 
     <article>
-      <div class="construction-notice">
-    <p>
-        <span style="font-size: 2em">🚧</span>
-    </p>
-    <p><strong>SECTION ON RECONSTRUCTION</strong></p>
-    <p>
-        <span class="white-bg">
-        Work on this section is in progress. Everything will be available soon.
-        </span>
-    </p>
-    <p>
-        <a href="">Statement on Reconstruction</a>
-    </p>
-    <p>
-        <span class="material-icons" style="font-size: 2em">construction</span>
-    </p>
+      <div class="meta-info">
+  /assets/css/rare.min.css
+  <p>
+      v0.6.10 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.6.10/rare.min.css">CDN</a> | 
+      <a href="/assets/css/rare.min.css">Download</a> <span class="material-icons">file_download</span>
+  </p>
 </div>
+<p>Rare Styles is a CSS library for clarity-first content and decision-grade interfaces. It is built for situations where attention is the scarcest resource: longreads, internal tools, dashboards, documentation, reporting. This is not a decoration kit and not a vehicle for visual fashion.</p>
+<h3>Visual decisions are not optional. They are the design.</h3>
+<p>Every screen makes choices for the reader: where to look, what to read first, what to ignore. General-purpose CSS frameworks defer those choices to the developer, who defers them to defaults. The result is interfaces that are technically clean and practically noisy.</p>
+<p>Rare Styles takes the opposite stance. It encodes <a href="/manifesto/">Rareism</a> — the discipline of removing what does not drive a decision — directly in its tokens, components and defaults. The library does not stay neutral on what attention should serve. It serves the signal.</p>
+<h2>Rare Styles</h2>
+<div class="sidenote-wrapper">
+  <div>
+    <p>Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a>. Its tokens, components and defaults carry the same philosophy: signal over noise, certainty over feature count, function over ornament.</p>
+  </div>
+  <div class="sidenote">
+    <h5>Built on 20 years of business-tooling expertise</h5>
+    <p>Rare Styles is authored by <a href="https://raredigits.io">Rare Digits Production</a>, a team that has spent two decades building instruments for businesses and decision-makers.</p>
+  </div>
+  <div>
+    <p>Most CSS frameworks ship a box of primitives and let the frontend assemble the answer. <strong>Rare Styles ships the answer.</strong> Visual decisions — typography, spacing, contrast, density, hierarchy — are already made and encoded in the defaults. Dark text on light background. Calm <a href="/kb/choosing-the-right-font/">typography</a>. Sufficient contrast. Deliberate density. The page you are reading uses these defaults with no overrides.</p>
+    <p>This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
+  </div>
+</div>
+<div class="highlight">Clarity is the default, not the goal.</div>
+<p>There is no light/dark toggle either — see the <a href="/styles/themes/">stance on theme switching</a> for why.</p>
+<p>Where a page genuinely calls for a different frame — a longread that wants a slower reading rhythm, or a data view that needs the full canvas — Rare Styles provides two opt-in body-level layout modes: <strong>Story</strong> for prose-heavy pages, <strong>Dashboard</strong> for data-heavy pages. Most pages need neither. The defaults already render correctly.</p>
+<p>The important part is not how many components ship. It is that each one has earned its place by serving a real reading or decision task.</p>
+<h2>Standard Architecture</h2>
+<p>The library is organized into layered modules: tokens, utilities, layout, typography, elements, components, navigation, decorations, layouts. You can ship the full bundle or import only the modules you need from the SCSS source.</p>
+<h3>Tokens</h3>
+<p>All design decisions live as CSS custom properties — colors, spacing, typography, shadows, motion, surfaces. Adapting Rare Styles to a constrained brand context is a matter of overriding tokens in <code>:root</code>, not forking the library. Brand identity (<code>--brand-color</code>) and decision-driving accents (<code>--signal</code>) are intentionally kept separate.</p>
+<h3>Components</h3>
+<p>Components split into two semantic families. <strong>Cards</strong> carry narrative content: article previews, persons, projects. <strong>Panels</strong> carry data and system content: KPIs, charts, status, settings. Both work in either layout mode. The choice is semantic, not stylistic.</p>
+<h3>Layouts</h3>
+<p>Story and Dashboard are opt-in body-level modes for pages whose content asks for a different frame. <strong>Story</strong> scales typography up and adjusts heading treatment for prose-heavy reading; <strong>Dashboard</strong> removes the sidebar and lifts text-width constraints for data-heavy composition. Most pages need neither — the defaults already render correctly. The visual language stays identical across all three states.</p>
+<h3>Professional Considerations</h3>
+<p>Rare Styles accounts for details that are often skipped in feature-driven frameworks: keyboard focus visibility, motion reduction, semantic markup, WCAG AA contrast, and a clear public API contract that distinguishes breaking from non-breaking change.</p>
+<p>The following sections cover each module in depth: tokens, layout, typography, colors, elements, components, navigation, decorations, utilities, layouts, and integration with sibling libraries — <a href="/scripts/">Rare Scripts</a> and <a href="/charts/">Rare Charts</a>.</p>
+
     </article>
   </div>
 </main>
