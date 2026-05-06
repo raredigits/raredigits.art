@@ -1,0 +1,942 @@
+<h1>Rare CSS — Backlog &amp; Roadmap</h1>
+<p><strong>Current version:</strong> <code>0.6.9</code> (early beta)
+<strong>Public release target:</strong> <code>1.0.0</code></p>
+<hr>
+<h2>Conventions</h2>
+<ul>
+<li><strong>Priority:</strong> P0 (blocker) · P1 (important) · P2 (nice-to-have)</li>
+<li><strong>Type:</strong> <code>bug</code> · <code>feat</code> · <code>a11y</code> · <code>perf</code> · <code>chore</code> · <code>docs</code> · <code>dx</code></li>
+<li><strong>Estimate:</strong> S (≤4 h) · M (1 day) · L (2–3 days) · XL (a week+)</li>
+</ul>
+<hr>
+<h1>Milestone <code>0.7.0</code> — Stabilization</h1>
+<p><strong>Goal:</strong> zero invalid CSS in the codebase, linter in place, fonts loaded properly, and the existing button module turned into a real button system.</p>
+<h2>Bugs (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>File / line</th>
+<th>Issue</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-001</code></td>
+<td>bug</td>
+<td><code>modules/typography/_fonts.scss:1–4</code></td>
+<td><code>@import url(...)</code> strings contain leftover HTML attribute fragments (<code>...&amp;display=swap&quot; rel=&quot;stylesheet'</code>). URLs are invalid.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-002</code></td>
+<td>bug</td>
+<td><code>rare.scss:11</code></td>
+<td><code>body { color: var(--text-color) }</code> — <code>--text-color</code> is not defined anywhere.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-003</code></td>
+<td>bug</td>
+<td><code>modules/bricks/_cards.scss:11</code></td>
+<td><code>.card-hover</code> references <code>--grey-lightest</code> (British spelling); only <code>--gray-lightest</code> exists.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-004</code></td>
+<td>bug</td>
+<td><code>modules/typography/_text-content.scss:130</code></td>
+<td><code>.warning { color: var(--warning-color) }</code> — variable is undefined.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-005</code></td>
+<td>bug</td>
+<td><code>modules/typography/_text-content.scss:138</code></td>
+<td><code>cite { color: var(--grey-dark) }</code> — British spelling, undefined.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-006</code></td>
+<td>bug</td>
+<td><code>modules/typography/_text-content.scss:211</code></td>
+<td><code>pre code { border-radius: none }</code> — invalid value, must be <code>0</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-007</code></td>
+<td>bug</td>
+<td><code>modules/utilities/_resets.scss:14–17</code></td>
+<td><code>.no-decoration:hover { background-color: none; color: none }</code> — both values invalid.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-008</code></td>
+<td>bug</td>
+<td><code>modules/utilities/_display.scss:32</code></td>
+<td><code>.text-wrap { white-space: wrap }</code> — <code>wrap</code> is not a valid value for <code>white-space</code>; should be <code>normal</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-009</code></td>
+<td>bug</td>
+<td><code>modules/align/_align.scss:31, 41</code></td>
+<td><code>.top { text-align: top }</code>, <code>.bottom { text-align: bottom }</code> — <code>text-align</code> does not accept <code>top</code>/<code>bottom</code>. Classes do nothing.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-010</code></td>
+<td>bug</td>
+<td><code>modules/align/_align.scss:14, 35</code></td>
+<td><code>.center-y</code> is declared twice with different definitions; the second overrides the first.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Quality infrastructure (P0–P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-020</code></td>
+<td>dx</td>
+<td>Add <strong>stylelint</strong> + <code>stylelint-config-recommended-scss</code> to <code>package.json</code>. Enable <code>declaration-property-value-no-unknown</code>, <code>no-invalid-position-at-import-rule</code>, <code>scss/no-global-function-names</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-021</code></td>
+<td>dx</td>
+<td>Run <code>stylelint --fix</code> across <code>modules/</code> after <code>CSS-001..010</code>. Wire as a pre-commit hook.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-022</code></td>
+<td>dx</td>
+<td>Document the build pipeline: how <code>rare.css</code> / <code>rare.min.css</code> are produced. Add <code>build:css</code>, <code>watch:css</code>, <code>lint:css</code> scripts to <code>package.json</code>.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h2>Buttons (P0)</h2>
+<p>The current <code>_buttons.scss</code> is a single style with no variants. Turn it into a proper button system before forms in <code>0.8.0</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-040</code></td>
+<td>feat</td>
+<td><code>_buttons.scss</code>: variants <code>primary</code> / <code>secondary</code> / <code>ghost</code> / <code>danger</code> / <code>link</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-041</code></td>
+<td>feat</td>
+<td>Sizes: <code>button-sm</code> / <code>button-md</code> (default) / <code>button-lg</code>. Driven by <code>--button-padding</code> and <code>--button-font-size</code> tokens.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-042</code></td>
+<td>feat</td>
+<td>Icon buttons (<code>button-icon</code>), buttons with leading/trailing icons, button-only-icon-square.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-043</code></td>
+<td>feat</td>
+<td>States: <code>:hover</code>, <code>:active</code>, <code>:focus-visible</code>, <code>:disabled</code>, <code>[aria-busy=&quot;true&quot;]</code> (loading spinner).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-044</code></td>
+<td>feat</td>
+<td><code>button-group</code> — segmented horizontal group with shared borders.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-045</code></td>
+<td>feat</td>
+<td><code>button-block</code> modifier (full-width).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-046</code></td>
+<td>feat</td>
+<td>Token surface: <code>--button-radius</code>, <code>--button-padding-x/y</code>, <code>--button-font-weight</code>, <code>--button-transition</code>.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Performance (P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-030</code></td>
+<td>perf</td>
+<td>Move Google Fonts out of <code>@import url()</code> into the page <code>&lt;head&gt;</code>: <code>&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;</code> + non-blocking stylesheet load.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-031</code></td>
+<td>perf</td>
+<td>Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1>Milestone <code>0.8.0</code> — Completeness</h1>
+<p><strong>Goal:</strong> close the functional gaps. After this version Rare CSS can build any common site, not just longreads. Two themes (<code>theme-story</code>, <code>theme-dashboard</code>) ship as preset bundles.</p>
+<h2>Forms (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-100</code></td>
+<td>feat</td>
+<td><code>modules/elements/_forms.scss</code>: base styles for <code>input[type=text/email/password/search/tel/url/number]</code>, <code>textarea</code>, <code>select</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-101</code></td>
+<td>feat</td>
+<td>Custom-styled <code>checkbox</code> and <code>radio</code> via <code>appearance: none</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-102</code></td>
+<td>feat</td>
+<td><code>&lt;label&gt;</code>, <code>.form-group</code>, <code>.form-row</code>, <code>.form-help</code>, <code>.form-error</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-103</code></td>
+<td>feat</td>
+<td>States: <code>:focus</code>, <code>:focus-visible</code>, <code>:disabled</code>, <code>:invalid</code>, <code>:valid</code>, <code>[aria-invalid]</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-104</code></td>
+<td>feat</td>
+<td><code>fieldset</code> / <code>legend</code> reset and styling.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-105</code></td>
+<td>feat</td>
+<td><code>range</code>, <code>color</code>, <code>file</code> inputs — minimal styling.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Accessibility (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-110</code></td>
+<td>a11y</td>
+<td>Global <code>:focus-visible</code> style (2px solid <code>var(--brand-color)</code>, 2px offset). Audit and remove any stray <code>outline: none</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-111</code></td>
+<td>a11y</td>
+<td><code>.sr-only</code> / <code>.visually-hidden</code> utilities (a11y-project recipe).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-112</code></td>
+<td>a11y</td>
+<td><code>@media (prefers-reduced-motion: reduce)</code> — neutralize transitions / animations.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-113</code></td>
+<td>a11y</td>
+<td>Skip-link styles (<code>.skip-to-content</code>).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-114</code></td>
+<td>a11y</td>
+<td>Contrast audit: <code>--gray-trans</code> (#888) on <code>--bg-color</code> (#f0f0f0) is ~3.5:1, fails WCAG AA for body text. Adjust <code>--text-color-light</code>.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h2>Token system (P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-121</code></td>
+<td>feat</td>
+<td>Semantic color layer on top of base palette: <code>--color-success</code> / <code>--color-danger</code> / <code>--color-warning</code> / <code>--color-info</code>. Migrate components to semantic tokens.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-122</code></td>
+<td>feat</td>
+<td>Surface tokens: <code>--surface-1</code> / <code>--surface-2</code> / <code>--surface-raised</code>, replacing direct <code>--gray-lightest</code> / <code>--gray-light</code> references inside components.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-123</code></td>
+<td>feat</td>
+<td>Motion tokens: <code>--ease-out</code>, <code>--ease-in-out</code>, <code>--duration-fast</code> (120 ms), <code>--duration-base</code> (200 ms), <code>--duration-slow</code> (320 ms).</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Architecture (P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-130</code></td>
+<td>feat</td>
+<td>Adopt <code>@layer reset, vendor, base, tokens, components, utilities</code> at the root. Removes the need for <code>!important</code> and locks cascade order.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-131</code></td>
+<td>chore</td>
+<td>Drop <code>!important</code> from <code>.mobile-hidden</code> once <code>CSS-130</code> lands.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-132</code></td>
+<td>chore</td>
+<td>Generate <code>:root</code> variables from a SCSS map. Eliminate the duplication between <code>:root { --gray: ... }</code> and <code>$base_colors: gray, ...</code>. Single source of truth.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-133</code></td>
+<td>chore</td>
+<td>Library prefix decision. Either keep classes unprefixed (and document the collision risk) or introduce <code>r-</code> / <code>rare-</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-134</code></td>
+<td>chore</td>
+<td><code>STYLEGUIDE.md</code> convention: components live in <code>bricks/</code> + <code>elements/</code>, utilities live in <code>layout/</code> + <code>utilities/</code> + <code>align/</code> + <code>decorations/</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-135</code></td>
+<td>feat</td>
+<td>Migrate margin/padding/border to logical properties (<code>margin-inline</code>, <code>padding-block</code>, <code>border-inline-start</code>). Out-of-the-box RTL/i18n support.</td>
+<td>L</td>
+</tr>
+</tbody>
+</table>
+<h2>Themes (P0)</h2>
+<p>Themes are preset bundles of tokens (and small component tweaks) opted in via a class on <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code>.</p>
+<h3><code>theme-story</code> — longread layout</h3>
+<p>Formalizes what the library already does well: serif headings, generous reading rhythm, narrow text column, decorative typography utilities.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-150</code></td>
+<td>feat</td>
+<td><code>modules/themes/_story.scss</code>. Gate via <code>.theme-story</code> on <code>&lt;html&gt;</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-151</code></td>
+<td>feat</td>
+<td>Token overrides: serif headings (Playfair), wider <code>--line-height</code>, narrow <code>--text-content-width</code>, larger <code>--font-size-xl/xxl</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-152</code></td>
+<td>feat</td>
+<td>Drop cap utility (<code>.dropcap</code> / <code>p.dropcap::first-letter</code>).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-153</code></td>
+<td>feat</td>
+<td>Section divider variants for narrative structure (<code>.story-divider</code>, <code>.story-section-break</code>).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-154</code></td>
+<td>feat</td>
+<td>Pull-quote variant tuned for Story (typographic, large, centered).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-155</code></td>
+<td>feat</td>
+<td>Promote sidenotes / captions / blockquote / handwritten utilities into the Story theme bundle (no code change — just documented as part of the preset).</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h3><code>theme-dashboard</code> — dense data UI</h3>
+<p>Compact layout, sans-serif everywhere, denser spacing scale, panel/grid components for KPIs and tables.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-160</code></td>
+<td>feat</td>
+<td><code>modules/themes/_dashboard.scss</code>. Gate via <code>.theme-dashboard</code> on <code>&lt;html&gt;</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-161</code></td>
+<td>feat</td>
+<td>Token overrides: sans-serif everywhere, smaller base font, tighter <code>--line-height</code>, denser spacing scale (<code>--space-md</code> → 12 px), reduced <code>--header-height</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-162</code></td>
+<td>feat</td>
+<td><code>panel</code> component — bordered card optimized for data (<code>.panel</code>, <code>.panel-header</code>, <code>.panel-body</code>, <code>.panel-footer</code>).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-163</code></td>
+<td>feat</td>
+<td>KPI / stat block (<code>.stat</code>, <code>.stat-label</code>, <code>.stat-value</code>, <code>.stat-delta-up/down</code>).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-164</code></td>
+<td>feat</td>
+<td>Dense table styles (<code>.table-dense</code>, zebra rows, sticky header, sortable indicator).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-165</code></td>
+<td>feat</td>
+<td>Status indicators (<code>.status-dot</code>, <code>.badge-success/warning/danger/info</code>). Uses semantic tokens from <code>CSS-121</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-166</code></td>
+<td>feat</td>
+<td>Toolbar / filter row (<code>.toolbar</code>, <code>.toolbar-section</code>, <code>.toolbar-spacer</code>).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-167</code></td>
+<td>feat</td>
+<td>Sidebar layout shell for dashboards (<code>.dashboard-shell</code> with collapsible sidebar + main + topbar grid).</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h3>Theme infrastructure</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-170</code></td>
+<td>feat</td>
+<td><code>modules/themes/_index.scss</code> forwarding both themes. Wire from <code>modules/_index.scss</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-171</code></td>
+<td>feat</td>
+<td>Allow combining themes with overrides at <code>:root</code> (token-level customization without forking the theme).</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Existing module review</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-140</code></td>
+<td>chore</td>
+<td>Reconsider the <code>.desktop:</code> prefix. <code>desktop</code> ≥ 1024 px is the default state, so <code>.desktop:col-span-6</code> equals <code>.col-span-6</code>. Either remove or scope it strictly to <code>(min-width: 1024px)</code> overrides.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-141</code></td>
+<td>chore</td>
+<td>Audit collision-prone names: <code>.left</code>, <code>.right</code>, <code>.top</code>, <code>.bottom</code>, <code>.bold</code>, <code>.italic</code>, <code>.note</code>, <code>.warning</code>, <code>.lead</code>. Resolve together with <code>CSS-133</code>.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1>Milestone <code>0.9.0</code> — Release Prep</h1>
+<p><strong>Goal:</strong> ship-ready package — documentation, integrations with sibling libraries, build/CI, and theming guidance.</p>
+<h2>Documentation (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-200</code></td>
+<td>docs</td>
+<td><code>README.md</code>: what the library is, how to install (CDN / npm / SCSS source), quick start, module map.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-201</code></td>
+<td>docs</td>
+<td><code>STYLEGUIDE.md</code>: naming conventions, utilities vs components, how to add a new module, how to add a new token.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-202</code></td>
+<td>docs</td>
+<td>Single-page demo (<code>assets/css/examples/index.html</code>) showing every component and utility. Doubles as a visual smoke test.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-203</code></td>
+<td>docs</td>
+<td>Per-module live examples: typography, grid, cards, forms, buttons, navigation, colors, themes.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-204</code></td>
+<td>docs</td>
+<td><code>CHANGELOG.md</code> starting at <code>0.7.0</code>, <a href="https://keepachangelog.com/">Keep a Changelog</a> format.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-205</code></td>
+<td>docs</td>
+<td><code>CONTRIBUTING.md</code>: forking, PRs, running the linter.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-206</code></td>
+<td>docs</td>
+<td><code>LICENSE</code> (MIT recommended) at the repo root.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-207</code></td>
+<td>docs</td>
+<td><strong>Theming guide</strong> (<code>THEMING.md</code>): how to build a custom theme by overriding base color tokens. Show a worked dark-theme example via <code>:root { --bg-color: #111; --primary-color: #f0f0f0; ... }</code> overrides — no built-in dark mode, just a recipe.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h2>Sibling-library integration (P0)</h2>
+<p>The CSS library lives next to two siblings: <code>scripts/</code> (collapsible, cookies, copy-to-clipboard, hamburger, search) and <code>charts/</code> (bar, line, map, multi, …). They already consume some classes; formalize the contract.</p>
+<h3>Scripts</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-230</code></td>
+<td>feat</td>
+<td>Audit <code>_collapsible.scss</code>, <code>_cookie-consent.scss</code>, <code>_search.scss</code>, <code>_hamburger.scss</code> against the actual JS in <code>scripts/</code>. Document required classes and ARIA hooks.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-231</code></td>
+<td>feat</td>
+<td>Add <code>copy-to-clipboard</code> styles (button, success/error toast). Currently the script has no companion CSS module.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-232</code></td>
+<td>docs</td>
+<td>One-page “Scripts integration” doc: which CSS classes each script needs, and which tokens it reads.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h3>Charts</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-240</code></td>
+<td>feat</td>
+<td><code>modules/charts/_index.scss</code> — base tokens for charts: <code>--chart-axis-color</code>, <code>--chart-grid-color</code>, <code>--chart-label-color</code>, <code>--chart-tooltip-bg</code>, <code>--chart-series-1..8</code>. Sourced from semantic tokens.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-241</code></td>
+<td>feat</td>
+<td>Common chart chrome styles: axis, gridlines, legend, tooltip, data labels. Used by every chart type in <code>charts/</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-242</code></td>
+<td>feat</td>
+<td>Map chart styles (<code>charts/map</code>): land/water fills, hover state, choropleth scale tokens.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-243</code></td>
+<td>feat</td>
+<td>Theme-aware chart palette: <code>theme-story</code> uses muted/editorial palette; <code>theme-dashboard</code> uses high-contrast functional palette.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-244</code></td>
+<td>docs</td>
+<td>“Charts integration” doc: how to wire any chart to the token system, how to override per-instance via CSS variables.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Distribution (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-211</code></td>
+<td>feat</td>
+<td>Tag releases in git (<code>v0.7.0</code>, <code>v0.8.0</code>, <code>v0.9.0</code>). Use semver strictly.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-213</code></td>
+<td>feat</td>
+<td>Validate source maps shipped with <code>rare.min.css</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-250</code></td>
+<td>feat</td>
+<td><strong>CDN + npm package</strong> — see dedicated track below (<code>CSS-T01</code>).</td>
+<td>L</td>
+</tr>
+</tbody>
+</table>
+<h2>Build / performance (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-210</code></td>
+<td>feat</td>
+<td><strong>PurgeCSS</strong> in the consuming site’s build. Expected reduction: 308 KB → 15–30 KB. The library itself stays full; purge happens downstream.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-218</code></td>
+<td>dx</td>
+<td>Visual regression on the demo page (Playwright + screenshot diff). Run in CI.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-219</code></td>
+<td>dx</td>
+<td>Lighthouse check on the demo page in CI: a11y ≥ 95, performance ≥ 95.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-220</code></td>
+<td>dx</td>
+<td>GitHub Actions workflow: lint + build + visual regression on every PR.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1>Dedicated Track — <code>CSS-T01</code> Public Distribution (CDN + npm)</h1>
+<p>Runs in parallel with <code>0.9.0</code>. Treated as a single deliverable so distribution does not block feature work.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-T01.1</code></td>
+<td>feat</td>
+<td>Define <code>dist/</code> layout: <code>dist/rare.css</code>, <code>dist/rare.min.css</code>, <code>dist/rare.css.map</code>, <code>dist/rare.min.css.map</code>, plus per-module SCSS sources under <code>dist/scss/</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-T01.2</code></td>
+<td>feat</td>
+<td>npm package <code>@raredigits/rare-css</code>. Set <code>main</code>, <code>style</code>, <code>sass</code>, <code>exports</code> fields. Mark <code>dist/</code> as the only published path via <code>files</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-T01.3</code></td>
+<td>feat</td>
+<td>GitHub Release pipeline: tag → build → publish to npm → push tag (jsDelivr/unpkg pick it up automatically).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-T01.4</code></td>
+<td>docs</td>
+<td>Install instructions for three flavors: <code>&lt;link&gt;</code> from jsDelivr, <code>npm install</code>, <code>@use</code> from SCSS source. Add to <code>README.md</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-T01.5</code></td>
+<td>feat</td>
+<td>Subresource Integrity (SRI) hashes published with each release for the CDN flavor.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-T01.6</code></td>
+<td>feat</td>
+<td><code>package.json</code> peerDependencies / engines: declare Node version, mark sass as a peer for source consumers.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-T01.7</code></td>
+<td>dx</td>
+<td>Pre-publish checks: <code>npm pack --dry-run</code> size budget (warn over 400 KB unminified), license check, no <code>node_modules</code> leakage.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1>Milestone <code>1.0.0</code> — Public Release</h1>
+<p><strong>Definition of done:</strong></p>
+<ul>
+<li>[ ] All P0/P1 tasks from <code>0.7</code> / <code>0.8</code> / <code>0.9</code> are closed</li>
+<li>[ ] Zero invalid CSS values (stylelint clean)</li>
+<li>[ ] Forms, buttons, focus-visible, sr-only, reduced-motion all shipped</li>
+<li>[ ] Semantic tokens (success/danger/warning/info, surfaces, motion)</li>
+<li>[ ] <code>theme-story</code> and <code>theme-dashboard</code> documented and demoed</li>
+<li>[ ] Cascade layers in place; no <code>!important</code></li>
+<li>[ ] Sibling-library integration finalized for <code>scripts/</code> and <code>charts/</code></li>
+<li>[ ] README + STYLEGUIDE + THEMING + CHANGELOG + LICENSE + demo page</li>
+<li>[ ] Theming guide includes a worked dark-theme example</li>
+<li>[ ] Bundle after purge ≤ 30 KB</li>
+<li>[ ] CDN + npm package published (<code>CSS-T01</code> complete)</li>
+<li>[ ] CI green: lint + visual regression + lighthouse</li>
+<li>[ ] <code>v1.0.0</code> tagged in git, GitHub Release notes published</li>
+</ul>
+<hr>
+<h1>Post-1.0 Backlog</h1>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-300</code></td>
+<td>feat</td>
+<td>Container queries (<code>@container</code>) for adaptive components</td>
+<td>Currently everything is <code>@media</code>; CQ is more useful for a component library</td>
+</tr>
+<tr>
+<td><code>CSS-301</code></td>
+<td>feat</td>
+<td>Animation library: <code>.fade-in</code>, <code>.slide-up</code>, micro-interactions</td>
+<td>Built on the <code>--ease-*</code> / <code>--duration-*</code> tokens</td>
+</tr>
+<tr>
+<td><code>CSS-302</code></td>
+<td>feat</td>
+<td>Extended color palette: 50–950 ramp per hue</td>
+<td>Currently flat: light/base/dark</td>
+</tr>
+<tr>
+<td><code>CSS-303</code></td>
+<td>feat</td>
+<td>Bundled icon set (or adapter for Lucide / Heroicons)</td>
+<td>Currently Material Icons loaded ad-hoc</td>
+</tr>
+<tr>
+<td><code>CSS-304</code></td>
+<td>feat</td>
+<td>Toast / Modal / Tooltip / Dropdown components</td>
+<td>HTML-only via <code>&lt;dialog&gt;</code> and <code>:popover-open</code> where possible</td>
+</tr>
+<tr>
+<td><code>CSS-305</code></td>
+<td>feat</td>
+<td>Tabs / Accordion / Stepper</td>
+<td>Same</td>
+</tr>
+<tr>
+<td><code>CSS-306</code></td>
+<td>feat</td>
+<td>RTL demo and tests after <code>CSS-135</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>CSS-307</code></td>
+<td>dx</td>
+<td>Figma plugin or <code>tokens.json</code> export (W3C Design Tokens)</td>
+<td>Designer round-trip</td>
+</tr>
+<tr>
+<td><code>CSS-308</code></td>
+<td>feat</td>
+<td>Additional themes: <code>theme-print</code>, <code>theme-presentation</code>, <code>theme-zen</code></td>
+<td>Built on the same theme infrastructure as Story / Dashboard</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>Release summary</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Codename</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0.6.9</code></td>
+<td><em>current</em></td>
+<td>Architecture, grid, typography, cards, navigation — bugs inside</td>
+</tr>
+<tr>
+<td><code>0.7.0</code></td>
+<td>Stabilization</td>
+<td>Bug fixes <code>CSS-001..010</code>, stylelint, build pipeline, fonts, real button system</td>
+</tr>
+<tr>
+<td><code>0.8.0</code></td>
+<td>Completeness</td>
+<td>Forms, a11y, semantic tokens, <code>@layer</code>, <code>theme-story</code>, <code>theme-dashboard</code></td>
+</tr>
+<tr>
+<td><code>0.9.0</code></td>
+<td>Release Prep</td>
+<td>Docs, demo, theming guide, scripts/charts integration, purge, CI</td>
+</tr>
+<tr>
+<td><code>CSS-T01</code></td>
+<td>(parallel)</td>
+<td>CDN + npm distribution</td>
+</tr>
+<tr>
+<td><code>1.0.0</code></td>
+<td>Public Release</td>
+<td>Stable public API</td>
+</tr>
+</tbody>
+</table>
