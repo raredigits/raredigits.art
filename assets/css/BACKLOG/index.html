@@ -1,6 +1,8 @@
-<h1>Rare CSS — Backlog &amp; Roadmap</h1>
-<p><strong>Current version:</strong> <code>0.6.9</code> (early beta)
+<h1>Rare Styles — Backlog &amp; Roadmap</h1>
+<p><strong>Current version:</strong> <code>0.6.10</code> (early beta)
 <strong>Public release target:</strong> <code>1.0.0</code></p>
+<p><strong>Positioning:</strong> <code>Rare Styles</code> is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.</p>
+<p><strong>Library positioning:</strong> Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a> — a CSS library for clarity-first content (Story) and decision-grade interfaces (Dashboard). Audience: a narrow circle of Rareism-aligned designers and developers. Not a Bootstrap/Tailwind competitor.</p>
 <hr>
 <h2>Conventions</h2>
 <ul>
@@ -121,6 +123,20 @@
 <td>Sass warns about interpolating unquoted color names (<code>black</code>, <code>white</code>, <code>blue</code>, etc.) into selectors. Generator is fragile and may emit invalid selectors.</td>
 <td>S</td>
 </tr>
+<tr>
+<td><code>CSS-015</code></td>
+<td>bug</td>
+<td><code>modules/navigation/header/_hamburger.scss:57–59</code></td>
+<td><code>.nav-hamburger ul</code> sets <code>padding-top</code>, then immediately resets it with <code>padding: 0</code>; the intended top spacing never applies.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-016</code></td>
+<td>bug</td>
+<td><code>modules/navigation/header/_header-container.scss:25, 28</code></td>
+<td><code>.header-logo</code> declares two <code>height</code> values; <code>height: 100%</code> overrides the calculated logo height, so the sizing rule is effectively dead.</td>
+<td>S</td>
+</tr>
 </tbody>
 </table>
 <h2>Quality infrastructure (P0–P1)</h2>
@@ -137,20 +153,38 @@
 <tr>
 <td><code>CSS-020</code></td>
 <td>dx</td>
-<td>Add <strong>stylelint</strong> + <code>stylelint-config-recommended-scss</code> to <code>package.json</code>. Enable <code>declaration-property-value-no-unknown</code>, <code>no-invalid-position-at-import-rule</code>, <code>scss/no-global-function-names</code>.</td>
+<td>Keep <strong>Stylelint</strong> on a Node-18-compatible stack: <code>stylelint@16</code>, <code>stylelint-config-standard-scss</code>, <code>postcss-scss</code>. Document <code>npm run lint:css</code> as the canonical CSS check.</td>
 <td>M</td>
 </tr>
 <tr>
 <td><code>CSS-021</code></td>
 <td>dx</td>
-<td>Run <code>stylelint --fix</code> across <code>modules/</code> after <code>CSS-001..010</code>. Wire as a pre-commit hook.</td>
+<td>Run <code>stylelint --fix</code> across <code>modules/</code> after <code>CSS-001..016</code>. Wire linting into the team workflow (pre-commit hook or CI check).</td>
 <td>S</td>
 </tr>
 <tr>
 <td><code>CSS-022</code></td>
 <td>dx</td>
-<td>Document the build pipeline: how <code>rare.css</code> / <code>rare.min.css</code> are produced. Add <code>build:css</code>, <code>watch:css</code>, <code>lint:css</code> scripts to <code>package.json</code>.</td>
+<td>Document the build pipeline: how <code>rare.css</code> / <code>rare.min.css</code> are produced, and how linting fits into it. Keep <code>build:css</code>, <code>watch:css</code>, <code>lint:css</code> scripts in <code>package.json</code>.</td>
 <td>M</td>
+</tr>
+<tr>
+<td><code>CSS-023</code></td>
+<td>chore</td>
+<td>Sweep low-risk Stylelint cleanup that is mostly mechanical: modern <code>rgb(... / ... )</code> notation, alpha percentages, hex shortening, empty-line normalization, operator spacing, argumentless mixin call style.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-024</code></td>
+<td>chore</td>
+<td>Triage duplicate/dead declarations reported by Stylelint and either remove them or document intent: <code>_icons.scss</code>, <code>_tags.scss</code>, <code>_header-container.scss</code>, <code>_grid.scss</code>, <code>_sidenotes.scss</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-025</code></td>
+<td>chore</td>
+<td>Clean up module hygiene issues reported by Stylelint: <code>@forward</code> without <code>.scss</code> extension in <code>navigation/_index.scss</code>, decide whether empty <code>special/_rare.scss</code> should be removed or kept as an intentional staging file.</td>
+<td>S</td>
 </tr>
 </tbody>
 </table>
@@ -235,6 +269,25 @@
 </tr>
 </tbody>
 </table>
+<h2>Layout utilities documentation (P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-072</code></td>
+<td>docs</td>
+<td><code>STYLEGUIDE.md</code> decision rule for picking between three column utilities: <code>.columns</code> (text-flow column-count, balance) vs <code>.grid-cols-fit</code> (auto-fit grid, no balancing) vs <code>.list-pack</code> (sequential packing, requires height). Concrete use cases per utility.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
 <h2>Distribution hygiene (P0)</h2>
 <table>
 <thead>
@@ -256,7 +309,7 @@
 </table>
 <hr>
 <h1>Milestone <code>0.8.0</code> — Completeness</h1>
-<p><strong>Goal:</strong> close the functional gaps. After this version Rare CSS can build any common site, not just longreads. Two themes (<code>theme-story</code>, <code>theme-dashboard</code>) ship as preset bundles.</p>
+<p><strong>Goal:</strong> close the functional gaps needed for the core Rareism use cases. After this version Rare Styles covers clarity-first longreads and decision-first data views via two opt-in body-level layout modes (<code>.layout-story</code>, <code>.layout-dashboard</code>), on top of the already-correct defaults.</p>
 <h2>Forms (P0)</h2>
 <table>
 <thead>
@@ -378,6 +431,12 @@
 <td>Motion tokens: <code>--ease-out</code>, <code>--ease-in-out</code>, <code>--duration-fast</code> (120 ms), <code>--duration-base</code> (200 ms), <code>--duration-slow</code> (320 ms).</td>
 <td>S</td>
 </tr>
+<tr>
+<td><code>CSS-124</code></td>
+<td>feat</td>
+<td><strong><code>--signal</code> token</strong> separate from <code>--brand-color</code>. <code>--brand-color</code> stays for brand identity (link highlights, decorative brand marks). <code>--signal</code> is reserved for attention/action-driving accents (primary buttons, critical-state indicators, threshold violations, focus-visible). Migrate <code>button-primary</code>, <code>:focus-visible</code> outline, status-critical, KPI-delta-up/down to <code>--signal</code>. Codifies the Rareism distinction between identity and signal in the token layer itself.</td>
+<td>M</td>
+</tr>
 </tbody>
 </table>
 <h2>Architecture (P1)</h2>
@@ -427,12 +486,24 @@
 <td>Migrate margin/padding/border to logical properties (<code>margin-inline</code>, <code>padding-block</code>, <code>border-inline-start</code>). Out-of-the-box RTL/i18n support.</td>
 <td>L</td>
 </tr>
+<tr>
+<td><code>CSS-136</code></td>
+<td>chore</td>
+<td>Rework the large-end spacing scale in <code>assets/css/modules/layout/_spacing.scss</code>: replace sizes above <code>xl</code> with semantically clearer names and values, so the token system communicates intent instead of just “bigger than bigger”.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-137</code></td>
+<td>chore</td>
+<td>Reassess <code>assets/css/modules/layout/_spacing-aliases.scss</code>: current aliases can mislead consumers about what is canonical versus shorthand. Clarify, reduce, or restructure the alias layer.</td>
+<td>M</td>
+</tr>
 </tbody>
 </table>
-<h2>Themes (P0)</h2>
-<p>Themes are preset bundles of tokens (and small component tweaks) opted in via a class on <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code>.</p>
-<h3><code>theme-story</code> — longread layout</h3>
-<p>Formalizes what the library already does well: serif headings, generous reading rhythm, narrow text column, decorative typography utilities.</p>
+<h2>Layouts (P0)</h2>
+<p>Story and Dashboard are <strong>opt-in body-level layout modes</strong>, not visual themes. Most pages need neither — the defaults already render correctly. Layouts only kick in when a page genuinely calls for a different frame: a longread that wants slower reading rhythm, or a data view that needs the full canvas. They are bundles of <strong>token and layout-shell adjustments only</strong> — they do not own components. All UI primitives (panels, stats, tables, toolbars, cards, buttons) are general-purpose and live in <code>bricks/</code> + <code>elements/</code>. They work in any layout; the layout just sets the typography/density/sidebar context.</p>
+<h3><code>layout-story</code> — longread mode</h3>
+<p>For prose-heavy pages: scaled-up serif typography, adjusted heading treatment, generous reading rhythm, narrow text column, left sidebar for navigation, rigid text-element constraints to protect prose.</p>
 <table>
 <thead>
 <tr>
@@ -446,13 +517,13 @@
 <tr>
 <td><code>CSS-150</code></td>
 <td>feat</td>
-<td><code>modules/themes/_story.scss</code>. Gate via <code>.theme-story</code> on <code>&lt;html&gt;</code>.</td>
+<td><code>modules/layouts/_story.scss</code>. Gate via <code>.layout-story</code> on <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code>.</td>
 <td>S</td>
 </tr>
 <tr>
 <td><code>CSS-151</code></td>
 <td>feat</td>
-<td>Token overrides: serif headings (Playfair), wider <code>--line-height</code>, narrow <code>--text-content-width</code>, larger <code>--font-size-xl/xxl</code>.</td>
+<td>Token overrides: serif headings (Playfair), scaled-up <code>--font-size-xl/xxl</code>, adjusted heading treatment, wider <code>--line-height</code>, narrow <code>--text-content-width</code>. Sidebar enabled. Rigid <code>max-width</code> on <code>article p/ul/ol</code>.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -476,13 +547,13 @@
 <tr>
 <td><code>CSS-155</code></td>
 <td>feat</td>
-<td>Promote sidenotes / captions / blockquote / handwritten utilities into the Story theme bundle (no code change — just documented as part of the preset).</td>
+<td>Promote sidenotes / captions / blockquote / handwritten utilities as part of the documented Story preset (no code change — just docs grouping).</td>
 <td>S</td>
 </tr>
 </tbody>
 </table>
-<h3><code>theme-dashboard</code> — dense data UI</h3>
-<p>Compact layout, sans-serif everywhere, denser spacing scale, panel/grid components for KPIs and tables.</p>
+<h3><code>layout-dashboard</code> — relaxed shell for decision surfaces</h3>
+<p><strong>Minimal delta from the defaults:</strong> no left sidebar; no rigid <code>max-width</code> constraints on text elements (so panels and grids can expand to full width). Everything else (typography, spacing scale, colors, components) is identical to the library default. The purpose of Dashboard is not endless monitoring or generic admin CRUD, but focused display of decision-driving metrics, statuses, comparisons, and charts. Components like <code>panel</code>, <code>stat</code>, <code>table-dense</code>, <code>toolbar</code> are NOT layout-gated — they work without any layout class too (e.g. a KPI panel embedded inside a Story longread, or in plain documentation).</p>
 <table>
 <thead>
 <tr>
@@ -496,54 +567,24 @@
 <tr>
 <td><code>CSS-160</code></td>
 <td>feat</td>
-<td><code>modules/themes/_dashboard.scss</code>. Gate via <code>.theme-dashboard</code> on <code>&lt;html&gt;</code>.</td>
+<td><code>modules/layouts/_dashboard.scss</code>. Gate via <code>.layout-dashboard</code> on <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code>.</td>
 <td>S</td>
 </tr>
 <tr>
 <td><code>CSS-161</code></td>
 <td>feat</td>
-<td>Token overrides: sans-serif everywhere, smaller base font, tighter <code>--line-height</code>, denser spacing scale (<code>--space-md</code> → 12 px), reduced <code>--header-height</code>.</td>
-<td>M</td>
+<td>Sidebar removal: nullify <code>.sidebar</code> layout slot, expand main content to full grid width.</td>
+<td>S</td>
 </tr>
 <tr>
 <td><code>CSS-162</code></td>
 <td>feat</td>
-<td><code>panel</code> component — bordered card optimized for data (<code>.panel</code>, <code>.panel-header</code>, <code>.panel-body</code>, <code>.panel-footer</code>).</td>
-<td>M</td>
-</tr>
-<tr>
-<td><code>CSS-163</code></td>
-<td>feat</td>
-<td>KPI / stat block (<code>.stat</code>, <code>.stat-label</code>, <code>.stat-value</code>, <code>.stat-delta-up/down</code>).</td>
-<td>M</td>
-</tr>
-<tr>
-<td><code>CSS-164</code></td>
-<td>feat</td>
-<td>Dense table styles (<code>.table-dense</code>, zebra rows, sticky header, sortable indicator).</td>
-<td>M</td>
-</tr>
-<tr>
-<td><code>CSS-165</code></td>
-<td>feat</td>
-<td>Status indicators (<code>.status-dot</code>, <code>.badge-success/warning/danger/info</code>). Uses semantic tokens from <code>CSS-121</code>.</td>
+<td>Relax text-element constraints: drop <code>max-width</code> on <code>article p/ul/ol</code>, allow content to fill the grid.</td>
 <td>S</td>
-</tr>
-<tr>
-<td><code>CSS-166</code></td>
-<td>feat</td>
-<td>Toolbar / filter row (<code>.toolbar</code>, <code>.toolbar-section</code>, <code>.toolbar-spacer</code>).</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-167</code></td>
-<td>feat</td>
-<td>Sidebar layout shell for dashboards (<code>.dashboard-shell</code> with collapsible sidebar + main + topbar grid).</td>
-<td>M</td>
 </tr>
 </tbody>
 </table>
-<h3>Theme infrastructure</h3>
+<h3>Layout infrastructure</h3>
 <table>
 <thead>
 <tr>
@@ -557,14 +598,133 @@
 <tr>
 <td><code>CSS-170</code></td>
 <td>feat</td>
-<td><code>modules/themes/_index.scss</code> forwarding both themes. Wire from <code>modules/_index.scss</code>.</td>
+<td><code>modules/layouts/_index.scss</code> forwarding both layouts. Wire from <code>modules/_index.scss</code>.</td>
 <td>S</td>
 </tr>
 <tr>
 <td><code>CSS-171</code></td>
 <td>feat</td>
-<td>Allow combining themes with overrides at <code>:root</code> (token-level customization without forking the theme).</td>
+<td>Allow combining a layout with token overrides at <code>:root</code> (brand-context customization without forking the layout).</td>
 <td>S</td>
+</tr>
+<tr>
+<td><code>CSS-172</code></td>
+<td>docs</td>
+<td><code>STYLEGUIDE.md</code> section: layouts set page-level context, not components. Document which existing modules are layout-aware (typography, layout shell) and which are layout-agnostic (everything else). Make explicit: defaults are not a layout — pages without a <code>.layout-*</code> class get the canonical visual rendering.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Cross-layout components — Dashboard primitives (P0)</h2>
+<p>Functional UI primitives that work in any layout (Story, Dashboard, or no layout class at all). Deliberately not gated by <code>.layout-dashboard</code> so a Story article can embed them (e.g. a KPI panel inside a longread, a status indicator in plain documentation).</p>
+<h3>Panel — the data-surface counterpart to <code>card</code></h3>
+<p>Currently <code>.card</code> is overloaded for both narrative content (article preview, person, project) and functional content (KPI, status, chart wrapper). Split into two primitives with distinct semantics.</p>
+<table>
+<thead>
+<tr>
+<th>Primitive</th>
+<th>Semantics</th>
+<th>Surface</th>
+<th>Use cases</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.card</code> (existing)</td>
+<td>Authorial / narrative / human</td>
+<td>Soft, no rigid frame</td>
+<td>Article preview, person, project, pricing</td>
+</tr>
+<tr>
+<td><code>.panel</code> (new)</td>
+<td>Data / functional / system</td>
+<td>Structured: header / body / footer</td>
+<td>KPI, chart wrapper, status block, settings, log</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-180</code></td>
+<td>feat</td>
+<td><code>modules/bricks/_panels.scss</code>: <code>.panel</code>, <code>.panel-header</code>, <code>.panel-body</code>, <code>.panel-footer</code>, <code>.panel-grid</code> (multi-panel arrangement). Theme-agnostic.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-181</code></td>
+<td>chore</td>
+<td>Rename data-row patterns currently misfiled under <code>.card</code>: <code>.card-dashboard-bordered</code> → <code>.panel-bordered</code>; <code>.card-row-bordered</code> → <code>.panel-row</code>; <code>.card-row-bordered-item</code> → <code>.panel-row-item</code>. Old names kept as deprecated aliases (with SCSS <code>@warn</code>) until <code>1.0.0</code>. Keeps backward compat for current site.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-182</code></td>
+<td>docs</td>
+<td>STYLEGUIDE: <code>card</code> vs <code>panel</code> decision rule. Narrative / authorial content → <code>.card</code>. Data / system content → <code>.panel</code>. Concrete examples for each.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-183</code></td>
+<td>feat</td>
+<td><code>.panel-flush</code> modifier: removes outer padding so the panel docks flush against parent (used when nested in another panel or grid cell).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-183a</code></td>
+<td>chore</td>
+<td><strong>Site migration</strong>: replace <code>.card</code> usages on raredigits.art that wrap Dashboard-style blocks (KPI, charts, status, settings) with <code>.panel</code>. Audit <code>_includes/</code>, <code>_layouts/</code>, <code>_posts/</code>, <code>kb/</code>, <code>pricing/</code>, <code>charts/</code>, <code>_drafts/</code>. Old aliases keep the site working during the transition; this task removes the technical debt before <code>1.0.0</code>.</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<h3>Other primitives (layout-agnostic)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-184</code></td>
+<td>feat</td>
+<td><code>modules/bricks/_stats.scss</code>: KPI block — <code>.stat</code>, <code>.stat-label</code>, <code>.stat-value</code>, <code>.stat-delta-up/down</code> (uses <code>--signal</code> for emphasis, semantic tokens for delta direction).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-185</code></td>
+<td>feat</td>
+<td>Dense table styles in <code>modules/typography/_tables.scss</code>: <code>.table-dense</code>, zebra rows, sticky header, sortable indicator.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-186</code></td>
+<td>feat</td>
+<td>Status indicators in <code>modules/decorations/</code>: <code>.status-dot</code>, <code>.badge-success/warning/danger/info</code>. Uses semantic tokens from <code>CSS-121</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-187</code></td>
+<td>feat</td>
+<td><code>modules/elements/_toolbar.scss</code>: <code>.toolbar</code>, <code>.toolbar-section</code>, <code>.toolbar-spacer</code>. Used for filter rows, dashboard headers, panel actions.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-188</code></td>
+<td>feat</td>
+<td><code>modules/layout/_shell.scss</code>: <code>.app-shell</code> — opt-in layout shell with topbar + main + optional sidebar. Used by dashboard pages but not gated by <code>layout-dashboard</code>.</td>
+<td>M</td>
 </tr>
 </tbody>
 </table>
@@ -591,6 +751,18 @@
 <td>Audit collision-prone names: <code>.left</code>, <code>.right</code>, <code>.top</code>, <code>.bottom</code>, <code>.bold</code>, <code>.italic</code>, <code>.note</code>, <code>.warning</code>, <code>.lead</code>. Resolve together with <code>CSS-133</code>.</td>
 <td>S</td>
 </tr>
+<tr>
+<td><code>CSS-142</code></td>
+<td>docs</td>
+<td>STYLEGUIDE section <strong>“Decoration as attention management”</strong>: each decoration utility (border / shadow / separator / icon / image / skeleton) gets a one-line Rareism rationale — <em>what</em> attention it manages and <em>when</em> to reach for it. The Rareism stance: decorations are functional tools for guiding the eye; the standalone “decorator as creative specialist” role is obsolete.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-143</code></td>
+<td>docs</td>
+<td>STYLEGUIDE: document <code>modules/special/_rare.scss</code> as a <strong>staging area</strong> for non-universal classes that have not yet earned a place in a specialized module. Promotion path: when a class generalizes, it migrates out into the appropriate module and is removed from <code>_rare.scss</code>.</td>
+<td>S</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -610,7 +782,19 @@
 <tr>
 <td><code>CSS-200</code></td>
 <td>docs</td>
-<td><code>README.md</code>: what the library is, how to install (CDN / npm / SCSS source), quick start, module map.</td>
+<td><code>README.md</code>: what the library is (Rareism instrument, narrow audience), how to install (CDN / npm / SCSS source), quick start, module map. Tone: assumes reader has read the manifesto; links to it rather than re-explaining. No “beginners welcome” copy — this is a principled tool, not a mass-market framework.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-200a</code></td>
+<td>docs</td>
+<td><strong><code>/styles/index.md</code></strong> — main library landing page on raredigits.art. Positioning (&quot;ships the answer, not primitives&quot;), manifesto link, two opt-in layouts (Story / Dashboard) mentioned as a flexibility feature — not the headline, install snippets, link to docs site (<code>/docs/</code>). Replaces the current placeholder.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-200b</code></td>
+<td>docs</td>
+<td><strong><code>/manifesto/value/</code></strong> — fill the empty page. Articulates the value proposition of Digital Rareism: who it’s for, what problem it solves, why narrow focus over mass appeal. Indirectly serves as the library’s manifesto-side rationale.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -628,8 +812,8 @@
 <tr>
 <td><code>CSS-203</code></td>
 <td>docs</td>
-<td>Per-module live examples: typography, grid, cards, forms, buttons, navigation, colors, themes.</td>
-<td>L</td>
+<td><s>Per-module live examples</s> — subsumed by the <code>/styles/</code> content structure (<code>CSS-282..295</code>). Examples now live on each docs page.</td>
+<td>—</td>
 </tr>
 <tr>
 <td><code>CSS-204</code></td>
@@ -640,7 +824,7 @@
 <tr>
 <td><code>CSS-205</code></td>
 <td>docs</td>
-<td><strong><code>CONTRIBUTING.md</code></strong> — full contributor guide. Sections: quick start (clone/install/dev server), project structure (link to STYLEGUIDE), branching model, <a href="https://www.conventionalcommits.org/">Conventional Commits</a> convention, PR process (one concern per PR, backlog-ID in title, CHANGELOG update), <strong>public API definition</strong> (which classes / CSS variables / SCSS exports / theme names / dist filenames are public — i.e. require MAJOR bump to break), bug-report template, feature-proposal template, <strong>release process for maintainers</strong> (version bump → CHANGELOG → git tag → GitHub Release → npm publish), link to <code>CODE_OF_CONDUCT.md</code>.</td>
+<td><strong><code>CONTRIBUTING.md</code></strong> — full contributor guide. Sections: quick start (clone/install/dev server), project structure (link to STYLEGUIDE), branching model, <a href="https://www.conventionalcommits.org/">Conventional Commits</a> convention, PR process (one concern per PR, backlog-ID in title, CHANGELOG update), <strong>public API definition</strong> (which classes / CSS variables / SCSS exports / layout class names / dist filenames are public — i.e. require MAJOR bump to break), bug-report template, feature-proposal template, <strong>release process for maintainers</strong> (version bump → CHANGELOG → git tag → GitHub Release → npm publish), link to <code>CODE_OF_CONDUCT.md</code>.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -652,7 +836,7 @@
 <tr>
 <td><code>CSS-207</code></td>
 <td>docs</td>
-<td><strong>Theming guide</strong> (<code>THEMING.md</code>): how to build a custom theme by overriding base color tokens. Show a worked dark-theme example via <code>:root { --bg-color: #111; --primary-color: #f0f0f0; ... }</code> overrides — no built-in dark mode, just a recipe.</td>
+<td><strong>Theming guide</strong> (<code>THEMING.md</code>): how to override base tokens for a constrained brand context. Show a worked dark-mode example via <code>:root { --bg-color: #111; --primary-color: #f0f0f0; ... }</code> overrides — no built-in dark mode, just a recipe. <strong>Distinct from layouts</strong>: this is the brand-override path (color/token overrides), not the Story/Dashboard mechanism (page-level shell). Cross-link to <code>/styles/themes/</code> for the no-theme-switching stance.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -663,6 +847,142 @@
 </tr>
 </tbody>
 </table>
+<h2>Documentation site <code>/styles/</code> — content structure (P0)</h2>
+<p>Public docs live under <code>/styles/</code> on raredigits.art. Organized <strong>by user task</strong>, not by SCSS file structure — readers shouldn’t need to know that <code>align/_align.scss</code> and <code>align/_flex.scss</code> are separate files. Each page combines: hand-written narrative (the <em>why</em>) + KSS-extracted class reference (the <em>what</em>) + live HTML examples (the <em>how</em>) + “see also” links to related tokens, components and integrations.</p>
+<p><strong>Existing folder reconciliation</strong> — current <code>/styles/</code> already has stub folders that mostly map to this plan. The mapping below notes renames (<code>usage</code> → <code>getting-started</code>, <code>bricks</code> → <code>components</code>) and merges (<code>alignment</code> + <code>spaces</code> → <code>utilities</code>/<code>layout</code>). <code>/styles/idea/</code> and <code>/styles/modules/</code> are evaluated in <code>CSS-280</code>.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Path</th>
+<th>Replaces / merges</th>
+<th>Scope</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-280</code></td>
+<td>—</td>
+<td>—</td>
+<td><strong>Restructure plan</strong>: review existing 14 folders, decide renames/merges/removals (<code>idea/</code> and <code>modules/</code> audit included), produce final IA before writing content. Output: a one-page proposal in <code>STYLEGUIDE.md</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-281</code></td>
+<td><code>/styles/</code></td>
+<td>existing</td>
+<td>Library landing page — <strong>done in <code>CSS-200a</code></strong>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>CSS-282</code></td>
+<td><code>/styles/getting-started/</code></td>
+<td>renames <code>/styles/usage/</code></td>
+<td>Install (CDN / npm / SCSS), first component, opting into a layout (<code>.layout-story</code> / <code>.layout-dashboard</code>), Hello World, checklist for production use (purge, fonts, focus styles).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-283</code></td>
+<td><code>/styles/tokens/</code></td>
+<td>new</td>
+<td>Auto-generated token reference from <code>dist/tokens.json</code> (depends on <code>CSS-271</code>). Categorized: color / spacing / typography / shadow / motion / surface. Includes the <code>--brand-color</code> vs <code>--signal</code> distinction explainer.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-284</code></td>
+<td><code>/styles/layout/</code></td>
+<td>existing + merges <code>/styles/spaces/</code></td>
+<td>Grid, containers, spacing scale, <code>fr</code> system, breakpoints, responsive prefixes (<code>mobile:</code> / <code>tablet:</code> / <code>desktop:</code>), <code>app-shell</code>.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-285</code></td>
+<td><code>/styles/typography/</code></td>
+<td>existing</td>
+<td>Fonts, headings, body, lists (incl. <code>&lt;dl&gt;</code>), code, sidenotes, blockquote, captions, tables, text-content widths. Reads as a Story-style page by example.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-286</code></td>
+<td><code>/styles/colors/</code></td>
+<td>existing</td>
+<td>Palette overview, base / brand / supporting / blue families, <code>--signal</code> vs <code>--brand-color</code>, semantic tokens (<code>success</code> / <code>danger</code> / <code>warning</code> / <code>info</code>), link / text / bg utilities, contrast notes.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-287</code></td>
+<td><code>/styles/elements/</code></td>
+<td>new</td>
+<td>Buttons (variants, sizes, states, button-group, button-block), forms (inputs, checkbox, radio, select, validation states), toolbar.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-288</code></td>
+<td><code>/styles/components/</code></td>
+<td>renames <code>/styles/bricks/</code></td>
+<td>The “what to reach for” page for product builders. Cards vs panels (decision rule + examples), stats, status indicators, badges, dense tables.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-289</code></td>
+<td><code>/styles/navigation/</code></td>
+<td>existing</td>
+<td>Header, sidebar, hamburger, search, tags, links, footer.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-290</code></td>
+<td><code>/styles/decorations/</code></td>
+<td>existing</td>
+<td>Borders, shadows, separators, icons, images, skeleton — each block opens with its Rareism rationale (ties to <code>CSS-142</code>).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-291</code></td>
+<td><code>/styles/utilities/</code></td>
+<td>existing + merges <code>/styles/alignment/</code></td>
+<td>Display, alignment, flex, position, <code>sr-only</code>, <code>no-decoration</code>, <code>no-scrollbar</code>, resets.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-292a</code></td>
+<td><code>/styles/layouts/</code></td>
+<td>new</td>
+<td>Story and Dashboard body-level modes: when each applies, what changes vs the defaults, mixed-content examples (KPI panel inside Story, Story essay inside Dashboard shell). Explicit: defaults are not a layout — pages without a <code>.layout-*</code> class get the canonical rendering.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-292b</code></td>
+<td><code>/styles/themes/</code></td>
+<td>existing</td>
+<td>Keep the existing no-theme-switching stance. Add a pointer to the brand-override recipe from <code>THEMING.md</code> (<code>CSS-207</code>) for cases where a brand mandates a different palette. Rare cross-link to <code>/styles/layouts/</code> to clarify that themes ≠ layouts.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-293</code></td>
+<td><code>/styles/integration/</code></td>
+<td>new</td>
+<td>Wiring with Rare Scripts and Rare Charts. Per-script class/ARIA contracts, chart token consumption (depends on <code>CSS-230..244</code>).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-294</code></td>
+<td><code>/styles/reference/</code></td>
+<td>new (or absorbs <code>/styles/modules/</code>)</td>
+<td>Public API contract, semver policy, breaking-change rules, full module map, migration notes between major versions. Cross-link to <code>CONTRIBUTING.md</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-295</code></td>
+<td><code>/styles/special/</code></td>
+<td>existing</td>
+<td>Cookie consent, collapsible, mockups, construction notice — narrow-purpose components that don’t fit other sections. Document as “opt-in for specific page types”.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<p><code>CSS-203</code> (per-module live examples) is now <strong>subsumed</strong> by <code>CSS-282..295</code> — each docs page hosts its own live examples. Keep <code>CSS-202</code> (single-page demo) as the smoke-test artifact, separate from the docs site.</p>
 <h2>Documentation infrastructure — KSS + auto-extracted reference (P0)</h2>
 <p>Hundreds of classes already exist; hand-written docs would rot immediately. The plan: <strong>annotate sources with <a href="https://github.com/kss-node/kss-node">KSS</a>-style comments</strong>, generate the class reference automatically, and pair it with hand-curated examples. Token reference is fully auto-generated from <code>:root</code> (see “Token pipeline” below).</p>
 <table>
@@ -678,7 +998,7 @@
 <tr>
 <td><code>CSS-260</code></td>
 <td>dx</td>
-<td>Set up the docs site. Recommended stack: <strong>kss-node</strong> for class extraction + <strong>Eleventy</strong> (or Astro) shell for layout, navigation, search, theming with <code>theme-story</code>. Output to <code>docs/</code> (separate from <code>dist/</code>). Dev server with hot reload.</td>
+<td>Set up the docs site. Recommended stack: <strong>kss-node</strong> for class extraction + <strong>Eleventy</strong> (or Astro) shell for navigation, search, layout. The docs site itself is rendered with <code>.layout-story</code> (it's prose-heavy reading). Output to <code>docs/</code> (separate from <code>dist/</code>). Dev server with hot reload.</td>
 <td>L</td>
 </tr>
 <tr>
@@ -720,7 +1040,7 @@
 <tr>
 <td><code>CSS-267</code></td>
 <td>docs</td>
-<td>KSS-annotate themes (<code>theme-story</code>, <code>theme-dashboard</code>) with side-by-side previews.</td>
+<td>KSS-annotate layouts (<code>.layout-story</code>, <code>.layout-dashboard</code>) with side-by-side previews — including the no-layout default state for comparison.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -852,7 +1172,7 @@
 <tr>
 <td><code>CSS-243</code></td>
 <td>feat</td>
-<td>Theme-aware chart palette: <code>theme-story</code> uses muted/editorial palette; <code>theme-dashboard</code> uses high-contrast functional palette.</td>
+<td>Layout-aware chart palette: <code>.layout-story</code> uses muted/editorial palette; <code>.layout-dashboard</code> uses high-contrast functional palette. Default (no layout class) uses the high-contrast functional palette as well.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -953,7 +1273,7 @@
 <tr>
 <td><code>CSS-T01.2</code></td>
 <td>feat</td>
-<td>npm package <code>@raredigits/rare-css</code>. Set <code>main</code>, <code>style</code>, <code>sass</code>, <code>exports</code> fields. Mark <code>dist/</code> as the only published path via <code>files</code>.</td>
+<td>npm package <strong><code>@raredigits/rare-styles</code></strong> (matches the canonical library name). Set <code>main</code>, <code>style</code>, <code>sass</code>, <code>exports</code> fields. Mark <code>dist/</code> as the only published path via <code>files</code>. The compiled file stays <code>rare.css</code> / <code>rare.min.css</code> for continuity with existing consumers.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -995,8 +1315,8 @@
 <li>[ ] All P0/P1 tasks from <code>0.7</code> / <code>0.8</code> / <code>0.9</code> are closed</li>
 <li>[ ] Zero invalid CSS values (stylelint clean)</li>
 <li>[ ] Forms, buttons, focus-visible, sr-only, reduced-motion all shipped</li>
-<li>[ ] Semantic tokens (success/danger/warning/info, surfaces, motion)</li>
-<li>[ ] <code>theme-story</code> and <code>theme-dashboard</code> documented and demoed</li>
+<li>[ ] Semantic tokens (success/danger/warning/info, surfaces, motion) + <code>--signal</code> separate from <code>--brand-color</code></li>
+<li>[ ] <code>.layout-story</code> and <code>.layout-dashboard</code> documented and demoed against the no-layout default state; layout-agnostic primitives (panel, stat, table-dense, toolbar, app-shell) work in either layout and without any layout class</li>
 <li>[ ] Cascade layers in place; no <code>!important</code></li>
 <li>[ ] Sibling-library integration finalized for <code>scripts/</code> and <code>charts/</code></li>
 <li>[ ] README + STYLEGUIDE + CONTRIBUTING + CODE_OF_CONDUCT + THEMING + CHANGELOG + LICENSE + demo page</li>
@@ -1071,8 +1391,8 @@
 <tr>
 <td><code>CSS-308</code></td>
 <td>feat</td>
-<td>Additional themes: <code>theme-print</code>, <code>theme-presentation</code>, <code>theme-zen</code></td>
-<td>Built on the same theme infrastructure as Story / Dashboard</td>
+<td>Additional layouts: <code>.layout-print</code>, <code>.layout-presentation</code>, <code>.layout-zen</code></td>
+<td>Built on the same layout infrastructure as Story / Dashboard</td>
 </tr>
 </tbody>
 </table>
@@ -1095,12 +1415,12 @@
 <tr>
 <td><code>0.7.0</code></td>
 <td>Stabilization</td>
-<td>Bug fixes <code>CSS-001..010</code>, stylelint, build pipeline, fonts, real button system, jsDelivr migration</td>
+<td>Bug fixes <code>CSS-001..014</code>, stylelint, build pipeline, fonts, real button system, jsDelivr migration, rebrand to <strong>Rare Styles</strong></td>
 </tr>
 <tr>
 <td><code>0.8.0</code></td>
 <td>Completeness</td>
-<td>Forms, a11y, semantic tokens, <code>@layer</code>, <code>theme-story</code>, <code>theme-dashboard</code></td>
+<td>Forms, a11y, semantic tokens (incl. <code>--signal</code>), <code>@layer</code>, <code>.layout-story</code>, <code>.layout-dashboard</code>, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell)</td>
 </tr>
 <tr>
 <td><code>0.9.0</code></td>
