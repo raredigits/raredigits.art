@@ -93,6 +93,34 @@
 <td><code>.center-y</code> is declared twice with different definitions; the second overrides the first.</td>
 <td>S</td>
 </tr>
+<tr>
+<td><code>CSS-011</code></td>
+<td>bug</td>
+<td><code>modules/layout/_grid.scss:46</code></td>
+<td><code>.grid-mobile { gap: var(--global-grid-gap) }</code> — <code>--global-grid-gap</code> is undefined; likely meant <code>--grid-gap-global</code>.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-012</code></td>
+<td>bug</td>
+<td><code>modules/typography/_sidenotes.scss:11</code></td>
+<td><code>.remarked &gt; :first-child { min-width: var(--content-max-width) }</code> — <code>--content-max-width</code> is undefined, so sidenote layout can collapse unpredictably.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-013</code></td>
+<td>bug</td>
+<td><code>modules/navigation/header/_search.scss:21–23</code></td>
+<td>Search input removes <code>outline</code> with no replacement focus style. Keyboard focus becomes invisible.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-014</code></td>
+<td>bug</td>
+<td><code>modules/colors/_base.scss:64</code>, <code>modules/colors/_blue.scss:22</code></td>
+<td>Sass warns about interpolating unquoted color names (<code>black</code>, <code>white</code>, <code>blue</code>, etc.) into selectors. Generator is fragile and may emit invalid selectors.</td>
+<td>S</td>
+</tr>
 </tbody>
 </table>
 <h2>Quality infrastructure (P0–P1)</h2>
@@ -203,6 +231,25 @@
 <td><code>CSS-031</code></td>
 <td>perf</td>
 <td>Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Distribution hygiene (P0)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-T00</code></td>
+<td>chore</td>
+<td>Migrate consumers off <code>https://raredigits.github.io/rare-styles/rare.min.css</code> (mutable, no CDN, no SRI) to <code>https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css</code> (immutable, edge-cached, SRI-able). Tag <code>v0.6.9</code> retroactively so anyone still on the old state can pin to it. Announce the deprecation in the README of <code>rare-styles</code> repo.</td>
 <td>S</td>
 </tr>
 </tbody>
@@ -569,7 +616,7 @@
 <tr>
 <td><code>CSS-201</code></td>
 <td>docs</td>
-<td><code>STYLEGUIDE.md</code>: naming conventions, utilities vs components, how to add a new module, how to add a new token.</td>
+<td><code>STYLEGUIDE.md</code>: hand-written conventions doc — naming, utilities vs components, how to add a new module, how to add a new token, breaking-change policy.</td>
 <td>M</td>
 </tr>
 <tr>
@@ -593,8 +640,8 @@
 <tr>
 <td><code>CSS-205</code></td>
 <td>docs</td>
-<td><code>CONTRIBUTING.md</code>: forking, PRs, running the linter.</td>
-<td>S</td>
+<td><strong><code>CONTRIBUTING.md</code></strong> — full contributor guide. Sections: quick start (clone/install/dev server), project structure (link to STYLEGUIDE), branching model, <a href="https://www.conventionalcommits.org/">Conventional Commits</a> convention, PR process (one concern per PR, backlog-ID in title, CHANGELOG update), <strong>public API definition</strong> (which classes / CSS variables / SCSS exports / theme names / dist filenames are public — i.e. require MAJOR bump to break), bug-report template, feature-proposal template, <strong>release process for maintainers</strong> (version bump → CHANGELOG → git tag → GitHub Release → npm publish), link to <code>CODE_OF_CONDUCT.md</code>.</td>
+<td>M</td>
 </tr>
 <tr>
 <td><code>CSS-206</code></td>
@@ -607,6 +654,136 @@
 <td>docs</td>
 <td><strong>Theming guide</strong> (<code>THEMING.md</code>): how to build a custom theme by overriding base color tokens. Show a worked dark-theme example via <code>:root { --bg-color: #111; --primary-color: #f0f0f0; ... }</code> overrides — no built-in dark mode, just a recipe.</td>
 <td>M</td>
+</tr>
+<tr>
+<td><code>CSS-208</code></td>
+<td>docs</td>
+<td><code>CODE_OF_CONDUCT.md</code> — Contributor Covenant 2.1 (verbatim). Linked from <code>CONTRIBUTING.md</code>.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Documentation infrastructure — KSS + auto-extracted reference (P0)</h2>
+<p>Hundreds of classes already exist; hand-written docs would rot immediately. The plan: <strong>annotate sources with <a href="https://github.com/kss-node/kss-node">KSS</a>-style comments</strong>, generate the class reference automatically, and pair it with hand-curated examples. Token reference is fully auto-generated from <code>:root</code> (see “Token pipeline” below).</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-260</code></td>
+<td>dx</td>
+<td>Set up the docs site. Recommended stack: <strong>kss-node</strong> for class extraction + <strong>Eleventy</strong> (or Astro) shell for layout, navigation, search, theming with <code>theme-story</code>. Output to <code>docs/</code> (separate from <code>dist/</code>). Dev server with hot reload.</td>
+<td>L</td>
+</tr>
+<tr>
+<td><code>CSS-261</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>colors</code> module (base, brand, supporting, blue). Each color group gets one comment block with sample swatches.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-262</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>typography</code> module (fonts, headings, body, lists, sidenotes, text-content, tables).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-263</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>layout</code> module (grid, containers, spacing). Spacing utilities documented as <strong>one table per family</strong> (margin, padding, gap, …) — 200+ classes don’t need 200 entries.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-264</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>elements</code> (buttons, forms) and <code>bricks</code> (cards, sections).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-265</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>navigation</code> (header, sidebar, tags, links) and <code>decorations</code> (borders, shadows, separators, icons, images, skeleton).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-266</code></td>
+<td>docs</td>
+<td>KSS-annotate <code>align</code> (flex, position, align), <code>utilities</code> (display, resets, breakpoints), and <code>special</code> (collapsible, cookie-consent, construction, mockups).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-267</code></td>
+<td>docs</td>
+<td>KSS-annotate themes (<code>theme-story</code>, <code>theme-dashboard</code>) with side-by-side previews.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-268</code></td>
+<td>dx</td>
+<td>Docs site CI: build on every PR, deploy on tag to GitHub Pages at <code>https://raredigits.github.io/rare-styles/docs/</code>. Versioned URL per release (<code>/docs/v0.9.0/</code>, <code>/docs/latest/</code>).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-269</code></td>
+<td>docs</td>
+<td>KSS authoring conventions in <code>STYLEGUIDE.md</code>: required fields, <code>Markup:</code> block format, modifier-class syntax, <code>Style guide:</code> hierarchy. So contributors annotate consistently.</td>
+<td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Token pipeline (P0)</h2>
+<p>The library is already token-driven (CSS custom properties in <code>:root</code>). Formalize the pipeline so tokens can be auto-documented, exported to other formats, and validated against orphan references.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-270</code></td>
+<td>feat</td>
+<td><strong>Token extractor</strong>: parse <code>:root { --* }</code> blocks across <code>modules/**/*.scss</code>, emit <code>dist/tokens.json</code> in <a href="https://www.designtokens.org/">W3C Design Tokens (DTCG)</a> format with categories (color / spacing / typography / motion / shadow / surface). Run as part of <code>build:css</code>.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-271</code></td>
+<td>docs</td>
+<td>Auto-generate the token reference page in the docs site from <code>dist/tokens.json</code> — searchable table with name, value, category, computed sample (color swatch / spacing bar / shadow preview).</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-272</code></td>
+<td>dx</td>
+<td><strong>Token validator</strong>: scan all SCSS for <code>var(--foo)</code> usages and fail the build if <code>--foo</code> is not declared anywhere. Catches the <code>--text-color</code> / <code>--warning-color</code> / <code>--grey-lightest</code> class of bugs at compile time.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-273</code></td>
+<td>feat</td>
+<td>Multi-format token export via <a href="https://amzn.github.io/style-dictionary/">Style Dictionary</a>: emit <code>dist/tokens.scss</code> (SCSS map), <code>dist/tokens.js</code> (ES module), <code>dist/tokens.css</code> (standalone CSS file). Lets non-CSS consumers (JS charts, native apps) read the same source of truth.</td>
+<td>M</td>
+</tr>
+<tr>
+<td><code>CSS-274</code></td>
+<td>docs</td>
+<td>Token versioning policy section in <code>CONTRIBUTING.md</code>: renaming or removing a public token is a MAJOR bump; adding new tokens is MINOR; changing a value is MINOR (visual change) or PATCH (correction).</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-275</code></td>
+<td>dx</td>
+<td>Token diff tool: compare <code>dist/tokens.json</code> between two refs, output a human-readable changelog of token changes. Used for release notes.</td>
+<td>S</td>
 </tr>
 </tbody>
 </table>
@@ -822,11 +999,13 @@
 <li>[ ] <code>theme-story</code> and <code>theme-dashboard</code> documented and demoed</li>
 <li>[ ] Cascade layers in place; no <code>!important</code></li>
 <li>[ ] Sibling-library integration finalized for <code>scripts/</code> and <code>charts/</code></li>
-<li>[ ] README + STYLEGUIDE + THEMING + CHANGELOG + LICENSE + demo page</li>
+<li>[ ] README + STYLEGUIDE + CONTRIBUTING + CODE_OF_CONDUCT + THEMING + CHANGELOG + LICENSE + demo page</li>
 <li>[ ] Theming guide includes a worked dark-theme example</li>
+<li>[ ] Docs site (KSS + Eleventy) deployed; every module is annotated; token reference auto-generated from <code>dist/tokens.json</code></li>
+<li>[ ] Token pipeline complete: <code>dist/tokens.json</code> + Style Dictionary exports + token validator in CI</li>
 <li>[ ] Bundle after purge ≤ 30 KB</li>
 <li>[ ] CDN + npm package published (<code>CSS-T01</code> complete)</li>
-<li>[ ] CI green: lint + visual regression + lighthouse</li>
+<li>[ ] CI green: lint + token validator + visual regression + lighthouse</li>
 <li>[ ] <code>v1.0.0</code> tagged in git, GitHub Release notes published</li>
 </ul>
 <hr>
@@ -916,7 +1095,7 @@
 <tr>
 <td><code>0.7.0</code></td>
 <td>Stabilization</td>
-<td>Bug fixes <code>CSS-001..010</code>, stylelint, build pipeline, fonts, real button system</td>
+<td>Bug fixes <code>CSS-001..010</code>, stylelint, build pipeline, fonts, real button system, jsDelivr migration</td>
 </tr>
 <tr>
 <td><code>0.8.0</code></td>
@@ -926,7 +1105,7 @@
 <tr>
 <td><code>0.9.0</code></td>
 <td>Release Prep</td>
-<td>Docs, demo, theming guide, scripts/charts integration, purge, CI</td>
+<td>KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI</td>
 </tr>
 <tr>
 <td><code>CSS-T01</code></td>
