@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap" rel="stylesheet');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap">');
+@import url("https://fonts.googleapis.com/css2?family=Caveat&display=swap");
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons+Outlined");
 @import url("https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined");
@@ -35,7 +35,7 @@
 }
 
 .text-wrap {
-  white-space: wrap;
+  white-space: normal;
 }
 
 .text-nowrap {
@@ -80,8 +80,6 @@
   border: none;
   box-shadow: none;
   background: initial;
-  background-color: none;
-  color: none;
 }
 
 .no-decoration::before,
@@ -155,7 +153,7 @@
 .grid-mobile {
   display: grid;
   grid-template-columns: var(--grid-columns-global-mobile);
-  gap: var(--global-grid-gap);
+  gap: var(--grid-gap-global);
 }
 
 .auto-cols-fr {
@@ -18049,7 +18047,7 @@ dd + dt {
 }
 
 .remarked > :first-child {
-  min-width: var(--content-max-width);
+  min-width: var(--text-content-width);
 }
 
 .remark {
@@ -18312,7 +18310,7 @@ mark {
 
 .note,
 .meta-info,
-.warning,
+.callout,
 .remark,
 cite,
 .footnote {
@@ -18322,12 +18320,11 @@ cite,
   line-height: 1.3em;
 }
 
-.warning {
+.callout {
   padding: var(--space-sm) var(--space-md);
   text-align: center;
   border: 1px solid var(--border-color);
   border-radius: var(--space-xs);
-  color: var(--warning-color);
 }
 
 cite {
@@ -18335,7 +18332,7 @@ cite {
   width: 100%;
   margin: var(--space-sm) 0;
   text-align: right;
-  color: var(--grey-dark);
+  color: var(--gray-dark);
 }
 
 blockquote {
@@ -18410,7 +18407,7 @@ code {
 pre code {
   padding: 0;
   border: none;
-  border-radius: none;
+  border-radius: 0;
   background: none;
 }
 
@@ -19138,7 +19135,7 @@ section {
 }
 
 .card-hover:hover {
-  background: var(--grey-lightest);
+  background: var(--gray-lightest);
   border-bottom: 1px solid var(--border-color-light);
   box-shadow: var(--shadow-sm);
 }
@@ -19222,14 +19219,6 @@ section {
   justify-content: center;
 }
 
-.center-y {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
 .right {
   text-align: right;
 }
@@ -19239,7 +19228,6 @@ section {
 }
 
 .top {
-  text-align: top;
   vertical-align: top;
 }
 
@@ -19249,7 +19237,6 @@ section {
 }
 
 .bottom {
-  text-align: bottom;
   vertical-align: bottom;
 }
 
@@ -19297,7 +19284,6 @@ section {
 }
 
 .header-logo {
-  height: calc(var(--header-height) - var(--space-md) * 2);
   min-width: 100px;
   display: flex;
   height: 100%;
@@ -19431,7 +19417,6 @@ section {
 .nav-hamburger ul {
   grid-column: 4/span 9;
   grid-row: 1/-1;
-  padding-top: var(--space-md);
   list-style-type: none;
   padding: 0;
 }
@@ -19480,6 +19465,12 @@ section {
 .searchbar .pagefind-ui input,
 #search-page .pagefind-ui input {
   outline: none;
+}
+
+.searchbar .pagefind-ui input:focus-visible,
+#search-page .pagefind-ui input:focus-visible {
+  outline: 2px solid var(--brand-color);
+  outline-offset: 2px;
 }
 
 .searchbar .pagefind-ui__results-area {
@@ -20567,7 +20558,7 @@ template {
 
 body {
   background: var(--bg-color);
-  color: var(--text-color);
+  color: var(--primary-text-color);
   font-family: var(--primary-font);
   font-size: var(--font-size);
   font-weight: 400;
