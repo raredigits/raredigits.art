@@ -1,11 +1,9 @@
 # Rare Styles — Backlog & Roadmap
 
-**Current version:** `0.6.10` (early beta)
+**Current version:** `{{ versions.styles }}` (early beta)
 **Public release target:** `1.0.0`
 
 **Positioning:** `Rare Styles` is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.
-
-**Library positioning:** Rare Styles is the technical instrument of [Digital Rareism](/manifesto/) — a CSS library for clarity-first content (Story) and decision-grade interfaces (Dashboard). Audience: a narrow circle of Rareism-aligned designers and developers. Not a Bootstrap/Tailwind competitor.
 
 ---
 
@@ -84,7 +82,7 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to `https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css` (immutable, edge-cached, SRI-able). Tag `v0.6.9` retroactively so anyone still on the old state can pin to it. Announce the deprecation in the README of `rare-styles` repo. | S |
+| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to `https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css` (immutable, edge-cached, SRI-able). Tag the current `v0.6.10` snapshot before `0.7.0` lands so consumers can pin to it during the transition. Announce the deprecation in the README of `rare-styles` repo. | S |
 
 ---
 
@@ -132,8 +130,8 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 | `CSS-133` | chore | Library prefix decision. Either keep classes unprefixed (and document the collision risk) or introduce `r-` / `rare-`. | S |
 | `CSS-134` | chore | `STYLEGUIDE.md` convention: components live in `bricks/` + `elements/`, utilities live in `layout/` + `utilities/` + `align/` + `decorations/`. | S |
 | `CSS-135` | feat | Migrate margin/padding/border to logical properties (`margin-inline`, `padding-block`, `border-inline-start`). Out-of-the-box RTL/i18n support. | L |
-| `CSS-136` | chore | Rework the large-end spacing scale in `assets/css/modules/layout/_spacing.scss`: replace sizes above `xl` with semantically clearer names and values, so the token system communicates intent instead of just “bigger than bigger”. | M |
-| `CSS-137` | chore | Reassess `assets/css/modules/layout/_spacing-aliases.scss`: current aliases can mislead consumers about what is canonical versus shorthand. Clarify, reduce, or restructure the alias layer. | M |
+| `CSS-136` | chore | **Rename top-end spacing tokens for semantic clarity.** `--space-xxxl` (12×) and `--space-xxxxl` (24×) communicate "bigger than bigger" rather than intent; arguably `--space-xxl` (6×) too. Pick a semantic scheme — three candidates: (a) industry t-shirt extension `--space-2xl/3xl/4xl`; (b) functional names like `--space-section/block/page`; (c) numeric multipliers `--space-x6/x12/x24`. Migrate the spacing scale, the `$spaces` list, all generated utility classes (`.height-xxxxl`, `.padding-xxxl`, etc.), and consumers (incl. the `.list-pack` height utility example in `/styles/layout/spacing/`). Mark as breaking change in `CHANGELOG.md`. | M |
+| `CSS-137` | chore | **Merge `_spacing.scss` and `_spacing-aliases.scss` into one file.** The split between core tokens and short-form aliases adds an indirection layer without obvious benefit; consolidating clarifies what is canonical versus shorthand and reduces friction for contributors. While doing it, decide whether to keep the alias layer at all — the current convention `s: xs`, `m: sm`, etc. can mislead consumers (`m` ≠ `md`). Either prune to a smaller intentional set, or rebuild on cleaner ground. | M |
 
 ## Layouts (P0)
 
@@ -244,7 +242,7 @@ Public docs live under `/styles/` on raredigits.art. Organized **by user task**,
 | `CSS-281` | `/styles/` | existing | Library landing page — **done in `CSS-200a`**. | — |
 | `CSS-282` | `/styles/getting-started/` | renames `/styles/usage/` | Install (CDN / npm / SCSS), first component, opting into a layout (`.layout-story` / `.layout-dashboard`), Hello World, checklist for production use (purge, fonts, focus styles). | M |
 | `CSS-283` | `/styles/tokens/` | new | Auto-generated token reference from `dist/tokens.json` (depends on `CSS-271`). Categorized: color / spacing / typography / shadow / motion / surface. Includes the `--brand-color` vs `--signal` distinction explainer. | M |
-| `CSS-284` | `/styles/layout/` | existing + merges `/styles/spaces/` | Grid, containers, spacing scale, `fr` system, breakpoints, responsive prefixes (`mobile:` / `tablet:` / `desktop:`), `app-shell`. | L |
+| `CSS-284` | `/styles/layout/` | existing | Grid, containers, `fr` system, breakpoints, responsive prefixes (`mobile:` / `tablet:` / `desktop:`), `app-shell`. Includes the existing child page `/styles/layout/spacing/` (token reference, scale, utilities, aliases). | L |
 | `CSS-285` | `/styles/typography/` | existing | Fonts, headings, body, lists (incl. `<dl>`), code, sidenotes, blockquote, captions, tables, text-content widths. Reads as a Story-style page by example. | L |
 | `CSS-286` | `/styles/colors/` | existing | Palette overview, base / brand / supporting / blue families, `--signal` vs `--brand-color`, semantic tokens (`success` / `danger` / `warning` / `info`), link / text / bg utilities, contrast notes. | M |
 | `CSS-287` | `/styles/elements/` | new | Buttons (variants, sizes, states, button-group, button-block), forms (inputs, checkbox, radio, select, validation states), toolbar. | L |
