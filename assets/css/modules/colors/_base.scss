@@ -7,27 +7,22 @@
     // Grays Family
     
     --gray-light: #f0f0f0; // Used for backgrounds
-    --gray: #cccccc; // Used for borders, dividers
-    --gray-dark: #333333; // Used for secondary text
-
+    --gray: #ccc; // Used for borders, dividers
+    --gray-dark: #333; // Used for secondary text
     --gray-lightest: #fafafa; // Used for cards backgrounds
     --gray-mid-light: #e4e4e4; // Used for secondary backgrounds
-    --gray-trans: #888888; // Used for disabled states
-    --gray-mid-dark: #666666; // Used for labels, captions
+    --gray-trans: #888; // Used for disabled states
+    --gray-mid-dark: #666; // Used for labels, captions
     --gray-darkest: #191919; // Used for highlighting light-grays
-
     --primary-color: var(--black);
     --secondary-color: var(--gray-dark);
-
     --bg-color: var(--gray-light);
     --bg-color-light: var(--gray-lightest);
-    
     --border-color: var(--gray);
     --border-color-light: var(--gray-mid-light);
     --border-color-dark: var(--gray-dark);
     --border-code: 1px solid var(--border-color);
-
-    --red: #ff0000;
+    --red: #f00;
     --green: #389e0d;
     --yellow: #ffe000;
 }

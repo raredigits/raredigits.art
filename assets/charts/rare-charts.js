@@ -1552,7 +1552,7 @@ var RareCharts = (() => {
     return values[0];
   }
   function nest(values, map4, reduce2, keys) {
-    return function regroup(values2, i) {
+    return (function regroup(values2, i) {
       if (i >= keys.length) return reduce2(values2);
       const groups2 = new InternMap();
       const keyof2 = keys[i++];
@@ -1567,7 +1567,7 @@ var RareCharts = (() => {
         groups2.set(key, regroup(values3, i));
       }
       return map4(groups2);
-    }(values, 0);
+    })(values, 0);
   }
 
   // node_modules/d3-array/src/permute.js
@@ -1613,7 +1613,7 @@ var RareCharts = (() => {
 
   // node_modules/d3-array/src/groupSort.js
   function groupSort(values, reduce2, key) {
-    return (reduce2.length !== 2 ? sort(rollup(values, reduce2, key), ([ak, av], [bk, bv]) => ascending(av, bv) || ascending(ak, bk)) : sort(group(values, key), ([ak, av], [bk, bv]) => reduce2(av, bv) || ascending(ak, bk))).map(([key2]) => key2);
+    return (reduce2.length !== 2 ? sort(rollup(values, reduce2, key), (([ak, av], [bk, bv]) => ascending(av, bv) || ascending(ak, bk))) : sort(group(values, key), (([ak, av], [bk, bv]) => reduce2(av, bv) || ascending(ak, bk)))).map(([key2]) => key2);
   }
 
   // node_modules/d3-array/src/array.js
@@ -4143,7 +4143,7 @@ var RareCharts = (() => {
   }
 
   // node_modules/d3-interpolate/src/rgb.js
-  var rgb_default = function rgbGamma(y4) {
+  var rgb_default = (function rgbGamma(y4) {
     var color2 = gamma(y4);
     function rgb2(start2, end) {
       var r = color2((start2 = rgb(start2)).r, (end = rgb(end)).r), g = color2(start2.g, end.g), b = color2(start2.b, end.b), opacity = nogamma(start2.opacity, end.opacity);
@@ -4157,7 +4157,7 @@ var RareCharts = (() => {
     }
     rgb2.gamma = rgbGamma;
     return rgb2;
-  }(1);
+  })(1);
   function rgbSpline(spline) {
     return function(colors) {
       var n = colors.length, r = new Array(n), g = new Array(n), b = new Array(n), i, color2;
@@ -4421,7 +4421,7 @@ var RareCharts = (() => {
   function tanh(x4) {
     return ((x4 = Math.exp(2 * x4)) - 1) / (x4 + 1);
   }
-  var zoom_default = function zoomRho(rho, rho2, rho4) {
+  var zoom_default = (function zoomRho(rho, rho2, rho4) {
     function zoom(p02, p1) {
       var ux0 = p02[0], uy0 = p02[1], w0 = p02[2], ux1 = p1[0], uy1 = p1[1], w1 = p1[2], dx = ux1 - ux0, dy = uy1 - uy0, d2 = dx * dx + dy * dy, i, S;
       if (d2 < epsilon2) {
@@ -4453,7 +4453,7 @@ var RareCharts = (() => {
       return zoomRho(_1, _2, _4);
     };
     return zoom;
-  }(Math.SQRT2, 2, 4);
+  })(Math.SQRT2, 2, 4);
 
   // node_modules/d3-interpolate/src/hsl.js
   function hsl2(hue2) {
@@ -4501,7 +4501,7 @@ var RareCharts = (() => {
 
   // node_modules/d3-interpolate/src/cubehelix.js
   function cubehelix2(hue2) {
-    return function cubehelixGamma(y4) {
+    return (function cubehelixGamma(y4) {
       y4 = +y4;
       function cubehelix3(start2, end) {
         var h = hue2((start2 = cubehelix(start2)).h, (end = cubehelix(end)).h), s2 = nogamma(start2.s, end.s), l = nogamma(start2.l, end.l), opacity = nogamma(start2.opacity, end.opacity);
@@ -4515,7 +4515,7 @@ var RareCharts = (() => {
       }
       cubehelix3.gamma = cubehelixGamma;
       return cubehelix3;
-    }(1);
+    })(1);
   }
   var cubehelix_default = cubehelix2(hue);
   var cubehelixLong = cubehelix2(nogamma);
@@ -5343,30 +5343,30 @@ var RareCharts = (() => {
 
   // node_modules/d3-ease/src/poly.js
   var exponent = 3;
-  var polyIn = function custom(e) {
+  var polyIn = (function custom(e) {
     e = +e;
     function polyIn2(t) {
       return Math.pow(t, e);
     }
     polyIn2.exponent = custom;
     return polyIn2;
-  }(exponent);
-  var polyOut = function custom2(e) {
+  })(exponent);
+  var polyOut = (function custom2(e) {
     e = +e;
     function polyOut2(t) {
       return 1 - Math.pow(1 - t, e);
     }
     polyOut2.exponent = custom2;
     return polyOut2;
-  }(exponent);
-  var polyInOut = function custom3(e) {
+  })(exponent);
+  var polyInOut = (function custom3(e) {
     e = +e;
     function polyInOut2(t) {
       return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
     }
     polyInOut2.exponent = custom3;
     return polyInOut2;
-  }(exponent);
+  })(exponent);
 
   // node_modules/d3-ease/src/sin.js
   var pi = Math.PI;
@@ -5431,36 +5431,36 @@ var RareCharts = (() => {
 
   // node_modules/d3-ease/src/back.js
   var overshoot = 1.70158;
-  var backIn = function custom4(s2) {
+  var backIn = (function custom4(s2) {
     s2 = +s2;
     function backIn2(t) {
       return (t = +t) * t * (s2 * (t - 1) + t);
     }
     backIn2.overshoot = custom4;
     return backIn2;
-  }(overshoot);
-  var backOut = function custom5(s2) {
+  })(overshoot);
+  var backOut = (function custom5(s2) {
     s2 = +s2;
     function backOut2(t) {
       return --t * t * ((t + 1) * s2 + t) + 1;
     }
     backOut2.overshoot = custom5;
     return backOut2;
-  }(overshoot);
-  var backInOut = function custom6(s2) {
+  })(overshoot);
+  var backInOut = (function custom6(s2) {
     s2 = +s2;
     function backInOut2(t) {
       return ((t *= 2) < 1 ? t * t * ((s2 + 1) * t - s2) : (t -= 2) * t * ((s2 + 1) * t + s2) + 2) / 2;
     }
     backInOut2.overshoot = custom6;
     return backInOut2;
-  }(overshoot);
+  })(overshoot);
 
   // node_modules/d3-ease/src/elastic.js
   var tau = 2 * Math.PI;
   var amplitude = 1;
   var period = 0.3;
-  var elasticIn = function custom7(a4, p) {
+  var elasticIn = (function custom7(a4, p) {
     var s2 = Math.asin(1 / (a4 = Math.max(1, a4))) * (p /= tau);
     function elasticIn2(t) {
       return a4 * tpmt(- --t) * Math.sin((s2 - t) / p);
@@ -5472,8 +5472,8 @@ var RareCharts = (() => {
       return custom7(a4, p2);
     };
     return elasticIn2;
-  }(amplitude, period);
-  var elasticOut = function custom8(a4, p) {
+  })(amplitude, period);
+  var elasticOut = (function custom8(a4, p) {
     var s2 = Math.asin(1 / (a4 = Math.max(1, a4))) * (p /= tau);
     function elasticOut2(t) {
       return 1 - a4 * tpmt(t = +t) * Math.sin((t + s2) / p);
@@ -5485,8 +5485,8 @@ var RareCharts = (() => {
       return custom8(a4, p2);
     };
     return elasticOut2;
-  }(amplitude, period);
-  var elasticInOut = function custom9(a4, p) {
+  })(amplitude, period);
+  var elasticInOut = (function custom9(a4, p) {
     var s2 = Math.asin(1 / (a4 = Math.max(1, a4))) * (p /= tau);
     function elasticInOut2(t) {
       return ((t = t * 2 - 1) < 0 ? a4 * tpmt(-t) * Math.sin((s2 - t) / p) : 2 - a4 * tpmt(t) * Math.sin((s2 + t) / p)) / 2;
@@ -5498,7 +5498,7 @@ var RareCharts = (() => {
       return custom9(a4, p2);
     };
     return elasticInOut2;
-  }(amplitude, period);
+  })(amplitude, period);
 
   // node_modules/d3-transition/src/selection/transition.js
   var defaultTiming = {
@@ -12630,7 +12630,7 @@ var RareCharts = (() => {
     }
     return rows;
   }
-  var squarify_default = function custom10(ratio) {
+  var squarify_default = (function custom10(ratio) {
     function squarify(parent, x06, y06, x12, y12) {
       squarifyRatio(ratio, parent, x06, y06, x12, y12);
     }
@@ -12638,7 +12638,7 @@ var RareCharts = (() => {
       return custom10((x4 = +x4) > 1 ? x4 : 1);
     };
     return squarify;
-  }(phi);
+  })(phi);
 
   // node_modules/d3-hierarchy/src/treemap/index.js
   function treemap_default() {
@@ -12744,7 +12744,7 @@ var RareCharts = (() => {
   }
 
   // node_modules/d3-hierarchy/src/treemap/resquarify.js
-  var resquarify_default = function custom11(ratio) {
+  var resquarify_default = (function custom11(ratio) {
     function resquarify(parent, x06, y06, x12, y12) {
       if ((rows = parent._squarify) && rows.ratio === ratio) {
         var rows, row, nodes, i, j = -1, n, m3 = rows.length, value = parent.value;
@@ -12764,7 +12764,7 @@ var RareCharts = (() => {
       return custom11((x4 = +x4) > 1 ? x4 : 1);
     };
     return resquarify;
-  }(phi);
+  })(phi);
 
   // node_modules/d3-polygon/src/area.js
   function area_default4(polygon) {
@@ -12852,7 +12852,7 @@ var RareCharts = (() => {
   var defaultSource_default = Math.random;
 
   // node_modules/d3-random/src/uniform.js
-  var uniform_default = function sourceRandomUniform(source) {
+  var uniform_default = (function sourceRandomUniform(source) {
     function randomUniform(min4, max5) {
       min4 = min4 == null ? 0 : +min4;
       max5 = max5 == null ? 1 : +max5;
@@ -12864,10 +12864,10 @@ var RareCharts = (() => {
     }
     randomUniform.source = sourceRandomUniform;
     return randomUniform;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/int.js
-  var int_default = function sourceRandomInt(source) {
+  var int_default = (function sourceRandomInt(source) {
     function randomInt(min4, max5) {
       if (arguments.length < 2) max5 = min4, min4 = 0;
       min4 = Math.floor(min4);
@@ -12878,10 +12878,10 @@ var RareCharts = (() => {
     }
     randomInt.source = sourceRandomInt;
     return randomInt;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/normal.js
-  var normal_default = function sourceRandomNormal(source) {
+  var normal_default = (function sourceRandomNormal(source) {
     function randomNormal(mu, sigma) {
       var x4, r;
       mu = mu == null ? 0 : +mu;
@@ -12899,10 +12899,10 @@ var RareCharts = (() => {
     }
     randomNormal.source = sourceRandomNormal;
     return randomNormal;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/logNormal.js
-  var logNormal_default = function sourceRandomLogNormal(source) {
+  var logNormal_default = (function sourceRandomLogNormal(source) {
     var N = normal_default.source(source);
     function randomLogNormal() {
       var randomNormal = N.apply(this, arguments);
@@ -12912,10 +12912,10 @@ var RareCharts = (() => {
     }
     randomLogNormal.source = sourceRandomLogNormal;
     return randomLogNormal;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/irwinHall.js
-  var irwinHall_default = function sourceRandomIrwinHall(source) {
+  var irwinHall_default = (function sourceRandomIrwinHall(source) {
     function randomIrwinHall(n) {
       if ((n = +n) <= 0) return () => 0;
       return function() {
@@ -12925,10 +12925,10 @@ var RareCharts = (() => {
     }
     randomIrwinHall.source = sourceRandomIrwinHall;
     return randomIrwinHall;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/bates.js
-  var bates_default = function sourceRandomBates(source) {
+  var bates_default = (function sourceRandomBates(source) {
     var I = irwinHall_default.source(source);
     function randomBates(n) {
       if ((n = +n) === 0) return source;
@@ -12939,10 +12939,10 @@ var RareCharts = (() => {
     }
     randomBates.source = sourceRandomBates;
     return randomBates;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/exponential.js
-  var exponential_default = function sourceRandomExponential(source) {
+  var exponential_default = (function sourceRandomExponential(source) {
     function randomExponential(lambda) {
       return function() {
         return -Math.log1p(-source()) / lambda;
@@ -12950,10 +12950,10 @@ var RareCharts = (() => {
     }
     randomExponential.source = sourceRandomExponential;
     return randomExponential;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/pareto.js
-  var pareto_default = function sourceRandomPareto(source) {
+  var pareto_default = (function sourceRandomPareto(source) {
     function randomPareto(alpha) {
       if ((alpha = +alpha) < 0) throw new RangeError("invalid alpha");
       alpha = 1 / -alpha;
@@ -12963,10 +12963,10 @@ var RareCharts = (() => {
     }
     randomPareto.source = sourceRandomPareto;
     return randomPareto;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/bernoulli.js
-  var bernoulli_default = function sourceRandomBernoulli(source) {
+  var bernoulli_default = (function sourceRandomBernoulli(source) {
     function randomBernoulli(p) {
       if ((p = +p) < 0 || p > 1) throw new RangeError("invalid p");
       return function() {
@@ -12975,10 +12975,10 @@ var RareCharts = (() => {
     }
     randomBernoulli.source = sourceRandomBernoulli;
     return randomBernoulli;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/geometric.js
-  var geometric_default = function sourceRandomGeometric(source) {
+  var geometric_default = (function sourceRandomGeometric(source) {
     function randomGeometric(p) {
       if ((p = +p) < 0 || p > 1) throw new RangeError("invalid p");
       if (p === 0) return () => Infinity;
@@ -12990,10 +12990,10 @@ var RareCharts = (() => {
     }
     randomGeometric.source = sourceRandomGeometric;
     return randomGeometric;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/gamma.js
-  var gamma_default = function sourceRandomGamma(source) {
+  var gamma_default = (function sourceRandomGamma(source) {
     var randomNormal = normal_default.source(source)();
     function randomGamma(k2, theta) {
       if ((k2 = +k2) < 0) throw new RangeError("invalid k");
@@ -13014,10 +13014,10 @@ var RareCharts = (() => {
     }
     randomGamma.source = sourceRandomGamma;
     return randomGamma;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/beta.js
-  var beta_default = function sourceRandomBeta(source) {
+  var beta_default = (function sourceRandomBeta(source) {
     var G = gamma_default.source(source);
     function randomBeta(alpha, beta) {
       var X3 = G(alpha), Y3 = G(beta);
@@ -13028,10 +13028,10 @@ var RareCharts = (() => {
     }
     randomBeta.source = sourceRandomBeta;
     return randomBeta;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/binomial.js
-  var binomial_default = function sourceRandomBinomial(source) {
+  var binomial_default = (function sourceRandomBinomial(source) {
     var G = geometric_default.source(source), B3 = beta_default.source(source);
     function randomBinomial(n, p) {
       n = +n;
@@ -13057,10 +13057,10 @@ var RareCharts = (() => {
     }
     randomBinomial.source = sourceRandomBinomial;
     return randomBinomial;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/weibull.js
-  var weibull_default = function sourceRandomWeibull(source) {
+  var weibull_default = (function sourceRandomWeibull(source) {
     function randomWeibull(k2, a4, b) {
       var outerFunc;
       if ((k2 = +k2) === 0) {
@@ -13077,10 +13077,10 @@ var RareCharts = (() => {
     }
     randomWeibull.source = sourceRandomWeibull;
     return randomWeibull;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/cauchy.js
-  var cauchy_default = function sourceRandomCauchy(source) {
+  var cauchy_default = (function sourceRandomCauchy(source) {
     function randomCauchy(a4, b) {
       a4 = a4 == null ? 0 : +a4;
       b = b == null ? 1 : +b;
@@ -13090,10 +13090,10 @@ var RareCharts = (() => {
     }
     randomCauchy.source = sourceRandomCauchy;
     return randomCauchy;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/logistic.js
-  var logistic_default = function sourceRandomLogistic(source) {
+  var logistic_default = (function sourceRandomLogistic(source) {
     function randomLogistic(a4, b) {
       a4 = a4 == null ? 0 : +a4;
       b = b == null ? 1 : +b;
@@ -13104,10 +13104,10 @@ var RareCharts = (() => {
     }
     randomLogistic.source = sourceRandomLogistic;
     return randomLogistic;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/poisson.js
-  var poisson_default = function sourceRandomPoisson(source) {
+  var poisson_default = (function sourceRandomPoisson(source) {
     var G = gamma_default.source(source), B3 = binomial_default.source(source);
     function randomPoisson(lambda) {
       return function() {
@@ -13124,7 +13124,7 @@ var RareCharts = (() => {
     }
     randomPoisson.source = sourceRandomPoisson;
     return randomPoisson;
-  }(defaultSource_default);
+  })(defaultSource_default);
 
   // node_modules/d3-random/src/lcg.js
   var mul = 1664525;
@@ -13169,7 +13169,7 @@ var RareCharts = (() => {
   }
 
   // node_modules/d3-scale/src/ordinal.js
-  var implicit = Symbol("implicit");
+  var implicit = /* @__PURE__ */ Symbol("implicit");
   function ordinal() {
     var index3 = new InternMap(), domain = [], range4 = [], unknown = implicit;
     function scale2(d) {
@@ -16377,7 +16377,7 @@ var RareCharts = (() => {
       this._y.push(+y4);
     }
   };
-  var bundle_default = function custom12(beta) {
+  var bundle_default = (function custom12(beta) {
     function bundle(context) {
       return beta === 1 ? new Basis(context) : new Bundle(context, beta);
     }
@@ -16385,7 +16385,7 @@ var RareCharts = (() => {
       return custom12(+beta2);
     };
     return bundle;
-  }(0.85);
+  })(0.85);
 
   // node_modules/d3-shape/src/curve/cardinal.js
   function point3(that, x4, y4) {
@@ -16447,7 +16447,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var cardinal_default = function custom13(tension) {
+  var cardinal_default = (function custom13(tension) {
     function cardinal(context) {
       return new Cardinal(context, tension);
     }
@@ -16455,7 +16455,7 @@ var RareCharts = (() => {
       return custom13(+tension2);
     };
     return cardinal;
-  }(0);
+  })(0);
 
   // node_modules/d3-shape/src/curve/cardinalClosed.js
   function CardinalClosed(context, tension) {
@@ -16512,7 +16512,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var cardinalClosed_default = function custom14(tension) {
+  var cardinalClosed_default = (function custom14(tension) {
     function cardinal(context) {
       return new CardinalClosed(context, tension);
     }
@@ -16520,7 +16520,7 @@ var RareCharts = (() => {
       return custom14(+tension2);
     };
     return cardinal;
-  }(0);
+  })(0);
 
   // node_modules/d3-shape/src/curve/cardinalOpen.js
   function CardinalOpen(context, tension) {
@@ -16566,7 +16566,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var cardinalOpen_default = function custom15(tension) {
+  var cardinalOpen_default = (function custom15(tension) {
     function cardinal(context) {
       return new CardinalOpen(context, tension);
     }
@@ -16574,7 +16574,7 @@ var RareCharts = (() => {
       return custom15(+tension2);
     };
     return cardinal;
-  }(0);
+  })(0);
 
   // node_modules/d3-shape/src/curve/catmullRom.js
   function point4(that, x4, y4) {
@@ -16645,7 +16645,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var catmullRom_default = function custom16(alpha) {
+  var catmullRom_default = (function custom16(alpha) {
     function catmullRom(context) {
       return alpha ? new CatmullRom(context, alpha) : new Cardinal(context, 0);
     }
@@ -16653,7 +16653,7 @@ var RareCharts = (() => {
       return custom16(+alpha2);
     };
     return catmullRom;
-  }(0.5);
+  })(0.5);
 
   // node_modules/d3-shape/src/curve/catmullRomClosed.js
   function CatmullRomClosed(context, alpha) {
@@ -16716,7 +16716,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var catmullRomClosed_default = function custom17(alpha) {
+  var catmullRomClosed_default = (function custom17(alpha) {
     function catmullRom(context) {
       return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
     }
@@ -16724,7 +16724,7 @@ var RareCharts = (() => {
       return custom17(+alpha2);
     };
     return catmullRom;
-  }(0.5);
+  })(0.5);
 
   // node_modules/d3-shape/src/curve/catmullRomOpen.js
   function CatmullRomOpen(context, alpha) {
@@ -16776,7 +16776,7 @@ var RareCharts = (() => {
       this._y0 = this._y1, this._y1 = this._y2, this._y2 = y4;
     }
   };
-  var catmullRomOpen_default = function custom18(alpha) {
+  var catmullRomOpen_default = (function custom18(alpha) {
     function catmullRom(context) {
       return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
     }
@@ -16784,7 +16784,7 @@ var RareCharts = (() => {
       return custom18(+alpha2);
     };
     return catmullRom;
-  }(0.5);
+  })(0.5);
 
   // node_modules/d3-shape/src/curve/linearClosed.js
   function LinearClosed(context) {

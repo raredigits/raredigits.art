@@ -5,7 +5,7 @@
   --space-xs: calc(var(--base-unit) * 0.25);
   --space-sm: calc(var(--base-unit) * 0.5);
   --space-md: var(--base-unit);
-  --space-ml: calc(var(--base-unit) * 1.5); //24px
+  --space-ml: calc(var(--base-unit) * 1.5); // 24px
   --space-lg: calc(var(--base-unit) * 2); // 32px
   --space-xl: calc(var(--base-unit) * 3); // 48px
   --space-xxl: calc(var(--base-unit) * 6); // 96px
@@ -196,7 +196,6 @@ $spaces: px, xs, sm, md, ml, lg, xl, xxl, xxxl, xxxxl, fr,
 @include generate-responsive-spacings(("margin-left"), "margin-l", $spaces);
 @include generate-responsive-spacings(("margin-top", "margin-bottom"), "margin-y", $spaces);
 @include generate-responsive-spacings(("margin-left", "margin-right"), "margin-x", $spaces);
-
 @include generate-responsive-spacings(("padding"), "padding", $spaces);
 @include generate-responsive-spacings(("padding-top"), "padding-t", $spaces);
 @include generate-responsive-spacings(("padding-right"), "padding-r", $spaces);
@@ -204,14 +203,11 @@ $spaces: px, xs, sm, md, ml, lg, xl, xxl, xxxl, xxxxl, fr,
 @include generate-responsive-spacings(("padding-left"), "padding-l", $spaces);
 @include generate-responsive-spacings(("padding-top", "padding-bottom"), "padding-y", $spaces);
 @include generate-responsive-spacings(("padding-left", "padding-right"), "padding-x", $spaces);
-
 @include generate-responsive-spacings(("gap"), "gap", $spaces);
 @include generate-responsive-spacings(("row-gap"), "gap-y", $spaces);
 @include generate-responsive-spacings(("column-gap"), "gap-x", $spaces);
-
 @include generate-responsive-spacings(("width"), "width", $spaces);
 @include generate-responsive-spacings(("height"), "height", $spaces);
-
 @include generate-responsive-spacings(("top"), "top", $spaces);
 @include generate-responsive-spacings(("right"), "right", $spaces);
 @include generate-responsive-spacings(("bottom"), "bottom", $spaces);

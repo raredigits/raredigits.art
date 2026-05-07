@@ -6,7 +6,8 @@
     font-size: inherit;
 }
 
-.section-icon.material-icons-outlined {
+.section-icon.material-icons-outlined,
+.section-icon.material-symbols-outlined {
     display: inline-block;
     position: relative;
     top: 0.3em;
@@ -22,20 +23,24 @@
     font-size: 1.5em;
 }
 
-.remark .material-icons-outlined {
+.remark .material-icons-outlined,
+.remark .material-symbols-outlined {
     font-size: 1.2em;
 }
 
-@media (max-width: 768px) {
+@media (width <= 768px) {
     .section-icon.material-icons-outlined {
+        margin-left: 0;
+    }
+
+    .section-icon.material-symbols-outlined {
         margin-left: 0;
     }
 }
 
 .copy-data-icon {
     display: inline-block;
-    font-family: "Material Symbols Outlined";
-    font-size: var(--font-size-lg);
+    font-family: "Material Symbols Outlined", sans-serif;
     position: relative;
     top: 0.2em;
     font-size: inherit;

@@ -247,7 +247,7 @@ pre code {
     }
 }
 
-@include generate-columns();
+@include generate-columns;
 
 @include mobile {
   @include generate-columns(6, "mobile\\:");
@@ -267,8 +267,8 @@ pre code {
     width: var(--text-content-caption);
     max-width: unset;
     margin-top: var(--space-lg);
-    margin-left: calc(-1*var(--space-lg));
-    margin-right: calc(-1*var(--space-lg));
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
     border-top: var(--space-sm) solid var(--border-color);
     border-left: var(--space-sm) solid var(--border-color);
     border-right: var(--space-sm) solid var(--border-color);
@@ -278,7 +278,7 @@ pre code {
         background: none;
     }
 
-    @media (max-width: 1024px) {
-        margin-left: calc(-1*var(--space-sm));
+    @media (width <= 1024px) {
+        margin-left: calc(-1 * var(--space-sm));
     }
 }

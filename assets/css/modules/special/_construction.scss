@@ -1,9 +1,6 @@
 .construction-notice {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -11,9 +8,9 @@
     text-align: center;
     background: repeating-linear-gradient(
     45deg,
-    rgba(240, 240, 240, 0.1),
-    rgba(240, 240, 240, 0.1) 3px,
-    rgba(153, 153, 153, 0.3) 3px,
-    rgba(153, 153, 153, 0.3) 6px
+    rgb(240 240 240 / 10%),
+    rgb(240 240 240 / 10%) 3px,
+    rgb(153 153 153 / 30%) 3px,
+    rgb(153 153 153 / 30%) 6px
     );
 }

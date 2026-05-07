@@ -1,5 +1,9 @@
 @use "../utilities/breakpoints" as *;
 
+@function calculate-fr($count, $gap-count) {
+    @return calc((var(--global-fr) * #{$count}) + (var(--grid-gap-global) * #{$gap-count}));
+}
+
 :root {
     --base-unit: 16px;
     --grid-columns: 12;
@@ -7,8 +11,11 @@
     --grid-columns-global: repeat(12, 1fr);
     --grid-columns-global-mobile: repeat(6, 1fr);
     --grid-gap-global: var(--base-unit);
-
     --global-fr: calc((var(--site-max-width) - (11 * var(--grid-gap-global))) / 12);
+
+    @for $i from 1 through 12 {
+        --global-fr-#{$i}: #{calculate-fr($i, $i - 1)};
+    }
 }
 
 .grid {
@@ -55,7 +62,6 @@
 // columns: multi-column balances heights and leaves gaps under short blocks
 // when `break-inside: avoid` is set. Auto-fit grids have no balancing —
 // each cell takes its natural height, columns flow as the viewport allows.
-//
 // Override the minimum column width per instance via `--grid-min-col`.
 //   `auto-fit`  collapses empty tracks (items expand to fill the row).
 //   `auto-fill` keeps empty tracks (items keep their min width).
@@ -88,7 +94,7 @@
     }
 }
 
-@include generate-grid-cols();
+@include generate-grid-cols;
 
 @include mobile {
   @include generate-grid-cols("mobile\\:");
@@ -127,7 +133,8 @@
 }
 
 @mixin generate-col-position($type, $max) {
-    $base-class: if($type == 'start', 'col-start', 'col-end');
+    $base-class: 'col-end';
+    @if $type == 'start' { $base-class: 'col-start'; }
   
     @for $i from 1 through $max {
       .#{$base-class}-#{$i} {
@@ -214,16 +221,6 @@
 }
 
 // FRACTIONS
-
-@function calculate-fr($count, $gap-count) {
-    @return calc((var(--global-fr) * #{$count}) + (var(--grid-gap-global) * #{$gap-count}));
-}
-  
-:root {
-    @for $i from 1 through 12 {
-        --global-fr-#{$i}: #{calculate-fr($i, $i - 1)};
-    }
-}
 
 .fr {
     width: var(--global-fr);

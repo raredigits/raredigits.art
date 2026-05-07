@@ -12,7 +12,7 @@ permalink: '/scripts/copy-to-clipboard/'
     <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v2.0.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
     <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
-    <span class="material-icons">file_download</span>
+    <span class="material-symbols-outlined">download</span>
     </p>
 </div>
 

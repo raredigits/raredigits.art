@@ -11,7 +11,7 @@ templateEngineOverride: md
 js/search.js<br>
 <p>
     v.1.1 Stable | 
-    <a href="/assets/js/search.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/search.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
 
@@ -50,16 +50,16 @@ If the installation was successful, they should appear there automatically.
 
 ## Adding the Search UI to the Website
 
-First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-icons">search</span> in the website header next to the hamburger menu:
+First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-symbols-outlined">search</span> in the website header next to the hamburger menu:
 
 ```html
 <div class="header-icons">
   <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-      <span class="material-icons">search</span>
+      <span class="material-symbols-outlined">search</span>
   </button>
   <button class="hamburger no-decoration" aria-label="Toggle navigation">
-      <span class="material-icons icon-menu">menu</span>
-      <span class="material-icons icon-close">close</span>
+      <span class="material-symbols-outlined icon-menu">menu</span>
+      <span class="material-symbols-outlined icon-close">close</span>
   </button>
 </div>
 ```

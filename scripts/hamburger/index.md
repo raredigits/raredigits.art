@@ -10,7 +10,7 @@ permalink: '/scripts/hamburger/'
 js/hamburger.js<br>
 <p>
     v.1.0 Stable | 
-    <a href="/assets/js/hamburger.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/hamburger.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
 
@@ -54,11 +54,11 @@ Third, add the toggle button. Place the hamburger button in your header or anoth
 
 ```html
 <button class="hamburger no-decoration" aria-label="Toggle navigation">
-  <span class="material-icons icon-menu">menu</span>
-  <span class="material-icons icon-close">close</span>
+  <span class="material-symbols-outlined icon-menu">menu</span>
+  <span class="material-symbols-outlined icon-close">close</span>
 </button>
 ```
-The button uses Material Icons for visual clarity, but you can substitute any icon system or create custom hamburger lines using CSS.
+The button uses Material Symbols for visual clarity, but you can substitute any icon system or create custom hamburger lines using CSS.
 
 ## Functionality
 

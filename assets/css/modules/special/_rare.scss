@@ -1,0 +1,18 @@
+/* Rare branding helpers for external/embedded surfaces. */
+
+.rare-brand {
+    color: var(--brand-color);
+}
+
+.rare-brand-color {
+    color: var(--brand-color);
+}
+
+.rare-brand-border {
+    border-color: var(--brand-color);
+}
+
+.rare-brand-bg {
+    background-color: var(--brand-color);
+    color: var(--bg-color);
+}

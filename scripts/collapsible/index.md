@@ -10,7 +10,7 @@ permalink: '/scripts/collapsible/'
 js/collapsible.js<br>
 <p>
     v.1.0 Stable | 
-    <a href="/assets/js/collapsible.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
 
@@ -56,8 +56,8 @@ For cases requiring more complex behavior or specific design patterns that go be
 
 <div class="card collapsible-container">
     <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
+        <span class="section-icon material-symbols-outlined">code</span>
+        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-symbols-outlined">keyboard_arrow_down</span></span>
     </p>
     <div class="collapsible-content">
         <p>The script handles two common HTML structures:</p>
@@ -69,7 +69,7 @@ For cases requiring more complex behavior or specific design patterns that go be
         <pre>
 <code><span class="code-comment">// Structure 1 (siblings under same parent):</span>
 &lt;div class="container"&gt;
-    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-icons-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
+    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-symbols-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
     &lt;div class="collapsible-content"&gt;Content goes here&lt;/div&gt;
 &lt;/div&gt;
 <div class="air-md"></div>

@@ -15,7 +15,6 @@
 
 .columns .list {
     break-inside: avoid;
-    page-break-inside: avoid;
     -webkit-column-break-inside: avoid;
 }
 
@@ -69,13 +68,11 @@
 // own. Built on `column-fill: auto` so columns fill in source order without
 // the height-balancing "holes" that `column-fill: balance` produces with
 // `break-inside: avoid`.
-//
 // Requires a column height — `column-fill: auto` only engages when the
 // container is height-constrained. Set the height with any height utility
 // from the spacing scale (e.g. `.height-xxxl`, `.height-xxxxl`) or via
 // inline `style`. The minimum column width is configurable via
 // `--list-pack-min` (default 12rem).
-//
 // On mobile the utility falls back to a 3-column balanced layout so column
 // widths stay readable; any explicit height utility is reset to auto. The
 // host markup should give the section title its own row on mobile (e.g.
@@ -91,8 +88,7 @@
     }
 
     @include bp.mobile {
-        column-width: auto;
-        column-count: 3;
+        columns: auto 3;
         column-fill: balance;
         height: auto;
     }
@@ -126,8 +122,7 @@ dd + dt {
 .dl-inline {
     display: grid;
     grid-template-columns: max-content 1fr;
-    column-gap: var(--space-md);
-    row-gap: var(--space-xs);
+    gap: var(--space-xs) var(--space-md);
 
     dt {
         margin: 0;

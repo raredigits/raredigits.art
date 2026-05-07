@@ -82,20 +82,16 @@
         margin-top: 0;
     }
 
-    :not(:first-child):not(.sidenote) {
+    :not(:first-child, .sidenote) {
         grid-column: 1 / span 5;
     }
 
-    @media (max-width: 1024px) {
-        & { 
-            display: flex; 
-            flex-direction: column;
-                .sidenote {
-                    max-width: 100%; 
-                }
-        }
+    @media (width <= 1024px) {
+        display: flex;
+        flex-direction: column;
 
         .sidenote {
+            max-width: 100%;
             padding: var(--space-sm);
         }
 
@@ -111,18 +107,16 @@
 .sidenote-link::before,
 .sidenote-bulb::before,
 .sidenote-memory::before {
-    font-family: "Material Symbols Outlined";
+    font-family: "Material Symbols Outlined", sans-serif;
     font-size: var(--font-size-lg);
     position: absolute;
     top: -8px;
     left: -16px;
     color: var(--text-color-light);
 
-    @media (max-width: 1024px) {
-        & {
-            top: 8px;
-            left: -8px;
-        }
+    @media (width <= 1024px) {
+        top: 8px;
+        left: -8px;
     }
 }
 

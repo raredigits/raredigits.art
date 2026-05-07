@@ -20,33 +20,36 @@
 - Current released version: `v0.6.11`.
 - Current working release: `v0.6.12`.
 - Next release after that: `v0.6.13` for cross-project class harvesting / enrichment.
+- Follow-up release after that: `v0.6.14` for CDN migration and GitHub Pages sunset.
 
 ---
 
 # Milestone `v0.6.12` — Cleanup & Delivery Hygiene
 
 **Goal:** ship the next technical cleanup release without breaking the shared-library ergonomics: reduce CSS noise, clarify build/lint workflow, trim waste in font/icon loading, and prepare reusable external assets for downstream projects.
+**Status:** ready for release
 
 **Recommended scope:**
 
-- `CSS-020` Stylelint stack and canonical `npm run lint:css`
-- `CSS-021` lint command + team workflow cleanup
-- `CSS-022` build pipeline documentation
-- `CSS-023` / `CSS-024` / `CSS-025` cleanup batch
-- `CSS-026` reusable floating contact button audit
-- `CSS-031` trim Fira Sans weights
-- `CSS-032` Material Icons strategy cleanup
-- `CSS-033` external vendor-icon CDN track
-- `CSS-T00` distribution hygiene
+- [x] `CSS-020` Stylelint stack and canonical `npm run lint:css`
+- [x] `CSS-021` lint command + team workflow cleanup
+- [x] `CSS-022` build pipeline documentation
+- [x] `CSS-023` / `CSS-024` / `CSS-025` cleanup batch
+- [x] `CSS-026` reusable floating contact button audit
+- [x] `CSS-031` trim Fira Sans weights
+- [x] `CSS-032` Material Icons strategy cleanup
+- [x] `CSS-033` external vendor-icon CDN track
+- [x] `CSS-034` server-side dependency security refresh
 
 **Exit criteria:**
 
-- [ ] `npm run lint:css` passes or has a clearly reduced remaining error set with documented follow-up
-- [ ] `rare.css` / `rare.min.css` still build cleanly from `assets/css/rare.scss`
-- [ ] Build/lint/release flow is documented at a practical maintainer level
-- [ ] Font loading keeps shared-project convenience while reducing unnecessary payload
-- [ ] Material icon loading has an explicit policy instead of three ad-hoc imports
-- [ ] Reusable vendor assets (`wa.svg`, `github.svg`, etc.) have a concrete CDN/public-distribution follow-up task and target location
+- [x] `npm run lint:css` passes or has a clearly reduced remaining error set with documented follow-up
+- [x] `rare.css` / `rare.min.css` still build cleanly from `assets/css/rare.scss`
+- [x] Build/lint/release flow is documented at a practical maintainer level
+- [x] Font loading keeps shared-project convenience while reducing unnecessary payload
+- [x] Material icon loading has an explicit policy instead of three ad-hoc imports
+- [x] Reusable vendor assets (`wa.svg`, `github.svg`, etc.) have a concrete CDN/public-distribution follow-up task and target location
+- [x] High-severity server-side dependency vulnerabilities are reviewed and fixed or explicitly triaged for follow-up
 
 ---
 
@@ -57,16 +60,54 @@
 **Recommended scope:**
 
 - Audit sibling and downstream projects that use Rare Styles
+- Audit sibling and downstream projects for legacy Material icon selectors before removing compatibility from the library
 - Identify classes/patterns that are actually reusable across at least two projects
 - Normalize naming, token usage, and API shape before importing into the library
 - Port the selected classes into core modules or clearly scoped opt-in modules
 - Add minimal documentation/examples for every harvested pattern
 
+**Legacy Material icon migration hints (for external projects):**
+
+| Legacy selector / pattern | Likely usage in external projects | Canonical replacement target | Removal goal |
+|---|---|---|---|
+| `.material-icons` | Header actions (`search`, `menu`, `close`), download links, breadcrumb/meta icons, utility buttons | `.material-symbols-outlined` with verified icon names (`file_download` often becomes `download`) | Remove markup-level dependency on `Material Icons` |
+| `.material-icons-outlined` | Section icons, launch/open-external icons, collapsible affordances (`keyboard_arrow_down`) | `.material-symbols-outlined` with verified icon names (`launch` becomes `open_in_new`) | Remove markup-level dependency on `Material Icons Outlined` |
+| `.section-icon.material-icons-outlined` | Typography/docs pages, section headers, collapsible cards | `.section-icon.material-symbols-outlined` or a family-agnostic `.section-icon` rule | Drop legacy class coupling from `_icons.scss` |
+| `.remark .material-icons` / `.remark .material-icons-outlined` | Inline note markers inside prose components | `.remark .material-symbols-outlined` or a pseudo-element-based icon rule | Collapse remark styling onto canonical Symbols path |
+| `.sidebar-icon.material-icons` | Sidebar navigation affordances or meta rows | `.sidebar-icon.material-symbols-outlined` or family-agnostic `.sidebar-icon` | Remove legacy sidebar compatibility selectors |
+| Icon text names from old Material Icons set | `file_download`, `launch`, and any project-specific legacy names | Verify against Symbols before migration | Prevent silent broken glyphs during cleanup |
+
+`_icons.scss` full cleanup belongs to `v0.6.13`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across `v0.6.12` and `v0.6.13`.
+
 **Exit criteria:**
 
 - [ ] Candidate classes from adjacent projects are reviewed and curated, not copied wholesale
+- [ ] External projects using legacy Material icon selectors are audited and patched
+- [ ] Rare Styles compatibility selectors for legacy Material icon families are removed after downstream migration
 - [ ] Imported classes follow Rare Styles naming/token conventions
 - [ ] New patterns are documented with intended use cases and non-goals
+
+---
+
+# Milestone `v0.6.14` — CDN Migration & Pages Sunset
+
+**Goal:** move Rare Styles consumers off mutable GitHub Pages asset URLs onto versioned CDN URLs, then safely retire the old Pages-based distribution path.
+
+**Recommended scope:**
+
+- Update library asset references to canonical versioned CDN URLs under `assets/css/images/**`
+- Migrate docs/examples away from `https://raredigits.github.io/rare-styles/...`
+- Audit known downstream consumers for GitHub Pages CSS URLs and patch them
+- Unpublish the legacy GitHub Pages site once downstream consumers are migrated
+- Remove legacy Pages-only repository artifacts such as `.nojekyll` after unpublish
+
+**Exit criteria:**
+
+- [ ] Library references to old local image paths are replaced with canonical versioned CDN URLs
+- [ ] Docs/examples no longer recommend `https://raredigits.github.io/rare-styles/...`
+- [ ] Known downstream consumers are migrated off GitHub Pages CSS URLs
+- [ ] The `rare-styles` GitHub Pages site is unpublished
+- [ ] Pages-only legacy files like `.nojekyll` are removed or explicitly justified
 
 ---
 
@@ -108,6 +149,8 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 | `CSS-031` | perf | Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400. | S |
 | `CSS-032` | chore | Rationalize Material icon loading. We currently import three related families (`Material Icons`, `Material Icons Outlined`, `Material Symbols Outlined`); decide the canonical set, remove unnecessary overlap, and document which family the library expects. | S |
 | `CSS-033` | feat | Publish reusable vendor icon assets (`wa.svg`, `github.svg`, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo. | M |
+| `CSS-033a` | chore | After tagging `v0.6.12`, replace library references to old local image paths (`/assets/img/common/vendors/...`, `/assets/img/logo/...`) with canonical versioned CDN URLs pointing at `assets/css/images/**`. Verify vendor-logo, floating contact button, and brand-logo surfaces still render correctly. | S |
+| `CSS-034` | chore | Fix critical server-side dependency vulnerabilities in the site/build toolchain, starting with templating and content-processing packages flagged by `npm audit` (notably `liquidjs` and other server-side/high-severity findings). Verify `npm run build` still passes after the refresh. | M |
 
 ## Search tooling (P1)
 

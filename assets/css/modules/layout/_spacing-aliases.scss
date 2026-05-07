@@ -207,7 +207,6 @@ $spacing-aliases: (
 @include generate-spacing-aliases($spacing-aliases, "gap", ("gap"));
 @include generate-spacing-aliases($spacing-aliases, "w", ("width"));
 @include generate-spacing-aliases($spacing-aliases, "h", ("height"));
-
 @include generate-responsive-spacing-aliases($spacing-aliases, "p", ("padding"));
 @include generate-responsive-spacing-aliases($spacing-aliases, "m", ("margin"));
 @include generate-responsive-spacing-aliases($spacing-aliases, "gap", ("gap"));

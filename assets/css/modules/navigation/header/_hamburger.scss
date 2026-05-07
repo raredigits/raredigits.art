@@ -23,6 +23,7 @@
     justify-content: space-between;
     position: fixed;
     top: -100%;
+
     // top: 0;
     left: 0;
     width: 100%;
@@ -64,6 +65,7 @@
 
 .nav-hamburger ul li {
     margin-bottom: var(--space-md);;
+
     // &:hover {
     //     color: var(--primary-color);
     //     text-decoration: none;
@@ -79,6 +81,7 @@
 .hamburger-img {
     max-width: 100px;
     color: var(--gray);
+
     &:hover {
         color: var(--gray-light);
     }
