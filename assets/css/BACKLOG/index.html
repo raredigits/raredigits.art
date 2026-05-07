@@ -1,8 +1,7 @@
 <h1>Rare Styles — Backlog &amp; Roadmap</h1>
-<p><strong>Current version:</strong> <code>0.6.10</code> (early beta)
+<p><strong>Current version:</strong> <code>v0.6.10</code> (early beta)
 <strong>Public release target:</strong> <code>1.0.0</code></p>
 <p><strong>Positioning:</strong> <code>Rare Styles</code> is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.</p>
-<p><strong>Library positioning:</strong> Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a> — a CSS library for clarity-first content (Story) and decision-grade interfaces (Dashboard). Audience: a narrow circle of Rareism-aligned designers and developers. Not a Bootstrap/Tailwind competitor.</p>
 <hr>
 <h2>Conventions</h2>
 <ul>
@@ -302,7 +301,7 @@
 <tr>
 <td><code>CSS-T00</code></td>
 <td>chore</td>
-<td>Migrate consumers off <code>https://raredigits.github.io/rare-styles/rare.min.css</code> (mutable, no CDN, no SRI) to <code>https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css</code> (immutable, edge-cached, SRI-able). Tag <code>v0.6.9</code> retroactively so anyone still on the old state can pin to it. Announce the deprecation in the README of <code>rare-styles</code> repo.</td>
+<td>Migrate consumers off <code>https://raredigits.github.io/rare-styles/rare.min.css</code> (mutable, no CDN, no SRI) to <code>https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css</code> (immutable, edge-cached, SRI-able). Tag the current <code>v0.6.10</code> snapshot before <code>0.7.0</code> lands so consumers can pin to it during the transition. Announce the deprecation in the README of <code>rare-styles</code> repo.</td>
 <td>S</td>
 </tr>
 </tbody>
@@ -489,13 +488,13 @@
 <tr>
 <td><code>CSS-136</code></td>
 <td>chore</td>
-<td>Rework the large-end spacing scale in <code>assets/css/modules/layout/_spacing.scss</code>: replace sizes above <code>xl</code> with semantically clearer names and values, so the token system communicates intent instead of just “bigger than bigger”.</td>
+<td><strong>Rename top-end spacing tokens for semantic clarity.</strong> <code>--space-xxxl</code> (12×) and <code>--space-xxxxl</code> (24×) communicate &quot;bigger than bigger&quot; rather than intent; arguably <code>--space-xxl</code> (6×) too. Pick a semantic scheme — three candidates: (a) industry t-shirt extension <code>--space-2xl/3xl/4xl</code>; (b) functional names like <code>--space-section/block/page</code>; (c) numeric multipliers <code>--space-x6/x12/x24</code>. Migrate the spacing scale, the <code>$spaces</code> list, all generated utility classes (<code>.height-xxxxl</code>, <code>.padding-xxxl</code>, etc.), and consumers (incl. the <code>.list-pack</code> height utility example in <code>/styles/layout/spacing/</code>). Mark as breaking change in <code>CHANGELOG.md</code>.</td>
 <td>M</td>
 </tr>
 <tr>
 <td><code>CSS-137</code></td>
 <td>chore</td>
-<td>Reassess <code>assets/css/modules/layout/_spacing-aliases.scss</code>: current aliases can mislead consumers about what is canonical versus shorthand. Clarify, reduce, or restructure the alias layer.</td>
+<td><strong>Merge <code>_spacing.scss</code> and <code>_spacing-aliases.scss</code> into one file.</strong> The split between core tokens and short-form aliases adds an indirection layer without obvious benefit; consolidating clarifies what is canonical versus shorthand and reduces friction for contributors. While doing it, decide whether to keep the alias layer at all — the current convention <code>s: xs</code>, <code>m: sm</code>, etc. can mislead consumers (<code>m</code> ≠ <code>md</code>). Either prune to a smaller intentional set, or rebuild on cleaner ground.</td>
 <td>M</td>
 </tr>
 </tbody>
@@ -892,8 +891,8 @@
 <tr>
 <td><code>CSS-284</code></td>
 <td><code>/styles/layout/</code></td>
-<td>existing + merges <code>/styles/spaces/</code></td>
-<td>Grid, containers, spacing scale, <code>fr</code> system, breakpoints, responsive prefixes (<code>mobile:</code> / <code>tablet:</code> / <code>desktop:</code>), <code>app-shell</code>.</td>
+<td>existing</td>
+<td>Grid, containers, <code>fr</code> system, breakpoints, responsive prefixes (<code>mobile:</code> / <code>tablet:</code> / <code>desktop:</code>), <code>app-shell</code>. Includes the existing child page <code>/styles/layout/spacing/</code> (token reference, scale, utilities, aliases).</td>
 <td>L</td>
 </tr>
 <tr>
