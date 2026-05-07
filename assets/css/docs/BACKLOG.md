@@ -17,10 +17,10 @@
 ## Planning note
 
 - Source of truth for the current library version: `_data/versions.json` (`styles`).
-- Current released version: `v0.6.11`.
-- Current working release: `v0.6.12`.
-- Next release after that: `v0.6.13` for cross-project class harvesting / enrichment.
-- Follow-up release after that: `v0.6.14` for CDN migration and GitHub Pages sunset.
+- Current released version: `v0.6.12`.
+- Current working release: `v0.6.13`.
+- Next release after that: `v0.6.14` for cross-project class harvesting / enrichment.
+- Follow-up release after that: `v0.6.15` for CDN migration and GitHub Pages sunset.
 
 ---
 
@@ -53,7 +53,27 @@
 
 ---
 
-# Milestone `v0.6.13` — Cross-Project Enrichment
+# Milestone `v0.6.13` — Reusable Asset Reshuffle
+
+**Goal:** publish a tiny follow-up release that stabilizes the reusable image surface for Rare Styles after the library-facing asset reshuffle.
+**Status:** ready for release
+
+**Recommended scope:**
+
+- Finalize the canonical reusable-image layout under `assets/css/images/**`
+- Keep the release narrowly focused on asset reshuffle and reuse prep
+- Avoid mixing in downstream CDN cutover or cross-project component harvesting
+- Treat this as a compatibility-preserving micro-release
+
+**Exit criteria:**
+
+- [x] Reusable library images are reorganized into their intended canonical structure
+- [x] The reusable-image surface is documented as the public contract for downstream use
+- [x] No consumer-facing CSS API changes are introduced in the reshuffle release
+
+---
+
+# Milestone `v0.6.14` — Cross-Project Enrichment
 
 **Goal:** enrich Rare Styles with proven reusable classes and patterns harvested from adjacent projects that already consume the library.
 
@@ -77,7 +97,7 @@
 | `.sidebar-icon.material-icons` | Sidebar navigation affordances or meta rows | `.sidebar-icon.material-symbols-outlined` or family-agnostic `.sidebar-icon` | Remove legacy sidebar compatibility selectors |
 | Icon text names from old Material Icons set | `file_download`, `launch`, and any project-specific legacy names | Verify against Symbols before migration | Prevent silent broken glyphs during cleanup |
 
-`_icons.scss` full cleanup belongs to `v0.6.13`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across `v0.6.12` and `v0.6.13`.
+`_icons.scss` full cleanup belongs to `v0.6.14`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across `v0.6.12` and `v0.6.14`.
 
 **Exit criteria:**
 
@@ -89,7 +109,7 @@
 
 ---
 
-# Milestone `v0.6.14` — CDN Migration & Pages Sunset
+# Milestone `v0.6.15` — CDN Migration & Pages Sunset
 
 **Goal:** move Rare Styles consumers off mutable GitHub Pages asset URLs onto versioned CDN URLs, then safely retire the old Pages-based distribution path.
 
@@ -473,10 +493,11 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 
 | Version | Codename | Scope |
 |---|---|---|
-| `v0.6.11` | _current_ | Architecture, grid, typography, cards, navigation — active baseline before the next cleanup pass |
 | `v0.6.12` | Cleanup & Delivery Hygiene | Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up |
-| `v0.6.13` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
-| `0.7.0` | Stabilization | Real button system, search tooling overhaul, versioned CDN migration, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.13` |
+| `v0.6.13` | _current_ | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
+| `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
+| `v0.6.15` | CDN Migration & Pages Sunset | Move library/docs consumers off GitHub Pages URLs, switch to versioned CDN paths, retire Pages legacies |
+| `0.7.0` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
 | `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |
 | `CSS-T01` | (parallel) | CDN + npm distribution |
