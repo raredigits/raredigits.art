@@ -1,6 +1,7 @@
 # Rare Styles — Backlog & Roadmap
 
-**Current version:** `{{ versions.styles }}` (early beta)
+**Current version:** `v0.6.11` (from `_data/versions.json`)
+**Next planned release:** `v0.6.12`
 **Public release target:** `1.0.0`
 
 **Positioning:** `Rare Styles` is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.
@@ -13,6 +14,60 @@
 - **Type:** `bug` · `feat` · `a11y` · `perf` · `chore` · `docs` · `dx`
 - **Estimate:** S (≤4 h) · M (1 day) · L (2–3 days) · XL (a week+)
 
+## Planning note
+
+- Source of truth for the current library version: `_data/versions.json` (`styles`).
+- Current released version: `v0.6.11`.
+- Current working release: `v0.6.12`.
+- Next release after that: `v0.6.13` for cross-project class harvesting / enrichment.
+
+---
+
+# Milestone `v0.6.12` — Cleanup & Delivery Hygiene
+
+**Goal:** ship the next technical cleanup release without breaking the shared-library ergonomics: reduce CSS noise, clarify build/lint workflow, trim waste in font/icon loading, and prepare reusable external assets for downstream projects.
+
+**Recommended scope:**
+
+- `CSS-020` Stylelint stack and canonical `npm run lint:css`
+- `CSS-021` lint command + team workflow cleanup
+- `CSS-022` build pipeline documentation
+- `CSS-023` / `CSS-024` / `CSS-025` cleanup batch
+- `CSS-026` reusable floating contact button audit
+- `CSS-031` trim Fira Sans weights
+- `CSS-032` Material Icons strategy cleanup
+- `CSS-033` external vendor-icon CDN track
+- `CSS-T00` distribution hygiene
+
+**Exit criteria:**
+
+- [ ] `npm run lint:css` passes or has a clearly reduced remaining error set with documented follow-up
+- [ ] `rare.css` / `rare.min.css` still build cleanly from `assets/css/rare.scss`
+- [ ] Build/lint/release flow is documented at a practical maintainer level
+- [ ] Font loading keeps shared-project convenience while reducing unnecessary payload
+- [ ] Material icon loading has an explicit policy instead of three ad-hoc imports
+- [ ] Reusable vendor assets (`wa.svg`, `github.svg`, etc.) have a concrete CDN/public-distribution follow-up task and target location
+
+---
+
+# Milestone `v0.6.13` — Cross-Project Enrichment
+
+**Goal:** enrich Rare Styles with proven reusable classes and patterns harvested from adjacent projects that already consume the library.
+
+**Recommended scope:**
+
+- Audit sibling and downstream projects that use Rare Styles
+- Identify classes/patterns that are actually reusable across at least two projects
+- Normalize naming, token usage, and API shape before importing into the library
+- Port the selected classes into core modules or clearly scoped opt-in modules
+- Add minimal documentation/examples for every harvested pattern
+
+**Exit criteria:**
+
+- [ ] Candidate classes from adjacent projects are reviewed and curated, not copied wholesale
+- [ ] Imported classes follow Rare Styles naming/token conventions
+- [ ] New patterns are documented with intended use cases and non-goals
+
 ---
 
 # Milestone `0.7.0` — Stabilization
@@ -24,11 +79,12 @@
 | ID | Type | Task | Estimate |
 |---|---|---|---|
 | `CSS-020` | dx | Keep **Stylelint** on a Node-18-compatible stack: `stylelint@16`, `stylelint-config-standard-scss`, `postcss-scss`. Document `npm run lint:css` as the canonical CSS check. | M |
-| `CSS-021` | dx | Run `stylelint --fix` across `modules/` after `CSS-001..016`. Wire linting into the team workflow (pre-commit hook or CI check). | S |
-| `CSS-022` | dx | Document the build pipeline: how `rare.css` / `rare.min.css` are produced, and how linting fits into it. Keep `build:css`, `watch:css`, `lint:css` scripts in `package.json`. | M |
+| `CSS-021` | dx | Make `npm run lint:css` the stable team entry point, run `stylelint --fix` where safe, and document when linting is required in day-to-day work and before release. | S |
+| `CSS-022` | dx | Document the build pipeline: how `rare.css` / `rare.min.css` are produced, how linting fits into the release flow, and which `package.json` scripts are canonical (`build:css`, `watch:css`, `lint:css`). | M |
 | `CSS-023` | chore | Sweep low-risk Stylelint cleanup that is mostly mechanical: modern `rgb(... / ... )` notation, alpha percentages, hex shortening, empty-line normalization, operator spacing, argumentless mixin call style. | M |
 | `CSS-024` | chore | Triage duplicate/dead declarations reported by Stylelint and either remove them or document intent: `_icons.scss`, `_tags.scss`, `_header-container.scss`, `_grid.scss`, `_sidenotes.scss`. | S |
 | `CSS-025` | chore | Clean up module hygiene issues reported by Stylelint: `@forward` without `.scss` extension in `navigation/_index.scss`, decide whether empty `special/_rare.scss` should be removed or kept as an intentional staging file. | S |
+| `CSS-026` | chore | Audit the floating WhatsApp/contact button pattern as a reusable library primitive. Keep it in the library if it is genuinely cross-project, but clarify whether the API is brand-specific (`wa`) or a more general floating contact / floating action pattern. | S |
 
 ## Buttons (P0)
 
@@ -48,8 +104,10 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-030` | perf | Move Google Fonts out of `@import url()` into the page `<head>`: `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` + non-blocking stylesheet load. | S |
+| `CSS-030` | perf | Keep font loading convenient for downstream projects, but review whether Google Fonts imports can be made cheaper/cleaner without forcing every consumer to re-declare them manually. | S |
 | `CSS-031` | perf | Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400. | S |
+| `CSS-032` | chore | Rationalize Material icon loading. We currently import three related families (`Material Icons`, `Material Icons Outlined`, `Material Symbols Outlined`); decide the canonical set, remove unnecessary overlap, and document which family the library expects. | S |
+| `CSS-033` | feat | Publish reusable vendor icon assets (`wa.svg`, `github.svg`, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo. | M |
 
 ## Search tooling (P1)
 
@@ -67,7 +125,7 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to `https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css` (immutable, edge-cached, SRI-able). Tag the current `v0.6.10` snapshot before `0.7.0` lands so consumers can pin to it during the transition. Announce the deprecation in the README of `rare-styles` repo. | S |
+| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current `v0.6.11` snapshot, switch docs/examples to the `v0.6.12` CDN target, and announce the old URL as deprecated. | S |
 
 ---
 
@@ -299,7 +357,7 @@ The CSS library lives next to two siblings: `scripts/` (collapsible, cookies, co
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-211` | feat | Tag releases in git (`v0.7.0`, `v0.8.0`, `v0.9.0`). Use semver strictly. | S |
+| `CSS-211` | feat | Tag releases in git (`v0.6.12`, `v0.6.13`, `v0.7.0`, `v0.8.0`, `v0.9.0`). Use semver strictly. | S |
 | `CSS-213` | feat | Validate source maps shipped with `rare.min.css`. | S |
 | `CSS-250` | feat | **CDN + npm package** — see dedicated track below (`CSS-T01`). | L |
 
@@ -372,8 +430,10 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 
 | Version | Codename | Scope |
 |---|---|---|
-| `0.6.9` | _current_ | Architecture, grid, typography, cards, navigation — bugs inside |
-| `0.7.0` | Stabilization | Bug fixes `CSS-001..016` (done), stylelint, build pipeline, fonts, real button system, search tooling overhaul, jsDelivr migration, rebrand to **Rare Styles** |
+| `v0.6.11` | _current_ | Architecture, grid, typography, cards, navigation — active baseline before the next cleanup pass |
+| `v0.6.12` | Cleanup & Delivery Hygiene | Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up |
+| `v0.6.13` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
+| `0.7.0` | Stabilization | Real button system, search tooling overhaul, versioned CDN migration, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.13` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
 | `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |
 | `CSS-T01` | (parallel) | CDN + npm distribution |

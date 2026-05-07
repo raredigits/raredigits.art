@@ -1,5 +1,6 @@
 <h1>Rare Styles — Backlog &amp; Roadmap</h1>
-<p><strong>Current version:</strong> <code>v0.6.10</code> (early beta)
+<p><strong>Current version:</strong> <code>v0.6.11</code> (from <code>_data/versions.json</code>)
+<strong>Next planned release:</strong> <code>v0.6.12</code>
 <strong>Public release target:</strong> <code>1.0.0</code></p>
 <p><strong>Positioning:</strong> <code>Rare Styles</code> is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.</p>
 <hr>
@@ -8,6 +9,54 @@
 <li><strong>Priority:</strong> P0 (blocker) · P1 (important) · P2 (nice-to-have)</li>
 <li><strong>Type:</strong> <code>bug</code> · <code>feat</code> · <code>a11y</code> · <code>perf</code> · <code>chore</code> · <code>docs</code> · <code>dx</code></li>
 <li><strong>Estimate:</strong> S (≤4 h) · M (1 day) · L (2–3 days) · XL (a week+)</li>
+</ul>
+<h2>Planning note</h2>
+<ul>
+<li>Source of truth for the current library version: <code>_data/versions.json</code> (<code>styles</code>).</li>
+<li>Current released version: <code>v0.6.11</code>.</li>
+<li>Current working release: <code>v0.6.12</code>.</li>
+<li>Next release after that: <code>v0.6.13</code> for cross-project class harvesting / enrichment.</li>
+</ul>
+<hr>
+<h1>Milestone <code>v0.6.12</code> — Cleanup &amp; Delivery Hygiene</h1>
+<p><strong>Goal:</strong> ship the next technical cleanup release without breaking the shared-library ergonomics: reduce CSS noise, clarify build/lint workflow, trim waste in font/icon loading, and prepare reusable external assets for downstream projects.</p>
+<p><strong>Recommended scope:</strong></p>
+<ul>
+<li><code>CSS-020</code> Stylelint stack and canonical <code>npm run lint:css</code></li>
+<li><code>CSS-021</code> lint command + team workflow cleanup</li>
+<li><code>CSS-022</code> build pipeline documentation</li>
+<li><code>CSS-023</code> / <code>CSS-024</code> / <code>CSS-025</code> cleanup batch</li>
+<li><code>CSS-026</code> reusable floating contact button audit</li>
+<li><code>CSS-031</code> trim Fira Sans weights</li>
+<li><code>CSS-032</code> Material Icons strategy cleanup</li>
+<li><code>CSS-033</code> external vendor-icon CDN track</li>
+<li><code>CSS-T00</code> distribution hygiene</li>
+</ul>
+<p><strong>Exit criteria:</strong></p>
+<ul>
+<li>[ ] <code>npm run lint:css</code> passes or has a clearly reduced remaining error set with documented follow-up</li>
+<li>[ ] <code>rare.css</code> / <code>rare.min.css</code> still build cleanly from <code>assets/css/rare.scss</code></li>
+<li>[ ] Build/lint/release flow is documented at a practical maintainer level</li>
+<li>[ ] Font loading keeps shared-project convenience while reducing unnecessary payload</li>
+<li>[ ] Material icon loading has an explicit policy instead of three ad-hoc imports</li>
+<li>[ ] Reusable vendor assets (<code>wa.svg</code>, <code>github.svg</code>, etc.) have a concrete CDN/public-distribution follow-up task and target location</li>
+</ul>
+<hr>
+<h1>Milestone <code>v0.6.13</code> — Cross-Project Enrichment</h1>
+<p><strong>Goal:</strong> enrich Rare Styles with proven reusable classes and patterns harvested from adjacent projects that already consume the library.</p>
+<p><strong>Recommended scope:</strong></p>
+<ul>
+<li>Audit sibling and downstream projects that use Rare Styles</li>
+<li>Identify classes/patterns that are actually reusable across at least two projects</li>
+<li>Normalize naming, token usage, and API shape before importing into the library</li>
+<li>Port the selected classes into core modules or clearly scoped opt-in modules</li>
+<li>Add minimal documentation/examples for every harvested pattern</li>
+</ul>
+<p><strong>Exit criteria:</strong></p>
+<ul>
+<li>[ ] Candidate classes from adjacent projects are reviewed and curated, not copied wholesale</li>
+<li>[ ] Imported classes follow Rare Styles naming/token conventions</li>
+<li>[ ] New patterns are documented with intended use cases and non-goals</li>
 </ul>
 <hr>
 <h1>Milestone <code>0.7.0</code> — Stabilization</h1>
@@ -32,13 +81,13 @@
 <tr>
 <td><code>CSS-021</code></td>
 <td>dx</td>
-<td>Run <code>stylelint --fix</code> across <code>modules/</code> after <code>CSS-001..016</code>. Wire linting into the team workflow (pre-commit hook or CI check).</td>
+<td>Make <code>npm run lint:css</code> the stable team entry point, run <code>stylelint --fix</code> where safe, and document when linting is required in day-to-day work and before release.</td>
 <td>S</td>
 </tr>
 <tr>
 <td><code>CSS-022</code></td>
 <td>dx</td>
-<td>Document the build pipeline: how <code>rare.css</code> / <code>rare.min.css</code> are produced, and how linting fits into it. Keep <code>build:css</code>, <code>watch:css</code>, <code>lint:css</code> scripts in <code>package.json</code>.</td>
+<td>Document the build pipeline: how <code>rare.css</code> / <code>rare.min.css</code> are produced, how linting fits into the release flow, and which <code>package.json</code> scripts are canonical (<code>build:css</code>, <code>watch:css</code>, <code>lint:css</code>).</td>
 <td>M</td>
 </tr>
 <tr>
@@ -57,6 +106,12 @@
 <td><code>CSS-025</code></td>
 <td>chore</td>
 <td>Clean up module hygiene issues reported by Stylelint: <code>@forward</code> without <code>.scss</code> extension in <code>navigation/_index.scss</code>, decide whether empty <code>special/_rare.scss</code> should be removed or kept as an intentional staging file.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-026</code></td>
+<td>chore</td>
+<td>Audit the floating WhatsApp/contact button pattern as a reusable library primitive. Keep it in the library if it is genuinely cross-project, but clarify whether the API is brand-specific (<code>wa</code>) or a more general floating contact / floating action pattern.</td>
 <td>S</td>
 </tr>
 </tbody>
@@ -131,7 +186,7 @@
 <tr>
 <td><code>CSS-030</code></td>
 <td>perf</td>
-<td>Move Google Fonts out of <code>@import url()</code> into the page <code>&lt;head&gt;</code>: <code>&lt;link rel=&quot;preconnect&quot; href=&quot;https://fonts.gstatic.com&quot; crossorigin&gt;</code> + non-blocking stylesheet load.</td>
+<td>Keep font loading convenient for downstream projects, but review whether Google Fonts imports can be made cheaper/cleaner without forcing every consumer to re-declare them manually.</td>
 <td>S</td>
 </tr>
 <tr>
@@ -139,6 +194,18 @@
 <td>perf</td>
 <td>Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400.</td>
 <td>S</td>
+</tr>
+<tr>
+<td><code>CSS-032</code></td>
+<td>chore</td>
+<td>Rationalize Material icon loading. We currently import three related families (<code>Material Icons</code>, <code>Material Icons Outlined</code>, <code>Material Symbols Outlined</code>); decide the canonical set, remove unnecessary overlap, and document which family the library expects.</td>
+<td>S</td>
+</tr>
+<tr>
+<td><code>CSS-033</code></td>
+<td>feat</td>
+<td>Publish reusable vendor icon assets (<code>wa.svg</code>, <code>github.svg</code>, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo.</td>
+<td>M</td>
 </tr>
 </tbody>
 </table>
@@ -194,7 +261,7 @@
 <tr>
 <td><code>CSS-T00</code></td>
 <td>chore</td>
-<td>Migrate consumers off <code>https://raredigits.github.io/rare-styles/rare.min.css</code> (mutable, no CDN, no SRI) to <code>https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css</code> (immutable, edge-cached, SRI-able). Tag the current <code>v0.6.10</code> snapshot before <code>0.7.0</code> lands so consumers can pin to it during the transition. Announce the deprecation in the README of <code>rare-styles</code> repo.</td>
+<td>Migrate consumers off <code>https://raredigits.github.io/rare-styles/rare.min.css</code> (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current <code>v0.6.11</code> snapshot, switch docs/examples to the <code>v0.6.12</code> CDN target, and announce the old URL as deprecated.</td>
 <td>S</td>
 </tr>
 </tbody>
@@ -1089,7 +1156,7 @@
 <tr>
 <td><code>CSS-211</code></td>
 <td>feat</td>
-<td>Tag releases in git (<code>v0.7.0</code>, <code>v0.8.0</code>, <code>v0.9.0</code>). Use semver strictly.</td>
+<td>Tag releases in git (<code>v0.6.12</code>, <code>v0.6.13</code>, <code>v0.7.0</code>, <code>v0.8.0</code>, <code>v0.9.0</code>). Use semver strictly.</td>
 <td>S</td>
 </tr>
 <tr>
@@ -1300,14 +1367,24 @@
 </thead>
 <tbody>
 <tr>
-<td><code>0.6.9</code></td>
+<td><code>v0.6.11</code></td>
 <td><em>current</em></td>
-<td>Architecture, grid, typography, cards, navigation — bugs inside</td>
+<td>Architecture, grid, typography, cards, navigation — active baseline before the next cleanup pass</td>
+</tr>
+<tr>
+<td><code>v0.6.12</code></td>
+<td>Cleanup &amp; Delivery Hygiene</td>
+<td>Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up</td>
+</tr>
+<tr>
+<td><code>v0.6.13</code></td>
+<td>Cross-Project Enrichment</td>
+<td>Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles</td>
 </tr>
 <tr>
 <td><code>0.7.0</code></td>
 <td>Stabilization</td>
-<td>Bug fixes <code>CSS-001..016</code> (done), stylelint, build pipeline, fonts, real button system, search tooling overhaul, jsDelivr migration, rebrand to <strong>Rare Styles</strong></td>
+<td>Real button system, search tooling overhaul, versioned CDN migration, plus any remaining stabilization work not needed for <code>v0.6.12</code> / <code>v0.6.13</code></td>
 </tr>
 <tr>
 <td><code>0.8.0</code></td>
