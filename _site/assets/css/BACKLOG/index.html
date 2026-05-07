@@ -12,132 +12,6 @@
 <hr>
 <h1>Milestone <code>0.7.0</code> — Stabilization</h1>
 <p><strong>Goal:</strong> zero invalid CSS in the codebase, linter in place, fonts loaded properly, and the existing button module turned into a real button system.</p>
-<h2>Bugs (P0)</h2>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Type</th>
-<th>File / line</th>
-<th>Issue</th>
-<th>Estimate</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>CSS-001</code></td>
-<td>bug</td>
-<td><code>modules/typography/_fonts.scss:1–4</code></td>
-<td><code>@import url(...)</code> strings contain leftover HTML attribute fragments (<code>...&amp;display=swap&quot; rel=&quot;stylesheet'</code>). URLs are invalid.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-002</code></td>
-<td>bug</td>
-<td><code>rare.scss:11</code></td>
-<td><code>body { color: var(--text-color) }</code> — <code>--text-color</code> is not defined anywhere.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-003</code></td>
-<td>bug</td>
-<td><code>modules/bricks/_cards.scss:11</code></td>
-<td><code>.card-hover</code> references <code>--grey-lightest</code> (British spelling); only <code>--gray-lightest</code> exists.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-004</code></td>
-<td>bug</td>
-<td><code>modules/typography/_text-content.scss:130</code></td>
-<td><code>.warning { color: var(--warning-color) }</code> — variable is undefined.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-005</code></td>
-<td>bug</td>
-<td><code>modules/typography/_text-content.scss:138</code></td>
-<td><code>cite { color: var(--grey-dark) }</code> — British spelling, undefined.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-006</code></td>
-<td>bug</td>
-<td><code>modules/typography/_text-content.scss:211</code></td>
-<td><code>pre code { border-radius: none }</code> — invalid value, must be <code>0</code>.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-007</code></td>
-<td>bug</td>
-<td><code>modules/utilities/_resets.scss:14–17</code></td>
-<td><code>.no-decoration:hover { background-color: none; color: none }</code> — both values invalid.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-008</code></td>
-<td>bug</td>
-<td><code>modules/utilities/_display.scss:32</code></td>
-<td><code>.text-wrap { white-space: wrap }</code> — <code>wrap</code> is not a valid value for <code>white-space</code>; should be <code>normal</code>.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-009</code></td>
-<td>bug</td>
-<td><code>modules/align/_align.scss:31, 41</code></td>
-<td><code>.top { text-align: top }</code>, <code>.bottom { text-align: bottom }</code> — <code>text-align</code> does not accept <code>top</code>/<code>bottom</code>. Classes do nothing.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-010</code></td>
-<td>bug</td>
-<td><code>modules/align/_align.scss:14, 35</code></td>
-<td><code>.center-y</code> is declared twice with different definitions; the second overrides the first.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-011</code></td>
-<td>bug</td>
-<td><code>modules/layout/_grid.scss:46</code></td>
-<td><code>.grid-mobile { gap: var(--global-grid-gap) }</code> — <code>--global-grid-gap</code> is undefined; likely meant <code>--grid-gap-global</code>.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-012</code></td>
-<td>bug</td>
-<td><code>modules/typography/_sidenotes.scss:11</code></td>
-<td><code>.remarked &gt; :first-child { min-width: var(--content-max-width) }</code> — <code>--content-max-width</code> is undefined, so sidenote layout can collapse unpredictably.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-013</code></td>
-<td>bug</td>
-<td><code>modules/navigation/header/_search.scss:21–23</code></td>
-<td>Search input removes <code>outline</code> with no replacement focus style. Keyboard focus becomes invisible.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-014</code></td>
-<td>bug</td>
-<td><code>modules/colors/_base.scss:64</code>, <code>modules/colors/_blue.scss:22</code></td>
-<td>Sass warns about interpolating unquoted color names (<code>black</code>, <code>white</code>, <code>blue</code>, etc.) into selectors. Generator is fragile and may emit invalid selectors.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-015</code></td>
-<td>bug</td>
-<td><code>modules/navigation/header/_hamburger.scss:57–59</code></td>
-<td><code>.nav-hamburger ul</code> sets <code>padding-top</code>, then immediately resets it with <code>padding: 0</code>; the intended top spacing never applies.</td>
-<td>S</td>
-</tr>
-<tr>
-<td><code>CSS-016</code></td>
-<td>bug</td>
-<td><code>modules/navigation/header/_header-container.scss:25, 28</code></td>
-<td><code>.header-logo</code> declares two <code>height</code> values; <code>height: 100%</code> overrides the calculated logo height, so the sizing rule is effectively dead.</td>
-<td>S</td>
-</tr>
-</tbody>
-</table>
 <h2>Quality infrastructure (P0–P1)</h2>
 <table>
 <thead>
@@ -265,6 +139,25 @@
 <td>perf</td>
 <td>Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400.</td>
 <td>S</td>
+</tr>
+</tbody>
+</table>
+<h2>Search tooling (P1)</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type</th>
+<th>Task</th>
+<th>Estimate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CSS-050</code></td>
+<td>feat</td>
+<td>Search tooling overhaul. Rebuild the Pagefind UI integration (<code>modules/navigation/header/_search.scss</code>, <code>_includes/header.njk</code> search trigger) and the standalone <code>/search/index.njk</code> page. Scope: align styling with library tokens, replace ad-hoc Pagefind-default markup overrides with a thin SCSS adapter, ship a documented results layout, ensure full keyboard &amp; screen-reader path (focus-visible, ARIA roles, results live region), and audit <code>outline: none</code> patches like <code>CSS-013</code> so the global focus story (<code>CSS-110</code>) lands consistently. Treat the dedicated search page as the canonical surface, header search as a compact entry point.</td>
+<td>L</td>
 </tr>
 </tbody>
 </table>
@@ -1414,7 +1307,7 @@
 <tr>
 <td><code>0.7.0</code></td>
 <td>Stabilization</td>
-<td>Bug fixes <code>CSS-001..014</code>, stylelint, build pipeline, fonts, real button system, jsDelivr migration, rebrand to <strong>Rare Styles</strong></td>
+<td>Bug fixes <code>CSS-001..016</code> (done), stylelint, build pipeline, fonts, real button system, search tooling overhaul, jsDelivr migration, rebrand to <strong>Rare Styles</strong></td>
 </tr>
 <tr>
 <td><code>0.8.0</code></td>

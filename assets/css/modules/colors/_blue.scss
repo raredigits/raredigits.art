@@ -19,7 +19,7 @@ blue-dark;
         background-color: var(--#{$color});
     }
 
-    .#{$color}-link {
+    .#{$color + ""}-link {
       text-decoration-color: var(--#{$color});
       background-image: linear-gradient(
         to top,

@@ -43,7 +43,7 @@
 .grid-mobile {
     display: grid;
     grid-template-columns: var(--grid-columns-global-mobile);
-    gap: var(--global-grid-gap);
+    gap: var(--grid-gap-global);
 }
 
 .auto-cols-fr { grid-auto-columns: 1fr; }

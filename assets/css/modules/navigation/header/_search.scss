@@ -23,6 +23,12 @@
     outline: none;
 }
 
+.searchbar .pagefind-ui input:focus-visible,
+#search-page .pagefind-ui input:focus-visible {
+    outline: 2px solid var(--brand-color);
+    outline-offset: 2px;
+}
+
 .searchbar .pagefind-ui__results-area {
     height: 90vh;
     padding-bottom: var(--header-height);

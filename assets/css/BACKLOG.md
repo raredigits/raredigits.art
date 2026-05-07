@@ -19,27 +19,6 @@
 
 **Goal:** zero invalid CSS in the codebase, linter in place, fonts loaded properly, and the existing button module turned into a real button system.
 
-## Bugs (P0)
-
-| ID | Type | File / line | Issue | Estimate |
-|---|---|---|---|---|
-| `CSS-001` | bug | `modules/typography/_fonts.scss:1–4` | `@import url(...)` strings contain leftover HTML attribute fragments (`...&display=swap" rel="stylesheet'`). URLs are invalid. | S |
-| `CSS-002` | bug | `rare.scss:11` | `body { color: var(--text-color) }` — `--text-color` is not defined anywhere. | S |
-| `CSS-003` | bug | `modules/bricks/_cards.scss:11` | `.card-hover` references `--grey-lightest` (British spelling); only `--gray-lightest` exists. | S |
-| `CSS-004` | bug | `modules/typography/_text-content.scss:130` | `.warning { color: var(--warning-color) }` — variable is undefined. | S |
-| `CSS-005` | bug | `modules/typography/_text-content.scss:138` | `cite { color: var(--grey-dark) }` — British spelling, undefined. | S |
-| `CSS-006` | bug | `modules/typography/_text-content.scss:211` | `pre code { border-radius: none }` — invalid value, must be `0`. | S |
-| `CSS-007` | bug | `modules/utilities/_resets.scss:14–17` | `.no-decoration:hover { background-color: none; color: none }` — both values invalid. | S |
-| `CSS-008` | bug | `modules/utilities/_display.scss:32` | `.text-wrap { white-space: wrap }` — `wrap` is not a valid value for `white-space`; should be `normal`. | S |
-| `CSS-009` | bug | `modules/align/_align.scss:31, 41` | `.top { text-align: top }`, `.bottom { text-align: bottom }` — `text-align` does not accept `top`/`bottom`. Classes do nothing. | S |
-| `CSS-010` | bug | `modules/align/_align.scss:14, 35` | `.center-y` is declared twice with different definitions; the second overrides the first. | S |
-| `CSS-011` | bug | `modules/layout/_grid.scss:46` | `.grid-mobile { gap: var(--global-grid-gap) }` — `--global-grid-gap` is undefined; likely meant `--grid-gap-global`. | S |
-| `CSS-012` | bug | `modules/typography/_sidenotes.scss:11` | `.remarked > :first-child { min-width: var(--content-max-width) }` — `--content-max-width` is undefined, so sidenote layout can collapse unpredictably. | S |
-| `CSS-013` | bug | `modules/navigation/header/_search.scss:21–23` | Search input removes `outline` with no replacement focus style. Keyboard focus becomes invisible. | S |
-| `CSS-014` | bug | `modules/colors/_base.scss:64`, `modules/colors/_blue.scss:22` | Sass warns about interpolating unquoted color names (`black`, `white`, `blue`, etc.) into selectors. Generator is fragile and may emit invalid selectors. | S |
-| `CSS-015` | bug | `modules/navigation/header/_hamburger.scss:57–59` | `.nav-hamburger ul` sets `padding-top`, then immediately resets it with `padding: 0`; the intended top spacing never applies. | S |
-| `CSS-016` | bug | `modules/navigation/header/_header-container.scss:25, 28` | `.header-logo` declares two `height` values; `height: 100%` overrides the calculated logo height, so the sizing rule is effectively dead. | S |
-
 ## Quality infrastructure (P0–P1)
 
 | ID | Type | Task | Estimate |
@@ -71,6 +50,12 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 |---|---|---|---|
 | `CSS-030` | perf | Move Google Fonts out of `@import url()` into the page `<head>`: `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` + non-blocking stylesheet load. | S |
 | `CSS-031` | perf | Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400. | S |
+
+## Search tooling (P1)
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-050` | feat | Search tooling overhaul. Rebuild the Pagefind UI integration (`modules/navigation/header/_search.scss`, `_includes/header.njk` search trigger) and the standalone `/search/index.njk` page. Scope: align styling with library tokens, replace ad-hoc Pagefind-default markup overrides with a thin SCSS adapter, ship a documented results layout, ensure full keyboard & screen-reader path (focus-visible, ARIA roles, results live region), and audit `outline: none` patches like `CSS-013` so the global focus story (`CSS-110`) lands consistently. Treat the dedicated search page as the canonical surface, header search as a compact entry point. | L |
 
 ## Layout utilities documentation (P1)
 
@@ -388,7 +373,7 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 | Version | Codename | Scope |
 |---|---|---|
 | `0.6.9` | _current_ | Architecture, grid, typography, cards, navigation — bugs inside |
-| `0.7.0` | Stabilization | Bug fixes `CSS-001..014`, stylelint, build pipeline, fonts, real button system, jsDelivr migration, rebrand to **Rare Styles** |
+| `0.7.0` | Stabilization | Bug fixes `CSS-001..016` (done), stylelint, build pipeline, fonts, real button system, search tooling overhaul, jsDelivr migration, rebrand to **Rare Styles** |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
 | `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |
 | `CSS-T01` | (parallel) | CDN + npm distribution |

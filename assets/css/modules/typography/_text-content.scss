@@ -112,7 +112,7 @@ mark {
 
 .note,
 .meta-info,
-.warning,
+.callout,
 .remark,
 cite,
 .footnote {
@@ -122,12 +122,11 @@ cite,
     line-height: 1.3em;
 }
 
-.warning {
+.callout {
     padding: var(--space-sm) var(--space-md);
     text-align: center;
     border: 1px solid var(--border-color);
     border-radius: var(--space-xs);
-    color: var(--warning-color);
 }
 
 cite {
@@ -135,7 +134,7 @@ cite {
     width: 100%;
     margin: var(--space-sm) 0;
     text-align: right;
-    color: var(--grey-dark);
+    color: var(--gray-dark);
 }
 
 blockquote {
@@ -207,7 +206,7 @@ code {
 pre code {
     padding: 0;
     border: none;
-    border-radius: none;
+    border-radius: 0;
     background: none;
 }
 
