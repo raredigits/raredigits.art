@@ -26,8 +26,8 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 ## Planning note
 
 - Source of truth for the current released library version: `_data/versions.json` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
-- Current working release: `v0.6.14` for cross-project class harvesting / enrichment. Working manifest: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md). The harvest is in progress.
-- Follow-up patch: `v0.6.14_1` for audit hotfixes (findings from the 2026-06-06 and 2026-06-11 audits). New bugs found mid-harvest route here, not into `v0.6.14`.
+- Current released library version: `v0.6.14` (`Cross-Project Enrichment`). Release manifest: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md).
+- Current working release: `v0.6.14_1` for audit hotfixes (findings from the 2026-06-06 and 2026-06-11 audits).
 - Next release after that: `v0.6.15` — namespace foundations (`rd-` prefix, `rd-is-*`, `rd-js-*`), early scripts-integration contract, plus CDN migration and GitHub Pages sunset.
 
 ---
@@ -631,8 +631,8 @@ Parking lot for questions that need a maintainer decision before they become (or
 |---|---|---|
 | `v0.6.12` | Cleanup & Delivery Hygiene | Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up |
 | `v0.6.13` | Reusable Asset Reshuffle | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
-| `v0.6.14` | _current_ — Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
-| `v0.6.14_1` | Audit Hotfixes | Bug-fix patch on top of `v0.6.14` covering the 2026-06-06 and 2026-06-11 audit findings (`CSS-027..052`; table bugs `CSS-053..055` were pulled forward into `v0.6.14`) |
+| `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
+| `v0.6.14_1` | _current_ — Audit Hotfixes | Bug-fix patch on top of `v0.6.14` covering the 2026-06-06 and 2026-06-11 audit findings (`CSS-027..052`; table bugs `CSS-053..055` were pulled forward into `v0.6.14`) |
 | `v0.6.15` | Namespace Foundations, Scripts Integration & CDN Migration | Introduce `rd-` namespace and reserve `.rd-is-*` / `.rd-js-*` prefixes; freeze CSS↔/scripts/ contract; move library/docs consumers off GitHub Pages URLs to versioned CDN paths, retire Pages legacies |
 | `0.7.0` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |

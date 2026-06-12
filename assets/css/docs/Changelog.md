@@ -3,12 +3,14 @@
 All notable changes to Rare Styles are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/). The library follows semantic versioning.
 
-Working manifest for the current release: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md).
+Release manifest for `v0.6.14`: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md).
 Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ---
 
-## [Unreleased] — `v0.6.14` Cross-Project Enrichment
+## [Unreleased]
+
+## [v0.6.14] — 2026-06-12 — Cross-Project Enrichment
 
 ### Added
 
