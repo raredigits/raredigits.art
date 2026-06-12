@@ -1,8 +1,6 @@
 @use "../../utilities/breakpoints" as bp;
 
-:root {
-    --header-height: var(--space-xl);
-}
+// `--header-height` is owned by `layout/_containers.scss` — do not redeclare it here.
 
 .header-container {
     max-width: var(--site-max-width);
@@ -28,6 +26,7 @@
     height: 100%;
     align-items: center;
     white-space: nowrap;
+    background: url('images/vendors/rare-digits/rare-logo-black.svg') no-repeat;
 }
 
 .nav-global {

@@ -72,8 +72,7 @@ All three utilities below solve the same problem in different ways: a list is to
 
 - Use `.list-columns` when you have one long plain list and just want it to become shorter on screen.
 - Use `.list-group-pack` when the list is made of named groups and each group should stay whole.
-- Use `.list-fixed-rows` when you want a strict visual rhythm, for example exactly 3 or 4 rows.
-- Use `.list-fixed-rows-2col` when that fixed-row layout needs exactly two columns — most commonly a table of contents.
+- Use `.list-fixed-rows` when you want a strict visual rhythm, for example exactly 3 or 4 rows. For a fixed two-column layout (most commonly a table of contents), set `--list-rows` to half the item count — the columns come out equal-width automatically.
 
 In short: `.list-columns` controls columns, `.list-group-pack` protects groups, `.list-fixed-rows` controls rows.
 
@@ -172,11 +171,13 @@ On mobile the fixed-row contract is dropped: the list reflows into two equal col
     <li>Link the next typography page</li>
 </ol>
 
-### `.list-fixed-rows-2col`
+#### Two equal columns (tables of contents)
 
-An opt-in variant that locks the layout to two equal columns on larger screens and collapses to one stacked column on mobile. Its most common job is a two-column table of contents — that's the case it was harvested for.
+A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and `--list-rows: 4`, the grid fills four rows and wraps into two equal-width columns — `.list-fixed-rows` sizes its implicit columns with `minmax(0, 1fr)`, so they stay equal without any extra class.
 
-<ol class="list-fixed-rows list-fixed-rows-2col" style="--list-rows: 4;">
+<div class="note">Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</div>
+
+<ol class="list-fixed-rows" style="--list-rows: 4;">
     <li>What the library is for</li>
     <li>Installation</li>
     <li>Tokens</li>

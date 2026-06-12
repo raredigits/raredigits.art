@@ -362,3 +362,37 @@ pre code {
         margin-left: calc(-1 * var(--space-sm));
     }
 }
+
+// BOILERPLATE
+// A muted text-notes / news block set off from the main prose by a top rule and
+// an `info` marker. Structural contract: a `.boilerplate` container holding one
+// or more `<p>` elements; the first-line `info` glyph is drawn on each `<p>`
+// via `::before` and depends on the canonical Material Symbols Outlined family.
+// (Harvested from sibling projects in v0.6.15, CSS-059.)
+
+.boilerplate {
+    width: var(--text-content-width);
+    margin-top: var(--space-lg);
+    padding: var(--space-md) 0 0 var(--space-md);
+    font-size: var(--font-size-sm);
+    line-height: 1.2;
+    color: var(--text-color-light);
+    border-top: 1px solid var(--text-color-light);
+
+    p {
+        position: relative;
+    }
+
+    p::before {
+        position: absolute;
+        top: -0.2em;
+        left: -1.2em;
+
+        // Icon font — no generic family applies.
+        // stylelint-disable-next-line font-family-no-missing-generic-family-keyword
+        font-family: 'Material Symbols Outlined';
+        font-size: var(--font-size-lg);
+        vertical-align: middle;
+        content: 'info';
+    }
+}

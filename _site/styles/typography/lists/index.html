@@ -512,8 +512,7 @@
 <ul>
 <li>Use <code>.list-columns</code> when you have one long plain list and just want it to become shorter on screen.</li>
 <li>Use <code>.list-group-pack</code> when the list is made of named groups and each group should stay whole.</li>
-<li>Use <code>.list-fixed-rows</code> when you want a strict visual rhythm, for example exactly 3 or 4 rows.</li>
-<li>Use <code>.list-fixed-rows-2col</code> when that fixed-row layout needs exactly two columns — most commonly a table of contents.</li>
+<li>Use <code>.list-fixed-rows</code> when you want a strict visual rhythm, for example exactly 3 or 4 rows. For a fixed two-column layout (most commonly a table of contents), set <code>--list-rows</code> to half the item count — the columns come out equal-width automatically.</li>
 </ul>
 <p>In short: <code>.list-columns</code> controls columns, <code>.list-group-pack</code> protects groups, <code>.list-fixed-rows</code> controls rows.</p>
 <h3><code>.list-columns</code></h3>
@@ -599,9 +598,10 @@
     <li>Verify responsive behavior</li>
     <li>Link the next typography page</li>
 </ol>
-<h3><code>.list-fixed-rows-2col</code></h3>
-<p>An opt-in variant that locks the layout to two equal columns on larger screens and collapses to one stacked column on mobile. Its most common job is a two-column table of contents — that's the case it was harvested for.</p>
-<ol class="list-fixed-rows list-fixed-rows-2col" style="--list-rows: 4;">
+<h4>Two equal columns (tables of contents)</h4>
+<p>A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and <code>--list-rows: 4</code>, the grid fills four rows and wraps into two equal-width columns — <code>.list-fixed-rows</code> sizes its implicit columns with <code>minmax(0, 1fr)</code>, so they stay equal without any extra class.</p>
+<div class="note">Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</div>
+<ol class="list-fixed-rows" style="--list-rows: 4;">
     <li>What the library is for</li>
     <li>Installation</li>
     <li>Tokens</li>

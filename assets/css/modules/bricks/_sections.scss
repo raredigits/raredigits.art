@@ -45,3 +45,34 @@ section {
         padding-left: var(--base-unit);
     }
 }
+
+// FEATURE ROW
+// Horizontal, overflow-scrolling row that enumerates features as equal-width
+// cards. Structural contract: a `.feature-row` container holding one or more
+// `.feature-row__item` children; each item is a vertical flex column (top media,
+// bottom copy) that keeps a fixed responsive width so the row scrolls rather
+// than squashing its items. (Harvested from sibling projects in v0.6.15,
+// CSS-059.)
+
+.feature-row {
+    display: flex;
+    gap: var(--space-lg);
+    padding: var(--space-md) 0;
+    overflow: auto hidden;
+
+    .feature-row__item {
+        display: flex;
+        flex: 0 0 clamp(280px, 30vw, 420px);
+        flex-direction: column;
+        justify-content: space-between;
+
+        img {
+            display: block;
+            width: 100%;
+            max-width: none;
+            align-self: flex-start;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+    }
+}

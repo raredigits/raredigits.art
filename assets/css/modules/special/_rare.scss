@@ -1,10 +1,11 @@
 /* Rare branding helpers for external/embedded surfaces. */
 
-.rare-brand {
+.rare-brand-color {
     color: var(--brand-color);
 }
 
-.rare-brand-color {
+// Deprecated alias of `.rare-brand-color`, kept until 1.0.0. Do not add new usages.
+.rare-brand {
     color: var(--brand-color);
 }
 

@@ -10,6 +10,35 @@ Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ## [Unreleased]
 
+## [v0.6.15] — 2026-06-12 — Audit Hotfixes & Post-Harvest Cleanup
+
+Tight follow-up patch to `v0.6.14`: clears the 2026-06-06 / 2026-06-11 audit findings and the first post-harvest fixes. Bugs, hygiene, asset-path cleanup, and two narrowly scoped harvested selectors. Nothing here was hotfixed back into `v0.6.14`.
+
+### Added
+
+- **`.boilerplate`** in `assets/css/modules/typography/_text-content.scss` (`CSS-059`) — a muted text-notes / news block set off from the prose by a top rule and a leading `info` marker. Structural contract: a `.boilerplate` container holding one or more `<p>` elements; the `info` glyph is drawn per paragraph via `::before` and depends on the canonical Material Symbols Outlined family. Harvested from sibling projects via the annotated `move-in.css` transfer scratchpad, which is now removed.
+- **`.feature-row` / `.feature-row__item`** in `assets/css/modules/bricks/_sections.scss` (`CSS-059`) — a horizontal, overflow-scrolling row that enumerates features as equal-width cards. Structural contract: a `.feature-row` container holding one or more `.feature-row__item` children, each a vertical flex column (top media, bottom copy) with a fixed responsive width (`clamp(280px, 30vw, 420px)`) so the row scrolls rather than squashing its items. Normalized to hybrid BEM on import.
+
+### Changed
+
+- **normalize.css is now emitted first** (`CSS-048`). In `rare.scss`, `@use "vendor/normalize"` was ordered after `@use "modules/index"`, so the reset landed at the end of the bundle and overrode component styles instead of underpinning them. Reordered so normalize underpins the modules. The broader reset/normalization audit stays deferred to `CSS-078` (`v0.7.1`).
+- **`--font-size` is now `1rem`** instead of the literal `16px` (`CSS-035`). The root font-size token now honors the user's browser font-size preference, matching every other already-rem size token.
+- **`.card-grid` tile copy tightened** (`CSS-057`). Paragraphs inside `.card-grid` were inheriting generic prose rhythm and reading too loose on the compact tile surface. Added a scoped `.card-grid p` adjustment (`font-size: 0.9em`, `line-height: 1.1`, top-only margin); scoped to `.card-grid` so it does not bleed into other card patterns.
+- **`.list-fixed-rows` now equalizes its implicit columns** (`CSS-056`). Added `grid-auto-columns: minmax(0, 1fr)` so every generated column shares the available width evenly instead of sizing to its own content, which previously made visually identical lists render with different column widths.
+- **Library-owned vendor and brand image surfaces now resolve via package-local relative paths** (`CSS-058`). `.vendor-logo.github`, `.vendor-logo.wa` (`_media.scss`) and `.wa-button` (`_web-reusable.scss`) moved off `/assets/img/common/vendors/...` onto `images/vendors/{github,whatsapp}/...`. The Rare Digits brand logo (`.header-logo`) moved out of the plain-CSS `rare-website.css` site layer into the SCSS pipeline (`_header-container.scss`) and now resolves `images/vendors/rare-digits/rare-logo-black.svg` — the same relative-path convention as the blockquote mark, so downstream consumers no longer depend on site-root image folders. `rare-website.css` is retained as the intentional site-override layer (now effectively empty).
+
+### Fixed
+
+- **`CSS-027` — responsive spacing aliases were broken in production.** `_spacing-aliases.scss` used `\\:` and compiled to a literal backslash in the class name (`.mobile\\:p-s`), so every short-form responsive alias (`mobile:p-s`, `tablet:m-l`, `desktop:gap-xl`, …) failed to match HTML. Switched to `\:` to match `_spacing.scss`; verified single-backslash output in `rare.css` (zero double-backslash occurrences).
+- **`CSS-028` — duplicate `--header-height`.** The token was declared in both `layout/_containers.scss` and `navigation/header/_header-container.scss`. Dropped the header-module copy; `layout/_containers.scss` is the single owner.
+- **`CSS-049` — generated utilities emitted invalid CSS.** The `$spaces` matrix produced `.gap-auto`, `.gap-x-auto`, `.gap-y-auto` (`gap: auto` is not valid) in the base set and across all three responsive prefixes. `auto` is now special-cased out of every gap family. The full property×value matrix audit stays `CSS-079` (`v0.7.1`).
+- **`CSS-051` — install snippets on `/styles/usage/` pointed at GitHub Pages.** Updated all three snippets to the versioned jsDelivr CDN URL (`cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/...`), matching the `/styles/` landing page. The broader Pages sunset remains `CSS-T00.2` (`v0.6.17`).
+- **`CSS-029` — duplicate brand class.** `.rare-brand` and `.rare-brand-color` produced identical rules. `.rare-brand-color` is now the canonical class; `.rare-brand` is kept as a documented deprecated alias until `1.0.0` (it is consumed by external projects, so it is not removed outright).
+
+### Removed
+
+- **`.list-fixed-rows-2col` (breaking).** The two-equal-columns modifier is removed as part of `CSS-056`: with `grid-auto-columns: minmax(0, 1fr)` now equalizing the implicit columns on the base `.list-fixed-rows`, the dedicated `-2col` variant became redundant. Author a two-column fixed-rows list by setting `--list-rows` on the base utility instead. (`.list-fixed-rows-2col` shipped only in `v0.6.14`, so this corrects it within one release.)
+
 ## [v0.6.14] — 2026-06-12 — Cross-Project Enrichment
 
 ### Added

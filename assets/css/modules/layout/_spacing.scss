@@ -1,3 +1,4 @@
+@use "sass:list";
 @use "../utilities/breakpoints" as bp;
 
 :root {
@@ -41,6 +42,15 @@ $spaces: px, xs, sm, md, ml, lg, xl, xxl, xxxl, xxxxl, fr,
          5, 10, 15, 20, 25, 30, 33, 40, 50,
          60, 66, 70, 75, 80, 90, 95, 100,
          0, auto;
+
+// `gap` has no valid `auto` value — exclude it from every gap family.
+$gap-spaces: ();
+
+@each $space in $spaces {
+  @if $space != auto {
+    $gap-spaces: list.append($gap-spaces, $space);
+  }
+}
 
 .full-width {
   width: 100%;
@@ -126,16 +136,18 @@ $spaces: px, xs, sm, md, ml, lg, xl, xxl, xxxl, xxxxl, fr,
     padding-bottom: var(--space-#{$space});
   }
 
-  .gap-#{$space} {
-    gap: var(--space-#{$space});
-  }
+  @if $space != auto {
+    .gap-#{$space} {
+      gap: var(--space-#{$space});
+    }
 
-  .gap-x-#{$space} {
-    column-gap: var(--space-#{$space});
-  }
+    .gap-x-#{$space} {
+      column-gap: var(--space-#{$space});
+    }
 
-  .gap-y-#{$space} {
-    row-gap: var(--space-#{$space});
+    .gap-y-#{$space} {
+      row-gap: var(--space-#{$space});
+    }
   }
 
   .air-#{$space} {
@@ -203,9 +215,9 @@ $spaces: px, xs, sm, md, ml, lg, xl, xxl, xxxl, xxxxl, fr,
 @include generate-responsive-spacings(("padding-left"), "padding-l", $spaces);
 @include generate-responsive-spacings(("padding-top", "padding-bottom"), "padding-y", $spaces);
 @include generate-responsive-spacings(("padding-left", "padding-right"), "padding-x", $spaces);
-@include generate-responsive-spacings(("gap"), "gap", $spaces);
-@include generate-responsive-spacings(("row-gap"), "gap-y", $spaces);
-@include generate-responsive-spacings(("column-gap"), "gap-x", $spaces);
+@include generate-responsive-spacings(("gap"), "gap", $gap-spaces);
+@include generate-responsive-spacings(("row-gap"), "gap-y", $gap-spaces);
+@include generate-responsive-spacings(("column-gap"), "gap-x", $gap-spaces);
 @include generate-responsive-spacings(("width"), "width", $spaces);
 @include generate-responsive-spacings(("height"), "height", $spaces);
 @include generate-responsive-spacings(("top"), "top", $spaces);

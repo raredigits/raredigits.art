@@ -80,6 +80,35 @@ permalink: '/styles/bricks/'
 </section>
 
 <section>
+    <h3>Feature Row</h3>
+    <p>When a set of features, offerings, or highlights reads better as a scannable horizontal strip than as a wrapping grid, <code>.feature-row</code> lays its <code>.feature-row__item</code> children out in a single row that scrolls sideways instead of squashing. Each item is a flex column — media on top, copy below — pinned to a fixed responsive width (<code>clamp(280px, 30vw, 420px)</code>), so the cards keep a comfortable size and the row simply runs past the edge when there are more than fit.</p>
+    <div class="feature-row">
+        <div class="feature-row__item">
+            <img src="/assets/img/illustrations/poker.jpg" alt="">
+            <div class="padding-t-sm">
+                <h4>Read the table</h4>
+                <p class="note">Surface the one number that changes the next move — not the whole hand.</p>
+            </div>
+        </div>
+        <div class="feature-row__item">
+            <img src="/assets/img/illustrations/leg-split.jpg" alt="">
+            <div class="padding-t-sm">
+                <h4>Stay flexible</h4>
+                <p class="note">Match it to your brand without bending the underlying presentation logic.</p>
+            </div>
+        </div>
+        <div class="feature-row__item">
+            <img src="/assets/img/illustrations/batman-inverted.jpg" alt="">
+            <div class="padding-t-sm">
+                <h4>Cut the noise</h4>
+                <p class="note">Every tile earns its place, or it doesn't get one.</p>
+            </div>
+        </div>
+    </div>
+    <p>Use it for a small, deliberate set of features — not as a generic carousel. If the items want a uniform, wrapping arrangement instead of a horizontal scroll, reach for <code>.card-grid</code> instead.</p>
+</section>
+
+<section>
     <h2>Card</h2>
     <div class="meta-info">css/modules/bricks/_cards.scss</div>
     <p>Cards provide distinct content separation, letting you build complex hierarchies and group related elements. By default they stand out through background color, and they lay out as a <em>flex column</em>.</p>

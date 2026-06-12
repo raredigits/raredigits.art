@@ -15,13 +15,13 @@ Rare Styles provides a solid foundation for creating clean, functional interface
 Add the Rare Styles stylesheet to your project by including it in the `<head>` section of your HTML:
 
 ```html
-<link rel="stylesheet" href="https://raredigits.github.io/rare-styles/rare.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.min.css">
 ```
 
 For development environments or when you need unminified code:
 
 ```html
-<link rel="stylesheet" href="https://raredigits.github.io/rare-styles/rare.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.css">
 ```
 
 ## Understanding Cascading Styles
@@ -37,7 +37,7 @@ This cascade principle is what makes customizing Rare Styles straightforward: yo
 The simplest way to customize Rare Styles is to create your own stylesheet and include it after the main Rare Styles file:
 
 ```html
-<link rel="stylesheet" href="https://raredigits.github.io/rare-styles/rare.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.min.css">
 <link rel="stylesheet" href="path/to/my-beautiful-styles.css">
 ```
 

@@ -26,9 +26,12 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 ## Planning note
 
 - Source of truth for the current released library version: `_data/versions.json` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
-- Current released library version: `v0.6.14` (`Cross-Project Enrichment`). Release manifest: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md).
-- Current working release: `v0.6.14_1` for audit hotfixes (findings from the 2026-06-06 and 2026-06-11 audits).
-- Next release after that: `v0.6.15` — namespace foundations (`rd-` prefix, `rd-is-*`, `rd-js-*`), early scripts-integration contract, plus CDN migration and GitHub Pages sunset.
+- Current released library version: `v0.6.15` (`Audit Hotfixes & Post-Harvest Cleanup`) — bug-fix follow-up on top of `v0.6.14` (`Cross-Project Enrichment`, manifest [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md)). Changes recorded in [`Changelog.md`](./Changelog.md).
+- Current working release: `v0.6.16` — scripts audit and CSS↔`/scripts/` contract freeze.
+- Next release after that: `v0.6.17` — docs/examples migration off GitHub Pages URLs, downstream CDN cutover, and Pages cleanup.
+- Then: `v0.6.18` — documentation skeleton pass: keep draft docs pages visible as module backlogs, fix dead-nav edges, and formalize the incomplete-page policy.
+- Then: `v0.6.19` — vendor/media kit prep for Rare Digits branding surfaces, attribution variants, and library-linking guidance.
+- Then: `v0.7.0` — namespace foundations (`rd-` prefix, `rd-is-*`, `rd-js-*`).
 
 ---
 
@@ -107,7 +110,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 | `.sidebar-icon.material-icons` | Sidebar navigation affordances or meta rows | `.sidebar-icon.material-symbols-outlined` or family-agnostic `.sidebar-icon` | Remove legacy sidebar compatibility selectors |
 | Icon text names from old Material Icons set | `file_download`, `launch`, and any project-specific legacy names | Verify against Symbols before migration | Prevent silent broken glyphs during cleanup |
 
-`_icons.scss` full cleanup is deferred to `v0.6.16`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across adjacent releases.
+`_icons.scss` full cleanup is deferred to `v0.7.1`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across adjacent releases.
 
 **Exit criteria:**
 
@@ -115,13 +118,14 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 - [x] Imported classes follow Rare Styles naming/token conventions
 - [x] New patterns are documented with intended use cases and non-goals
 
-Icon-family cleanup follow-up: the external-project audit and compatibility-selector removal are moved out of `v0.6.14` and tracked for `v0.6.16`, where the full legacy Material icon cleanup can be handled as one bounded pass instead of stretching the harvest release.
+Icon-family cleanup follow-up: the external-project audit and compatibility-selector removal are moved out of `v0.6.14` and tracked for `v0.7.1`, where the full legacy Material icon cleanup can be handled as one bounded pass instead of stretching the harvest release.
 
 ---
 
-# Milestone `v0.6.14_1` — Audit Hotfixes
+# Milestone `v0.6.15` — Audit Hotfixes & Post-Harvest Cleanup
 
-**Goal:** ship a tight follow-up patch to `v0.6.14` that clears the audit findings from 2026-06-06 and 2026-06-11. Scope is strictly bugs and small hygiene fixes — no new features, no harvesting, no API changes. Nothing from this list is hotfixed into `v0.6.14` — the harvest release stays liftable.
+**Goal:** ship a tight follow-up patch to `v0.6.14` that clears the audit findings from 2026-06-06 and 2026-06-11 and absorbs the first post-harvest fixes discovered immediately after release. Scope is strictly bugs, small hygiene fixes, asset-path cleanup, and narrowly scoped harvested selectors that are already needed downstream. Nothing from this list is hotfixed into `v0.6.14` — the harvest release stays liftable.
+**Status:** ready for release — all scoped items resolved, exit criteria met, `npm run lint:css` clean, `rare.css` / `rare.min.css` rebuilt.
 
 **Recommended scope:**
 
@@ -131,55 +135,57 @@ Icon-family cleanup follow-up: the external-project audit and compatibility-sele
 | `CSS-028` | bug | `--header-height` declared in both `layout/_containers.scss:5` and `navigation/header/_header-container.scss:4`. Drop the duplicate and keep `layout/_containers.scss` as the single owner. | P1 | S |
 | `CSS-035` | a11y | `--font-size: 16px` literal in `typography/_fonts.scss:14`. Should be `1rem` so the user font-size preference is honored. All other size tokens are already in rem. | P1 | S |
 | `CSS-037` | chore | ~~Resolve outstanding stylelint error at `_grid.scss:137` (`at-rule-empty-line-before`).~~ **Done early in `v0.6.14`** — blank line added before the `@if`; `npm run lint:css` is clean. Pulled forward so the harvest release ships lint-clean. | P1 | S |
-| `CSS-039` | docs | Hide or replace stub `/styles/` pages. Five ship "🚧 SECTION ON RECONSTRUCTION": `alignment`, `idea`, `navigation`, `special`, `utilities`. The 2026-06-11 audit extends the list: `/styles/typography/interactive/` is a skeleton (empty `Links` / `Buttons` / `Forms` headings — and forms don't exist in the library until `0.8.0`), `/styles/decorations/` is near-empty (21 lines, one class mentioned), and `_data/tableOfContents.json` links dead anchors (`/styles/typography/interactive/#forms`). Either hide from sidebar until content lands (see `CSS-282..295`) or write minimum viable content. | P1 | S |
 | `CSS-029` | chore | Duplicate brand class in `special/_rare.scss`: `.rare-brand` and `.rare-brand-color` produce identical rules. Pick one. | P2 | S |
-| `CSS-038` | chore | ~~Decide fate of `assets/css/move-in.css` — a plain-CSS file outside the SCSS pipeline with site-specific overrides. Options: fold into SCSS, document as a separate site layer, or delete.~~ **Done in `v0.6.14`** — harvested rules were either integrated into SCSS modules, deferred, or dropped with rationale in `HARVEST_v0.6.14.md`; `assets/css/move-in.css` was then deleted. | P2 | S |
-| `CSS-047` | bug | **Asymmetric outdent override in `_collapsible.scss`.** `.collapsible-content > .caption, .highlight, pre, .text-content-caption, .card-caption` (and the parallel `.collapsible-content .…` rules) override `margin-left` only, leaving `margin-right` at the parent's default. Surfaced after `@mixin outdent` (v0.6.14) made the base outdent symmetric — the asymmetry inside collapsible blocks is now visible. Fix: either mirror to `margin-right` or drop the override if it's no longer needed. While fixing, collapse the duplication: the `>`-child block and the descendant block carry identical bodies. Lines: `assets/css/modules/special/_collapsible.scss:33-44`, `:46-56`. | P1 | S |
-| `CSS-048` | bug | **normalize.css is emitted at the end of the compiled bundle.** In `rare.scss`, `@use "vendor/normalize"` comes after `@use "modules/index"`, so the reset lands after all module CSS (`rare.css:20370` of 20678) and overrides component styles instead of underpinning them. Fix: reorder the `@use` statements so normalize is emitted first. Long-term the cascade gets locked by `@layer` (`CSS-130`). While there, review the doubled reset strategy: `* { margin: 0; padding: 0 }` in `rare.scss` overlaps normalize, and `box-sizing: border-box` is not extended to `*::before` / `*::after`. | P1 | S |
+| `CSS-038` | chore | ~~Decide fate of `assets/css/move-in.css` — a plain-CSS file outside the SCSS pipeline with site-specific overrides. Options: fold into SCSS, document as a separate site layer, or delete.~~ **Done in `v0.6.14`** — the original site-override file was cleared: harvested rules were either integrated into SCSS modules, deferred, or dropped with rationale in `HARVEST_v0.6.14.md`. If `assets/css/move-in.css` appears again later, treat it as a temporary migration scratchpad for targeted transfers (such as `CSS-059`), not as a revived production layer by default. | P2 | S |
+| `CSS-048` | bug | **normalize.css is emitted at the end of the compiled bundle.** In `rare.scss`, `@use "vendor/normalize"` comes after `@use "modules/index"`, so the reset lands after all module CSS (`rare.css:20370` of 20678) and overrides component styles instead of underpinning them. Fix in this patch release: reorder the `@use` statements so normalize is emitted first. The broader reset/normalization audit is deferred to `CSS-078` in `v0.7.1`. | P1 | S |
 | `CSS-049` | bug | **Generated utilities emit invalid CSS.** The `$spaces` matrix in `_spacing.scss` produces `.gap-auto`, `.gap-x-auto`, `.gap-y-auto` (`gap: auto` is not a valid value) in the base set and across all three responsive prefixes. Special-case `auto` out of the gap families. The full property×value matrix audit is `CSS-079` (`0.7.0`) — this is only the invalid-CSS slice. | P2 | S |
-| `CSS-051` | docs | **Install snippets contradict each other today.** `/styles/usage/` still recommends `https://raredigits.github.io/rare-styles/...` in three snippets, while the `/styles/` landing page already points to versioned jsDelivr. Update the usage page to the CDN URL now; the full Pages sunset remains `CSS-T00.2` (`v0.6.15`). | P1 | S |
-| `CSS-052` | chore | **Reconcile the `CSS-031` record with shipped reality.** The task spec said "keep 300/400/500/700 + italic 400", but `_fonts.scss:2` imports Fira Sans 100/200/400/700/900 + italics (10 styles), which matches the `--font-weight-*` tokens (`thin: 100`, `light: 200`, `normal: 400`, `bold: 700`, `black: 900`). Decide the canonical weight set and align the import, the tokens, and the task record. Note: `--font-weight-light: 200` actually maps to the extra-light cut. | P2 | S |
+| `CSS-051` | docs | **Install snippets contradict each other today.** `/styles/usage/` still recommends `https://raredigits.github.io/rare-styles/...` in three snippets, while the `/styles/` landing page already points to versioned jsDelivr. Update the usage page to the CDN URL now; the broader Pages sunset remains `CSS-T00.2` (`v0.6.17`). | P1 | S |
+| `CSS-052` | chore | **Reconcile the `CSS-031` record with shipped reality.** `_fonts.scss:2` imports Fira Sans 100/200/400/700/900 + italics (10 styles), and that set matches the shipped `--font-weight-*` tokens (`thin: 100`, `light: 200`, `normal: 400`, `bold: 700`, `black: 900`). Update the backlog/task record to reflect the shipped set instead of reintroducing the older 300/400/500/700 plan. Note: `--font-weight-light: 200` actually maps to the extra-light cut. | P2 | S |
 | `CSS-053` | bug | ~~**Table horizontal scroll is non-functional.**~~ **Done early in `v0.6.14`** — removed the dead `overflow-x` from `table`, shipped the opt-in `.table-scroll` wrapper, reconciled the docs claim. | P1 | S |
 | `CSS-054` | bug | ~~**Zebra/hover signal is inverted in `.table-striped`.**~~ **Done early in `v0.6.14`** — both directions unified upward: even rows `--gray-lightest`, hover `--white` across every preset. | P2 | S |
 | `CSS-055` | chore | ~~**Dead declaration `thead, tbody { width: 100% }`.**~~ **Done early in `v0.6.14`** — removed. | P2 | S |
+| `CSS-056` | bug | **Equalize implicit columns in `.list-fixed-rows`.** The utility currently uses `grid-auto-flow: column` without sizing the implicit columns, so visually identical lists end up with different column widths depending on content. Add `grid-auto-columns: minmax(0, 1fr)` so every generated column shares the available width evenly instead of shrinking to its own contents. **Resolved in `v0.6.15`.** Scope note: with the base utility now equalizing its implicit columns, the `.list-fixed-rows-2col` modifier became redundant and was **removed (breaking)** — author two-column fixed-rows lists by setting `--list-rows` on the base instead. `-2col` shipped only in `v0.6.14`, so this corrects it within one release; recorded in `Changelog.md`. | P1 | S |
+| `CSS-057` | bug | **Normalize supporting copy inside harvested `.card-grid` tiles.** Post-harvest usage exposed that paragraphs inside `card-grid` tiles currently inherit generic prose rhythm and look too loose for the compact tile surface. Add the minimum scoped typography adjustment needed for tile copy and verify it does not bleed into unrelated card patterns. | P1 | S |
+| `CSS-058` | chore | **Move vendor/brand asset dependencies onto `assets/css/images/**` and relative library paths.** Extend the blockquote asset-path cleanup to the remaining library-owned image consumers: `.vendor-logo` (`_media.scss`), `.wa-button` (`_web-reusable.scss`), and the Rare Digits brand-logo surface currently living in `rare-website.css`. Consolidate the Rare Digits branding asset into the same reusable vendor surface as WhatsApp and GitHub, add the needed files under `assets/css/images/vendors/**`, and replace old `/assets/img/...` URLs with package-local relative paths so downstream consumers no longer depend on site-root image folders or CDN-pinned CSS internals. | P0 | S |
+| `CSS-059` | feat | **Add harvested selectors `.boilerplate` and `.feature-row`.** Promote the two selectors now required by downstream projects into Rare Styles as normalized library primitives, using the annotated `assets/css/move-in.css` notes as the transfer guide. `.boilerplate` is the pattern for text notes/news blocks; `.feature-row` is the row-style subclass for sections that enumerate features. Choose their target modules, align them with existing spacing/token conventions, and document the structural contract before import so they land as reusable library API rather than project residue. | P1 | M |
 
 **Exit criteria:**
 
-- [ ] `CSS-027` resolved — responsive-alias regression cleared from compiled `rare.css`
-- [ ] `CSS-028`, `CSS-035`, `CSS-039`, `CSS-047`, `CSS-048`, `CSS-051` resolved
+- [x] `CSS-027` resolved — responsive-alias regression cleared from compiled `rare.css` (zero double-backslash occurrences)
+- [x] `CSS-028`, `CSS-035`, `CSS-048`, `CSS-051`, `CSS-056`, `CSS-057`, `CSS-058`, `CSS-059` resolved
 - [x] `CSS-037` — pulled forward and resolved in `v0.6.14`; `npm run lint:css` clean
-- [ ] `npm run lint:css` runs clean
-- [ ] P2 items (`CSS-029`, `CSS-038`, `CSS-049`, `CSS-052`) resolved or explicitly deferred with a target milestone
+- [x] `npm run lint:css` runs clean
+- [x] P2 items: `CSS-029` (canonical `.rare-brand-color`, `.rare-brand` kept as deprecated alias) and `CSS-049` resolved; `CSS-052` reconciled against shipped reality; `CSS-038` already closed in `v0.6.14`
 - [x] `CSS-053`, `CSS-054`, `CSS-055` — pulled forward and resolved in `v0.6.14` (table pass), not waiting for this patch
-- [ ] No new features, no consumer-facing API additions — bug-fix release only
+- [x] Library-owned vendor and brand image surfaces resolve via `assets/css/images/**` relative paths, not `/assets/img/...`
+- [x] Narrow post-harvest additions only: `.boilerplate` and `.feature-row` are normalized and documented, with no broader harvesting reopened
 
 ---
 
-# Milestone `v0.6.15` — Namespace Foundations, Scripts Integration & CDN Migration
+# Milestone `v0.6.16` — Scripts Audit & Contract Freeze
 
-**Goal:** seed three medium-term initiatives so they can land cleanly across `0.7.0`–`0.9.0`: introduce the `rd-` namespace and reserve its utility prefixes; freeze the contract between Rare Styles CSS and the companion `/scripts/` JS set; move consumers off mutable GitHub Pages asset URLs onto versioned CDN URLs.
+**Goal:** freeze the contract between Rare Styles CSS and the companion `/scripts/` JS set before namespace rollout and full integration work. This release is discovery and documentation: inventory real hooks, classes, and ARIA/state behavior so later script integration becomes finalization rather than archaeology.
 
-## Namespace foundations
-
-The library so far ships unprefixed classes. `CSS-133` and `CSS-141` flag the collision risk. Decision taken in this release: adopt **`rd-`** (Rare Digits) as the official library namespace, starting with two reserved utility prefixes plus the policy doc. Full migration of existing component classes is a later concern (`CSS-133` in `0.7.0`).
+Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `collapsible`, `cookies`, `copy-to-clipboard`, `hamburger`, `search` — already consumes some CSS classes. Freeze the contract here so the full integration in `CSS-230..232` (`0.9.0`) becomes finalization rather than discovery.
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
-| `CSS-060` | feat | **Introduce `rd-` namespace.** Adopt `rd-` as the official Rare Digits library prefix. New utility/state/JS-hook classes ship with the prefix from this release. Existing component classes (e.g. `.card`, `.sidebar`, `.tag`) stay unprefixed until the `0.7.0` migration pass — no churn in this release. | P0 | S |
-| `CSS-061` | feat | **Reserve `.rd-is-*` state-modifier prefix.** Document `.rd-is-active`, `.rd-is-hidden`, `.rd-is-open`, `.rd-is-loading`, `.rd-is-disabled` etc. as the canonical way to express UI state on any element. Ship at minimum `.rd-is-active` and `.rd-is-hidden` as real classes (others as documented convention). | P0 | S |
-| `CSS-062` | feat | **Reserve `.rd-js-*` JS-hook prefix.** Document `.rd-js-*` as the canonical hook used by `/scripts/` to find DOM nodes. CSS rules MUST NOT style `.rd-js-*` selectors directly — they are behavioral hooks only. Ship at minimum `.rd-js-dropdown` (toggleable container reserved for script-driven menus / pickers / panels). | P0 | S |
-| `CSS-063` | docs | **Namespace policy in `STYLEGUIDE.md`.** Codify the three rules: `rd-` for new utilities/states/hooks; `rd-is-*` for state; `rd-js-*` for JS hooks, never styled. Include a one-paragraph migration note pointing at `CSS-133`. | P0 | S |
-
-## Scripts integration (early audit)
-
-Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `collapsible`, `cookies`, `copy-to-clipboard`, `hamburger`, `search` — already consumes some CSS classes. Freeze the contract here so the full integration in `CSS-230..232` (`0.9.0`) becomes finalization rather than discovery. Coordinates with `CSS-060..063` because most contract hooks will end up as `.rd-js-*`.
-
-| ID | Type | Task | Priority | Estimate |
-|---|---|---|---|---|
+| `CSS-047` | bug | **Asymmetric outdent override in `_collapsible.scss`.** `.collapsible-content > .caption, .highlight, pre, .text-content-caption, .card-caption` (and the parallel `.collapsible-content .…` rules) override `margin-left` only, leaving `margin-right` at the parent's default. Because `collapsible` is one of the library's script-touched surfaces, resolve this as part of the scripts contract pass: confirm the intended visual contract for collapsible content, then mirror the outdent symmetrically and collapse the duplicated selector blocks if that remains the chosen behavior. Lines: `assets/css/modules/special/_collapsible.scss:33-44`, `:46-56`. | P1 | S |
 | `CSS-064` | feat | **Audit `/scripts/` CSS+ARIA contracts.** Inventory which classes and ARIA attributes each script reads/writes today (`collapsible`, `cookies`, `copy-to-clipboard`, `hamburger`, `search`). Output: a contract table per script, lands in `STYLEGUIDE.md` or a dedicated `SCRIPTS_CONTRACT.md`. | P1 | M |
-| `CSS-065` | feat | **Map each script to its `.rd-js-*` hook.** Define the canonical hook name per script (e.g. `.rd-js-collapsible`, `.rd-js-cookie-consent`, `.rd-js-copy`, `.rd-js-hamburger`, `.rd-js-search`). Document state classes each script applies (likely `.rd-is-open`, `.rd-is-active`, etc.). No JS migration in this release — only the contract. | P1 | S |
+| `CSS-065` | feat | **Map each script to its future namespace hook.** Define the canonical hook name per script (e.g. `.rd-js-collapsible`, `.rd-js-cookie-consent`, `.rd-js-copy`, `.rd-js-hamburger`, `.rd-js-search`) so the namespace release can adopt them cleanly later. Document state classes each script applies (likely `.rd-is-open`, `.rd-is-active`, etc.). No JS migration in this release — only the contract. | P1 | S |
 
-## CDN migration & Pages sunset
+## Exit criteria
+
+- [ ] Contract between Rare Styles CSS and each `/scripts/` module is documented per `CSS-064`
+- [ ] Each `/scripts/` module has a defined future hook name per `CSS-065`
+- [ ] `CSS-047` is resolved as part of the `collapsible` contract, not as an isolated visual patch
+- [ ] No JS rewrites in this release — this is the audit and contract pass only
+
+---
+
+# Milestone `v0.6.17` — CDN Migration & Pages Sunset Prep
+
+**Goal:** move docs, examples, and known consumers off mutable GitHub Pages asset URLs onto versioned jsDelivr targets, then clear the path for unpublishing the Pages surface and cleaning up its repository leftovers.
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
@@ -191,20 +197,71 @@ Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `colla
 
 ## Exit criteria
 
-- [ ] `rd-` namespace is documented in `STYLEGUIDE.md` with the three-rule policy
-- [ ] `.rd-is-active`, `.rd-is-hidden`, `.rd-js-dropdown` are reserved and shipped (real or documented per CSS-061/062)
-- [ ] Contract between Rare Styles CSS and each `/scripts/` module is documented per `CSS-064`
-- [ ] Each `/scripts/` module has a defined `.rd-js-*` hook name (`CSS-065`)
 - [ ] Library references to old local image paths are replaced with canonical versioned CDN URLs
 - [ ] Docs/examples no longer recommend `https://raredigits.github.io/rare-styles/...`
 - [ ] Known downstream consumers are migrated off GitHub Pages CSS URLs
 - [ ] The `rare-styles` GitHub Pages site is unpublished
 - [ ] Pages-only legacy files like `.nojekyll` are removed or explicitly justified
-- [ ] No JS rewrites in this release — `/scripts/` migration to `.rd-js-*` hooks is scheduled for `CSS-230..232` in `0.9.0`
 
 ---
 
-# Milestone `0.7.0` — Stabilization
+# Milestone `v0.6.18` — Documentation Skeleton Pressure
+
+**Goal:** keep draft `/styles/` pages visible as deliberate pressure on the library roadmap: incomplete pages act as module-level backlogs, while dead anchors and broken navigation are still cleaned up so the docs skeleton remains usable.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-039` | docs | Keep stub and draft `/styles/` pages as intentional skeletons rather than hiding them. Formalize the policy for "SECTION ON RECONSTRUCTION" pages, decide the minimum honest content each skeleton must carry, and fix dead-nav edges such as `_data/tableOfContents.json` anchors pointing to sections that do not exist yet (for example `/styles/typography/interactive/#forms`). This release is about making unfinished docs usable as pressure/backlog surfaces, not about fully writing the pages. | P1 | S |
+
+## Exit criteria
+
+- [ ] Draft docs pages are treated as intentional skeletons with a documented incomplete-page policy
+- [ ] Broken docs navigation/anchors caused by empty sections are fixed
+- [ ] Module-level docs skeletons remain visible as backlog pressure instead of being hidden away
+
+---
+
+# Milestone `v0.6.19` — Rare Digits Media Kit Prep
+
+**Goal:** package the Rare Digits brand surfaces as a reusable vendor/media-kit layer so attribution, linking, and logo usage are consistent wherever the library is referenced.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-066` | feat | **Prepare the Rare Digits media kit.** Build the reusable branding package around the vendor/logo surfaces introduced in earlier releases: logo variants, attribution snippets, and recommended links back to the Rare Styles library/repository. Scope is documentation and asset packaging, not a broader marketing-site redesign. | P1 | M |
+
+## Exit criteria
+
+- [ ] Rare Digits logo variants needed for library attribution are packaged in a stable reusable location
+- [ ] Docs include the intended attribution/linking variants for downstream usage
+- [ ] The media-kit scope stays focused on reusable library-brand surfaces
+
+---
+
+# Milestone `v0.7.0` — Namespace Foundations
+
+**Goal:** adopt the `rd-` namespace as the official Rare Digits library prefix, reserve the `rd-is-*` and `rd-js-*` families, and document the policy before the broader stabilization work begins in `v0.7.1`.
+
+## Namespace foundations
+
+The library so far ships unprefixed classes. `CSS-133` and `CSS-141` flag the collision risk. Decision taken in this release: adopt **`rd-`** (Rare Digits) as the official library namespace, starting with two reserved utility prefixes plus the policy doc. Full migration of existing component classes is a later concern (`CSS-133` in later stabilization work).
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-060` | feat | **Introduce `rd-` namespace.** Adopt `rd-` as the official Rare Digits library prefix. New utility/state/JS-hook classes ship with the prefix from this release. Existing component classes (e.g. `.card`, `.sidebar`, `.tag`) stay unprefixed until the broader migration pass — no churn in this release. | P0 | S |
+| `CSS-061` | feat | **Reserve `.rd-is-*` state-modifier prefix.** Document `.rd-is-active`, `.rd-is-hidden`, `.rd-is-open`, `.rd-is-loading`, `.rd-is-disabled` etc. as the canonical way to express UI state on any element. Ship at minimum `.rd-is-active` and `.rd-is-hidden` as real classes (others as documented convention). | P0 | S |
+| `CSS-062` | feat | **Reserve `.rd-js-*` JS-hook prefix.** Document `.rd-js-*` as the canonical hook used by `/scripts/` to find DOM nodes. CSS rules MUST NOT style `.rd-js-*` selectors directly — they are behavioral hooks only. Ship at minimum `.rd-js-dropdown` (toggleable container reserved for script-driven menus / pickers / panels). | P0 | S |
+| `CSS-063` | docs | **Namespace policy in `STYLEGUIDE.md`.** Codify the three rules: `rd-` for new utilities/states/hooks; `rd-is-*` for state; `rd-js-*` for JS hooks, never styled. Include a one-paragraph migration note pointing at `CSS-133`. | P0 | S |
+
+## Exit criteria
+
+- [ ] `rd-` namespace is documented in `STYLEGUIDE.md` with the three-rule policy
+- [ ] `.rd-is-active`, `.rd-is-hidden`, `.rd-js-dropdown` are reserved and shipped (real or documented per CSS-061/062)
+- [ ] Namespace policy is aligned with the script-hook contract documented in `v0.6.16`
+- [ ] No broad class-prefix migration yet — this release only establishes the namespace contract
+
+---
+
+# Milestone `v0.7.1` — Stabilization
 
 **Goal:** zero invalid CSS in the codebase, linter in place, fonts loaded properly, and the existing button module turned into a real button system.
 
@@ -239,11 +296,12 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 | ID | Type | Task | Estimate |
 |---|---|---|---|
 | `CSS-030` | perf | Keep font loading convenient for downstream projects, but review whether Google Fonts imports can be made cheaper/cleaner without forcing every consumer to re-declare them manually. | S |
-| `CSS-031` | perf | Trim Fira Sans weights (currently 18 weights × 2 styles). Keep 300/400/500/700 + italic 400. | S |
+| `CSS-031` | perf | Trim Fira Sans weights to the shipped canonical set used by the library tokens: 100/200/400/700/900 plus matching italics. Keep the task record aligned with the public `--font-weight-*` surface unless a later typography release intentionally changes both together. Reconciled in `v0.6.15` (`CSS-052`): `_fonts.scss` ships exactly this set and it matches the `--font-weight-*` tokens; note `--font-weight-light: 200` maps to the extra-light cut, not the 300 light cut. | S |
 | `CSS-032` | chore | Rationalize Material icon loading. We currently import three related families (`Material Icons`, `Material Icons Outlined`, `Material Symbols Outlined`); decide the canonical set, remove unnecessary overlap, and document which family the library expects. | S |
 | `CSS-033` | feat | Publish reusable vendor icon assets (`wa.svg`, `github.svg`, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo. | M |
 | `CSS-033a` | chore | After tagging `v0.6.12`, replace library references to old local image paths (`/assets/img/common/vendors/...`, `/assets/img/logo/...`) with canonical versioned CDN URLs pointing at `assets/css/images/**`. Verify vendor-logo, floating contact button, and brand-logo surfaces still render correctly. | S |
 | `CSS-034` | chore | Fix critical server-side dependency vulnerabilities in the site/build toolchain, starting with templating and content-processing packages flagged by `npm audit` (notably `liquidjs` and other server-side/high-severity findings). Verify `npm run build` still passes after the refresh. | M |
+| `CSS-078` | chore | **Audit the reset/normalization layer after the `v0.6.15` reorder fix.** Review `vendor/normalize`, the root `* { margin: 0; padding: 0 }` reset, and `box-sizing` coverage for pseudo-elements so the library has one intentional normalization strategy instead of overlapping reset behavior. Coordinates with the later `@layer` work (`CSS-130`). | S |
 | `CSS-079` | perf | **Audit the generated spacing-utility matrix.** `_spacing.scss` emits 24 property families × 30 `$spaces` values × (base + 3 breakpoints) ≈ 2 900 selectors; `rare.css` is 406 KB unminified — already over the 400 KB budget set in `CSS-T01.7`, and this matrix is the main driver. Define the intentional property×value matrix (percentages and `auto` make no sense for several families — see `CSS-049` for the invalid-CSS slice), prune the generators, re-measure the bundle. Coordinates with `CSS-136` / `CSS-137`. | M |
 
 ## Accessibility base (P2)
@@ -340,7 +398,7 @@ Per the **Documentation-driven audit policy** (see top of this doc). The corresp
 | `CSS-130` | feat | Adopt `@layer reset, vendor, base, tokens, components, utilities` at the root. Removes the need for `!important` and locks cascade order. | M |
 | `CSS-131` | chore | Drop `!important` from `.mobile-hidden` once `CSS-130` lands. | S |
 | `CSS-132` | chore | Generate `:root` variables from a SCSS map. Eliminate the duplication between `:root { --gray: ... }` and `$base_colors: gray, ...`. Single source of truth. | M |
-| `CSS-133` | chore | **Complete `rd-` namespace adoption.** Prefix decision is taken in `v0.6.15` (`CSS-060..063` — `rd-` namespace, `rd-is-*` state prefix, `rd-js-*` JS-hook prefix). This task finalizes the migration: audit existing component/utility classes (e.g. `.card`, `.tag`, `.sidebar`, `.note`, `.warning`, `.lead`) and decide per-class whether to prefix, alias, or leave as-is. Coordinates with `CSS-141`. | S |
+| `CSS-133` | chore | **Complete `rd-` namespace adoption.** Prefix decision is taken in `v0.7.0` (`CSS-060..063` — `rd-` namespace, `rd-is-*` state prefix, `rd-js-*` JS-hook prefix). This task finalizes the migration: audit existing component/utility classes (e.g. `.card`, `.tag`, `.sidebar`, `.note`, `.warning`, `.lead`) and decide per-class whether to prefix, alias, or leave as-is. Coordinates with `CSS-141`. | S |
 | `CSS-134` | chore | `STYLEGUIDE.md` convention: components live in `bricks/` + `elements/`, utilities live in `layout/` + `utilities/` + `align/` + `decorations/`. | S |
 | `CSS-135` | feat | Migrate margin/padding/border to logical properties (`margin-inline`, `padding-block`, `border-inline-start`). Out-of-the-box RTL/i18n support. | L |
 | `CSS-136` | chore | **Rename top-end spacing tokens for semantic clarity.** `--space-xxxl` (12×) and `--space-xxxxl` (24×) communicate "bigger than bigger" rather than intent; arguably `--space-xxl` (6×) too. Pick a semantic scheme — three candidates: (a) industry t-shirt extension `--space-2xl/3xl/4xl`; (b) functional names like `--space-section/block/page`; (c) numeric multipliers `--space-x6/x12/x24`. Migrate the spacing scale, the `$spaces` list, all generated utility classes (`.height-xxxxl`, `.padding-xxxl`, etc.), and consumers (incl. the `.list-group-pack` height utility example in `/styles/layout/spacing/`). Mark as breaking change in `CHANGELOG.md`. | M |
@@ -524,9 +582,9 @@ The CSS library lives next to two siblings: `scripts/` (collapsible, cookies, co
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-230` | feat | **Finalize** the audit of `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `/scripts/`. Initial inventory landed in `CSS-064` (`v0.6.15`); this task closes any remaining gaps and migrates the JS to consume the `.rd-js-*` hooks defined in `CSS-065`. | M |
+| `CSS-230` | feat | **Finalize** the audit of `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `/scripts/`. Initial inventory landed in `CSS-064` (`v0.6.16`); this task closes any remaining gaps and migrates the JS to consume the `.rd-js-*` hooks defined in `CSS-065`. | M |
 | `CSS-231` | feat | Add `copy-to-clipboard` styles (button, success/error toast). Currently the script has no companion CSS module. Consumes the `.rd-js-copy` hook reserved in `CSS-065`. | S |
-| `CSS-232` | docs | One-page "Scripts integration" doc: which CSS classes each script needs, and which tokens it reads. Builds on the contract draft from `CSS-064` (`v0.6.15`). | S |
+| `CSS-232` | docs | One-page "Scripts integration" doc: which CSS classes each script needs, and which tokens it reads. Builds on the contract draft from `CSS-064` (`v0.6.16`). | S |
 
 ### Charts
 
@@ -632,9 +690,13 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.6.12` | Cleanup & Delivery Hygiene | Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up |
 | `v0.6.13` | Reusable Asset Reshuffle | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
 | `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
-| `v0.6.14_1` | _current_ — Audit Hotfixes | Bug-fix patch on top of `v0.6.14` covering the 2026-06-06 and 2026-06-11 audit findings (`CSS-027..052`; table bugs `CSS-053..055` were pulled forward into `v0.6.14`) |
-| `v0.6.15` | Namespace Foundations, Scripts Integration & CDN Migration | Introduce `rd-` namespace and reserve `.rd-is-*` / `.rd-js-*` prefixes; freeze CSS↔/scripts/ contract; move library/docs consumers off GitHub Pages URLs to versioned CDN paths, retire Pages legacies |
-| `0.7.0` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
+| `v0.6.15` | Audit Hotfixes & Post-Harvest Cleanup | Bug-fix follow-up on top of `v0.6.14`: audit findings (`CSS-027..052`, with table bugs `CSS-053..055` already pulled forward), immediate downstream fixes, asset-path cleanup, and the narrow harvested additions `.boilerplate` / `.feature-row` |
+| `v0.6.16` | _current_ — Scripts Audit & Contract Freeze | Inventory CSS/ARIA/hooks used by `/scripts/`, define the future namespace hooks, and freeze the CSS↔scripts contract before migration work begins |
+| `v0.6.17` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets, then clear the path for Pages unpublish and legacy cleanup |
+| `v0.6.18` | Documentation Skeleton Pressure | Keep draft `/styles/` pages visible as intentional backlog pressure, while cleaning up broken anchors and incomplete-page policy |
+| `v0.6.19` | Rare Digits Media Kit Prep | Package Rare Digits branding surfaces, attribution variants, and library-link guidance as a reusable media-kit layer |
+| `v0.7.0` | Namespace Foundations | Introduce `rd-` as the official namespace and reserve `.rd-is-*` / `.rd-js-*` before broader migration |
+| `v0.7.1` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
 | `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |
 | `CSS-T01` | (parallel) | CDN + npm distribution |
