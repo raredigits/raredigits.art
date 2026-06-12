@@ -97,11 +97,11 @@
     </nav>
     <div class="header-icons">
       <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-icons">search</span>
+          <span class="material-symbols-outlined">search</span>
       </button>
       <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-icons icon-menu">menu</span>
-          <span class="material-icons icon-close">close</span>
+          <span class="material-symbols-outlined icon-menu">menu</span>
+          <span class="material-symbols-outlined icon-close">close</span>
       </button>
     </div>
   </div>
@@ -169,10 +169,10 @@
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-pack height-xxxxl">
-                        <div class="list">
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
                             <span class="list-title">Settings</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
                                 <li>Spacing Scale</li>
@@ -185,9 +185,9 @@
                                 <li>Naming System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Modules</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
                                 <li>Spaces</li>
@@ -199,18 +199,18 @@
                                 <li><a href="/styles/themes/">Themes</a></li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Layout Patterns</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
                                 <li>Mobile Only</li>
                                 <li>Floors System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Components</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
                                 <li>Card Decks</li>
@@ -218,18 +218,18 @@
                                 <li>Images</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Decorations</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
                                 <li>Dividers</li>
                                 <li>Shadows</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Usage</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
@@ -262,6 +262,7 @@
         </div>
     </section>
 </div>
+
   
 <main>
   <div class="content grid-global">
@@ -339,7 +340,7 @@
 js/collapsible.js<br>
 <p>
     v.1.0 Stable | 
-    <a href="/assets/js/collapsible.js">Download</a> <span class="material-icons">file_download</span>
+    <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
 <p>The collapsible component provides a clean solution for managing large, secondary content or detailed information that might otherwise clutter the interface. When implemented correctly, it allows users to progressively discover content based on their interest level, maintaining a clean, focused interface by default.</p>
@@ -374,8 +375,8 @@ js/collapsible.js<br>
 <p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available:</p>
 <div class="card collapsible-container">
     <p>
-        <span class="section-icon material-icons-outlined">code</span>
-        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-icons-outlined">keyboard_arrow_down</span></span>
+        <span class="section-icon material-symbols-outlined">code</span>
+        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-symbols-outlined">keyboard_arrow_down</span></span>
     </p>
     <div class="collapsible-content">
         <p>The script handles two common HTML structures:</p>
@@ -387,7 +388,7 @@ js/collapsible.js<br>
         <pre>
 <code><span class="code-comment">// Structure 1 (siblings under same parent):</span>
 &lt;div class="container"&gt;
-    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-icons-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
+    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-symbols-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
     &lt;div class="collapsible-content"&gt;Content goes here&lt;/div&gt;
 &lt;/div&gt;
 <div class="air-md"></div>

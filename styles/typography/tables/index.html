@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Elements / Tables | Rare Digits Art</title>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="current">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
+          <span class="material-symbols-outlined">search</span>
+      </button>
+      <button class="hamburger no-decoration" aria-label="Toggle navigation">
+          <span class="material-symbols-outlined icon-menu">menu</span>
+          <span class="material-symbols-outlined icon-close">close</span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar" hidden>
+      <div id="search" class="search-input"></div>
+    </div>
+  </div>
+</header>
+<div class="nav-hamburger">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/styles/">Styles</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/usage/">Usage</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/text-content/">Text Content</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/lists/">Lists &amp; Columns</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <span class="bold">Tables</span>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/interactive/">Interactive Elements</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/typography/sidenotes/">Sidenotes</a>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Text Elements / Tables</h1>
+  </section>
+
+    <article>
+      <h2>Tables</h2>
+<div class="meta-info">css/modules/typography/_tables.scss</div>
+<p>Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.</p>
+<table class="table-terminal table-striped">
+    <tr>
+        <th>Library</th>
+        <th>Versatility</th>
+        <th>Simplicity</th>
+        <th>Recognizability</th>
+        <th>Score</th>
+    </tr>
+    <tr>
+        <td>Tailwind</td>
+        <td>V</td>
+        <td>X</td>
+        <td>X</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Bootstrap</td>
+        <td>V</td>
+        <td>X</td>
+        <td>V</td>
+        <td>2</td>
+    </tr>
+    <tr>
+        <td>Rare Styles</td>
+        <td>V</td>
+        <td>V</td>
+        <td>V</td>
+        <td>3</td>
+    </tr>
+</table>
+<div class="sidenote-wrapper">
+    <div>
+        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself.</p>
+        <p>For small tables and table-style data presentation, the <code>.table-small</code> selector is available with left-aligned content.</p>
+        <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don't overload tables with unnecessary information or use them for content better presented as text or graphics.
+        </p>
+    </div>
+    <div class="sidenote">
+        <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile:width-75</code>, etc., or create custom classes.</p>
+    </div>
+</div>
+<h3>Preset Tables</h3>
+<div class="sidenote-wrapper">
+    <div>
+        <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
+        </p>
+        <table class="table-small">
+            <tr>
+                <th>Selector</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>.table-striped</code></td>
+                <td>Alternating row backgrounds (zebra)</td>
+            </tr>
+            <tr>
+                <td><code>.table-terminal</code></td>
+                <td>Monospace metrics readout, centered values, last column right-aligned</td>
+            </tr>
+            <tr>
+                <td><code>.table-comparison</code></td>
+                <td>Centers value columns for scanning across options; row label stays left</td>
+            </tr>
+            <tr>
+                <td><code>.table-numeric</code></td>
+                <td>Tabular figures, value columns right-aligned for comparing numbers down a column</td>
+            </tr>
+            <tr>
+                <td><code>.table-horizontal-borders</code></td>
+                <td>Quiet rules between rows, no outer frame</td>
+            </tr>
+            <tr>
+                <td><code>.table-small</code></td>
+                <td>Compact, fit-content, left-aligned</td>
+            </tr>
+            <tr>
+                <td><code>.table-bordered</code></td>
+                <td>Full grid with outer frame and header band</td>
+            </tr>
+            <tr>
+                <td><code>.table-scroll</code></td>
+                <td>Wrapper (not a table class) — lets a wide table scroll horizontally</td>
+            </tr>
+        </table>
+    </div>
+    <div class="sidenote">
+        <p>
+            .table-terminal example:
+        </p>
+        <table class="table-terminal">
+            <tr>
+                <td>Visitors:</td>
+                <td>1,234</td>
+            </tr>
+            <tr>
+                <td>Clicks:</td>
+                <td>345</td>
+            </tr>
+            <tr>
+                <td>Leads:</td>
+                <td>123</td>
+            </tr>
+            <tr>
+                <td>Sales:</td>
+                <td>12</td>
+            </tr>
+            <tr>
+                <td>Revenue:</td>
+                <td>$1,234</td>
+            </tr>
+            <tr>
+                <td>Conversion:</td>
+                <td>1%</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<h3>Comparison tables</h3>
+<p><code>.table-comparison</code> left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for <code>.table-terminal</code> instead when the values are numeric and benefit from a monospace, right-aligned readout.</p>
+<table class="table-comparison table-horizontal-borders">
+    <tr>
+        <th>Library</th>
+        <th>Versatility</th>
+        <th>Simplicity</th>
+        <th>Recognizability</th>
+    </tr>
+    <tr>
+        <td>Tailwind</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>No</td>
+    </tr>
+    <tr>
+        <td>Bootstrap</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Yes</td>
+    </tr>
+    <tr>
+        <td>Rare Styles</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Yes</td>
+    </tr>
+</table>
+<p>The example above also carries <code>.table-horizontal-borders</code>: a lighter alternative to <code>.table-bordered</code> that draws a quiet rule between rows without the outer frame or vertical lines. The two border presets are mutually exclusive — pick the frame weight the data needs.</p>
+<h3>Numeric tables</h3>
+<p><code>.table-numeric</code> is the preset for decision-grade figures: it switches the table to <strong>tabular figures</strong> (every digit the same width, so numbers line up vertically) and right-aligns the value columns while the row label stays left. Use it for financial tables, KPI readouts, and any data where the reader compares numbers down a column. It keeps the normal text font — reach for <code>.table-terminal</code> when you want a monospace readout.</p>
+<table class="table-numeric table-horizontal-borders">
+    <tr>
+        <th>Channel</th>
+        <th>Sessions</th>
+        <th>Conversion</th>
+        <th>Revenue</th>
+    </tr>
+    <tr>
+        <td>Organic search</td>
+        <td>48,120</td>
+        <td>3.4%</td>
+        <td>$182,400</td>
+    </tr>
+    <tr>
+        <td>Paid social</td>
+        <td>9,265</td>
+        <td>1.1%</td>
+        <td>$24,900</td>
+    </tr>
+    <tr>
+        <td>Direct</td>
+        <td>121,008</td>
+        <td>5.0%</td>
+        <td>$540,150</td>
+    </tr>
+</table>
+<div class="caption">
+    <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>
+</div>
+<div class="teaser-bottom">
+    <p>Next:</p>
+    <h3><a href="/styles/typography/interactive/">Interactive Elements</a></h3>
+</div>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div id="cookie-notice" class="cookie-notice">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+</body>
+</html>

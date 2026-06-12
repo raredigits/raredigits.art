@@ -97,11 +97,11 @@
     </nav>
     <div class="header-icons">
       <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-icons">search</span>
+          <span class="material-symbols-outlined">search</span>
       </button>
       <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-icons icon-menu">menu</span>
-          <span class="material-icons icon-close">close</span>
+          <span class="material-symbols-outlined icon-menu">menu</span>
+          <span class="material-symbols-outlined icon-close">close</span>
       </button>
     </div>
   </div>
@@ -169,10 +169,10 @@
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-pack height-xxxxl">
-                        <div class="list">
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
                             <span class="list-title">Settings</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
                                 <li>Spacing Scale</li>
@@ -185,9 +185,9 @@
                                 <li>Naming System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Modules</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
                                 <li>Spaces</li>
@@ -199,18 +199,18 @@
                                 <li><a href="/styles/themes/">Themes</a></li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Layout Patterns</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
                                 <li>Mobile Only</li>
                                 <li>Floors System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Components</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
                                 <li>Card Decks</li>
@@ -218,18 +218,18 @@
                                 <li>Images</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Decorations</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
                                 <li>Dividers</li>
                                 <li>Shadows</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Usage</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
@@ -262,6 +262,7 @@
         </div>
     </section>
 </div>
+
   
 <main>
   <div class="content grid-global">
@@ -449,7 +450,7 @@
 
 <p>For every token in the scale, the library generates utility classes for the common spacing properties. Replace <code>{token}</code> with any value from the scale (<code>xs</code>, <code>md</code>, <code>xxl</code>, <code>50</code>, …).</p>
 
-<dl class="dl-inline">
+<dl class="dl-grid">
   <dt><code>.padding-{token}</code></dt>            <dd>padding on all four sides</dd>
   <dt><code>.padding-x-{token}</code></dt>          <dd>padding-left and -right</dd>
   <dt><code>.padding-y-{token}</code></dt>          <dd>padding-top and -bottom</dd>
@@ -473,7 +474,7 @@
 
 <p>Shorter aliases are available for the most-used spacing utilities, intended for finer typographic control inside content blocks. Each alias is one step smaller than its core counterpart — useful when the literal name would interrupt the reading flow of inline class lists.</p>
 
-<dl class="dl-inline">
+<dl class="dl-grid">
   <dt><code>.p-s</code></dt>   <dd>= <code>.padding-xs</code> (4px)</dd>
   <dt><code>.p-m</code></dt>   <dd>= <code>.padding-sm</code> (8px)</dd>
   <dt><code>.p-l</code></dt>   <dd>= <code>.padding-md</code> (16px)</dd>
@@ -489,12 +490,12 @@
 
 <pre><code>:root {
   --space-md: 20px;            /* tighten or expand the base step */
-  --space-xxxxl: 32rem;        /* taller list-pack columns */
+  --space-xxxxl: 32rem;        /* taller list-group-pack columns */
 }</code></pre>
 
 <p>Components that consume tokens via custom properties accept inline overrides too:</p>
 
-<pre><code>&lt;div class="list-pack" style="--list-pack-height: var(--space-xxxxl);"&gt;</code></pre>
+<pre><code>&lt;div class="list-group-pack" style="height: var(--space-xxxxl);"&gt;</code></pre>
     </article>
   </div>
 </main>
