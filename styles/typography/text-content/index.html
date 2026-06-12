@@ -12,6 +12,16 @@ permalink: '/styles/typography/text-content/'
 
 <section>
     <h3>Body Text</h3>
+    <p>Body text is the default. Paragraphs sit on the text-content column at a comfortable measure, the line-height is tuned for sustained reading, and nothing extra is needed — just write.</p>
+
+    <h4><code>.lead</code></h4>
+    <p>A single oversized opening paragraph. Think of it as the page's TL;DR: one or two sentences that tell the reader what this page is about and whether to keep reading. Use it once, at the top of a long-read.</p>
+
+    <div class="lead">
+        Typography is not decoration; it is the path the reader walks. A well-set page tells the reader, before a single word is parsed, that the content was thought about. Selector <code>.lead</code> is how you say that out loud.
+    </div>
+
+    <p>The treatment is intentionally restrained — larger size, lighter weight, slightly tighter leading. Loud enough to set the page, quiet enough to step out of the way.</p>
 </section>
 
 <section>
@@ -20,12 +30,32 @@ permalink: '/styles/typography/text-content/'
 
 <section>
     <h2>Special Text Elements</h2>
-    <p><code>.lead</code></p>
-    <p><code>.caption</code></p>
-    <p><code>.highlight</code></p>
-    <p><code>&lt;mark&gt;</code></p>
-    <p><code>&lt;cite&gt;</code></p>
-    
+
+    <p>A handful of blocks sit slightly past the text-content column on both sides — a small but deliberate signal that they are not the prose, they are <em>about</em> the prose. Captions, highlights, and content-captions all share this outdent: <code>var(--space-lg)</code> on desktop, tightening to <code>var(--space-sm)</code> on mobile. The shift is driven by a single internal SCSS mixin (<code>@mixin outdent</code> in <code>typography/_text-content.scss</code>) so the three blocks stay coherent. In <code>v0.6.15</code> the same pattern will be exposed as the public utility <code>.rd-outdent</code>.</p>
+
+    <h3><code>.text-content-caption</code></h3>
+    <p>A wrapper that widens its content past the regular text column by one outdent on each side. Use it for figures, illustrative cards, or any block that needs slightly more horizontal room than a paragraph but should still belong to the article.</p>
+
+    <h3><code>.highlight</code></h3>
+    <p>An emphatic, centered block with a thick brand-color border. The reading flow stops here and reads this carefully — so use it sparingly, for the single sentence on the page that has to land.</p>
+
+    <div class="highlight">
+        Make it beautiful by making it understandable. Not loud. Not clever. Just right.
+    </div>
+
+    <h3><code>.caption</code></h3>
+    <p>An aside-style block with a soft gray background and a brand-color left rule. Used for editor's notes, observations, or short asides that comment on the prose without being part of it.</p>
+
+    <div class="caption">
+        <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant.</p>
+    </div>
+
+    <h3><code>&lt;mark&gt;</code></h3>
+    <p>Inline highlighting for words or phrases inside running text. <mark>Use it to flag the single phrase a skimming reader must not miss.</mark></p>
+
+    <h3><code>&lt;cite&gt;</code></h3>
+    <p>The semantic element for attributing a quotation. Renders right-aligned and muted — see the <code>&lt;blockquote&gt;</code> example below.</p>
+
     <h3>Blockquote</h3>
 
     <p>A good quote is like a well-timed assist in basketball—it brings someone else’s brilliance into play exactly when you need it. Blockquotes give voice and weight to borrowed wisdom, letting other people’s words do the heavy lifting while you focus on connecting the dots.</p>
@@ -39,6 +69,49 @@ permalink: '/styles/typography/text-content/'
     </blockquote>
     <p>In Rare Styles, <code>&lt;blockquote&gt;</code> are set apart with comfortable margins and a subtle background treatment—enough to signal “this is someone else talking” without turning your page into a ransom note made of clippings. Citations are handled through the <code>&lt;cite&gt;</code> element, because proper attribution is the difference between scholarship and plagiarism, and we prefer the former.</p>
     
+<h3>Epigraph</h3>
+
+    <figure class="epigraph text-content-width">
+        <p>The whole of science is nothing more than a refinement of everyday thinking.</p>
+        <p>— Albert Einstein</p>
+    </figure>
+
+    <p>An <code>&lt;figure class="epigraph"&gt;</code> sets a short, attributed quotation at the head of a section or page. Unlike a blockquote, it is small, italic, and right-aligned — a voice from outside the text, placed at the threshold rather than woven into the argument.</p>
+
+    <p>Keep epigraphs brief. Their job is to set a tone before the reader enters, not to carry an argument.</p>
+
+    <h3>Definition Lists</h3>
+
+    <p>A plain <code>&lt;dl&gt;</code> is styled directly: readable spacing, bold enlarged terms, and extra separation before each new term. Use it for glossary-style or principle-style content where each term introduces a short block — the <a href="/manifesto/principles/">manifesto principles</a> are set exactly this way.</p>
+
+    <dl>
+        <dt>Clarity first</dt>
+        <dd>Every component should help the reader decide faster, not admire the styling longer.</dd>
+
+        <dt>Scannability</dt>
+        <dd>Dense information should still reveal structure at a glance.</dd>
+
+        <dt>Narrow scope</dt>
+        <dd>Rare Styles is for longreads and decision-first views, not for general-purpose UI theming.</dd>
+    </dl>
+
+    <h3><code>.dl-grid</code></h3>
+
+    <p>The grid variant turns a definition list into a compact key:value grid. Use it for metadata, settings summaries, technical facts, or small inspection panels.</p>
+
+    <dl class="dl-grid">
+        <dt>Version</dt>
+        <dd><code>v0.6.14</code></dd>
+
+        <dt>Status</dt>
+        <dd>In progress</dd>
+
+        <dt>Next release</dt>
+        <dd><code>v0.6.14_1</code></dd>
+    </dl>
+
+    <p><code>dt &gt; code</code> inside <code>.dl-grid</code> is intentionally rendered at normal weight, so code-like keys do not become too heavy.</p>
+
     <h3>Tags</h3>
     <p><code>.tag</code></p>
     

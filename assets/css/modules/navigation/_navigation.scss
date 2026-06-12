@@ -1,6 +1,8 @@
 @use "../utilities/breakpoints" as bp;
 
 .nav-list {
+    list-style-type: none;
+    padding: 0;
     margin-bottom: var(--space-lg);
 }
 

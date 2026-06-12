@@ -11,6 +11,12 @@
     justify-content: center;
 }
 
+// Text/content centering helper. Unlike `.center-center`, this does not
+// create a flex container — it only centers inline content and text.
+.center {
+    text-align: center;
+}
+
 .right {
     text-align: right;
 }

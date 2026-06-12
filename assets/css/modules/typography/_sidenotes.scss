@@ -86,6 +86,14 @@
         grid-column: 1 / span 5;
     }
 
+    // Highlights and content-captions get one extra column (still clear of
+    // the sidenote, which starts at column 7) so emphatic blocks read wider
+    // than ordinary body content.
+    > .highlight,
+    > .text-content-caption {
+        grid-column: 1 / span 6;
+    }
+
     @media (width <= 1024px) {
         display: flex;
         flex-direction: column;

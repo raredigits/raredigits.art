@@ -65,3 +65,97 @@
         width: calc(100% + var(--space-sm));
     }
 }
+
+// Paper-like surface for document-style inserts: a quiet white sheet with
+// generous inner space and a mild lift from the page.
+.paper-sheet {
+    aspect-ratio: 1 / 1.4;
+    background: var(--white);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-xxl) var(--space-lg) var(--space-lg) var(--space-xxl);
+}
+
+// CARD GRID — the repeated-card special case: arranges tile items into a
+// responsive grid. Unlike a plain `.grid` + `.grid-cols-*`, a card grid owns
+// its items, shipping two tile treatments (`--cards`, `--gallery`) and a
+// card-tuned responsive collapse. Column count is driven by
+// `--card-grid-cols` (default 5); the `--cols-2/3/4` modifiers set it, and
+// below desktop every variant collapses to two so tiles stay legible.
+
+.card-grid {
+    --card-grid-cols: 5;
+
+    display: grid;
+    grid-template-columns: repeat(var(--card-grid-cols), 1fr);
+    gap: var(--space-sm) var(--space-md);
+}
+
+.card-grid--cols-2 { --card-grid-cols: 2; }
+.card-grid--cols-3 { --card-grid-cols: 3; }
+.card-grid--cols-4 { --card-grid-cols: 4; }
+
+.card-grid__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    justify-content: flex-start;
+}
+
+// Cards mode — each item is a square card surface lifted off the page.
+.card-grid--cards .card-grid__item {
+    aspect-ratio: 1 / 1;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.card-grid--cards .card-grid__title {
+    // Source pinned `padding-top: var(--shadow-md)` — a shadow token used as
+    // spacing; corrected to a spacing token.
+    padding-top: var(--space-sm);
+}
+
+// Gallery mode — each item is an image tile (set the image via inline
+// `background-image`) with a title overlaid at the bottom.
+.card-grid--gallery {
+    gap: var(--space-xs);
+}
+
+.card-grid--gallery .card-grid__item {
+    aspect-ratio: 1 / 1;
+    justify-content: flex-end;
+    background-size: cover;
+    background-position: center;
+}
+
+.card-grid--gallery .card-grid__title {
+    width: 100%;
+    padding: var(--space-xs) var(--space-sm);
+    background: color-mix(in srgb, var(--gray-darkest) 30%, transparent);
+    transition: background 0.2s ease;
+}
+
+.card-grid--gallery .card-grid__title:hover {
+    background: color-mix(in srgb, var(--gray-darkest) 85%, transparent);
+}
+
+.card-grid--gallery .card-grid__title a {
+    display: block;
+    width: 100%;
+    color: var(--white);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+}
+
+.card-grid--gallery .card-grid__title a:hover {
+    border-bottom: none;
+}
+
+// Below desktop every column variant collapses to two. Placed last so it
+// wins over the `--cols-*` modifiers on equal specificity.
+@include bp.multi-breakpoint("mobile", "tablet") {
+    .card-grid {
+        --card-grid-cols: 2;
+    }
+}

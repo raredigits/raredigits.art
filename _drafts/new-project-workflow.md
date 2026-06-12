@@ -22,7 +22,7 @@ Start with the assumption that **the first articulation of the problem is incomp
 
 <div class="card full-width-caption padding-lg">
     <h5>Briefing Tasks:</h5> 
-    <div class="columns">
+    <div class="prose-columns">
         <li>Identify the key stakeholders and decision-makers. Kick off middlemen</li>
         <li>Identify the real users (often different from stakeholders)</li>
         <li>Conduct initial interviews to understand stated requirements</li>
@@ -42,7 +42,7 @@ Before designing solutions, **understand the context** and develop a viable conc
 
 <div class="card full-width-caption padding-lg">
     <h5>Researh Tasks:</h5> 
-    <div class="columns">
+    <div class="prose-columns">
         <li>Research user needs and patterns through interviews/observation</li>
         <li>Identify the Core Value they needed</li>
         <li>Analyze existing solutions in the problem space</li>
@@ -66,7 +66,7 @@ Translate concepts into concrete designs using Rare Styles principles.
 
 <div class="card full-width-caption padding-lg">
     <h5>Design Tasks:</h5> 
-    <div class="columns">
+    <div class="prose-columns">
         <li>Sort and deliver Core Values to the interfaces</li>
         <li>Map user journeys between screens/pages</li>
         <li>Implement the grid system for layout structure</li>

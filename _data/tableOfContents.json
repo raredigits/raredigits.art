@@ -34,21 +34,21 @@
     ]
   },
   {
-    "category": "Lists",
+    "category": "Lists & Columns",
     "url": "/styles/typography/lists/",
     "topics": [
-      { "title": "General Lists", "url": "/styles/typography/lists/#general-lists/" },
-      { "title": "Semi-Column Lists", "url": "/styles/typography/lists/#semi-column-lists/" },
-      { "title": "Feed List", "url": "/styles/typography/lists/#feed-list/" }
+      { "title": "Lists", "url": "/styles/typography/lists/#lists/" },
+      { "title": "Columns", "url": "/styles/typography/lists/#columns/" },
+      { "title": "Multigroup & Fixed Rows", "url": "/styles/typography/lists/#when-mechanical-columns-fall-short/" },
+      { "title": "Feed List", "url": "/styles/typography/lists/#feed-list/" },
+      { "title": "Directory List", "url": "/styles/typography/lists/#directory-list/" }
     ]
   },
   {
     "category": "Tables",
-    "url": "/styles/typography/lists/",
+    "url": "/styles/typography/tables/",
     "topics": [
-      { "title": "Basic Table", "url": "/styles/typography/lists/#basic-table/" },
-      { "title": "Striped Table", "url": "/styles/typography/lists/#striped-table/" },
-      { "title": "Terminal Table", "url": "/styles/typography/lists/#terminal-table/" }
+      { "title": "Preset Tables", "url": "/styles/typography/tables/#preset-tables/" }
     ]
   },
   {

@@ -58,7 +58,7 @@
 
 // Auto-fit / auto-fill grids — content-driven flexible columns that adapt
 // to viewport width without hardcoded breakpoint counts. Use these instead
-// of CSS multi-column (`.columns`) when items must not be split across
+// of CSS multi-column (`.prose-columns`) when items must not be split across
 // columns: multi-column balances heights and leaves gaps under short blocks
 // when `break-inside: avoid` is set. Auto-fit grids have no balancing —
 // each cell takes its natural height, columns flow as the viewport allows.
@@ -134,6 +134,7 @@
 
 @mixin generate-col-position($type, $max) {
     $base-class: 'col-end';
+
     @if $type == 'start' { $base-class: 'col-start'; }
   
     @for $i from 1 through $max {

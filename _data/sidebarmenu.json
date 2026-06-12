@@ -27,7 +27,8 @@
           "url": "/styles/typography/",
           "subitems": [
             { "title": "Text Content", "url": "/styles/typography/text-content/" },
-            { "title": "Lists and Tables", "url": "/styles/typography/lists/" },
+            { "title": "Lists & Columns", "url": "/styles/typography/lists/" },
+            { "title": "Tables", "url": "/styles/typography/tables/" },
             { "title": "Interactive Elements", "url": "/styles/typography/interactive/" },
             { "title": "Sidenotes", "url": "/styles/typography/sidenotes/" }
           ]

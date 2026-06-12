@@ -169,10 +169,10 @@
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-pack height-xxxxl">
-                        <div class="list">
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
                             <span class="list-title">Settings</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
                                 <li>Spacing Scale</li>
@@ -185,9 +185,9 @@
                                 <li>Naming System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Modules</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
                                 <li>Spaces</li>
@@ -199,18 +199,18 @@
                                 <li><a href="/styles/themes/">Themes</a></li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Layout Patterns</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
                                 <li>Mobile Only</li>
                                 <li>Floors System</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Components</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
                                 <li>Card Decks</li>
@@ -218,18 +218,18 @@
                                 <li>Images</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Decorations</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
                                 <li>Dividers</li>
                                 <li>Shadows</li>
                             </ul>
                         </div>
-                        <div class="list">
+                        <div class="index-list">
                             <span class="list-title">Usage</span>
-                            <ul class="nav-list">
+                            <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
@@ -412,18 +412,44 @@
 <div class="meta-info">
     css/modules/bricks/
 </div>
+
 <section>
-    <p>Like pieces in a construction kit, the style system uses a minimal set of semantic building blocks to represent content: <code>&lt;section&gt;</code>, <code>.card</code>, and <code>&lt;space&gt;</code>.
-    </p>
-    <p>These foundational elements combine with typography, whitespace, and basic decorative elements to solve any content presentation challenge—no matter how complex the hierarchy.
-    </p>
+    <p>Screens in this system are assembled from a deliberately small set of semantic building blocks. Three carry the weight:</p>
+    <dl>
+        <dt><code>&lt;section&gt;</code></dt>
+        <dd>The semantic grouping block. It thematically unites primarily textual content and sets the vertical rhythm between page parts.</dd>
+
+        <dt><code>.card</code></dt>
+        <dd>A narrative surface — authorial, human, story-like content that wants to stand slightly apart from the page.</dd>
+
+        <dt><code>.panel</code></dt>
+        <dd>The data surface — the stricter sibling for system-facing, structured, metric-heavy content. (Ships in a later release; the distinction is described below so you know which one a given block wants.)</dd>
+    </dl>
+    <p>The important idea is what is <em>not</em> here. There is no grid component, no deck component, no positioning component. Those jobs belong to the utility layers — <a href="/styles/layout/">layout &amp; grid</a>, <a href="/styles/alignment/">alignment</a>, spacing, and positioning. A handful of surfaces plus the utilities compose any screen, so reaching for a brand-new class should be rare and deliberate.</p>
+</section>
+
+<section>
+    <h2>Card vs Panel</h2>
+    <p>Both are surfaces, but they answer different questions, and keeping them separate keeps the intent of a screen legible.</p>
+    <div class="grid grid-cols-2 gap-md mobile:grid-cols-1">
+        <div class="card bordered padding-lg column gap-sm">
+            <h4><code>.card</code> — narrative</h4>
+            <p>Authorial, human, story-like. An article preview, a person, a project, a pricing block, a visual fragment.</p>
+            <p class="note">Soft surface, no rigid internal frame. Holds whatever the author needs.</p>
+        </div>
+        <div class="card bordered padding-lg column gap-sm">
+            <h4><code>.panel</code> — data</h4>
+            <p>System-facing, structured, scannable. A KPI, a status block, settings, a log, a metrics readout.</p>
+            <p class="note">Explicit internal structure (header / body / footer) for content that benefits from a predictable frame.</p>
+        </div>
+    </div>
+    <p><strong>The rule.</strong> If a human authored it and it reads as content, it is a <code>.card</code>. If a system produced it and it reads as data, it is a <code>.panel</code>. When unsure, ask whether the block would feel at home in an article (card) or on a dashboard (panel).</p>
 </section>
 
 <section>
     <h2>Section</h2>
     <div class="meta-info">css/modules/bricks/_sections.scss</div>
-    <p>The section serves as the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set.</p>
-    <p>Visually separated with <code>margin-bottom: var(--space-lg)</code>:</p>
+    <p>The section is the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set. It is visually separated with <code>margin-bottom: var(--space-lg)</code>:</p>
     <div class="card text-content-caption padding-lg gap-sm">
         <div class="text-content-width column gap-xs">
             <div class="skeleton-row"></div>
@@ -446,16 +472,24 @@
 </section>
 
 <section>
+    <h3>Wide Background</h3>
+    <p>Sometimes a section needs more canvas than the normal reading column allows: a full-bleed image, a contextual band, or a wide visual insert. <code>.wide-background</code> breaks the outer section to the viewport edge, while <code>.wide-background-text-content-wrapper</code> brings inner prose back to the normal line.</p>
+    <div class="wide-background wide-section gray-dark-bg white">
+        <div class="wide-background-text-content-wrapper">
+            <h4>A full-bleed band with a disciplined inner text line</h4>
+            <p>The outer surface can carry color, imagery, or other wide media. The inner wrapper returns content to the same reading track the rest of the page uses, so a dramatic section does not force the prose to become chaotic.</p>
+        </div>
+    </div>
+</section>
+
+<section>
     <h2>Card</h2>
     <div class="meta-info">css/modules/bricks/_cards.scss</div>
-    <p>Cards provide more distinct content separation, allowing you to create complex hierarchies and group related elements. By default, they stand out through background color.
-    </p>
-    <p>From a markup perspective, cards have a default <em>flex column</em> layout.</p>
+    <p>Cards provide distinct content separation, letting you build complex hierarchies and group related elements. By default they stand out through background color, and they lay out as a <em>flex column</em>.</p>
     <div class="card center-center padding-lg">
        .card
     </div>
-    <p>Consider cards as your versatile connector pieces—they can take on any visual style: sizes, colors, margins, paddings, alignment, and borders.</p>
-    <p>Content-wise, cards can function as simple containers or develop their own complex hierarchy and structure. They can hold any content type, blocks, or interactive elements.</p>
+    <p>A card is a versatile connector piece — it takes on any visual style through utilities: sizes, colors, margins, paddings, alignment, borders. Content-wise it can be a simple container or develop its own hierarchy, holding any content type, blocks, or interactive elements.</p>
     <div class="card text-content-width stretched">
         <div class="card-header padding-md">.card-header</div>
         <div class="column gap-sm padding-md">
@@ -467,32 +501,62 @@
 </section>
 
 <section>
-    <h3>Card Deck</h3>
-    <p>Just as you would combine building blocks to create larger structures, cards can be assembled into unified semantic constructions without limitations.</p>
+    <h2>Card Grid</h2>
+    <div class="meta-info">css/modules/bricks/_cards.scss</div>
+    <p>When one card is not enough and the cards form a regular, repeated set, <code>.card-grid</code> is the special case that arranges <code>.card-grid__item</code> tiles into a responsive grid. It is the one place where the card surface owns its own layout, because the tiles are uniform by design. Column count defaults to five via the <code>--cols-2</code> / <code>--cols-3</code> / <code>--cols-4</code> modifiers (or the <code>--card-grid-cols</code> custom property); below desktop every variant collapses to two so tiles stay legible.</p>
+
+    <p>The grid ships two tile treatments. <code>.card-grid--cards</code> turns items into square card surfaces:</p>
+
+    <div class="card-grid card-grid--cards card-grid--cols-4">
+        <div class="card-grid__item"><span class="card-grid__title">Clarity</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Density</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Signal</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Restraint</span></div>
+    </div>
+
+    <p><code>.card-grid--gallery</code> turns items into image tiles — set the image with an inline <code>background-image</code> — with a title overlaid at the bottom:</p>
+
+    <div class="card-grid card-grid--gallery card-grid--cols-3">
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/poker.jpg');">
+            <span class="card-grid__title"><a href="">Poker</a></span>
+        </div>
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/leg-split.jpg');">
+            <span class="card-grid__title"><a href="">Split</a></span>
+        </div>
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/batman-inverted.jpg');">
+            <span class="card-grid__title"><a href="">Batman</a></span>
+        </div>
+    </div>
+
+    <p>The card grid is for <em>uniform, repeated</em> tiles. For a freeform arrangement of full <code>.card</code> surfaces, do not reach for a component — use the grid utilities directly, as shown next.</p>
+</section>
+
+<section>
+    <h2>Composing cards — no new class required</h2>
+    <p>There is no <code>.card-deck</code> selector, and there never needs to be. A "card deck" is not a thing the library ships; it is just several cards arranged together, and arrangement is already a solved problem. Any block-level element — a <code>&lt;div&gt;</code>, a <code>&lt;section&gt;</code>, or another <code>.card</code> — can serve as the wrapper, and the alignment, positioning, spacing, and grid utilities do the placement.</p>
     <div class="card-inverted padding-b-lg text-content-width">
         <div>
             <img src="/assets/img/illustrations/poker.jpg" alt="">
         </div>
         <div class="card-header padding-md">
-            <h4>Card Deck Example</h4>
+            <h4>A "deck" is just composition</h4>
         </div>
         <div class="padding-x-md">
-            <p>
-                „Card Deck” isn’t a standalone selector. Block-level parent elements like <code>&lt;div&gt;</code>, <code>.card</code>, or <code>&lt;section&gt;</code> can serve as wrappers.
-            </p>
+            <p>This block is a <code>.card-inverted</code> wrapping an image, a header, prose, and a nested card — no special deck class involved.</p>
             <div class="card center-center padding-lg black">
                 .card .center-center .padding-lg
             </div>
             <div class="divider-lg"></div>
-            <p>Remember that cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
+            <p>Cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
         </div>
         <cite class="absolute right-md bottom-md">.card-inverted</cite>
     </div>
+    <p>The takeaway: any positioning a card layout needs is reachable through the existing utilities. Before adding a new class, check whether alignment and positioning already cover it — they almost always do.</p>
 </section>
 
 <section>
     <h3>Helper Selectors</h3>
-    <p>The stylesheet includes several preset helper selectors for styling cards. Their combinations can satisfy virtually any design requirement—like specialized adapter pieces that help connect your building blocks in unique ways.</p>
+    <p>The same principle, pushed further. Everything below is built from cards plus decoration, color, spacing, and positioning utilities — no bespoke classes. Combine them freely to satisfy virtually any design requirement.</p>
     <div class="grid grid-cols-3 gap-md">
         <div class="card rounded-sm gray-bg col-span-2 center-center">
             <code>.rounded</code>
@@ -522,12 +586,12 @@
                 <code>.square</code>
             </div>
             <div class="width-25 square pink-bg absolute left-20 top-10 z-index-2"></div>
-            <div class="width-25 square ocean-bg absolute right-20 top-10 z-index-2""></div>
+            <div class="width-25 square ocean-bg absolute right-20 top-10 z-index-2"></div>
             <div class="width-25 square orange-bg absolute left-5 top-5 z-index-1"></div>
             <div class="width-25 square purple-bg absolute right-5 top-5 z-index-1"></div>
             <div class="width-25 square green-bg absolute z-index-0" style="left: -5%; top: -10%;"></div>
             <div class="width-25 square yellow-bg absolute z-index-0" style="right: -5%; top: -10%;"></div>
-            <h3 class="padding-t-md">Rare Card Deck</h3>
+            <h3 class="padding-t-md">Composed entirely from utilities</h3>
             <cite class="absolute right-md bottom-md">.bordered</cite>
         </div>
     </div>

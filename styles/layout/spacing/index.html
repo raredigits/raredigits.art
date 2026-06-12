@@ -47,7 +47,7 @@ permalink: '/styles/layout/spacing/'
 
 <p>For every token in the scale, the library generates utility classes for the common spacing properties. Replace <code>{token}</code> with any value from the scale (<code>xs</code>, <code>md</code>, <code>xxl</code>, <code>50</code>, …).</p>
 
-<dl class="dl-inline">
+<dl class="dl-grid">
   <dt><code>.padding-{token}</code></dt>            <dd>padding on all four sides</dd>
   <dt><code>.padding-x-{token}</code></dt>          <dd>padding-left and -right</dd>
   <dt><code>.padding-y-{token}</code></dt>          <dd>padding-top and -bottom</dd>
@@ -71,7 +71,7 @@ permalink: '/styles/layout/spacing/'
 
 <p>Shorter aliases are available for the most-used spacing utilities, intended for finer typographic control inside content blocks. Each alias is one step smaller than its core counterpart — useful when the literal name would interrupt the reading flow of inline class lists.</p>
 
-<dl class="dl-inline">
+<dl class="dl-grid">
   <dt><code>.p-s</code></dt>   <dd>= <code>.padding-xs</code> (4px)</dd>
   <dt><code>.p-m</code></dt>   <dd>= <code>.padding-sm</code> (8px)</dd>
   <dt><code>.p-l</code></dt>   <dd>= <code>.padding-md</code> (16px)</dd>
@@ -87,9 +87,9 @@ permalink: '/styles/layout/spacing/'
 
 <pre><code>:root {
   --space-md: 20px;            /* tighten or expand the base step */
-  --space-xxxxl: 32rem;        /* taller list-pack columns */
+  --space-xxxxl: 32rem;        /* taller list-group-pack columns */
 }</code></pre>
 
 <p>Components that consume tokens via custom properties accept inline overrides too:</p>
 
-<pre><code>&lt;div class="list-pack" style="--list-pack-height: var(--space-xxxxl);"&gt;</code></pre>
+<pre><code>&lt;div class="list-group-pack" style="height: var(--space-xxxxl);"&gt;</code></pre>

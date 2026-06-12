@@ -1,7 +1,6 @@
 # Rare Styles — Backlog & Roadmap
 
-**Current version:** `v0.6.11` (from `_data/versions.json`)
-**Next planned release:** `v0.6.12`
+**Current version:** resolved from [`_data/versions.json`](../../../_data/versions.json) → `styles`. Do not hardcode version numbers in this header — they rot.
 **Public release target:** `1.0.0`
 
 **Positioning:** `Rare Styles` is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.
@@ -14,13 +13,22 @@
 - **Type:** `bug` · `feat` · `a11y` · `perf` · `chore` · `docs` · `dx`
 - **Estimate:** S (≤4 h) · M (1 day) · L (2–3 days) · XL (a week+)
 
+## Documentation-driven audit policy
+
+Starting with `v0.7.0`, every milestone that touches a module also writes the first-pass `/styles/<section>/` page for that module. The act of writing is the audit. Explaining each class, justifying every utility, producing a real example — that's the pressure that surfaces duplicates, exposes temporary/unused classes, and reveals over-complicated utility families that look fine in isolation but can't be described together.
+
+Findings that come out of a docs-pass are filed as separate task IDs and routed to the next available bug-fix release (`v0.X.Y_1` pattern) or to the feature backlog.
+
+The `CSS-282..295` IDs in `v0.9.0` are reframed: they become **finalization + KSS-extracted reference integration + remaining edge pages**, not first-pass writing. First-pass write-ups happen in `v0.7.0` and `v0.8.0` per this policy.
+
+Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also write or update its `/styles/` page in the same milestone — before the milestone ships.
+
 ## Planning note
 
-- Source of truth for the current library version: `_data/versions.json` (`styles`).
-- Current released version: `v0.6.12`.
-- Current working release: `v0.6.13`.
-- Next release after that: `v0.6.14` for cross-project class harvesting / enrichment.
-- Follow-up release after that: `v0.6.15` for CDN migration and GitHub Pages sunset.
+- Source of truth for the current released library version: `_data/versions.json` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
+- Current working release: `v0.6.14` for cross-project class harvesting / enrichment. Working manifest: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md). The harvest is in progress.
+- Follow-up patch: `v0.6.14_1` for audit hotfixes (findings from the 2026-06-06 and 2026-06-11 audits). New bugs found mid-harvest route here, not into `v0.6.14`.
+- Next release after that: `v0.6.15` — namespace foundations (`rd-` prefix, `rd-is-*`, `rd-js-*`), early scripts-integration contract, plus CDN migration and GitHub Pages sunset.
 
 ---
 
@@ -85,6 +93,8 @@
 - Normalize naming, token usage, and API shape before importing into the library
 - Port the selected classes into core modules or clearly scoped opt-in modules
 - Add minimal documentation/examples for every harvested pattern
+- Wire harvested patterns to existing library tokens: `.wide-background` must consume the already-declared but currently unused `--sidebar-width` (`navigation/_sidebar.scss:4`); the harvested calc also references `--field-width`, which is declared nowhere in the library — define it or rework the calc, otherwise `margin-left` fails silently (see `HARVEST_v0.6.14.md`, F6)
+- Fix harvest source bugs that already leaked into modules: the CDN-pinned blockquote `background-image` URL is live in `typography/_text-content.scss:142` — switch to a relative `images/...` path during the blockquote patch integration (HARVEST source bug 5 / F7)
 
 **Legacy Material icon migration hints (for external projects):**
 
@@ -97,37 +107,100 @@
 | `.sidebar-icon.material-icons` | Sidebar navigation affordances or meta rows | `.sidebar-icon.material-symbols-outlined` or family-agnostic `.sidebar-icon` | Remove legacy sidebar compatibility selectors |
 | Icon text names from old Material Icons set | `file_download`, `launch`, and any project-specific legacy names | Verify against Symbols before migration | Prevent silent broken glyphs during cleanup |
 
-`_icons.scss` full cleanup belongs to `v0.6.14`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across `v0.6.12` and `v0.6.14`.
+`_icons.scss` full cleanup is deferred to `v0.6.16`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across adjacent releases.
 
 **Exit criteria:**
 
-- [ ] Candidate classes from adjacent projects are reviewed and curated, not copied wholesale
-- [ ] External projects using legacy Material icon selectors are audited and patched
-- [ ] Rare Styles compatibility selectors for legacy Material icon families are removed after downstream migration
-- [ ] Imported classes follow Rare Styles naming/token conventions
-- [ ] New patterns are documented with intended use cases and non-goals
+- [x] Candidate classes from adjacent projects are reviewed and curated, not copied wholesale
+- [x] Imported classes follow Rare Styles naming/token conventions
+- [x] New patterns are documented with intended use cases and non-goals
+
+Icon-family cleanup follow-up: the external-project audit and compatibility-selector removal are moved out of `v0.6.14` and tracked for `v0.6.16`, where the full legacy Material icon cleanup can be handled as one bounded pass instead of stretching the harvest release.
 
 ---
 
-# Milestone `v0.6.15` — CDN Migration & Pages Sunset
+# Milestone `v0.6.14_1` — Audit Hotfixes
 
-**Goal:** move Rare Styles consumers off mutable GitHub Pages asset URLs onto versioned CDN URLs, then safely retire the old Pages-based distribution path.
+**Goal:** ship a tight follow-up patch to `v0.6.14` that clears the audit findings from 2026-06-06 and 2026-06-11. Scope is strictly bugs and small hygiene fixes — no new features, no harvesting, no API changes. Nothing from this list is hotfixed into `v0.6.14` — the harvest release stays liftable.
 
 **Recommended scope:**
 
-- Update library asset references to canonical versioned CDN URLs under `assets/css/images/**`
-- Migrate docs/examples away from `https://raredigits.github.io/rare-styles/...`
-- Audit known downstream consumers for GitHub Pages CSS URLs and patch them
-- Unpublish the legacy GitHub Pages site once downstream consumers are migrated
-- Remove legacy Pages-only repository artifacts such as `.nojekyll` after unpublish
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-027` | bug | **Responsive aliases broken in production.** `_spacing-aliases.scss` uses `\\:` and compiles to `.mobile\\:p-s` (literal backslash in the class name) — verified in `assets/css/rare.css`. Every short-form responsive alias (`mobile:p-s`, `tablet:m-l`, `desktop:gap-xl`, …) currently fails to match HTML. Fix: use `\:` (single backslash) to match `_spacing.scss`. | P0 | S |
+| `CSS-028` | bug | `--header-height` declared in both `layout/_containers.scss:5` and `navigation/header/_header-container.scss:4`. Drop the duplicate and keep `layout/_containers.scss` as the single owner. | P1 | S |
+| `CSS-035` | a11y | `--font-size: 16px` literal in `typography/_fonts.scss:14`. Should be `1rem` so the user font-size preference is honored. All other size tokens are already in rem. | P1 | S |
+| `CSS-037` | chore | ~~Resolve outstanding stylelint error at `_grid.scss:137` (`at-rule-empty-line-before`).~~ **Done early in `v0.6.14`** — blank line added before the `@if`; `npm run lint:css` is clean. Pulled forward so the harvest release ships lint-clean. | P1 | S |
+| `CSS-039` | docs | Hide or replace stub `/styles/` pages. Five ship "🚧 SECTION ON RECONSTRUCTION": `alignment`, `idea`, `navigation`, `special`, `utilities`. The 2026-06-11 audit extends the list: `/styles/typography/interactive/` is a skeleton (empty `Links` / `Buttons` / `Forms` headings — and forms don't exist in the library until `0.8.0`), `/styles/decorations/` is near-empty (21 lines, one class mentioned), and `_data/tableOfContents.json` links dead anchors (`/styles/typography/interactive/#forms`). Either hide from sidebar until content lands (see `CSS-282..295`) or write minimum viable content. | P1 | S |
+| `CSS-029` | chore | Duplicate brand class in `special/_rare.scss`: `.rare-brand` and `.rare-brand-color` produce identical rules. Pick one. | P2 | S |
+| `CSS-038` | chore | ~~Decide fate of `assets/css/move-in.css` — a plain-CSS file outside the SCSS pipeline with site-specific overrides. Options: fold into SCSS, document as a separate site layer, or delete.~~ **Done in `v0.6.14`** — harvested rules were either integrated into SCSS modules, deferred, or dropped with rationale in `HARVEST_v0.6.14.md`; `assets/css/move-in.css` was then deleted. | P2 | S |
+| `CSS-047` | bug | **Asymmetric outdent override in `_collapsible.scss`.** `.collapsible-content > .caption, .highlight, pre, .text-content-caption, .card-caption` (and the parallel `.collapsible-content .…` rules) override `margin-left` only, leaving `margin-right` at the parent's default. Surfaced after `@mixin outdent` (v0.6.14) made the base outdent symmetric — the asymmetry inside collapsible blocks is now visible. Fix: either mirror to `margin-right` or drop the override if it's no longer needed. While fixing, collapse the duplication: the `>`-child block and the descendant block carry identical bodies. Lines: `assets/css/modules/special/_collapsible.scss:33-44`, `:46-56`. | P1 | S |
+| `CSS-048` | bug | **normalize.css is emitted at the end of the compiled bundle.** In `rare.scss`, `@use "vendor/normalize"` comes after `@use "modules/index"`, so the reset lands after all module CSS (`rare.css:20370` of 20678) and overrides component styles instead of underpinning them. Fix: reorder the `@use` statements so normalize is emitted first. Long-term the cascade gets locked by `@layer` (`CSS-130`). While there, review the doubled reset strategy: `* { margin: 0; padding: 0 }` in `rare.scss` overlaps normalize, and `box-sizing: border-box` is not extended to `*::before` / `*::after`. | P1 | S |
+| `CSS-049` | bug | **Generated utilities emit invalid CSS.** The `$spaces` matrix in `_spacing.scss` produces `.gap-auto`, `.gap-x-auto`, `.gap-y-auto` (`gap: auto` is not a valid value) in the base set and across all three responsive prefixes. Special-case `auto` out of the gap families. The full property×value matrix audit is `CSS-079` (`0.7.0`) — this is only the invalid-CSS slice. | P2 | S |
+| `CSS-051` | docs | **Install snippets contradict each other today.** `/styles/usage/` still recommends `https://raredigits.github.io/rare-styles/...` in three snippets, while the `/styles/` landing page already points to versioned jsDelivr. Update the usage page to the CDN URL now; the full Pages sunset remains `CSS-T00.2` (`v0.6.15`). | P1 | S |
+| `CSS-052` | chore | **Reconcile the `CSS-031` record with shipped reality.** The task spec said "keep 300/400/500/700 + italic 400", but `_fonts.scss:2` imports Fira Sans 100/200/400/700/900 + italics (10 styles), which matches the `--font-weight-*` tokens (`thin: 100`, `light: 200`, `normal: 400`, `bold: 700`, `black: 900`). Decide the canonical weight set and align the import, the tokens, and the task record. Note: `--font-weight-light: 200` actually maps to the extra-light cut. | P2 | S |
+| `CSS-053` | bug | ~~**Table horizontal scroll is non-functional.**~~ **Done early in `v0.6.14`** — removed the dead `overflow-x` from `table`, shipped the opt-in `.table-scroll` wrapper, reconciled the docs claim. | P1 | S |
+| `CSS-054` | bug | ~~**Zebra/hover signal is inverted in `.table-striped`.**~~ **Done early in `v0.6.14`** — both directions unified upward: even rows `--gray-lightest`, hover `--white` across every preset. | P2 | S |
+| `CSS-055` | chore | ~~**Dead declaration `thead, tbody { width: 100% }`.**~~ **Done early in `v0.6.14`** — removed. | P2 | S |
 
 **Exit criteria:**
 
+- [ ] `CSS-027` resolved — responsive-alias regression cleared from compiled `rare.css`
+- [ ] `CSS-028`, `CSS-035`, `CSS-039`, `CSS-047`, `CSS-048`, `CSS-051` resolved
+- [x] `CSS-037` — pulled forward and resolved in `v0.6.14`; `npm run lint:css` clean
+- [ ] `npm run lint:css` runs clean
+- [ ] P2 items (`CSS-029`, `CSS-038`, `CSS-049`, `CSS-052`) resolved or explicitly deferred with a target milestone
+- [x] `CSS-053`, `CSS-054`, `CSS-055` — pulled forward and resolved in `v0.6.14` (table pass), not waiting for this patch
+- [ ] No new features, no consumer-facing API additions — bug-fix release only
+
+---
+
+# Milestone `v0.6.15` — Namespace Foundations, Scripts Integration & CDN Migration
+
+**Goal:** seed three medium-term initiatives so they can land cleanly across `0.7.0`–`0.9.0`: introduce the `rd-` namespace and reserve its utility prefixes; freeze the contract between Rare Styles CSS and the companion `/scripts/` JS set; move consumers off mutable GitHub Pages asset URLs onto versioned CDN URLs.
+
+## Namespace foundations
+
+The library so far ships unprefixed classes. `CSS-133` and `CSS-141` flag the collision risk. Decision taken in this release: adopt **`rd-`** (Rare Digits) as the official library namespace, starting with two reserved utility prefixes plus the policy doc. Full migration of existing component classes is a later concern (`CSS-133` in `0.7.0`).
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-060` | feat | **Introduce `rd-` namespace.** Adopt `rd-` as the official Rare Digits library prefix. New utility/state/JS-hook classes ship with the prefix from this release. Existing component classes (e.g. `.card`, `.sidebar`, `.tag`) stay unprefixed until the `0.7.0` migration pass — no churn in this release. | P0 | S |
+| `CSS-061` | feat | **Reserve `.rd-is-*` state-modifier prefix.** Document `.rd-is-active`, `.rd-is-hidden`, `.rd-is-open`, `.rd-is-loading`, `.rd-is-disabled` etc. as the canonical way to express UI state on any element. Ship at minimum `.rd-is-active` and `.rd-is-hidden` as real classes (others as documented convention). | P0 | S |
+| `CSS-062` | feat | **Reserve `.rd-js-*` JS-hook prefix.** Document `.rd-js-*` as the canonical hook used by `/scripts/` to find DOM nodes. CSS rules MUST NOT style `.rd-js-*` selectors directly — they are behavioral hooks only. Ship at minimum `.rd-js-dropdown` (toggleable container reserved for script-driven menus / pickers / panels). | P0 | S |
+| `CSS-063` | docs | **Namespace policy in `STYLEGUIDE.md`.** Codify the three rules: `rd-` for new utilities/states/hooks; `rd-is-*` for state; `rd-js-*` for JS hooks, never styled. Include a one-paragraph migration note pointing at `CSS-133`. | P0 | S |
+
+## Scripts integration (early audit)
+
+Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `collapsible`, `cookies`, `copy-to-clipboard`, `hamburger`, `search` — already consumes some CSS classes. Freeze the contract here so the full integration in `CSS-230..232` (`0.9.0`) becomes finalization rather than discovery. Coordinates with `CSS-060..063` because most contract hooks will end up as `.rd-js-*`.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-064` | feat | **Audit `/scripts/` CSS+ARIA contracts.** Inventory which classes and ARIA attributes each script reads/writes today (`collapsible`, `cookies`, `copy-to-clipboard`, `hamburger`, `search`). Output: a contract table per script, lands in `STYLEGUIDE.md` or a dedicated `SCRIPTS_CONTRACT.md`. | P1 | M |
+| `CSS-065` | feat | **Map each script to its `.rd-js-*` hook.** Define the canonical hook name per script (e.g. `.rd-js-collapsible`, `.rd-js-cookie-consent`, `.rd-js-copy`, `.rd-js-hamburger`, `.rd-js-search`). Document state classes each script applies (likely `.rd-is-open`, `.rd-is-active`, etc.). No JS migration in this release — only the contract. | P1 | S |
+
+## CDN migration & Pages sunset
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-T00.1` | chore | Update library asset references to canonical versioned CDN URLs under `assets/css/images/**`. Note: as of `v0.6.14` the folder is passed through to the built site (`.eleventy.js`) and `blockquote` already references it via a relative URL — use that relative-path pattern as the local fallback, and reconcile with the versioned-CDN form here. | P0 | S |
+| `CSS-T00.2` | chore | Migrate docs/examples away from `https://raredigits.github.io/rare-styles/...`. | P0 | S |
+| `CSS-T00.3` | chore | Audit known downstream consumers for GitHub Pages CSS URLs and patch them. | P0 | M |
+| `CSS-T00.4` | chore | Unpublish the legacy GitHub Pages site once downstream consumers are migrated. | P0 | S |
+| `CSS-T00.5` | chore | Remove legacy Pages-only repository artifacts such as `.nojekyll` after unpublish. | P1 | S |
+
+## Exit criteria
+
+- [ ] `rd-` namespace is documented in `STYLEGUIDE.md` with the three-rule policy
+- [ ] `.rd-is-active`, `.rd-is-hidden`, `.rd-js-dropdown` are reserved and shipped (real or documented per CSS-061/062)
+- [ ] Contract between Rare Styles CSS and each `/scripts/` module is documented per `CSS-064`
+- [ ] Each `/scripts/` module has a defined `.rd-js-*` hook name (`CSS-065`)
 - [ ] Library references to old local image paths are replaced with canonical versioned CDN URLs
 - [ ] Docs/examples no longer recommend `https://raredigits.github.io/rare-styles/...`
 - [ ] Known downstream consumers are migrated off GitHub Pages CSS URLs
 - [ ] The `rare-styles` GitHub Pages site is unpublished
 - [ ] Pages-only legacy files like `.nojekyll` are removed or explicitly justified
+- [ ] No JS rewrites in this release — `/scripts/` migration to `.rd-js-*` hooks is scheduled for `CSS-230..232` in `0.9.0`
 
 ---
 
@@ -171,6 +244,16 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 | `CSS-033` | feat | Publish reusable vendor icon assets (`wa.svg`, `github.svg`, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo. | M |
 | `CSS-033a` | chore | After tagging `v0.6.12`, replace library references to old local image paths (`/assets/img/common/vendors/...`, `/assets/img/logo/...`) with canonical versioned CDN URLs pointing at `assets/css/images/**`. Verify vendor-logo, floating contact button, and brand-logo surfaces still render correctly. | S |
 | `CSS-034` | chore | Fix critical server-side dependency vulnerabilities in the site/build toolchain, starting with templating and content-processing packages flagged by `npm audit` (notably `liquidjs` and other server-side/high-severity findings). Verify `npm run build` still passes after the refresh. | M |
+| `CSS-079` | perf | **Audit the generated spacing-utility matrix.** `_spacing.scss` emits 24 property families × 30 `$spaces` values × (base + 3 breakpoints) ≈ 2 900 selectors; `rare.css` is 406 KB unminified — already over the 400 KB budget set in `CSS-T01.7`, and this matrix is the main driver. Define the intentional property×value matrix (percentages and `auto` make no sense for several families — see `CSS-049` for the invalid-CSS slice), prune the generators, re-measure the bundle. Coordinates with `CSS-136` / `CSS-137`. | M |
+
+## Accessibility base (P2)
+
+Moved up from `0.8.0`. Not a high priority on its own, but both tasks are S-sized and the button-state work (`CSS-043`) needs a global focus story to build on. The rest of the a11y batch (`CSS-112..114`) stays in `0.8.0`.
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-110` | a11y | Global `:focus-visible` style (2px solid `var(--brand-color)`, 2px offset). Audit and remove any stray `outline: none` (one known: `_search.scss:23`, already paired with a `:focus-visible` rule). | S |
+| `CSS-111` | a11y | `.sr-only` / `.visually-hidden` utilities (a11y-project recipe). | S |
 
 ## Search tooling (P1)
 
@@ -182,13 +265,37 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-072` | docs | `STYLEGUIDE.md` decision rule for picking between three column utilities: `.columns` (text-flow column-count, balance) vs `.grid-cols-fit` (auto-fit grid, no balancing) vs `.list-pack` (sequential packing, requires height). Concrete use cases per utility. | S |
+| `CSS-072` | docs | `STYLEGUIDE.md` decision rule for picking between three column utilities: `.prose-columns` (text-flow column-count, balance) vs `.grid-cols-fit` (auto-fit grid, no balancing) vs `.list-group-pack` (sequential packing, requires height). Concrete use cases per utility. | S |
+
+## Typography / list patterns (P1)
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-073` | feat | **Numbered steps pattern.** Add a dedicated ordered-process primitive for step-by-step flows where sequence is the main meaning, not just browser-default `<ol>` numbering. Scope: clear spacing, strong step marker, and optional short title/description structure for onboarding flows, procedures, checklists, and tutorials. | M |
+| `CSS-074` | feat | **Interactive action list.** Add a list pattern for clickable rows with clear hover/focus/current states, suitable for menus, result lists, command pickers, settings sections, and other “choose one action/item” interfaces. Should cover the full-row hit area without turning every list use case into a button system. | M |
+| `CSS-075` | feat | **Real tree-view list pattern.** Promote the current tree-style reading idea beyond simple visual indentation into a dedicated hierarchical list primitive for nested navigation, file trees, API surfaces, and documentation structures. Scope decision: static tree only vs expandable/collapsible tree with ARIA expectations. | M |
+| `CSS-076` | feat | **Inline / horizontal list utility.** Add a lightweight list primitive for compact one-line item groups such as legal links, metadata trails, tag-like plain-text sequences, and short navigation rows. Decide separator strategy (`gap` only vs optional visual divider). | S |
+| `CSS-077` | chore | ~~**Rename `.text-columns` to `.prose-columns`.**~~ **Done early, in `v0.6.14`** — renamed before the intermediate `.text-columns` name ever shipped (it existed only inside the unreleased harvest pass), so no extra breaking change. `Changelog.md` records `.columns` → `.prose-columns` directly. | S |
+
+## Documentation-driven audit — first-pass `/styles/` pages (P1)
+
+Per the **Documentation-driven audit policy** (see top of this doc). The corresponding `CSS-282..295` IDs in `v0.9.0` finalize these pages with KSS-extracted reference and remaining polish. Duplicates and over-complicated utilities surfaced here are filed as new tasks against the next bug-fix release.
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-080` | docs | First-pass write of `/styles/typography/` covering fonts, headings, body, lists (incl. `<dl>`), code, sidenotes, blockquote, captions, tables, text-content widths. Expected to surface: heading variant overlap, list/dl duplication, table-row utility names. Finalized in `CSS-285`. | M |
+| `CSS-081` | docs | First-pass write of `/styles/layout/` + child page `/styles/layout/spacing/` covering grid, containers, `fr` system, breakpoints, responsive prefixes (`mobile:` / `tablet:` / `desktop:`). Reflects the post-`CSS-027` aliases state. Expected to surface: spacing-utility overlap (`margin-t-*` vs `mt-*`), alias-vs-canonical distinction. Finalized in `CSS-284`. | M |
+| `CSS-082` | docs | First-pass write of `/styles/utilities/` covering display, resets, breakpoints. Expected to surface: overlap between `.no-decoration` / `.no-padding` / `.no-border`, scrollbar helpers. Finalized in `CSS-291`. | S |
+| `CSS-083` | docs | First-pass write of `/styles/decorations/` covering borders, shadows, separators, icons, images, skeleton. Reflects post-`CSS-032` Material Symbols Outlined canonical state. Pairs with `CSS-142` (Rareism rationale per utility). Finalized in `CSS-290`. | M |
+| `CSS-084` | docs | First-pass write of `/styles/colors/` covering base / brand / supporting / blue and color utility classes. Expected to surface: contrast issues (feeds `CSS-114`), clarification of supporting-palette public-API surface. Finalized in `CSS-286`. | M |
+| `CSS-085` | docs | First-pass write of `/styles/navigation/` covering header, sidebar, hamburger, search (post-`CSS-050` rebuild), tags, links, footer. Expected to surface: nav-list overlap, tags-vs-links distinction. Finalized in `CSS-289`. | M |
+| `CSS-086` | docs | First-pass write of `/styles/elements/buttons/` covering variants, sizes, states, button-group, button-block. Depends on `CSS-040..046`. Finalized in `CSS-287` (forms section added in `v0.8.0`). | M |
 
 ## Distribution hygiene (P0)
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current `v0.6.11` snapshot, switch docs/examples to the `v0.6.12` CDN target, and announce the old URL as deprecated. | S |
+| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current released snapshot (version per `_data/versions.json`), switch docs/examples to the latest tagged CDN target, and announce the old URL as deprecated. | S |
 
 ---
 
@@ -209,10 +316,10 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 ## Accessibility (P0)
 
+`CSS-110` / `CSS-111` moved up to the `0.7.0` accessibility-base section.
+
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-110` | a11y | Global `:focus-visible` style (2px solid `var(--brand-color)`, 2px offset). Audit and remove any stray `outline: none`. | S |
-| `CSS-111` | a11y | `.sr-only` / `.visually-hidden` utilities (a11y-project recipe). | S |
 | `CSS-112` | a11y | `@media (prefers-reduced-motion: reduce)` — neutralize transitions / animations. | S |
 | `CSS-113` | a11y | Skip-link styles (`.skip-to-content`). | S |
 | `CSS-114` | a11y | Contrast audit: `--gray-trans` (#888) on `--bg-color` (#f0f0f0) is ~3.5:1, fails WCAG AA for body text. Adjust `--text-color-light`. | M |
@@ -233,10 +340,10 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 | `CSS-130` | feat | Adopt `@layer reset, vendor, base, tokens, components, utilities` at the root. Removes the need for `!important` and locks cascade order. | M |
 | `CSS-131` | chore | Drop `!important` from `.mobile-hidden` once `CSS-130` lands. | S |
 | `CSS-132` | chore | Generate `:root` variables from a SCSS map. Eliminate the duplication between `:root { --gray: ... }` and `$base_colors: gray, ...`. Single source of truth. | M |
-| `CSS-133` | chore | Library prefix decision. Either keep classes unprefixed (and document the collision risk) or introduce `r-` / `rare-`. | S |
+| `CSS-133` | chore | **Complete `rd-` namespace adoption.** Prefix decision is taken in `v0.6.15` (`CSS-060..063` — `rd-` namespace, `rd-is-*` state prefix, `rd-js-*` JS-hook prefix). This task finalizes the migration: audit existing component/utility classes (e.g. `.card`, `.tag`, `.sidebar`, `.note`, `.warning`, `.lead`) and decide per-class whether to prefix, alias, or leave as-is. Coordinates with `CSS-141`. | S |
 | `CSS-134` | chore | `STYLEGUIDE.md` convention: components live in `bricks/` + `elements/`, utilities live in `layout/` + `utilities/` + `align/` + `decorations/`. | S |
 | `CSS-135` | feat | Migrate margin/padding/border to logical properties (`margin-inline`, `padding-block`, `border-inline-start`). Out-of-the-box RTL/i18n support. | L |
-| `CSS-136` | chore | **Rename top-end spacing tokens for semantic clarity.** `--space-xxxl` (12×) and `--space-xxxxl` (24×) communicate "bigger than bigger" rather than intent; arguably `--space-xxl` (6×) too. Pick a semantic scheme — three candidates: (a) industry t-shirt extension `--space-2xl/3xl/4xl`; (b) functional names like `--space-section/block/page`; (c) numeric multipliers `--space-x6/x12/x24`. Migrate the spacing scale, the `$spaces` list, all generated utility classes (`.height-xxxxl`, `.padding-xxxl`, etc.), and consumers (incl. the `.list-pack` height utility example in `/styles/layout/spacing/`). Mark as breaking change in `CHANGELOG.md`. | M |
+| `CSS-136` | chore | **Rename top-end spacing tokens for semantic clarity.** `--space-xxxl` (12×) and `--space-xxxxl` (24×) communicate "bigger than bigger" rather than intent; arguably `--space-xxl` (6×) too. Pick a semantic scheme — three candidates: (a) industry t-shirt extension `--space-2xl/3xl/4xl`; (b) functional names like `--space-section/block/page`; (c) numeric multipliers `--space-x6/x12/x24`. Migrate the spacing scale, the `$spaces` list, all generated utility classes (`.height-xxxxl`, `.padding-xxxl`, etc.), and consumers (incl. the `.list-group-pack` height utility example in `/styles/layout/spacing/`). Mark as breaking change in `CHANGELOG.md`. | M |
 | `CSS-137` | chore | **Merge `_spacing.scss` and `_spacing-aliases.scss` into one file.** The split between core tokens and short-form aliases adds an indirection layer without obvious benefit; consolidating clarifies what is canonical versus shorthand and reduces friction for contributors. While doing it, decide whether to keep the alias layer at all — the current convention `s: xs`, `m: sm`, etc. can mislead consumers (`m` ≠ `md`). Either prune to a smaller intentional set, or rebuild on cleaner ground. | M |
 
 ## Layouts (P0)
@@ -289,21 +396,33 @@ Currently `.card` is overloaded for both narrative content (article preview, per
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-180` | feat | `modules/bricks/_panels.scss`: `.panel`, `.panel-header`, `.panel-body`, `.panel-footer`, `.panel-grid` (multi-panel arrangement). Theme-agnostic. | M |
-| `CSS-181` | chore | Rename data-row patterns currently misfiled under `.card`: `.card-dashboard-bordered` → `.panel-bordered`; `.card-row-bordered` → `.panel-row`; `.card-row-bordered-item` → `.panel-row-item`. Old names kept as deprecated aliases (with SCSS `@warn`) until `1.0.0`. Keeps backward compat for current site. | S |
+| `CSS-180` | feat | `modules/bricks/_panels.scss`: `.panel`, `.panel__header`, `.panel__body`, `.panel__footer`, `.panel-grid` (multi-panel layout primitive — flat per hybrid BEM policy, since it arranges panels rather than being one). Theme-agnostic. | M |
+| `CSS-181` | chore | Rename data-row patterns currently misfiled under `.card`: `.card-dashboard-bordered` → `.panel--bordered`; `.card-row-bordered` → `.panel__row`; `.card-row-bordered-item` → `.panel__row-item`. Old names kept as deprecated aliases (with SCSS `@warn`) until `1.0.0`. Keeps backward compat for current site. | S |
 | `CSS-182` | docs | STYLEGUIDE: `card` vs `panel` decision rule. Narrative / authorial content → `.card`. Data / system content → `.panel`. Concrete examples for each. | S |
-| `CSS-183` | feat | `.panel-flush` modifier: removes outer padding so the panel docks flush against parent (used when nested in another panel or grid cell). | S |
+| `CSS-183` | feat | `.panel--flush` modifier: removes outer padding so the panel docks flush against parent (used when nested in another panel or grid cell). | S |
 | `CSS-183a` | chore | **Site migration**: replace `.card` usages on raredigits.art that wrap Dashboard-style blocks (KPI, charts, status, settings) with `.panel`. Audit `_includes/`, `_layouts/`, `_posts/`, `kb/`, `pricing/`, `charts/`, `_drafts/`. Old aliases keep the site working during the transition; this task removes the technical debt before `1.0.0`. | M |
 
 ### Other primitives (layout-agnostic)
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-184` | feat | `modules/bricks/_stats.scss`: KPI block — `.stat`, `.stat-label`, `.stat-value`, `.stat-delta-up/down` (uses `--signal` for emphasis, semantic tokens for delta direction). | M |
+| `CSS-184` | feat | `modules/bricks/_stats.scss`: KPI block — `.stat`, `.stat__label`, `.stat__value`, `.stat--delta-up` / `.stat--delta-down` (BEM per hybrid policy; uses `--signal` for emphasis, semantic tokens for delta direction). | M |
 | `CSS-185` | feat | Dense table styles in `modules/typography/_tables.scss`: `.table-dense`, zebra rows, sticky header, sortable indicator. | M |
 | `CSS-186` | feat | Status indicators in `modules/decorations/`: `.status-dot`, `.badge-success/warning/danger/info`. Uses semantic tokens from `CSS-121`. | S |
-| `CSS-187` | feat | `modules/elements/_toolbar.scss`: `.toolbar`, `.toolbar-section`, `.toolbar-spacer`. Used for filter rows, dashboard headers, panel actions. | S |
+| `CSS-187` | feat | `modules/elements/_toolbar.scss`: `.toolbar`, `.toolbar__section`, `.toolbar__spacer` (BEM per hybrid policy). Used for filter rows, dashboard headers, panel actions. | S |
 | `CSS-188` | feat | `modules/layout/_shell.scss`: `.app-shell` — opt-in layout shell with topbar + main + optional sidebar. Used by dashboard pages but not gated by `layout-dashboard`. | M |
+
+## Documentation-driven audit — first-pass `/styles/` pages (P0)
+
+Continuation of the docs-audit policy started in `v0.7.0`. Each page below depends on the corresponding feature work landing in this milestone. Finalized in `v0.9.0` with KSS extraction.
+
+| ID | Type | Task | Estimate |
+|---|---|---|---|
+| `CSS-090` | docs | First-pass write of `/styles/tokens/`. Depends on `CSS-121..124` (semantic + surface + motion + `--signal`). Expected to surface: tokens duplicated across multiple `:root` blocks (feeds `CSS-132`). Finalized in `CSS-283` (auto-generated reference from `dist/tokens.json`). | M |
+| `CSS-091` | docs | First-pass write of forms section on `/styles/elements/`. Depends on `CSS-100..105`. Joined with the buttons section already drafted in `CSS-086`. Finalized in `CSS-287`. | M |
+| `CSS-092` | docs | First-pass write of `/styles/components/` (renames `/styles/bricks/`): Cards + Panels decision rule, stats, status indicators, badges, dense tables. Depends on `CSS-180..188`. Expected to surface: leftover `.card-*` patterns that are really panels (feeds `CSS-181`, `CSS-183a`). Finalized in `CSS-288`. | M |
+| `CSS-093` | docs | First-pass write of `/styles/layouts/`: when `.layout-story` / `.layout-dashboard` apply, what changes vs the defaults, mixed-content examples. Depends on `CSS-150..172`. Finalized in `CSS-292a`. | M |
+| `CSS-094` | docs | Update `/styles/utilities/` with a11y additions: `sr-only`, `:focus-visible` story, `prefers-reduced-motion` handling. Depends on `CSS-110..113` (`CSS-110` / `CSS-111` land earlier, in `0.7.0`). Extends `CSS-082`. | S |
 
 ## Existing module review
 
@@ -335,10 +454,13 @@ Currently `.card` is overloaded for both narrative content (article preview, per
 | `CSS-206` | docs | `LICENSE` (MIT recommended) at the repo root. | S |
 | `CSS-207` | docs | **Theming guide** (`THEMING.md`): how to override base tokens for a constrained brand context. Show a worked dark-mode example via `:root { --bg-color: #111; --primary-color: #f0f0f0; ... }` overrides — no built-in dark mode, just a recipe. **Distinct from layouts**: this is the brand-override path (color/token overrides), not the Story/Dashboard mechanism (page-level shell). Cross-link to `/styles/themes/` for the no-theme-switching stance. | M |
 | `CSS-208` | docs | `CODE_OF_CONDUCT.md` — Contributor Covenant 2.1 (verbatim). Linked from `CONTRIBUTING.md`. | S |
+| `CSS-209` | docs | **Module inventory + documentation audit.** Compile the canonical list of every CSS/SCSS module in the library, audit each one for current purpose / ownership / public API surface, and verify that each module is documented somewhere appropriate (`/styles/`, `STYLEGUIDE.md`, KSS reference, or maintainer docs). Audit the current docs structure too: identify missing module coverage, stale sections, modules documented in the wrong place, and pages that describe code no longer present. This is an intentionally long-running task: it can advance incrementally alongside other backlog work and should be updated whenever a module changes or a docs page is written. | L |
 
 ## Documentation site `/styles/` — content structure (P0)
 
 Public docs live under `/styles/` on raredigits.art. Organized **by user task**, not by SCSS file structure — readers shouldn’t need to know that `align/_align.scss` and `align/_flex.scss` are separate files. Each page combines: hand-written narrative (the *why*) + KSS-extracted class reference (the *what*) + live HTML examples (the *how*) + “see also” links to related tokens, components and integrations.
+
+**First-pass write-ups happen earlier** — per the **Documentation-driven audit policy**, `CSS-080..086` (`v0.7.0`) and `CSS-090..094` (`v0.8.0`) cover the initial drafts. The `CSS-282..295` tasks below are **finalization**: integrate the KSS-extracted reference, fill the remaining edge pages (`getting-started`, `integration`, `reference`), and clean up anything still open from the earlier docs-audit passes.
 
 **Existing folder reconciliation** — current `/styles/` already has stub folders that mostly map to this plan. The mapping below notes renames (`usage` → `getting-started`, `bricks` → `components`) and merges (`alignment` + `spaces` → `utilities`/`layout`). `/styles/idea/` and `/styles/modules/` are evaluated in `CSS-280`.
 
@@ -402,9 +524,9 @@ The CSS library lives next to two siblings: `scripts/` (collapsible, cookies, co
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-230` | feat | Audit `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `scripts/`. Document required classes and ARIA hooks. | M |
-| `CSS-231` | feat | Add `copy-to-clipboard` styles (button, success/error toast). Currently the script has no companion CSS module. | S |
-| `CSS-232` | docs | One-page “Scripts integration” doc: which CSS classes each script needs, and which tokens it reads. | S |
+| `CSS-230` | feat | **Finalize** the audit of `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `/scripts/`. Initial inventory landed in `CSS-064` (`v0.6.15`); this task closes any remaining gaps and migrates the JS to consume the `.rd-js-*` hooks defined in `CSS-065`. | M |
+| `CSS-231` | feat | Add `copy-to-clipboard` styles (button, success/error toast). Currently the script has no companion CSS module. Consumes the `.rd-js-copy` hook reserved in `CSS-065`. | S |
+| `CSS-232` | docs | One-page "Scripts integration" doc: which CSS classes each script needs, and which tokens it reads. Builds on the contract draft from `CSS-064` (`v0.6.15`). | S |
 
 ### Charts
 
@@ -473,6 +595,19 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 
 ---
 
+# Open Questions — for discussion
+
+Parking lot for questions that need a maintainer decision before they become (or close) tasks. Raised by the 2026-06-11 audit; review during planning, route each to its target milestone.
+
+| # | Question | Context | Routes to |
+|---|---|---|---|
+| `Q-01` | Fate of `/styles/typography/interactive/` | IA conflict: the skeleton page (Links / Buttons / Forms) lives under typography, while the target IA puts buttons and forms under `/styles/elements/` (`CSS-086`, `CSS-287`). Merge, redirect, or delete — decide inside the `CSS-280` restructure plan. | `CSS-280` |
+| `Q-02` | Is `CSS-200a` already done? | `/styles/index.md` already ships the positioning copy, jsDelivr install link, and manifesto framing that the task describes. Verify against the task scope, then close or re-scope it. | `0.9.0` docs |
+| `Q-03` | Orphan public tokens | `--brand-color-rgb`, `--line-height-md`, `--link-color-light`, `--link-color-secondary` are declared but consumed nowhere in the library. Public API for consumers or leftovers? Feeds the token validator / reference work. | `CSS-270..272` |
+| `Q-04` | Element-vs-class stance for buttons | `_buttons.scss` styles every native `button` globally (`display: block`, `width: fit-content`) — aggressive for embedded/consumer contexts. Decide whether the button system targets elements or only `.button` classes before building variants. | `CSS-040..046` |
+
+---
+
 # Post-1.0 Backlog
 
 | ID | Type | Task | Notes |
@@ -486,6 +621,7 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 | `CSS-306` | feat | RTL demo and tests after `CSS-135` | |
 | `CSS-307` | dx | Figma plugin or `tokens.json` export (W3C Design Tokens) | Designer round-trip |
 | `CSS-308` | feat | Additional layouts: `.layout-print`, `.layout-presentation`, `.layout-zen` | Built on the same layout infrastructure as Story / Dashboard |
+| `CSS-309` | feat | **Official Eleventy (11ty) theme built on Rare Styles** | Packaged starter/theme for 11ty sites; planned — candidate for its own release track separate from the library versioning. The `/styles/` docs shell and the KSS docs site (`CSS-260`) already run on Eleventy and can seed it |
 
 ---
 
@@ -494,9 +630,10 @@ Runs in parallel with `0.9.0`. Treated as a single deliverable so distribution d
 | Version | Codename | Scope |
 |---|---|---|
 | `v0.6.12` | Cleanup & Delivery Hygiene | Lint/build cleanup batch, font-weight trim, Material Icons policy, reusable contact-button audit, vendor-icon CDN follow-up |
-| `v0.6.13` | _current_ | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
-| `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
-| `v0.6.15` | CDN Migration & Pages Sunset | Move library/docs consumers off GitHub Pages URLs, switch to versioned CDN paths, retire Pages legacies |
+| `v0.6.13` | Reusable Asset Reshuffle | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
+| `v0.6.14` | _current_ — Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
+| `v0.6.14_1` | Audit Hotfixes | Bug-fix patch on top of `v0.6.14` covering the 2026-06-06 and 2026-06-11 audit findings (`CSS-027..052`; table bugs `CSS-053..055` were pulled forward into `v0.6.14`) |
+| `v0.6.15` | Namespace Foundations, Scripts Integration & CDN Migration | Introduce `rd-` namespace and reserve `.rd-is-*` / `.rd-js-*` prefixes; freeze CSS↔/scripts/ contract; move library/docs consumers off GitHub Pages URLs to versioned CDN paths, retire Pages legacies |
 | `0.7.0` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
 | `0.9.0` | Release Prep | KSS docs site, token pipeline, theming guide, scripts/charts integration, purge, CI |

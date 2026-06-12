@@ -1,5 +1,15 @@
 @use "../utilities/breakpoints" as *;
 
+@mixin outdent {
+    margin-left: calc(-1 * var(--space-lg));
+    margin-right: calc(-1 * var(--space-lg));
+
+    @include mobile {
+        margin-left: calc(-1 * var(--space-sm));
+        margin-right: calc(-1 * var(--space-sm));
+    }
+}
+
 :root {
     --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
     --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
@@ -41,40 +51,27 @@ article .meta-info {
     white-space: nowrap;
 }
 
-.lead-container {
-    width: var(--global-fr-4);
-
-    @include mobile {
-        width: 100%;
-    }
-}
-
-.lead {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-light);
-    margin: var(--space-sm) 0 var(--space-md);
-    line-height: var(--line-height-sm);
-
-    @include mobile {
-        width: 80%;
-    }
-}
-
 .text-content-caption,
 .highlight,
-p.highlight {
+p.highlight,
+.lead {
     width: var(--text-content-caption);
     max-width: unset;
-    margin-left: calc(-1 * var(--space-lg));
-    margin-right: calc(-1 * var(--space-lg));
 
-    @include mobile {
-        margin-left: calc(-1 * var(--space-sm));
-    }
+    @include outdent;
+}
+
+.highlight,
+p.highlight {
+    margin-bottom: var(--space-md);
 }
 
 .text-content-caption {
     position: relative;
+}
+
+article .text-content-caption:first-child {
+    padding: 0 0 var(--space-sm);
 }
 
 .text-content-width {
@@ -85,13 +82,25 @@ p.highlight {
     margin-bottom: var(--space-md);
 }
 
+.lead {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-light);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-md);
+    line-height: var(--line-height-sm);
+
+    @include mobile {
+        width: 80%;
+    }
+}
+
 .caption {
-    margin-left: calc(-1 * var(--space-lg));
-    margin-right: calc(-1 * var(--space-lg));
+    @include outdent;
+
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-light);
     line-height: var(--line-height);
-    padding: var(--space-lg) calc(var(--space-lg) - var(--space-sm)) ;
+    padding: var(--space-md) calc(var(--space-lg) - var(--space-sm)) ;
     background-color: var(--gray-light);
     border-left: var(--space-sm) solid var(--primary-color);
 }
@@ -141,7 +150,7 @@ blockquote {
     max-width: var(--text-content-width);
     margin-left: calc(var(--space-md) * -1);
     padding: var(--space-md) 0 var(--space-md) var(--space-lg);
-    background-image: url('/assets/img/common/app/mark-quote.svg');
+    background-image: url('images/common/mark-quote.svg');
     background-position: 0 var(--space-md);
     background-size: var(--space-lg);
     background-repeat: no-repeat;
@@ -151,10 +160,74 @@ blockquote p:first-of-type {
     text-indent: 1.5em;
 }
 
+// Epigraph — a short attributed quote at the head of a section or page,
+// right-aligned and italic so it reads as a voice from outside the prose.
+// (Harvested from sibling projects; the source had a duplicated `margin`
+// declaration and a magic `3em` gap — both normalized here.)
+
+figure.epigraph {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0 0 var(--space-xl);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+
+    p {
+        width: 60%;
+        margin: 0;
+        text-align: right;
+    }
+}
+
 .footnote {
     margin-top: var(--space-lg);
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-color-light);
+}
+
+// DEFINITION LISTS — a special text element, not a list pattern (hence this
+// file, not `_lists.scss`). Default styling matches the "named principle"
+// pattern: each term reads as a strong, distinct label without becoming a
+// full heading. Use a plain <dl> for principle-style content (manifesto
+// principles, glossary entries, labeled feature blocks). For horizontal
+// key:value metadata, opt in to `.dl-grid`.
+
+dl {
+    max-width: var(--text-content-width);
+    margin: var(--space-md) 0;
+}
+
+dt {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+}
+
+dd + dt {
+    margin-top: var(--space-md);
+}
+
+// Grid modifier — horizontal key:value pairs for metadata, KPI rows,
+// settings summaries, etc. Term renders bold without underline; definition
+// flows on the same line.
+
+.dl-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: var(--space-xs) var(--space-md);
+
+    dt {
+        margin: 0;
+
+        > code {
+            font-weight: var(--font-weight-normal);
+        }
+    }
+
+    dd {
+        margin: 0;
+    }
 }
 
 .code-block {
@@ -230,35 +303,42 @@ pre code {
     font-style: italic;
 }
 
-// COLUMNS
+// PROSE COLUMNS
 
-@mixin generate-columns($max: 6, $prefix: "") {
+@mixin generate-prose-columns($max: 6, $prefix: "") {
     @if $prefix == "" {
-      .columns {
+      .prose-columns {
         column-count: 2;
         column-gap: var(--space-lg);
       }
     }
-  
+
     @for $i from 1 through $max {
-      .#{$prefix}columns-#{$i} {
+      .#{$prefix}prose-columns-#{$i} {
         column-count: $i;
       }
     }
 }
 
-@include generate-columns;
+@include generate-prose-columns;
 
 @include mobile {
-  @include generate-columns(6, "mobile\\:");
+  @include generate-prose-columns(6, "mobile\\:");
 }
 
 @include tablet {
-  @include generate-columns(6, "tablet\\:");
+  @include generate-prose-columns(6, "tablet\\:");
 }
 
 @include desktop {
-  @include generate-columns(6, "desktop\\:");
+  @include generate-prose-columns(6, "desktop\\:");
+}
+
+// Mark an unbreakable group inside a `.prose-columns` flow so it is not split
+// across a column boundary.
+.prose-columns .list {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
 }
 
 // TEASERS

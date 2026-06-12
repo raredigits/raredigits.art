@@ -1,41 +1,60 @@
 @use "../utilities/breakpoints" as bp;
 
-.nav-list,
 .list-unstyled {
     list-style-type: none;
     padding: 0;
 }
 
+// A bold uppercase label for a list group. Pure label utility: it carries
+// no margins of its own — vertical rhythm belongs to the host context
+// (e.g. `.index-list`). A plain `<span>` is enough as the element; the
+// `font-size: 1em` and `font-family` declarations keep the label stable
+// even if it lands on a heading element.
+
 .list-title {
     display: block;
-    font-weight: var(--font-weight-bold);
-    text-transform: uppercase;
-    margin: 0 0 var(--space-md);
-}
-
-.columns .list {
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-}
-
-.index-list h4 {
     font-family: var(--primary-font);
     font-size: 1em;
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
-    margin: 0 0 var(--space-sm);
+    margin: 0;
+    padding-bottom: var(--space-sm);
 }
 
-.index-list ul {
-    list-style-type: none;
-    padding: 0;
+// INDEX LIST — a compact section index: a `.list-title` label over a flat
+// list of links. The building block of the table-of-contents grid, and the
+// canonical content unit inside `.list-group-pack` columns. The block owns
+// the bottom rhythm so stacked or packed index lists separate cleanly.
+
+// The component styles its inner `ul`/`li` directly (child combinators, so
+// deeper nested lists stay untouched): the structure is canonical HTML and
+// any `li` here is an index entry by definition — a BEM element class would
+// add markup noise, not information. Rule of thumb: BEM elements are for
+// containers whose role does not read from the tag (`div`/`span` →
+// `__meta`); self-describing structures (`ul > li`, `dl`, tables) are
+// styled as elements. The title is the shared `.list-title` utility — no
+// dedicated `__title` element.
+
+.index-list {
+    margin-bottom: var(--space-md);
+
+    > ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    > ul > li {
+        margin: 0 0 var(--space-sm);
+    }
 }
 
-.index-list ul li {
-    margin: 0 0 var(--space-xs);
-}
-
-// FEED
+// FEED LIST — a chronological stream of curated entries: updates, releases,
+// knowledge-base articles. A feed is a navigation surface, not body copy:
+// authors put content into a feed precisely because it deserves the
+// reader's attention, so the pattern spends visual budget on it — full-size
+// titles and generous vertical whitespace between line-separated items mark
+// the content as valuable. The quiet meta line keeps dates and tags from
+// competing with titles. Sequence matters more than per-item detail.
 
 .feed-list {
     display: flex;
@@ -52,34 +71,163 @@
     border-top: none;
 }
 
-.feed-list__item h4 {
+.feed-list__title {
     margin: var(--space-xs) 0 var(--space-sm);
 }
 
-.feed-list__item-meta,
-.feed-list__item-meta .tag {
+.feed-list__meta,
+.feed-list__meta .tag {
     color: var(--text-color-light);
     font-size: var(--font-size-xs);
 }
 
-// List packing — sequential CSS multi-column flow for groups of unbreakable
-// blocks (named lists, link groups, definition pairs). Short groups pack
-// together inside a column; tall groups naturally claim a column on their
-// own. Built on `column-fill: auto` so columns fill in source order without
-// the height-balancing "holes" that `column-fill: balance` produces with
-// `break-inside: avoid`.
+// CATALOG LIST — a scannable vertical list of entries the reader browses to
+// pick one: catalogs, knowledge-base indexes, portfolios, search results.
+// Deliberately minimal: each item is a bold title over a muted meta line.
+// Anything else inside an item (tag chips in the meta line, a free
+// paragraph) is host content — the component does not own or style it.
+// Differs from `.feed-list` (chronological, line-separated stream) by gap
+// separation and browse-to-pick reading.
+// The `--nest` modifier indents everything under the title, so each item
+// reads as a parent with its nested children/contents: directory-tree
+// indexes, API surfaces, section maps.
+
+.catalog-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.catalog-list__item {
+    padding-bottom: var(--space-sm);
+}
+
+.catalog-list__title {
+    font-weight: var(--font-weight-bold);
+}
+
+.catalog-list__meta,
+.catalog-list__meta a {
+    font-size: var(--font-size-sm);
+    color: var(--text-color-light);
+}
+
+.catalog-list--nest .catalog-list__item > :not(.catalog-list__title) {
+    padding-left: var(--space-lg);
+    margin-top: 0;
+}
+
+// List columns — the default packer for a single long flat list. Resets
+// list-style and flows items into a fixed column-count via CSS `columns`.
+// Defaults to 2 columns; `-3/-4/-5` bump the count and collapse to 2 on
+// mobile (the base collapses to 1). Use this when mechanical balancing is
+// fine. When a list misbehaves under mechanical balancing — grouped
+// sublists that must not split, or a strict row count — reach for
+// `.list-group-pack` or `.list-fixed-rows` below instead.
+
+.list-columns {
+    columns: 2;
+    column-gap: var(--grid-gap);
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+
+    @include bp.mobile {
+        columns: 1;
+    }
+
+    &.list-columns-3 {
+        columns: 3;
+
+        @include bp.mobile { columns: 2; }
+    }
+
+    &.list-columns-4 {
+        columns: 4;
+
+        @include bp.mobile { columns: 2; }
+    }
+
+    &.list-columns-5 {
+        columns: 5;
+
+        @include bp.mobile { columns: 2; }
+    }
+}
+
+// List fixed-rows — grid-based packer driven by an explicit row count.
+// Unlike the column-based packers above, the author fixes the number of
+// rows via `--list-rows` and the browser fills columns automatically, left
+// to right, top to bottom. Built on CSS grid (`grid-auto-flow: column`), so
+// items keep source order down each column. Use when you need a precise
+// row count rather than a precise column count.
+// On mobile the base drops the fixed-row contract: it reflows into two
+// equal columns in row order (left to right, then down). The column count
+// is overridable with the responsive grid utilities (`mobile:grid-cols-3`,
+// `mobile:grid-cols-4`, …) because the mobile rule consumes the same
+// `--grid-columns` custom property they set.
+// The `-2col` variant locks the layout to two equal columns — most commonly
+// a table of contents — and collapses to a single stacked column on mobile.
+
+.list-fixed-rows {
+    width: 100%;
+    display: grid;
+    grid-template-rows: repeat(var(--list-rows), auto);
+    grid-auto-flow: column;
+    column-gap: var(--grid-gap);
+    list-style-type: none;
+    padding: 0;
+
+    @include bp.mobile {
+        grid-template-columns: repeat(var(--grid-columns), 1fr);
+        grid-template-rows: none;
+        grid-auto-flow: row;
+    }
+
+    &.list-fixed-rows-2col {
+        grid-template-columns: repeat(2, 1fr);
+
+        @include bp.mobile {
+            grid-template-columns: repeat(1, 1fr);
+            grid-template-rows: none;
+            grid-auto-flow: row;
+        }
+    }
+}
+
+// Mobile default column count for `.list-fixed-rows`. Lives in a separate
+// zero-specificity rule (`:where`) for two reasons: `--grid-columns` is
+// declared at `:root` (12) and would otherwise inherit straight through the
+// `var()` fallback; and the responsive grid utilities (`mobile:grid-cols-N`,
+// emitted earlier in the bundle) must win over this default to stay usable
+// as the override mechanism.
+@include bp.mobile {
+    :where(.list-fixed-rows) {
+        --grid-columns: 2;
+    }
+}
+
+// List group-pack — sequential CSS multi-column flow for several grouped
+// sublists with their own subheadings, where a group must never be split
+// across a column edge. The canonical child is an `.index-list` (label +
+// flat list + bottom rhythm), but any direct child is kept intact. Short
+// groups pack together inside a column; tall groups naturally claim a
+// column on their own. Built on `column-fill: auto`
+// so columns fill in source order without the height-balancing "holes" that
+// `column-fill: balance` produces with `break-inside: avoid`.
 // Requires a column height — `column-fill: auto` only engages when the
 // container is height-constrained. Set the height with any height utility
 // from the spacing scale (e.g. `.height-xxxl`, `.height-xxxxl`) or via
 // inline `style`. The minimum column width is configurable via
-// `--list-pack-min` (default 12rem).
-// On mobile the utility falls back to a 3-column balanced layout so column
-// widths stay readable; any explicit height utility is reset to auto. The
-// host markup should give the section title its own row on mobile (e.g.
-// `mobile:col-span-full`) so the lists get the full container width.
+// `--list-group-pack-min` (default 12rem).
+// On narrow viewports the utility falls back to a balanced fixed-count
+// layout so column widths stay readable: 2 columns on mobile, 3 on tablet;
+// any explicit height utility is reset to auto. The host markup should give
+// the section title its own row on mobile (e.g. `mobile:col-span-full`) so
+// the lists get the full container width.
 
-.list-pack {
-    column-width: var(--list-pack-min, 12rem);
+.list-group-pack {
+    column-width: var(--list-group-pack-min, 12rem);
     column-fill: auto;
     column-gap: var(--grid-gap);
 
@@ -88,52 +236,15 @@
     }
 
     @include bp.mobile {
+        columns: auto 2;
+        column-fill: balance;
+        height: auto;
+    }
+
+    @include bp.tablet {
         columns: auto 3;
         column-fill: balance;
         height: auto;
     }
 }
 
-// DEFINITION LISTS
-// Default styling matches the "named principle" pattern: each term reads as
-// a strong, distinct label without becoming a full heading. Use a plain <dl>
-// for principle-style content (manifesto principles, glossary entries,
-// labeled feature blocks). For horizontal key:value metadata, opt in to
-// `.dl-inline`.
-
-dl {
-    max-width: var(--text-content-width);
-    margin: var(--space-md) 0;
-}
-
-dt {
-    font-size: var(--font-size-lg);
-    font-weight: var(--font-weight-bold);
-}
-
-dd + dt {
-    margin-top: var(--space-md);
-}
-
-// Inline modifier — horizontal key:value pairs for metadata,
-// KPI rows, settings summaries, etc. Term renders bold without
-// underline; definition flows on the same line.
-
-.dl-inline {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: var(--space-xs) var(--space-md);
-
-    dt {
-        margin: 0;
-        color: var(--text-color-light);
-        
-        > code {
-            font-weight: var(--font-weight-normal);
-        }
-    }
-
-    dd {
-        margin: 0;
-    }
-}

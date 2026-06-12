@@ -63,21 +63,6 @@
     }
 }
 
-.nav-hamburger ul li {
-    margin-bottom: var(--space-md);;
-
-    // &:hover {
-    //     color: var(--primary-color);
-    //     text-decoration: none;
-    //     transform: translateY(-2px);
-    //     box-shadow: var(--shadow-sm);
-    // }
-
-    @include bp.mobile {
-        margin-bottom: var(--space-sm);
-    }
-}
-
 .hamburger-img {
     max-width: 100px;
     color: var(--gray);

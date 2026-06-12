@@ -31,8 +31,12 @@
 }
 
 .nav-global {
-    grid-column: 4 / span 7;
+    grid-column: 4 / span 8;
     height: var(--header-height);
+
+    @include bp.tablet {
+        overflow: hidden;
+    }
 
     @include bp.mobile {
         grid-column: 2 / span 4;
@@ -74,7 +78,7 @@
 }
 
 .header-icons {
-    grid-column: 11 / span 2;
+    grid-column: 12 / span 1;
     height: 100%;
     text-align: right;
     font-size: var(--font-size-xl);

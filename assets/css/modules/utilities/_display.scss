@@ -36,6 +36,11 @@
     white-space: nowrap;
 }
 
+// Opt-in overflow wrapper for any block that may exceed its box.
+.scroll-container {
+    overflow: auto;
+}
+
 .z-index-0 {
     z-index: 0;
 }

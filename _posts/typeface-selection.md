@@ -6,14 +6,11 @@ title: "Choosing the Right Font"
 section: Values
 tags: fonts
 author: Typesetter who has broken more layouts than you’ve built
----
+---   
 
-        
-<section class="lead-container">
-    <p class="lead">
-        Fonts are very impornant. They set the mood. They guide the eye. But they are not the star of the show.
-    </p>
-</section>
+<p class="lead">
+    Fonts are very impornant. They set the mood. They guide the eye. But they are not the star of the show.
+</p>
 
 People often ask: “What font should I use?” 
 

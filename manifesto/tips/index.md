@@ -19,11 +19,13 @@ No need to regurgitate the countless design principles that populate every UX�
 <dl>
   <dt>Rule 1: Know Your Client (KYC)</dt>
   <dd>
-    Even when hired for your signature aesthetic or typographic wizardry, the acceptance decision lives with the client. Before touching your first artboard:
-    <li>Map the decision hierarchy. Who holds final approval power. Decision by committee is a dangerous illusion—find the true decision-maker hiding behind delegated communications.</li>
-    <li>Extract the real success metrics. “Make it pop” or “needs more wow factor” are red flags signaling the perilous road of endless revisions ahead.</li>
-    <li>For business clients, decode their revenue model. The path to profit is rarely obvious. Connect with the P&L owners, not just the slide deck presenters.</li>
-    <li>Audit available resources. Ensure your client possesses the technical stack, implementation bandwidth, and organizational willpower needed to execute your vision.</li>
+    Even when hired for your signature aesthetic or typographic wizardry, the acceptance decision lives with the client. <p>Before touching your first artboard:</p>
+    <ul>
+      <li>Map the decision hierarchy. Who holds final approval power. Decision by committee is a dangerous illusion—find the true decision-maker hiding behind delegated communications.</li>
+      <li>Extract the real success metrics. “Make it pop” or “needs more wow factor” are red flags signaling the perilous road of endless revisions ahead.</li>
+      <li>For business clients, decode their revenue model. The path to profit is rarely obvious. Connect with the P&L owners, not just the slide deck presenters.</li>
+      <li>Audit available resources. Ensure your client possesses the technical stack, implementation bandwidth, and organizational willpower needed to execute your vision.</li>
+    </ul>
     <p>The deeper your client understanding, the clearer their actual needs become. Each insight increases your chances of delivering work that resonates precisely with their expectations—making approval almost inevitable.</p>
   </dd>
 

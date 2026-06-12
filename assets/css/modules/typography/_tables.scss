@@ -4,12 +4,14 @@ table {
     line-height: var(--line-height);
     border-collapse: collapse;
     margin-bottom: var(--space-lg);
-    overflow-x: auto;
 }
 
-thead,
-tbody {
-    width: 100%;
+// Opt-in horizontal-scroll wrapper. `overflow-x` does nothing on the table
+// element itself (the table layout model ignores it), so wrap a wide table
+// in this block to let it scroll instead of breaking the layout grid:
+// <div class="table-scroll"><table>…</table></div>.
+.table-scroll {
+    overflow-x: auto;
 }
 
 th {
@@ -31,7 +33,7 @@ th:first-child {
 }
 
 .table-striped tbody tr:nth-child(even) {
-    background-color: var(--gray-mid-light);
+    background-color: var(--gray-lightest);
 }
 
 .table-terminal {
@@ -55,7 +57,36 @@ th:first-child {
 
 .table-terminal tbody tr:hover,
 .table-striped tbody tr:hover {
-    background-color: var(--gray-lightest);
+    background-color: var(--white);
+}
+
+// Comparison preset — centers every value column under its header so the
+// reader can scan across options; the first column (the row label) stays
+// left. Normal text font: for feature / option comparison tables. For a
+// monospace metrics readout use `.table-terminal`, which shares this
+// centering but adds the code font and a right-aligned last column. The two
+// presets deliberately keep their own alignment rules (no shared modifier).
+
+.table-comparison {
+    th:not(:first-child),
+    td:not(:first-child) {
+        text-align: center;
+    }
+}
+
+// Numeric preset — tabular figures (equal-width digits so columns of numbers
+// line up vertically) and right-aligned value columns; the first column (the
+// row label) stays left. For financial tables, KPI readouts, and any
+// decision-grade data where numbers are compared down a column. Normal text
+// font — for a monospace readout use `.table-terminal`.
+
+.table-numeric {
+    font-variant-numeric: tabular-nums;
+
+    th:not(:first-child),
+    td:not(:first-child) {
+        text-align: right;
+    }
 }
 
 .table-small {
@@ -75,6 +106,27 @@ th:first-child {
     text-align: left;
 }
 
+// Horizontal-borders preset — quiet rules between rows plus a little extra
+// vertical padding. Lighter than `.table-bordered`: no outer frame, no
+// vertical lines. For readable multi-row data that wants row separation
+// without a full grid.
+
+.table-horizontal-borders {
+    th,
+    td {
+        padding-top: var(--space-sm);
+        padding-bottom: var(--space-sm);
+    }
+
+    tr + tr td {
+        border-top: 1px solid var(--border-color);
+    }
+
+    tr:hover {
+        background-color: var(--white);
+    }
+}
+
 .table-bordered {
     border: 1px solid var(--border-color);
 
@@ -91,7 +143,7 @@ th:first-child {
     }
 
     tr:hover {
-        background-color: var(--gray-lightest);
+        background-color: var(--white);
     }
 
     .table-section {

@@ -1,5 +1,47 @@
+@use "../utilities/breakpoints" as bp;
+
 section {
     width: 100%;
     position: relative;
     margin-bottom: var(--space-lg);
+}
+
+// Full-bleed section surface that breaks out of the text/content column while
+// letting inner prose return to the canonical reading line.
+.wide-background {
+    width: 100vw;
+    position: relative;
+    margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--field-width));
+
+    img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    @include bp.tablet {
+        margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--base-unit));
+    }
+
+    @include bp.mobile {
+        margin-left: calc(-1 * var(--base-unit));
+    }
+}
+
+// Optional vertical rhythm preset for a full-bleed content band.
+.wide-section {
+    padding: var(--space-md) 0 var(--space-lg);
+}
+
+// Re-enter the normal content track inside a `.wide-background`.
+.wide-background-text-content-wrapper {
+    padding-left: calc(var(--field-width) + var(--sidebar-width) + var(--grid-gap-global));
+
+    @include bp.tablet {
+        padding-left: calc(var(--base-unit) + var(--sidebar-width) + var(--grid-gap-global));
+    }
+
+    @include bp.mobile {
+        padding-left: var(--base-unit);
+    }
 }

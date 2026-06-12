@@ -2,7 +2,38 @@
 
 :root {
     --site-max-width: clamp(1116px, 95vw, 1600px);
+
+    // Gutter beside the centered content container. Guarded with `max(0px, …)`
+    // because the desktop breakpoint (1024px) starts below the --site-max-width
+    // clamp minimum (1116px): in the 1024–1116px window the raw calc goes
+    // negative, which made `.wide-background` under-pull and overflow by the
+    // scrollbar width. Clamping to 0 there keeps the full-bleed breakout exact.
+    --field-width: max(0px, calc(50vw - (var(--site-max-width) / 2)));
     --header-height: var(--space-xl);
+}
+
+html, 
+body {
+    height: 100%;
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-color);
+    color: var(--primary-text-color);
+    font-family: var(--primary-font);
+    font-size: var(--font-size);
+    font-weight: 400;
+    line-height: var(--line-height);
+}
+
+.site-max-width,
+.site-width-wrapper {
+  max-width: var(--site-max-width);
+  width: 100%;
+  margin: 0 auto;
 }
 
 header {
@@ -16,7 +47,7 @@ header {
 
 main {
     width: 100%;
-    min-height: 100vh;
+    flex: 1 0 auto;
     padding: var(--header-height) var(--space-md) calc(var(--space-lg) * 5);
 }
 
@@ -63,10 +94,4 @@ footer {
     background: var(--gray-lightest);
     color: var(--gray-trans);
     font-size: var(--font-size-sm);
-}
-
-.site-width-wrapper {
-    max-width: var(--site-max-width);
-    width: 100%;
-    margin: 0 auto;
 }
