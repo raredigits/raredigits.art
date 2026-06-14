@@ -1,0 +1,24 @@
+<h1>RareCharts — Changelog</h1>
+<p>All notable changes to RareCharts are documented in this file.
+Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The library follows semantic versioning.</p>
+<p>Roadmap and planned features: <a href="https://raredigits.art/charts/backlog/">raredigits.art/charts/backlog</a>.</p>
+<p>This file begins tracking at <code>v0.9.6</code>. Earlier versions were released without an itemized changelog.</p>
+<hr>
+<h2>[Unreleased]</h2>
+<h2>[v0.9.6] — 2026-06-14 — Confidence Bands</h2>
+<p>Adds a band (confidence-ribbon) primitive to <code>Line</code> and the supporting legend and tooltip work to make it readable. Targeted at forecasts and any figure where a single line would overstate precision. Also corrects two <code>strokeDash</code> defects that were documented but didn't work.</p>
+<h3>Added</h3>
+<ul>
+<li><strong><code>band</code> series type on <code>RareCharts.Line</code></strong> (<code>src/charts/Line.js</code>, <code>src/core/seriesPath.js</code>). A series marked <code>type: 'band'</code> with <code>{ date, lower, upper }</code> points renders a filled ribbon between the two boundaries at each x — for confidence intervals (P10–P90 cones), min/max envelopes, and error bands. The band draws behind every line and area, both bounds participate in the Y scale, and it mixes freely with ordinary line series in the same <code>setData</code> call. Fill uses the series <code>color</code> at <code>fillOpacity</code> (default <code>0.16</code>). Detected by <code>type: 'band'</code> or by the presence of <code>lower</code>/<code>upper</code> on the first point. Documented at <a href="https://raredigits.art/charts/line/band/"><code>/charts/line/band/</code></a> with two examples (<code>examples/line/line-chart-band.js</code>, <code>examples/line/line-chart-forecast.js</code>).</li>
+<li><strong>Band readout on hover</strong> (<code>src/core/Crosshair.js</code>). A band reports its range in the crosshair tooltip as <code>lower – upper</code> (e.g. <code>P10–P90: $1.95M – $3.65M</code>). It draws no crosshair dot — a band has two edges and no single point, so a dot would be ambiguous; markers and end labels skip it for the same reason.</li>
+<li><strong>Legend swatch types</strong> (<code>src/core/Chart.js</code>, <code>rare-charts.css</code>). A legend entry's <code>type</code> now selects its swatch so the legend matches the on-screen encoding: <code>'band'</code> → filled square, <code>'dashed'</code> (or <code>dash: true</code>) → dashed rule, <code>'dot'</code> / <code>'bar'</code> → dot (unchanged), default → solid rule. Needed because a forecast draws actuals, P50, and the range in a single hue, where the legend has to carry the distinction.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>The crosshair only reports a series where its data covers the cursor date</strong> (<code>src/core/Crosshair.js</code>). A partial series — a forecast band or a projected line that starts part-way along the axis — no longer snaps its nearest endpoint across the whole width; it stays silent outside its own date range. When nothing is under the cursor, the crosshair line, dots, and tooltip clear. <strong>This affects every chart that uses the crosshair, not only bands</strong> — in practice it only changes charts whose series span different date ranges.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Per-series <code>strokeDash</code> was documented but never applied.</strong> The field was listed in the Line options table and read during render, but <code>_normalizeData</code> dropped it, so a per-series dash pattern had no effect. It is now carried through and works.</li>
+<li><strong><code>resolveStrokeDash</code> rejected raw dash-array strings</strong> (<code>src/core/utils.js</code>). The options table implied a value like <code>'4,3'</code> was accepted, but only the named presets (<code>'dashed'</code>, <code>'dotted'</code>, <code>'dashDot'</code>, <code>'longDash'</code>) resolved — any raw string fell through to <code>null</code>. A numeric dash-array string (e.g. <code>'5,4'</code>, <code>'4 3'</code>) is now passed through as-is.</li>
+</ul>

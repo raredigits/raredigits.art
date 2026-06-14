@@ -78,14 +78,28 @@ export class Chart {
           const el = document.createElement('div');
           el.className = 'rc-legend-item';
 
-          // Line indicator for line series; dot for everything else
+          // Indicator shape reflects the series encoding:
+          //   'band'           → filled square (a shaded range)
+          //   'bar' | 'dot'    → dot
+          //   'dashed'         → dashed line
+          //   default          → solid line
           const indicator = document.createElement('span');
-          if (item.type === 'bar' || item.type === 'dot') {
+          const color = item.color ?? this.theme.accent;
+          if (item.type === 'band') {
+            indicator.className = 'rc-legend-band';
+            indicator.style.background = color;
+          } else if (item.type === 'bar' || item.type === 'dot') {
             indicator.className = 'rc-legend-dot';
+            indicator.style.background = color;
+          } else if (item.type === 'dashed' || item.dash) {
+            indicator.className = 'rc-legend-line rc-legend-line--dashed';
+            // Dashes drawn via a repeating gradient so the swatch stays a thin rule.
+            indicator.style.backgroundImage =
+              `repeating-linear-gradient(90deg, ${color} 0 5px, transparent 5px 8px)`;
           } else {
             indicator.className = 'rc-legend-line';
+            indicator.style.background = color;
           }
-          indicator.style.background = item.color ?? this.theme.accent;
 
           const text = document.createElement('span');
           text.textContent = item.label ?? item.name ?? '';
