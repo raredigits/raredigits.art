@@ -63,3 +63,26 @@ export function areaPath(series, x, y, defaultCurve = 'linear', globalBaseline =
     .y1(d => y(d.value))
     .curve(curve)(series.values);
 }
+
+// ─── Band path ─────────────────────────────────────────────────────────────────
+
+/**
+ * Build a band (ribbon) path string for one series — the filled region between
+ * a lower and an upper value at each x. Used for confidence intervals
+ * (e.g. P10–P90 forecast cones), min/max envelopes, and error bands.
+ *
+ * @param {object}   series        — { values: [{date, lower, upper}], curve? }
+ * @param {Function} x             — d3 time scale
+ * @param {Function} y             — d3 linear scale
+ * @param {string}   defaultCurve  — fallback curve name
+ * @param {number}   tension       — tension for cardinal curve
+ * @returns {string} SVG path d attribute
+ */
+export function bandPath(series, x, y, defaultCurve = 'linear', tension = 0) {
+  const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+  return d3.area()
+    .x(d  => x(d.date))
+    .y0(d => y(d.lower))
+    .y1(d => y(d.upper))
+    .curve(curve)(series.values);
+}

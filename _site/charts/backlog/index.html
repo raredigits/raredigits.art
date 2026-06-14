@@ -436,6 +436,17 @@
         </tr>
 <p><tr class="table-section">
 <td colspan="3">
+<h5>Band series</h5>
+<p>The <code>band</code> (confidence-ribbon) series ships on <code>RareCharts.Line</code> in v0.9.6 — see <a href="/charts/line/band/">Bands</a>. Items below extend it.</p>
+</td>
+</tr>
+<tr>
+<td>Bands on Time Series and Dual Axes</td>
+<td><code>type: 'band'</code> on <code>RareCharts.TimeSeries</code> / <code>RareCharts.DualAxes</code></td>
+<td>Wire the same <code>{ date, lower, upper }</code> band series into the other date-based chart classes. Useful for confidence ranges on a zoomable price feed or alongside a bar/line dual-axis layout. Currently band rendering lives only in <code>Line</code>.</td>
+</tr></p>
+<p><tr class="table-section">
+<td colspan="3">
 <h5>Chart structure</h5>
 <p>Extensions to the shared base layout rendered above and below the SVG area</p>
 </td>

@@ -149,12 +149,27 @@
   flex-shrink: 0;
 }
 
+/* Dashed line — for forecast / projected series */
+.rc-legend-line--dashed {
+  background-color: transparent;
+}
+
 /* Dot — for bar / donut / scatter */
 .rc-legend-dot {
   width: var(--space-sm);
   height: var(--space-sm);
   display: inline-block;
   border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Band — filled square for shaded ranges (confidence intervals, envelopes) */
+.rc-legend-band {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  display: inline-block;
+  border-radius: 2px;
+  opacity: 0.85;
   flex-shrink: 0;
 }
 
@@ -182,6 +197,11 @@
 .rc-zero-line {
   stroke-width: 1.5;
   opacity: 0.9;
+}
+
+/* Band (confidence ribbon) — non-interactive fill behind lines */
+.rc-band {
+  pointer-events: none;
 }
 
 /* Axis tick labels */

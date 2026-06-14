@@ -71,19 +71,41 @@ export class Crosshair {
       const dt    = x.invert(mx);
 
       const points = series.map(s => {
-        const d   = pickNearest(s.values, dt);
+        const d = pickNearest(s.values, dt);
+        if (!d) return null;
+        // Skip series that don't cover the hovered date — e.g. a forecast band
+        // or a projected line that only exists past a cut-over point. Without
+        // this, a partial series would report its nearest endpoint everywhere.
+        if (dt < s.values[0].date || dt > s.values[s.values.length - 1].date) return null;
+
+        if (s.type === 'band') {
+          // A band has two edges and no single value: report the range, no dot.
+          return {
+            name: s.name, type: 'band', color: s.color, date: d.date,
+            lower: d.lower, upper: d.upper,
+            fmt: `${formatFor(s, d.lower)} – ${formatFor(s, d.upper)}`,
+          };
+        }
         const fmt = formatFor(s, d.value);
         return { name: s.name, axis: s.axis, type: s.type, color: s.color, date: d.date, value: d.value, fmt };
-      });
+      }).filter(Boolean);
+
+      // Nothing under the cursor (outside every series' date range): clear.
+      if (!points.length) {
+        this._line.attr('opacity', 0);
+        this._dots.selectAll('.rc-cross-dot').attr('opacity', 0);
+        this._tooltip.hide();
+        return;
+      }
 
       // Crosshair line
       this._line
         .attr('x1', mx).attr('x2', mx)
         .attr('opacity', 1);
 
-      // Dots on line-type series only
+      // Dots on line-type series only (bars and bands carry no single point)
       this._dots.selectAll('.rc-cross-dot')
-        .data(points.filter(p => p.type !== 'bar'), p => p.name)
+        .data(points.filter(p => p.type !== 'bar' && p.type !== 'band'), p => p.name)
         .join('circle')
         .attr('class', 'rc-cross-dot')
         .attr('r', 3)

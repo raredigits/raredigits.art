@@ -52,6 +52,7 @@
           "subitems": [
             { "title": "Visual Options", "url": "/charts/line/visual-options/" },
             { "title": "Time Series", "url": "/charts/line/time-series/" },
+            { "title": "Bands", "url": "/charts/line/band/" },
             { "title": "Annotations", "url": "/charts/line/annotations/" }
           ]
       },

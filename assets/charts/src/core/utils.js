@@ -108,6 +108,7 @@ export function resolveCurve(name, tension = 0) {
  *   'dashDot'  → '8,4,2,4'
  *   'longDash' → '12,4'
  *   number[]   → joined with ','
+ *   '5,4'      → passed through as a raw SVG dash-array
  * @returns {string|null}
  */
 export function resolveStrokeDash(dash) {
@@ -118,8 +119,10 @@ export function resolveStrokeDash(dash) {
     case 'dotted':   return '2,3';
     case 'dashDot':  return '8,4,2,4';
     case 'longDash': return '12,4';
-    default:         return null;
   }
+  // Raw SVG dash-array string, e.g. '5,4' or '4 3'.
+  if (typeof dash === 'string' && /^[\d.,\s]+$/.test(dash.trim())) return dash.trim();
+  return null;
 }
 
 // ─── Marker shape ─────────────────────────────────────────────────────────────

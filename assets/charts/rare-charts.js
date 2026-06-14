@@ -198,12 +198,27 @@ var RareCharts = (() => {
   flex-shrink: 0;
 }
 
+/* Dashed line \u2014 for forecast / projected series */
+.rc-legend-line--dashed {
+  background-color: transparent;
+}
+
 /* Dot \u2014 for bar / donut / scatter */
 .rc-legend-dot {
   width: var(--space-sm);
   height: var(--space-sm);
   display: inline-block;
   border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
+.rc-legend-band {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  display: inline-block;
+  border-radius: 2px;
+  opacity: 0.85;
   flex-shrink: 0;
 }
 
@@ -231,6 +246,11 @@ var RareCharts = (() => {
 .rc-zero-line {
   stroke-width: 1.5;
   opacity: 0.9;
+}
+
+/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */
+.rc-band {
+  pointer-events: none;
 }
 
 /* Axis tick labels */
@@ -17775,9 +17795,9 @@ var RareCharts = (() => {
         return "8,4,2,4";
       case "longDash":
         return "12,4";
-      default:
-        return null;
     }
+    if (typeof dash === "string" && /^[\d.,\s]+$/.test(dash.trim())) return dash.trim();
+    return null;
   }
   function markerPath(shape, size = 4) {
     const s2 = size;
@@ -18055,12 +18075,20 @@ var RareCharts = (() => {
             const el = document.createElement("div");
             el.className = "rc-legend-item";
             const indicator = document.createElement("span");
-            if (item.type === "bar" || item.type === "dot") {
+            const color2 = item.color ?? this.theme.accent;
+            if (item.type === "band") {
+              indicator.className = "rc-legend-band";
+              indicator.style.background = color2;
+            } else if (item.type === "bar" || item.type === "dot") {
               indicator.className = "rc-legend-dot";
+              indicator.style.background = color2;
+            } else if (item.type === "dashed" || item.dash) {
+              indicator.className = "rc-legend-line rc-legend-line--dashed";
+              indicator.style.backgroundImage = `repeating-linear-gradient(90deg, ${color2} 0 5px, transparent 5px 8px)`;
             } else {
               indicator.className = "rc-legend-line";
+              indicator.style.background = color2;
             }
-            indicator.style.background = item.color ?? this.theme.accent;
             const text = document.createElement("span");
             text.textContent = item.label ?? item.name ?? "";
             text.style.color = this.theme.text;
@@ -18372,11 +18400,30 @@ var RareCharts = (() => {
         const dt = x4.invert(mx);
         const points = series.map((s2) => {
           const d = pickNearest(s2.values, dt);
+          if (!d) return null;
+          if (dt < s2.values[0].date || dt > s2.values[s2.values.length - 1].date) return null;
+          if (s2.type === "band") {
+            return {
+              name: s2.name,
+              type: "band",
+              color: s2.color,
+              date: d.date,
+              lower: d.lower,
+              upper: d.upper,
+              fmt: `${formatFor(s2, d.lower)} \u2013 ${formatFor(s2, d.upper)}`
+            };
+          }
           const fmt = formatFor(s2, d.value);
           return { name: s2.name, axis: s2.axis, type: s2.type, color: s2.color, date: d.date, value: d.value, fmt };
-        });
+        }).filter(Boolean);
+        if (!points.length) {
+          this._line.attr("opacity", 0);
+          this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
+          this._tooltip.hide();
+          return;
+        }
         this._line.attr("x1", mx).attr("x2", mx).attr("opacity", 1);
-        this._dots.selectAll(".rc-cross-dot").data(points.filter((p) => p.type !== "bar"), (p) => p.name).join("circle").attr("class", "rc-cross-dot").attr("r", 3).attr("fill", (p) => p.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (p) => x4(p.date)).attr("cy", (p) => scaleFor(p)(p.value)).attr("opacity", 1);
+        this._dots.selectAll(".rc-cross-dot").data(points.filter((p) => p.type !== "bar" && p.type !== "band"), (p) => p.name).join("circle").attr("class", "rc-cross-dot").attr("r", 3).attr("fill", (p) => p.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (p) => x4(p.date)).attr("cy", (p) => scaleFor(p)(p.value)).attr("opacity", 1);
         const payload = { date: points[0]?.date, points };
         const html2 = tooltipFmt ? tooltipFmt(payload) : `<div style="color:${t.muted}">${timeFormat("%b %d, %Y")(payload.date)}</div>` + points.map(
           (p) => `<div style="color:${p.color}">${p.name}: ${p.fmt}</div>`
@@ -18412,6 +18459,10 @@ var RareCharts = (() => {
     const curve = resolveCurve(series.curve ?? defaultCurve, tension);
     const base = baselineValue(series.areaBaseline ?? globalBaseline, y4.domain());
     return area_default5().x((d) => x4(d.date)).y0(y4(base)).y1((d) => y4(d.value)).curve(curve)(series.values);
+  }
+  function bandPath(series, x4, y4, defaultCurve = "linear", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    return area_default5().x((d) => x4(d.date)).y0((d) => y4(d.lower)).y1((d) => y4(d.upper)).curve(curve)(series.values);
   }
 
   // assets/charts/src/core/renderHelpers.js
@@ -18686,7 +18737,8 @@ var RareCharts = (() => {
       return all.length ? extent(all, (d) => d.date) : null;
     }
     _getNavigatorData() {
-      const source = this._series[0]?.values ?? [];
+      const lineSeries = this._series.find((s2) => s2.type !== "band");
+      const source = (lineSeries ?? this._series[0])?.values ?? [];
       return source.length ? source : null;
     }
     _normalizeData(data) {
@@ -18699,17 +18751,32 @@ var RareCharts = (() => {
           values: data.map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
         }];
       }
-      return (Array.isArray(data) ? data : []).map((s2, idx) => ({
-        name: s2.name ?? `Series ${idx + 1}`,
-        color: s2.color ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent),
-        type: "line",
-        curve: s2.curve,
-        area: s2.area,
-        areaOpacity: s2.areaOpacity,
-        areaBaseline: s2.areaBaseline,
-        strokeWidth: Number.isFinite(+s2.strokeWidth) ? +s2.strokeWidth : 2,
-        values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
-      })).filter((s2) => s2.values.length);
+      return (Array.isArray(data) ? data : []).map((s2, idx) => {
+        const color2 = s2.color ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent);
+        const isBand = s2.type === "band" || s2.values?.[0] && "lower" in s2.values[0] && "upper" in s2.values[0];
+        if (isBand) {
+          return {
+            name: s2.name ?? `Series ${idx + 1}`,
+            color: color2,
+            type: "band",
+            curve: s2.curve,
+            fillOpacity: s2.fillOpacity ?? s2.areaOpacity,
+            values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), lower: +d.lower, upper: +d.upper })).filter((d) => d.date && Number.isFinite(d.lower) && Number.isFinite(d.upper))
+          };
+        }
+        return {
+          name: s2.name ?? `Series ${idx + 1}`,
+          color: color2,
+          type: "line",
+          curve: s2.curve,
+          strokeDash: s2.strokeDash,
+          area: s2.area,
+          areaOpacity: s2.areaOpacity,
+          areaBaseline: s2.areaBaseline,
+          strokeWidth: Number.isFinite(+s2.strokeWidth) ? +s2.strokeWidth : 2,
+          values: (s2.values ?? []).map((d) => ({ date: parseDate(d.date), value: +d.value })).filter((d) => d.date && Number.isFinite(d.value))
+        };
+      }).filter((s2) => s2.values.length);
     }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG(tooltip) {
@@ -18718,6 +18785,7 @@ var RareCharts = (() => {
       const { left: left2, top: top2 } = this.margin;
       this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
+      this.gBands = this.g.append("g").attr("class", "rc-bands");
       this.gLines = this.g.append("g").attr("class", "rc-lines");
       this.gAxisX = this.g.append("g").attr("class", "rc-axis rc-axis-x");
       this.gAxisY = this.g.append("g").attr("class", "rc-axis rc-axis-y");
@@ -18745,16 +18813,19 @@ var RareCharts = (() => {
       const animate = (o.animate ?? true) && !this._didAnimateIn;
       const duration = o.duration ?? 650;
       const ease = resolveEase(o.ease ?? "cubicOut");
-      const all = visibleSeries.flatMap((s2) => s2.values);
+      const lineSeries = visibleSeries.filter((s2) => s2.type !== "band");
+      const bandSeries = visibleSeries.filter((s2) => s2.type === "band");
+      const yValuesOf = (s2) => s2.type === "band" ? s2.values.flatMap((d) => [d.lower, d.upper]) : s2.values.map((d) => d.value);
       const xPad = 8;
       const x4 = time().domain(viewExtent).range([xPad, W - xPad]);
       const yTicks = o.yTicks ?? 4;
-      const maxY2 = max(all, (d) => d.value);
-      const minY = min(all, (d) => d.value);
+      const allY = visibleSeries.flatMap(yValuesOf);
+      const maxY2 = max(allY);
+      const minY = min(allY);
       const pad3 = (maxY2 - minY) * 0.08 || 1;
       const resolvedYTickValues = o.yTickValues ?? niceTickValues(minY - pad3, maxY2 + pad3, yTicks);
       const y4 = linear3().domain([minY - pad3, Math.max(maxY2 + pad3, resolvedYTickValues[resolvedYTickValues.length - 1])]).range([H, 0]);
-      const absMax = max(all, (d) => Math.abs(d.value)) ?? 0;
+      const absMax = max(allY, (v2) => Math.abs(v2)) ?? 0;
       const usePercent = (o.yFormat ?? "auto") === "percent" || (o.yFormat ?? "auto") === "auto" && absMax <= 1;
       const prefix = o.yPrefix ?? "";
       const suffix = o.ySuffix ?? "";
@@ -18794,9 +18865,10 @@ var RareCharts = (() => {
       } else {
         this.gAxisY.selectAll("*").remove();
       }
-      const areaSeries = visibleSeries.filter((s2) => (s2.area ?? globalArea) === true);
+      this.gBands.selectAll(".rc-band").data(bandSeries, (s2) => s2.name).join("path").attr("class", "rc-band").attr("d", (s2) => bandPath(s2, x4, y4, defaultCurve, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.fillOpacity ?? globalAreaOp);
+      const areaSeries = lineSeries.filter((s2) => (s2.area ?? globalArea) === true);
       this.gLines.selectAll(".rc-line-area").data(areaSeries, (s2) => s2.name).join("path").attr("class", "rc-line-area").attr("d", (s2) => areaPath(s2, x4, y4, defaultCurve, globalAreaBase, tension)).attr("fill", (s2) => s2.color).attr("opacity", (s2) => s2.areaOpacity ?? globalAreaOp);
-      const paths = this.gLines.selectAll(".rc-line").data(visibleSeries, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
+      const paths = this.gLines.selectAll(".rc-line").data(lineSeries, (s2) => s2.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s2) => s2.color).attr("stroke-width", (s2) => s2.strokeWidth ?? 2).attr("stroke-dasharray", (s2) => resolveStrokeDash(s2.strokeDash ?? globalDash)).attr("d", (s2) => linePath(s2, x4, y4, defaultCurve, tension));
       if (animate) {
         const solidPaths = paths.filter((s2) => !resolveStrokeDash(s2.strokeDash ?? globalDash));
         const dashedPaths = paths.filter((s2) => resolveStrokeDash(s2.strokeDash ?? globalDash));
@@ -18810,17 +18882,17 @@ var RareCharts = (() => {
         this._didAnimateIn = true;
       }
       if (o.endLabels ?? true) {
-        renderEndLabels(this.gEnds, visibleSeries, y4, W, yTickFormat, t);
+        renderEndLabels(this.gEnds, lineSeries, y4, W, yTickFormat, t);
       } else {
         this.gEnds.selectAll("*").remove();
       }
-      renderMarkers(this.gMarkers, visibleSeries, x4, () => y4, globalMarkers, globalShape, globalSize, t);
+      renderMarkers(this.gMarkers, lineSeries, x4, () => y4, globalMarkers, globalShape, globalSize, t);
       renderAnnotations(this.gAnnotations, this._annotations, x4, () => y4, H, this._annLabelHeight, t);
       this._crosshair.bind({
         W,
         H,
         x: x4,
-        series: visibleSeries,
+        series: [...lineSeries, ...bandSeries],
         enabled: o.crosshair ?? true,
         scaleFor: () => y4,
         formatFor: (_s, v2) => yTickFormat(v2),

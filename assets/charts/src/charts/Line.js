@@ -4,6 +4,13 @@
 // Data formats supported:
 // 1) Single series: [{ date: Date|string|number, value: number }, ...]
 // 2) Multi series:  [{ name, color?, values: [{ date, value }, ...] }, ...]
+// 3) Band series:   [{ name, type:'band', color?, fillOpacity?,
+//                      values: [{ date, lower, upper }, ...] }, ...]
+//                    A filled ribbon between lower/upper at each x — for
+//                    confidence intervals (P10–P90 cones), min/max envelopes,
+//                    error bands. Rendered behind lines; excluded from the
+//                    crosshair, end labels, and markers. Mixes freely with
+//                    line series in the same dataset.
 //
 // Options:
 //   height         — chart height (default: 240)
@@ -42,14 +49,16 @@
 //   areaBaseline   — 'zero'|'min'|number (default: 'zero')
 //
 // Per-series overrides (multi-series only):
-//   series.curve, series.strokeWidth, series.area, series.areaOpacity, series.areaBaseline
+//   series.curve, series.strokeWidth, series.strokeDash,
+//   series.area, series.areaOpacity, series.areaBaseline
+//   series.type ('band'), series.fillOpacity (band)
 
 import * as d3 from 'd3';
 import { Chart }             from '../core/Chart.js';
 import { Tooltip }           from '../core/Tooltip.js';
 import { Crosshair }         from '../core/Crosshair.js';
 import { parseDate, resolveEase, resolveStrokeDash, niceTickValues, normalizeAnnotations } from '../core/utils.js';
-import { linePath, areaPath }     from '../core/seriesPath.js';
+import { linePath, areaPath, bandPath } from '../core/seriesPath.js';
 import {
   renderGrid,
   renderZeroBaseline,
@@ -104,7 +113,8 @@ export class Line extends Chart {
   }
 
   _getNavigatorData() {
-    const source = this._series[0]?.values ?? [];
+    const lineSeries = this._series.find(s => s.type !== 'band');
+    const source = (lineSeries ?? this._series[0])?.values ?? [];
     return source.length ? source : null;
   }
 
@@ -125,19 +135,40 @@ export class Line extends Chart {
 
     // Multi-series
     return (Array.isArray(data) ? data : [])
-      .map((s, idx) => ({
-        name:         s.name   ?? `Series ${idx + 1}`,
-        color:        s.color  ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent),
-        type:         'line',
-        curve:        s.curve,
-        area:         s.area,
-        areaOpacity:  s.areaOpacity,
-        areaBaseline: s.areaBaseline,
-        strokeWidth:  Number.isFinite(+s.strokeWidth) ? +s.strokeWidth : 2,
-        values: (s.values ?? [])
-          .map(d => ({ date: parseDate(d.date), value: +d.value }))
-          .filter(d => d.date && Number.isFinite(d.value)),
-      }))
+      .map((s, idx) => {
+        const color = s.color ?? (this.theme.colors?.[idx % (this.theme.colors?.length || 1)] ?? this.theme.accent);
+
+        // Band (ribbon) series: { type:'band', values:[{date, lower, upper}] }
+        const isBand = s.type === 'band' ||
+                       (s.values?.[0] && 'lower' in s.values[0] && 'upper' in s.values[0]);
+        if (isBand) {
+          return {
+            name:        s.name ?? `Series ${idx + 1}`,
+            color,
+            type:        'band',
+            curve:       s.curve,
+            fillOpacity: s.fillOpacity ?? s.areaOpacity,
+            values: (s.values ?? [])
+              .map(d => ({ date: parseDate(d.date), lower: +d.lower, upper: +d.upper }))
+              .filter(d => d.date && Number.isFinite(d.lower) && Number.isFinite(d.upper)),
+          };
+        }
+
+        return {
+          name:         s.name   ?? `Series ${idx + 1}`,
+          color,
+          type:         'line',
+          curve:        s.curve,
+          strokeDash:   s.strokeDash,
+          area:         s.area,
+          areaOpacity:  s.areaOpacity,
+          areaBaseline: s.areaBaseline,
+          strokeWidth:  Number.isFinite(+s.strokeWidth) ? +s.strokeWidth : 2,
+          values: (s.values ?? [])
+            .map(d => ({ date: parseDate(d.date), value: +d.value }))
+            .filter(d => d.date && Number.isFinite(d.value)),
+        };
+      })
       .filter(s => s.values.length);
   }
 
@@ -155,6 +186,7 @@ export class Line extends Chart {
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
 
     this.gGrid  = this.g.append('g').attr('class', 'rc-grid');
+    this.gBands = this.g.append('g').attr('class', 'rc-bands');
     this.gLines = this.g.append('g').attr('class', 'rc-lines');
     this.gAxisX = this.g.append('g').attr('class', 'rc-axis rc-axis-x');
     this.gAxisY = this.g.append('g').attr('class', 'rc-axis rc-axis-y');
@@ -197,8 +229,17 @@ export class Line extends Chart {
     const duration = o.duration ?? 650;
     const ease     = resolveEase(o.ease ?? 'cubicOut');
 
+    // Split line vs band series — bands render behind lines and are excluded
+    // from the crosshair, end labels, and markers.
+    const lineSeries = visibleSeries.filter(s => s.type !== 'band');
+    const bandSeries = visibleSeries.filter(s => s.type === 'band');
+
+    // Per-series Y values (band contributes both its lower and upper bounds).
+    const yValuesOf = s => s.type === 'band'
+      ? s.values.flatMap(d => [d.lower, d.upper])
+      : s.values.map(d => d.value);
+
     // Scales
-    const all  = visibleSeries.flatMap(s => s.values);
     const xPad = 8;
     const x    = d3.scaleTime()
       .domain(viewExtent)
@@ -207,8 +248,9 @@ export class Line extends Chart {
     // Formatters
     const yTicks   = o.yTicks ?? 4;
 
-    const maxY = d3.max(all, d => d.value);
-    const minY = d3.min(all, d => d.value);
+    const allY = visibleSeries.flatMap(yValuesOf);
+    const maxY = d3.max(allY);
+    const minY = d3.min(allY);
     const pad  = (maxY - minY) * 0.08 || 1;
 
     // Compute ticks from the raw padded range — no .nice() to avoid double-expansion.
@@ -217,7 +259,7 @@ export class Line extends Chart {
     const y    = d3.scaleLinear()
       .domain([minY - pad, Math.max(maxY + pad, resolvedYTickValues[resolvedYTickValues.length - 1])])
       .range([H, 0]);
-    const absMax   = d3.max(all, d => Math.abs(d.value)) ?? 0;
+    const absMax   = d3.max(allY, v => Math.abs(v)) ?? 0;
     const usePercent = (o.yFormat ?? 'auto') === 'percent' ||
                        ((o.yFormat ?? 'auto') === 'auto' && absMax <= 1);
 
@@ -269,8 +311,17 @@ export class Line extends Chart {
       this.gAxisY.selectAll('*').remove();
     }
 
+    // Bands (confidence ribbons) — drawn behind everything else.
+    this.gBands.selectAll('.rc-band')
+      .data(bandSeries, s => s.name)
+      .join('path')
+      .attr('class', 'rc-band')
+      .attr('d', s => bandPath(s, x, y, defaultCurve, tension))
+      .attr('fill',    s => s.color)
+      .attr('opacity', s => s.fillOpacity ?? globalAreaOp);
+
     // Areas
-    const areaSeries = visibleSeries.filter(s => (s.area ?? globalArea) === true);
+    const areaSeries = lineSeries.filter(s => (s.area ?? globalArea) === true);
     this.gLines.selectAll('.rc-line-area')
       .data(areaSeries, s => s.name)
       .join('path')
@@ -281,7 +332,7 @@ export class Line extends Chart {
 
     // Lines
     const paths = this.gLines.selectAll('.rc-line')
-      .data(visibleSeries, s => s.name)
+      .data(lineSeries, s => s.name)
       .join('path')
       .attr('class', 'rc-line')
       .attr('fill', 'none')
@@ -312,13 +363,13 @@ export class Line extends Chart {
 
     // End labels
     if (o.endLabels ?? true) {
-      renderEndLabels(this.gEnds, visibleSeries, y, W, yTickFormat, t);
+      renderEndLabels(this.gEnds, lineSeries, y, W, yTickFormat, t);
     } else {
       this.gEnds.selectAll('*').remove();
     }
 
     // Markers
-    renderMarkers(this.gMarkers, visibleSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
+    renderMarkers(this.gMarkers, lineSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
 
     // Annotations
     renderAnnotations(this.gAnnotations, this._annotations, x, () => y, H, this._annLabelHeight, t);
@@ -326,7 +377,7 @@ export class Line extends Chart {
     // Crosshair
     this._crosshair.bind({
       W, H, x,
-      series:     visibleSeries,
+      series:     [...lineSeries, ...bandSeries],
       enabled:    o.crosshair ?? true,
       scaleFor:   () => y,
       formatFor:  (_s, v) => yTickFormat(v),
