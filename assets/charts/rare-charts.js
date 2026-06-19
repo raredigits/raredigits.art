@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.6 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -79,6 +79,10 @@ var RareCharts = (() => {
   font-family: var(--rc-font-family);
   font-size: var(--rc-font-size);
   overflow: visible; /* otherwise end labels and crosshair dots are clipped */
+  /* Let the plot shrink inside the fixed-height card so a tall footer (a long
+     source line or a multi-sentence note) never overflows and gets clipped \u2014
+     without min-height:0 a flex item refuses to shrink below its content. */
+  min-height: 0;
 }
 
 .rc-chart-header,
@@ -139,6 +143,39 @@ var RareCharts = (() => {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+}
+
+/* Links inside the source line \u2014 inherit the source text color, set apart by
+   the underline (so they adapt to light/dark theme automatically). */
+.rc-chart-source a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Multi-part (array) source: let it wrap so several attributions/links all
+   stay visible instead of being cut off by the single-line ellipsis. */
+.rc-chart-source--rich {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.
+   Wraps freely (unlike source) since it can be a sentence or two; color is
+   set from theme.muted in JS so it reads as secondary to the source. */
+.rc-chart-note {
+  font-size: var(--rc-font-size-sm);
+  font-weight: initial;
+  line-height: 1.4;
+  margin: var(--space-xs) 0 var(--space-sm);
+  text-align: left;
+  /* Long words / URLs break instead of pushing the note past the card edge. */
+  overflow-wrap: anywhere;
+}
+
+.rc-chart-source + .rc-chart-note {
+  margin-top: 0;
 }
 
 .rc-chart-navigator {
@@ -17765,6 +17802,15 @@ var RareCharts = (() => {
     if (!Array.isArray(a4) || !Array.isArray(b) || !a4[0] || !a4[1] || !b[0] || !b[1]) return false;
     return +a4[0] === +b[0] && +a4[1] === +b[1];
   }
+  var _warnedAxisTitles = /* @__PURE__ */ new Set();
+  function warnAxisTitleClipped(text) {
+    const str = String(text ?? "");
+    if (_warnedAxisTitles.has(str)) return;
+    _warnedAxisTitles.add(str);
+    console.warn(
+      `RareCharts: axis title "${str}" is wider than its axis margin and was truncated. Axis titles are meant to be terse units (e.g. "PRICE", "N \xB7 K HLX") \u2014 shorten the label, widen the margin, or set axisTitleMaxLength to cap it explicitly.`
+    );
+  }
   function resolveCurve(name, tension = 0) {
     switch (name) {
       case "monotone":
@@ -18044,6 +18090,7 @@ var RareCharts = (() => {
       this._legendAsideEl = null;
       this._footerEl = null;
       this._sourceEl = null;
+      this._noteEl = null;
       this._rangeRowEl = null;
       this._rangeBarEl = null;
       this._timeframeButtons = [];
@@ -18058,6 +18105,14 @@ var RareCharts = (() => {
       this._ensureNavigator();
       this._resizeObserver = new ResizeObserver(() => this._onResize());
       this._resizeObserver.observe(this.container);
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        document.fonts.ready.then(() => {
+          try {
+            this.render();
+          } catch {
+          }
+        });
+      }
     }
     // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
     _renderHeader() {
@@ -18159,21 +18214,65 @@ var RareCharts = (() => {
     // ── Footer (Source) ───────────────────────────────────────────────────────
     _renderFooter() {
       const hasSource = !!this.options.source;
-      if (!hasSource) return;
+      const hasNote = !!this.options.note;
+      if (!hasSource && !hasNote) return;
       if (this._footerEl?.parentNode) this._footerEl.remove();
       this._footerEl = document.createElement("div");
       this._footerEl.className = "rc-chart-footer";
-      this._sourceEl = document.createElement("cite");
-      this._sourceEl.className = "rc-chart-source";
-      this._sourceEl.style.color = this.theme.text;
-      const src = this.options.source;
-      if (src instanceof HTMLElement) {
-        this._sourceEl.appendChild(src);
-      } else {
-        this._sourceEl.textContent = String(src);
+      if (hasSource) {
+        this._sourceEl = document.createElement("cite");
+        this._sourceEl.className = "rc-chart-source";
+        this._sourceEl.style.color = this.theme.text;
+        const src = this.options.source;
+        if (Array.isArray(src)) this._sourceEl.classList.add("rc-chart-source--rich");
+        this._renderAttribution(this._sourceEl, src);
+        this._footerEl.appendChild(this._sourceEl);
       }
-      this._footerEl.appendChild(this._sourceEl);
+      if (hasNote) {
+        this._noteEl = document.createElement("p");
+        this._noteEl.className = "rc-chart-note";
+        this._noteEl.style.color = this.theme.muted;
+        const note = this.options.note;
+        if (note instanceof HTMLElement) {
+          this._noteEl.appendChild(note);
+        } else {
+          this._noteEl.textContent = String(note);
+        }
+        this._footerEl.appendChild(this._noteEl);
+      }
       this.container.appendChild(this._footerEl);
+    }
+    /**
+     * Render a source/attribution value into `el`. Accepts:
+     *   string                         → plain text
+     *   HTMLElement                    → appended as-is
+     *   { text, href }                 → an <a> opening in a new tab
+     *   Array<string | { text, href } | HTMLElement>
+     *                                  → each part in sequence, so a footer can mix
+     *                                    several links and unlinked text on one line
+     *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
+     * Links inherit the source text color and are distinguished by an underline.
+     */
+    _renderAttribution(el, value) {
+      const appendPart = (part) => {
+        if (part == null) return;
+        if (part instanceof HTMLElement) {
+          el.appendChild(part);
+          return;
+        }
+        if (typeof part === "object" && part.href) {
+          const a4 = document.createElement("a");
+          a4.href = part.href;
+          a4.textContent = part.text ?? part.href;
+          a4.target = "_blank";
+          a4.rel = "noopener noreferrer";
+          el.appendChild(a4);
+          return;
+        }
+        el.appendChild(document.createTextNode(String(part)));
+      };
+      if (Array.isArray(value)) value.forEach(appendPart);
+      else appendPart(value);
     }
     // ── Dimensions ────────────────────────────────────────────────────────────
     get width() {
@@ -18307,6 +18406,7 @@ var RareCharts = (() => {
       this._legendAsideEl = null;
       this._footerEl = null;
       this._sourceEl = null;
+      this._noteEl = null;
       this._rangeRowEl = null;
       this._rangeBarEl = null;
       this._timeframeButtons = [];
@@ -18552,11 +18652,29 @@ var RareCharts = (() => {
       select_default2(this).select("rect").attr("x", bbox.x - px).attr("y", bbox.y - py).attr("width", bbox.width + px * 4).attr("height", bbox.height + py * 8);
     });
   }
-  function renderAxisTitles(g, W, y1Title, y2Title, theme) {
+  function renderAxisTitles(g, W, y1Title, y2Title, theme, opts = {}) {
     const titles = [];
-    if (y2Title) titles.push({ axis: "y2", text: y2Title });
-    if (y1Title) titles.push({ axis: "y1", text: y1Title });
-    g.selectAll(".rc-axis-title").data(titles, (d) => d.axis).join("text").attr("class", (d) => `rc-axis-title rc-axis-title-${d.axis}`).attr("x", (d) => d.axis === "y1" ? W + 8 : -8).attr("y", -28).attr("fill", theme.muted).style("font-family", theme.font).style("font-size", theme.fontSize).text((d) => d.text);
+    if (y2Title) titles.push({ axis: "y2", full: String(y2Title), avail: opts.y2Avail });
+    if (y1Title) titles.push({ axis: "y1", full: String(y1Title), avail: opts.y1Avail });
+    const maxLen = Number.isFinite(opts.maxLength) ? opts.maxLength : Infinity;
+    const sel = g.selectAll(".rc-axis-title").data(titles, (d) => d.axis).join("text").attr("class", (d) => `rc-axis-title rc-axis-title-${d.axis}`).attr("x", (d) => d.axis === "y1" ? W + 8 : -8).attr("y", -28).attr("fill", theme.muted).style("font-family", theme.font).style("font-size", theme.fontSize);
+    sel.each(function(d) {
+      const node = this;
+      const avail = Number.isFinite(d.avail) ? d.avail : Infinity;
+      let text = d.full.length > maxLen ? d.full.slice(0, Math.max(1, maxLen - 1)) + "\u2026" : d.full;
+      node.textContent = text;
+      while (node.getComputedTextLength() > avail) {
+        const core = text.endsWith("\u2026") ? text.slice(0, -1) : text;
+        if (core.length <= 1) break;
+        text = core.slice(0, -1).trimEnd() + "\u2026";
+        node.textContent = text;
+      }
+      select_default2(node).selectAll("title").remove();
+      if (text !== d.full) {
+        warnAxisTitleClipped(d.full);
+        select_default2(node).append("title").text(d.full);
+      }
+    });
   }
   function animateLines(paths, duration, ease, onDone) {
     paths.each(function() {
@@ -19258,6 +19376,9 @@ var RareCharts = (() => {
           g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
           g.select(".domain").remove();
           g.selectAll("line").remove();
+          const ticks2 = g.selectAll(".tick text");
+          const n = ticks2.size();
+          ticks2.attr("text-anchor", (d, i) => i === 0 ? "start" : i === n - 1 ? "end" : "middle");
         });
       } else {
         this.gAxisY.selectAll("*").remove();
@@ -19574,7 +19695,14 @@ var RareCharts = (() => {
       } else {
         this.gAxisY2.selectAll("*").remove();
       }
-      renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t);
+      const cs = window.getComputedStyle(this.container);
+      const padL = parseFloat(cs.paddingLeft) || 0;
+      const padR = parseFloat(cs.paddingRight) || 0;
+      renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t, {
+        y1Avail: this.margin.right + padR - 8,
+        y2Avail: this.margin.left + padL - 8,
+        maxLength: o.axisTitleMaxLength
+      });
       if (bars.length) {
         this._renderBars({
           bars,
@@ -20682,7 +20810,7 @@ var RareCharts = (() => {
   }
   injectCssOnce("rc-base-styles", rare_charts_default);
   var DOCS_URL = "https://raredigits.art/charts";
-  var VERSION = "v0.9.6";
+  var VERSION = "v0.9.7";
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;

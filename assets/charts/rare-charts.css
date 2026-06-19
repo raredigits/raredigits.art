@@ -29,6 +29,10 @@
   font-family: var(--rc-font-family);
   font-size: var(--rc-font-size);
   overflow: visible; /* otherwise end labels and crosshair dots are clipped */
+  /* Let the plot shrink inside the fixed-height card so a tall footer (a long
+     source line or a multi-sentence note) never overflows and gets clipped —
+     without min-height:0 a flex item refuses to shrink below its content. */
+  min-height: 0;
 }
 
 .rc-chart-header,
@@ -89,6 +93,39 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   text-align: left;
+}
+
+/* Links inside the source line — inherit the source text color, set apart by
+   the underline (so they adapt to light/dark theme automatically). */
+.rc-chart-source a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Multi-part (array) source: let it wrap so several attributions/links all
+   stay visible instead of being cut off by the single-line ellipsis. */
+.rc-chart-source--rich {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Note — disclaimers, caveats, editorial context. Sits below the source.
+   Wraps freely (unlike source) since it can be a sentence or two; color is
+   set from theme.muted in JS so it reads as secondary to the source. */
+.rc-chart-note {
+  font-size: var(--rc-font-size-sm);
+  font-weight: initial;
+  line-height: 1.4;
+  margin: var(--space-xs) 0 var(--space-sm);
+  text-align: left;
+  /* Long words / URLs break instead of pushing the note past the card edge. */
+  overflow-wrap: anywhere;
+}
+
+.rc-chart-source + .rc-chart-note {
+  margin-top: 0;
 }
 
 .rc-chart-navigator {

@@ -22,7 +22,7 @@ injectCssOnce('rc-base-styles',        baseCssText);
 // VERSION is stamped by hand at release — keep it in sync with the build
 // banner (package.json) and _data/versions.json. See CHANGELOG release checklist.
 export const DOCS_URL = 'https://raredigits.art/charts';
-export const VERSION  = 'v0.9.6';
+export const VERSION  = 'v0.9.7';
 
 export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';
