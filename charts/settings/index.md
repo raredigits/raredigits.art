@@ -48,9 +48,9 @@ Each slot has a job. Use the right one and the chart composes correctly on its o
             <td>Always prefixed <code>Source:</code> and written in Title Case — <code>'Source: Internal Accounting'</code>, <code>'Source: Synthetic Demo Data'</code>.</td>
         </tr>
         <tr>
-            <td>editorial / caveat text</td>
-            <td>Interpretation, disclaimers.</td>
-            <td>Belongs in the prose <em>around</em> the chart, not in ad-hoc markup glued under it. An in-component slot for caveats (<code>note</code>) is on the <a href="/charts/backlog/">backlog</a>; until it ships, keep this text in your surrounding copy.</td>
+            <td><code>note</code></td>
+            <td>Interpretation, disclaimers, caveats.</td>
+            <td>One or two sentences of editorial context, rendered in muted type below the source. Use this instead of gluing a stray <code>&lt;div&gt;</code> under the chart container — same as the other slots, the component owns the placement and styling.</td>
         </tr>
     </tbody>
 </table>
@@ -114,9 +114,25 @@ For line charts, use the default (line indicator). For bar and donut charts, use
 
 | Option | Type | Description |
 |--------|------|-------------|
-| `source` | string \| HTMLElement | Rendered as a `<cite>` below the chart. Great for data attribution. |
+| `source` | string \| `{ text, href }` \| array \| HTMLElement | Rendered as a `<cite>` below the chart. Great for data attribution. Pass `{ text, href }` to make it a link, or an **array of parts** to mix several links and plain text on one line — see below. |
+| `note` | string \| HTMLElement | Rendered as a `<p class="rc-chart-note">` below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container. |
 
-<pre class="text-content-caption"><code>source: 'Source: The Truth'</code></pre>
+<pre class="text-content-caption"><code>source: 'Source: The Truth',
+note:   'Figures are unaudited and restated monthly.'</code></pre>
+
+A single linked source:
+
+<pre class="text-content-caption"><code>source: { text: 'Source: Bloomberg', href: 'https://bloomberg.com' }</code></pre>
+
+Multiple sources — some linked, some not. Pass an array of parts: a string renders as plain text, a `{ text, href }` object as a link (in the standard blue, opening in a new tab). Array sources wrap instead of truncating, so every attribution stays visible.
+
+<pre class="text-content-caption"><code>source: [
+  'Source: ',
+  { text: 'NASDAQ',    href: 'https://nasdaq.com' },
+  ', ',
+  { text: 'Bloomberg', href: 'https://bloomberg.com' },
+  ', Internal calculations',     <span class="code-comment">// plain, no link</span>
+]</code></pre>
 
 ## Layout
 

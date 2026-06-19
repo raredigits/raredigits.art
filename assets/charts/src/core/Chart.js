@@ -37,6 +37,7 @@ export class Chart {
     this._legendAsideEl = null;   // set when legendPosition: 'right'
     this._footerEl     = null;
     this._sourceEl     = null;
+    this._noteEl       = null;
     this._rangeRowEl   = null;
     this._rangeBarEl   = null;
     this._timeframeButtons = [];
@@ -53,6 +54,16 @@ export class Chart {
 
     this._resizeObserver = new ResizeObserver(() => this._onResize());
     this._resizeObserver.observe(this.container);
+
+    // Text measurement (axis-title clipping, X-label thinning, end-label boxes)
+    // runs at first paint, which can land before the web font loads — the
+    // wider fallback font then mis-measures and, e.g., trims a title that would
+    // actually fit. Re-render once fonts settle so those measurements are right.
+    if (typeof document !== 'undefined' && document.fonts?.ready) {
+      document.fonts.ready.then(() => {
+        try { this.render(); } catch { /* destroyed or not yet populated */ }
+      });
+    }
   }
 
   // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
@@ -190,26 +201,79 @@ export class Chart {
 
   _renderFooter() {
     const hasSource = !!this.options.source;
-    if (!hasSource) return;
+    const hasNote   = !!this.options.note;
+    if (!hasSource && !hasNote) return;
 
     if (this._footerEl?.parentNode) this._footerEl.remove();
 
     this._footerEl = document.createElement('div');
     this._footerEl.className = 'rc-chart-footer';
 
-    this._sourceEl = document.createElement('cite');
-    this._sourceEl.className = 'rc-chart-source';
-    this._sourceEl.style.color = this.theme.text;
+    if (hasSource) {
+      this._sourceEl = document.createElement('cite');
+      this._sourceEl.className = 'rc-chart-source';
+      this._sourceEl.style.color = this.theme.text;
 
-    const src = this.options.source;
-    if (src instanceof HTMLElement) {
-      this._sourceEl.appendChild(src);
-    } else {
-      this._sourceEl.textContent = String(src);
+      const src = this.options.source;
+      // An array source carries multiple parts (e.g. several attributions, some
+      // linked) and is allowed to wrap so none get truncated; a plain string
+      // keeps the single-line ellipsis behaviour.
+      if (Array.isArray(src)) this._sourceEl.classList.add('rc-chart-source--rich');
+      this._renderAttribution(this._sourceEl, src);
+
+      this._footerEl.appendChild(this._sourceEl);
     }
 
-    this._footerEl.appendChild(this._sourceEl);
+    // Note — disclaimers, data caveats, editorial context. Rendered below the
+    // source in the muted color so it reads as secondary. An in-component slot
+    // so this text stops getting hand-built as stray markup around the chart.
+    if (hasNote) {
+      this._noteEl = document.createElement('p');
+      this._noteEl.className = 'rc-chart-note';
+      this._noteEl.style.color = this.theme.muted;
+
+      const note = this.options.note;
+      if (note instanceof HTMLElement) {
+        this._noteEl.appendChild(note);
+      } else {
+        this._noteEl.textContent = String(note);
+      }
+
+      this._footerEl.appendChild(this._noteEl);
+    }
+
     this.container.appendChild(this._footerEl);
+  }
+
+  /**
+   * Render a source/attribution value into `el`. Accepts:
+   *   string                         → plain text
+   *   HTMLElement                    → appended as-is
+   *   { text, href }                 → an <a> opening in a new tab
+   *   Array<string | { text, href } | HTMLElement>
+   *                                  → each part in sequence, so a footer can mix
+   *                                    several links and unlinked text on one line
+   *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
+   * Links inherit the source text color and are distinguished by an underline.
+   */
+  _renderAttribution(el, value) {
+    const appendPart = (part) => {
+      if (part == null) return;
+      if (part instanceof HTMLElement) { el.appendChild(part); return; }
+      if (typeof part === 'object' && part.href) {
+        const a = document.createElement('a');
+        a.href = part.href;
+        a.textContent = part.text ?? part.href;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        el.appendChild(a);
+        return;
+      }
+      el.appendChild(document.createTextNode(String(part)));
+    };
+
+    if (Array.isArray(value)) value.forEach(appendPart);
+    else appendPart(value);
   }
 
   // ── Dimensions ────────────────────────────────────────────────────────────
@@ -388,6 +452,7 @@ export class Chart {
     this._legendAsideEl = null;
     this._footerEl     = null;
     this._sourceEl     = null;
+    this._noteEl       = null;
     this._rangeRowEl   = null;
     this._rangeBarEl   = null;
     this._timeframeButtons = [];

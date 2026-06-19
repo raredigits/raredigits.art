@@ -45,6 +45,7 @@
     title: 'Treasury Bills Convergence',
     subtitle: 'On-the-run vs off-the-run: prices converge, spread mean-reverts',
     source: 'Source: Synthetic Demo Data',
+    note: 'The spread is the trade: it widens before it converges, and the position has to survive the gap. Synthetic figures, shown for illustration.',
 
     legend: [
       { label: 'UST 10Y (on-the-run)', color: '#00aaff' },

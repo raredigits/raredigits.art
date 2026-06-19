@@ -81,6 +81,28 @@ export function extentEquals(a, b) {
   return +a[0] === +b[0] && +a[1] === +b[1];
 }
 
+// ─── Axis title length guard ───────────────────────────────────────────────────
+
+const _warnedAxisTitles = new Set();
+
+/**
+ * One-time console hint when an axis title is clipped to fit its margin.
+ * Deduplicated by title text so a resize re-render doesn't spam the console.
+ *
+ * @param {string} text — the full (un-clipped) title text
+ */
+export function warnAxisTitleClipped(text) {
+  const str = String(text ?? '');
+  if (_warnedAxisTitles.has(str)) return;
+  _warnedAxisTitles.add(str);
+  console.warn(
+    `RareCharts: axis title "${str}" is wider than its axis margin and was ` +
+    `truncated. Axis titles are meant to be terse units (e.g. "PRICE", ` +
+    `"N · K HLX") — shorten the label, widen the margin, or set ` +
+    `axisTitleMaxLength to cap it explicitly.`
+  );
+}
+
 // ─── Curve ───────────────────────────────────────────────────────────────────
 
 export function resolveCurve(name, tension = 0) {

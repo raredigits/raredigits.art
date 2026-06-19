@@ -35,7 +35,9 @@
 //   endLabels       — show last value labels on the right (default: true)
 //   endLabelsAxis   — which axis to label ('y1' default)
 //
-//   y1Title / y2Title — axis title labels
+//   y1Title / y2Title — axis title labels (terse units; trimmed with an
+//                     ellipsis if wider than their axis margin)
+//   axisTitleMaxLength — optional hard character cap for axis titles
 //
 //   barOpacity      — opacity for bars (default: 0.35)
 //   barWidthRatio   — width ratio vs time step (default: 0.65)
@@ -385,7 +387,18 @@ export class DualAxes extends Chart {
       this.gAxisY2.selectAll('*').remove();
     }
 
-    renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t);
+    // Available px for each title = its axis margin plus the container's side
+    // padding. Titles are anchored 8px in from the axis (x = ±8), and the
+    // overflow clip sits at the padding box, so that 8px is the exact room
+    // before a title would be cut off.
+    const cs   = window.getComputedStyle(this.container);
+    const padL = parseFloat(cs.paddingLeft)  || 0;
+    const padR = parseFloat(cs.paddingRight) || 0;
+    renderAxisTitles(this.gAxisTitles, W, o.y1Title, o.y2Title, t, {
+      y1Avail:   this.margin.right + padR - 8,
+      y2Avail:   this.margin.left  + padL - 8,
+      maxLength: o.axisTitleMaxLength,
+    });
 
     // Series
     if (bars.length) {

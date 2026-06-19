@@ -287,6 +287,14 @@ export class Bar extends Chart {
             .style('font-size', t.fontSize);
           g.select('.domain').remove();
           g.selectAll('line').remove();
+
+          // The value axis can sit flush against the chart edge (margin.left /
+          // right = 0), where a centered first/last label would be half-clipped
+          // by the card's overflow. Anchor the end labels inward instead.
+          const ticks = g.selectAll('.tick text');
+          const n = ticks.size();
+          ticks.attr('text-anchor', (d, i) =>
+            i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle');
         });
     } else {
       this.gAxisY.selectAll('*').remove();

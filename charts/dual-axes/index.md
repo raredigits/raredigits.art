@@ -26,6 +26,8 @@ In the chart, the right axis (Y1) shows the price index of the two instruments
 
 Both axes are configured independently. You can set titles (`y1Title`, `y2Title`), control tick formatting (`y1TickFormat`, `y2TickFormat`), and, when needed, override the visible ranges (`y1Domain`, `y2Domain`) to keep the chart stable and comparable across screenshots, reports, or multiple panels.
 
+Axis titles are meant to be terse units (`PRICE`, `N · K HLX`). A title that would run past its axis margin is trimmed with an ellipsis — measured by rendered width, so a short label that fits is left alone — with the full text on hover and a one-time console hint. Set `axisTitleMaxLength` to cap it explicitly, or widen `margin` if you need more room.
+
 In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine.
 
 ### Interaction

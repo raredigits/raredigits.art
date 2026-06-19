@@ -3,7 +3,7 @@
 // Each function mutates the passed D3 selection and returns nothing.
 
 import * as d3 from 'd3';
-import { markerPath, resolveStrokeDash } from './utils.js';
+import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js';
 
 // ─── Grid ────────────────────────────────────────────────────────────────────
 
@@ -233,18 +233,31 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
 /**
  * Render Y axis title labels (used in DualAxes).
  *
+ * Titles are clipped by measured pixel width — not character count — so a label
+ * only loses characters when it would actually run past the axis margin and get
+ * cut off by the chart's overflow clip. The narrow glyphs in something like
+ * "N · K HLX" are measured as they render, so a terse title that fits is left
+ * intact. When a title is trimmed, the full text is kept as a hover <title> and
+ * a one-time console hint fires.
+ *
  * @param {d3.Selection} g       — target <g> element
  * @param {number}       W       — chart width
  * @param {string|null}  y1Title — right axis title
  * @param {string|null}  y2Title — left axis title
  * @param {object}       theme
+ * @param {object}       [opts]
+ * @param {number}       [opts.y1Avail] — px available for the right title (≈ margin.right)
+ * @param {number}       [opts.y2Avail] — px available for the left title (≈ margin.left)
+ * @param {number}       [opts.maxLength] — optional hard character cap (both axes)
  */
-export function renderAxisTitles(g, W, y1Title, y2Title, theme) {
+export function renderAxisTitles(g, W, y1Title, y2Title, theme, opts = {}) {
   const titles = [];
-  if (y2Title) titles.push({ axis: 'y2', text: y2Title });
-  if (y1Title) titles.push({ axis: 'y1', text: y1Title });
+  if (y2Title) titles.push({ axis: 'y2', full: String(y2Title), avail: opts.y2Avail });
+  if (y1Title) titles.push({ axis: 'y1', full: String(y1Title), avail: opts.y1Avail });
 
-  g.selectAll('.rc-axis-title')
+  const maxLen = Number.isFinite(opts.maxLength) ? opts.maxLength : Infinity;
+
+  const sel = g.selectAll('.rc-axis-title')
     .data(titles, d => d.axis)
     .join('text')
     .attr('class', d => `rc-axis-title rc-axis-title-${d.axis}`)
@@ -252,8 +265,30 @@ export function renderAxisTitles(g, W, y1Title, y2Title, theme) {
     .attr('y', -28)
     .attr('fill', theme.muted)
     .style('font-family', theme.font)
-    .style('font-size', theme.fontSize)
-    .text(d => d.text);
+    .style('font-size', theme.fontSize);
+
+  sel.each(function (d) {
+    const node  = this;
+    const avail = Number.isFinite(d.avail) ? d.avail : Infinity;
+
+    // Start from the full text (capped by maxLength if set), measure, then drop
+    // one trailing character at a time until the rendered glyphs fit `avail`.
+    let text = d.full.length > maxLen ? d.full.slice(0, Math.max(1, maxLen - 1)) + '…' : d.full;
+    node.textContent = text;
+
+    while (node.getComputedTextLength() > avail) {
+      const core = text.endsWith('…') ? text.slice(0, -1) : text;
+      if (core.length <= 1) break;
+      text = core.slice(0, -1).trimEnd() + '…';
+      node.textContent = text;
+    }
+
+    d3.select(node).selectAll('title').remove();
+    if (text !== d.full) {
+      warnAxisTitleClipped(d.full);
+      d3.select(node).append('title').text(d.full);
+    }
+  });
 }
 
 // ─── Line animation ───────────────────────────────────────────────────────────

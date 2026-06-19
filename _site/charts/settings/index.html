@@ -444,9 +444,9 @@
             <td>Always prefixed <code>Source:</code> and written in Title Case — <code>'Source: Internal Accounting'</code>, <code>'Source: Synthetic Demo Data'</code>.</td>
         </tr>
         <tr>
-            <td>editorial / caveat text</td>
-            <td>Interpretation, disclaimers.</td>
-            <td>Belongs in the prose <em>around</em> the chart, not in ad-hoc markup glued under it. An in-component slot for caveats (<code>note</code>) is on the <a href="/charts/backlog/">backlog</a>; until it ships, keep this text in your surrounding copy.</td>
+            <td><code>note</code></td>
+            <td>Interpretation, disclaimers, caveats.</td>
+            <td>One or two sentences of editorial context, rendered in muted type below the source. Use this instead of gluing a stray <code>&lt;div&gt;</code> under the chart container — same as the other slots, the component owns the placement and styling.</td>
         </tr>
     </tbody>
 </table>
@@ -526,12 +526,28 @@
 <tbody>
 <tr>
 <td><code>source</code></td>
+<td>string | <code>{ text, href }</code> | array | HTMLElement</td>
+<td>Rendered as a <code>&lt;cite&gt;</code> below the chart. Great for data attribution. Pass <code>{ text, href }</code> to make it a link, or an <strong>array of parts</strong> to mix several links and plain text on one line — see below.</td>
+</tr>
+<tr>
+<td><code>note</code></td>
 <td>string | HTMLElement</td>
-<td>Rendered as a <code>&lt;cite&gt;</code> below the chart. Great for data attribution.</td>
+<td>Rendered as a <code>&lt;p class=&quot;rc-chart-note&quot;&gt;</code> below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container.</td>
 </tr>
 </tbody>
 </table>
-<pre class="text-content-caption"><code>source: 'Source: The Truth'</code></pre>
+<pre class="text-content-caption"><code>source: 'Source: The Truth',
+note:   'Figures are unaudited and restated monthly.'</code></pre>
+<p>A single linked source:</p>
+<pre class="text-content-caption"><code>source: { text: 'Source: Bloomberg', href: 'https://bloomberg.com' }</code></pre>
+<p>Multiple sources — some linked, some not. Pass an array of parts: a string renders as plain text, a <code>{ text, href }</code> object as a link (in the standard blue, opening in a new tab). Array sources wrap instead of truncating, so every attribution stays visible.</p>
+<pre class="text-content-caption"><code>source: [
+  'Source: ',
+  { text: 'NASDAQ',    href: 'https://nasdaq.com' },
+  ', ',
+  { text: 'Bloomberg', href: 'https://bloomberg.com' },
+  ', Internal calculations',     <span class="code-comment">// plain, no link</span>
+]</code></pre>
 <h2>Layout</h2>
 <table>
 <thead>

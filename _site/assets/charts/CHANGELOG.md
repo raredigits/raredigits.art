@@ -18,9 +18,24 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.7] — 2026-06-19 — Footnotes
+
+Finishes the chart footer. Two new attribution slots — an editorial `note` and a linkable, multi-part `source` — so the interpretive line and the data credits live inside the component instead of as hand-built markup glued around it. Plus a set of edge-rendering fixes (axis titles, web-font timing, flush bar labels) that surfaced while wiring a real client chart.
+
 ### Added
 
+- **`source` accepts links and multi-part attribution** (`src/core/Chart.js` → `_renderAttribution`, `rare-charts.css`). Beyond a plain string, `source` now takes `{ text, href }` (a single linked attribution) or an **array of parts** — strings render as plain text, `{ text, href }` objects as links — so a footer can mix several linked and unlinked sources on one line (e.g. `Source: NASDAQ, Bloomberg, Internal calculations` with the first two linked). Links inherit the source text color (set apart by an underline, so they adapt to light/dark theme), open in a new tab with `rel="noopener noreferrer"`, and an array source wraps instead of truncating so every attribution stays visible. String and `HTMLElement` sources are unchanged. Flows through `MultiChart`'s shared footer. Removed from the [backlog](https://raredigits.art/charts/backlog/).
+- **`note` text slot on every chart** (`src/core/Chart.js`, `rare-charts.css`). A new footer option renders a `<p class="rc-chart-note">` below the source line in `theme.muted`, for disclaimers, data caveats, and editorial context. Accepts a string or an `HTMLElement`. This was the recurring anti-pattern the settings page warned about — interpretive captions hand-built as a stray `<div>` glued under the chart container — now an in-component slot the chart owns. Long notes wrap (including unbroken tokens like URLs, via `overflow-wrap`) and the plot shrinks to keep the note inside the card rather than overflowing it. Also flows through `MultiChart`'s shared footer. Documented at [`/charts/settings/`](https://raredigits.art/charts/settings/); removed from the [backlog](https://raredigits.art/charts/backlog/).
 - **Machine-readable bundle header + `RareCharts.VERSION`** (`src/index.js`, build banner in `package.json`). The minified bundle is opaque to anyone — human or LLM — handed only the file. The header now states the global, the `new RareCharts.<Type>(selector, options).setData(data)` construction pattern, the full list of chart classes, the container requirement, that d3/CSS are bundled, and that external data loads via the `fromJson`/`fromCsv`/`fromApi`/`fromArray` adapters — so consumers stop guessing class names or hardcoding structure. `VERSION` is also exported as a runtime constant for build identification. Pairs with the text-slot conventions added to [`/charts/settings/`](https://raredigits.art/charts/settings/).
+
+### Changed
+
+- **Axis titles clip to their margin instead of running off the chart** (`src/core/renderHelpers.js` → `renderAxisTitles`, `src/charts/DualAxes.js`, `src/core/utils.js` → `warnAxisTitleClipped`). `y1Title` / `y2Title` are now measured by rendered pixel width against the available axis margin (its exact overflow-clip boundary) and trimmed with an ellipsis only when they would actually be cut off — narrow glyphs in a terse title like `N · K HLX`, and the uppercase transform applied via CSS, are accounted for as they render, so a label that fits (e.g. `Inflows`) is left intact. The full text is kept as a hover `<title>`, a one-time console hint fires, and `axisTitleMaxLength` caps the length explicitly.
+
+### Fixed
+
+- **Horizontal bar value-axis end labels no longer clip at the chart edge** (`src/charts/Bar.js`). When the value axis sits flush against the card (`margin.left` / `right` = 0), the centered first/last tick label (e.g. `0`) was half-cut by the card's overflow clip. The first label is now anchored `start` and the last `end`, so both sit fully inside the plot while the bars stay flush.
+- **Text-dependent layout now settles after the web font loads** (`src/core/Chart.js`). First paint can happen before the bundled font (Fira Sans) finishes loading, so measurements taken against the wider fallback font were wrong — axis titles that fit were trimmed, X-axis labels over-thinned, end-label boxes mis-sized. Each chart now re-renders once on `document.fonts.ready`, so these measurements are correct without waiting for a resize. The re-render does not replay entry animations.
 
 ## [v0.9.6] — 2026-06-14 — Confidence Bands
 
