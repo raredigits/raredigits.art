@@ -3,8 +3,21 @@
 Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The library follows semantic versioning.</p>
 <p>Roadmap and planned features: <a href="https://raredigits.art/charts/backlog/">raredigits.art/charts/backlog</a>.</p>
 <p>This file begins tracking at <code>v0.9.6</code>. Earlier versions were released without an itemized changelog.</p>
+<blockquote>
+<p><strong>Release checklist — the version is stamped in three places and they must move together when cutting a tag:</strong></p>
+<ol>
+<li><code>VERSION</code> constant in <code>assets/charts/src/index.js</code></li>
+<li>the build banner string in <code>package.json</code> (3 esbuild scripts: <code>charts:build</code>, <code>charts:build:min</code>, <code>charts:watch</code>)</li>
+<li><code>_data/versions.json</code> (<code>charts</code>) — drives the docs version label and the CDN pin</li>
+</ol>
+<p>Then rebuild both bundles (<code>npm run charts:build &amp;&amp; npm run charts:build:min</code>) so the banner is regenerated. Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header too.</p>
+</blockquote>
 <hr>
 <h2>[Unreleased]</h2>
+<h3>Added</h3>
+<ul>
+<li><strong>Machine-readable bundle header + <code>RareCharts.VERSION</code></strong> (<code>src/index.js</code>, build banner in <code>package.json</code>). The minified bundle is opaque to anyone — human or LLM — handed only the file. The header now states the global, the <code>new RareCharts.&lt;Type&gt;(selector, options).setData(data)</code> construction pattern, the full list of chart classes, the container requirement, that d3/CSS are bundled, and that external data loads via the <code>fromJson</code>/<code>fromCsv</code>/<code>fromApi</code>/<code>fromArray</code> adapters — so consumers stop guessing class names or hardcoding structure. <code>VERSION</code> is also exported as a runtime constant for build identification. Pairs with the text-slot conventions added to <a href="https://raredigits.art/charts/settings/"><code>/charts/settings/</code></a>.</li>
+</ul>
 <h2>[v0.9.6] — 2026-06-14 — Confidence Bands</h2>
 <p>Adds a band (confidence-ribbon) primitive to <code>Line</code> and the supporting legend and tooltip work to make it readable. Targeted at forecasts and any figure where a single line would overstate precision. Also corrects two <code>strokeDash</code> defects that were documented but didn't work.</p>
 <h3>Added</h3>

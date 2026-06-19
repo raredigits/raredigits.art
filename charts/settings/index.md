@@ -10,6 +10,65 @@ Every chart type in RareCharts extends a shared base class. That means there's a
 
 This page documents those shared options. Chart-specific options (axis formatting, link types, bar orientation, etc.) are documented on each chart's own page.
 
+## Anatomy — the text slots
+
+Every piece of text around a chart — the headline, the explanatory line, the legend, the attribution — is an **option you pass to the constructor**. The component renders it, in the system's typography and spacing, in the right place. You do not hand-build a title, a source line, or a caption in your own markup around the chart container. Feed the options and let the chart own the layout.
+
+This matters because hardcoded structure drifts. A title written as a full sentence, a source without the `Source:` framing, an interpretive caption bolted on as a stray `<div>` — each one is a chart that no longer looks like the rest of the document. The slots below exist so the same data always reads the same way.
+
+Each slot has a job. Use the right one and the chart composes correctly on its own.
+
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Slot</th>
+            <th>What it carries</th>
+            <th>Content rule</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>title</code></td>
+            <td>The headline — <em>what</em> the chart is.</td>
+            <td>A short label in Title Case, roughly two to five words ("Revenue Dynamics"). Not a sentence. Never spell out the encoding here — <code>"(bars)"</code> / <code>"(line)"</code> belong to the legend, not the title.</td>
+        </tr>
+        <tr>
+            <td><code>subtitle</code></td>
+            <td>The explanatory line — <em>what against what</em>.</td>
+            <td>One sentence. The place for the full description, the units, and the timeframe that does not fit in a headline.</td>
+        </tr>
+        <tr>
+            <td><code>legend</code></td>
+            <td>Series identity <em>and</em> mark.</td>
+            <td>Identifies each series and which mark it uses — <code>type: 'bar'</code> renders a square dot, anything else a line. This is where "which one is the bars" is communicated. See <strong>Legend format</strong> below.</td>
+        </tr>
+        <tr>
+            <td><code>source</code></td>
+            <td>Attribution.</td>
+            <td>Always prefixed <code>Source:</code> and written in Title Case — <code>'Source: Internal Accounting'</code>, <code>'Source: Synthetic Demo Data'</code>.</td>
+        </tr>
+        <tr>
+            <td>editorial / caveat text</td>
+            <td>Interpretation, disclaimers.</td>
+            <td>Belongs in the prose <em>around</em> the chart, not in ad-hoc markup glued under it. An in-component slot for caveats (<code>note</code>) is on the <a href="/charts/backlog/">backlog</a>; until it ships, keep this text in your surrounding copy.</td>
+        </tr>
+    </tbody>
+</table>
+
+A correctly composed header and footer, then, is just options:
+
+<pre class="text-content-caption"><code>new RareCharts.DualAxes('#chart', {
+  title:    'Revenue Dynamics',
+  subtitle: 'Monthly revenue against year-over-year growth',
+  source:   'Source: Internal Accounting',
+  legend: [
+    { label: 'Revenue',    color: '#4f5be0', type: 'bar' },
+    { label: 'YoY growth', color: '#e0564f' },
+  ],
+}).setData(series);</code></pre>
+
+The reference for each slot's exact type and behavior follows below.
+
 ## The constructor
 
 All charts are created the same way:
