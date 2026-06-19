@@ -50,8 +50,10 @@ Pin to a specific version to avoid unexpected updates:
 | `RareCharts.Donut` | Part-to-whole with center label |
 | `RareCharts.Pie` | Pie chart alias for Donut with `innerRadius: 0` |
 | `RareCharts.Gauge` | Progress toward a target |
-| `RareCharts.Graph` | Force-directed network visualization |
+| `RareCharts.Graph` | Force-directed network visualization — **experimental** ⚠️ |
 | `RareCharts.Map` | Choropleth and region-highlight geographic maps |
+
+> ⚠️ **`Graph` is experimental** and is **not covered by the 1.0 stability guarantee**. Its layout, rendering, and options may change without a major-version bump. A rework is planned after 1.0.
 
 ## Documentation
 

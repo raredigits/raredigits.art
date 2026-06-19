@@ -37,6 +37,7 @@ import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { Chart } from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
+import { applySvgA11y } from '../core/renderHelpers.js';
 
 export class Map extends Chart {
   constructor(selector, options = {}) {
@@ -81,6 +82,7 @@ export class Map extends Chart {
       .attr('class', 'rc-map-svg')
       .style('display', 'block')
       .style('overflow', 'hidden');
+    applySvgA11y(this.svg, this.options);
 
     if (this._footerEl && this._footerEl.parentNode === this.container) {
       this.container.insertBefore(this.svg.node(), this._footerEl);

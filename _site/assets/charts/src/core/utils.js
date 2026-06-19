@@ -330,6 +330,34 @@ export function normalizeAnnotations(list) {
     .filter(Boolean);
 }
 
+// ─── Motion / reduced-motion ───────────────────────────────────────────────────
+
+/**
+ * Whether the user has asked the OS to minimize motion
+ * (`prefers-reduced-motion: reduce`). Safe in non-browser/SSR contexts
+ * (11ty build, tests) where `window`/`matchMedia` are absent — returns false.
+ *
+ * @returns {boolean}
+ */
+export function prefersReducedMotion() {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+/**
+ * Gate an animation duration on the reduced-motion preference: returns the
+ * given duration normally, or 0 when the user prefers reduced motion (so a
+ * d3 transition resolves instantly instead of animating). Pass every
+ * chart's animation duration through this before handing it to a transition.
+ *
+ * @param {number} ms — the desired duration in milliseconds
+ * @returns {number}
+ */
+export function motionDuration(ms) {
+  return prefersReducedMotion() ? 0 : ms;
+}
+
 // ─── Ease ────────────────────────────────────────────────────────────────────
 
 export function resolveEase(name) {

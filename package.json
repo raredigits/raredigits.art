@@ -17,11 +17,13 @@
     "sass-watch-readable": "npm run watch:css",
     "sass-watch-minified": "npm run watch:css:min",
     "sass-build": "npm run build:css",
-    "charts:build": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */\" --outfile=assets/charts/rare-charts.js",
-    "charts:build:min": "esbuild assets/charts/src/index.js --bundle --minify --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */\" --outfile=assets/charts/rare-charts.min.js",
-    "charts:watch": "esbuild assets/charts/src/index.js --bundle --format=iife --global-name=RareCharts --loader:.css=text --banner:js=\"/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */\" --outfile=assets/charts/rare-charts.js --watch",
+    "charts:build": "node scripts/build-charts.mjs",
+    "charts:build:min": "node scripts/build-charts.mjs",
+    "charts:watch": "node scripts/build-charts.mjs --watch",
     "eleventy-serve": "eleventy --serve",
-    "pagefind:build": "pagefind --site _site"
+    "pagefind:build": "pagefind --site _site",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -29,7 +31,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/raredigits/raredigits.art/issues"
   },
@@ -39,6 +41,7 @@
     "@11ty/eleventy": "^3.1.5",
     "d3": "^7.9.0",
     "esbuild": "^0.28.0",
+    "jsdom": "^29.1.1",
     "npm-run-all": "^4.1.5",
     "pagefind": "^1.5.2",
     "postcss": "^8.5.14",
@@ -47,6 +50,7 @@
     "stylelint": "^16.26.1",
     "stylelint-config-standard-scss": "^16.0.0",
     "topojson-client": "^3.1.0",
+    "vitest": "^4.1.9",
     "world-atlas": "^2.0.2"
   }
 }

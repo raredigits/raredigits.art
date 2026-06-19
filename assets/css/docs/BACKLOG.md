@@ -1,6 +1,6 @@
 # Rare Styles — Backlog & Roadmap
 
-**Current version:** resolved from [`_data/versions.json`](../../../_data/versions.json) → `styles`. Do not hardcode version numbers in this header — they rot.
+**Current version:** resolved from [`_data/versions.js`](../../../_data/versions.js) → `styles`. Do not hardcode version numbers in this header — they rot.
 **Public release target:** `1.0.0`
 
 **Positioning:** `Rare Styles` is a narrow professional CSS library for clarity-first longreads and decision-first data views. It is not a general-purpose CSS framework and not a Tailwind/Bootstrap competitor.
@@ -25,7 +25,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 ## Planning note
 
-- Source of truth for the current released library version: `_data/versions.json` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
+- Source of truth for the current released library version: `_data/versions.js` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
 - Current released library version: `v0.6.15` (`Audit Hotfixes & Post-Harvest Cleanup`) — bug-fix follow-up on top of `v0.6.14` (`Cross-Project Enrichment`, manifest [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md)). Changes recorded in [`Changelog.md`](./Changelog.md).
 - Current working release: `v0.6.16` — scripts audit and CSS↔`/scripts/` contract freeze.
 - Next release after that: `v0.6.17` — docs/examples migration off GitHub Pages URLs, downstream CDN cutover, and Pages cleanup.
@@ -353,7 +353,7 @@ Per the **Documentation-driven audit policy** (see top of this doc). The corresp
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current released snapshot (version per `_data/versions.json`), switch docs/examples to the latest tagged CDN target, and announce the old URL as deprecated. | S |
+| `CSS-T00` | chore | Migrate consumers off `https://raredigits.github.io/rare-styles/rare.min.css` (mutable, no CDN, no SRI) to a versioned CDN URL. Tag the current released snapshot (version per `_data/versions.js`), switch docs/examples to the latest tagged CDN target, and announce the old URL as deprecated. | S |
 
 ---
 

@@ -506,3 +506,16 @@
 .price-chart-stat-value {
   font-variant-numeric: tabular-nums;
 }
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────────
+   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.
+   Entry/update motion driven by D3 (JS) is gated separately via
+   motionDuration() in core/utils.js. */
+@media (prefers-reduced-motion: reduce) {
+  .rc-chart,
+  .rc-chart * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

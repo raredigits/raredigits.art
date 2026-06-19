@@ -6,6 +6,7 @@
 // IMPORTANT: imports assume esbuild is configured to load .css as text.
 // CLI flag: --loader:.css=text  or  build config: loader: { '.css': 'text' }
 import baseCssText       from '../rare-charts.css';
+import versionInfo       from './version.json';
 
 function injectCssOnce(id, cssText) {
   if (typeof document === 'undefined') return;
@@ -19,10 +20,11 @@ function injectCssOnce(id, cssText) {
 injectCssOnce('rc-base-styles',        baseCssText);
 
 // Public docs URL and version for CDN consumers and console discovery.
-// VERSION is stamped by hand at release — keep it in sync with the build
-// banner (package.json) and _data/versions.json. See CHANGELOG release checklist.
+// VERSION has a single source of truth: assets/charts/src/version.json.
+// The build banner (scripts/build-charts.mjs) and the docs label
+// (_data/versions.js) read the same file — bump the version there only.
 export const DOCS_URL = 'https://raredigits.art/charts';
-export const VERSION  = 'v0.9.7';
+export const VERSION  = versionInfo.version;
 
 export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';

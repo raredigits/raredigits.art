@@ -62,7 +62,7 @@ import * as d3 from 'd3';
 import { Chart }                  from '../core/Chart.js';
 import { Tooltip }                from '../core/Tooltip.js';
 import { Crosshair }              from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations, motionDuration } from '../core/utils.js';
 import { linePath, areaPath }     from '../core/seriesPath.js';
 import {
   renderGrid,
@@ -70,6 +70,7 @@ import {
   renderAxisX,
   renderAxisYRight,
   renderAxisYLeft,
+  applySvgA11y,
   renderEndLabels,
   renderAxisTitles,
   animateLines,
@@ -155,6 +156,7 @@ export class DualAxes extends Chart {
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%');
+    applySvgA11y(this.svg, this.options);
 
     const { left, top } = this.margin;
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
@@ -321,7 +323,7 @@ export class DualAxes extends Chart {
 
     // Animation
     const animate  = (o.animate ?? true) && !this._didAnimateIn;
-    const duration = o.duration ?? 650;
+    const duration = motionDuration(o.duration ?? 650);
     const ease     = resolveEase(o.ease ?? 'cubicOut');
 
     // Curve / dash options

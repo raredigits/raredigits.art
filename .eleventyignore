@@ -1,5 +1,9 @@
 assets/css/rare.css
 assets/css/docs/
 assets/charts/README.md
+charts/ROADMAP-INTERNAL.md
+charts/API-INVENTORY-INTERNAL.md
+test/
+vitest.config.js
 .claude/
 _temp/

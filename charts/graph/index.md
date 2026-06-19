@@ -8,6 +8,10 @@ permalink: '/charts/graph/'
 
 The Graph chart renders a force-directed network: nodes connected by typed links. Use it when the structure of relationships is the message — who is connected to whom, how tightly, and in what way.
 
+<div class="card text-content-caption card-dashboard-bordered">
+  <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. A rework is planned after 1.0. For production reporting, prefer the stable chart types.</p>
+</div>
+
 <div id="knowledge-graph"></div>
 
 ### How it works

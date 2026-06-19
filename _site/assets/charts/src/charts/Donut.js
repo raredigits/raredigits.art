@@ -27,7 +27,8 @@
 import * as d3 from 'd3';
 import { Chart }       from '../core/Chart.js';
 import { Tooltip }     from '../core/Tooltip.js';
-import { resolveEase } from '../core/utils.js';
+import { resolveEase, motionDuration } from '../core/utils.js';
+import { applySvgA11y } from '../core/renderHelpers.js';
 
 export class Donut extends Chart {
   constructor(selector, options = {}) {
@@ -61,6 +62,7 @@ export class Donut extends Chart {
       .append('svg')
       .attr('width',  '100%')
       .attr('height', '100%');
+    applySvgA11y(this.svg, this.options);
 
     this.gSlices = this.svg.append('g').attr('class', 'rc-donut-slices');
     this.gLabels = this.svg.append('g').attr('class', 'rc-donut-labels');
@@ -82,7 +84,7 @@ export class Donut extends Chart {
     const t = this.theme;
 
     const animate    = (o.animate ?? true) && !this._didAnimateIn;
-    const duration   = o.duration ?? 650;
+    const duration   = motionDuration(o.duration ?? 650);
     const ease       = resolveEase(o.ease ?? 'cubicOut');
 
     const isPie      = (o.innerRadius ?? 0.58) === 0;

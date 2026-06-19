@@ -22,7 +22,7 @@
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
-import { renderGrid, renderAxisX, renderAxisYRight, renderAnnotations } from '../core/renderHelpers.js';
+import { renderGrid, renderAxisX, renderAxisYRight, renderAnnotations, applySvgA11y } from '../core/renderHelpers.js';
 import { normalizeAnnotations } from '../core/utils.js';
 
 export class TimeSeries extends Chart {
@@ -87,6 +87,7 @@ export class TimeSeries extends Chart {
 
     this.svg = d3.select(this.container).append('svg')
       .attr('width', '100%').attr('height', '100%');
+    applySvgA11y(this.svg, this.options);
 
     const { top, left } = this.margin;
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);

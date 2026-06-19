@@ -7,16 +7,32 @@ Roadmap and planned features: [raredigits.art/charts/backlog](https://raredigits
 
 This file begins tracking at `v0.9.6`. Earlier versions were released without an itemized changelog.
 
-> **Release checklist — the version is stamped in three places and they must move together when cutting a tag:**
-> 1. `VERSION` constant in `assets/charts/src/index.js`
-> 2. the build banner string in `package.json` (3 esbuild scripts: `charts:build`, `charts:build:min`, `charts:watch`)
-> 3. `_data/versions.json` (`charts`) — drives the docs version label and the CDN pin
+> **Release checklist — the version has a single source of truth:**
+> 1. Bump `version` in `assets/charts/src/version.json`. That value flows automatically to the runtime `RareCharts.VERSION` (`src/index.js`), the build banner (`scripts/build-charts.mjs`), and the docs version label / CDN pin (`_data/versions.js`) — nothing else to edit.
+> 2. Rebuild the bundles: `npm run charts:build` (produces both `rare-charts.js` and `rare-charts.min.js`).
 >
-> Then rebuild both bundles (`npm run charts:build && npm run charts:build:min`) so the banner is regenerated. Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header too.
+> Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header in `scripts/build-charts.mjs`.
 
 ---
 
 ## [Unreleased]
+
+Path-to-1.0 groundwork (see internal roadmap). License, reduced-motion / accessibility chokepoints, and the test harness — plus a real adapter bug the new tests surfaced.
+
+### Added
+
+- **Test harness — Vitest + jsdom** (`vitest.config.js`, `test/`). First automated tests for the library (95 across 9 files). Pure-function coverage of `core/utils.js` (date parsing, timeframe extents, stroke-dash, marker paths, nice ticks, annotation normalization, motion gating), `core/seriesPath.js` (line/area/band geometry, baseline), `core/theme.js` (theme merge), `applySvgA11y`, and the `fromArray` adapter — plus render **smoke tests** that construct every chart type (`Line`, `Bar`, `Donut`, `Gauge`, `DualAxes`, `TimeSeries`, `Map` via inline GeoJSON, `MultiChart` with children), feed data, and assert a labelled `<svg>` renders without throwing, including edge data (empty/all-zero Donut, Gauge value parsing and clamping). jsdom layout/`ResizeObserver` shimmed in `test/setup.js`. Run with `npm test` (watch) or `npm run test:run`. Tests live in repo-root `test/`, outside the Eleventy-published `assets/charts/`.
+- **Reduced-motion support** (`src/core/utils.js` → `prefersReducedMotion()` / `motionDuration()`, `rare-charts.css`). Honours the OS `prefers-reduced-motion: reduce` setting: a CSS media query neutralizes in-chart CSS transitions, and `motionDuration()` collapses D3 animation durations to 0 so transitions resolve instantly. Applied to every animating chart type — `Bar`, `Line`, `DualAxes`, `Donut`, `Gauge` (`TimeSeries`, `Map`, `MultiChart` have no entry animation; `Graph` is experimental and excluded from 1.0).
+- **Accessible name on the chart SVG** (`src/core/renderHelpers.js` → `applySvgA11y()`). The root `<svg>` now carries `role="img"` and an `aria-label` derived from `title`/`subtitle` (or an explicit `ariaLabel` option), so screen readers announce the chart instead of skipping it. Applied to `Bar`, `Line`, `TimeSeries`, `DualAxes`, `Donut`, `Gauge`, `Map` (`MultiChart` delegates to its child charts; `Graph` is experimental and excluded from 1.0).
+
+### Fixed
+
+- **`fromArray` / data adapters kept rows with a non-finite `value`** (`src/adapters/index.js`). The filter `!row.value || isFinite(row.value)` let `NaN` through because `NaN` is falsy (`!NaN === true`), so a row whose value failed to parse (e.g. `+'x'`) was not dropped despite the documented intent. Now uses `row.value == null || Number.isFinite(+row.value)` — an absent value and a legitimate `0` are kept, a present-but-non-finite value is dropped. Surfaced by the new test suite.
+
+### Changed
+
+- **Single source of truth for the version** (`assets/charts/src/version.json`, `scripts/build-charts.mjs`, `_data/versions.js`). The version was stamped by hand in four places — `index.js`, the triplicated build banner across three `package.json` esbuild scripts, and `_data/versions.json` — which could (and did, per the old release checklist) drift. Now `version.json` is the only place to edit: the runtime `RareCharts.VERSION`, the build banner, and the docs label all read from it. The build moved from inline `esbuild` CLI calls to a small Node script (`scripts/build-charts.mjs`) that composes the banner once and emits both bundles; `_data/versions.json` became `_data/versions.js`. No change to the public API or bundle output.
+- **License field corrected to MIT** (`package.json`). Was `ISC`, contradicting the `LICENSE` file and README which both state MIT.
 
 ## [v0.9.7] — 2026-06-19 — Footnotes
 
