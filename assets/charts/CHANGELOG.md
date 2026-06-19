@@ -7,9 +7,20 @@ Roadmap and planned features: [raredigits.art/charts/backlog](https://raredigits
 
 This file begins tracking at `v0.9.6`. Earlier versions were released without an itemized changelog.
 
+> **Release checklist — the version is stamped in three places and they must move together when cutting a tag:**
+> 1. `VERSION` constant in `assets/charts/src/index.js`
+> 2. the build banner string in `package.json` (3 esbuild scripts: `charts:build`, `charts:build:min`, `charts:watch`)
+> 3. `_data/versions.json` (`charts`) — drives the docs version label and the CDN pin
+>
+> Then rebuild both bundles (`npm run charts:build && npm run charts:build:min`) so the banner is regenerated. Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header too.
+
 ---
 
 ## [Unreleased]
+
+### Added
+
+- **Machine-readable bundle header + `RareCharts.VERSION`** (`src/index.js`, build banner in `package.json`). The minified bundle is opaque to anyone — human or LLM — handed only the file. The header now states the global, the `new RareCharts.<Type>(selector, options).setData(data)` construction pattern, the full list of chart classes, the container requirement, that d3/CSS are bundled, and that external data loads via the `fromJson`/`fromCsv`/`fromApi`/`fromArray` adapters — so consumers stop guessing class names or hardcoding structure. `VERSION` is also exported as a runtime constant for build identification. Pairs with the text-slot conventions added to [`/charts/settings/`](https://raredigits.art/charts/settings/).
 
 ## [v0.9.6] — 2026-06-14 — Confidence Bands
 

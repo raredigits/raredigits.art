@@ -1,4 +1,4 @@
-/*! RareCharts | Docs: https://raredigits.art/charts */
+/*! RareCharts v0.9.6 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -33,6 +33,7 @@ var RareCharts = (() => {
     Overview: () => Overview,
     Pie: () => Donut,
     TimeSeries: () => TimeSeries,
+    VERSION: () => VERSION,
     createTheme: () => createTheme,
     d3: () => src_exports,
     darkTheme: () => darkTheme,
@@ -20681,6 +20682,7 @@ var RareCharts = (() => {
   }
   injectCssOnce("rc-base-styles", rare_charts_default);
   var DOCS_URL = "https://raredigits.art/charts";
+  var VERSION = "v0.9.6";
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;
