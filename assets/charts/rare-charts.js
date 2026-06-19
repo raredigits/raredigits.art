@@ -48,515 +48,12 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = `@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap');
-
-/* RareCharts \u2014 charts.css
-   Structure and positioning.
-   Colors \u2014 via theme (JS), not CSS. */
-
-/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart {
-  --rc-font-family: "Fira Sans", sans-serif;
-  --rc-font-family-numeric: "Cousine", monospace;
-  --rc-font-size: 16px;
-  --rc-font-size-sm: 14px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.
-     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */
-  overflow: hidden;
-}
-
-.rc-chart > .rc-chart-header { order: 0; }
-.rc-graph-legend             { order: 2; }
-.rc-chart > svg              { order: 3; }
-.rc-chart > .rc-chart-navigator { order: 4; }
-.rc-chart > .rc-chart-footer { order: 5; }
-
-.rc-chart > svg {
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size);
-  overflow: visible; /* otherwise end labels and crosshair dots are clipped */
-  /* Let the plot shrink inside the fixed-height card so a tall footer (a long
-     source line or a multi-sentence note) never overflows and gets clipped \u2014
-     without min-height:0 a flex item refuses to shrink below its content. */
-  min-height: 0;
-}
-
-.rc-chart-header,
-.rc-chart-subtitle,
-.rc-legend,
-.rc-chart-source {
-  color: var(--primary-color);
-}
-
-/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "title range"
-    "subtitle range"
-    "legend legend";
-  column-gap: var(--space-md);
-  row-gap: var(--space-xs);
-  position: relative;
-  user-select: none;
-}
-
-.rc-chart-title {
-  grid-area: title;
-  min-width: 0;
-  margin: 0;
-  font-family: var(--rc-font-family);
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rc-chart-subtitle {
-  grid-area: subtitle;
-  min-width: 0;
-  font-size: var(--rc-font-size-sm);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart-footer {
-  user-select: none;
-}
-
-.rc-chart-source {
-  font-style: italic;
-  font-size: var(--rc-font-size-sm);
-  font-weight: initial;
-  margin: var(--space-sm) 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: left;
-}
-
-/* Links inside the source line \u2014 inherit the source text color, set apart by
-   the underline (so they adapt to light/dark theme automatically). */
-.rc-chart-source a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Multi-part (array) source: let it wrap so several attributions/links all
-   stay visible instead of being cut off by the single-line ellipsis. */
-.rc-chart-source--rich {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-}
-
-/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.
-   Wraps freely (unlike source) since it can be a sentence or two; color is
-   set from theme.muted in JS so it reads as secondary to the source. */
-.rc-chart-note {
-  font-size: var(--rc-font-size-sm);
-  font-weight: initial;
-  line-height: 1.4;
-  margin: var(--space-xs) 0 var(--space-sm);
-  text-align: left;
-  /* Long words / URLs break instead of pushing the note past the card edge. */
-  overflow-wrap: anywhere;
-}
-
-.rc-chart-source + .rc-chart-note {
-  margin-top: 0;
-}
-
-.rc-chart-navigator {
-  width: 100%;
-}
-
-.rc-chart-range-row {
-  grid-area: range;
-  justify-self: end;
-  align-self: start;
-  min-width: max-content;
-  padding-right: 60px;
-}
-
-/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-legend {
-  grid-area: legend;
-  padding: var(--space-sm) 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  font-size: var(--rc-font-size-sm);
-  user-select: none;
-}
-
-@media (max-width: 768px) {
-  .rc-chart-header {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "title"
-      "subtitle"
-      "range"
-      "legend";
-  }
-
-  .rc-chart-range-row {
-    justify-self: start;
-    min-width: 0;
-    padding-right: 0;
-  }
-}
-
-.rc-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  cursor: default;
-}
-
-/* Line \u2014 for line series */
-.rc-legend-line {
-  width: 16px;
-  height: 2px;
-  display: inline-block;
-  border-radius: 1px;
-  flex-shrink: 0;
-}
-
-/* Dashed line \u2014 for forecast / projected series */
-.rc-legend-line--dashed {
-  background-color: transparent;
-}
-
-/* Dot \u2014 for bar / donut / scatter */
-.rc-legend-dot {
-  width: var(--space-sm);
-  height: var(--space-sm);
-  display: inline-block;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
-.rc-legend-band {
-  width: var(--space-sm);
-  height: var(--space-sm);
-  display: inline-block;
-  border-radius: 2px;
-  opacity: 0.85;
-  flex-shrink: 0;
-}
-
-/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/* Only positioning and transition. */
-/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */
-
-.rc-tooltip {
-  position: absolute;
-  pointer-events: none;
-  padding: var(--space-sm) var(--space-md);
-  opacity: 0;
-  transition: opacity 0.1s;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.rc-tooltip.is-visible {
-  opacity: 0.9;
-}
-
-/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-/* Zero baseline \u2014 visible only when domain crosses zero */
-.rc-zero-line {
-  stroke-width: 1.5;
-  opacity: 0.9;
-}
-
-/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */
-.rc-band {
-  pointer-events: none;
-}
-
-/* Axis tick labels */
-.rc-axis text {
-  font-variant-numeric: tabular-nums;
-}
-
-/* Axis titles (used in DualAxes) */
-.rc-axis-title {
-  text-transform: uppercase;
-  dominant-baseline: hanging;
-}
-
-.rc-axis-title-y1 { text-anchor: start; }
-.rc-axis-title-y2 { text-anchor: end; }
-
-/* End labels \u2014 last-value labels on the right edge */
-.rc-end-label {
-  font-variant-numeric: tabular-nums;
-  background-color: var(--white);
-  padding: var(--space-xs);
-}
-
-/* Markers */
-.rc-marker-circle,
-.rc-marker-shape {
-  stroke-width: 1.5;
-}
-
-/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */
-.rc-annotation-line,
-.rc-annotation-range-edge,
-.rc-annotation-h-line,
-.rc-annotation-h-range-edge {
-  stroke-width: 1;
-}
-
-.rc-annotation-label,
-.rc-annotation-h-label {
-  font-size: var(--rc-font-size-sm);
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.rc-annotation-h-label {
-  dominant-baseline: text-after-edge;
-}
-
-/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/*
- * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
- * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended
- * before _initSVG runs). Explicit rows fix placement regardless of DOM order.
- */
-
-.rc-chart--legend-right {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */
-}
-
-/* Pin each element to its row \u2014 overrides DOM insertion order */
-.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
-.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
-.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }
-
-/* Aside spans the full chart block in column 2 */
-.rc-chart--legend-right > .rc-chart-legend-aside {
-  grid-column: 2;
-  grid-row: 1 / 5;
-  display: flex;
-  align-items: center;
-  padding-left: var(--space-lg);
-}
-
-/* Stack legend items vertically when in aside */
-.rc-chart-legend-aside .rc-legend {
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: 0;
-}
-
-/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-multichart-grid {
-  display: grid;
-  gap: var(--space-lg, 16px);
-  order: 1;   /* sits between header (0) and footer (3) in the flex column */
-}
-
-.rc-multichart-cell {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;    /* prevent grid blowout */
-  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */
-}
-
-/* The inner div that receives the child Chart instance.
-   Height is set inline by the child chart constructor \u2014 do not override with flex.
-   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */
-.rc-multichart-chart-wrapper {
-  min-width: 0;
-}
-
-.rc-multichart-chart-wrapper.rc-chart {
-  overflow: visible;
-}
-
-.rc-multichart-cell-title {
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm);
-  font-weight: bold;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: none;
-  margin-bottom: 4px;
-}
-
-/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-demo-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
-}
-
-.rc-demo-group {
-  width: 48%;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-sm);
-  padding: var(--space-sm);
-}
-
-.rc-demo-group-label {
-  padding-left: var(--space-sm);
-  font-size: var(--rc-font-size-sm);
-  text-transform: uppercase;
-  user-select: none;
-}
-
-.rc-demo-btn-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.rc-demo-btn {
-  background: none;
-  border: 1px solid var(--border-color, #ccc);
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm);
-  padding: 3px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  color: inherit;
-  transition: background 0.08s, border-color 0.08s, color 0.08s;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.rc-demo-btn:hover {
-  border-color: var(--text-color, #000);
-}
-
-.rc-demo-btn.is-active {
-  background: var(--text-color, #000);
-  border-color: var(--text-color, #000);
-  color: var(--bg-color, #fff);
-}
-
-@media  (max-width: 768px) {
-    .rc-demo-group {
-        width: 100%;
-    }
-}
-
-/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */
-
-.price-chart-header {
-  width: calc(100% - 60px);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
-.price-chart-ticker {
-  font-size: var(--font-size-xl);
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.price-chart-price {
-  font-size: var(--font-size-xl);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change {
-  font-size: var(--font-size-md);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change.up   { color: var(--positive-color, #389e0d); }
-.price-chart-change.down { color: var(--negative-color, #ff0000); }
-
-/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.price-chart-range-bar,
-.rc-chart-range-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  align-items: center;
-}
-
-.range-btn,
-.rc-range-btn {
-  background: none;
-  font-size: var(--rc-font-size-sm);
-  font-family: var(--rc-font-family);
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  cursor: pointer;
-  transition: background-color 0.1s, border-color 0.1s;
-  color: var(--text-color-light);
-}
-
-.range-btn:hover,
-.rc-range-btn:hover {
-  color: var(--primary-text-color);
-  border-color: var(--primary-color);
-}
-
-.range-btn.active,
-.rc-range-btn.active {
-  color: var(--primary-text-color);
-  background-color: var(--white);
-  border-color: var(--primary-color);
-}
-
-/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.price-chart-stats {
-  width: calc(100% - 56px);
-  margin-left: -8px;
-}
-
-.price-chart-stat {
-  padding: var(--space-xs) var(--space-md);
-  font-size: var(--rc-font-size-sm);
-}
-
-.price-chart-stat-label {
-  color: var(--muted-color, #666);
-}
-
-.price-chart-stat-value {
-  font-variant-numeric: tabular-nums;
-}
-`;
+  var rare_charts_default = '@import url(\'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap\');\n\n/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  --rc-font-family: "Fira Sans", sans-serif;\n  --rc-font-family-numeric: "Cousine", monospace;\n  --rc-font-size: 16px;\n  --rc-font-size-sm: 14px;\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.\n     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-chart-footer { order: 5; }\n\n.rc-chart > svg {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n  /* Let the plot shrink inside the fixed-height card so a tall footer (a long\n     source line or a multi-sentence note) never overflows and gets clipped \u2014\n     without min-height:0 a flex item refuses to shrink below its content. */\n  min-height: 0;\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  grid-template-areas:\n    "title range"\n    "subtitle range"\n    "legend legend";\n  column-gap: var(--space-md);\n  row-gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  grid-area: title;\n  min-width: 0;\n  margin: 0;\n  font-family: var(--rc-font-family);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  grid-area: subtitle;\n  min-width: 0;\n  font-size: var(--rc-font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* Links inside the source line \u2014 inherit the source text color, set apart by\n   the underline (so they adapt to light/dark theme automatically). */\n.rc-chart-source a {\n  color: inherit;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n/* Multi-part (array) source: let it wrap so several attributions/links all\n   stay visible instead of being cut off by the single-line ellipsis. */\n.rc-chart-source--rich {\n  white-space: normal;\n  overflow: visible;\n  text-overflow: clip;\n}\n\n/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.\n   Wraps freely (unlike source) since it can be a sentence or two; color is\n   set from theme.muted in JS so it reads as secondary to the source. */\n.rc-chart-note {\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  line-height: 1.4;\n  margin: var(--space-xs) 0 var(--space-sm);\n  text-align: left;\n  /* Long words / URLs break instead of pushing the note past the card edge. */\n  overflow-wrap: anywhere;\n}\n\n.rc-chart-source + .rc-chart-note {\n  margin-top: 0;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  grid-area: range;\n  justify-self: end;\n  align-self: start;\n  min-width: max-content;\n  padding-right: 60px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  grid-area: legend;\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--rc-font-size-sm);\n  user-select: none;\n}\n\n@media (max-width: 768px) {\n  .rc-chart-header {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      "title"\n      "subtitle"\n      "range"\n      "legend";\n  }\n\n  .rc-chart-range-row {\n    justify-self: start;\n    min-width: 0;\n    padding-right: 0;\n  }\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dashed line \u2014 for forecast / projected series */\n.rc-legend-line--dashed {\n  background-color: transparent;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */\n.rc-legend-band {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 2px;\n  opacity: 0.85;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */\n.rc-band {\n  pointer-events: none;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */\n.rc-annotation-line,\n.rc-annotation-range-edge,\n.rc-annotation-h-line,\n.rc-annotation-h-range-edge {\n  stroke-width: 1;\n}\n\n.rc-annotation-label,\n.rc-annotation-h-label {\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  pointer-events: none;\n}\n\n.rc-annotation-h-label {\n  dominant-baseline: text-after-edge;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 5;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--rc-font-size-sm);\n  font-family: var(--rc-font-family);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--rc-font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.\n   Entry/update motion driven by D3 (JS) is gated separately via\n   motionDuration() in core/utils.js. */\n@media (prefers-reduced-motion: reduce) {\n  .rc-chart,\n  .rc-chart * {\n    transition-duration: 0.01ms !important;\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n  }\n}\n';
+
+  // assets/charts/src/version.json
+  var version_default = {
+    version: "v0.9.7"
+  };
 
   // node_modules/d3/src/index.js
   var src_exports = {};
@@ -17962,6 +17459,12 @@ var RareCharts = (() => {
       };
     }).filter(Boolean);
   }
+  function prefersReducedMotion() {
+    return typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+  function motionDuration(ms) {
+    return prefersReducedMotion() ? 0 : ms;
+  }
   function resolveEase(name) {
     switch (name) {
       case "cubicInOut":
@@ -18567,6 +18070,13 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/core/renderHelpers.js
+  function applySvgA11y(svg2, options = {}) {
+    if (!svg2) return;
+    const explicit = typeof options.ariaLabel === "string" ? options.ariaLabel.trim() : "";
+    const parts = explicit ? [explicit] : [options.title, options.subtitle].filter((t) => typeof t === "string" && t.trim());
+    const label = parts.length ? parts.join(" \u2014 ") : "Chart";
+    svg2.attr("role", "img").attr("aria-label", label);
+  }
   function renderGrid(g, scale2, W, ticks2, theme, tickValues = null) {
     const axis2 = tickValues ? axisLeft(scale2).tickValues(tickValues).tickSize(-W).tickFormat("") : axisLeft(scale2).ticks(ticks2).tickSize(-W).tickFormat("");
     g.call(axis2).call((sel) => {
@@ -18901,6 +18411,7 @@ var RareCharts = (() => {
     _initSVG(tooltip) {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       const { left: left2, top: top2 } = this.margin;
       this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
@@ -18930,7 +18441,7 @@ var RareCharts = (() => {
       this._syncTimeframeButtons(fullExtent, viewExtent);
       this._syncNavigator();
       const animate = (o.animate ?? true) && !this._didAnimateIn;
-      const duration = o.duration ?? 650;
+      const duration = motionDuration(o.duration ?? 650);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const lineSeries = visibleSeries.filter((s2) => s2.type !== "band");
       const bandSeries = visibleSeries.filter((s2) => s2.type === "band");
@@ -19071,6 +18582,7 @@ var RareCharts = (() => {
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       const { top: top2, left: left2 } = this.margin;
       this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
       const clipId = "rc-clip-" + Math.random().toString(36).slice(2);
@@ -19262,6 +18774,7 @@ var RareCharts = (() => {
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       const { left: left2, top: top2 } = this.margin;
       this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
       this.gGrid = this.g.append("g");
@@ -19284,7 +18797,7 @@ var RareCharts = (() => {
       const t = this.theme;
       const horizontal = this.options.orientation === "horizontal";
       const animate = (this.options.animate ?? true) && !this._didAnimateIn;
-      const duration = this.options.duration ?? 500;
+      const duration = motionDuration(this.options.duration ?? 500);
       const stagger = this.options.stagger ?? 0;
       const ease = resolveEase(this.options.ease ?? "cubicOut");
       const barFill = this.options.barColor ?? t.accent;
@@ -19559,6 +19072,7 @@ var RareCharts = (() => {
     _initSVG(tooltip) {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       const { left: left2, top: top2 } = this.margin;
       this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
@@ -19655,7 +19169,7 @@ var RareCharts = (() => {
       this._syncTimeframeButtons(fullExtent, viewExtent);
       this._syncNavigator();
       const animate = (o.animate ?? true) && !this._didAnimateIn;
-      const duration = o.duration ?? 650;
+      const duration = motionDuration(o.duration ?? 650);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const defaultCurve = o.curve ?? "linear";
       const tension = o.curveTension ?? 0;
@@ -19790,6 +19304,7 @@ var RareCharts = (() => {
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       this.gSlices = this.svg.append("g").attr("class", "rc-donut-slices");
       this.gLabels = this.svg.append("g").attr("class", "rc-donut-labels");
       this.gCenter = this.svg.append("g").attr("class", "rc-donut-center");
@@ -19803,7 +19318,7 @@ var RareCharts = (() => {
       const o = this.options;
       const t = this.theme;
       const animate = (o.animate ?? true) && !this._didAnimateIn;
-      const duration = o.duration ?? 650;
+      const duration = motionDuration(o.duration ?? 650);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const isPie = (o.innerRadius ?? 0.58) === 0;
       const innerFrac = isPie ? 0 : o.innerRadius ?? 0.58;
@@ -19944,6 +19459,7 @@ var RareCharts = (() => {
     _initSVG() {
       this.container.style.height = this.options.height + "px";
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
       this.gArc = this.svg.append("g").attr("class", "rc-gauge-arc");
       this.gCenter = this.svg.append("g").attr("class", "rc-gauge-center");
     }
@@ -19959,7 +19475,7 @@ var RareCharts = (() => {
       const thickness = o.thickness ?? 0.18;
       const cornerR = o.cornerRadius ?? 6;
       const animate = (o.animate ?? true) && !this._didAnimateIn;
-      const duration = o.duration ?? 800;
+      const duration = motionDuration(o.duration ?? 800);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const trackColor = o.trackColor ?? t.grid;
       const fillColor = o.color ?? t.accent;
@@ -20570,6 +20086,7 @@ var RareCharts = (() => {
     _initSVG() {
       this.container.style.overflow = "hidden";
       this.svg = create_default("svg").attr("class", "rc-map-svg").style("display", "block").style("overflow", "hidden");
+      applySvgA11y(this.svg, this.options);
       if (this._footerEl && this._footerEl.parentNode === this.container) {
         this.container.insertBefore(this.svg.node(), this._footerEl);
       } else {
@@ -20794,7 +20311,7 @@ var RareCharts = (() => {
       return result;
     }).filter((row) => {
       const hasDate = !row.date || row.date instanceof Date && !isNaN(row.date);
-      const hasValue = !row.value || isFinite(row.value);
+      const hasValue = row.value == null || Number.isFinite(+row.value);
       return hasDate && hasValue;
     });
   }
@@ -20810,7 +20327,7 @@ var RareCharts = (() => {
   }
   injectCssOnce("rc-base-styles", rare_charts_default);
   var DOCS_URL = "https://raredigits.art/charts";
-  var VERSION = "v0.9.7";
+  var VERSION = version_default.version;
   function generateMockPrices(days = 365, startPrice = 150) {
     const data = [];
     let price = startPrice;

@@ -60,9 +60,11 @@ function applyMapping(rows, mapping) {
       return result;
     })
     .filter(row => {
-      // Drop rows with invalid date or value
-      const hasDate  = !row.date  || row.date  instanceof Date && !isNaN(row.date);
-      const hasValue = !row.value || isFinite(row.value);
+      // Drop rows with invalid date or value. Keep an absent value and a
+      // legitimate 0; drop a present-but-non-finite value (e.g. +'x' → NaN,
+      // which is falsy and previously slipped through the `!row.value` guard).
+      const hasDate  = !row.date  || row.date instanceof Date && !isNaN(row.date);
+      const hasValue = row.value == null || Number.isFinite(+row.value);
       return hasDate && hasValue;
     });
 }

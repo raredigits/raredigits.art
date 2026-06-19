@@ -32,7 +32,8 @@
 import * as d3 from 'd3';
 import { Chart }       from '../core/Chart.js';
 import { Tooltip }     from '../core/Tooltip.js';
-import { resolveEase } from '../core/utils.js';
+import { resolveEase, motionDuration } from '../core/utils.js';
+import { applySvgA11y } from '../core/renderHelpers.js';
 
 export class Gauge extends Chart {
   constructor(selector, options = {}) {
@@ -74,6 +75,7 @@ export class Gauge extends Chart {
       .append('svg')
       .attr('width',  '100%')
       .attr('height', '100%');
+    applySvgA11y(this.svg, this.options);
 
     this.gArc    = this.svg.append('g').attr('class', 'rc-gauge-arc');
     this.gCenter = this.svg.append('g').attr('class', 'rc-gauge-center');
@@ -94,7 +96,7 @@ export class Gauge extends Chart {
     const thickness  = o.thickness   ?? 0.18;
     const cornerR    = o.cornerRadius ?? 6;
     const animate    = (o.animate ?? true) && !this._didAnimateIn;
-    const duration   = o.duration ?? 800;
+    const duration   = motionDuration(o.duration ?? 800);
     const ease       = resolveEase(o.ease ?? 'cubicOut');
 
     const trackColor = o.trackColor ?? t.grid;

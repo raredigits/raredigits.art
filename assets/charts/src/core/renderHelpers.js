@@ -5,6 +5,30 @@
 import * as d3 from 'd3';
 import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js';
 
+// ─── Accessibility ─────────────────────────────────────────────────────────────
+
+/**
+ * Give an <svg> root an accessible name so assistive technology announces the
+ * chart instead of skipping it as an unlabeled graphic. Sets `role="img"` and
+ * an `aria-label` built from the chart's title/subtitle (or an explicit
+ * `ariaLabel` option), falling back to a generic "Chart".
+ *
+ * HTMLElement title/subtitle values are ignored here — only string slots
+ * contribute to the label. Call once at SVG creation.
+ *
+ * @param {d3.Selection} svg     — the root <svg> selection
+ * @param {object}       options — chart options (reads ariaLabel, title, subtitle)
+ */
+export function applySvgA11y(svg, options = {}) {
+  if (!svg) return;
+  const explicit = typeof options.ariaLabel === 'string' ? options.ariaLabel.trim() : '';
+  const parts = explicit
+    ? [explicit]
+    : [options.title, options.subtitle].filter(t => typeof t === 'string' && t.trim());
+  const label = parts.length ? parts.join(' — ') : 'Chart';
+  svg.attr('role', 'img').attr('aria-label', label);
+}
+
 // ─── Grid ────────────────────────────────────────────────────────────────────
 
 /**

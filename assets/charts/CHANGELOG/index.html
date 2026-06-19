@@ -4,16 +4,31 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <p>Roadmap and planned features: <a href="https://raredigits.art/charts/backlog/">raredigits.art/charts/backlog</a>.</p>
 <p>This file begins tracking at <code>v0.9.6</code>. Earlier versions were released without an itemized changelog.</p>
 <blockquote>
-<p><strong>Release checklist — the version is stamped in three places and they must move together when cutting a tag:</strong></p>
+<p><strong>Release checklist — the version has a single source of truth:</strong></p>
 <ol>
-<li><code>VERSION</code> constant in <code>assets/charts/src/index.js</code></li>
-<li>the build banner string in <code>package.json</code> (3 esbuild scripts: <code>charts:build</code>, <code>charts:build:min</code>, <code>charts:watch</code>)</li>
-<li><code>_data/versions.json</code> (<code>charts</code>) — drives the docs version label and the CDN pin</li>
+<li>Bump <code>version</code> in <code>assets/charts/src/version.json</code>. That value flows automatically to the runtime <code>RareCharts.VERSION</code> (<code>src/index.js</code>), the build banner (<code>scripts/build-charts.mjs</code>), and the docs version label / CDN pin (<code>_data/versions.js</code>) — nothing else to edit.</li>
+<li>Rebuild the bundles: <code>npm run charts:build</code> (produces both <code>rare-charts.js</code> and <code>rare-charts.min.js</code>).</li>
 </ol>
-<p>Then rebuild both bundles (<code>npm run charts:build &amp;&amp; npm run charts:build:min</code>) so the banner is regenerated. Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header too.</p>
+<p>Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header in <code>scripts/build-charts.mjs</code>.</p>
 </blockquote>
 <hr>
 <h2>[Unreleased]</h2>
+<p>Path-to-1.0 groundwork (see internal roadmap). License, reduced-motion / accessibility chokepoints, and the test harness — plus a real adapter bug the new tests surfaced.</p>
+<h3>Added</h3>
+<ul>
+<li><strong>Test harness — Vitest + jsdom</strong> (<code>vitest.config.js</code>, <code>test/</code>). First automated tests for the library (95 across 9 files). Pure-function coverage of <code>core/utils.js</code> (date parsing, timeframe extents, stroke-dash, marker paths, nice ticks, annotation normalization, motion gating), <code>core/seriesPath.js</code> (line/area/band geometry, baseline), <code>core/theme.js</code> (theme merge), <code>applySvgA11y</code>, and the <code>fromArray</code> adapter — plus render <strong>smoke tests</strong> that construct every chart type (<code>Line</code>, <code>Bar</code>, <code>Donut</code>, <code>Gauge</code>, <code>DualAxes</code>, <code>TimeSeries</code>, <code>Map</code> via inline GeoJSON, <code>MultiChart</code> with children), feed data, and assert a labelled <code>&lt;svg&gt;</code> renders without throwing, including edge data (empty/all-zero Donut, Gauge value parsing and clamping). jsdom layout/<code>ResizeObserver</code> shimmed in <code>test/setup.js</code>. Run with <code>npm test</code> (watch) or <code>npm run test:run</code>. Tests live in repo-root <code>test/</code>, outside the Eleventy-published <code>assets/charts/</code>.</li>
+<li><strong>Reduced-motion support</strong> (<code>src/core/utils.js</code> → <code>prefersReducedMotion()</code> / <code>motionDuration()</code>, <code>rare-charts.css</code>). Honours the OS <code>prefers-reduced-motion: reduce</code> setting: a CSS media query neutralizes in-chart CSS transitions, and <code>motionDuration()</code> collapses D3 animation durations to 0 so transitions resolve instantly. Applied to every animating chart type — <code>Bar</code>, <code>Line</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code> (<code>TimeSeries</code>, <code>Map</code>, <code>MultiChart</code> have no entry animation; <code>Graph</code> is experimental and excluded from 1.0).</li>
+<li><strong>Accessible name on the chart SVG</strong> (<code>src/core/renderHelpers.js</code> → <code>applySvgA11y()</code>). The root <code>&lt;svg&gt;</code> now carries <code>role=&quot;img&quot;</code> and an <code>aria-label</code> derived from <code>title</code>/<code>subtitle</code> (or an explicit <code>ariaLabel</code> option), so screen readers announce the chart instead of skipping it. Applied to <code>Bar</code>, <code>Line</code>, <code>TimeSeries</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code>, <code>Map</code> (<code>MultiChart</code> delegates to its child charts; <code>Graph</code> is experimental and excluded from 1.0).</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong><code>fromArray</code> / data adapters kept rows with a non-finite <code>value</code></strong> (<code>src/adapters/index.js</code>). The filter <code>!row.value || isFinite(row.value)</code> let <code>NaN</code> through because <code>NaN</code> is falsy (<code>!NaN === true</code>), so a row whose value failed to parse (e.g. <code>+'x'</code>) was not dropped despite the documented intent. Now uses <code>row.value == null || Number.isFinite(+row.value)</code> — an absent value and a legitimate <code>0</code> are kept, a present-but-non-finite value is dropped. Surfaced by the new test suite.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>Single source of truth for the version</strong> (<code>assets/charts/src/version.json</code>, <code>scripts/build-charts.mjs</code>, <code>_data/versions.js</code>). The version was stamped by hand in four places — <code>index.js</code>, the triplicated build banner across three <code>package.json</code> esbuild scripts, and <code>_data/versions.json</code> — which could (and did, per the old release checklist) drift. Now <code>version.json</code> is the only place to edit: the runtime <code>RareCharts.VERSION</code>, the build banner, and the docs label all read from it. The build moved from inline <code>esbuild</code> CLI calls to a small Node script (<code>scripts/build-charts.mjs</code>) that composes the banner once and emits both bundles; <code>_data/versions.json</code> became <code>_data/versions.js</code>. No change to the public API or bundle output.</li>
+<li><strong>License field corrected to MIT</strong> (<code>package.json</code>). Was <code>ISC</code>, contradicting the <code>LICENSE</code> file and README which both state MIT.</li>
+</ul>
 <h2>[v0.9.7] — 2026-06-19 — Footnotes</h2>
 <p>Finishes the chart footer. Two new attribution slots — an editorial <code>note</code> and a linkable, multi-part <code>source</code> — so the interpretive line and the data credits live inside the component instead of as hand-built markup glued around it. Plus a set of edge-rendering fixes (axis titles, web-font timing, flush bar labels) that surfaced while wiring a real client chart.</p>
 <h3>Added</h3>

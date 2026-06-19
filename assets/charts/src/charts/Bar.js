@@ -31,8 +31,8 @@
 import * as d3 from 'd3';
 import { Chart }              from '../core/Chart.js';
 import { Tooltip }            from '../core/Tooltip.js';
-import { parseDate, resolveEase, niceTickValues } from '../core/utils.js';
-import { renderGrid }         from '../core/renderHelpers.js';
+import { parseDate, resolveEase, niceTickValues, motionDuration } from '../core/utils.js';
+import { renderGrid, applySvgA11y } from '../core/renderHelpers.js';
 
 export class Bar extends Chart {
   constructor(selector, options = {}) {
@@ -93,6 +93,7 @@ export class Bar extends Chart {
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%');
+    applySvgA11y(this.svg, this.options);
 
     const { left, top } = this.margin;
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
@@ -124,7 +125,7 @@ export class Bar extends Chart {
     const t          = this.theme;
     const horizontal = this.options.orientation === 'horizontal';
     const animate    = (this.options.animate ?? true) && !this._didAnimateIn;
-    const duration   = this.options.duration ?? 500;
+    const duration   = motionDuration(this.options.duration ?? 500);
     const stagger    = this.options.stagger  ?? 0;
     const ease       = resolveEase(this.options.ease ?? 'cubicOut');
     const barFill    = this.options.barColor ?? t.accent;
