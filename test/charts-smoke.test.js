@@ -48,7 +48,7 @@ describe('chart render smoke tests', () => {
   });
 
   it('Bar (horizontal)', () => {
-    expect(() => new Bar('#chart', { title: 'BarH', height: 300, horizontal: true }).setData(labelSeries)).not.toThrow();
+    expect(() => new Bar('#chart', { title: 'BarH', height: 300, orientation: 'horizontal' }).setData(labelSeries)).not.toThrow();
     expectLabelledSvg('BarH');
   });
 

@@ -119,6 +119,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Initial active timeframe used on first render when no explicit view has been set.</td>
         </tr>
         <tr>
+            <td><code>defaultView</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+        </tr>
+        <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
@@ -281,19 +287,19 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>showXAxis</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show the X (date) axis at the bottom.</td>
+            <td>Show the X (date) axis at the bottom. Hiding it also collapses the bottom margin, so the plot runs flush.</td>
         </tr>
         <tr>
             <td><code>showY1Axis</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show the Y1 axis on the right.</td>
+            <td>Show the Y1 axis on the right. The right margin collapses once <code>endLabels</code> is off and no <code>y1Title</code> is set — they all share that gutter. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr>
             <td><code>showY2Axis</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show the Y2 axis on the left.</td>
+            <td>Show the Y2 axis on the left. The left margin collapses unless a <code>y2Title</code> is set.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>End labels and markers</h5></td>

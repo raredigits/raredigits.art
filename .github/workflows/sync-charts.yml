@@ -1,5 +1,10 @@
 name: Sync Charts to rare-charts
 
+# Release-gated: the sync runs only when assets/charts/src/version.json names a
+# version that is not yet tagged in raredigits/rare-charts. jsDelivr resolves
+# @latest and version pins from those tags, so main pushes between releases
+# never reach CDN consumers. To release: bump version.json and push.
+
 on:
   push:
     branches:
@@ -18,24 +23,46 @@ jobs:
       - name: Checkout raredigits.art
         uses: actions/checkout@v3
 
+      - name: Check whether this version is already released
+        id: release
+        run: |
+          VERSION=$(node -p "require('./assets/charts/src/version.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags https://github.com/raredigits/rare-charts.git "refs/tags/$VERSION" > /dev/null; then
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is already tagged in rare-charts — skipping sync. Bump version.json to release."
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is not tagged in rare-charts yet — releasing."
+          fi
+
       - name: Setup Node.js
+        if: steps.release.outputs.new == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 24
 
       - name: Install dependencies
+        if: steps.release.outputs.new == 'true'
         run: npm install
 
+      - name: Run tests
+        if: steps.release.outputs.new == 'true'
+        run: npm run test:run
+
       - name: Build charts bundles
+        if: steps.release.outputs.new == 'true'
         run: |
           npm run charts:build
           npm run charts:build:min
 
       - name: Clone rare-charts repo
+        if: steps.release.outputs.new == 'true'
         run: |
           git clone https://x-access-token:${{ secrets.RARE_STYLES_PAT }}@github.com/raredigits/rare-charts.git temp-rare-charts
 
       - name: Copy built files and examples to rare-charts
+        if: steps.release.outputs.new == 'true'
         run: |
           rsync -av --delete assets/charts/examples/ temp-rare-charts/examples/
           rsync -av --delete assets/charts/data/ temp-rare-charts/data/
@@ -44,11 +71,13 @@ jobs:
           cp assets/charts/README.md temp-rare-charts/README.md
           cp assets/charts/LICENSE temp-rare-charts/LICENSE
 
-      - name: Commit & Push to rare-charts
+      - name: Commit, tag & push to rare-charts
+        if: steps.release.outputs.new == 'true'
         run: |
           cd temp-rare-charts
           git config user.name "Rare Sync Bot"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Update charts from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
-          git push origin main
+          git commit -m "RareCharts ${{ steps.release.outputs.version }}" || echo "Nothing to commit"
+          git tag ${{ steps.release.outputs.version }}
+          git push origin main --tags

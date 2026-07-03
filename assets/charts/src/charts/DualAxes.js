@@ -17,9 +17,18 @@
 //   height, margin
 //   xPad            — inner padding for X scale (default: 8)
 //   curve           — 'linear' (default) | 'monotone' | 'step' | ...
+//   curveTension    — 0..1 for 'cardinal' (default: 0)
 //   animate         — animate on first render (default: true)
 //   duration        — ms (default: 650)
 //   ease            — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
+//
+//   area            — fill area under line series (default: false)
+//   areaOpacity     — area opacity (default: 0.12)
+//   areaBaseline    — 'zero'|'min'|number (default: 'zero')
+//   strokeDash      — dash pattern for all line series: preset name or dash-array (default: solid)
+//   markers         — draw point markers on line series (default: false)
+//   markerShape     — 'circle'|'square'|'diamond'|'triangle'|'cross' (default: 'circle')
+//   markerSize      — marker radius / half-size px (default: 4)
 //
 //   y1Ticks/y2Ticks — tick count (default: 4)
 //   y1TickFormat    — function(value) => string
@@ -29,9 +38,11 @@
 //
 //   y1LabelsOnly/y2LabelsOnly — labels only, no axis line (default: true)
 //   showGrid        — show grid lines (default: true)
-//   showXAxis       — show X axis (default: true)
-//   showY1Axis      — show right Y1 axis (default: true)
-//   showY2Axis      — show left Y2 axis (default: true)
+//   showXAxis       — show X axis (default: true; hiding it also reclaims the bottom margin)
+//   showY1Axis      — show right Y1 axis (default: true; hiding it reclaims the right
+//                     margin once endLabels is off and no y1Title is set — shared gutter)
+//   showY2Axis      — show left Y2 axis (default: true; hiding it reclaims the left
+//                     margin unless a y2Title is set)
 //   endLabels       — show last value labels on the right (default: true)
 //   endLabelsAxis   — which axis to label ('y1' default)
 //
@@ -87,13 +98,21 @@ export class DualAxes extends Chart {
     const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
     const { margin: _margin, ...restOptions } = options;
 
+    // Margin defaults track what occupies each gutter: the right one hosts the
+    // Y1 axis, its title, and end labels; the left one the Y2 axis and title;
+    // the bottom one the X axis. Hiding all of a gutter's occupants collapses
+    // it so the plot runs flush; an explicit margin always wins.
+    const y1Gutter  = options.showY1Axis !== false || !!options.y1Title;
+    const y2Gutter  = options.showY2Axis !== false || !!options.y2Title;
+    const endGutter = options.endLabels  !== false;
+
     super(selector, {
       height: 280,
       margin: {
         top:    Math.max(hasAxisTitles ? Math.max(topDefault, 30) : topDefault, annTopReserve),
-        right:  options.margin?.right  ?? 64,
-        bottom: options.margin?.bottom ?? 18,
-        left:   options.margin?.left   ?? 64,
+        right:  options.margin?.right  ?? (y1Gutter || endGutter ? 64 : 0),
+        bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
+        left:   options.margin?.left   ?? (y2Gutter ? 64 : 0),
       },
       ...restOptions,
     });

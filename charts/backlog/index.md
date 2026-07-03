@@ -122,22 +122,6 @@ Features and chart types planned for future releases.
 
         <tr class="table-section">
             <td colspan="3">
-                <h5>Axes</h5>
-            </td>
-        </tr>
-        <tr>
-            <td>Reclaim margin when an axis is hidden</td>
-            <td><code>showXAxis</code> / <code>showYAxis</code> / <code>showY1Axis</code> / <code>showY2Axis</code><code>: false</code></td>
-            <td>When an axis is hidden, collapse the margin it occupied so the plot expands flush — instead of leaving the empty gutter behind. Today hiding an axis (e.g. <code>showYAxis: false</code>) only drops its ticks and labels; the <code>margin.right</code> space remains, so a flush or sparkline look needs a manual <code>margin</code> override. This should happen automatically across <code>Line</code>, <code>Bar</code>, and <code>DualAxes</code> (and <code>TimeSeries</code>, once it gains the toggles below). <strong>Targeted for v0.9.8.</strong></td>
-        </tr>
-        <tr>
-            <td>Axis-visibility toggles on Time Series</td>
-            <td><code>showGrid</code> / <code>showXAxis</code> / <code>showYAxis</code> on <code>RareCharts.TimeSeries</code></td>
-            <td>Bring the grid and axis toggles that <code>Line</code>, <code>Bar</code>, and <code>DualAxes</code> already expose to <code>TimeSeries</code>, where the grid and both axes currently render unconditionally. A small change mirroring the existing pattern, and a prerequisite for margin reclaim on a time-series chart. <strong>Targeted for v0.9.8.</strong></td>
-        </tr>
-
-        <tr class="table-section">
-            <td colspan="3">
                 <h5>Interactivity</h5>
             </td>
         </tr>

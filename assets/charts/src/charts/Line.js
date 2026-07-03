@@ -22,14 +22,18 @@
 //   yTickFormat    — function(value) => string
 //   xTickFormat    — function(date) => string
 //   yTicks         — number of ticks (default: 4)
+//   yTickValues    — explicit Y tick positions (overrides yTicks)
+//   xTicks         — number of X ticks (default: 6)
 //   yFormat        — 'auto' (default) | 'percent' | 'number'
 //   zeroEpsilon    — treat |v| < epsilon as zero (default: 1e-6)
 //   yPrefix / ySuffix
+//   yAxisPosition  — 'right' (default) | 'left'; the default margins follow the side
 //
 //   yLabelsOnly    — show only Y tick labels (default: true)
 //   showGrid       — show grid lines (default: true)
-//   showXAxis      — show X axis (default: true)
-//   showYAxis      — show Y axis (default: true)
+//   showXAxis      — show X axis (default: true; hiding it also reclaims the bottom margin)
+//   showYAxis      — show Y axis (default: true; hiding it reclaims the side margin
+//                    once endLabels is off too — they share the same gutter)
 //   endLabels      — show last value labels on the right (default: true)
 //
 //   crosshair      — enable crosshair + dots + tooltip (default: true)
@@ -47,6 +51,15 @@
 //   area           — fill area under line(s) (default: false)
 //   areaOpacity    — default area opacity (default: 0.12)
 //   areaBaseline   — 'zero'|'min'|number (default: 'zero')
+//   strokeDash     — dash pattern for all lines: 'dashed'|'dotted'|'dashDot'|'longDash'
+//                    or a raw dash-array string like '4,3' (default: solid)
+//   markers        — draw point markers on lines (default: false)
+//   markerShape    — 'circle'|'square'|'diamond'|'triangle'|'cross' (default: 'circle')
+//   markerSize     — marker radius / half-size px (default: 4)
+//
+// Single-series shorthand only:
+//   seriesName     — series name shown in the crosshair tooltip (default: 'Series')
+//   lineColor      — line color (default: theme.accent)
 //
 // Per-series overrides (multi-series only):
 //   series.curve, series.strokeWidth, series.strokeDash,
@@ -79,13 +92,21 @@ export class Line extends Chart {
     const annLabelHeight = options.annotationLabelHeight ?? 22;
     const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
 
+    // Margin defaults track what occupies each gutter: Y-axis labels and end
+    // labels share the axis side, X-axis labels own the bottom. Hiding all of
+    // a gutter's occupants collapses it so the plot runs flush; an explicit
+    // margin always wins.
+    const yLeft     = options.yAxisPosition === 'left';
+    const yGutter   = options.showYAxis !== false;
+    const endGutter = options.endLabels  !== false;
+
     super(selector, {
       height: 240,
       margin: {
         top:    options.margin?.top    ?? Math.max(10, annTopReserve),
-        bottom: options.margin?.bottom ?? 18,
-        right:  options.margin?.right  ?? (options.yAxisPosition === 'left' ? 0 : 64),
-        left:   options.margin?.left   ?? (options.yAxisPosition === 'left' ? 64 : 0),
+        bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
+        right:  options.margin?.right  ?? (yLeft ? 0 : (yGutter || endGutter ? 64 : 0)),
+        left:   options.margin?.left   ?? (yLeft && yGutter ? 64 : 0),
       },
       ...restOptions,
     });

@@ -211,6 +211,12 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td>Initial active timeframe used on first render when no explicit <code>view</code> has been set.</td>
         </tr>
         <tr>
+            <td><code>defaultView</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+        </tr>
+        <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
@@ -248,6 +254,27 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td>boolean</td>
             <td><code>true</code></td>
             <td>Show only Y labels and suppress the axis line.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Visibility</h5></td>
+        </tr>
+        <tr>
+            <td><code>showGrid</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show horizontal grid lines.</td>
+        </tr>
+        <tr>
+            <td><code>showXAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the X (date) axis at the bottom. Hiding it also collapses the bottom margin, so the plot runs flush.</td>
+        </tr>
+        <tr>
+            <td><code>showYAxis</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show the Y (price) axis on the right. Hiding it also collapses the right margin. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Line and Area</h5></td>

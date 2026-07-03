@@ -169,6 +169,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Initial active timeframe used when the chart is in date-based mode.</td>
         </tr>
         <tr>
+            <td><code>defaultView</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Initial visible date range as <code>[from, to]</code> (date-based mode). An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+        </tr>
+        <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
@@ -318,7 +324,8 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>
                 Show the X axis.<br>
                 Horizontal: numeric (value) axis at the bottom.<br>
-                Vertical: category axis at the bottom.
+                Vertical: category axis at the bottom.<br>
+                Hiding it also collapses the bottom margin, so the bars run flush.
             </td>
         </tr>
         <tr>
@@ -328,7 +335,8 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>
                 Show the Y axis.<br>
                 Horizontal: category labels on the left.<br>
-                Vertical: numeric labels on the right.
+                Vertical: numeric labels on the right.<br>
+                Hiding it also collapses its side margin, so the bars run flush. An explicit <code>margin</code> always wins.
             </td>
         </tr>
         <tr class="table-section">

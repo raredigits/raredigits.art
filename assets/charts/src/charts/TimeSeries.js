@@ -9,9 +9,16 @@
 //   tooltipFormat — fn(d) => HTML string for tooltip
 //   theme         — theme override object
 //   curve         — 'linear'|'monotone'|'basis'|'cardinal'|'step'|'stepBefore'|'stepAfter' (default: 'monotone')
-//   area          — show area fill under line (default: true)
+//   area          — false | true (gradient) | number (solid fill at that opacity) (default: true)
+//   areaColor     — area fill color (default: theme.accent)
 //   yLabelsOnly   — hide Y axis line/ticks (default: true)
 //   yTicks        — Y tick count (default: 5)
+//   yTickValues   — explicit Y tick positions (overrides yTicks)
+//   yTickFormat   — fn(value) => string (default: '$' + ',.0f')
+//   xTickFormat   — fn(date) => string (default: '%b')
+//   showGrid      — show grid lines (default: true)
+//   showXAxis     — show X axis (default: true; hiding it also reclaims the bottom margin)
+//   showYAxis     — show Y axis (default: true; hiding it also reclaims the right margin)
 //   annotations   — event markers. Vertical (point/range) and horizontal (line/band).
 //                   point:  { date, label?, color?, strokeDash?, labelColor? }
 //                   range:  { from, to, label?, color?, fill?, fillOpacity?, strokeDash? }
@@ -32,12 +39,14 @@ export class TimeSeries extends Chart {
     const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
     const { margin: _margin, ...restOptions } = options;
 
+    // A hidden axis collapses its margin so the plot runs flush; an explicit
+    // margin always wins.
     super(selector, {
       height: 340,
       margin: {
         top:    Math.max(options.margin?.top ?? 16, annTopReserve),
-        right:  options.margin?.right  ?? 70,
-        bottom: options.margin?.bottom ?? 28,
+        right:  options.margin?.right  ?? (options.showYAxis === false ? 0 : 70),
+        bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 28),
         left:   options.margin?.left   ?? 0,
       },
       ...restOptions,
@@ -138,7 +147,11 @@ export class TimeSeries extends Chart {
     this.yScale = d3.scaleLinear().domain([yMin, yMax]).range([H, 0]);
 
     // Grid
-    renderGrid(this.gGrid, this.yScale, W, (this.options.yTicks ?? 5), t);
+    if (this.options.showGrid ?? true) {
+      renderGrid(this.gGrid, this.yScale, W, (this.options.yTicks ?? 5), t);
+    } else {
+      this.gGrid.selectAll('*').remove();
+    }
 
     const curveName = this.options.curve ?? 'monotone';
     const curveMap = {
@@ -204,22 +217,30 @@ export class TimeSeries extends Chart {
       .attr('stroke-width', t.strokeWidth ?? 1.5);
 
     // X axis
-    const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%b')(d));
-    renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
+    if (this.options.showXAxis ?? true) {
+      const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%b')(d));
+      renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
+    } else {
+      this.gAxisX.selectAll('*').remove();
+    }
 
     // Y axis
-    const yTicks = this.options.yTicks ?? 5;
-    const yTickFormat = this.options.yTickFormat ?? (v => '$' + d3.format(',.0f')(v));
-    renderAxisYRight(
-      this.gAxisY,
-      this.yScale,
-      W,
-      yTicks,
-      yTickFormat,
-      (this.options.yLabelsOnly ?? true),
-      t,
-      this.options.yTickValues ?? null
-    );
+    if (this.options.showYAxis ?? true) {
+      const yTicks = this.options.yTicks ?? 5;
+      const yTickFormat = this.options.yTickFormat ?? (v => '$' + d3.format(',.0f')(v));
+      renderAxisYRight(
+        this.gAxisY,
+        this.yScale,
+        W,
+        yTicks,
+        yTickFormat,
+        (this.options.yLabelsOnly ?? true),
+        t,
+        this.options.yTickValues ?? null
+      );
+    } else {
+      this.gAxisY.selectAll('*').remove();
+    }
 
     // Annotations
     renderAnnotations(

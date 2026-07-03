@@ -3,6 +3,7 @@ assets/css/docs/
 assets/charts/README.md
 charts/ROADMAP-INTERNAL.md
 charts/API-INVENTORY-INTERNAL.md
+charts/FIELD-NOTES-INTERNAL.md
 test/
 vitest.config.js
 .claude/
