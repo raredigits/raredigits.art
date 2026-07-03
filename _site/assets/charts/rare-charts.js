@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __defProp = Object.defineProperty;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -52,7 +52,7 @@ var RareCharts = (() => {
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.7"
+    version: "v0.9.8"
   };
 
   // node_modules/d3/src/index.js
