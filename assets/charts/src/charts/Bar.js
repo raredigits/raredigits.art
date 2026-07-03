@@ -20,8 +20,8 @@
 //   valueInsideGap — threshold px: label flips inside bar when space is tight (default: 42)
 //
 //   showGrid       — show grid lines (default: true)
-//   showXAxis      — show X axis (default: true)
-//   showYAxis      — show Y axis (default: true)
+//   showXAxis      — show X axis (default: true; hiding it also reclaims its margin)
+//   showYAxis      — show Y axis (default: true; hiding it also reclaims its margin)
 //
 //   yTickFormat    — function(value) => string (vertical: Y axis labels)
 //   yPrefix/ySuffix— prefix/suffix for default Y formatter (vertical)
@@ -37,13 +37,21 @@ import { renderGrid, applySvgA11y } from '../core/renderHelpers.js';
 export class Bar extends Chart {
   constructor(selector, options = {}) {
     const { margin: _margin, ...restOptions } = options;
+
+    // Margin defaults track the axis that owns each gutter (which axis that
+    // is flips with the orientation). A hidden axis collapses its gutter so
+    // the plot runs flush; an explicit margin always wins.
+    const horizontal = options.orientation === 'horizontal';
+    const yGutter    = options.showYAxis !== false;
+    const xGutter    = options.showXAxis !== false;
+
     super(selector, {
       height: 200,
       margin: {
         top:    options.margin?.top    ?? 12,
-        right:  options.margin?.right  ?? (options.orientation === 'horizontal' ? 0  : 65),
-        left:   options.margin?.left   ?? (options.orientation === 'horizontal' ? 65  : 0),
-        bottom: options.margin?.bottom ?? (options.orientation === 'horizontal' ? 16  : 8),
+        right:  options.margin?.right  ?? (!horizontal && yGutter ? 65 : 0),
+        left:   options.margin?.left   ?? (horizontal && yGutter ? 65 : 0),
+        bottom: options.margin?.bottom ?? (xGutter ? (horizontal ? 16 : 8) : 0),
       },
       ...restOptions,
     });

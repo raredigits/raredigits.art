@@ -18337,13 +18337,16 @@ var RareCharts = (() => {
       const annotations = normalizeAnnotations(options.annotations);
       const annLabelHeight = options.annotationLabelHeight ?? 22;
       const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
+      const yLeft = options.yAxisPosition === "left";
+      const yGutter = options.showYAxis !== false;
+      const endGutter = options.endLabels !== false;
       super(selector, {
         height: 240,
         margin: {
           top: options.margin?.top ?? Math.max(10, annTopReserve),
-          bottom: options.margin?.bottom ?? 18,
-          right: options.margin?.right ?? (options.yAxisPosition === "left" ? 0 : 64),
-          left: options.margin?.left ?? (options.yAxisPosition === "left" ? 64 : 0)
+          bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
+          right: options.margin?.right ?? (yLeft ? 0 : yGutter || endGutter ? 64 : 0),
+          left: options.margin?.left ?? (yLeft && yGutter ? 64 : 0)
         },
         ...restOptions
       });
@@ -18542,8 +18545,8 @@ var RareCharts = (() => {
         height: 340,
         margin: {
           top: Math.max(options.margin?.top ?? 16, annTopReserve),
-          right: options.margin?.right ?? 70,
-          bottom: options.margin?.bottom ?? 28,
+          right: options.margin?.right ?? (options.showYAxis === false ? 0 : 70),
+          bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 28),
           left: options.margin?.left ?? 0
         },
         ...restOptions
@@ -18616,7 +18619,11 @@ var RareCharts = (() => {
       const yMin = min(visible, (d) => d.value) * 0.99;
       const yMax = max(visible, (d) => d.value) * 1.01;
       this.yScale = linear3().domain([yMin, yMax]).range([H, 0]);
-      renderGrid(this.gGrid, this.yScale, W, this.options.yTicks ?? 5, t);
+      if (this.options.showGrid ?? true) {
+        renderGrid(this.gGrid, this.yScale, W, this.options.yTicks ?? 5, t);
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
       const curveName = this.options.curve ?? "monotone";
       const curveMap = {
         linear: linear_default,
@@ -18650,20 +18657,28 @@ var RareCharts = (() => {
         this.gPaths.selectAll(".rc-ts-area").remove();
       }
       this.gPaths.selectAll(".rc-ts-line").data([visible]).join("path").attr("class", "rc-ts-line").attr("d", line).attr("fill", "none").attr("stroke", t.accent).attr("stroke-width", t.strokeWidth ?? 1.5);
-      const xTickFormat = this.options.xTickFormat ?? ((d) => timeFormat("%b")(d));
-      renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
-      const yTicks = this.options.yTicks ?? 5;
-      const yTickFormat = this.options.yTickFormat ?? ((v2) => "$" + format(",.0f")(v2));
-      renderAxisYRight(
-        this.gAxisY,
-        this.yScale,
-        W,
-        yTicks,
-        yTickFormat,
-        this.options.yLabelsOnly ?? true,
-        t,
-        this.options.yTickValues ?? null
-      );
+      if (this.options.showXAxis ?? true) {
+        const xTickFormat = this.options.xTickFormat ?? ((d) => timeFormat("%b")(d));
+        renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (this.options.showYAxis ?? true) {
+        const yTicks = this.options.yTicks ?? 5;
+        const yTickFormat = this.options.yTickFormat ?? ((v2) => "$" + format(",.0f")(v2));
+        renderAxisYRight(
+          this.gAxisY,
+          this.yScale,
+          W,
+          yTicks,
+          yTickFormat,
+          this.options.yLabelsOnly ?? true,
+          t,
+          this.options.yTickValues ?? null
+        );
+      } else {
+        this.gAxisY.selectAll("*").remove();
+      }
       renderAnnotations(
         this.gAnnotations,
         this._annotations,
@@ -18736,13 +18751,16 @@ var RareCharts = (() => {
   var Bar = class extends Chart {
     constructor(selector, options = {}) {
       const { margin: _margin, ...restOptions } = options;
+      const horizontal = options.orientation === "horizontal";
+      const yGutter = options.showYAxis !== false;
+      const xGutter = options.showXAxis !== false;
       super(selector, {
         height: 200,
         margin: {
           top: options.margin?.top ?? 12,
-          right: options.margin?.right ?? (options.orientation === "horizontal" ? 0 : 65),
-          left: options.margin?.left ?? (options.orientation === "horizontal" ? 65 : 0),
-          bottom: options.margin?.bottom ?? (options.orientation === "horizontal" ? 16 : 8)
+          right: options.margin?.right ?? (!horizontal && yGutter ? 65 : 0),
+          left: options.margin?.left ?? (horizontal && yGutter ? 65 : 0),
+          bottom: options.margin?.bottom ?? (xGutter ? horizontal ? 16 : 8 : 0)
         },
         ...restOptions
       });
@@ -19021,13 +19039,16 @@ var RareCharts = (() => {
       const annLabelHeight = options.annotationLabelHeight ?? 22;
       const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
       const { margin: _margin, ...restOptions } = options;
+      const y1Gutter = options.showY1Axis !== false || !!options.y1Title;
+      const y2Gutter = options.showY2Axis !== false || !!options.y2Title;
+      const endGutter = options.endLabels !== false;
       super(selector, {
         height: 280,
         margin: {
           top: Math.max(hasAxisTitles ? Math.max(topDefault, 30) : topDefault, annTopReserve),
-          right: options.margin?.right ?? 64,
-          bottom: options.margin?.bottom ?? 18,
-          left: options.margin?.left ?? 64
+          right: options.margin?.right ?? (y1Gutter || endGutter ? 64 : 0),
+          bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
+          left: options.margin?.left ?? (y2Gutter ? 64 : 0)
         },
         ...restOptions
       });
