@@ -18843,7 +18843,10 @@ var RareCharts = (() => {
     // ─── Horizontal ───────────────────────────────────────────────────────────
     _renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
       const y4 = band().domain(this._data.map((d) => d.label)).range([0, H]).padding(0.25);
-      const x4 = linear3().domain([0, max(this._data, (d) => d.value) * 1.1]).range([0, W]);
+      const maxVal = max(this._data, (d) => d.value);
+      const minVal = min(this._data, (d) => d.value);
+      const x4 = linear3().domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)]).range([0, W]);
+      const zeroX = x4(0);
       const xTickFormat = this.options.xTickFormat ?? ((d) => format(".2s")(d));
       const showValues = this.options.showValues ?? false;
       const valueOffset = this.options.valueOffset ?? 6;
@@ -18862,30 +18865,33 @@ var RareCharts = (() => {
         this.gGrid.selectAll("*").remove();
       }
       const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
-        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", 0).attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth()).attr("width", animate ? 0 : (d) => x4(d.value)).attr("fill", barFill),
+        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", animate ? zeroX : (d) => Math.min(zeroX, x4(d.value))).attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth()).attr("width", animate ? 0 : (d) => Math.abs(x4(d.value) - zeroX)).attr("fill", barFill),
         (update) => update,
         (exit) => exit.remove()
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth());
       if (animate) {
-        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("width", (d) => x4(d.value)).on("end", (d, i, nodes) => {
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX)).on("end", (d, i, nodes) => {
           if (i === nodes.length - 1) this._didAnimateIn = true;
         });
       } else {
-        bars.attr("width", (d) => x4(d.value));
+        bars.attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX));
         this._didAnimateIn = true;
       }
       if (showValues) {
         const placeValue = (sel) => {
           sel.each((d, i, nodes) => {
             const end = x4(d.value);
-            const inside = W - end < valueInsideGap;
-            select_default2(nodes[i]).attr("x", inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset)).attr("text-anchor", inside ? "end" : "start").attr("fill", inside ? t.bg : t.text);
+            const neg = d.value < 0;
+            const inside = (neg ? end : W - end) < valueInsideGap;
+            const xPos = neg ? inside ? Math.min(W - 2, end + valueOffset) : Math.max(2, end - valueOffset) : inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset);
+            const anchor = (neg ? !inside : inside) ? "end" : "start";
+            select_default2(nodes[i]).attr("x", xPos).attr("text-anchor", anchor).attr("fill", inside ? t.bg : t.text);
           });
         };
         const values = this.gBars.selectAll(".rc-bar-value").data(this._data, (d) => d.label).join("text").attr("class", "rc-bar-value").attr("y", (d) => y4(d.label) + y4.bandwidth() / 2).attr("dy", "0.35em").style("font-family", t.numericFont).style("font-size", t.fontSize).attr("opacity", animate ? 0 : 1).text((d) => valueFormat(d));
         if (animate) {
-          values.attr("x", valueOffset).transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("opacity", 1).on("end", (d, i, nodes) => placeValue(select_default2(nodes[i])));
+          values.attr("x", zeroX + valueOffset).transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("opacity", 1).on("end", (d, i, nodes) => placeValue(select_default2(nodes[i])));
           setTimeout(() => placeValue(values), duration + (this._data.length - 1) * stagger + 10);
         } else {
           placeValue(values);
@@ -18919,8 +18925,10 @@ var RareCharts = (() => {
     _renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
       const x4 = band().domain(this._data.map((d) => d.label)).range([0, W]).padding(0.25);
       const maxVal = max(this._data, (d) => d.value);
+      const minVal = min(this._data, (d) => d.value);
       const yTicks = this.options.yTicks ?? 4;
-      const y4 = linear3().domain([0, maxVal * 1.1]).nice(yTicks).range([H, 0]);
+      const y4 = linear3().domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)]).nice(yTicks).range([H, 0]);
+      const zeroY = y4(0);
       const resolvedYTickValues = this.options.yTickValues ?? y4.ticks(yTicks);
       const prefix = this.options.yPrefix ?? "";
       const suffix = this.options.ySuffix ?? "";
@@ -18934,17 +18942,17 @@ var RareCharts = (() => {
         this.gGrid.selectAll("*").remove();
       }
       const bars = this.gBars.selectAll(".rc-bar").data(this._data, (d) => d.label).join(
-        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth()).attr("y", animate ? H : (d) => y4(d.value)).attr("height", animate ? 0 : (d) => H - y4(d.value)).attr("fill", barFill),
+        (enter) => enter.append("rect").attr("class", "rc-bar").attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth()).attr("y", animate ? zeroY : (d) => y4(Math.max(0, d.value))).attr("height", animate ? 0 : (d) => Math.abs(y4(d.value) - zeroY)).attr("fill", barFill),
         (update) => update,
         (exit) => exit.remove()
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth());
       if (animate) {
-        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value)).on("end", (d, i, nodes) => {
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY)).on("end", (d, i, nodes) => {
           if (i === nodes.length - 1) this._didAnimateIn = true;
         });
       } else {
-        bars.attr("y", (d) => y4(d.value)).attr("height", (d) => H - y4(d.value));
+        bars.attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
         this._didAnimateIn = true;
       }
       if (showXAxis) {

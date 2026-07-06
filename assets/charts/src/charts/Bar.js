@@ -3,6 +3,8 @@
 //
 // Expected data format:
 // [{ label: string, value: number }, ...]
+// Values may be negative: bars grow from a zero baseline in both directions
+// (below it when vertical, to the left of it when horizontal).
 //
 // Options:
 //   orientation    — 'vertical' (default) | 'horizontal'
@@ -171,9 +173,14 @@ export class Bar extends Chart {
       .range([0, H])
       .padding(0.25);
 
+    // The domain always includes 0 — bars grow from the zero baseline, and
+    // negative values extend to the left of it.
+    const maxVal = d3.max(this._data, d => d.value);
+    const minVal = d3.min(this._data, d => d.value);
     const x = d3.scaleLinear()
-      .domain([0, d3.max(this._data, d => d.value) * 1.1])
+      .domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)])
       .range([0, W]);
+    const zeroX = x(0);
 
     const xTickFormat    = this.options.xTickFormat    ?? (d => d3.format('.2s')(d));
     const showValues     = this.options.showValues     ?? false;
@@ -204,10 +211,10 @@ export class Bar extends Chart {
       .join(
         enter => enter.append('rect')
           .attr('class',  'rc-bar')
-          .attr('x',      0)
+          .attr('x',      animate ? zeroX : d => Math.min(zeroX, x(d.value)))
           .attr('y',      d => y(d.label))
           .attr('height', y.bandwidth())
-          .attr('width',  animate ? 0 : d => x(d.value))
+          .attr('width',  animate ? 0 : d => Math.abs(x(d.value) - zeroX))
           .attr('fill',   barFill),
         update => update,
         exit   => exit.remove()
@@ -220,10 +227,12 @@ export class Bar extends Chart {
 
     if (animate) {
       bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease)
-        .attr('width', d => x(d.value))
+        .attr('x',     d => Math.min(zeroX, x(d.value)))
+        .attr('width', d => Math.abs(x(d.value) - zeroX))
         .on('end', (d, i, nodes) => { if (i === nodes.length - 1) this._didAnimateIn = true; });
     } else {
-      bars.attr('width', d => x(d.value));
+      bars.attr('x', d => Math.min(zeroX, x(d.value)))
+          .attr('width', d => Math.abs(x(d.value) - zeroX));
       this._didAnimateIn = true;
     }
 
@@ -231,11 +240,19 @@ export class Bar extends Chart {
     if (showValues) {
       const placeValue = (sel) => {
         sel.each((d, i, nodes) => {
+          // The label sits just past the bar's value end — to the right of a
+          // positive bar, to the left of a negative one — and flips inside
+          // the bar when the space between the end and the chart edge is tight.
           const end = x(d.value);
-          const inside = (W - end) < valueInsideGap;
+          const neg = d.value < 0;
+          const inside = (neg ? end : W - end) < valueInsideGap;
+          const xPos = neg
+            ? (inside ? Math.min(W - 2, end + valueOffset) : Math.max(2, end - valueOffset))
+            : (inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset));
+          const anchor = (neg ? !inside : inside) ? 'end' : 'start';
           d3.select(nodes[i])
-            .attr('x',            inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset))
-            .attr('text-anchor',  inside ? 'end' : 'start')
+            .attr('x',            xPos)
+            .attr('text-anchor',  anchor)
             .attr('fill',         inside ? t.bg  : t.text);
         });
       };
@@ -252,7 +269,7 @@ export class Bar extends Chart {
         .text(d => valueFormat(d));
 
       if (animate) {
-        values.attr('x', valueOffset)
+        values.attr('x', zeroX + valueOffset)
           .transition().duration(duration).delay((d, i) => i * stagger).ease(ease)
           .attr('opacity', 1)
           .on('end', (d, i, nodes) => placeValue(d3.select(nodes[i])));
@@ -319,14 +336,18 @@ export class Bar extends Chart {
       .padding(0.25);
 
     const maxVal = d3.max(this._data, d => d.value);
+    const minVal = d3.min(this._data, d => d.value);
     const yTicks = this.options.yTicks ?? 4;
-    // For bars (always starting from 0), use d3's .nice() + .ticks() to get
-    // clean tick values without overshooting. niceTickValues() can pick a step
-    // that's 2× too large (e.g. step=100k for max=156k → ticks go to 300k).
+    // Bars grow from a zero baseline, so the domain always includes 0 and
+    // extends to the data on both sides — negative bars hang below it.
+    // d3's .nice() + .ticks() gives clean tick values without overshooting.
+    // niceTickValues() can pick a step that's 2× too large (e.g. step=100k
+    // for max=156k → ticks go to 300k).
     const y = d3.scaleLinear()
-      .domain([0, maxVal * 1.1])
+      .domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)])
       .nice(yTicks)
       .range([H, 0]);
+    const zeroY = y(0);
     const resolvedYTickValues = this.options.yTickValues ?? y.ticks(yTicks);
 
     const prefix      = this.options.yPrefix ?? '';
@@ -351,8 +372,8 @@ export class Bar extends Chart {
           .attr('class',  'rc-bar')
           .attr('x',      d => x(d.label))
           .attr('width',  x.bandwidth())
-          .attr('y',      animate ? H : d => y(d.value))
-          .attr('height', animate ? 0  : d => H - y(d.value))
+          .attr('y',      animate ? zeroY : d => y(Math.max(0, d.value)))
+          .attr('height', animate ? 0     : d => Math.abs(y(d.value) - zeroY))
           .attr('fill',   barFill),
         update => update,
         exit   => exit.remove()
@@ -365,11 +386,11 @@ export class Bar extends Chart {
 
     if (animate) {
       bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease)
-        .attr('y',      d => y(d.value))
-        .attr('height', d => H - y(d.value))
+        .attr('y',      d => y(Math.max(0, d.value)))
+        .attr('height', d => Math.abs(y(d.value) - zeroY))
         .on('end', (d, i, nodes) => { if (i === nodes.length - 1) this._didAnimateIn = true; });
     } else {
-      bars.attr('y', d => y(d.value)).attr('height', d => H - y(d.value));
+      bars.attr('y', d => y(Math.max(0, d.value))).attr('height', d => Math.abs(y(d.value) - zeroY));
       this._didAnimateIn = true;
     }
 
