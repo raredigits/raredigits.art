@@ -115,9 +115,24 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Graph refactor</td>
-            <td><code>RareCharts.Graph</code></td>
-            <td>Rework the Graph class: fix layout and rendering issues, improve animation, and add support for nested or grouped graph structures.</td>
+            <td>Graph rework: network views</td>
+            <td><code>view: 'ego' | 'path' | 'cluster'</code></td>
+            <td>Rebuild <code>Graph</code> around a headless graph model with computed analytics (centrality, communities, shortest paths) and three deterministic views instead of a single force simulation: <strong>ego</strong> (rings by degree of separation, sectors by relation type), <strong>path</strong> (layered "how are A and B connected" routes), and <strong>cluster</strong> (communities collapsed into meta-nodes). Click a node to re-center; zoom switches ego ↔ cluster semantically. Designed for entity relations, agent networks, and blockchain addresses.</td>
+        </tr>
+        <tr>
+            <td>Graph node details panel</td>
+            <td>details surface</td>
+            <td>The tooltip is a capped counts-first summary by design (a hover tooltip cannot scroll); well-connected nodes end with "+N more". Add a proper HTML details surface — side panel or expandable list — with the full, filterable connection list, reachable from the tooltip hint or a node action.</td>
+        </tr>
+        <tr>
+            <td>Graph chrome styling</td>
+            <td>zoom controls, capacity note</td>
+            <td>The +/−/⟲ zoom buttons and the "+N more" capacity note are functional placeholders. Align them with Rare Styles: proper icons, spacing, positioning, hover states, and dark-theme support.</td>
+        </tr>
+        <tr>
+            <td>Graph interactive legend</td>
+            <td>link-type legend</td>
+            <td>Clicking a link-type item in the graph legend isolates links of that type (others fade); clicking again or clicking outside restores all. Mirrors the planned series isolation on axis charts.</td>
         </tr>
 
         <tr class="table-section">
