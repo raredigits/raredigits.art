@@ -16,6 +16,16 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Categorical `Bar` now renders negative values** (`src/charts/Bar.js`). The vertical and horizontal category modes hard-coded a `[0, max]` scale domain, so a negative bar computed a negative height/width — an invalid rect that silently didn't render (the time-series mode already handled negatives). The domain now always includes 0 and extends to the data on both sides; bars grow from the zero baseline in both directions, entry animation starts at the baseline, and horizontal value labels flip to the correct side of a negative bar. Covered by `test/bar-negatives.test.js`.
+
+### Changed
+
+- **A GitHub Release is published automatically on release** (`.github/workflows/sync-charts.yml`). The sync already pushed the `vX.Y.Z` tag (which drives jsDelivr); now it also creates the human-facing card on the `rare-charts` Releases page, lifting the title and notes from this changelog's entry — so the Releases page no longer lags the tags.
+
 ## [v0.9.8] — 2026-07-03 — Axes & Accessibility
 
 The pre-freeze groundwork release. Two axes features close out the backlog's Axes section: hiding an axis now reclaims the margin it occupied — so a flush or sparkline look no longer needs a manual `margin` override — and `TimeSeries` gains the visibility toggles every other cartesian class already had. Around the code: the library's first automated test suite (122 tests, now gating every deploy and CDN sync), accessibility groundwork (`prefers-reduced-motion`, accessible names on every chart), a release pipeline where the CDN only ever receives tagged versions, a documentation catch-up for every working option, and an MIT license consistency fix — plus a real adapter bug the new tests caught.

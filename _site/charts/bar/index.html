@@ -427,6 +427,7 @@
     { label: 'R&D', value: 154000 }
 ]</code></pre>
 <p>The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.</p>
+<p>Values may be negative: the scale always includes zero, and bars grow from the zero baseline in both directions — below it in vertical mode, to the left of it in horizontal mode. Useful for P&amp;L by segment, period-over-period changes, and other signed comparisons.</p>
 <p>Bar also supports a time-based vertical mode when you pass <code>{ date, value }</code> points instead of categorical <code>{ label, value }</code> items:</p>
 <pre class="text-content-caption"><code>[
     { date: '2025-01-01', value: 128000 },

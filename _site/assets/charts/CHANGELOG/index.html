@@ -13,6 +13,15 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <p>Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header in <code>scripts/build-charts.mjs</code>.</p>
 </blockquote>
 <hr>
+<h2>[Unreleased]</h2>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Categorical <code>Bar</code> now renders negative values</strong> (<code>src/charts/Bar.js</code>). The vertical and horizontal category modes hard-coded a <code>[0, max]</code> scale domain, so a negative bar computed a negative height/width — an invalid rect that silently didn't render (the time-series mode already handled negatives). The domain now always includes 0 and extends to the data on both sides; bars grow from the zero baseline in both directions, entry animation starts at the baseline, and horizontal value labels flip to the correct side of a negative bar. Covered by <code>test/bar-negatives.test.js</code>.</li>
+</ul>
+<h3>Changed</h3>
+<ul>
+<li><strong>A GitHub Release is published automatically on release</strong> (<code>.github/workflows/sync-charts.yml</code>). The sync already pushed the <code>vX.Y.Z</code> tag (which drives jsDelivr); now it also creates the human-facing card on the <code>rare-charts</code> Releases page, lifting the title and notes from this changelog's entry — so the Releases page no longer lags the tags.</li>
+</ul>
 <h2>[v0.9.8] — 2026-07-03 — Axes &amp; Accessibility</h2>
 <p>The pre-freeze groundwork release. Two axes features close out the backlog's Axes section: hiding an axis now reclaims the margin it occupied — so a flush or sparkline look no longer needs a manual <code>margin</code> override — and <code>TimeSeries</code> gains the visibility toggles every other cartesian class already had. Around the code: the library's first automated test suite (122 tests, now gating every deploy and CDN sync), accessibility groundwork (<code>prefers-reduced-motion</code>, accessible names on every chart), a release pipeline where the CDN only ever receives tagged versions, a documentation catch-up for every working option, and an MIT license consistency fix — plus a real adapter bug the new tests caught.</p>
 <h3>Added</h3>

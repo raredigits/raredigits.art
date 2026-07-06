@@ -35,6 +35,8 @@ Bar expects a simple dataset:
 
 The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.
 
+Values may be negative: the scale always includes zero, and bars grow from the zero baseline in both directions — below it in vertical mode, to the left of it in horizontal mode. Useful for P&amp;L by segment, period-over-period changes, and other signed comparisons.
+
 Bar also supports a time-based vertical mode when you pass `{ date, value }` points instead of categorical `{ label, value }` items:
 
 <pre class="text-content-caption"><code>[
