@@ -54,6 +54,30 @@ describe('GraphModel', () => {
     expect(sub.links.every(l => depths[l.source] != null && depths[l.target] != null)).toBe(true);
   });
 
+  it('neighborhood type filter drops off-type induced links and keeps untyped as default', () => {
+    // Triangle with mixed types: both b and c are family-reachable from a,
+    // but the b–c tie is work — a family filter must not display it.
+    const m = new GraphModel({
+      nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+      links: [
+        { source: 'a', target: 'b', type: 'family' },
+        { source: 'a', target: 'c', type: 'family' },
+        { source: 'b', target: 'c', type: 'work' },
+      ],
+    });
+    const sub = m.neighborhood('a', 1, { types: ['family'] });
+    expect(sub.nodes.map(n => n.id).sort()).toEqual(['a', 'b', 'c']);
+    expect(sub.links.map(l => l.type)).toEqual(['family', 'family']);
+
+    // Untyped links belong to the 'default' type the legend names them by
+    const untyped = new GraphModel({
+      nodes: [{ id: 'a' }, { id: 'b' }],
+      links: [{ source: 'a', target: 'b' }],
+    });
+    expect(untyped.neighborhood('a', 1, { types: ['default'] }).links).toHaveLength(1);
+    expect(untyped.neighborhood('a', 1, { types: ['family'] }).links).toHaveLength(0);
+  });
+
   it('centrality finds the broker: b sits on every left↔right path', () => {
     const m = new GraphModel(fixture);
     const { betweenness, degree } = m.centrality();
@@ -249,6 +273,137 @@ describe('Graph viewport', () => {
     expect(second).toContain('D');
   });
 
+  it('focus() filters traversal by relation type and can clear the filter', async () => {
+    const g = new Graph('#chart', { dataSource: memorySource(fixture), depth: 2, duration: 0 });
+    await g.focus('a', { types: ['family'] }).whenReady();
+    const labels = () => [...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent);
+    expect(labels()).toEqual(expect.arrayContaining(['A', 'E']));
+    expect(labels()).not.toContain('B');
+
+    await g.clearRelationTypes().whenReady();
+    expect(labels()).toContain('B');
+    expect(labels()).toContain('C');
+  });
+
+  it('interactive legend isolates, multi-selects and resets relation types', async () => {
+    const g = new Graph('#chart', {
+      dataSource: memorySource(fixture), depth: 2, duration: 0,
+      linkTypes: {
+        professional: { color: '#09f', label: 'Professional' },
+        investment: { color: '#f90', label: 'Investment' },
+        family: { color: '#0c7', label: 'Family' },
+      },
+    });
+    await g.focus('a').whenReady();
+    const item = type => host.querySelector(`.rc-graph-legend-item[data-type="${type}"]`);
+    item('family').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await g.whenReady();
+    expect([...host.querySelectorAll('.rc-graph-link')]).toHaveLength(1);
+    expect(item('family').getAttribute('aria-pressed')).toBe('true');
+    expect(item('professional').getAttribute('aria-pressed')).toBe('false');
+
+    item('professional').dispatchEvent(new MouseEvent('click', { bubbles: true, shiftKey: true }));
+    await g.whenReady();
+    expect([...host.querySelectorAll('.rc-graph-link')].length).toBeGreaterThan(1);
+
+    host.querySelector('.rc-graph-legend-reset').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await g.whenReady();
+    expect(item('investment').getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('progressive contract: a links-only payload drives all three views', async () => {
+    // The minimal unit of data: links with source/target, nothing else.
+    // Nodes are auto-created, labels fall back to ids, untyped links act as
+    // 'default', weights default — every view must render something sensible.
+    const g = new Graph('#chart', { duration: 0 }).setData({
+      links: [
+        { source: 'a', target: 'b' },
+        { source: 'b', target: 'c' },
+        { source: 'c', target: 'd' },
+        { source: 'a', target: 'd' },
+      ],
+    });
+    await g.whenReady();
+    const labels = () => [...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent);
+    expect(labels()).toEqual(expect.arrayContaining(['a', 'b', 'c', 'd']));
+    expect(labels().join(' ')).not.toContain('undefined');
+    expect(host.querySelectorAll('.rc-graph-link').length).toBeGreaterThan(0);
+
+    await g.connect('a', 'c').whenReady();
+    expect(host.querySelectorAll('.rc-graph-node').length).toBeGreaterThan(0);
+    expect(host.querySelector('.rc-graph-row-label')?.textContent).toMatch(/hop/);
+
+    await g.overview().whenReady();
+    expect(labels().length).toBeGreaterThan(0);
+    expect(labels().join(' ')).not.toContain('undefined');
+  });
+
+  it('progressive contract: tooltip falls back to the id when label is absent', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData({
+      links: [{ source: 'acme', target: 'globex' }],
+    });
+    await g.whenReady();
+    host.querySelector('.rc-graph-node')
+      .dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    const tip = host.querySelector('.rc-tooltip');
+    expect(tip.textContent).toMatch(/acme|globex/);
+    expect(tip.textContent).not.toContain('undefined');
+  });
+
+  it('queued focus() calls each fetch with their own type filter', async () => {
+    const src = memorySource(fixture);
+    const calls = [];
+    const spy = {
+      ...src,
+      neighbors: (id, opts) => { calls.push(opts.types); return src.neighbors(id, opts); },
+    };
+    const g = new Graph('#chart', { dataSource: spy, depth: 1, duration: 0 });
+    g.focus('a', { types: ['family'] });
+    g.focus('c', { types: ['investment'] });   // queued before the first fetch runs
+    await g.whenReady();
+    expect(calls).toEqual([['family'], ['investment']]);
+  });
+
+  it('legend is a static caption in the path view', async () => {
+    const g = new Graph('#chart', { dataSource: memorySource(fixture), duration: 0 });
+    await g.connect('a', 'f').whenReady();
+    const items = [...host.querySelectorAll('.rc-graph-legend-item')];
+    expect(items.length).toBeGreaterThan(0);
+    expect(items.every(b => b.disabled)).toBe(true);
+    expect(items.every(b => !b.hasAttribute('aria-pressed'))).toBe(true);
+    expect(host.querySelector('.rc-graph-legend-reset')).toBeNull();
+  });
+
+  it('tolerates a source payload without links', async () => {
+    const g = new Graph('#chart', {
+      duration: 0,
+      dataSource: {
+        neighbors: async () => ({ nodes: [{ id: 'a', label: 'A' }] }),
+        paths: async () => ({ paths: [], nodes: [], links: [] }),
+        aggregates: async () => ({ communities: [], links: [] }),
+      },
+    });
+    await g.focus('a').whenReady();
+    expect(host.querySelectorAll('.rc-graph-node')).toHaveLength(1);
+  });
+
+  it('selecting the default legend type keeps untyped links visible', async () => {
+    // Untyped links surface in the legend as 'default' — clicking that item
+    // must select them, not filter the whole neighborhood away.
+    const untyped = {
+      nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }, { id: 'c', label: 'C' }],
+      links: [{ source: 'a', target: 'b' }, { source: 'b', target: 'c' }],
+    };
+    const g = new Graph('#chart', { dataSource: memorySource(untyped), depth: 2, duration: 0 });
+    await g.focus('a').whenReady();
+    const item = host.querySelector('.rc-graph-legend-item[data-type="default"]');
+    item.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await g.whenReady();
+    const labels = [...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent);
+    expect(labels).toEqual(expect.arrayContaining(['A', 'B', 'C']));
+    expect(host.querySelectorAll('.rc-graph-link')).toHaveLength(2);
+  });
+
   it('connect() renders the path view with context and a shortest caption', async () => {
     const g = new Graph('#chart', { dataSource: memorySource(fixture), duration: 0 });
     await g.connect('a', 'f').whenReady();
@@ -355,6 +510,38 @@ describe('Graph viewport', () => {
     expect(host.querySelectorAll('.rc-graph-node').length).toBe(3);
     const note = host.querySelector('.rc-graph-note');
     expect(note?.textContent).toContain('+1 more');
+    note.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const overflow = host.querySelector('.rc-graph-overflow');
+    expect(overflow.hidden).toBe(false);
+    expect(overflow.querySelectorAll('.rc-graph-overflow-item')).toHaveLength(1);
+
+    overflow.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    expect(overflow.hidden).toBe(true);
+
+    note.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(overflow.hidden).toBe(false);
+    overflow.querySelector('.rc-graph-overflow-item')
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await g.whenReady();
+    expect(overflow.hidden).toBe(true);
+  });
+
+  it('breadcrumbs restore prior views and back() follows the same history', async () => {
+    const g = new Graph('#chart', {
+      dataSource: memorySource(fixture), depth: 1, duration: 0, zoom: false,
+    });
+    await g.focus('a').whenReady();
+    await g.focus('c').whenReady();
+    let crumbs = [...host.querySelectorAll('.rc-graph-breadcrumbs button')];
+    expect(crumbs.map(el => el.textContent)).toEqual(['A', 'C']);
+
+    crumbs[0].dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await g.whenReady();
+    expect([...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent)).toContain('A');
+
+    await g.focus('c').whenReady();
+    await g.back().whenReady();
+    expect([...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent)).toContain('A');
   });
 
   it('renders zoom controls, and omits them with zoom: false', async () => {

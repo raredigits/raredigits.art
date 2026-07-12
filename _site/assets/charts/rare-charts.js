@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_1 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -3394,11 +3394,11 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = '@import url(\'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap\');\n\n/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  --rc-font-family: "Fira Sans", sans-serif;\n  --rc-font-family-numeric: "Cousine", monospace;\n  --rc-font-size: 16px;\n  --rc-font-size-sm: 14px;\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.\n     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-chart-footer { order: 5; }\n\n.rc-chart > svg {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n  /* Let the plot shrink inside the fixed-height card so a tall footer (a long\n     source line or a multi-sentence note) never overflows and gets clipped \u2014\n     without min-height:0 a flex item refuses to shrink below its content. */\n  min-height: 0;\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  grid-template-areas:\n    "title range"\n    "subtitle range"\n    "legend legend";\n  column-gap: var(--space-md);\n  row-gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  grid-area: title;\n  min-width: 0;\n  margin: 0;\n  font-family: var(--rc-font-family);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  grid-area: subtitle;\n  min-width: 0;\n  font-size: var(--rc-font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* Links inside the source line \u2014 inherit the source text color, set apart by\n   the underline (so they adapt to light/dark theme automatically). */\n.rc-chart-source a {\n  color: inherit;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n/* Multi-part (array) source: let it wrap so several attributions/links all\n   stay visible instead of being cut off by the single-line ellipsis. */\n.rc-chart-source--rich {\n  white-space: normal;\n  overflow: visible;\n  text-overflow: clip;\n}\n\n/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.\n   Wraps freely (unlike source) since it can be a sentence or two; color is\n   set from theme.muted in JS so it reads as secondary to the source. */\n.rc-chart-note {\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  line-height: 1.4;\n  margin: var(--space-xs) 0 var(--space-sm);\n  text-align: left;\n  /* Long words / URLs break instead of pushing the note past the card edge. */\n  overflow-wrap: anywhere;\n}\n\n.rc-chart-source + .rc-chart-note {\n  margin-top: 0;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  grid-area: range;\n  justify-self: end;\n  align-self: start;\n  min-width: max-content;\n  padding-right: 60px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  grid-area: legend;\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--rc-font-size-sm);\n  user-select: none;\n}\n\n@media (max-width: 768px) {\n  .rc-chart-header {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      "title"\n      "subtitle"\n      "range"\n      "legend";\n  }\n\n  .rc-chart-range-row {\n    justify-self: start;\n    min-width: 0;\n    padding-right: 0;\n  }\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dashed line \u2014 for forecast / projected series */\n.rc-legend-line--dashed {\n  background-color: transparent;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */\n.rc-legend-band {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 2px;\n  opacity: 0.85;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */\n.rc-band {\n  pointer-events: none;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */\n.rc-annotation-line,\n.rc-annotation-range-edge,\n.rc-annotation-h-line,\n.rc-annotation-h-range-edge {\n  stroke-width: 1;\n}\n\n.rc-annotation-label,\n.rc-annotation-h-label {\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  pointer-events: none;\n}\n\n.rc-annotation-h-label {\n  dominant-baseline: text-after-edge;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 5;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--rc-font-size-sm);\n  font-family: var(--rc-font-family);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--rc-font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.\n   Entry/update motion driven by D3 (JS) is gated separately via\n   motionDuration() in core/utils.js. */\n@media (prefers-reduced-motion: reduce) {\n  .rc-chart,\n  .rc-chart * {\n    transition-duration: 0.01ms !important;\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n  }\n}\n';
+  var rare_charts_default = '@import url(\'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap\');\n\n/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  --rc-font-family: "Fira Sans", sans-serif;\n  --rc-font-family-numeric: "Cousine", monospace;\n  --rc-font-size: 16px;\n  --rc-font-size-sm: 14px;\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.\n     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-breadcrumbs        { order: 1; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-chart-footer { order: 5; }\n\n.rc-chart > svg {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n  /* Let the plot shrink inside the fixed-height card so a tall footer (a long\n     source line or a multi-sentence note) never overflows and gets clipped \u2014\n     without min-height:0 a flex item refuses to shrink below its content. */\n  min-height: 0;\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  grid-template-areas:\n    "title range"\n    "subtitle range"\n    "legend legend";\n  column-gap: var(--space-md);\n  row-gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  grid-area: title;\n  min-width: 0;\n  margin: 0;\n  font-family: var(--rc-font-family);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  grid-area: subtitle;\n  min-width: 0;\n  font-size: var(--rc-font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* Links inside the source line \u2014 inherit the source text color, set apart by\n   the underline (so they adapt to light/dark theme automatically). */\n.rc-chart-source a {\n  color: inherit;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n/* Multi-part (array) source: let it wrap so several attributions/links all\n   stay visible instead of being cut off by the single-line ellipsis. */\n.rc-chart-source--rich {\n  white-space: normal;\n  overflow: visible;\n  text-overflow: clip;\n}\n\n/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.\n   Wraps freely (unlike source) since it can be a sentence or two; color is\n   set from theme.muted in JS so it reads as secondary to the source. */\n.rc-chart-note {\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  line-height: 1.4;\n  margin: var(--space-xs) 0 var(--space-sm);\n  text-align: left;\n  /* Long words / URLs break instead of pushing the note past the card edge. */\n  overflow-wrap: anywhere;\n}\n\n.rc-chart-source + .rc-chart-note {\n  margin-top: 0;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  grid-area: range;\n  justify-self: end;\n  align-self: start;\n  min-width: max-content;\n  padding-right: 60px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  grid-area: legend;\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--rc-font-size-sm);\n  user-select: none;\n}\n\n@media (max-width: 768px) {\n  .rc-chart-header {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      "title"\n      "subtitle"\n      "range"\n      "legend";\n  }\n\n  .rc-chart-range-row {\n    justify-self: start;\n    min-width: 0;\n    padding-right: 0;\n  }\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Graph legend items are controls, not static labels. */\n.rc-graph-legend-item,\n.rc-graph-legend-reset {\n  appearance: none;\n  border: 0;\n  padding: 2px 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n}\n\n.rc-graph-legend-item:not(:disabled),\n.rc-graph-legend-reset {\n  cursor: pointer;\n}\n\n.rc-graph-legend-item:disabled { cursor: default; }\n\n.rc-graph-legend-item:focus-visible,\n.rc-graph-legend-reset:focus-visible,\n.rc-graph-breadcrumbs button:focus-visible,\n.rc-graph-overflow button:focus-visible {\n  outline: 2px solid currentColor;\n  outline-offset: 2px;\n}\n\n.rc-graph-legend-reset {\n  text-decoration: underline;\n  opacity: 0.7;\n}\n\n.rc-graph-breadcrumbs {\n  display: block;\n  padding: 4px 0;\n  font-family: var(--rc-font-family);\n  font-size: 11px;\n  line-height: 1.4;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-graph-breadcrumbs[hidden],\n.rc-graph-overflow[hidden] { display: none; }\n\n.rc-graph-breadcrumbs button {\n  appearance: none;\n  border: 0;\n  padding: 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  cursor: pointer;\n}\n\n.rc-graph-breadcrumbs button:disabled {\n  cursor: default;\n  font-weight: 600;\n  opacity: 1;\n}\n\n.rc-graph-overflow {\n  position: absolute;\n  z-index: 4;\n  left: 104px;\n  bottom: 34px;\n  width: min(320px, calc(100% - 120px));\n  max-height: min(300px, 55%);\n  overflow: hidden;\n  padding: 12px;\n  border: 1px solid rgba(127, 127, 127, 0.35);\n  border-radius: 6px;\n  background: var(--background-color, #fff);\n  color: var(--primary-color, #111);\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);\n  font-family: var(--rc-font-family);\n  font-size: 12px;\n}\n\n.rc-graph-overflow-title {\n  padding-right: 28px;\n  margin-bottom: 8px;\n  font-weight: 600;\n}\n\n.rc-graph-overflow-list {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  max-height: 240px;\n  overflow: auto;\n}\n\n.rc-graph-overflow-item {\n  appearance: none;\n  width: 100%;\n  border: 0;\n  border-radius: 3px;\n  padding: 6px 8px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: left;\n  cursor: pointer;\n}\n\n.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }\n\n.rc-graph-overflow-close {\n  position: absolute;\n  top: 6px;\n  right: 7px;\n  appearance: none;\n  border: 0;\n  padding: 2px 5px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  font-size: 18px;\n  cursor: pointer;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dashed line \u2014 for forecast / projected series */\n.rc-legend-line--dashed {\n  background-color: transparent;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */\n.rc-legend-band {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 2px;\n  opacity: 0.85;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */\n.rc-band {\n  pointer-events: none;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */\n.rc-annotation-line,\n.rc-annotation-range-edge,\n.rc-annotation-h-line,\n.rc-annotation-h-range-edge {\n  stroke-width: 1;\n}\n\n.rc-annotation-label,\n.rc-annotation-h-label {\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  pointer-events: none;\n}\n\n.rc-annotation-h-label {\n  dominant-baseline: text-after-edge;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 5;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--rc-font-size-sm);\n  font-family: var(--rc-font-family);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--rc-font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.\n   Entry/update motion driven by D3 (JS) is gated separately via\n   motionDuration() in core/utils.js. */\n@media (prefers-reduced-motion: reduce) {\n  .rc-chart,\n  .rc-chart * {\n    transition-duration: 0.01ms !important;\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n  }\n}\n';
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.7"
+    version: "v0.9.8_1"
   };
 
   // node_modules/d3/src/index.js
@@ -27165,16 +27165,20 @@ var RareCharts = (() => {
     }
     // BFS neighborhood: all nodes within `depth` hops of rootId (nodes annotated
     // with their depth) plus every link between included nodes.
-    // `types` restricts which link types the traversal may walk through.
+    // `types` filters both the traversal and the induced links — an off-type tie
+    // between two reached nodes stays out of the result. Untyped links count as
+    // 'default', matching how the Graph legend names them.
     neighborhood(rootId, depth = 1, { types = null } = {}) {
       if (!this.g.hasNode(rootId)) return { nodes: [], links: [] };
+      const allow = types ? new Set(types.map(String)) : null;
+      const pass = (attrs) => !allow || allow.has(String(attrs.type ?? "default"));
       const depths = /* @__PURE__ */ new Map([[rootId, 0]]);
       let frontier = [rootId];
       for (let d = 1; d <= depth && frontier.length; d++) {
         const next = [];
         frontier.forEach((id2) => {
           this.g.forEachEdge(id2, (edge, attrs, s2, t) => {
-            if (types && !types.includes(attrs.type)) return;
+            if (!pass(attrs)) return;
             const other = s2 === id2 ? t : s2;
             if (!depths.has(other)) {
               depths.set(other, d);
@@ -27184,7 +27188,7 @@ var RareCharts = (() => {
         });
         frontier = next;
       }
-      return this._induced(depths);
+      return this._induced(depths, pass);
     }
     // Centrality measures over the accumulated graph.
     // degree ~ "who has the most connections"; betweenness ~ "who do the
@@ -27235,13 +27239,14 @@ var RareCharts = (() => {
       const links = this.g.mapEdges((edge, attrs, s2, t) => ({ source: s2, target: t, ...attrs }));
       return { nodes, links };
     }
-    _induced(depths) {
+    _induced(depths, pass = null) {
       const nodes = [...depths.entries()].map(([id2, depth]) => ({ id: id2, ...this.g.getNodeAttributes(id2), depth }));
       const links = [];
       const seen = /* @__PURE__ */ new Set();
       depths.forEach((_, id2) => {
         this.g.forEachEdge(id2, (edge, attrs, s2, t) => {
           if (seen.has(edge) || !depths.has(s2) || !depths.has(t)) return;
+          if (pass && !pass(attrs)) return;
           seen.add(edge);
           links.push({ source: s2, target: t, ...attrs });
         });
@@ -27559,6 +27564,11 @@ var RareCharts = (() => {
       this._viewData = null;
       this._shown = null;
       this._hiddenCount = 0;
+      this._overflowNodes = [];
+      this._relationTypes = options.relationTypes?.length ? new Set(options.relationTypes.map(String)) : null;
+      this._knownTypes = /* @__PURE__ */ new Set();
+      this._history = [];
+      this._skipHistoryOnce = false;
       this._manual = /* @__PURE__ */ new Map();
       this._hidden = new Set(options.hiddenNodes ?? []);
       this._ready = Promise.resolve();
@@ -27568,17 +27578,24 @@ var RareCharts = (() => {
       this._linkTypes = options.linkTypes ?? {
         default: { color: "#888888", dash: null, label: "Connection" }
       };
+      if (this._relationTypes) {
+        Object.keys(this._linkTypes).forEach((type2) => this._knownTypes.add(type2));
+      }
       this._nodeIcons = options.nodeIcons === false ? null : { ...defaultNodeIcons, ...options.nodeIcons ?? {} };
       this._initSVG();
+      this._initGraphChrome();
     }
     // ─── Public API ───────────────────────────────────────────────────────────
     // Ego view around `id`: fetch its neighborhood, merge into the model,
     // lay out from the accumulated graph.
-    focus(id2) {
+    focus(id2, { types } = {}) {
       return this._enqueue(async () => {
+        if (types !== void 0) this._setRelationTypesState(types);
         const depth = this.options.depth ?? 2;
-        const sub = await this._requireSource().neighbors(id2, { depth });
+        const activeTypes = this._activeRelationTypes();
+        const sub = await this._requireSource().neighbors(id2, { depth, types: activeTypes });
         this._model.merge(sub);
+        (sub.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
         this._view = "ego";
         this._root = id2;
         this._paths = null;
@@ -27587,8 +27604,9 @@ var RareCharts = (() => {
         this._rows = null;
         this._manual = /* @__PURE__ */ new Map();
         this._anchors = /* @__PURE__ */ new Set([id2]);
-        this._viewData = this._model.neighborhood(id2, depth);
+        this._viewData = this._model.neighborhood(id2, depth, { types: activeTypes });
         this.render();
+        this._recordHistory({ view: "ego", root: id2, types: activeTypes });
         this._resetZoomSilently();
       });
     }
@@ -27603,6 +27621,7 @@ var RareCharts = (() => {
           console.warn(`RareCharts.Graph: no path found between "${a4}" and "${b}"`);
         }
         this._model.merge(res);
+        (res.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
         let ctxNodes = [], ctxLinks = [];
         this._ctxIds = null;
         if (o.pathContext !== false && res.paths.length) {
@@ -27650,6 +27669,7 @@ var RareCharts = (() => {
           links: [...res.links, ...ctxLinks]
         };
         this.render();
+        this._recordHistory({ view: "path", a: a4, b, types: this._activeRelationTypes() });
         this._resetZoomSilently();
       });
     }
@@ -27679,6 +27699,7 @@ var RareCharts = (() => {
           links: agg.links.map((l) => ({ ...l, strength: Math.min(1, l.weight / 8) }))
         };
         this.render();
+        this._recordHistory({ view: "cluster", root: this._root, types: this._activeRelationTypes() });
         this._resetZoomSilently();
       });
     }
@@ -27702,8 +27723,11 @@ var RareCharts = (() => {
     // falls back to the id), so the minimal unit of ingestion is one link.
     add(payload = {}) {
       this._model.merge(payload);
+      (payload.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
       if (this._view === "ego" && this._root != null) {
-        this._viewData = this._model.neighborhood(this._root, this.options.depth ?? 2);
+        this._viewData = this._model.neighborhood(this._root, this.options.depth ?? 2, {
+          types: this._activeRelationTypes()
+        });
         this.render();
       }
       return this;
@@ -27717,6 +27741,33 @@ var RareCharts = (() => {
     show(id2) {
       this._hidden.delete(id2);
       this.render();
+      return this;
+    }
+    // Filter ego relations by type. null / [] means all types.
+    setRelationTypes(types) {
+      if (this._view === "ego" && this._root != null) {
+        return this.focus(this._root, { types: types ?? null });
+      }
+      this._setRelationTypesState(types);
+      this.render();
+      return this;
+    }
+    clearRelationTypes() {
+      return this.setRelationTypes(null);
+    }
+    // Restore the previous semantic view (not the literal pan/zoom transform).
+    back() {
+      if (this._history.length < 2) return this;
+      this._history.pop();
+      const state = this._history[this._history.length - 1];
+      this._skipHistoryOnce = true;
+      this._restoreState(state);
+      this._renderBreadcrumbs();
+      return this;
+    }
+    clearHistory() {
+      this._history = this._history.length ? [this._history[this._history.length - 1]] : [];
+      this._renderBreadcrumbs();
       return this;
     }
     // Resolves when all queued view changes have fetched and rendered.
@@ -27745,6 +27796,21 @@ var RareCharts = (() => {
         this.svg.call(this._zoom).on("dblclick.zoom", null);
         this._initZoomControls();
       }
+    }
+    _initGraphChrome() {
+      this._breadcrumbsEl = document.createElement("nav");
+      this._breadcrumbsEl.className = "rc-graph-breadcrumbs";
+      this._breadcrumbsEl.setAttribute("aria-label", "Graph navigation");
+      this.container.appendChild(this._breadcrumbsEl);
+      this._overflowEl = document.createElement("div");
+      this._overflowEl.className = "rc-graph-overflow";
+      this._overflowEl.setAttribute("role", "dialog");
+      this._overflowEl.setAttribute("aria-label", "Hidden nodes");
+      this._overflowEl.hidden = true;
+      this._overflowEl.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") this._overflowEl.hidden = true;
+      });
+      this.container.appendChild(this._overflowEl);
     }
     _initZoomControls() {
       const t = this.theme;
@@ -27793,6 +27859,7 @@ var RareCharts = (() => {
         data = this._trimToCapacity(data, W, H);
       }
       this._shown = data;
+      if (this._view !== "ego") this._overflowNodes = [];
       let positions, sectors = null;
       if (this._view === "ego") {
         const res = egoLayout(this._shown, {
@@ -27833,9 +27900,12 @@ var RareCharts = (() => {
       const max5 = o.maxNodes == null || o.maxNodes === "auto" ? Math.max(12, Math.floor(W / 96) * Math.floor(H / 74) - 1) : o.maxNodes;
       if (data.nodes.length <= max5) {
         this._hiddenCount = 0;
+        this._overflowNodes = [];
         return data;
       }
-      const nodes = data.nodes.slice().sort((a4, b) => (a4.depth ?? 0) - (b.depth ?? 0) || this._model.degree(b.id) - this._model.degree(a4.id) || String(a4.label ?? a4.id).localeCompare(String(b.label ?? b.id))).slice(0, max5);
+      const ranked = data.nodes.slice().sort((a4, b) => (a4.depth ?? 0) - (b.depth ?? 0) || this._model.degree(b.id) - this._model.degree(a4.id) || String(a4.label ?? a4.id).localeCompare(String(b.label ?? b.id)));
+      const nodes = ranked.slice(0, max5);
+      this._overflowNodes = ranked.slice(max5);
       const keep = new Set(nodes.map((n) => n.id));
       this._hiddenCount = data.nodes.length - nodes.length;
       return {
@@ -27974,7 +28044,13 @@ var RareCharts = (() => {
       const showSectors = o.sectorLabels === true && (sectors?.length ?? 0) > 1;
       this.gSectors.selectAll(".rc-graph-sector-label").data(showSectors ? sectors : [], (d) => d.key).join("text").attr("class", "rc-graph-sector-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => Math.cos(d.angle) > 0.35 ? "start" : Math.cos(d.angle) < -0.35 ? "end" : "middle").attr("dominant-baseline", "middle").attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("letter-spacing", "0.08em").style("text-transform", "uppercase").style("pointer-events", "none").text((d) => d.key);
       const note = this._view === "ego" && this._hiddenCount > 0 ? [`+${this._hiddenCount} more \u2014 enlarge the chart or recenter to reveal`] : [];
-      this.gRoot.selectAll(".rc-graph-note").data(note).join("text").attr("class", "rc-graph-note").attr("x", 104).attr("y", H - 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").text((d) => d);
+      this.gRoot.selectAll(".rc-graph-note").data(note).join("text").attr("class", "rc-graph-note").attr("x", 104).attr("y", H - 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("cursor", "pointer").style("text-decoration", "underline").attr("role", "button").attr("tabindex", 0).text((d) => d).on("click", () => this._toggleOverflow()).on("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          this._toggleOverflow();
+        }
+      });
+      this._renderOverflow();
       const rowLabels = this._view === "path" && this._rows?.length ? this._rows : [];
       this.gRoot.selectAll(".rc-graph-row-label").data(rowLabels, (d, i) => i).join("text").attr("class", "rc-graph-row-label").attr("x", 8).attr("y", (d) => d.y + 3).attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("letter-spacing", "0.05em").text((d) => `${d.hops} hop${d.hops !== 1 ? "s" : ""}${d.shortest ? " \xB7 shortest" : ""}`);
       const hiddenNote = this._view === "ego" && this._hidden.size > 0 ? [`${this._hidden.size} hidden \xB7 restore`] : [];
@@ -28044,24 +28120,164 @@ var RareCharts = (() => {
     // ─── Legend ───────────────────────────────────────────────────────────────
     _renderLegend(typesInUse, t) {
       if (!this._legendEl) return;
-      const items = typesInUse.map((type2) => ({ type: type2, ...this._linkTypes[type2] ?? { color: t.muted, label: type2 } }));
-      this._legendEl.innerHTML = items.map((item) => {
-        const dash = item.dash ? `stroke-dasharray="${item.dash}"` : "";
-        return `<span class="rc-legend-item">
-        <svg width="22" height="12" style="flex-shrink:0;vertical-align:middle">
-          <line x1="1" y1="6" x2="21" y2="6"
-            stroke="${item.color}" stroke-width="2" ${dash}/>
-        </svg>
-        ${item.label ?? item.type}
-      </span>`;
-      }).join("");
+      typesInUse.forEach((type2) => this._knownTypes.add(String(type2)));
+      const filterable = this._view === "ego";
+      const available = filterable && this._knownTypes.size ? [...this._knownTypes] : typesInUse.map(String);
+      const items = available.map((type2) => ({ type: type2, ...this._linkTypes[type2] ?? { color: t.muted, label: type2 } }));
+      const active = filterable ? this._relationTypes : null;
+      this._legendEl.replaceChildren();
+      items.forEach((item) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "rc-legend-item rc-graph-legend-item";
+        button.dataset.type = item.type;
+        const selected = !active || active.has(item.type);
+        if (filterable) button.setAttribute("aria-pressed", String(selected));
+        button.style.opacity = selected ? "1" : "0.35";
+        button.disabled = !filterable || this.options.interactiveLegend === false;
+        button.innerHTML = `<svg width="22" height="12" aria-hidden="true">
+        <line x1="1" y1="6" x2="21" y2="6" stroke="${item.color}"
+          stroke-width="2" ${item.dash ? `stroke-dasharray="${item.dash}"` : ""}/>
+      </svg><span></span>`;
+        button.querySelector("span").textContent = item.label ?? item.type;
+        button.addEventListener("click", (event) => this._toggleRelationType(item.type, event));
+        this._legendEl.appendChild(button);
+      });
+      if (active) {
+        const reset = document.createElement("button");
+        reset.type = "button";
+        reset.className = "rc-graph-legend-reset";
+        reset.textContent = "Show all";
+        reset.addEventListener("click", () => this.clearRelationTypes());
+        this._legendEl.appendChild(reset);
+      }
+    }
+    _toggleRelationType(type2, event) {
+      if (this.options.interactiveLegend === false) return;
+      const multi = event.shiftKey || event.ctrlKey || event.metaKey;
+      if (!multi) {
+        const onlyThis = this._relationTypes?.size === 1 && this._relationTypes.has(type2);
+        this.setRelationTypes(onlyThis ? null : [type2]);
+        return;
+      }
+      const next = new Set(this._relationTypes ?? this._knownTypes);
+      if (next.has(type2)) next.delete(type2);
+      else next.add(type2);
+      this.setRelationTypes(next.size === this._knownTypes.size || next.size === 0 ? null : [...next]);
+    }
+    _setRelationTypesState(types) {
+      const list = types == null ? [] : [...types].map(String);
+      this._relationTypes = list.length ? new Set(list) : null;
+    }
+    _activeRelationTypes() {
+      return this._relationTypes ? [...this._relationTypes] : null;
+    }
+    _renderOverflow() {
+      if (!this._overflowEl) return;
+      if (!this._overflowNodes.length || this._view !== "ego") {
+        this._overflowEl.hidden = true;
+        this._overflowEl.replaceChildren();
+        return;
+      }
+      const title = document.createElement("div");
+      title.className = "rc-graph-overflow-title";
+      title.textContent = `${this._overflowNodes.length} more node${this._overflowNodes.length === 1 ? "" : "s"}`;
+      const list = document.createElement("div");
+      list.className = "rc-graph-overflow-list";
+      this._overflowNodes.forEach((node) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "rc-graph-overflow-item";
+        button.textContent = node.label ?? node.id;
+        button.title = `Focus ${node.label ?? node.id}`;
+        button.addEventListener("click", () => {
+          this._overflowEl.hidden = true;
+          this.focus(node.id);
+        });
+        list.appendChild(button);
+      });
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "rc-graph-overflow-close";
+      close.setAttribute("aria-label", "Close hidden nodes list");
+      close.textContent = "\xD7";
+      close.addEventListener("click", () => {
+        this._overflowEl.hidden = true;
+      });
+      this._overflowEl.replaceChildren(title, close, list);
+    }
+    _toggleOverflow() {
+      if (!this._overflowEl || !this._overflowNodes.length) return;
+      this._overflowEl.hidden = !this._overflowEl.hidden;
+      if (!this._overflowEl.hidden) {
+        this._overflowEl.querySelector(".rc-graph-overflow-close")?.focus();
+      }
+    }
+    _recordHistory(state) {
+      if (this._skipHistoryOnce) {
+        this._skipHistoryOnce = false;
+        this._renderBreadcrumbs();
+        return;
+      }
+      const normalized = { ...state, types: state.types ? [...state.types].sort() : null };
+      const last = this._history[this._history.length - 1];
+      if (JSON.stringify(last) !== JSON.stringify(normalized)) this._history.push(normalized);
+      const max5 = Math.max(1, this.options.historyLimit ?? 12);
+      if (this._history.length > max5) this._history.splice(0, this._history.length - max5);
+      this._renderBreadcrumbs();
+    }
+    _restoreState(state) {
+      if (state.view === "path") {
+        this._setRelationTypesState(state.types);
+        this.connect(state.a, state.b);
+      } else if (state.view === "cluster") {
+        this._setRelationTypesState(state.types);
+        this.overview();
+      } else {
+        this.focus(state.root, { types: state.types ?? null });
+      }
+    }
+    _renderBreadcrumbs() {
+      if (!this._breadcrumbsEl) return;
+      if (this.options.breadcrumbs === false || this._history.length < 2) {
+        this._breadcrumbsEl.hidden = true;
+        this._breadcrumbsEl.replaceChildren();
+        return;
+      }
+      this._breadcrumbsEl.hidden = false;
+      this._breadcrumbsEl.replaceChildren();
+      this._history.forEach((state, index3) => {
+        if (index3) this._breadcrumbsEl.append(" / ");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.disabled = index3 === this._history.length - 1;
+        button.textContent = this._historyLabel(state);
+        button.addEventListener("click", () => {
+          const target = this._history[index3];
+          this._history = this._history.slice(0, index3 + 1);
+          this._skipHistoryOnce = true;
+          this._restoreState(target);
+          this._renderBreadcrumbs();
+        });
+        this._breadcrumbsEl.appendChild(button);
+      });
+    }
+    _historyLabel(state) {
+      if (state.view === "cluster") return "Overview";
+      if (state.view === "path") {
+        const a4 = this._model.node(state.a)?.label ?? state.a;
+        const b = this._model.node(state.b)?.label ?? state.b;
+        return `${a4} \u2194 ${b}`;
+      }
+      return this._model.node(state.root)?.label ?? state.root;
     }
     // ─── Tooltip ──────────────────────────────────────────────────────────────
     _defaultTooltip(node, nodeLinks) {
       const t = this.theme;
+      const name = node.label ?? node.id;
       if (node._size != null) {
         return `
-        <div style="font-weight:bold;margin-bottom:2px">${node.label}</div>
+        <div style="font-weight:bold;margin-bottom:2px">${name}</div>
         <div style="color:${t.muted};font-size:11px">
           ${node._size} node${node._size !== 1 ? "s" : ""} \u2014 click to explore
         </div>`;
@@ -28093,7 +28309,7 @@ var RareCharts = (() => {
       const footer = hiddenNames > 0 ? `<div style="color:${t.muted};font-size:10px;margin-top:6px">+${hiddenNames} more</div>` : "";
       const total = nodeLinks.length;
       return `<div style="max-width:260px">
-      <div style="font-weight:bold;margin-bottom:2px">${node.label}</div>
+      <div style="font-weight:bold;margin-bottom:2px">${name}</div>
       ${node.group ? `<div style="color:${t.muted};font-size:10px;margin-bottom:2px">${node.group}</div>` : ""}
       <div style="color:${t.muted};font-size:11px">${total} connection${total !== 1 ? "s" : ""}</div>
       ${rows}
@@ -28109,7 +28325,10 @@ var RareCharts = (() => {
     }
     // View changes queue up so rapid clicks can't interleave fetch + render.
     _enqueue(task) {
-      this._ready = this._ready.then(task).catch((err) => console.error("RareCharts.Graph:", err));
+      this._ready = this._ready.then(task).catch((err) => {
+        this._skipHistoryOnce = false;
+        console.error("RareCharts.Graph:", err);
+      });
       return this;
     }
     // ─── Cleanup ──────────────────────────────────────────────────────────────

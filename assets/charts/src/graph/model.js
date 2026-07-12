@@ -67,9 +67,14 @@ export class GraphModel {
 
   // BFS neighborhood: all nodes within `depth` hops of rootId (nodes annotated
   // with their depth) plus every link between included nodes.
-  // `types` restricts which link types the traversal may walk through.
+  // `types` filters both the traversal and the induced links — an off-type tie
+  // between two reached nodes stays out of the result. Untyped links count as
+  // 'default', matching how the Graph legend names them.
   neighborhood(rootId, depth = 1, { types = null } = {}) {
     if (!this.g.hasNode(rootId)) return { nodes: [], links: [] };
+
+    const allow = types ? new Set(types.map(String)) : null;
+    const pass  = attrs => !allow || allow.has(String(attrs.type ?? 'default'));
 
     const depths = new Map([[rootId, 0]]);
     let frontier = [rootId];
@@ -77,7 +82,7 @@ export class GraphModel {
       const next = [];
       frontier.forEach(id => {
         this.g.forEachEdge(id, (edge, attrs, s, t) => {
-          if (types && !types.includes(attrs.type)) return;
+          if (!pass(attrs)) return;
           const other = s === id ? t : s;
           if (!depths.has(other)) {
             depths.set(other, d);
@@ -87,7 +92,7 @@ export class GraphModel {
       });
       frontier = next;
     }
-    return this._induced(depths);
+    return this._induced(depths, pass);
   }
 
   // Centrality measures over the accumulated graph.
@@ -148,7 +153,7 @@ export class GraphModel {
     return { nodes, links };
   }
 
-  _induced(depths) {
+  _induced(depths, pass = null) {
     const nodes = [...depths.entries()].map(([id, depth]) =>
       ({ id, ...this.g.getNodeAttributes(id), depth }));
     const links = [];
@@ -156,6 +161,7 @@ export class GraphModel {
     depths.forEach((_, id) => {
       this.g.forEachEdge(id, (edge, attrs, s, t) => {
         if (seen.has(edge) || !depths.has(s) || !depths.has(t)) return;
+        if (pass && !pass(attrs)) return;
         seen.add(edge);
         links.push({ source: s, target: t, ...attrs });
       });

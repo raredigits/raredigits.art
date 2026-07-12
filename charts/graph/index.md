@@ -57,7 +57,7 @@ Everything the user walks through accumulates in a client-side model, so revisit
 
 ### Nodes
 
-Each node requires `id` and `label`. Everything else is optional:
+Each node requires only `id`. `label` and every other field are optional; when no label is supplied, Graph displays the id:
 
 <table class="table-bordered card-caption">
   <thead>
@@ -78,8 +78,8 @@ Each node requires `id` and `label`. Everything else is optional:
     <tr>
       <td><code>label</code></td>
       <td>string</td>
-      <td>—</td>
-      <td>Display name (required)</td>
+      <td><code>id</code></td>
+      <td>Display name</td>
     </tr>
     <tr>
       <td><code>group</code></td>
@@ -235,6 +235,30 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td>Node ids to keep out of the ego view (see the <code>hidden</code> node field)</td>
         </tr>
         <tr>
+            <td><code>relationTypes</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Initial ego-view relation filter: only the listed types are traversed and drawn — an off-type tie between two visible nodes stays hidden. Links without a <code>type</code> match <code>'default'</code>. Omit or pass an empty array to show every relation type</td>
+        </tr>
+        <tr>
+            <td><code>interactiveLegend</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Legend items filter relation types. A regular click isolates one type; Shift/Ctrl/Cmd-click toggles types in a multi-selection</td>
+        </tr>
+        <tr>
+            <td><code>breadcrumbs</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Show clickable semantic history after the user visits more than one view</td>
+        </tr>
+        <tr>
+            <td><code>historyLimit</code></td>
+            <td>number</td>
+            <td><code>12</code></td>
+            <td>Maximum number of graph states retained by breadcrumb and <code>back()</code> navigation</td>
+        </tr>
+        <tr>
             <td><code>onNodeClick</code></td>
             <td>string | function</td>
             <td><code>'recenter'</code></td>
@@ -298,7 +322,7 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td><code>maxNodes</code></td>
             <td>number | 'auto'</td>
             <td><code>'auto'</code></td>
-            <td>Cap on rendered ego nodes. <code>'auto'</code> derives it from the canvas size (one node per comfortable grid cell); first-ring and best-connected nodes win, and the hidden count is noted on the chart</td>
+            <td>Cap on rendered ego nodes. <code>'auto'</code> derives it from the canvas size; first-ring and best-connected nodes win. Clicking <code>+N more</code> opens the omitted-node list, where any node can become the new focus</td>
         </tr>
         <tr>
             <td><code>draggable</code></td>
@@ -334,12 +358,19 @@ All methods return the chart instance; fetching and rendering are async — `whe
 <pre class="text-content-caption"><code>const graph = new RareCharts.Graph('#chart', { dataSource, depth: 2 });
 
 graph.focus('peter-thiel');              // ego view around a node
+graph.focus('peter-thiel', {
+  types: ['investment', 'professional'], // filter the neighbors() query
+});
 graph.connect('peter-thiel', 'target');  // routes between two nodes
 graph.overview();                        // community overview
 graph.setData({ nodes, links });         // static payload: memorySource + focus
 graph.add({ links: [{ source: 'a', target: 'b', type: 'deal' }] });
                                          // incremental: merge one news-sized payload
 graph.hide('noisy-node');                // declutter; show(id) brings it back
+graph.setRelationTypes(['investment']);  // update the current ego filter
+graph.clearRelationTypes();              // restore all relation types
+graph.back();                            // previous ego/path/cluster state
+graph.clearHistory();                    // keep only the current breadcrumb
 await graph.whenReady();</code></pre>
 
 `add()` is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id.
@@ -349,6 +380,12 @@ await graph.whenReady();</code></pre>
 **Recenter on click** — clicking a node fetches its neighborhood and re-lays the view around it; shared nodes animate to their new positions so you keep your bearings while walking the graph. In the cluster view, clicking a community recenters on its most-connected member.
 
 **Focus + context on hover** — hovering a node highlights its direct neighborhood and fades everything else, along with a tooltip listing connections by type.
+
+**Filter relations from the legend** — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the `neighbors()` query and the client-side neighborhood. "Show all" clears the filter. Graphs whose links have no explicit `type` continue to work as a single `default` relation type.
+
+**Reveal omitted nodes** — when the viewport cap removes nodes from the drawing, the underlined `+N more` note opens an accessible list. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with `hide()`.
+
+**Breadcrumb navigation** — after more than one semantic view has been visited, Graph shows a clickable history of ego, path, and cluster states. Returning through a breadcrumb or `back()` restores the relation filter together with the view; literal pan and zoom are deliberately reset.
 
 **Zoom buttons** — +/− buttons zoom, ⟲ resets, dragging the background pans. The mouse wheel deliberately stays with page scrolling.
 

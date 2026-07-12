@@ -516,21 +516,31 @@
 <td>Rebuild <code>Graph</code> around a headless graph model with computed analytics (centrality, communities, shortest paths) and three deterministic views instead of a single force simulation: <strong>ego</strong> (rings by degree of separation, sectors by relation type), <strong>path</strong> (layered &quot;how are A and B connected&quot; routes), and <strong>cluster</strong> (communities collapsed into meta-nodes). Click a node to re-center; zoom switches ego ↔ cluster semantically. Designed for entity relations, agent networks, and blockchain addresses.</td>
 </tr>
 <tr>
-<td>Graph node details panel</td>
-<td>details surface</td>
-<td>The tooltip is a capped counts-first summary by design (a hover tooltip cannot scroll); well-connected nodes end with &quot;+N more&quot;. Add a proper HTML details surface — side panel or expandable list — with the full, filterable connection list, reachable from the tooltip hint or a node action.</td>
+<td>Directed and multiple graph relations</td>
+<td>optional edge direction, identity and labels</td>
+<td>Support directed relations and multiple simultaneous relations between the same pair of nodes. Allow optional edge labels and values such as ownership percentages, while keeping the minimum link payload at <code>{ source, target }</code>. Direction, relation IDs, percentages and other domain fields must enrich the result when present, not become required input.</td>
+</tr>
+<tr>
+<td>Graph details panel</td>
+<td>node and relation details surface</td>
+<td>Add a proper HTML details surface for a selected node or relation. It should show whatever metadata is available — relation type, share, dates, source, confidence and the full filterable connection list — without requiring any of those fields. The hover tooltip remains a compact summary and links to the details surface when more information exists.</td>
+</tr>
+<tr>
+<td>Graph ownership layout</td>
+<td><code>view: 'ownership'</code></td>
+<td>Add an optional deterministic hierarchy for ownership and control chains: owners above, controlled entities below, direction made explicit, and percentages or relation labels shown when supplied. It is a specialized presentation over the general graph contract, not a required ownership-specific schema.</td>
+</tr>
+<tr>
+<td>Graph cluster-view strategies</td>
+<td>configurable aggregation and layout</td>
+<td>Revisit <code>cluster</code> after relation filtering, richer edges and details are available. Explore pluggable strategies for community structure, industry roles, value chains, geography and ownership groups, with the current Louvain overview retained as a general default. Domain-specific grouping must be opt-in and may be supplied by the data source instead of inferred client-side.</td>
 </tr>
 <tr>
 <td>Graph chrome styling</td>
-<td>zoom controls, capacity note</td>
-<td>The +/−/⟲ zoom buttons and the &quot;+N more&quot; capacity note are functional placeholders. Align them with Rare Styles: proper icons, spacing, positioning, hover states, and dark-theme support.</td>
+<td>zoom controls, capacity note, navigation</td>
+<td>Align the +/−/⟲ zoom buttons, actionable <code>+N more</code> disclosure, breadcrumbs and details controls with Rare Styles: proper icons, spacing, positioning, focus and hover states, responsive behavior, and dark-theme support.</td>
 </tr>
-<tr>
-<td>Graph interactive legend</td>
-<td>link-type legend</td>
-<td>Clicking a link-type item in the graph legend isolates links of that type (others fade); clicking again or clicking outside restores all. Mirrors the planned series isolation on axis charts.</td>
-</tr></p>
-<p><tr class="table-section">
+<tr class="table-section">
 <td colspan="3">
 <h5>Axes</h5>
 </td>

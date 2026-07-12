@@ -47,16 +47,23 @@
 //   zoom          — +/−/reset buttons and drag pan; the wheel is left to the
 //                   page (default: true)
 //   linkTypes     — { type: { color, dash, label } } map or preset
+//   relationTypes — initial link-type filter: only listed types are traversed
+//                   and drawn; untyped links match 'default' (default: all)
+//   interactiveLegend — click legend items to filter relation types (default: true)
+//   breadcrumbs   — show clickable view history (default: true)
+//   historyLimit  — max states kept for breadcrumbs/back() (default: 12)
 //   tooltipFormat — function({ node, links }) => html
 //   duration      — transition ms (default: 500; reduced-motion aware)
 //
 // Methods (each returns `this`; use whenReady() to await the fetch+render):
-//   focus(id)      — ego view around id (click-recenter uses this too)
+//   focus(id, { types? }) — ego view around id (click-recenter uses this too)
 //   connect(a, b)  — path view between a and b
 //   overview()     — cluster view
 //   setData(data)  — wrap data in memorySource and focus the best-connected node
 //   add(payload)   — merge an incremental { nodes?, links } payload and refresh
 //   hide(id) / show(id) — toggle a node out of / back into the ego view
+//   setRelationTypes(types) / clearRelationTypes() — filter ego relations
+//   back() / clearHistory() — navigate the graph view history
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
@@ -91,6 +98,12 @@ export class Graph extends Chart {
     this._viewData = null;               // { nodes, links } of the current query
     this._shown    = null;               // viewData capped to canvas capacity
     this._hiddenCount = 0;
+    this._overflowNodes = [];
+    this._relationTypes = options.relationTypes?.length
+      ? new Set(options.relationTypes.map(String)) : null;
+    this._knownTypes = new Set();
+    this._history = [];
+    this._skipHistoryOnce = false;
     this._manual   = new Map();          // node id → dragged position override
     this._hidden   = new Set(options.hiddenNodes ?? []);
     this._ready    = Promise.resolve();
@@ -101,6 +114,13 @@ export class Graph extends Chart {
     this._linkTypes = options.linkTypes ?? {
       default: { color: '#888888', dash: null, label: 'Connection' },
     };
+    // If the graph starts filtered, the current query cannot reveal the other
+    // available types. Treat configured linkTypes as the legend catalogue so
+    // the user can still expand the filter; unfiltered graphs discover types
+    // from their actual payload instead.
+    if (this._relationTypes) {
+      Object.keys(this._linkTypes).forEach(type => this._knownTypes.add(type));
+    }
     // nodeIcons: group → svg path (24×24). Merged over the built-in set;
     // pass false to render plain circles.
     this._nodeIcons = options.nodeIcons === false
@@ -108,17 +128,24 @@ export class Graph extends Chart {
       : { ...defaultNodeIcons, ...(options.nodeIcons ?? {}) };
 
     this._initSVG();
+    this._initGraphChrome();
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
 
   // Ego view around `id`: fetch its neighborhood, merge into the model,
   // lay out from the accumulated graph.
-  focus(id) {
+  focus(id, { types } = {}) {
     return this._enqueue(async () => {
+      // The filter is applied inside the queued task: two rapid focus() calls
+      // with different filters must each fetch with their own, not both with
+      // whichever was set last.
+      if (types !== undefined) this._setRelationTypesState(types);
       const depth = this.options.depth ?? 2;
-      const sub = await this._requireSource().neighbors(id, { depth });
+      const activeTypes = this._activeRelationTypes();
+      const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
       this._model.merge(sub);
+      (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
       this._view = 'ego';
       this._root = id;
       this._paths = null;
@@ -127,8 +154,9 @@ export class Graph extends Chart {
       this._rows = null;
       this._manual = new Map();
       this._anchors = new Set([id]);
-      this._viewData = this._model.neighborhood(id, depth);
+      this._viewData = this._model.neighborhood(id, depth, { types: activeTypes });
       this.render();
+      this._recordHistory({ view: 'ego', root: id, types: activeTypes });
       this._resetZoomSilently();
     });
   }
@@ -144,6 +172,7 @@ export class Graph extends Chart {
         console.warn(`RareCharts.Graph: no path found between "${a}" and "${b}"`);
       }
       this._model.merge(res);
+      (res.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
 
       // The story of a path view: both endpoints have many ties, several
       // routes exist, the shortest is highlighted. Endpoint context = their
@@ -201,6 +230,7 @@ export class Graph extends Chart {
         links: [...res.links, ...ctxLinks],
       };
       this.render();
+      this._recordHistory({ view: 'path', a, b, types: this._activeRelationTypes() });
       this._resetZoomSilently();
     });
   }
@@ -231,6 +261,7 @@ export class Graph extends Chart {
         links: agg.links.map(l => ({ ...l, strength: Math.min(1, l.weight / 8) })),
       };
       this.render();
+      this._recordHistory({ view: 'cluster', root: this._root, types: this._activeRelationTypes() });
       this._resetZoomSilently();
     });
   }
@@ -257,8 +288,11 @@ export class Graph extends Chart {
   // falls back to the id), so the minimal unit of ingestion is one link.
   add(payload = {}) {
     this._model.merge(payload);
+    (payload.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
     if (this._view === 'ego' && this._root != null) {
-      this._viewData = this._model.neighborhood(this._root, this.options.depth ?? 2);
+      this._viewData = this._model.neighborhood(this._root, this.options.depth ?? 2, {
+        types: this._activeRelationTypes(),
+      });
       this.render();
     }
     return this;
@@ -267,6 +301,35 @@ export class Graph extends Chart {
   // Keep a node out of the ego view without removing it from the model.
   hide(id) { this._hidden.add(id);    this.render(); return this; }
   show(id) { this._hidden.delete(id); this.render(); return this; }
+
+  // Filter ego relations by type. null / [] means all types.
+  setRelationTypes(types) {
+    if (this._view === 'ego' && this._root != null) {
+      return this.focus(this._root, { types: types ?? null });
+    }
+    this._setRelationTypesState(types);
+    this.render();
+    return this;
+  }
+
+  clearRelationTypes() { return this.setRelationTypes(null); }
+
+  // Restore the previous semantic view (not the literal pan/zoom transform).
+  back() {
+    if (this._history.length < 2) return this;
+    this._history.pop();
+    const state = this._history[this._history.length - 1];
+    this._skipHistoryOnce = true;
+    this._restoreState(state);
+    this._renderBreadcrumbs();
+    return this;
+  }
+
+  clearHistory() {
+    this._history = this._history.length ? [this._history[this._history.length - 1]] : [];
+    this._renderBreadcrumbs();
+    return this;
+  }
 
   // Resolves when all queued view changes have fetched and rendered.
   whenReady() { return this._ready; }
@@ -315,6 +378,23 @@ export class Graph extends Chart {
 
       this._initZoomControls();
     }
+  }
+
+  _initGraphChrome() {
+    this._breadcrumbsEl = document.createElement('nav');
+    this._breadcrumbsEl.className = 'rc-graph-breadcrumbs';
+    this._breadcrumbsEl.setAttribute('aria-label', 'Graph navigation');
+    this.container.appendChild(this._breadcrumbsEl);
+
+    this._overflowEl = document.createElement('div');
+    this._overflowEl.className = 'rc-graph-overflow';
+    this._overflowEl.setAttribute('role', 'dialog');
+    this._overflowEl.setAttribute('aria-label', 'Hidden nodes');
+    this._overflowEl.hidden = true;
+    this._overflowEl.addEventListener('keydown', event => {
+      if (event.key === 'Escape') this._overflowEl.hidden = true;
+    });
+    this.container.appendChild(this._overflowEl);
   }
 
   _initZoomControls() {
@@ -385,6 +465,7 @@ export class Graph extends Chart {
       data = this._trimToCapacity(data, W, H);
     }
     this._shown = data;
+    if (this._view !== 'ego') this._overflowNodes = [];
 
     let positions, sectors = null;
     if (this._view === 'ego') {
@@ -434,13 +515,15 @@ export class Graph extends Chart {
       : o.maxNodes;
     if (data.nodes.length <= max) {
       this._hiddenCount = 0;
+      this._overflowNodes = [];
       return data;
     }
-    const nodes = data.nodes.slice().sort((a, b) =>
+    const ranked = data.nodes.slice().sort((a, b) =>
       ((a.depth ?? 0) - (b.depth ?? 0))
       || (this._model.degree(b.id) - this._model.degree(a.id))
-      || String(a.label ?? a.id).localeCompare(String(b.label ?? b.id)))
-      .slice(0, max);
+      || String(a.label ?? a.id).localeCompare(String(b.label ?? b.id)));
+    const nodes = ranked.slice(0, max);
+    this._overflowNodes = ranked.slice(max);
     const keep = new Set(nodes.map(n => n.id));
     this._hiddenCount = data.nodes.length - nodes.length;
     return {
@@ -745,7 +828,19 @@ export class Graph extends Chart {
       .attr('fill',         t.muted)
       .style('font-family', t.font)
       .style('font-size',   '10px')
-      .text(d => d);
+      .style('cursor',      'pointer')
+      .style('text-decoration', 'underline')
+      .attr('role',         'button')
+      .attr('tabindex',     0)
+      .text(d => d)
+      .on('click', () => this._toggleOverflow())
+      .on('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          this._toggleOverflow();
+        }
+      });
+    this._renderOverflow();
 
     // ── Path-view row captions: hop counts, shortest called out ──
     const rowLabels = this._view === 'path' && this._rows?.length ? this._rows : [];
@@ -861,30 +956,183 @@ export class Graph extends Chart {
 
   _renderLegend(typesInUse, t) {
     if (!this._legendEl) return;
-
-    const items = typesInUse
+    typesInUse.forEach(type => this._knownTypes.add(String(type)));
+    // The filter only drives the ego traversal. In the path view the legend
+    // is a static caption of the types on screen — clickable items that do
+    // nothing would read as broken, and the accumulated catalogue would list
+    // types the canvas doesn't show.
+    const filterable = this._view === 'ego';
+    const available = filterable && this._knownTypes.size
+      ? [...this._knownTypes] : typesInUse.map(String);
+    const items = available
       .map(type => ({ type, ...(this._linkTypes[type] ?? { color: t.muted, label: type }) }));
+    const active = filterable ? this._relationTypes : null;
+    this._legendEl.replaceChildren();
+    items.forEach(item => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'rc-legend-item rc-graph-legend-item';
+      button.dataset.type = item.type;
+      const selected = !active || active.has(item.type);
+      if (filterable) button.setAttribute('aria-pressed', String(selected));
+      button.style.opacity = selected ? '1' : '0.35';
+      button.disabled = !filterable || this.options.interactiveLegend === false;
+      button.innerHTML = `<svg width="22" height="12" aria-hidden="true">
+        <line x1="1" y1="6" x2="21" y2="6" stroke="${item.color}"
+          stroke-width="2" ${item.dash ? `stroke-dasharray="${item.dash}"` : ''}/>
+      </svg><span></span>`;
+      button.querySelector('span').textContent = item.label ?? item.type;
+      button.addEventListener('click', event => this._toggleRelationType(item.type, event));
+      this._legendEl.appendChild(button);
+    });
 
-    this._legendEl.innerHTML = items.map(item => {
-      const dash = item.dash ? `stroke-dasharray="${item.dash}"` : '';
-      return `<span class="rc-legend-item">
-        <svg width="22" height="12" style="flex-shrink:0;vertical-align:middle">
-          <line x1="1" y1="6" x2="21" y2="6"
-            stroke="${item.color}" stroke-width="2" ${dash}/>
-        </svg>
-        ${item.label ?? item.type}
-      </span>`;
-    }).join('');
+    if (active) {
+      const reset = document.createElement('button');
+      reset.type = 'button';
+      reset.className = 'rc-graph-legend-reset';
+      reset.textContent = 'Show all';
+      reset.addEventListener('click', () => this.clearRelationTypes());
+      this._legendEl.appendChild(reset);
+    }
+  }
+
+  _toggleRelationType(type, event) {
+    if (this.options.interactiveLegend === false) return;
+    const multi = event.shiftKey || event.ctrlKey || event.metaKey;
+    if (!multi) {
+      const onlyThis = this._relationTypes?.size === 1 && this._relationTypes.has(type);
+      this.setRelationTypes(onlyThis ? null : [type]);
+      return;
+    }
+    const next = new Set(this._relationTypes ?? this._knownTypes);
+    if (next.has(type)) next.delete(type); else next.add(type);
+    this.setRelationTypes(next.size === this._knownTypes.size || next.size === 0 ? null : [...next]);
+  }
+
+  _setRelationTypesState(types) {
+    const list = types == null ? [] : [...types].map(String);
+    this._relationTypes = list.length ? new Set(list) : null;
+  }
+
+  _activeRelationTypes() { return this._relationTypes ? [...this._relationTypes] : null; }
+
+  _renderOverflow() {
+    if (!this._overflowEl) return;
+    if (!this._overflowNodes.length || this._view !== 'ego') {
+      this._overflowEl.hidden = true;
+      this._overflowEl.replaceChildren();
+      return;
+    }
+    const title = document.createElement('div');
+    title.className = 'rc-graph-overflow-title';
+    title.textContent = `${this._overflowNodes.length} more node${this._overflowNodes.length === 1 ? '' : 's'}`;
+    const list = document.createElement('div');
+    list.className = 'rc-graph-overflow-list';
+    this._overflowNodes.forEach(node => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'rc-graph-overflow-item';
+      button.textContent = node.label ?? node.id;
+      button.title = `Focus ${node.label ?? node.id}`;
+      button.addEventListener('click', () => {
+        this._overflowEl.hidden = true;
+        this.focus(node.id);
+      });
+      list.appendChild(button);
+    });
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'rc-graph-overflow-close';
+    close.setAttribute('aria-label', 'Close hidden nodes list');
+    close.textContent = '×';
+    close.addEventListener('click', () => { this._overflowEl.hidden = true; });
+    this._overflowEl.replaceChildren(title, close, list);
+  }
+
+  _toggleOverflow() {
+    if (!this._overflowEl || !this._overflowNodes.length) return;
+    this._overflowEl.hidden = !this._overflowEl.hidden;
+    if (!this._overflowEl.hidden) {
+      this._overflowEl.querySelector('.rc-graph-overflow-close')?.focus();
+    }
+  }
+
+  _recordHistory(state) {
+    if (this._skipHistoryOnce) {
+      this._skipHistoryOnce = false;
+      this._renderBreadcrumbs();
+      return;
+    }
+    // Types are a set: sort them so {a,b} and {b,a} dedupe to one entry.
+    const normalized = { ...state, types: state.types ? [...state.types].sort() : null };
+    const last = this._history[this._history.length - 1];
+    if (JSON.stringify(last) !== JSON.stringify(normalized)) this._history.push(normalized);
+    const max = Math.max(1, this.options.historyLimit ?? 12);
+    if (this._history.length > max) this._history.splice(0, this._history.length - max);
+    this._renderBreadcrumbs();
+  }
+
+  _restoreState(state) {
+    if (state.view === 'path') {
+      this._setRelationTypesState(state.types);
+      this.connect(state.a, state.b);
+    } else if (state.view === 'cluster') {
+      this._setRelationTypesState(state.types);
+      this.overview();
+    } else {
+      // Ego restores carry the filter through focus() so it is applied in
+      // queue order, exactly like a user-issued focus.
+      this.focus(state.root, { types: state.types ?? null });
+    }
+  }
+
+  _renderBreadcrumbs() {
+    if (!this._breadcrumbsEl) return;
+    if (this.options.breadcrumbs === false || this._history.length < 2) {
+      this._breadcrumbsEl.hidden = true;
+      this._breadcrumbsEl.replaceChildren();
+      return;
+    }
+    this._breadcrumbsEl.hidden = false;
+    this._breadcrumbsEl.replaceChildren();
+    this._history.forEach((state, index) => {
+      if (index) this._breadcrumbsEl.append(' / ');
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.disabled = index === this._history.length - 1;
+      button.textContent = this._historyLabel(state);
+      button.addEventListener('click', () => {
+        const target = this._history[index];
+        this._history = this._history.slice(0, index + 1);
+        this._skipHistoryOnce = true;
+        this._restoreState(target);
+        this._renderBreadcrumbs();
+      });
+      this._breadcrumbsEl.appendChild(button);
+    });
+  }
+
+  _historyLabel(state) {
+    if (state.view === 'cluster') return 'Overview';
+    if (state.view === 'path') {
+      const a = this._model.node(state.a)?.label ?? state.a;
+      const b = this._model.node(state.b)?.label ?? state.b;
+      return `${a} ↔ ${b}`;
+    }
+    return this._model.node(state.root)?.label ?? state.root;
   }
 
   // ─── Tooltip ──────────────────────────────────────────────────────────────
 
   _defaultTooltip(node, nodeLinks) {
     const t = this.theme;
+    // Progressive contract: label is optional everywhere, so the tooltip
+    // falls back to the id just like the on-canvas node labels do.
+    const name = node.label ?? node.id;
 
     if (node._size != null) {
       return `
-        <div style="font-weight:bold;margin-bottom:2px">${node.label}</div>
+        <div style="font-weight:bold;margin-bottom:2px">${name}</div>
         <div style="color:${t.muted};font-size:11px">
           ${node._size} node${node._size !== 1 ? 's' : ''} — click to explore
         </div>`;
@@ -931,7 +1179,7 @@ export class Graph extends Chart {
     const total = nodeLinks.length;
 
     return `<div style="max-width:260px">
-      <div style="font-weight:bold;margin-bottom:2px">${node.label}</div>
+      <div style="font-weight:bold;margin-bottom:2px">${name}</div>
       ${node.group ? `<div style="color:${t.muted};font-size:10px;margin-bottom:2px">${node.group}</div>` : ''}
       <div style="color:${t.muted};font-size:11px">${total} connection${total !== 1 ? 's' : ''}</div>
       ${rows}
@@ -952,7 +1200,12 @@ export class Graph extends Chart {
   _enqueue(task) {
     this._ready = this._ready
       .then(task)
-      .catch(err => console.error('RareCharts.Graph:', err));
+      .catch(err => {
+        // A failed restore must not leave the one-shot history skip armed:
+        // the next successful view change still has to record itself.
+        this._skipHistoryOnce = false;
+        console.error('RareCharts.Graph:', err);
+      });
     return this;
   }
 
