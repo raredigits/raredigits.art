@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -332,6 +330,15 @@
               
             </li>
           
+            <li>
+              
+                <a href="/scripts/carousel/">Carousel</a>
+              
+              
+              
+              
+            </li>
+          
         </ul>
       </nav>
     
@@ -347,7 +354,7 @@
       <div class="meta-info">
 js/collapsible.js<br>
 <p>
-    v.1.0 Stable | 
+    v2.0.0 Stable (breaking: `rd-js-` hook) | 
     <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
@@ -380,95 +387,150 @@ js/collapsible.js<br>
 </ul>
 <div class="air-lg"></div>
 <h3>JavaScript</h3>
-<p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available:</p>
+<p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available. Here it is, live:</p>
 <div class="card collapsible-container">
     <p>
         <span class="section-icon material-symbols-outlined">code</span>
-        <span class="collapsible-trigger">Implementation Example<span class="collapsible-icon material-symbols-outlined">keyboard_arrow_down</span></span>
+        <button class="collapsible-trigger rd-js-collapsible" aria-controls="collapsible-demo">Implementation Example<span class="collapsible-icon"></span></button>
     </p>
-    <div class="collapsible-content">
-        <p>The script handles two common HTML structures:</p>
-        <ul>
-            <li>Structure 1: Trigger and content are siblings</li>
-            <li>Structure 2: Trigger inside parent element (like <code>&lt;p&gt;</code>) followed by content</li>
-        </ul>
-        <p>Below is a practical implementation example showing how the collapsible component works.</p>
-        <pre>
-<code><span class="code-comment">// Structure 1 (siblings under same parent):</span>
-&lt;div class="container"&gt;
-    &lt;div class="collapsible-trigger"&gt;Trigger&lt;span&gt; class="collapsible-icon material-symbols-outlined"&gt;keyboard_arrow_down&lt;/span&gt;&lt;/div&gt;
-    &lt;div class="collapsible-content"&gt;Content goes here&lt;/div&gt;
-&lt;/div&gt;
-<div class="air-md"></div>
-<span class="code-comment">// Structure 2 (content after trigger's parent):</span>
-&lt;div class="container"&gt;
-    &lt;p&gt;
-        &lt;span class="collapsible-trigger"&gt;Trigger&lt;span class="collapsible-icon"&gt;...&gt;/span&gt;&lt;/span&gt;
-    &lt;/p&gt;
-    &lt;div class="collapsible-content"&gt;Content&lt;/div&gt;
-&lt;/div&gt;</code>
-        </pre>
-        <p>Note: The <code>.collapsible-icon</code> element is optional. If it's not present, the script will still toggle the visibility of the content, but there won't be any icon changes.</p>
-        <div class="air-lg"></div>
+    <div id="collapsible-demo" class="collapsible-content rd-js-collapsible-content">
+        <p>This block is a live collapsible driven by the script from this page. The trigger carries the hook class <code>rd-js-collapsible</code>, this content block carries <code>rd-js-collapsible-content</code>, and the open state is the <code>rd-is-open</code> class plus <code>aria-expanded</code> on the trigger. The icon rotation is pure CSS — no glyph swapping.</p>
+        <p>Ready-to-paste markup for all three supported structures is right below.</p>
+        <div class="air-md"></div>
     </div>
+</div>
+<div class="air-lg"></div>
+<h4>Ready-to-paste markup</h4>
+<p>The script resolves the content element in three ways, in order: explicit <code>aria-controls</code> pointing at the content's <code>id</code> (canonical), the trigger's next sibling, or the trigger's parent's next sibling.</p>
+<p><strong>Canonical — explicit <code>aria-controls</code>:</strong></p>
+<div class="code-block">
+    <pre><code id="snippet-collapsible-1" class="language-html">&lt;button class=&#34;collapsible-trigger rd-js-collapsible&#34; aria-controls=&#34;details-1&#34;&gt;
+  Trigger&lt;span class=&#34;collapsible-icon&#34;&gt;&lt;/span&gt;
+&lt;/button&gt;
+&lt;div id=&#34;details-1&#34; class=&#34;collapsible-content rd-js-collapsible-content&#34;&gt;
+  Content goes here
+&lt;/div&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-collapsible-1"></button>
+</div>
+<p><strong>Structure 1 — trigger and content are siblings:</strong></p>
+<div class="code-block">
+    <pre><code id="snippet-collapsible-2" class="language-html">&lt;div class=&#34;collapsible-trigger rd-js-collapsible&#34;&gt;Trigger&lt;/div&gt;
+&lt;div class=&#34;collapsible-content rd-js-collapsible-content&#34;&gt;Content goes here&lt;/div&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-collapsible-2"></button>
+</div>
+<p><strong>Structure 2 — trigger inside a parent (like a <code>&lt;p&gt;</code>), content right after that parent:</strong></p>
+<div class="code-block">
+    <pre><code id="snippet-collapsible-3" class="language-html">&lt;p&gt;
+  &lt;span class=&#34;collapsible-trigger rd-js-collapsible&#34;&gt;Trigger&lt;/span&gt;
+&lt;/p&gt;
+&lt;div class=&#34;collapsible-content rd-js-collapsible-content&#34;&gt;Content goes here&lt;/div&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-collapsible-3"></button>
+</div>
+<p><strong>Script include and minimum CSS</strong> (Rare Styles already ships these styles — add them only when using the script standalone):</p>
+<div class="code-block">
+    <pre><code id="snippet-collapsible-4" class="language-html">&lt;script src=&#34;/assets/js/collapsible.js&#34;&gt;&lt;/script&gt;
+<p>&lt;style&gt;
+.collapsible-content { display: none; }
+.collapsible-content.rd-is-open { display: block; }
+&lt;/style&gt;</code></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy setup" data-icon="content_copy" data-copy-target="#snippet-collapsible-4"></button></p>
+</div>
+<p>Note: The <code>.collapsible-icon</code> element is optional, and it is <strong>empty on purpose</strong> — the arrow glyph is baked into the class by CSS (Material Symbols ligature via <code>::before</code>), so markup carries no vendor icon class and no ligature text. The script never swaps icon glyphs — the open state rotates the icon via CSS (<code>[aria-expanded=&quot;true&quot;] .collapsible-icon</code>). Standalone users need:</p>
+<div class="code-block">
+    <pre><code id="snippet-collapsible-5" class="language-css">.collapsible-icon {
+  display: inline-block;
+  font-family: &#34;Material Symbols Outlined&#34;;
+  transition: transform 0.2s ease;
+}
+<p>.collapsible-icon::before { content: &quot;keyboard_arrow_down&quot;; }</p>
+<p>.collapsible-trigger[aria-expanded=&quot;true&quot;] .collapsible-icon {
+transform: rotate(180deg);
+}</code></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy icon CSS" data-icon="content_copy" data-copy-target="#snippet-collapsible-5"></button></p>
 </div>
 <div class="air-lg"></div>
 <details>
 <summary>Technical Requirements</summary>
 <p>Pay attention for several points:</p>
 <ol>
-<li>The clickable element must have class <code>.collapsible-trigger</code></li>
-<li>The hidden content must have class <code>.collapsible-content</code></li>
-<li>Optional: Icon element with class <code>.collapsible-icon</code></li>
-<li>The default state of <code>.collapsible-content</code> should be set as <code>display: none;</code> or <code>max-height: 0;</code> to ensure content is hidden before JavaScript runs</li>
+<li>The clickable element must carry the hook class <code>rd-js-collapsible</code> (keep a separate presentational class like <code>.collapsible-trigger</code> for styling — hooks are never styled)</li>
+<li>The content element must carry the hook class <code>rd-js-collapsible-content</code>, or be targeted explicitly via <code>aria-controls</code> + <code>id</code></li>
+<li>Optional: icon element with class <code>.collapsible-icon</code> — rotated by CSS when open, no glyph swapping</li>
+<li>The content must be hidden by default via CSS (<code>display: none;</code>) and shown by the state class the script toggles: <code>.rd-is-open { display: block; }</code></li>
+<li>The script mirrors open/closed state to <code>aria-expanded</code> on the trigger. A <code>&lt;button&gt;</code> trigger is preferred; for any other element the script adds <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and handles <kbd>Enter</kbd> / <kbd>Space</kbd>, so keyboard access works either way</li>
 </ol>
 </details>
 <div class="air-md"></div>
 <details>
     <summary>Raw code</summary>
 <pre><code class="language-js">document.addEventListener('DOMContentLoaded', function() {
-    // Find all trigger elements
-    const triggers = document.querySelectorAll('.collapsible-trigger');
+    // Resolve the content element for a trigger:
+    // 1. explicit aria-controls id, 2. trigger's next sibling, 3. trigger's parent's next sibling
+    function resolveContent(trigger) {
+        const id = trigger.getAttribute('aria-controls');
+        if (id) {
+            const byId = document.getElementById(id);
+            if (byId) return byId;
+        }
 
-    // Add click handler to each trigger
-    triggers.forEach(trigger =&gt; {
-        trigger.addEventListener('click', function() {
-            // Try to find related content element
-            let content;
+        const sibling = trigger.nextElementSibling;
+        if (sibling &amp;&amp; sibling.classList.contains('rd-js-collapsible-content')) {
+            return sibling;
+        }
 
-            // Check if trigger and content are siblings
-            if (this.nextElementSibling &amp;&amp; this.nextElementSibling.classList.contains('collapsible-content')) {
-                content = this.nextElementSibling;
-            }
-            // Check if content is the next sibling of trigger's parent
-            else if (this.parentElement &amp;&amp;
-                        this.parentElement.nextElementSibling &amp;&amp;
-                        this.parentElement.nextElementSibling.classList.contains('collapsible-content')) {
-                content = this.parentElement.nextElementSibling;
-            }
+        const parentSibling = trigger.parentElement &amp;&amp; trigger.parentElement.nextElementSibling;
+        if (parentSibling &amp;&amp; parentSibling.classList.contains('rd-js-collapsible-content')) {
+            return parentSibling;
+        }
 
-            // Exit if no content found
-            if (!content) return;
+        return null;
+    }
 
-            // Find the icon (if it exists)
-            const icon = this.querySelector('.collapsible-icon');
+    document.querySelectorAll('.rd-js-collapsible').forEach(trigger =&gt; {
+        const content = resolveContent(trigger);
+        if (!content) return;
 
-            // Check if content is currently visible
-            const isVisible = window.getComputedStyle(content).display !== 'none';
+        // Initialize ARIA from the authored state
+        const isOpen = content.classList.contains('rd-is-open');
+        trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (content.id &amp;&amp; !trigger.getAttribute('aria-controls')) {
+            trigger.setAttribute('aria-controls', content.id);
+        }
 
-            // Toggle visibility
-            if (isVisible) {
-                content.style.display = 'none';
-                if (icon) icon.textContent = 'keyboard_arrow_down';
-            } else {
-                content.style.display = 'block';
-                if (icon) icon.textContent = 'keyboard_arrow_up';
-            }
-        });
+        function toggle() {
+            const open = content.classList.toggle('rd-is-open');
+            trigger.classList.toggle('rd-is-open', open);
+            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+
+        trigger.addEventListener('click', toggle);
+
+        // Keyboard access when the trigger is not a native button:
+        // make it focusable and respond to Enter / Space
+        if (trigger.tagName !== 'BUTTON') {
+            if (!trigger.hasAttribute('tabindex')) trigger.setAttribute('tabindex', '0');
+            if (!trigger.hasAttribute('role')) trigger.setAttribute('role', 'button');
+            trigger.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggle();
+                }
+            });
+        }
     });
 });
 </code></pre>
 </details>
+<div class="air-lg"></div>
+<h3>Changelog</h3>
+<h4>v2.0.0</h4>
+<ul>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script finds elements via <code>rd-js-collapsible</code> / <code>rd-js-collapsible-content</code>; <code>.collapsible-trigger</code> / <code>.collapsible-content</code> remain as presentational classes only</li>
+<li><strong>Breaking:</strong> visibility is now expressed by the <code>rd-is-open</code> state class instead of inline <code>style.display</code></li>
+<li><strong>Breaking:</strong> the icon glyph is no longer swapped (<code>keyboard_arrow_down</code> ↔ <code>keyboard_arrow_up</code>); the icon rotates via CSS keyed off <code>aria-expanded</code></li>
+<li>Added <code>aria-expanded</code> / <code>aria-controls</code>; explicit <code>aria-controls</code> targeting is now the canonical structure</li>
+<li>Added keyboard access: non-<code>&lt;button&gt;</code> triggers get <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and toggle on <kbd>Enter</kbd> / <kbd>Space</kbd></li>
+</ul>
 <div class="air-lg"></div>
 <h3>Pseudo-Link Styling Cheat Sheet</h3>
 <p>Create a special style for pseudo-links.</p>
@@ -494,24 +556,29 @@ js/collapsible.js<br>
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

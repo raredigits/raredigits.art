@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel | Rare Digits Art</title>
+
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="current">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/scripts/">Scripts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/scripts/hamburger/">Hamburger</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/scripts/collapsible/">Collapsible</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/scripts/search/">Search</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/scripts/cookies/">Cookies</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/scripts/copy-to-clipboard/">Copy</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <span class="bold">Carousel</span>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Carousel</h1>
+  </section>
+
+    <article>
+      <div class="meta-info">
+js/carousel.js<br>
+<p>
+    v1.0.0 Stable |
+    <a href="/assets/js/carousel.js">Download</a> <span class="material-symbols-outlined">download</span>
+</p>
+</div>
+<p>A lightweight image carousel for a small set of related photos — one visible at a time, with previous/next arrows and a dot for each slide. Each slide is a <code>&lt;figure&gt;</code>, so an optional caption travels with its image instead of sitting still while the pictures change underneath it.</p>
+<p>It stays deliberately small: no autoplay, no infinite virtual scrolling, no touch-momentum physics. For a handful of images inside an article — a place, a building from three angles, a before/after — that is all it needs to be.</p>
+<h2>Live example</h2>
+<div class="text-content-caption">
+<div class="carousel rd-js-carousel">
+  <div class="carousel-track rd-js-carousel-track">
+    <figure class="carousel-slide rd-is-active">
+      <img src="/assets/img/illustrations/poker.jpg" alt="Poker">
+      <figcaption class="carousel-caption">First slide — the caption belongs to this image</figcaption>
+    </figure>
+    <figure class="carousel-slide">
+      <img src="/assets/img/illustrations/batman-inverted.jpg" alt="Batman, inverted">
+      <figcaption class="carousel-caption">Second slide — and this caption changes with it</figcaption>
+    </figure>
+    <figure class="carousel-slide">
+      <img src="/assets/img/illustrations/leg-split.jpg" alt="Leg split">
+      <figcaption class="carousel-caption">Third slide — a slide with no caption is fine too</figcaption>
+    </figure>
+  </div>
+  <button class="carousel-arrow carousel-arrow-prev rd-js-carousel-prev" aria-label="Previous slide"></button>
+  <button class="carousel-arrow carousel-arrow-next rd-js-carousel-next" aria-label="Next slide"></button>
+  <div class="carousel-dots rd-js-carousel-dots"></div>
+</div>
+</div>
+<p>Use the arrows, the dots, or the <kbd>←</kbd> / <kbd>→</kbd> keys while the carousel has focus.</p>
+<h2>Contract</h2>
+<ul>
+<li><code>rd-js-carousel</code> on the root, <code>rd-js-carousel-track</code> on the slide container — the track's <strong>element children are the slides</strong>, so the script never depends on the slide's presentational class</li>
+<li><code>rd-js-carousel-prev</code> / <code>rd-js-carousel-next</code> on the arrow buttons; <code>rd-js-carousel-dots</code> on the (empty) dots container the script fills</li>
+<li>State is <code>rd-is-active</code> on the current slide and its dot — CSS shows the active slide and stretches the active dot</li>
+<li>A slide is a <code>&lt;figure&gt;</code> with an <code>&lt;img&gt;</code> and an optional <code>&lt;figcaption class=&quot;carousel-caption&quot;&gt;</code>; keeping the caption inside the slide is what makes it travel with the image</li>
+<li>Reading order below the photo: caption first, then the dots — the dots live in normal flow under the carousel (dark by default), never overlaid on the caption or the photo</li>
+<li>Any number of carousels can share one page — each is initialized independently</li>
+<li>ARIA: the root is a <code>role=&quot;group&quot;</code> / <code>aria-roledescription=&quot;carousel&quot;</code>; arrows and dots are real <code>&lt;button&gt;</code>s with labels; inactive slides are <code>aria-hidden</code></li>
+</ul>
+<h2>Ready-to-paste markup</h2>
+<p>Each slide is a <code>&lt;figure&gt;</code>. The first slide carries <code>rd-is-active</code>; the dots container is left empty — the script builds one dot per slide.</p>
+<div class="code-block">
+    <pre><code id="snippet-carousel-1" class="language-html">&lt;div class=&#34;carousel rd-js-carousel&#34;&gt;
+  &lt;div class=&#34;carousel-track rd-js-carousel-track&#34;&gt;
+    &lt;figure class=&#34;carousel-slide rd-is-active&#34;&gt;
+      &lt;img src=&#34;/img/one.jpg&#34; alt=&#34;…&#34;&gt;
+      &lt;figcaption class=&#34;carousel-caption&#34;&gt;Caption for the first image&lt;/figcaption&gt;
+    &lt;/figure&gt;
+    &lt;figure class=&#34;carousel-slide&#34;&gt;
+      &lt;img src=&#34;/img/two.jpg&#34; alt=&#34;…&#34;&gt;
+      &lt;figcaption class=&#34;carousel-caption&#34;&gt;Caption for the second image&lt;/figcaption&gt;
+    &lt;/figure&gt;
+  &lt;/div&gt;
+  &lt;button class=&#34;carousel-arrow carousel-arrow-prev rd-js-carousel-prev&#34; aria-label=&#34;Previous slide&#34;&gt;&lt;/button&gt;
+  &lt;button class=&#34;carousel-arrow carousel-arrow-next rd-js-carousel-next&#34; aria-label=&#34;Next slide&#34;&gt;&lt;/button&gt;
+  &lt;div class=&#34;carousel-dots rd-js-carousel-dots&#34;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-carousel-1"></button>
+</div>
+<p>The arrow buttons are empty on purpose — the chevron glyphs are baked into <code>.carousel-arrow-prev</code> / <code>-next</code> by CSS (via the <code>symbol()</code> mixin), so the markup carries no vendor icon class.</p>
+<p><strong>Script include:</strong></p>
+<div class="code-block">
+    <pre><code id="snippet-carousel-2" class="language-html">&lt;script src=&#34;/assets/js/carousel.js&#34;&gt;&lt;/script&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy include" data-icon="content_copy" data-copy-target="#snippet-carousel-2"></button>
+</div>
+<h2>Recoloring</h2>
+<p>The arrows overlay the photo, so their defaults are fixed light-on-dark values; the dots sit <strong>below</strong> the carousel on the page background, so their defaults are dark. All four are component tokens, overridable per instance (e.g. a carousel on a dark surface wants light dots back):</p>
+<div class="code-block">
+    <pre><code id="snippet-carousel-3" class="language-html">&lt;!-- carousel on a dark panel: light dots, brand arrows --&gt;
+&lt;div class=&#34;carousel rd-js-carousel&#34;
+     style=&#34;--carousel-dot-color: rgb(255 255 255 / 50%); --carousel-dot-active: var(--white); --carousel-control-bg: var(--brand-color);&#34;&gt;
+  …
+&lt;/div&gt;</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy example" data-icon="content_copy" data-copy-target="#snippet-carousel-3"></button>
+</div>
+<p>Available tokens: <code>--carousel-control-bg</code>, <code>--carousel-control-color</code>, <code>--carousel-dot-color</code>, <code>--carousel-dot-active</code>.</p>
+<details>
+    <summary>Raw code</summary>
+<pre><code class="language-js">document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.rd-js-carousel').forEach(initCarousel);
+});
+
+function initCarousel(root) {
+    const track = root.querySelector('.rd-js-carousel-track');
+    if (!track) return;
+
+    // Slides are the track's element children — the caption travels with the
+    // image because both live inside the same slide element.
+    const slides = Array.prototype.filter.call(track.children, function (el) {
+        return el.nodeType === 1;
+    });
+    if (slides.length === 0) return;
+
+    const prev = root.querySelector('.rd-js-carousel-prev');
+    const next = root.querySelector('.rd-js-carousel-next');
+    const dotsBox = root.querySelector('.rd-js-carousel-dots');
+
+    let idx = Math.max(0, slides.findIndex(function (s) {
+        return s.classList.contains('rd-is-active');
+    }));
+
+    if (!root.getAttribute('role')) root.setAttribute('role', 'group');
+    if (!root.getAttribute('aria-roledescription')) root.setAttribute('aria-roledescription', 'carousel');
+
+    const dots = [];
+    if (dotsBox &amp;&amp; slides.length &gt; 1) {
+        slides.forEach(function (_, i) {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.className = 'carousel-dot';
+            dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+            dot.addEventListener('click', function () { go(i); });
+            dotsBox.appendChild(dot);
+            dots.push(dot);
+        });
+    }
+
+    function go(index) {
+        idx = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, i) {
+            const active = i === idx;
+            slide.classList.toggle('rd-is-active', active);
+            slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+        });
+        dots.forEach(function (dot, i) {
+            const active = i === idx;
+            dot.classList.toggle('rd-is-active', active);
+            dot.setAttribute('aria-current', active ? 'true' : 'false');
+        });
+    }
+
+    if (prev) prev.addEventListener('click', function () { go(idx - 1); });
+    if (next) next.addEventListener('click', function () { go(idx + 1); });
+
+    root.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'ArrowRight') { e.preventDefault(); go(idx + 1); }
+    });
+
+    if (slides.length &lt; 2) {
+        if (prev) prev.hidden = true;
+        if (next) next.hidden = true;
+    }
+
+    go(idx);
+}
+</code></pre>
+</details>
+<h2>Changelog</h2>
+<h3>v1.0.0</h3>
+<ul>
+<li>Harvested into Rare Scripts from schnellreich.ru and rebuilt on the <code>rd-js</code> / <code>rd-is</code> contract</li>
+<li><strong>Multiple carousels per page now work</strong> — each instance is initialized independently (the original collected every image on the page into one shared list, so only a single carousel worked)</li>
+<li>Captions travel with their images: a slide is a <code>&lt;figure&gt;</code> holding the image and an optional <code>&lt;figcaption&gt;</code></li>
+<li>Arrows and dots are real <code>&lt;button&gt;</code>s; added keyboard navigation (<kbd>←</kbd> / <kbd>→</kbd>), <code>role</code>/<code>aria-roledescription</code>, per-control labels, and <code>aria-hidden</code> on inactive slides</li>
+<li>Styles tokenized: hardcoded colors and sizes replaced with <code>--space-*</code> and the recolorable <code>--carousel-*</code> component tokens; the dead <code>transform</code> transition on the track was removed</li>
+<li>Dots moved out of the photo overlay into normal flow below the carousel (they collided with the new travelling captions) and recolored dark for the page background; the arrows keep their light-on-photo overlay defaults</li>
+</ul>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+<script src="/assets/js/carousel.js"></script>
+
+
+
+</body>
+</html>
