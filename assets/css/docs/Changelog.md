@@ -10,6 +10,59 @@ Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ## [Unreleased]
 
+## [v0.6.17] — 2026-07-12 — Scripts Contract & Unified Rewrite
+
+**Breaking release, hard cut.** The five companion scripts (`collapsible`, `cookie-consent`, `copy-to-clipboard`, `hamburger`, `search`) move to one unified contract: `.rd-js-*` hook classes (read by JS, never styled), `.rd-is-*` state classes (written by JS, styled by CSS), baseline ARIA (`aria-expanded` / `aria-controls`), zero inline `style` writes for UI state (the clipboard fallback's off-screen `textarea` is mechanism, not state, and is the one documented exemption). The `rd-` namespace is adopted in the same release (consuming the dissolved `v0.7.0` — `CSS-060..063` → `CSS-067`). Full contract: [`SCRIPTS_CONTRACT.md`](./SCRIPTS_CONTRACT.md); policy: `STYLEGUIDE.md` → Namespace policy.
+
+### Added
+
+- **`carousel` component + script** (`special/_carousel.scss`, `assets/js/carousel.js`, `/scripts/carousel/`) — harvested from schnellreich.ru and rebuilt on the contract. A slide is a `<figure>` (image + optional `<figcaption class="carousel-caption">`) so captions travel with their images; hooks `.rd-js-carousel` / `-track` / `-prev` / `-next` / `-dots`, state `.rd-is-active`, arrows/dots as real `<button>`s, `←`/`→` keys, `role`/`aria-roledescription` and per-control labels. **Fixes a real multi-instance bug** in the source (it collected every image on the page into one shared list, so only one carousel per page worked). Styles tokenized with `--space-*` and recolorable `--carousel-*` component tokens; chevrons drawn via `::before` ligatures. Dots live in normal flow below the carousel (dark defaults for the page background — the photo-overlay placement collided with the travelling captions); arrows keep light-on-photo overlay defaults. Loaded per-page (`scripts: [carousel]`), not globally.
+- **`utilities/_states.scss`** — reserved `rd-is-*` state layer; ships `.rd-is-hidden { display: none }` as a universal state class. Forwarded **last** in `modules/_index.scss` on purpose, so states win order-ties against component display rules until cascade layers land (`CSS-130`).
+- **`.searchbar.rd-is-open`** (`_search.scss`), **`.collapsible-content.rd-is-open`** and ARIA-driven icon rotation **`.collapsible-trigger[aria-expanded="true"] .collapsible-icon`** (`_collapsible.scss`), **`.hamburger.rd-is-active` / `.nav-hamburger.rd-is-active`** (`_hamburger.scss`) — the CSS side of the new script states (`CSS-069`).
+- **`SCRIPTS_CONTRACT.md`** (`CSS-064` / `CSS-065`) — per-script as-was audit plus the target unified contract; doubles as the migration reference for downstream consumers.
+- **Contract regression tests** — `test/scripts-contract.test.js` evals each real script (all six) in an isolated JSDOM window and asserts hooks, `rd-is-*` state, ARIA, guards, keyboard access, clipboard behavior, and carousel multi-instance independence; runs in the existing vitest suite.
+- **`--copy-icon-color` / `--copy-icon-color-hover` component tokens** on `.copy-data-icon` — the copy icon can be recolored per surface (dark panels, brand backgrounds) by setting the token on any container, following the house component-token pattern (`--list-rows`, `--card-grid-cols`). Defaults unchanged (`--text-color-light` / `--primary-color`).
+- **`symbol()` mixin** (`utilities/_symbols.scss`) — a component class can now own the Material Symbols font and draw its glyph via `::before` (baked or from `data-icon`), so markup needs no vendor `.material-symbols-outlined` class and no ligature text. Applied to the script surfaces: `.hamburger__icon-menu` / `.hamburger__icon-close` (baked `menu`/`close`), `.collapsible-icon` (baked `keyboard_arrow_down`), `.icon-search` (baked `search` — the header button is now empty markup), `.copy-data-icon` (refactored onto the mixin, `data-icon` API unchanged). Icon markup on these surfaces is now `<span class="hamburger__icon-menu"></span>` (**breaking** for authored markup that carried the vendor class + ligature text). The site-wide sweep of the remaining vendor-class usages is filed as `CSS-087` (`v0.7.1`).
+
+### Changed
+
+- **All five scripts rewritten onto the unified contract** (`CSS-068`): hooks `.rd-js-collapsible` (+`-content`), `.rd-js-cookie-consent` (+`.rd-js-cookie-accept`), `.rd-js-copy`, `.rd-js-hamburger` (+`-nav`), `.rd-js-search` (+`-bar`, `-ui`); every script now guards against missing hooks (previously `hamburger.js` threw on pages without a hamburger). `collapsible.js` gains `aria-expanded` / `aria-controls`, canonical explicit targeting via `aria-controls`, and keyboard access (non-`<button>` triggers get `tabindex="0"` + `role="button"`, toggle on Enter/Space); the icon rotates via CSS instead of glyph-swapping `textContent`. `hamburger.js` closes on Escape, sets `aria-controls` when the panel carries an `id`, and attaches its outside-click/Escape listeners only while the menu is open; its icon elements are renamed to BEM — `.icon-menu` / `.icon-close` → `.hamburger__icon-menu` / `.hamburger__icon-close` (**breaking**, presentational rename).
+- **`.searchbar` is now hidden by CSS** (`display: none`) and opened via `.rd-is-open`, replacing the `hidden` markup attribute; the header include drops the `search-button` / `searchbar` IDs in favor of hooks.
+- **`cookie-consent` include** (`_includes/special/cookie-consent.njk`) hooks by classes instead of the `cookie-notice` / `cookie-notice-accept` IDs and temporarily loads the local source instead of the `rare-scripts@v1.0.0` CDN pin until the rewrite is published and re-pinned (`CSS-071`).
+- **`copy-to-clipboard.min.js`** regenerated from the rewritten source (esbuild).
+- **`/scripts/` doc pages** rewritten against the shipped contract, each with its own breaking-change changelog entry (collapsible v2.0.0, hamburger v2.0.0, search v2.0.0, cookie-notice v3.0.0, copy-to-clipboard v3.0.0).
+
+### Fixed
+
+- **`CSS-047` — prose outdent pinned collapsible children to the card edge.** The original report was an asymmetric `margin-left`-only override (with a `>` bound only to `.caption`, leaving two near-duplicate blocks); live inspection surfaced the real contract defect: inside the padded `.collapsible-container` the prose outdent family (`.lead`, `.highlight`, `.caption`, `.text-content-caption` — `@mixin outdent` + `width: var(--text-content-caption)` in `typography/_text-content.scss`) sat flush against the card edge (`.lead` at 0px on desktop) or overflowed it (`.highlight`). Resolution inverts the contract instead of mirroring it: inside `.collapsible-container` / `.collapsible-content` the outdent family (plus `pre` and `.card-caption`, which the old scoped rules had been outdenting) resets to the card's content width — `margin-inline: 0`, `width: auto`, `max-width: 100%`. The card frame replaces the page margins; there is nothing to outdent into. Verified at mobile and desktop widths: every child sits at the container padding on both sides with zero horizontal overflow.
+- **Dead state write in `search.js`** — the `.has-query` class was written on every keystroke but styled nowhere; removed.
+- **Cookie-notice FOUC** — `cookie-consent.js` waited for `DOMContentLoaded` before hiding a dismissed notice, letting it flash for returning visitors. The script now initializes immediately when its markup is already parsed (synchronous include right after the markup hides it before paint); an optional inline anti-flash guard is documented on `/scripts/cookies/` for `defer`/CDN setups.
+- **Search button was dead on the `main.njk` layout** — the landing layout carried its own script list and was silently missing `search.js` (and `collapsible`/`copy`). Script wiring now lives in one shared `_includes/scripts.njk` consumed by every layout; `hamburger.js` is no longer listed in two places.
+- **Hover-flicker on glyph buttons** — `.no-decoration:hover::before { content: none }` (`utilities/_resets.scss`) blanked mixin-drawn glyphs out from under the cursor (visible on the header search button). The `symbol()` mixin now asserts its `::before` content for `:hover` as well.
+- **`aria-controls` now materializes in the real markup** — the hamburger panel got `id="nav-hamburger"` and the search bar kept `id="searchbar"`, with `search.js` (like the other scripts) wiring `aria-controls` from the element id; ids remain legitimate as ARIA/anchor identity — they are just never JS hooks.
+- **Live collapsible examples migrated to the canonical `<button>` trigger** (typography page, `/scripts/collapsible/` demo) with an explicit `button.collapsible-trigger` neutralization of the global button treatment, so the trigger reads as inline prose text.
+
+### Removed
+
+- **Legacy state selectors (breaking):** `.hamburger.active` / `.nav-hamburger.active` are gone from `_hamburger.scss` — state is `.rd-is-active`. Old JS hooks (`.collapsible-trigger` / `.collapsible-content` as JS targets, `#cookie-notice`, `#cookie-notice-accept`, `#search-button`, `#searchbar`) are no longer read; the classes remain as presentational-only. No dual-hook window: downstream consumers migrate via `CSS-071` before this reaches the CDN.
+
+## [v0.6.16] — 2026-07-12 — Font Self-Hosting
+
+*(Entry backfilled during `v0.6.17`: this release originally shipped without a changelog record.)*
+
+### Added
+
+- **Self-hosted text families** (`CSS-030`): Playfair Display (variable 400–900), Fira Sans (100/200/400/700/900 + italics), Cousine (400/700 + italics), Caveat (400) as woff2 under `assets/css/fonts/` with latin + cyrillic `unicode-range` subsets and `font-display: swap`; referenced via relative `url(fonts/…)` so the same path resolves locally and on jsDelivr. License texts shipped alongside (`CSS-030b`; all four families OFL-1.1).
+- **Fonts passthrough** in `.eleventy.js` (`CSS-030a`) and font preloads + Google preconnect hints in `_includes/head.njk` (`CSS-030c`, site-level).
+
+### Changed
+
+- **Icon loading rationalized to a single scoped `@import`** (`CSS-032`, decision `Q-06`): Material Symbols Outlined only, weights 200/400. Net: 7 `@import`s → 1 in `rare.min.css`.
+
+### Removed
+
+- **Legacy `Material Icons` / `Material Icons Outlined`** `@import`s and the `.material-icons` / `.material-icons-outlined` selectors (breaking downstream-only; coordinated via `CSS-032a`, confirmed migrated 2026-07-12).
+
 ## [v0.6.15] — 2026-06-12 — Audit Hotfixes & Post-Harvest Cleanup
 
 Tight follow-up patch to `v0.6.14`: clears the 2026-06-06 / 2026-06-11 audit findings and the first post-harvest fixes. Bugs, hygiene, asset-path cleanup, and two narrowly scoped harvested selectors. Nothing here was hotfixed back into `v0.6.14`.

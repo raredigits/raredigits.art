@@ -15,19 +15,19 @@ D3 is bundled in. You do not need to include it separately.
 **From GitHub** — clone the repo and use the prebuilt file:
 
 <pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 
 Copy `rare-charts.js` wherever your project keeps static assets.
 
 **From CDN** — load it directly, no download required:
 
 <pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 
 For production, pin to a specific version. `@latest` is fine for prototyping, bad for anything that ships:
 
 <pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@{{ versions.charts }}/rare-charts.min.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 
 ## Where to put the script tag
 

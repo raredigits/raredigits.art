@@ -1,0 +1,131 @@
+// Image carousel (harvested from schnellreich.ru, v0.6.17). Driven by
+// carousel.js — contract: SCRIPTS_CONTRACT.md.
+// A slide is a <figure> holding an <img> plus an optional <figcaption>, so the
+// caption travels with its image. The active slide is shown via .rd-is-active;
+// controls are recolored per instance through the --carousel-* tokens.
+
+.carousel {
+    // Component tokens. The arrows overlay the photo, so their defaults are
+    // fixed light-on-dark values; the dots sit below the carousel on the page
+    // background, so their defaults are dark. Override per instance:
+    // <div class="carousel rd-js-carousel" style="--carousel-dot-active: …">
+    --carousel-control-bg: rgb(0 0 0 / 50%);
+    --carousel-control-color: var(--white);
+    --carousel-dot-color: rgb(0 0 0 / 25%);
+    --carousel-dot-active: var(--primary-color);
+
+    position: relative;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.carousel-track {
+    width: 100%;
+}
+
+// Slides: only the active one renders. The <figure> wraps image + caption so
+// both change together.
+.carousel-slide {
+    display: none;
+
+    &.rd-is-active {
+        display: block;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        object-fit: cover;
+    }
+}
+
+.carousel-caption {
+    margin-top: var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--text-color-light);
+    text-align: center;
+}
+
+// Arrow controls — positioned flex <button>s. The glyph is drawn via ::before
+// (Material Symbols ligature), so the markup carries no vendor icon class. The
+// symbol() mixin is deliberately NOT used here: it sets position: relative /
+// display: inline-block for inline glyphs, which would fight this button's
+// absolute positioning and flex centering.
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--space-xl);
+    height: var(--space-xl);
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: var(--carousel-control-bg);
+    color: var(--carousel-control-color);
+    cursor: pointer;
+    z-index: 2;
+
+    &::before {
+        font-family: "Material Symbols Outlined", sans-serif;
+        font-size: var(--font-size-xl);
+        line-height: 1;
+    }
+
+    &:hover {
+        background: var(--carousel-control-bg);
+    }
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.carousel-arrow-prev {
+    left: var(--space-sm);
+
+    &::before {
+        content: "chevron_left";
+    }
+}
+
+.carousel-arrow-next {
+    right: var(--space-sm);
+
+    &::before {
+        content: "chevron_right";
+    }
+}
+
+// Dots — built by the script, one <button> per slide. They live in normal
+// flow BELOW the carousel content (not overlaid on the photo or the caption),
+// which is why their default color is dark: they render on the page background.
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-md);
+
+    &:empty {
+        margin-top: 0;
+    }
+}
+
+.carousel-dot {
+    width: var(--space-sm);
+    height: var(--space-sm);
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+    background: var(--carousel-dot-color);
+    cursor: pointer;
+    transition: width 0.3s ease, background-color 0.3s ease;
+
+    &.rd-is-active {
+        width: var(--space-lg);
+        background: var(--carousel-dot-active);
+    }
+}

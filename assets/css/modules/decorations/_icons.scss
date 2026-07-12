@@ -1,3 +1,5 @@
+@use "../utilities/symbols" as sym;
+
 .material-symbols-outlined {
     position: relative;
     top: 0.2em;
@@ -23,26 +25,25 @@
     }
 }
 
+// Read by copy-to-clipboard.js (contract: SCRIPTS_CONTRACT.md, v0.6.17) — the
+// script hooks clicks via the separate `.rd-js-copy` class and drives the glyph
+// through the `data-icon` attribute; this rule owns only the presentation.
+// Color is tokenized so the icon can be recolored per surface (dark panels,
+// brand backgrounds) without fighting the selector:
+// <div style="--copy-icon-color: #fff">…</div>
 .copy-data-icon {
-    display: inline-block;
-    font-family: "Material Symbols Outlined", sans-serif;
-    position: relative;
-    top: 0.2em;
-    font-size: inherit;
+    @include sym.symbol;
+
     line-height: inherit;
     background: none;
-    color: var(--text-color-light);
+    color: var(--copy-icon-color, var(--text-color-light));
     border: none;
     padding: 0;
     cursor: pointer;
 }
 
-.copy-data-icon::before {
-    content: attr(data-icon);
-}
-
 .copy-data-icon:hover {
-    color: var(--primary-color);
+    color: var(--copy-icon-color-hover, var(--primary-color));
     background: none;
     border: none;
 }

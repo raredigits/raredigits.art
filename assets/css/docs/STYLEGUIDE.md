@@ -41,15 +41,25 @@ Before shipping a CSS-affecting release:
 2. `npm run build:css`
 3. If the site shell or examples changed, run `npm run build`
 
+## Namespace policy (`rd-`)
+
+Adopted in `v0.6.17` (`CSS-067`, consuming the dissolved `v0.7.0` Namespace Foundations). `rd-` (Rare Digits) is the official library namespace. Three rules:
+
+1. **`rd-` for everything new.** New utility, state, and JS-hook classes ship with the `rd-` prefix. Existing component classes (`.card`, `.sidebar`, `.tag`, …) stay unprefixed until the dedicated migration pass (`CSS-133`).
+2. **`.rd-is-*` is the only way to express UI state.** Scripts toggle `.rd-is-open` (disclosure surfaces), `.rd-is-active` (toggles/menus), `.rd-is-hidden` (dismissed surfaces); CSS styles these classes. Reserved as documented convention, not yet shipped: `.rd-is-loading`, `.rd-is-disabled`. No inline `style.*` writes for UI state from scripts (transient utility elements that never render as UI — e.g. the clipboard fallback `textarea` — are mechanism, not state, and are exempt), no ad-hoc state classes (`.active`, `.has-query`).
+3. **`.rd-js-*` is a behavioral hook, never styled.** Scripts find DOM nodes only via `.rd-js-*` classes. CSS rules MUST NOT target `.rd-js-*` selectors — presentational styling belongs to separate presentational classes on the same element. Shipped hooks: `.rd-js-collapsible` (+ `.rd-js-collapsible-content`), `.rd-js-cookie-consent` (+ `.rd-js-cookie-accept`), `.rd-js-copy`, `.rd-js-hamburger` (+ `.rd-js-hamburger-nav`), `.rd-js-search` (+ `.rd-js-search-bar`, `.rd-js-search-ui`), `.rd-js-carousel` (+ `.rd-js-carousel-track`, `.rd-js-carousel-prev`, `.rd-js-carousel-next`, `.rd-js-carousel-dots`). Reserved: `.rd-js-dropdown`.
+
+State MAY also be styled via ARIA attributes the scripts maintain (`[aria-expanded="true"]`) — ARIA is state, not a hook. The full CSS↔scripts contract lives in [`SCRIPTS_CONTRACT.md`](./SCRIPTS_CONTRACT.md).
+
+**Migration note:** prefixing the existing component/utility surface is deliberately deferred — `CSS-133` (`0.8.0`) audits each class and decides prefix / alias / leave per case. Do not preemptively rename shipped classes.
+
 ## Icon policy
 
-- Canonical icon family for new Rare Styles work: `Material Symbols Outlined`
-- Legacy families temporarily retained for backward compatibility:
-  - `material-icons`
-  - `material-icons-outlined`
-- New markup should not introduce additional dependencies on legacy Material icon classes
-- When migrating legacy spans to `material-symbols-outlined`, verify icon-name compatibility first. Some names stay the same (`search`, `menu`, `close`, `construction`), while others may differ (for example `file_download` → `download`)
-- Pseudo-element and `data-icon` usage should prefer `Material Symbols Outlined`
+- The only supported icon family is `Material Symbols Outlined`. The legacy `.material-icons` and `.material-icons-outlined` families and selectors were removed in `v0.6.16`; do not use them in new or migrated markup.
+- For new component-owned icon surfaces, prefer a semantic component class backed by the `symbol()` mixin from `utilities/_symbols.scss`. The component class owns the font and glyph, so markup does not need the vendor `.material-symbols-outlined` class or ligature text.
+- Use the baked-glyph form for fixed icons (`@include symbol("search")`) and the `data-icon` form for genuinely dynamic glyphs (`@include symbol`).
+- Direct `.material-symbols-outlined` markup remains supported while the existing site surface is migrated under `CSS-087`; do not expand its usage.
+- When migrating an existing icon to a component-owned class, verify glyph-name compatibility. Some names stay the same (`search`, `menu`, `close`, `construction`), while others differ (for example `file_download` → `download`).
 
 ## Public asset contract
 

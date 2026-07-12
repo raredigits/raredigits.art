@@ -1,0 +1,14 @@
+{# Single source for the site-wide companion scripts (SCRIPTS_CONTRACT.md).
+   Included by every layout — keep script wiring here, not per-layout, so a
+   layout can't silently miss one (v0.6.17: main.njk was missing search.js). #}
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+{# Per-page scripts: a page declares `scripts: [carousel]` in its front matter
+   to load /assets/js/<name>.js only where it is used (e.g. carousel). #}
+{% for scriptName in scripts %}
+<script src="/assets/js/{{ scriptName }}.js"></script>
+{% endfor %}
