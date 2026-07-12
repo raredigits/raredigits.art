@@ -14,7 +14,7 @@ The target contract is regression-tested: [`test/scripts-contract.test.js`](../.
 | Script | Loaded on this site from | Reaches consumers via |
 |---|---|---|
 | `collapsible.js` | `_includes/scripts.njk` (single include shared by all layouts since `v0.6.17` — previously per-layout lists, and `main.njk` was silently missing `search.js`) | Hand-copy / download link on `/scripts/collapsible/` |
-| `cookie-consent.js` | **CDN**: `rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js` (`_includes/special/cookie-consent.njk`); local `assets/js/cookie-consent.js` is the unminified source, verified identical | Versioned jsDelivr pin on the `raredigits/rare-scripts` repo |
+| `cookie-consent.js` | **CDN**: `rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js` (`_includes/special/cookie-consent.njk`) — re-pinned to the rewritten build once `rare-scripts@v3.0.0` was published; local `assets/js/cookie-consent.js` remains the unminified source of truth | Versioned jsDelivr pin on the `raredigits/rare-scripts` repo |
 | `copy-to-clipboard.js` | `_includes/scripts.njk` (plus a `copy-to-clipboard.min.js` alongside — the only min variant in `assets/js/`) | Hand-copy / download link |
 | `hamburger.js` | `_includes/scripts.njk` (was duplicated across `footer.njk` and `main.njk` before the shared include) | Hand-copy / download link |
 | `search.js` | `_includes/scripts.njk` | Site-specific (Pagefind); unlikely copied as-is |
