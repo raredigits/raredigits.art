@@ -4,7 +4,7 @@
 > Публичный бэклог фич — `charts/backlog/index.md` (рендерится на `/charts/backlog/`).
 > Этот файл — про путь к **заморозке API в 1.0**. С 2026-07-06 путь включает фичевые релизы 0.9.8_x: терминальный набор классов (гэп-анализ «аналитический Bloomberg») входит в библиотеку **до** заморозки, чтобы 1.0 фиксировала полноценный словарь.
 
-Текущая версия: **v0.9.8** (Beta), выпущена 2026-07-03 — первый релиз через автоматический конвейер (гейт по версии + автотег), прошёл штатно.
+Текущая версия: **v0.9.8_1** (Beta) — Graph rework (experimental), выпущена 2026-07-12. Базовый **v0.9.8** (2026-07-03) — первый релиз через автоматический конвейер (гейт по версии + автотег), прошёл штатно.
 
 ## Состояние на 2026-07-03 (ревизия)
 
@@ -32,10 +32,12 @@
 | Релиз | Тема | Статус |
 |-------|------|--------|
 | **0.9.8** | Накопленный `[Unreleased]` + фичи Axes. Тесты/a11y/лицензия/версия/релизный конвейер/доки. | ✅ released 2026-07-03 |
-| **0.9.8_1** | **Composition:** stacked bars + stacked area (`stacked: true` на Bar/Line) + `DivergingBar`. Сюда же едет уже готовый фикс Bar-негативов (лежит в `[Unreleased]`). | planned |
-| **0.9.8_2** | **Новые типы:** `Scatter`, `Heatmap`, `Waterfall`. | planned |
-| **0.9.8_3** | **Шкалы и интерактив:** `yScale: 'log'` (Line/TimeSeries/DualAxes), `normalize: 'rebase'\|'percent'` (Line), legend isolation, `MultiChart` → все типы чартов. | planned |
-| **0.9.8_4** | **Graph rework (experimental):** merge `graph_branch` (headless model, deterministic views, свои тесты). Ветка отстаёт от main (база — до 0.9.8) → сначала rebase. Статус experimental сохраняется — вне semver-гарантии 1.0. | planned |
+| **0.9.8_1** | **Graph rework (experimental):** headless model, deterministic views, relation-фильтрация + навигация (breadcrumbs/back), progressive data contract, свои тесты. Сюда же уехали лежавшие в `[Unreleased]` фикс Bar-негативов и автопубликация GitHub Release. Статус experimental — вне semver-гарантии 1.0. | ✅ released 2026-07-12 |
+| **0.9.8_2** | **Composition:** stacked bars + stacked area (`stacked: true` на Bar/Line) + `DivergingBar`. | planned |
+| **0.9.8_3** | **Новые типы:** `Scatter`, `Heatmap`, `Waterfall`. | planned |
+| **0.9.8_4** | **Шкалы и интерактив:** `yScale: 'log'` (Line/TimeSeries/DualAxes), `normalize: 'rebase'\|'percent'` (Line), legend isolation, `MultiChart` → все типы чартов. | planned |
+
+> **Graph вышел вне очереди.** По плану 2026-07-06 rework стоял последним в поезде (_4). По факту `graph_branch` доехала первой и вышла как **0.9.8_1** (2026-07-12), сдвинув Composition/типы/шкалы на слот вниз. На состав словаря к 1.0 это не влияет — 0.9.9 обкатывает все классы из 0.9.8_x независимо от порядка их выхода.
 | **0.9.9** | **Финальная отладка перед заморозкой:** находки боевого тестирования ([FIELD-NOTES](./FIELD-NOTES-INTERNAL.md)) + все ⚠️/❓ инвентаря + инвентарь и обкатка классов из 0.9.8_x. Последнее окно для переименований. | planned |
 | **1.0** | Заморозка публичного API. Semver-обещание стабильности для CDN-потребителей. | target |
 | **1+** | Что осталось аддитивного: candlestick, hierarchies/treemap, map overlays, branding API, callouts. | out of scope |

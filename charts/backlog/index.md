@@ -64,17 +64,17 @@ Features and chart types planned for future releases.
         <tr>
             <td>Scatter</td>
             <td><code>RareCharts.Scatter</code></td>
-            <td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any "rank N items on two axes" figure. <strong>Targeted for v0.9.8_2.</strong></td>
+            <td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any "rank N items on two axes" figure. <strong>Targeted for v0.9.8_3.</strong></td>
         </tr>
         <tr>
             <td>Heatmap</td>
             <td><code>RareCharts.Heatmap</code></td>
-            <td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_2.</strong></td>
+            <td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_3.</strong></td>
         </tr>
         <tr>
             <td>Waterfall</td>
             <td><code>RareCharts.Waterfall</code></td>
-            <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_2.</strong></td>
+            <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_3.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -86,17 +86,17 @@ Features and chart types planned for future releases.
         <tr>
             <td>Stacked bars</td>
             <td><code>stacked: true</code> with multi-series data on <code>RareCharts.Bar</code></td>
-            <td>Accept <code>[{ name, values }]</code> series and stack segments within each category or date slot, with a per-segment tooltip and legend. Composition over time — revenue by segment, index membership — is the most common analytics figure after lines. <strong>Targeted for v0.9.8_1.</strong></td>
+            <td>Accept <code>[{ name, values }]</code> series and stack segments within each category or date slot, with a per-segment tooltip and legend. Composition over time — revenue by segment, index membership — is the most common analytics figure after lines. <strong>Targeted for v0.9.8_2.</strong></td>
         </tr>
         <tr>
             <td>Stacked area</td>
             <td><code>stacked: true</code> on <code>RareCharts.Line</code> area series</td>
-            <td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_1.</strong></td>
+            <td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_2.</strong></td>
         </tr>
         <tr>
             <td>All chart types in MultiChart</td>
             <td><code>type: 'Donut' | 'Gauge' | 'DualAxes' | ...</code> in <code>charts</code> descriptors</td>
-            <td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_3.</strong></td>
+            <td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_4.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -107,12 +107,12 @@ Features and chart types planned for future releases.
         <tr>
             <td>Logarithmic Y scale</td>
             <td><code>yScale: 'log'</code> on <code>Line</code> / <code>TimeSeries</code> / <code>DualAxes</code></td>
-            <td>Log-scale toggle for long-horizon price and index series, where a linear scale visually overstates recent moves. Requires positive-domain guards and log-aware tick generation. <strong>Targeted for v0.9.8_3.</strong></td>
+            <td>Log-scale toggle for long-horizon price and index series, where a linear scale visually overstates recent moves. Requires positive-domain guards and log-aware tick generation. <strong>Targeted for v0.9.8_4.</strong></td>
         </tr>
         <tr>
             <td>Series rebase / normalization</td>
             <td><code>normalize: 'rebase'&nbsp;|&nbsp;'percent'</code> on <code>RareCharts.Line</code></td>
-            <td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_3.</strong></td>
+            <td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_4.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -138,7 +138,7 @@ Features and chart types planned for future releases.
         <tr>
             <td>Diverging bar chart</td>
             <td><code>RareCharts.DivergingBar</code></td>
-            <td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_1.</strong></td>
+            <td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_2.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -196,7 +196,7 @@ Features and chart types planned for future releases.
         <tr>
             <td>Legend series isolation</td>
             <td><code>legendInteractive: true</code></td>
-            <td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_3.</strong></td>
+            <td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_4.</strong></td>
         </tr>
         <tr>
             <td>Tooltip header style</td>

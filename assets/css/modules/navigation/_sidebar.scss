@@ -145,7 +145,7 @@ h5.sidebar-header a:hover {
     display: inline-block;
 }
 
-.sidebar-icon.material-icons {
+.sidebar-icon.material-symbols-outlined {
     @include bp.mobile {
         top: 0;
     }

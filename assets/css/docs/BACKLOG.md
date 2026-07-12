@@ -27,10 +27,11 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 - Source of truth for the current released library version: `_data/versions.js` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
 - Current released library version: `v0.6.15` (`Audit Hotfixes & Post-Harvest Cleanup`) — bug-fix follow-up on top of `v0.6.14` (`Cross-Project Enrichment`, manifest [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md)). Changes recorded in [`Changelog.md`](./Changelog.md).
-- Current working release: `v0.6.16` — scripts audit and CSS↔`/scripts/` contract freeze.
-- Next release after that: `v0.6.17` — docs/examples migration off GitHub Pages URLs, downstream CDN cutover, and Pages cleanup.
-- Then: `v0.6.18` — documentation skeleton pass: keep draft docs pages visible as module backlogs, fix dead-nav edges, and formalize the incomplete-page policy.
-- Then: `v0.6.19` — vendor/media kit prep for Rare Digits branding surfaces, attribution variants, and library-linking guidance.
+- Current release (shipping now): `v0.6.16` — font self-hosting: kill the render-blocking `@import` waterfall, self-host the four text families, keep one scoped Material Symbols import (weights 200/400), drop legacy Material Icons. Pulled forward from `v0.7.1` (`CSS-030` / `CSS-032`).
+- Next release: `v0.6.17` — scripts audit and CSS↔`/scripts/` contract freeze.
+- Then: `v0.6.18` — docs/examples migration off GitHub Pages URLs, downstream CDN cutover, and Pages cleanup.
+- Then: `v0.6.19` — documentation skeleton pass: keep draft docs pages visible as module backlogs, fix dead-nav edges, and formalize the incomplete-page policy.
+- Then: `v0.6.20` — vendor/media kit prep for Rare Digits branding surfaces, attribution variants, and library-linking guidance.
 - Then: `v0.7.0` — namespace foundations (`rd-` prefix, `rd-is-*`, `rd-js-*`).
 
 ---
@@ -110,7 +111,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 | `.sidebar-icon.material-icons` | Sidebar navigation affordances or meta rows | `.sidebar-icon.material-symbols-outlined` or family-agnostic `.sidebar-icon` | Remove legacy sidebar compatibility selectors |
 | Icon text names from old Material Icons set | `file_download`, `launch`, and any project-specific legacy names | Verify against Symbols before migration | Prevent silent broken glyphs during cleanup |
 
-`_icons.scss` full cleanup is deferred to `v0.7.1`: make selectors family-agnostic where possible, remove legacy compatibility tails only after downstream migration is complete, and avoid doing the same refactor twice across adjacent releases.
+`_icons.scss` full cleanup **landed in `v0.6.16`** (not `v0.7.1` as originally planned): the legacy `.material-icons` / `.material-icons-outlined` selectors were removed and `.sidebar-icon.material-icons` was repointed to `.material-symbols-outlined`. Per decision `Q-06` the in-repo cut did not wait for downstream migration (0 markup usages here); downstream coordination is tracked separately as `CSS-032a`.
 
 **Exit criteria:**
 
@@ -118,7 +119,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 - [x] Imported classes follow Rare Styles naming/token conventions
 - [x] New patterns are documented with intended use cases and non-goals
 
-Icon-family cleanup follow-up: the external-project audit and compatibility-selector removal are moved out of `v0.6.14` and tracked for `v0.7.1`, where the full legacy Material icon cleanup can be handled as one bounded pass instead of stretching the harvest release.
+Icon-family cleanup follow-up: the compatibility-selector removal was moved out of `v0.6.14` and handled as one bounded pass in `v0.6.16` (Font Self-Hosting). The remaining piece — the external-project audit and downstream `.material-icons` migration — is `CSS-032a`.
 
 ---
 
@@ -139,7 +140,7 @@ Icon-family cleanup follow-up: the external-project audit and compatibility-sele
 | `CSS-038` | chore | ~~Decide fate of `assets/css/move-in.css` — a plain-CSS file outside the SCSS pipeline with site-specific overrides. Options: fold into SCSS, document as a separate site layer, or delete.~~ **Done in `v0.6.14`** — the original site-override file was cleared: harvested rules were either integrated into SCSS modules, deferred, or dropped with rationale in `HARVEST_v0.6.14.md`. If `assets/css/move-in.css` appears again later, treat it as a temporary migration scratchpad for targeted transfers (such as `CSS-059`), not as a revived production layer by default. | P2 | S |
 | `CSS-048` | bug | **normalize.css is emitted at the end of the compiled bundle.** In `rare.scss`, `@use "vendor/normalize"` comes after `@use "modules/index"`, so the reset lands after all module CSS (`rare.css:20370` of 20678) and overrides component styles instead of underpinning them. Fix in this patch release: reorder the `@use` statements so normalize is emitted first. The broader reset/normalization audit is deferred to `CSS-078` in `v0.7.1`. | P1 | S |
 | `CSS-049` | bug | **Generated utilities emit invalid CSS.** The `$spaces` matrix in `_spacing.scss` produces `.gap-auto`, `.gap-x-auto`, `.gap-y-auto` (`gap: auto` is not a valid value) in the base set and across all three responsive prefixes. Special-case `auto` out of the gap families. The full property×value matrix audit is `CSS-079` (`0.7.0`) — this is only the invalid-CSS slice. | P2 | S |
-| `CSS-051` | docs | **Install snippets contradict each other today.** `/styles/usage/` still recommends `https://raredigits.github.io/rare-styles/...` in three snippets, while the `/styles/` landing page already points to versioned jsDelivr. Update the usage page to the CDN URL now; the broader Pages sunset remains `CSS-T00.2` (`v0.6.17`). | P1 | S |
+| `CSS-051` | docs | **Install snippets contradict each other today.** `/styles/usage/` still recommends `https://raredigits.github.io/rare-styles/...` in three snippets, while the `/styles/` landing page already points to versioned jsDelivr. Update the usage page to the CDN URL now; the broader Pages sunset remains `CSS-T00.2` (`v0.6.18`). | P1 | S |
 | `CSS-052` | chore | **Reconcile the `CSS-031` record with shipped reality.** `_fonts.scss:2` imports Fira Sans 100/200/400/700/900 + italics (10 styles), and that set matches the shipped `--font-weight-*` tokens (`thin: 100`, `light: 200`, `normal: 400`, `bold: 700`, `black: 900`). Update the backlog/task record to reflect the shipped set instead of reintroducing the older 300/400/500/700 plan. Note: `--font-weight-light: 200` actually maps to the extra-light cut. | P2 | S |
 | `CSS-053` | bug | ~~**Table horizontal scroll is non-functional.**~~ **Done early in `v0.6.14`** — removed the dead `overflow-x` from `table`, shipped the opt-in `.table-scroll` wrapper, reconciled the docs claim. | P1 | S |
 | `CSS-054` | bug | ~~**Zebra/hover signal is inverted in `.table-striped`.**~~ **Done early in `v0.6.14`** — both directions unified upward: even rows `--gray-lightest`, hover `--white` across every preset. | P2 | S |
@@ -162,7 +163,38 @@ Icon-family cleanup follow-up: the external-project audit and compatibility-sele
 
 ---
 
-# Milestone `v0.6.16` — Scripts Audit & Contract Freeze
+# Milestone `v0.6.16` — Font Self-Hosting
+
+**Goal:** eliminate the render-blocking Google Fonts `@import` waterfall by self-hosting the four text families and rationalizing icon loading, without breaking the shared-library ergonomics. Pulled forward from `v0.7.1` (`CSS-030` / `CSS-032`) because it is a live, dated perf regression (schnellreich.ru, PageSpeed mobile 2026-07-12). Distribution-layer scope only — no component or token API changes.
+
+**Decisions carried in (2026-07-12):**
+
+- `Q-05` → **(a) batteries-included, self-hosted.** `rare.min.css` keeps `@font-face` pointing at self-hosted woff2 under `fonts/`. Consumers bump the version and get the same families minus the Google/waterfall cost. No opt-in font pack.
+- `Q-06` → **keep Material Symbols as a single scoped `@import`** (weights `200`/`400` only), drop legacy `Material Icons` + `Material Icons Outlined` now. Symbols stays Google-hosted so consumers need zero icon migration; the two legacy families have **0 markup usages in this repo**, so their removal here is CSS-rule cleanup only. The `.material-icons` breaking change is downstream-only (schnellreich.ru header) and is coordinated via `CSS-032a`, not blocking this release's in-repo cut.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-030` | perf | **Kill the render-blocking `@import` font waterfall; self-host the text families.** Remove the four text-font `@import`s in `typography/_fonts.scss:1-4` and replace with `@font-face` blocks pointing at self-hosted woff2 under `assets/css/fonts/` via **relative** `url(fonts/…)`. The `sync-css.yml` workflow (`cp -r assets/css/* temp-rare-styles/`) lands `fonts/` at the `rare-styles` repo root, so the same relative path resolves on jsDelivr and on the local site with no path fixup. Ship latin + cyrillic `unicode-range` subsets and `font-display: swap`. Families: Playfair Display (`400..900`), Fira Sans (`100/200/400/700/900` + italics, matching the `--font-weight-*` tokens per `CSS-031`), Cousine (`400/700` + italics), Caveat (`400`). Fonts are OFL/Apache — ship the license text alongside the woff2 (`CSS-030b`). **Never re-introduce `@import` for the text fonts.** | P0 | M |
+| `CSS-030a` | chore | **Add the fonts passthrough.** `.eleventy.js` passes through `rare.css`, `images`, examples, and `rare-website.css` but not a fonts dir, so `assets/css/fonts/` would not exist on the built site. Add `addPassthroughCopy("assets/css/fonts")` and a watch target so `/assets/css/fonts/…` resolves locally the same way it does on the CDN. | P0 | S |
+| `CSS-030b` | chore | **Ship font licenses.** Add the OFL (Playfair Display, Fira Sans, Caveat) and Apache-2.0 (Cousine) license text under `assets/css/fonts/` next to the woff2, so downstream redistribution via the CDN stays compliant. | P1 | S |
+| `CSS-030c` | perf | **Preload the critical text faces on raredigits.art. ✅ Done in `v0.6.16`.** Added `<link rel="preload" as="font" type="font/woff2" crossorigin>` for `FiraSans-Regular-latin.woff2` (body) and `PlayfairDisplay-latin.woff2` (headings) in `_includes/head.njk`. Browser-verified: each preloaded face is fetched exactly once, initiated by the `link` — no double-fetch, no unused-preload warning. Companion hint added in the same pass: `preconnect` to `fonts.googleapis.com` + `fonts.gstatic.com` (crossorigin) for the still-Google-hosted Material Symbols — its gstatic woff2 URL is a content hash that can't be preloaded stably, so preconnect is the correct lever under `display: block`. Both are documented on `/styles/typography/`. Site-level, not a library change. | P2 | S |
+| `CSS-032` | chore | **Rationalize Material icon loading → single scoped Symbols import.** Drop the `Material Icons` and `Material Icons Outlined` `@import`s (`typography/_fonts.scss:5-6`). Convert the `Material Symbols Outlined` line to the `css2` API scoped to the two weights the library actually uses — `family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@…,200;400,…` — and keep it as **one** `@import` (decision `Q-06`): Symbols stays Google-hosted, so consumers need no icon migration. Remove the now-dead `.material-icons` / `.material-icons-outlined` selectors from `decorations/_icons.scss` and the `.sidebar-icon.material-icons` rule in `navigation/_sidebar.scss:148`; keep `.material-symbols-outlined`. Net result in `rare.min.css`: 7 `@import`s → 1 (Symbols only), text fonts self-hosted. | P0 | S |
+| `CSS-032a` | chore | **Coordinate the downstream `.material-icons` cut. ✅ Done (confirmed 2026-07-12).** Downstream consumers (schnellreich.ru header) migrated off `.material-icons` / `.material-icons-outlined` to `.material-symbols-outlined` with verified icon names. The legacy-family removal in `CSS-032` is now safe to reach consumers via CDN. | P1 | S |
+
+## Exit criteria
+
+- [x] `rare.min.css` contains exactly one `@import` (Material Symbols Outlined, weights 200/400) and zero `@import`s for the text families — verified: 1 `@import`, 32 `@font-face`, 0 `material-icons`
+- [x] The four text families load from self-hosted woff2 via relative `fonts/…` paths that resolve both locally (`/assets/css/fonts/…`) and on jsDelivr (`rare-styles@<ver>/fonts/…`) — browser-verified: text faces load from `/assets/css/fonts/*.woff2`, only Google request is the scoped Symbols css2
+- [x] `@font-face` blocks carry latin + cyrillic `unicode-range` and `font-display: swap`; only the token-declared weights ship (Playfair variable 400–900, Fira 100/200/400/700/900 + italics, Cousine 400/700 + italics, Caveat 400)
+- [x] Legacy `.material-icons` / `.material-icons-outlined` selectors are removed; `.material-symbols-outlined` still renders every in-repo glyph — browser-verified: `search` renders as a 24px icon, sidenote markers compute `wght 200`
+- [x] `assets/css/fonts/` is passed through by Eleventy (32 woff2 in `_site`) and carries the license text (all four families are OFL-1.1 — Cousine was relicensed from Apache — see `OFL-*.txt` + `README.md`)
+- [x] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`
+- [x] No render-blocking request to `fonts.gstatic.com` for the text families (the scoped Symbols import is the only remaining Google request, by decision)
+- [x] Downstream `.material-icons` consumers are notified/migrated (`CSS-032a`) before the CDN cut reaches them — confirmed 2026-07-12; schnellreich.ru migrated to `.material-symbols-outlined`, so the `sync-css.yml` (non-release-gated) CDN cut is now safe
+
+---
+
+# Milestone `v0.6.17` — Scripts Audit & Contract Freeze
 
 **Goal:** freeze the contract between Rare Styles CSS and the companion `/scripts/` JS set before namespace rollout and full integration work. This release is discovery and documentation: inventory real hooks, classes, and ARIA/state behavior so later script integration becomes finalization rather than archaeology.
 
@@ -183,7 +215,7 @@ Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `colla
 
 ---
 
-# Milestone `v0.6.17` — CDN Migration & Pages Sunset Prep
+# Milestone `v0.6.18` — CDN Migration & Pages Sunset Prep
 
 **Goal:** move docs, examples, and known consumers off mutable GitHub Pages asset URLs onto versioned jsDelivr targets, then clear the path for unpublishing the Pages surface and cleaning up its repository leftovers.
 
@@ -205,7 +237,7 @@ Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `colla
 
 ---
 
-# Milestone `v0.6.18` — Documentation Skeleton Pressure
+# Milestone `v0.6.19` — Documentation Skeleton Pressure
 
 **Goal:** keep draft `/styles/` pages visible as deliberate pressure on the library roadmap: incomplete pages act as module-level backlogs, while dead anchors and broken navigation are still cleaned up so the docs skeleton remains usable.
 
@@ -221,7 +253,7 @@ Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `colla
 
 ---
 
-# Milestone `v0.6.19` — Rare Digits Media Kit Prep
+# Milestone `v0.6.20` — Rare Digits Media Kit Prep
 
 **Goal:** package the Rare Digits brand surfaces as a reusable vendor/media-kit layer so attribution, linking, and logo usage are consistent wherever the library is referenced.
 
@@ -256,7 +288,7 @@ The library so far ships unprefixed classes. `CSS-133` and `CSS-141` flag the co
 
 - [ ] `rd-` namespace is documented in `STYLEGUIDE.md` with the three-rule policy
 - [ ] `.rd-is-active`, `.rd-is-hidden`, `.rd-js-dropdown` are reserved and shipped (real or documented per CSS-061/062)
-- [ ] Namespace policy is aligned with the script-hook contract documented in `v0.6.16`
+- [ ] Namespace policy is aligned with the script-hook contract documented in `v0.6.17`
 - [ ] No broad class-prefix migration yet — this release only establishes the namespace contract
 
 ---
@@ -273,7 +305,7 @@ The library so far ships unprefixed classes. `CSS-133` and `CSS-141` flag the co
 | `CSS-021` | dx | Make `npm run lint:css` the stable team entry point, run `stylelint --fix` where safe, and document when linting is required in day-to-day work and before release. | S |
 | `CSS-022` | dx | Document the build pipeline: how `rare.css` / `rare.min.css` are produced, how linting fits into the release flow, and which `package.json` scripts are canonical (`build:css`, `watch:css`, `lint:css`). | M |
 | `CSS-023` | chore | Sweep low-risk Stylelint cleanup that is mostly mechanical: modern `rgb(... / ... )` notation, alpha percentages, hex shortening, empty-line normalization, operator spacing, argumentless mixin call style. | M |
-| `CSS-024` | chore | Triage duplicate/dead declarations reported by Stylelint and either remove them or document intent: `_icons.scss`, `_tags.scss`, `_header-container.scss`, `_grid.scss`, `_sidenotes.scss`. | S |
+| `CSS-024` | chore | Triage duplicate/dead declarations reported by Stylelint and either remove them or document intent: `_icons.scss`, `_tags.scss`, `_header-container.scss`, `_grid.scss`, `_sidenotes.scss`. Note: `_icons.scss` was already simplified in `v0.6.16` (legacy Material Icons selectors removed) and `_sidenotes.scss` touched (marker `font-variation-settings`) — re-triage those two against their current state. | S |
 | `CSS-025` | chore | Clean up module hygiene issues reported by Stylelint: `@forward` without `.scss` extension in `navigation/_index.scss`, decide whether empty `special/_rare.scss` should be removed or kept as an intentional staging file. | S |
 | `CSS-026` | chore | Audit the floating WhatsApp/contact button pattern as a reusable library primitive. Keep it in the library if it is genuinely cross-project, but clarify whether the API is brand-specific (`wa`) or a more general floating contact / floating action pattern. | S |
 
@@ -295,9 +327,9 @@ The current `_buttons.scss` is a single style with no variants. Turn it into a p
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-030` | perf | **Kill the render-blocking `@import` font waterfall.** `typography/_fonts.scss:1-7` uses 7 CSS `@import`s to Google Fonts (Playfair, Fira Sans, Cousine, Caveat + 3 icon families). Real-world audit — schnellreich.ru, PageSpeed mobile 2026-07-12 — flags this as the **#1 render-blocking cost**: `@import` inside CSS forces a serial waterfall (jsDelivr → parse `rare.min.css` → discover 7 imports → googleapis → gstatic), ~2.67 s render-blocking of which ~3.3 s is Google Fonts alone. Fix: remove all `@import`; self-host woff2 under `assets/css/fonts/` (the `sync-css.yml` workflow copies `assets/css/*` into the `rare-styles` repo, so a relative `@font-face url(fonts/…)` in `rare.min.css` resolves on jsDelivr with **no path fixup**), keep `unicode-range` (latin + cyrillic) and `font-display: swap`. **Never re-introduce `@import` for fonts** — a parallel `<link>` beats it even when hosting on Google. Reference implementation already shipped downstream: schnellreich.ru self-hosts PT Serif/Montserrat via a local `fonts.css` + `preload` (see that repo's `assets/fonts/`). Fonts are OFL/Apache — ship the OFL license text alongside the woff2. Philosophy + breaking-change decision in `Q-05`; icon families handled in `CSS-032` (`Q-06`). Supersedes the old weak "review whether imports can be cheaper" framing. | M |
-| `CSS-031` | perf | Trim Fira Sans weights to the shipped canonical set used by the library tokens: 100/200/400/700/900 plus matching italics. Keep the task record aligned with the public `--font-weight-*` surface unless a later typography release intentionally changes both together. Reconciled in `v0.6.15` (`CSS-052`): `_fonts.scss` ships exactly this set and it matches the `--font-weight-*` tokens; note `--font-weight-light: 200` maps to the extra-light cut, not the 300 light cut. | S |
-| `CSS-032` | chore | Rationalize Material icon loading. We currently import three related families (`Material Icons`, `Material Icons Outlined`, `Material Symbols Outlined`); decide the canonical set, remove unnecessary overlap, and document which family the library expects. **Breaking-change caveat (`Q-06`):** collapsing to `Material Symbols` only breaks consumers still on `.material-icons` / `.material-icons-outlined` — schnellreich.ru's header uses `.material-icons` (`search`/`menu`/`close`). Coordinate with the legacy-icon migration hints in `v0.6.14` and the deferred `_icons.scss` cleanup (`v0.7.1`); do not ship the family cut before downstream markup is migrated. When the fonts pass (`CSS-030`) lands, the canonical icon family should also be self-hosted, not `@import`ed. | S |
+| `CSS-030` | perf | **Moved to `v0.6.16` — Font Self-Hosting.** Pulled forward as a live perf regression; full spec (self-host text families, `CSS-030a`/`b`/`c` sub-tasks) lives there. | — |
+| `CSS-031` | perf | Trim Fira Sans weights to the shipped canonical set used by the library tokens: 100/200/400/700/900 plus matching italics. Keep the task record aligned with the public `--font-weight-*` surface unless a later typography release intentionally changes both together. Reconciled in `v0.6.15` (`CSS-052`): `_fonts.scss` ships exactly this set and it matches the `--font-weight-*` tokens; note `--font-weight-light: 200` maps to the extra-light cut, not the 300 light cut. **Consumed by `CSS-030` in `v0.6.16`.** | S |
+| `CSS-032` | chore | **Moved to `v0.6.16` — Font Self-Hosting.** Decision `Q-06`: keep Material Symbols as one scoped `@import` (weights 200/400), drop legacy Material Icons; downstream `.material-icons` migration tracked as `CSS-032a`. Full spec lives there. | — |
 | `CSS-033` | feat | Publish reusable vendor icon assets (`wa.svg`, `github.svg`, and similar stripes/badges) to a stable CDN/public path so downstream projects can reference them without copying files from this repo. | M |
 | `CSS-033a` | chore | After tagging `v0.6.12`, replace library references to old local image paths (`/assets/img/common/vendors/...`, `/assets/img/logo/...`) with canonical versioned CDN URLs pointing at `assets/css/images/**`. Verify vendor-logo, floating contact button, and brand-logo surfaces still render correctly. | S |
 | `CSS-034` | chore | Fix critical server-side dependency vulnerabilities in the site/build toolchain, starting with templating and content-processing packages flagged by `npm audit` (notably `liquidjs` and other server-side/high-severity findings). Verify `npm run build` still passes after the refresh. | M |
@@ -582,9 +614,9 @@ The CSS library lives next to two siblings: `scripts/` (collapsible, cookies, co
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-230` | feat | **Finalize** the audit of `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `/scripts/`. Initial inventory landed in `CSS-064` (`v0.6.16`); this task closes any remaining gaps and migrates the JS to consume the `.rd-js-*` hooks defined in `CSS-065`. | M |
+| `CSS-230` | feat | **Finalize** the audit of `_collapsible.scss`, `_cookie-consent.scss`, `_search.scss`, `_hamburger.scss` against the actual JS in `/scripts/`. Initial inventory landed in `CSS-064` (`v0.6.17`); this task closes any remaining gaps and migrates the JS to consume the `.rd-js-*` hooks defined in `CSS-065`. | M |
 | `CSS-231` | feat | Add `copy-to-clipboard` styles (button, success/error toast). Currently the script has no companion CSS module. Consumes the `.rd-js-copy` hook reserved in `CSS-065`. | S |
-| `CSS-232` | docs | One-page "Scripts integration" doc: which CSS classes each script needs, and which tokens it reads. Builds on the contract draft from `CSS-064` (`v0.6.16`). | S |
+| `CSS-232` | docs | One-page "Scripts integration" doc: which CSS classes each script needs, and which tokens it reads. Builds on the contract draft from `CSS-064` (`v0.6.17`). | S |
 
 ### Charts
 
@@ -663,8 +695,8 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `Q-02` | Is `CSS-200a` already done? | `/styles/index.md` already ships the positioning copy, jsDelivr install link, and manifesto framing that the task describes. Verify against the task scope, then close or re-scope it. | `0.9.0` docs |
 | `Q-03` | Orphan public tokens | `--brand-color-rgb`, `--line-height-md`, `--link-color-light`, `--link-color-secondary` are declared but consumed nowhere in the library. Public API for consumers or leftovers? Feeds the token validator / reference work. | `CSS-270..272` |
 | `Q-04` | Element-vs-class stance for buttons | `_buttons.scss` styles every native `button` globally (`display: block`, `width: fit-content`) — aggressive for embedded/consumer contexts. Decide whether the button system targets elements or only `.button` classes before building variants. | `CSS-040..046` |
-| `Q-05` | Font-loading philosophy after killing `@import` (`CSS-030`) | Two shapes. **(a) Batteries-included, self-hosted:** `rare.min.css` keeps `@font-face` pointing at self-hosted woff2 in `rare-styles/fonts/`. Zero migration — consumers bump the version and get the same families minus Google/waterfall; but every consumer pulls the library's font set (mitigated by `unicode-range` + shipping only the weights the `--font-weight-*` tokens declare). **(b) Agnostic core + optional pack:** `rare.min.css` ships only the font vars with system fallbacks; a separate `rare-fonts.css` carries the faces and is opted into. Architecturally cleaner, but breaking — sites that don't add the pack silently fall back to system fonts. Recommendation: (a) for this library's scale. | `CSS-030` / `v0.7.1` |
-| `Q-06` | Scope/sequencing of icon consolidation (`CSS-032`) | Collapsing 3 icon families → `Material Symbols` only is breaking for `.material-icons` / `.material-icons-outlined` consumers (schnellreich.ru header uses `.material-icons`). Ship the text-font self-host (`CSS-030`) and the icon-family cut together in one major bump, or land fonts first and stage the icon cut behind the downstream migration (`v0.6.14` hints → `v0.7.1` `_icons.scss` cleanup)? | `CSS-032` / `CSS-030` |
+| `Q-05` | Font-loading philosophy after killing `@import` (`CSS-030`) | **Decided (2026-07-12): (a) batteries-included, self-hosted.** `rare.min.css` keeps `@font-face` pointing at self-hosted woff2 in `fonts/`; consumers bump the version and get the same families minus Google/waterfall, mitigated by `unicode-range` + shipping only the token-declared weights. Rejected (b) agnostic core + optional pack (breaking, silent system-font fallback). | ✅ `CSS-030` / `v0.6.16` |
+| `Q-06` | Scope/sequencing of icon consolidation (`CSS-032`) | **Decided (2026-07-12): keep Material Symbols as one scoped `@import`** (weights 200/400), self-host only the text families, drop legacy `Material Icons` + `Material Icons Outlined`. Symbols stays Google-hosted → zero consumer icon migration. In-repo cut is clean (0 usages); the downstream `.material-icons` break (schnellreich.ru) is staged via `CSS-032a` and lands together with `CSS-030` in one release. | ✅ `CSS-032` / `v0.6.16` |
 
 ---
 
@@ -675,7 +707,7 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `CSS-300` | feat | Container queries (`@container`) for adaptive components | Currently everything is `@media`; CQ is more useful for a component library |
 | `CSS-301` | feat | Animation library: `.fade-in`, `.slide-up`, micro-interactions | Built on the `--ease-*` / `--duration-*` tokens |
 | `CSS-302` | feat | Extended color palette: 50–950 ramp per hue | Currently flat: light/base/dark |
-| `CSS-303` | feat | Bundled icon set (or adapter for Lucide / Heroicons) | Currently Material Icons loaded ad-hoc |
+| `CSS-303` | feat | Bundled icon set (or adapter for Lucide / Heroicons) | Since `v0.6.16` the library loads a single scoped Material Symbols import (weights 200/400); a bundled/self-hosted icon set or Lucide/Heroicons adapter is the post-1.0 evolution of that |
 | `CSS-304` | feat | Toast / Modal / Tooltip / Dropdown components | HTML-only via `<dialog>` and `:popover-open` where possible |
 | `CSS-305` | feat | Tabs / Accordion / Stepper | Same |
 | `CSS-306` | feat | RTL demo and tests after `CSS-135` | |
@@ -693,10 +725,11 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.6.13` | Reusable Asset Reshuffle | Micro-release for canonical reusable-image layout and downstream asset-surface stabilization |
 | `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
 | `v0.6.15` | Audit Hotfixes & Post-Harvest Cleanup | Bug-fix follow-up on top of `v0.6.14`: audit findings (`CSS-027..052`, with table bugs `CSS-053..055` already pulled forward), immediate downstream fixes, asset-path cleanup, and the narrow harvested additions `.boilerplate` / `.feature-row` |
-| `v0.6.16` | _current_ — Scripts Audit & Contract Freeze | Inventory CSS/ARIA/hooks used by `/scripts/`, define the future namespace hooks, and freeze the CSS↔scripts contract before migration work begins |
-| `v0.6.17` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets, then clear the path for Pages unpublish and legacy cleanup |
-| `v0.6.18` | Documentation Skeleton Pressure | Keep draft `/styles/` pages visible as intentional backlog pressure, while cleaning up broken anchors and incomplete-page policy |
-| `v0.6.19` | Rare Digits Media Kit Prep | Package Rare Digits branding surfaces, attribution variants, and library-link guidance as a reusable media-kit layer |
+| `v0.6.16` | _current_ — Font Self-Hosting | Kill the render-blocking `@import` waterfall: self-host the four text families (relative `fonts/…` woff2, `unicode-range`, `swap`), keep one scoped Material Symbols import (weights 200/400), drop legacy Material Icons. Pulled forward from `v0.7.1` (`CSS-030` / `CSS-032`) |
+| `v0.6.17` | Scripts Audit & Contract Freeze | Inventory CSS/ARIA/hooks used by `/scripts/`, define the future namespace hooks, and freeze the CSS↔scripts contract before migration work begins |
+| `v0.6.18` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets, then clear the path for Pages unpublish and legacy cleanup |
+| `v0.6.19` | Documentation Skeleton Pressure | Keep draft `/styles/` pages visible as intentional backlog pressure, while cleaning up broken anchors and incomplete-page policy |
+| `v0.6.20` | Rare Digits Media Kit Prep | Package Rare Digits branding surfaces, attribution variants, and library-link guidance as a reusable media-kit layer |
 | `v0.7.0` | Namespace Foundations | Introduce `rd-` as the official namespace and reserve `.rd-is-*` / `.rd-js-*` before broader migration |
 | `v0.7.1` | Stabilization | Real button system, search tooling overhaul, plus any remaining stabilization work not needed for `v0.6.12` / `v0.6.14` |
 | `0.8.0` | Completeness | Forms, a11y, semantic tokens (incl. `--signal`), `@layer`, `.layout-story`, `.layout-dashboard`, layout-agnostic primitives (panel/stat/table-dense/toolbar/app-shell) |
