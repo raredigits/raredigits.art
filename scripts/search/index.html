@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -332,6 +330,15 @@
               
             </li>
           
+            <li>
+              
+                <a href="/scripts/carousel/">Carousel</a>
+              
+              
+              
+              
+            </li>
+          
         </ul>
       </nav>
     
@@ -347,7 +354,7 @@
       <div class="meta-info">
 js/search.js<br>
 <p>
-    v.1.1 Stable | 
+    v2.0.0 Stable (breaking: `rd-js-` hook) | 
     <a href="/assets/js/search.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
@@ -380,19 +387,18 @@ js/search.js<br>
 <h2>Adding the Search UI to the Website</h2>
 <p>First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-symbols-outlined">search</span> in the website header next to the hamburger menu:</p>
 <pre><code class="language-html">&lt;div class=&quot;header-icons&quot;&gt;
-  &lt;button class=&quot;icon-search no-decoration&quot; id=&quot;search-button&quot; aria-label=&quot;Поиск&quot;&gt;
-      &lt;span class=&quot;material-symbols-outlined&quot;&gt;search&lt;/span&gt;
-  &lt;/button&gt;
-  &lt;button class=&quot;hamburger no-decoration&quot; aria-label=&quot;Toggle navigation&quot;&gt;
-      &lt;span class=&quot;material-symbols-outlined icon-menu&quot;&gt;menu&lt;/span&gt;
-      &lt;span class=&quot;material-symbols-outlined icon-close&quot;&gt;close&lt;/span&gt;
+  &lt;button class=&quot;icon-search no-decoration rd-js-search&quot; aria-label=&quot;Поиск&quot;&gt;&lt;/button&gt;
+  &lt;button class=&quot;hamburger no-decoration rd-js-hamburger&quot; aria-label=&quot;Toggle navigation&quot;&gt;
+      &lt;span class=&quot;hamburger__icon-menu&quot;&gt;&lt;/span&gt;
+      &lt;span class=&quot;hamburger__icon-close&quot;&gt;&lt;/span&gt;
   &lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
-<p>Next, create a container that will hold both the search input and the search results. Initially it is hidden until the user clicks the search button.</p>
+<p>The search button is empty on purpose: the glyph is baked into <code>.icon-search</code> by CSS (<code>::before</code> with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.</p>
+<p>Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (<code>.searchbar { display: none; }</code>) and shown by the <code>rd-is-open</code> state class the script toggles. The script hooks the button via <code>rd-js-search</code>, the bar via <code>rd-js-search-bar</code>, and the Pagefind mount via <code>rd-js-search-ui</code>; open/closed state is mirrored to <code>aria-expanded</code> on the button.</p>
 <pre><code class="language-html">&lt;div class=&quot;search-wrapper&quot;&gt;
-  &lt;div id=&quot;searchbar&quot; class=&quot;searchbar&quot; hidden&gt;
-    &lt;div id=&quot;search&quot; class=&quot;search-input&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;searchbar&quot; class=&quot;searchbar rd-js-search-bar&quot;&gt;
+    &lt;div id=&quot;search&quot; class=&quot;search-input rd-js-search-ui&quot;&gt;&lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
@@ -402,55 +408,43 @@ js/search.js<br>
 </code></pre>
 <p>Now add a small JavaScript file that will initialize Pagefind UI and show/hide the search panel when the user clicks the button:</p>
 <pre><code class="language-js">function initSearchUI() {
-    var btn = document.getElementById('search-button');
-    var bar = document.getElementById('searchbar');
-    var container = document.getElementById('search');
+    if (document.body.classList.contains('page-search')) return;
+    var btn = document.querySelector('.rd-js-search');
+    var bar = document.querySelector('.rd-js-search-bar');
+    var container = document.querySelector('.rd-js-search-ui');
+    if (!btn || !bar) return;
     var initialized = false;
-    var inputListenerAdded = false;
+
+    btn.setAttribute('aria-expanded', 'false');
+    if (bar.id) btn.setAttribute('aria-controls', bar.id);
 
     function openSearch() {
-        if (bar) {
-            bar.hidden = false;
-        }
-        
+        bar.classList.add('rd-is-open');
+        btn.setAttribute('aria-expanded', 'true');
+
         if (!initialized &amp;&amp; window.PagefindUI &amp;&amp; container) {
+            if (!container.id) container.id = 'rd-search-ui';
             new PagefindUI({
-                element: '#search',
+                element: '#' + container.id,
                 showSubResults: true,
                 translations: { placeholder: 'Search…' }
             });
             initialized = true;
         }
-        
+
         setTimeout(function() {
             if (container) {
                 var input = container.querySelector('input[type=&quot;text&quot;]') || container.querySelector('input');
-                if (input) {
-                    if (input.focus) input.focus();
-                    
-                    if (!inputListenerAdded) {
-                        input.addEventListener('input', function() {
-                            if (!bar) return;
-                            if (input.value &amp;&amp; input.value.trim().length &gt; 0) {
-                                bar.classList.add('has-query');
-                            } else {
-                                bar.classList.remove('has-query');
-                            }
-                        });
-                        inputListenerAdded = true;
-                    }
-                }
+                if (input &amp;&amp; input.focus) input.focus();
             }
         }, 50);
-        
+
         document.addEventListener('keydown', escListener);
     }
 
     function closeSearch() {
-        if (bar) {
-            bar.hidden = true;
-            bar.classList.remove('has-query');
-        }
+        bar.classList.remove('rd-is-open');
+        btn.setAttribute('aria-expanded', 'false');
         document.removeEventListener('keydown', escListener);
     }
 
@@ -458,16 +452,14 @@ js/search.js<br>
         if (e.key === 'Escape') closeSearch();
     }
 
-    if (btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (bar &amp;&amp; bar.hidden) {
-                openSearch();
-            } else {
-                closeSearch();
-            }
-        });
-    }
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (bar.classList.contains('rd-is-open')) {
+            closeSearch();
+        } else {
+            openSearch();
+        }
+    });
 }
 
 if (document.readyState === 'loading') {
@@ -569,7 +561,7 @@ body_class: page-search # optional CSS hook
 <h4>2. Hide the overlay-search button on this page (optional)</h4>
 <p>In your header template, wrap the search button in a condition:</p>
 <pre><code class="language-njk">{% if not disable_header_search %}
-  &lt;button id=&quot;search-button&quot; ...&gt;…&lt;/button&gt;
+  &lt;button class=&quot;rd-js-search&quot; ...&gt;…&lt;/button&gt;
 {% endif %}
 </code></pre>
 <p>Alternatively, you may simply hide it with CSS using <code>.page-search</code> as a body class.</p>
@@ -580,6 +572,14 @@ if (document.body.classList.contains('page-search')) return;
 </code></pre>
 <p>This ensures there will never be two search UIs active on the same page.</p>
 <p>At this point, the setup provides two independent search interfaces: an overlay search that is opened from the header on regular pages, and a dedicated /search/ page with a full-page search interface. They do not conflict with each other because they use separate containers and separate initialization logic. The search page itself is excluded from the index so it never appears in search results, which is the recommended practice for dedicated search pages.</p>
+<h3>Changelog</h3>
+<h4>v2.0.0</h4>
+<ul>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — <code>rd-js-search</code> (button), <code>rd-js-search-bar</code> (container), <code>rd-js-search-ui</code> (Pagefind mount); the <code>search-button</code> / <code>searchbar</code> / <code>search</code> IDs are no longer read</li>
+<li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-open</code> state class instead of the <code>hidden</code> attribute</li>
+<li>Removed the dead <code>has-query</code> class write (it was styled nowhere)</li>
+<li>Added <code>aria-expanded</code> on the toggle button; guard added for pages without the hooks</li>
+</ul>
 
     </article>
   </div>
@@ -599,24 +599,29 @@ if (document.body.classList.contains('page-search')) return;
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

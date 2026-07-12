@@ -1,54 +1,45 @@
+// Contract: SCRIPTS_CONTRACT.md (v0.6.17).
+// Hook: .rd-js-search (toggle button), .rd-js-search-bar (bar), .rd-js-search-ui (Pagefind mount).
+// State: .rd-is-open on the bar + aria-expanded on the button.
+// The Pagefind UI rebuild itself is out of scope here (CSS-050).
 function initSearchUI() {
     if (document.body.classList.contains('page-search')) return;
-    var btn = document.getElementById('search-button');
-    var bar = document.getElementById('searchbar');
-    var container = document.getElementById('search');
+    var btn = document.querySelector('.rd-js-search');
+    var bar = document.querySelector('.rd-js-search-bar');
+    var container = document.querySelector('.rd-js-search-ui');
+    if (!btn || !bar) return;
     var initialized = false;
-    var inputListenerAdded = false;
+
+    btn.setAttribute('aria-expanded', 'false');
+    if (bar.id) btn.setAttribute('aria-controls', bar.id);
 
     function openSearch() {
-        if (bar) {
-            bar.hidden = false;
-        }
-        
+        bar.classList.add('rd-is-open');
+        btn.setAttribute('aria-expanded', 'true');
+
         if (!initialized && window.PagefindUI && container) {
+            if (!container.id) container.id = 'rd-search-ui';
             new PagefindUI({
-                element: '#search',
+                element: '#' + container.id,
                 showSubResults: true,
                 translations: { placeholder: 'Search…' }
             });
             initialized = true;
         }
-        
+
         setTimeout(function() {
             if (container) {
                 var input = container.querySelector('input[type="text"]') || container.querySelector('input');
-                if (input) {
-                    if (input.focus) input.focus();
-                    
-                    if (!inputListenerAdded) {
-                        input.addEventListener('input', function() {
-                            if (!bar) return;
-                            if (input.value && input.value.trim().length > 0) {
-                                bar.classList.add('has-query');
-                            } else {
-                                bar.classList.remove('has-query');
-                            }
-                        });
-                        inputListenerAdded = true;
-                    }
-                }
+                if (input && input.focus) input.focus();
             }
         }, 50);
-        
+
         document.addEventListener('keydown', escListener);
     }
 
     function closeSearch() {
-        if (bar) {
-            bar.hidden = true;
-            bar.classList.remove('has-query');
-        }
+        bar.classList.remove('rd-is-open');
+        btn.setAttribute('aria-expanded', 'false');
         document.removeEventListener('keydown', escListener);
     }
 
@@ -56,16 +47,14 @@ function initSearchUI() {
         if (e.key === 'Escape') closeSearch();
     }
 
-    if (btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (bar && bar.hidden) {
-                openSearch();
-            } else {
-                closeSearch();
-            }
-        });
-    }
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (bar.classList.contains('rd-is-open')) {
+            closeSearch();
+        } else {
+            openSearch();
+        }
+    });
 }
 
 if (document.readyState === 'loading') {

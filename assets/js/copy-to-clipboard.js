@@ -1,3 +1,6 @@
+// Contract: SCRIPTS_CONTRACT.md (v0.6.17).
+// Hook: .rd-js-copy (delegated). Payload API unchanged: data-copy / data-copy-target.
+// data-icon / data-copy-busy stay — payload and internal flag, not layout state.
 const ICON_DEFAULT = "content_copy";
 const ICON_SUCCESS = "check";
 const RESET_MS = 1200;
@@ -30,7 +33,7 @@ function fallbackCopy(text) {
 }
 
 document.addEventListener("click", async (e) => {
-  const icon = e.target.closest(".copy-data-icon");
+  const icon = e.target.closest(".rd-js-copy");
   if (!icon) return;
 
   if (icon.dataset.copyBusy) return;

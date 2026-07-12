@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -332,6 +330,15 @@
               
             </li>
           
+            <li>
+              
+                <a href="/scripts/carousel/">Carousel</a>
+              
+              
+              
+              
+            </li>
+          
         </ul>
       </nav>
     
@@ -346,9 +353,9 @@
     <article>
       <div class="meta-info">
     <p>js/cookie-consent.js</p>
-    <p>v.1.0.0 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button> |
+    <p>v3.0.0 Stable (breaking: `rd-js-` hook) |
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
+    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button> |
     <a href="/assets/js/cookie-consent.js">Download</a>
     <span class="material-symbols-outlined">download</span>
     </p>
@@ -382,66 +389,75 @@
 <h2>How It Works</h2>
 <ol>
 <li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
-<li>If the cookie is missing, the notice is displayed</li>
-<li>When the user clicks the confirmation button, the cookie is set</li>
-<li>The notice is hidden for subsequent visits</li>
+<li>If the cookie is present, the notice is hidden by adding the <code>rd-is-hidden</code> state class</li>
+<li>When the user clicks the confirmation button, the cookie is set and the notice gets <code>rd-is-hidden</code></li>
+<li>The notice stays hidden for subsequent visits</li>
 </ol>
 <p>Default cookie lifetime: <strong>31 days</strong></p>
 <h2>Installation</h2>
 <details>
 <summary>Required HTML Markup</summary>
-<p>The script expects the following <strong>mandatory element IDs</strong>. If they are missing or renamed, the script will not function.</p>
+<p>The script expects the following <strong>mandatory hook classes</strong>. If they are missing or renamed, the script safely does nothing.</p>
 <div class="code-block">
-    <pre><code id="snippet-1" class="language-html">&lt;div id=&#34;cookie-notice&#34; class=&#34;cookie-notice&#34;&gt;
+    <pre><code id="snippet-1" class="language-html">&lt;div class=&#34;cookie-notice rd-js-cookie-consent&#34;&gt;
   &lt;div class=&#34;cookie-notice__content&#34;&gt;
     &lt;h3&gt;🍪&lt;/h3&gt;
     &lt;p class=&#34;bold&#34;&gt;Help yourself to some cookies!&lt;/p&gt;
     &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&#34;/legal/privacy&#34;&gt;Privacy Policy&lt;/a&gt;.&lt;/p&gt;
     &lt;div class=&#34;right&#34;&gt;
-      &lt;button id=&#34;cookie-notice-accept&#34; class=&#34;cookie-notice__button&#34;&gt;Nice!&lt;/button&gt;
+      &lt;button class=&#34;cookie-notice__button rd-js-cookie-accept&#34;&gt;Nice!&lt;/button&gt;
     &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
+    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
 </div>
 </details>
 <div class="air-md"></div>
 <details>
-<summary>Required IDs (Mandatory)</summary>
-<p>Be sure to include <strong>the mandatory IDs</strong> in your HTML elements:</p>
+<summary>Required hooks (Mandatory)</summary>
+<p>Be sure to include <strong>the mandatory hook classes</strong> on your HTML elements:</p>
 <table class="table-small">
     <tr>
-        <th>ID</th>
+        <th>Hook class</th>
         <th>Purpose</th> 
     </tr>
     <tr>
-        <td><code>cookie-notice</code></td>
-        <td>Root container shown / hidden by the script</td>
+        <td><code>rd-js-cookie-consent</code></td>
+        <td>Root container the script hides by toggling <code>rd-is-hidden</code></td>
     </tr>
     <tr>
-        <td><code>cookie-notice-accept</code></td>
-        <td>Button that dismisses the notice</td>
+        <td><code>rd-js-cookie-accept</code></td>
+        <td>Button (inside the container) that dismisses the notice</td>
     </tr>
 </table>
-<p>These IDs are <strong>hard-coded in the JavaScript file</strong>.</p>
+<p>Hook classes are <strong>read by the JavaScript and never styled</strong> — presentational styling belongs to separate classes (<code>cookie-notice</code>, <code>cookie-notice__button</code>) which you are free to rename or replace.</p>
 </details>
 <div class="air-md"></div><details>
 <summary>Required CSS (Minimum)</summary>
-<p>The Rare Styles Library already includes styles for the cookie consent block. If you use this script on its own, make sure to add the required styles. At minimum, the notice <strong>must be hidden by default</strong>.</p>
+<p>The Rare Styles Library already includes styles for the cookie consent block (including the <code>rd-is-hidden</code> state). If you use this script on its own, make sure to add the required styles. At minimum, the <code>.rd-is-hidden { display: none; }</code> rule <strong>must exist</strong> — the script hides the notice by toggling that class, never by inline styles.</p>
 <div class="code-block">
-    <pre><code id="snippet-2" class="language-css">.cookie-notice {&#10;    max-width: var(--site-max-width);&#10;    display: block;&#10;    position: fixed; &#10;    bottom: 10px; &#10;    left: 50%;&#10;    transform: translateX(-50%);&#10;    background: #f0f0f0;&#10;    color: #000;&#10;    padding: var(--space-lg) var(--space-lg) var(--space-md);&#10;    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);&#10;    border-radius: 15px;&#10;    box-sizing: border-box;&#10;    z-index: 1000;&#10;&#10;    @include bp.mobile {&#10;        padding: 15px 5%;&#10;        width: 90%;&#10;    }&#10;}&#10;&#10;.cookie-notice__content {&#10;    position: relative;&#10;}&#10;&#10;.cookie-notice__content h3 {&#10;    position: absolute;&#10;    margin: 0;&#10;    top: -50px;&#10;    font-size: 3.5em;&#10;&#10;    @include bp.mobile {&#10;        font-size: 2.5em;&#10;        top: -60px;&#10;    }&#10;}&#10;&#10;.cookie-notice__content a {&#10;    color: #000;&#10;    text-decoration: none;&#10;    border-bottom: 1px solid var(--brand-color);&#10;}&#10;&#10;.cookie-notice__content button {&#10;    position: relative;&#10;    display: inline-block;&#10;    margin-top: var(--space-md);&#10;}</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
+    <pre><code id="snippet-2" class="language-css">.cookie-notice {&#10;    max-width: var(--site-max-width);&#10;    display: block;&#10;    position: fixed; &#10;    bottom: 10px; &#10;    left: 50%;&#10;    transform: translateX(-50%);&#10;    background: #f0f0f0;&#10;    color: #000;&#10;    padding: var(--space-lg) var(--space-lg) var(--space-md);&#10;    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);&#10;    border-radius: 15px;&#10;    box-sizing: border-box;&#10;    z-index: 1000;&#10;&#10;    @include bp.mobile {&#10;        padding: 15px 5%;&#10;        width: 90%;&#10;    }&#10;}&#10;&#10;.cookie-notice__content {&#10;    position: relative;&#10;}&#10;&#10;.cookie-notice__content h3 {&#10;    position: absolute;&#10;    margin: 0;&#10;    top: -50px;&#10;    font-size: 3.5em;&#10;&#10;    @include bp.mobile {&#10;        font-size: 2.5em;&#10;        top: -60px;&#10;    }&#10;}&#10;&#10;.cookie-notice__content a {&#10;    color: #000;&#10;    text-decoration: none;&#10;    border-bottom: 1px solid var(--brand-color);&#10;}&#10;&#10;.cookie-notice__content button {&#10;    position: relative;&#10;    display: inline-block;&#10;    margin-top: var(--space-md);&#10;}&#10;&#10;/* State class the script toggles — mandatory */&#10;.rd-is-hidden {&#10;    display: none;&#10;}</code></pre>
+    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
 </div>
 <p>You are free to fully replace these styles with your own design system.</p>
 </details>
 <div class="air-md"></div><details>
 <summary>JavaScript Setup</summary>
-<p>Place the script file anywhere you prefer and include it <strong>after the markup</strong>, or just before the closing <code>&lt;/body&gt;</code> tag.</p>
+<p>Include the script <strong>synchronously, right after the notice markup</strong> (no <code>defer</code>, no <code>async</code>):</p>
 <div class="code-block">
     <pre><code id="snippet-3" class="language-html">&lt;script src=&#34;/assets/js/cookie-consent.js&#34;&gt;&lt;/script&gt;</code></pre>
-    <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
+    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
 </div>
-<p>The script runs automatically on <code>DOMContentLoaded</code>. No configuration is required.</p>
+<p>Placement matters: the script initializes immediately when the notice markup is already parsed, so the dismissal check runs <strong>before the browser paints the content that follows</strong> — a returning visitor never sees the notice flash. If the markup is not there yet, the script falls back to <code>DOMContentLoaded</code>. No configuration is required.</p>
+<div class="air-md"></div>
+<p><strong>Optional anti-flash guard.</strong> If you load the script with <code>defer</code>/<code>async</code> or from a CDN late in the page, the paint-then-hide flash comes back for returning visitors. In that case add this one-liner right after the notice markup:<div class="code-block">
+<pre><code id="snippet-4" class="language-html">&lt;script&gt;
+if (document.cookie.indexOf('cookie-notice-dismissed=true') !== -1) {
+document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
+}
+&lt;/script&gt;</code></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy guard" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+</div>
 </details>
 <h2>Assumptions Made by the Script</h2>
 <ul>
@@ -459,7 +475,15 @@
 <li>Cookie lifetime (in days)</li>
 <li>Cookie name</li>
 </ul>
-<p>If you rename required IDs, you must update the script accordingly.</p>
+<p>The <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> hook classes and the <code>rd-is-hidden</code> state class are the script's contract — if you rename them, you must update the script accordingly.</p>
+<h2>Changelog</h2>
+<h3>v3.0.0</h3>
+<ul>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script finds elements via the <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> classes; the <code>cookie-notice</code> / <code>cookie-notice-accept</code> IDs are no longer read</li>
+<li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-hidden</code> state class instead of inline <code>style.display</code></li>
+<li>Anti-FOUC: the script no longer waits for <code>DOMContentLoaded</code> when the notice markup is already parsed — included synchronously after the markup, it hides a dismissed notice before paint; an optional inline guard is documented for <code>defer</code>/CDN setups</li>
+<li>Added a guard: pages without the markup no longer run the listeners</li>
+</ul>
 
     </article>
   </div>
@@ -479,24 +503,29 @@
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

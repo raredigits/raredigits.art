@@ -20187,16 +20187,57 @@ section {
   z-index: 1000;
 }
 
-.hamburger .icon-close {
+.hamburger__icon-menu {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: inherit;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+.hamburger__icon-menu::before, .hamburger__icon-menu:hover::before {
+  content: "menu";
+}
+
+.hamburger__icon-close {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: inherit;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+.hamburger__icon-close::before, .hamburger__icon-close:hover::before {
+  content: "close";
+}
+.hamburger__icon-close {
   display: none;
 }
 
-.hamburger.active .icon-menu {
+.hamburger.rd-is-active .hamburger__icon-menu {
   display: none;
 }
 
-.hamburger.active .icon-close {
-  display: inline;
+.hamburger.rd-is-active .hamburger__icon-close {
+  display: inline-block;
 }
 
 .nav-hamburger {
@@ -20222,7 +20263,7 @@ section {
   }
 }
 
-.nav-hamburger.active {
+.nav-hamburger.rd-is-active {
   top: 0;
   box-shadow: var(--shadow-md);
 }
@@ -20253,6 +20294,27 @@ section {
   color: var(--gray-light);
 }
 
+.icon-search {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: inherit;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+.icon-search::before, .icon-search:hover::before {
+  content: "search";
+}
+
 .search-wrapper {
   display: block;
   background: var(--bg-color);
@@ -20261,6 +20323,7 @@ section {
 }
 
 .searchbar {
+  display: none;
   width: var(--site-max-width);
   overflow: auto;
   margin: 0 auto;
@@ -20270,6 +20333,10 @@ section {
   .searchbar {
     width: 100%;
   }
+}
+
+.searchbar.rd-is-open {
+  display: block;
 }
 
 .searchbar .pagefind-ui input,
@@ -20706,24 +20773,35 @@ img {
 }
 .copy-data-icon {
   display: inline-block;
-  font-family: "Material Symbols Outlined", sans-serif;
   position: relative;
   top: 0.2em;
+  font-family: "Material Symbols Outlined", sans-serif;
   font-size: inherit;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+.copy-data-icon::before, .copy-data-icon:hover::before {
+  content: attr(data-icon);
+}
+.copy-data-icon {
   line-height: inherit;
   background: none;
-  color: var(--text-color-light);
+  color: var(--copy-icon-color, var(--text-color-light));
   border: none;
   padding: 0;
   cursor: pointer;
 }
 
-.copy-data-icon::before {
-  content: attr(data-icon);
-}
-
 .copy-data-icon:hover {
-  color: var(--primary-color);
+  color: var(--copy-icon-color-hover, var(--primary-color));
   background: none;
   border: none;
 }
@@ -20992,41 +21070,186 @@ details summary {
   cursor: pointer;
 }
 
-.collapsible-trigger .collapsible-icon {
+button.collapsible-trigger {
+  display: inline;
+  width: auto;
+  background: none;
+  color: inherit;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: var(--text-color-light);
+}
+button.collapsible-trigger:hover {
+  background: none;
+  border: none;
+}
+
+.collapsible-icon {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: inherit;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  overflow-wrap: normal;
+  direction: ltr;
+  font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+.collapsible-icon::before, .collapsible-icon:hover::before {
+  content: "keyboard_arrow_down";
+}
+.collapsible-icon {
   text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.collapsible-trigger[aria-expanded=true] .collapsible-icon {
+  transform: rotate(180deg);
 }
 
 .collapsible-content {
   display: none;
   padding-top: var(--space-lg);
 }
-.collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
-  margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
-}
-@media screen and (max-width: 768px) {
-  .collapsible-content > .caption, .collapsible-content .highlight, .collapsible-content pre, .collapsible-content .text-content-caption, .collapsible-content .card-caption {
-    margin-left: calc(-1 * var(--space-sm));
-  }
-}
 .collapsible-content > .card-dashboard-bordered {
   padding: var(--space-md);
 }
 
+.collapsible-container .lead,
+.collapsible-container .caption,
+.collapsible-container .highlight,
+.collapsible-container pre,
+.collapsible-container .text-content-caption,
+.collapsible-container .card-caption,
+.collapsible-content .lead,
 .collapsible-content .caption,
 .collapsible-content .highlight,
 .collapsible-content pre,
 .collapsible-content .text-content-caption,
 .collapsible-content .card-caption {
-  margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
+  width: auto;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
-@media screen and (max-width: 768px) {
-  .collapsible-content .caption,
-  .collapsible-content .highlight,
-  .collapsible-content pre,
-  .collapsible-content .text-content-caption,
-  .collapsible-content .card-caption {
-    margin-left: calc(-1 * var(--space-sm));
-  }
+
+.collapsible-content.rd-is-open {
+  display: block;
+}
+
+.carousel {
+  --carousel-control-bg: rgb(0 0 0 / 50%);
+  --carousel-control-color: var(--white);
+  --carousel-dot-color: rgb(0 0 0 / 25%);
+  --carousel-dot-active: var(--primary-color);
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.carousel-track {
+  width: 100%;
+}
+
+.carousel-slide {
+  display: none;
+}
+.carousel-slide.rd-is-active {
+  display: block;
+}
+.carousel-slide img {
+  display: block;
+  width: 100%;
+  object-fit: cover;
+}
+
+.carousel-caption {
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--text-color-light);
+  text-align: center;
+}
+
+.carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--space-xl);
+  height: var(--space-xl);
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--carousel-control-bg);
+  color: var(--carousel-control-color);
+  cursor: pointer;
+  z-index: 2;
+}
+.carousel-arrow::before {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: var(--font-size-xl);
+  line-height: 1;
+}
+.carousel-arrow:hover {
+  background: var(--carousel-control-bg);
+}
+.carousel-arrow[hidden] {
+  display: none;
+}
+
+.carousel-arrow-prev {
+  left: var(--space-sm);
+}
+.carousel-arrow-prev::before {
+  content: "chevron_left";
+}
+
+.carousel-arrow-next {
+  right: var(--space-sm);
+}
+.carousel-arrow-next::before {
+  content: "chevron_right";
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+}
+.carousel-dots:empty {
+  margin-top: 0;
+}
+
+.carousel-dot {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--carousel-dot-color);
+  cursor: pointer;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+.carousel-dot.rd-is-active {
+  width: var(--space-lg);
+  background: var(--carousel-dot-active);
 }
 
 .phone-frame-wrapper {
@@ -21098,6 +21321,10 @@ details summary {
   background-position: 0 33.3333%;
   background-size: auto 400%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.rd-is-hidden {
+  display: none;
 }
 
 * {
