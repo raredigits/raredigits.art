@@ -16,7 +16,15 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ---
 
-## [Unreleased]
+## [v0.9.8_1] — 2026-07-12 — Graph Rework (experimental)
+
+The experimental `Graph` relaunched: from a single force simulation to a headless graph model with three deterministic views, relation-type filtering, and semantic navigation. Graph remains **experimental** — outside the 1.0 semver guarantee. Also ships a categorical `Bar` fix and the release automation that were waiting under Unreleased.
+
+### Added
+
+- **Graph rework — headless model, deterministic views** (`src/charts/Graph.js`, `src/graph/`). `Graph` is now a viewport over a headless `GraphModel` (graphology) that accumulates everything the user walks, fed through a source-adapter contract (`neighbors` / `paths` / `aggregates`; `memorySource()` simulates a backend over a static payload — swap in a real adapter without touching the class). Three deterministic views replace the force simulation: **ego** (grid rings by degree of separation, category corners), **path** (layered "how are A and B connected" routes with endpoint context and the shortest route called out), and **cluster** (Louvain communities as meta-nodes) — with semantic zoom between ego and cluster, hand-draggable nodes, and identity-preserving recenter transitions. Covered by `test/graph.test.js` (37 tests: model, layouts, source adapter, and the viewport interaction contract). Documented at [`/charts/graph/`](https://raredigits.art/charts/graph/).
+- **Graph navigation and filtering** (`src/charts/Graph.js`, `rare-charts.css`). Relation-type filtering over the ego view — a `relationTypes` option, `setRelationTypes()` / `clearRelationTypes()`, and an interactive legend (click isolates a type, Shift/Ctrl/Cmd-click multi-selects, "Show all" resets); the filter drives both the traversal and what is drawn, and untyped links act as a single `default` type. Breadcrumb history with `back()` restores prior ego/path/cluster states together with their filter. The `+N more` capacity note is now an actionable disclosure listing the capped-out nodes — click one to refocus on it. Removed from the [backlog](https://raredigits.art/charts/backlog/).
+- **Graph progressive data contract.** Nodes need only an `id`, links only `{ source, target }`: labels fall back to ids everywhere (canvas, tooltip, breadcrumbs), endpoint nodes are auto-created, link type and weight default sensibly — every view renders from a links-only payload, pinned by contract tests. Removed from the [backlog](https://raredigits.art/charts/backlog/).
 
 ### Fixed
 
