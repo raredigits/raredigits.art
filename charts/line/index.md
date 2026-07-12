@@ -222,6 +222,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Initial active timeframe used on first render when no explicit view has been set.</td>
         </tr>
         <tr>
+            <td><code>defaultView</code></td>
+            <td>array</td>
+            <td>—</td>
+            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+        </tr>
+        <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
@@ -241,6 +247,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>number</td>
             <td><code>4</code></td>
             <td>Number of Y tick marks.</td>
+        </tr>
+        <tr>
+            <td><code>xTicks</code></td>
+            <td>number</td>
+            <td><code>6</code></td>
+            <td>Number of X tick marks.</td>
         </tr>
         <tr>
             <td><code>yTickFormat</code></td>
@@ -363,13 +375,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>showXAxis</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show the X (date) axis at the bottom.</td>
+            <td>Show the X (date) axis at the bottom. Hiding it also collapses the bottom margin, so the plot runs flush.</td>
         </tr>
         <tr>
             <td><code>showYAxis</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show the Y (value) axis.</td>
+            <td>Show the Y (value) axis. Its side margin collapses once <code>endLabels</code> is off too — the axis and the end labels share that gutter. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>

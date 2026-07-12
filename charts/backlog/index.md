@@ -62,9 +62,57 @@ Features and chart types planned for future releases.
             <td>Hierarchical data views such as tree, treemap, cluster, pack, or related structures for nested datasets and ownership-style breakdowns.</td>
         </tr>
         <tr>
-            <td>Multi-chart container</td>
-            <td><code>RareCharts.MultiChart</code></td>
-            <td>Single chart block that composes up to several child charts under one shared title, subtitle, source, and legend. Intended for dashboard-style layouts where multiple chart types belong to one narrative unit.</td>
+            <td>Scatter</td>
+            <td><code>RareCharts.Scatter</code></td>
+            <td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any "rank N items on two axes" figure. <strong>Targeted for v0.9.8_2.</strong></td>
+        </tr>
+        <tr>
+            <td>Heatmap</td>
+            <td><code>RareCharts.Heatmap</code></td>
+            <td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_2.</strong></td>
+        </tr>
+        <tr>
+            <td>Waterfall</td>
+            <td><code>RareCharts.Waterfall</code></td>
+            <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_2.</strong></td>
+        </tr>
+
+        <tr class="table-section">
+            <td colspan="3">
+                <h5>Composition &amp; stacking</h5>
+                <p>Stacking is currently absent from the library: <code>Bar</code> draws one series, and multi-series <code>Line</code> areas overlap rather than accumulate.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>Stacked bars</td>
+            <td><code>stacked: true</code> with multi-series data on <code>RareCharts.Bar</code></td>
+            <td>Accept <code>[{ name, values }]</code> series and stack segments within each category or date slot, with a per-segment tooltip and legend. Composition over time — revenue by segment, index membership — is the most common analytics figure after lines. <strong>Targeted for v0.9.8_1.</strong></td>
+        </tr>
+        <tr>
+            <td>Stacked area</td>
+            <td><code>stacked: true</code> on <code>RareCharts.Line</code> area series</td>
+            <td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_1.</strong></td>
+        </tr>
+        <tr>
+            <td>All chart types in MultiChart</td>
+            <td><code>type: 'Donut' | 'Gauge' | 'DualAxes' | ...</code> in <code>charts</code> descriptors</td>
+            <td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_3.</strong></td>
+        </tr>
+
+        <tr class="table-section">
+            <td colspan="3">
+                <h5>Scales &amp; transforms</h5>
+            </td>
+        </tr>
+        <tr>
+            <td>Logarithmic Y scale</td>
+            <td><code>yScale: 'log'</code> on <code>Line</code> / <code>TimeSeries</code> / <code>DualAxes</code></td>
+            <td>Log-scale toggle for long-horizon price and index series, where a linear scale visually overstates recent moves. Requires positive-domain guards and log-aware tick generation. <strong>Targeted for v0.9.8_3.</strong></td>
+        </tr>
+        <tr>
+            <td>Series rebase / normalization</td>
+            <td><code>normalize: 'rebase'&nbsp;|&nbsp;'percent'</code> on <code>RareCharts.Line</code></td>
+            <td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_3.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -90,7 +138,7 @@ Features and chart types planned for future releases.
         <tr>
             <td>Diverging bar chart</td>
             <td><code>RareCharts.DivergingBar</code></td>
-            <td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts.</td>
+            <td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_1.</strong></td>
         </tr>
 
         <tr class="table-section">
@@ -113,11 +161,6 @@ Features and chart types planned for future releases.
             <td colspan="3">
                 <h5>Graph</h5>
             </td>
-        </tr>
-        <tr>
-            <td>Graph rework: network views</td>
-            <td><code>view: 'ego' | 'path' | 'cluster'</code></td>
-            <td>Rebuild <code>Graph</code> around a headless graph model with computed analytics (centrality, communities, shortest paths) and three deterministic views instead of a single force simulation: <strong>ego</strong> (rings by degree of separation, sectors by relation type), <strong>path</strong> (layered "how are A and B connected" routes), and <strong>cluster</strong> (communities collapsed into meta-nodes). Click a node to re-center; zoom switches ego ↔ cluster semantically. Designed for entity relations, agent networks, and blockchain addresses.</td>
         </tr>
         <tr>
             <td>Directed and multiple graph relations</td>
@@ -144,21 +187,6 @@ Features and chart types planned for future releases.
             <td>zoom controls, capacity note, navigation</td>
             <td>Align the +/−/⟲ zoom buttons, actionable <code>+N more</code> disclosure, breadcrumbs and details controls with Rare Styles: proper icons, spacing, positioning, focus and hover states, responsive behavior, and dark-theme support.</td>
         </tr>
-        <tr class="table-section">
-            <td colspan="3">
-                <h5>Axes</h5>
-            </td>
-        </tr>
-        <tr>
-            <td>Reclaim margin when an axis is hidden</td>
-            <td><code>showXAxis</code> / <code>showYAxis</code> / <code>showY1Axis</code> / <code>showY2Axis</code><code>: false</code></td>
-            <td>When an axis is hidden, collapse the margin it occupied so the plot expands flush — instead of leaving the empty gutter behind. Today hiding an axis (e.g. <code>showYAxis: false</code>) only drops its ticks and labels; the <code>margin.right</code> space remains, so a flush or sparkline look needs a manual <code>margin</code> override. This should happen automatically across <code>Line</code>, <code>Bar</code>, and <code>DualAxes</code> (and <code>TimeSeries</code>, once it gains the toggles below). <strong>Targeted for v0.9.8.</strong></td>
-        </tr>
-        <tr>
-            <td>Axis-visibility toggles on Time Series</td>
-            <td><code>showGrid</code> / <code>showXAxis</code> / <code>showYAxis</code> on <code>RareCharts.TimeSeries</code></td>
-            <td>Bring the grid and axis toggles that <code>Line</code>, <code>Bar</code>, and <code>DualAxes</code> already expose to <code>TimeSeries</code>, where the grid and both axes currently render unconditionally. A small change mirroring the existing pattern, and a prerequisite for margin reclaim on a time-series chart. <strong>Targeted for v0.9.8.</strong></td>
-        </tr>
 
         <tr class="table-section">
             <td colspan="3">
@@ -168,7 +196,7 @@ Features and chart types planned for future releases.
         <tr>
             <td>Legend series isolation</td>
             <td><code>legendInteractive: true</code></td>
-            <td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series.</td>
+            <td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_3.</strong></td>
         </tr>
         <tr>
             <td>Tooltip header style</td>

@@ -7,8 +7,8 @@
 // Options:
 //   height       — chart height px (default: 280)
 //   innerRadius  — 0 for pie, 0..1 as fraction of outer radius (default: 0.58)
-//   padAngle     — gap between slices in radians (default: 0.018)
-//   cornerRadius — rounded slice corners px (default: 3)
+//   padAngle     — gap between slices in radians (default: 0.018 donut / 0.008 pie)
+//   cornerRadius — rounded slice corners px (default: 3 donut / 1 pie)
 //
 //   animate      — animate on first render (default: true)
 //   duration     — animation duration ms (default: 650)
@@ -16,6 +16,7 @@
 //
 //   showLabels   — show slice labels with leader lines outside the chart (default: false)
 //   labelMinPct  — hide label when slice is smaller than this fraction (default: 0.04)
+//   labelContent — what outside labels show: 'both' | 'label' | 'percent' (default: 'both')
 //   showCenter   — show text in the center hole (default: true for donut)
 //   centerText   — string | function(data) => string (default: formatted total)
 //   centerLabel  — secondary line below centerText (default: 'Total')

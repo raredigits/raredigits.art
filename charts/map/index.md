@@ -222,6 +222,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td>D3 geo projection to use for rendering.</td>
         </tr>
         <tr>
+            <td><code>reflectY</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Flip the Y axis. Only applies with <code>projection: 'identity'</code> — planar source data often uses a Y axis that grows downward.</td>
+        </tr>
+        <tr>
             <td><code>rotate</code></td>
             <td>array</td>
             <td>—</td>

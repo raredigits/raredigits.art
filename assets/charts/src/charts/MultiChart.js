@@ -2,7 +2,8 @@
 // Combines 2–4 charts in a shared grid with a common title / legend / footer.
 //
 // Options:
-//   title, subtitle, legend, source  — same as Chart (shared header/footer)
+//   title, subtitle, legend, source, note — same as Chart (shared header/footer)
+//   animate            — passed through to every child chart (default: true)
 //   columns            — grid columns: 1 | 2 | 3 | 4 (default: 2)
 //   mobileColumns      — columns when container width ≤ mobileBreakpoint (default: 1)
 //   mobileBreakpoint   — container width (px) at which to switch to mobileColumns (default: 480)

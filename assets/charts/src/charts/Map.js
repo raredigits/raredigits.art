@@ -13,11 +13,14 @@
 //   geoUrl     — URL string; fetched via d3.json()
 //   topoData   — TopoJSON topology object passed inline
 //   topoUrl    — URL string; fetched via d3.json()
-//   topoObject — named object inside the topology (required when using topo*)
+//   topoObject — named object inside the topology (default: the first object in the topology)
 //
 // Options:
 //   height        — total chart height in px (default: 400)
-//   projection    — 'mercator' | 'naturalEarth1' | 'equalEarth' | 'orthographic' (default: 'naturalEarth1')
+//   projection    — 'mercator' | 'naturalEarth1' | 'equalEarth' | 'orthographic' | 'identity'
+//                   (default: 'naturalEarth1'; 'identity' = no projection, for source data
+//                   already in planar/screen coordinates)
+//   reflectY      — flip the Y axis; only with projection: 'identity' (default: false)
 //   fitPadding    — padding around features in px (default: 20)
 //   defaultFill   — fill for regions with NO matching data
 //   matchFill     — fill for regions WITH matching data without explicit color

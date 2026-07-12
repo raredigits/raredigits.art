@@ -1,5 +1,10 @@
 name: Sync Charts to rare-charts
 
+# Release-gated: the sync runs only when assets/charts/src/version.json names a
+# version that is not yet tagged in raredigits/rare-charts. jsDelivr resolves
+# @latest and version pins from those tags, so main pushes between releases
+# never reach CDN consumers. To release: bump version.json and push.
+
 on:
   push:
     branches:
@@ -18,24 +23,46 @@ jobs:
       - name: Checkout raredigits.art
         uses: actions/checkout@v3
 
+      - name: Check whether this version is already released
+        id: release
+        run: |
+          VERSION=$(node -p "require('./assets/charts/src/version.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags https://github.com/raredigits/rare-charts.git "refs/tags/$VERSION" > /dev/null; then
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is already tagged in rare-charts — skipping sync. Bump version.json to release."
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is not tagged in rare-charts yet — releasing."
+          fi
+
       - name: Setup Node.js
+        if: steps.release.outputs.new == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: 24
 
       - name: Install dependencies
+        if: steps.release.outputs.new == 'true'
         run: npm install
 
+      - name: Run tests
+        if: steps.release.outputs.new == 'true'
+        run: npm run test:run
+
       - name: Build charts bundles
+        if: steps.release.outputs.new == 'true'
         run: |
           npm run charts:build
           npm run charts:build:min
 
       - name: Clone rare-charts repo
+        if: steps.release.outputs.new == 'true'
         run: |
           git clone https://x-access-token:${{ secrets.RARE_STYLES_PAT }}@github.com/raredigits/rare-charts.git temp-rare-charts
 
       - name: Copy built files and examples to rare-charts
+        if: steps.release.outputs.new == 'true'
         run: |
           rsync -av --delete assets/charts/examples/ temp-rare-charts/examples/
           rsync -av --delete assets/charts/data/ temp-rare-charts/data/
@@ -46,11 +73,33 @@ jobs:
           CHARTS_VERSION=$(node -p "require('./assets/charts/src/version.json').version")
           sed -i "s/{{ versions.charts }}/${CHARTS_VERSION}/g" temp-rare-charts/README.md
 
-      - name: Commit & Push to rare-charts
+      - name: Commit, tag & push to rare-charts
+        if: steps.release.outputs.new == 'true'
         run: |
           cd temp-rare-charts
           git config user.name "Rare Sync Bot"
           git config user.email "actions@github.com"
           git add .
-          git commit -m "Update charts from raredigits.art on $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "Nothing to commit"
-          git push origin main
+          git commit -m "RareCharts ${{ steps.release.outputs.version }}" || echo "Nothing to commit"
+          git tag ${{ steps.release.outputs.version }}
+          git push origin main --tags
+
+      # The tag drives jsDelivr; the GitHub Release is the human-facing card on
+      # the Releases page. Title and notes are lifted from the CHANGELOG entry.
+      - name: Create GitHub Release
+        if: steps.release.outputs.new == 'true'
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          TITLE=$(grep -m1 -F "## [$VERSION]" assets/charts/CHANGELOG.md | sed -E 's/^## \[//; s/\] — [0-9]{4}-[0-9]{2}-[0-9]{2} — / — /')
+          [ -n "$TITLE" ] || TITLE="$VERSION"
+          awk -v ver="$VERSION" 'index($0, "## [" ver "]")==1{f=1; next} /^## \[/{f=0} f' \
+            assets/charts/CHANGELOG.md > /tmp/relnotes.md
+          printf '\nFull changelog: https://raredigits.art/assets/charts/CHANGELOG/\n' >> /tmp/relnotes.md
+          jq -n --arg tag "$VERSION" --arg title "$TITLE" --rawfile body /tmp/relnotes.md \
+            '{tag_name: $tag, name: $title, body: $body, make_latest: "true"}' \
+          | curl -sf -X POST \
+              -H "Authorization: Bearer ${{ secrets.RARE_STYLES_PAT }}" \
+              -H "Accept: application/vnd.github+json" \
+              -d @- \
+              "https://api.github.com/repos/raredigits/rare-charts/releases" > /dev/null
+          echo "GitHub Release created: $TITLE"
