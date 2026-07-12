@@ -20,6 +20,7 @@
 }
 
 .rc-chart > .rc-chart-header { order: 0; }
+.rc-graph-breadcrumbs        { order: 1; }
 .rc-graph-legend             { order: 2; }
 .rc-chart > svg              { order: 3; }
 .rc-chart > .rc-chart-navigator { order: 4; }
@@ -175,6 +176,128 @@
   gap: 6px;
   white-space: nowrap;
   cursor: default;
+}
+
+/* Graph legend items are controls, not static labels. */
+.rc-graph-legend-item,
+.rc-graph-legend-reset {
+  appearance: none;
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.rc-graph-legend-item:not(:disabled),
+.rc-graph-legend-reset {
+  cursor: pointer;
+}
+
+.rc-graph-legend-item:disabled { cursor: default; }
+
+.rc-graph-legend-item:focus-visible,
+.rc-graph-legend-reset:focus-visible,
+.rc-graph-breadcrumbs button:focus-visible,
+.rc-graph-overflow button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.rc-graph-legend-reset {
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+.rc-graph-breadcrumbs {
+  display: block;
+  padding: 4px 0;
+  font-family: var(--rc-font-family);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-graph-breadcrumbs[hidden],
+.rc-graph-overflow[hidden] { display: none; }
+
+.rc-graph-breadcrumbs button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rc-graph-breadcrumbs button:disabled {
+  cursor: default;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.rc-graph-overflow {
+  position: absolute;
+  z-index: 4;
+  left: 104px;
+  bottom: 34px;
+  width: min(320px, calc(100% - 120px));
+  max-height: min(300px, 55%);
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+  background: var(--background-color, #fff);
+  color: var(--primary-color, #111);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  font-family: var(--rc-font-family);
+  font-size: 12px;
+}
+
+.rc-graph-overflow-title {
+  padding-right: 28px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rc-graph-overflow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.rc-graph-overflow-item {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  padding: 6px 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
+
+.rc-graph-overflow-close {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  appearance: none;
+  border: 0;
+  padding: 2px 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 /* Line — for line series */

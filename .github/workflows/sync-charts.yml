@@ -70,6 +70,8 @@ jobs:
           cp assets/charts/rare-charts.min.js temp-rare-charts/rare-charts.min.js
           cp assets/charts/README.md temp-rare-charts/README.md
           cp assets/charts/LICENSE temp-rare-charts/LICENSE
+          CHARTS_VERSION=$(node -p "require('./assets/charts/src/version.json').version")
+          sed -i "s/{{ versions.charts }}/${CHARTS_VERSION}/g" temp-rare-charts/README.md
 
       - name: Commit, tag & push to rare-charts
         if: steps.release.outputs.new == 'true'

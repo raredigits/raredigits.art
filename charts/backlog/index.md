@@ -163,9 +163,29 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Graph refactor</td>
-            <td><code>RareCharts.Graph</code></td>
-            <td>Relaunch of the experimental Graph class on a headless model with deterministic views: fixed layout and rendering, improved animation. Stays <strong>experimental</strong> — outside the 1.0 stability guarantee. <strong>Targeted for v0.9.8_4.</strong></td>
+            <td>Directed and multiple graph relations</td>
+            <td>optional edge direction, identity and labels</td>
+            <td>Support directed relations and multiple simultaneous relations between the same pair of nodes. Allow optional edge labels and values such as ownership percentages, while keeping the minimum link payload at <code>{ source, target }</code>. Direction, relation IDs, percentages and other domain fields must enrich the result when present, not become required input.</td>
+        </tr>
+        <tr>
+            <td>Graph details panel</td>
+            <td>node and relation details surface</td>
+            <td>Add a proper HTML details surface for a selected node or relation. It should show whatever metadata is available — relation type, share, dates, source, confidence and the full filterable connection list — without requiring any of those fields. The hover tooltip remains a compact summary and links to the details surface when more information exists.</td>
+        </tr>
+        <tr>
+            <td>Graph ownership layout</td>
+            <td><code>view: 'ownership'</code></td>
+            <td>Add an optional deterministic hierarchy for ownership and control chains: owners above, controlled entities below, direction made explicit, and percentages or relation labels shown when supplied. It is a specialized presentation over the general graph contract, not a required ownership-specific schema.</td>
+        </tr>
+        <tr>
+            <td>Graph cluster-view strategies</td>
+            <td>configurable aggregation and layout</td>
+            <td>Revisit <code>cluster</code> after relation filtering, richer edges and details are available. Explore pluggable strategies for community structure, industry roles, value chains, geography and ownership groups, with the current Louvain overview retained as a general default. Domain-specific grouping must be opt-in and may be supplied by the data source instead of inferred client-side.</td>
+        </tr>
+        <tr>
+            <td>Graph chrome styling</td>
+            <td>zoom controls, capacity note, navigation</td>
+            <td>Align the +/−/⟲ zoom buttons, actionable <code>+N more</code> disclosure, breadcrumbs and details controls with Rare Styles: proper icons, spacing, positioning, focus and hover states, responsive behavior, and dark-theme support.</td>
         </tr>
 
         <tr class="table-section">
