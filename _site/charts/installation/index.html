@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -421,14 +419,14 @@
 <h2>Getting the file</h2>
 <p><strong>From GitHub</strong> — clone the repo and use the prebuilt file:</p>
 <pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <p>Copy <code>rare-charts.js</code> wherever your project keeps static assets.</p>
 <p><strong>From CDN</strong> — load it directly, no download required:</p>
 <pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <p>For production, pin to a specific version. <code>@latest</code> is fine for prototyping, bad for anything that ships:</p>
 <pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <h2>Where to put the script tag</h2>
 <p>Two standard options, both work fine.</p>
 <p><strong>Before <code>&lt;/body&gt;</code></strong> — the classic approach. The page renders first, then the script loads. Charts initialize against already-present DOM elements.</p>
@@ -559,24 +557,29 @@
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

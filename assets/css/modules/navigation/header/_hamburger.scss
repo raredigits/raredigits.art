@@ -1,20 +1,30 @@
 @use "../../utilities/breakpoints" as bp;
+@use "../../utilities/symbols" as sym;
 
 .hamburger {
     cursor: pointer;
     z-index: 1000;
 }
 
-.hamburger .icon-close {
+// Glyphs are baked into the classes (utilities/_symbols.scss) — markup needs
+// no vendor icon class and no ligature text: <span class="hamburger__icon-menu"></span>
+.hamburger__icon-menu {
+    @include sym.symbol("menu");
+}
+
+.hamburger__icon-close {
+    @include sym.symbol("close");
+
     display: none;
 }
 
-.hamburger.active .icon-menu {
+// State written by hamburger.js (contract: SCRIPTS_CONTRACT.md, v0.6.17)
+.hamburger.rd-is-active .hamburger__icon-menu {
     display: none;
 }
 
-.hamburger.active .icon-close {
-    display: inline;
+.hamburger.rd-is-active .hamburger__icon-close {
+    display: inline-block;
 }
 
 .nav-hamburger {
@@ -41,7 +51,7 @@
     }
 }
 
-.nav-hamburger.active {
+.nav-hamburger.rd-is-active {
     top: 0;
     box-shadow: var(--shadow-md);
 }

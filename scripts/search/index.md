@@ -10,7 +10,7 @@ templateEngineOverride: md
 <div class="meta-info">
 js/search.js<br>
 <p>
-    v.1.1 Stable | 
+    v2.0.0 Stable (breaking: `rd-js-` hook) | 
     <a href="/assets/js/search.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
@@ -54,22 +54,22 @@ First, we need an element that will allow users to open the search interface.
 
 ```html
 <div class="header-icons">
-  <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-      <span class="material-symbols-outlined">search</span>
-  </button>
-  <button class="hamburger no-decoration" aria-label="Toggle navigation">
-      <span class="material-symbols-outlined icon-menu">menu</span>
-      <span class="material-symbols-outlined icon-close">close</span>
+  <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+  <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+      <span class="hamburger__icon-menu"></span>
+      <span class="hamburger__icon-close"></span>
   </button>
 </div>
 ```
 
-Next, create a container that will hold both the search input and the search results. Initially it is hidden until the user clicks the search button.
+The search button is empty on purpose: the glyph is baked into `.icon-search` by CSS (`::before` with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.
+
+Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (`.searchbar { display: none; }`) and shown by the `rd-is-open` state class the script toggles. The script hooks the button via `rd-js-search`, the bar via `rd-js-search-bar`, and the Pagefind mount via `rd-js-search-ui`; open/closed state is mirrored to `aria-expanded` on the button.
 
 ```html
 <div class="search-wrapper">
-  <div id="searchbar" class="searchbar" hidden>
-    <div id="search" class="search-input"></div>
+  <div id="searchbar" class="searchbar rd-js-search-bar">
+    <div id="search" class="search-input rd-js-search-ui"></div>
   </div>
 </div>
 ```
@@ -85,55 +85,43 @@ Now add a small JavaScript file that will initialize Pagefind UI and show/hide
 
 ```js
 function initSearchUI() {
-    var btn = document.getElementById('search-button');
-    var bar = document.getElementById('searchbar');
-    var container = document.getElementById('search');
+    if (document.body.classList.contains('page-search')) return;
+    var btn = document.querySelector('.rd-js-search');
+    var bar = document.querySelector('.rd-js-search-bar');
+    var container = document.querySelector('.rd-js-search-ui');
+    if (!btn || !bar) return;
     var initialized = false;
-    var inputListenerAdded = false;
+
+    btn.setAttribute('aria-expanded', 'false');
+    if (bar.id) btn.setAttribute('aria-controls', bar.id);
 
     function openSearch() {
-        if (bar) {
-            bar.hidden = false;
-        }
-        
+        bar.classList.add('rd-is-open');
+        btn.setAttribute('aria-expanded', 'true');
+
         if (!initialized && window.PagefindUI && container) {
+            if (!container.id) container.id = 'rd-search-ui';
             new PagefindUI({
-                element: '#search',
+                element: '#' + container.id,
                 showSubResults: true,
                 translations: { placeholder: 'Search…' }
             });
             initialized = true;
         }
-        
+
         setTimeout(function() {
             if (container) {
                 var input = container.querySelector('input[type="text"]') || container.querySelector('input');
-                if (input) {
-                    if (input.focus) input.focus();
-                    
-                    if (!inputListenerAdded) {
-                        input.addEventListener('input', function() {
-                            if (!bar) return;
-                            if (input.value && input.value.trim().length > 0) {
-                                bar.classList.add('has-query');
-                            } else {
-                                bar.classList.remove('has-query');
-                            }
-                        });
-                        inputListenerAdded = true;
-                    }
-                }
+                if (input && input.focus) input.focus();
             }
         }, 50);
-        
+
         document.addEventListener('keydown', escListener);
     }
 
     function closeSearch() {
-        if (bar) {
-            bar.hidden = true;
-            bar.classList.remove('has-query');
-        }
+        bar.classList.remove('rd-is-open');
+        btn.setAttribute('aria-expanded', 'false');
         document.removeEventListener('keydown', escListener);
     }
 
@@ -141,16 +129,14 @@ function initSearchUI() {
         if (e.key === 'Escape') closeSearch();
     }
 
-    if (btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            if (bar && bar.hidden) {
-                openSearch();
-            } else {
-                closeSearch();
-            }
-        });
-    }
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (bar.classList.contains('rd-is-open')) {
+            closeSearch();
+        } else {
+            openSearch();
+        }
+    });
 }
 
 if (document.readyState === 'loading') {
@@ -159,6 +145,7 @@ if (document.readyState === 'loading') {
     initSearchUI();
 }
 ```
+
 
 Finally, make sure this script is included at the end of the page, before `</body>`:
 
@@ -303,7 +290,7 @@ In your header template, wrap the search button in a condition:
 
 ```njk
 {% if not disable_header_search %}
-  <button id="search-button" ...>…</button>
+  <button class="rd-js-search" ...>…</button>
 {% endif %}
 ```
 
@@ -321,3 +308,12 @@ if (document.body.classList.contains('page-search')) return;
 This ensures there will never be two search UIs active on the same page.
 
 At this point, the setup provides two independent search interfaces: an overlay search that is opened from the header on regular pages, and a dedicated /search/ page with a full-page search interface. They do not conflict with each other because they use separate containers and separate initialization logic. The search page itself is excluded from the index so it never appears in search results, which is the recommended practice for dedicated search pages.
+
+### Changelog
+
+#### v2.0.0
+
+- **Breaking:** hooks moved to the `rd-js` contract — `rd-js-search` (button), `rd-js-search-bar` (container), `rd-js-search-ui` (Pagefind mount); the `search-button` / `searchbar` / `search` IDs are no longer read
+- **Breaking:** visibility is expressed by the `rd-is-open` state class instead of the `hidden` attribute
+- Removed the dead `has-query` class write (it was styled nowhere)
+- Added `aria-expanded` on the toggle button; guard added for pages without the hooks

@@ -78,7 +78,7 @@ Well, suppose you are a relatively civilized person, and your documentation is w
 
 <div class="code-block text-content-width">
   <pre><code id="snippet-1" class="language-css">{{ markdownCodeSnippet | escape }}</code></pre>
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
 </div>
 
 You expected to see cleanly formatted CSS. But suddenly, after rendering in the browser, your perfectly innocent code block turns into something like this:
@@ -101,7 +101,7 @@ And the worst part is: it isn’t wrong. It is simply doing its job. Its job
 Maybe you’re kind. Maybe you think about users. Maybe you want a sweet « Copy » button so they don’t have to select text like cavemen.
 
 <div class="text-content-width center-x padding-b-lg font-size-xxl">
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button>
 </div>
 
 And the obvious answer is: just do what GitHub does. Let JavaScript stroll across the page, find every `<pre>`, invisibly wire it with a clipboard button, and turn your documentation into a frictionless UX paradise where code leaps obediently into the user’s buffer and everyone applauds like we’ve solved civilization.
@@ -151,7 +151,7 @@ So we do this:
 
 <div class="code-block text-content-width">
   <pre><code id="snippet-2" class="language-css">{{ captureSnippet | escape }}</code></pre>
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
 </div>
 
 Now the snippet lives safely as plain text.  
@@ -168,13 +168,13 @@ Later, when we actually want to show this snippet, we explicitly place it in
 {%- capture codeBlockSnippet -%}
 <div class="code-block">
   {% raw %}<pre><code id="snippet">{{ codeSnippet | escape }}</code></pre>{% endraw %}
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet"></button>
 </div>
 {%- endcapture -%}
 
 <div class="code-block">
   <pre><code id="snippet-3" class="language-css">{{ codeBlockSnippet | escape }}</code></pre>
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
 </div>
 
 escape is doing the important emotional labor here. It turns `<` into `&lt;` and `>` into `&gt;`, browser stops being “creative”, `<pre>` preserves lines, copy button works. Life is briefly good.
@@ -195,7 +195,7 @@ So for CSS we add a very small but incredibly calming trick:
 
 <div class="code-block">
   <pre><code id="snippet-4">{{ cssSnippet | escape | replace: '\n', '&#10;' }}</code></pre>
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button>
 </div>
 
 escape keeps the browser from executing anything. `replace` swaps literal newlines with `&#10;`, which Markdown politely ignores but browsers happily render as real line breaks. Markdown stops “helping.” Indentation lives. Formatting survives.

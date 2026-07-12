@@ -9,3 +9,6 @@
 @forward "elements";
 @forward "decorations/index";
 @forward "special/index";
+
+// rd-is-* states are forwarded last on purpose — see utilities/_states.scss
+@forward "utilities/states";

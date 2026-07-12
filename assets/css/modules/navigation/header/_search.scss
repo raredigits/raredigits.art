@@ -1,4 +1,11 @@
 @use "../../utilities/breakpoints" as bp;
+@use "../../utilities/symbols" as sym;
+
+// Glyph baked into the button class (utilities/_symbols.scss) — markup needs
+// no inner icon span at all: <button class="icon-search ..." aria-label="…"></button>
+.icon-search {
+    @include sym.symbol("search");
+}
 
 .search-wrapper {
     display: block;
@@ -8,6 +15,7 @@
 }
 
 .searchbar {
+    display: none;
     width: var(--site-max-width);
     overflow: auto;
     margin: 0 auto;
@@ -16,6 +24,11 @@
     @include bp.mobile {
         width: 100%;
     }
+}
+
+// State written by search.js (contract: SCRIPTS_CONTRACT.md, v0.6.17)
+.searchbar.rd-is-open {
+    display: block;
 }
 
 .searchbar .pagefind-ui input,

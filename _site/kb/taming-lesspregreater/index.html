@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -354,7 +352,7 @@ and restructure anything that looks like a tag.</p>
   <pre><code id="snippet-1" class="language-css">```css
 // your styles here ...
 ```</code></pre>
-<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button></p>
+<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button></p>
 </div>
 <p>You expected to see cleanly formatted CSS. But suddenly, after rendering in the browser, your perfectly innocent code block turns into something like this:</p>
 <pre><code class="language-html">&lt;code&gt;
@@ -369,7 +367,7 @@ and restructure anything that looks like a tag.</p>
 <h3>Problem 3: The Copy Button of Doom</h3>
 <p>Maybe you’re kind. Maybe you think about users. Maybe you want a sweet « Copy » button so they don’t have to select text like cavemen.</p>
 <div class="text-content-width center-x padding-b-lg font-size-xxl">
-  <button class="copy-data-icon" title="Copy link" data-icon="content_copy"></button>
+  <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button>
 </div>
 <p>And the obvious answer is: just do what GitHub does. Let JavaScript stroll across the page, find every <code>&lt;pre&gt;</code>, invisibly wire it with a clipboard button, and turn your documentation into a frictionless UX paradise where code leaps obediently into the user’s buffer and everyone applauds like we’ve solved civilization.</p>
 <p>But maybe you don’t want a global script quietly modifying your entire page. And maybe you only want copy buttons on <em>some</em> blocks, not on every stray <code>&lt;pre&gt;</code> fragment. And maybe — just to make things more interesting — you’re already juggling Eleventy and Liquid and Markdown and Nunjucks and HTML, plus whatever cosmic entity lives in your build pipeline pretending to be helpful.</p>
@@ -395,7 +393,7 @@ No coping mechanisms involving alcohol.</p>
 &lt;/div&gt;
 {%- endcapture -%}
 </code></pre>
-<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button></p>
+<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button></p>
 </div>
 <p>Now the snippet lives safely as plain text.<br>
 No Markdown rules touch it.<br>
@@ -406,9 +404,9 @@ Nobody “helps”.</p>
 <p>Later, when we actually want to show this snippet, we explicitly place it inside <code>&lt;pre&gt;&lt;code&gt;</code> and tell the browser: “Display this. Literally. Calmly.”<div class="code-block"></p>
   <pre><code id="snippet-3" class="language-css">&lt;div class=&#34;code-block&#34;&gt;
   &lt;pre&gt;&lt;code id=&#34;snippet&#34;&gt;{{ codeSnippet | escape }}&lt;/code&gt;&lt;/pre&gt;
-  &lt;button class=&#34;copy-data-icon&#34; title=&#34;Copy link&#34; data-icon=&#34;content_copy&#34; data-copy-target=&#34;#snippet&#34;&gt;&lt;/button&gt;
+  &lt;button class=&#34;copy-data-icon rd-js-copy&#34; title=&#34;Copy link&#34; data-icon=&#34;content_copy&#34; data-copy-target=&#34;#snippet&#34;&gt;&lt;/button&gt;
 &lt;/div&gt;</code></pre>
-<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button></p>
+<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button></p>
 </div>
 <p>escape is doing the important emotional labor here. It turns <code>&lt;</code> into <code>&amp;lt;</code> and <code>&gt;</code> into <code>&amp;gt;</code>, browser stops being “creative”, <code>&lt;pre&gt;</code> preserves lines, copy button works. Life is briefly good.</p>
 <div class="air-md"></div>
@@ -417,7 +415,7 @@ Nobody “helps”.</p>
 <p>Because this is where Markdown really leans in. It sees blank lines inside your CSS block and, with great confidence and zero hesitation, begins inserting <code>&lt;p&gt;</code> tags <em>inside your <code>&lt;code&gt;</code></em>, like a toddler enthusiastically decorating a cake with olives. The browser is technically not wrong, Markdown is technically not wrong, but the end result is emotionally devastating.</p>
 <p>So for CSS we add a very small but incredibly calming trick:<div class="code-block"></p>
   <pre><code id="snippet-4">{{ codeStyles | escape | replace: &#39;\n&#39;, &#39;&amp;#10;&#39; }}</code></pre>
-<p><button class="copy-data-icon" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
 </div>
 <p>escape keeps the browser from executing anything. <code>replace</code> swaps literal newlines with <code>&amp;#10;</code>, which Markdown politely ignores but browsers happily render as real line breaks. Markdown stops “helping.” Indentation lives. Formatting survives.</p>
 <p>Victory.</p>
@@ -482,24 +480,29 @@ Nobody “helps”.</p>
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

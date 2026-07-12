@@ -77,7 +77,8 @@
       { "title": "Collapsible", "url": "/scripts/collapsible/" },
       { "title": "Search", "url": "/scripts/search/" },
       { "title": "Cookies", "url": "/scripts/cookies/" },
-      { "title": "Copy", "url": "/scripts/copy-to-clipboard/" }
+      { "title": "Copy", "url": "/scripts/copy-to-clipboard/" },
+      { "title": "Carousel", "url": "/scripts/carousel/" }
       ]
     },
     "Legal": {

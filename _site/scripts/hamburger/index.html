@@ -104,22 +104,20 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration" id="search-button" aria-label="Поиск">
-          <span class="material-symbols-outlined">search</span>
-      </button>
-      <button class="hamburger no-decoration" aria-label="Toggle navigation">
-          <span class="material-symbols-outlined icon-menu">menu</span>
-          <span class="material-symbols-outlined icon-close">close</span>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
       </button>
     </div>
   </div>
   <div class="search-wrapper">
-    <div id="searchbar" class="searchbar" hidden>
-      <div id="search" class="search-input"></div>
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
     </div>
   </div>
 </header>
-<div class="nav-hamburger">
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
     <div>
         <div class="height-lg padding-x-md center-center">
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
@@ -332,6 +330,15 @@
               
             </li>
           
+            <li>
+              
+                <a href="/scripts/carousel/">Carousel</a>
+              
+              
+              
+              
+            </li>
+          
         </ul>
       </nav>
     
@@ -347,7 +354,7 @@
       <div class="meta-info">
 js/hamburger.js<br>
 <p>
-    v.1.0 Stable | 
+    v2.0.0 Stable (breaking: `rd-js-` hook) | 
     <a href="/assets/js/hamburger.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
@@ -365,7 +372,7 @@ js/hamburger.js<br>
 <pre><code class="language-html">&lt;script src=&quot;assets/js/hamburger.js&quot;&gt;&lt;/script&gt;
 &lt;/body&gt;
 </code></pre>
-<p>Second, structure your navigation. The hamburger menu requires a navigation container with the .nav-hamburger class. This element should be hidden by default using CSS:</p>
+<p>Second, structure your navigation. The script finds the panel by the <code>rd-js-hamburger-nav</code> hook class; presentational styling lives on a separate class (here <code>.nav-hamburger</code>). The panel should be hidden by default using CSS, and shown by the <code>rd-is-active</code> state class the script toggles:</p>
 <pre><code class="language-css">.nav-hamburger {
   position: fixed;
   top: -100%;
@@ -374,47 +381,101 @@ js/hamburger.js<br>
   transition: top 0.3s ease;
 }
 
-.nav-hamburger.active {
+.nav-hamburger.rd-is-active {
   top: 0;
 }
 </code></pre>
-<p>Third, add the toggle button. Place the hamburger button in your header or another accessible location:</p>
-<pre><code class="language-html">&lt;button class=&quot;hamburger no-decoration&quot; aria-label=&quot;Toggle navigation&quot;&gt;
-  &lt;span class=&quot;material-symbols-outlined icon-menu&quot;&gt;menu&lt;/span&gt;
-  &lt;span class=&quot;material-symbols-outlined icon-close&quot;&gt;close&lt;/span&gt;
+<pre><code class="language-html">&lt;div class=&quot;nav-hamburger rd-js-hamburger-nav&quot;&gt;…&lt;/div&gt;
+</code></pre>
+<p>Third, add the toggle button. The script hooks it via <code>rd-js-hamburger</code>; place it in your header or another accessible location:</p>
+<pre><code class="language-html">&lt;button class=&quot;hamburger no-decoration rd-js-hamburger&quot; aria-label=&quot;Toggle navigation&quot;&gt;
+  &lt;span class=&quot;hamburger__icon-menu&quot;&gt;&lt;/span&gt;
+  &lt;span class=&quot;hamburger__icon-close&quot;&gt;&lt;/span&gt;
 &lt;/button&gt;
 </code></pre>
-<p>The button uses Material Symbols for visual clarity, but you can substitute any icon system or create custom hamburger lines using CSS.</p>
+<p>The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (Material Symbols ligatures rendered via <code>::before</code>), so markup carries no vendor icon class and no ligature text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this; standalone users need:</p>
+<pre><code class="language-css">.hamburger__icon-menu,
+.hamburger__icon-close {
+  display: inline-block;
+  font-family: &quot;Material Symbols Outlined&quot;;
+}
+
+.hamburger__icon-menu::before { content: &quot;menu&quot;; }
+.hamburger__icon-close::before { content: &quot;close&quot;; }
+
+.hamburger__icon-close { display: none; }
+.hamburger.rd-is-active .hamburger__icon-menu { display: none; }
+.hamburger.rd-is-active .hamburger__icon-close { display: inline-block; }
+</code></pre>
+<p>You can substitute any icon system or draw custom hamburger lines in CSS — the script only toggles state classes.</p>
+<h2>Contract</h2>
+<ul>
+<li><code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code> are <strong>hooks</strong>: the script reads them, CSS never styles them</li>
+<li><code>rd-is-active</code> is <strong>state</strong>: the script writes it on both elements, CSS styles it</li>
+<li><code>aria-expanded</code> on the button mirrors the open/closed state on every toggle; if the panel has an <code>id</code>, the script also sets <code>aria-controls</code></li>
+<li><code>hamburger__icon-menu</code> / <code>hamburger__icon-close</code> are <strong>presentational</strong> BEM elements of the button — styled by CSS, invisible to the script</li>
+<li>If either hook is missing on a page, the script safely does nothing</li>
+</ul>
 <h2>Functionality</h2>
 <p>The script automatically handles:</p>
 <ul>
 <li>Toggling the menu open/closed when clicking the hamburger button</li>
-<li>Closing the menu when users click anywhere outside the menu area</li>
-<li>Adding/removing the <code>.active</code> class to control visibility</li>
+<li>Closing the menu on a click outside the menu area or on <kbd>Escape</kbd> (both listeners are attached only while the menu is open)</li>
+<li>Adding/removing the <code>rd-is-active</code> state class and keeping <code>aria-expanded</code> in sync</li>
 </ul>
 <div class="air-md"></div>
 <details>
     <summary>Raw code</summary>
 <pre><code class="language-js">document.addEventListener('DOMContentLoaded', () =&gt; {
-  const hamburger = document.querySelector('.hamburger');
-  const navGlobal = document.querySelector('.nav-hamburger');
+  const hamburger = document.querySelector('.rd-js-hamburger');
+  const navGlobal = document.querySelector('.rd-js-hamburger-nav');
+  if (!hamburger || !navGlobal) return;
+
+  // Closing the menu when clicking outside — attached only while open
+  const outsideListener = (event) =&gt; {
+    if (!navGlobal.contains(event.target) &amp;&amp; !hamburger.contains(event.target)) {
+      setState(false);
+    }
+  };
+
+  const escListener = (event) =&gt; {
+    if (event.key === 'Escape') setState(false);
+  };
+
+  const setState = (open) =&gt; {
+    hamburger.classList.toggle('rd-is-active', open);
+    navGlobal.classList.toggle('rd-is-active', open);
+    hamburger.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+    if (open) {
+      document.addEventListener('click', outsideListener);
+      document.addEventListener('keydown', escListener);
+    } else {
+      document.removeEventListener('click', outsideListener);
+      document.removeEventListener('keydown', escListener);
+    }
+  };
+
+  if (navGlobal.id) hamburger.setAttribute('aria-controls', navGlobal.id);
+  setState(false);
 
   // Toggle the hamburger menu on click
   hamburger.addEventListener('click', () =&gt; {
-    hamburger.classList.toggle('active');
-    navGlobal.classList.toggle('active');
-  });
-
-  // Closing the menu when clicking outside
-  document.addEventListener('click', (event) =&gt; {
-    if (!navGlobal.contains(event.target) &amp;&amp; !hamburger.contains(event.target)) {
-      hamburger.classList.remove('active');
-      navGlobal.classList.remove('active');
-    }
+    setState(!navGlobal.classList.contains('rd-is-active'));
   });
 });
 </code></pre>
 </details>
+<h2>Changelog</h2>
+<h3>v2.0.0</h3>
+<ul>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script now finds elements via <code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code>, not <code>.hamburger</code> / <code>.nav-hamburger</code></li>
+<li><strong>Breaking:</strong> state class renamed <code>.active</code> → <code>.rd-is-active</code></li>
+<li><strong>Breaking:</strong> icon elements renamed to BEM — <code>.icon-menu</code> / <code>.icon-close</code> → <code>.hamburger__icon-menu</code> / <code>.hamburger__icon-close</code> (CSS-only rename; the script never reads them)</li>
+<li>Added <code>aria-expanded</code> on the toggle button, plus <code>aria-controls</code> when the panel carries an <code>id</code></li>
+<li>Added <kbd>Escape</kbd> to close; outside-click and Escape listeners are attached only while the menu is open</li>
+<li>Added a guard: pages without the hooks no longer throw</li>
+</ul>
 
     </article>
   </div>
@@ -434,24 +495,29 @@ js/hamburger.js<br>
 
 </footer>
 
-<div id="cookie-notice" class="cookie-notice">
+<div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
     <h3>🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
-        <button id="cookie-notice-accept" class="cookie-notice__button">Nice!</button>
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v1.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
 
 <script src="/assets/js/search.js"></script>
 <script src="/assets/js/hamburger.js"></script>
 <script src="/assets/js/header-scroll.js"></script>
 <script src="/assets/js/collapsible.js"></script>
 <script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
 
 </body>
 </html>

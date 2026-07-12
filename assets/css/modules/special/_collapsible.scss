@@ -1,4 +1,5 @@
 @use "../utilities/breakpoints" as bp;
+@use "../utilities/symbols" as sym;
 
 .collapsible-container {
     padding: var(--space-md) var(--space-lg);
@@ -22,35 +23,78 @@ details summary {
     cursor: pointer;
 }
 
-.collapsible-trigger .collapsible-icon {
+// The canonical trigger is a <button> (keyboard for free) — neutralize the
+// global button treatment (elements/_buttons.scss) so it reads as inline text
+// inside prose; the dashed underline above still applies.
+button.collapsible-trigger {
+    display: inline;
+    width: auto;
+    background: none;
+    color: inherit;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font: inherit;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-style: dashed;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: var(--text-color-light);
+
+    &:hover {
+        background: none;
+        border: none;
+    }
+}
+
+// Glyph baked into the class (utilities/_symbols.scss) — markup needs no vendor
+// icon class and no ligature text: <span class="collapsible-icon"></span>
+.collapsible-icon {
+    @include sym.symbol("keyboard_arrow_down");
+
     text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+// State is ARIA-driven (contract: SCRIPTS_CONTRACT.md, v0.6.17) — the script
+// mirrors open/closed to aria-expanded; the icon rotates instead of swapping glyphs.
+.collapsible-trigger[aria-expanded="true"] .collapsible-icon {
+    transform: rotate(180deg);
 }
 
 .collapsible-content {
     display: none;
     padding-top: var(--space-lg);
 
-    > .caption, .highlight, pre, .text-content-caption, .card-caption {
-        margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
-
-        @include bp.mobile {
-            margin-left: calc(-1 * var(--space-sm));
-        }
-    }
-
     > .card-dashboard-bordered {
         padding: var(--space-md);
     }
 }
 
-.collapsible-content .caption,
-.collapsible-content .highlight,
-.collapsible-content pre,
-.collapsible-content .text-content-caption,
-.collapsible-content .card-caption {
-    margin-left: calc(-1 * (var(--space-md) + var(--space-sm)));
-
-    @include bp.mobile {
-        margin-left: calc(-1 * var(--space-sm));
+// CSS-047 resolution: inside the card frame the prose outdent contract is
+// inverted, not mirrored. On open pages .lead / .highlight / .caption /
+// .text-content-caption outdent past the text column (typography/_text-content.scss)
+// — but a padded card has no page margins to bleed into, so the same outdent
+// pinned them to (or past) the card edge. Reset the whole family to the card's
+// content width. `pre` and `.card-caption` are included because the previous
+// collapsible-scoped rules imposed an outdent on them here.
+.collapsible-container,
+.collapsible-content {
+    .lead,
+    .caption,
+    .highlight,
+    pre,
+    .text-content-caption,
+    .card-caption {
+        width: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
     }
+}
+
+// State written by collapsible.js (contract: SCRIPTS_CONTRACT.md, v0.6.17)
+.collapsible-content.rd-is-open {
+    display: block;
 }

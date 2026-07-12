@@ -1,5 +1,8 @@
 @use "../utilities/breakpoints" as bp;
 
+// State written by cookie-consent.js (contract: SCRIPTS_CONTRACT.md, v0.6.17):
+// the script toggles `.rd-is-hidden` on this element to dismiss the notice —
+// the state rule itself lives in utilities/_states.scss.
 .cookie-notice {
     max-width: var(--site-max-width);
     display: block;

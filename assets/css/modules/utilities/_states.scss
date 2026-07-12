@@ -1,0 +1,9 @@
+// Reserved rd-is-* state classes (namespace policy: STYLEGUIDE.md, v0.6.17 / CSS-067).
+// Scripts toggle these; CSS styles them. .rd-is-open and .rd-is-active are styled
+// contextually by their components; .rd-is-hidden carries one universal meaning.
+// This file is forwarded LAST in modules/_index.scss so the state wins order-ties
+// against component display rules until cascade layers land (CSS-130).
+
+.rd-is-hidden {
+    display: none;
+}

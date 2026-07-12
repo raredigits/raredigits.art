@@ -32,70 +32,70 @@ The core grayscale palette consists of three primary and five supplementary sha
             <div>white</div>
             <div>
                 <span data-copy>#ffffff</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-lightest-bg width-100 padding-md">
             <div>gray-lightest</div>
             <div>
                 <span data-copy>#fafafa</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-light-bg width-100 padding-md">
             <div>gray-light</div>
             <div>
                 <span data-copy>#f0f0f0</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-mid-light-bg width-100 padding-md">
             <div>gray-mid-light</div>
             <div>
                 <span data-copy>#e4e4e4</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-bg width-100 padding-md">
             <div>gray</div>
             <div>
                 <span data-copy>#cccccc</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-trans-bg gray-light width-100 padding-md">
             <div>gray-trans</div>
             <div>
                 <span data-copy>#888888</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-mid-dark-bg gray-light width-100 padding-md">
             <div>gray-mid-dark</div>
             <div>
                 <span data-copy>#666666</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-dark-bg gray-light width-100 padding-md">
             <div>gray-dark</div>
             <div>
                 <span data-copy>#333333</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched gray-darkest-bg gray-light width-100 padding-md">
             <div>gray-darkest</div>
             <div>
                 <span data-copy>#191919</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched black-bg gray-light width-100 padding-md">
             <div>black</div>
             <div>
                 <span data-copy>#000000</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
     </div>
@@ -152,21 +152,21 @@ Technical colors are used to highlight important info: statuses, warnings, and 
             <div>yellow — for warnings</div>
             <div>
                 <span data-copy>#ffe000</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched red-bg width-100 padding-md">
             <div>red — for errors</div>
             <div>
                 <span data-copy>#ff0000</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched green-bg white width-100 padding-md">
             <div>green — for success</div>
             <div>
                 <span data-copy>#389e0d</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
     </div>
@@ -186,91 +186,91 @@ A limited set of supporting colors is available for specific purposes like da
             <div>cherry</div>
             <div>
                 <span data-copy>#86241a</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched plum-bg white width-100 padding-md">
             <div>plum</div>
             <div>
                 <span data-copy>#4e4153</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched ocean-bg gray-light width-100 padding-md">
             <div>ocean</div>
             <div>
                 <span data-copy>#2f7395</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched orange-bg width-100 padding-md">
             <div>orange</div>
             <div>
                 <span data-copy>#fa8c16</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched pink-bg width-100 padding-md">
             <div>pink</div>
             <div>
                 <span data-copy>#ffd6e7</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched princess-bg width-100 padding-md">
             <div>princess</div>
             <div>
                 <span data-copy>#ff00f5</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched safari-bg width-100 padding-md">
             <div>safari</div>
             <div>
                 <span data-copy>#ffb038</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched purple-bg gray-light width-100 padding-md">
             <div>purple</div>
             <div>
                 <span data-copy>#722ed1</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched pen-bg white width-100 padding-md">
             <div>pen</div>
             <div>
                 <span data-copy>#0033a0</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched tiffany-bg white width-100 padding-md">
             <div>tiffany</div>
             <div>
                 <span data-copy>#53c9e9</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched blueberry-bg gray-light width-100 padding-md">
             <div>blueberry</div>
             <div>
                 <span data-copy>#221e4d</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched coral-bg width-100 padding-md">
             <div>coral</div>
             <div>
                 <span data-copy>#fe7c64</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
         <div class="flex stretched matrix-bg width-100 padding-md">
             <div>matrix</div>
             <div>
                 <span data-copy>#00ff4e</span>
-                <span class="copy-data-icon" data-icon="content_copy" title="Copy"></span>
+                <span class="copy-data-icon rd-js-copy" data-icon="content_copy" title="Copy"></span>
             </div>
         </div>
     </div>
