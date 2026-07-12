@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if title %}{{ title }} | {% endif %}{{ site.title }}</title>
 
+    {# Warm up the Google font origins ahead of the Material Symbols @import (the one
+       icon font still hosted by Google). Its gstatic woff2 URL is a content hash we
+       can't stably preload, so preconnect is the right lever — it removes DNS/TCP/TLS
+       latency from the icon-font chain, which matters under `display=block`. Not needed
+       for the text fonts: they're self-hosted and load from this origin. #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    {# Preload the above-the-fold self-hosted faces (latin) so body + headings paint
+       without waiting on the CSS→@font-face discovery chain. woff2 are fetched in CORS
+       mode even same-origin, so `crossorigin` is required or the preload goes unused. #}
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+
     <link rel="stylesheet" href="/assets/css/rare.css">
     {% if page.url == "/" %}
         <link rel="stylesheet" href="/assets/css/examples/rare-styles-main.css">

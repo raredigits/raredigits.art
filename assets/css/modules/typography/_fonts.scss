@@ -1,10 +1,6 @@
-@import 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400..900&display=swap';
-@import 'https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,400;0,700;0,900;1,100;1,200;1,400;1,700;1,900&display=swap';
-@import 'https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&display=swap';
-@import 'https://fonts.googleapis.com/css2?family=Caveat&display=swap';
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
-@import 'https://fonts.googleapis.com/icon?family=Material+Icons+Outlined';
-@import 'https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined';
+// The four text families are self-hosted and the Material Symbols icon font is
+// loaded scoped — all of it lives in `_font-faces.scss` (forwarded from the
+// typography index). This file owns only the font tokens and utility classes.
 
 :root {
     --primary-font: 'Fira Sans', sans-serif;
