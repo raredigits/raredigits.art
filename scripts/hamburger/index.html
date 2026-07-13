@@ -352,27 +352,29 @@
 
     <article>
       <div class="meta-info">
-js/hamburger.js<br>
+js/hamburger.js
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
     <a href="/assets/js/hamburger.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
-<p>The hamburger menu script provides a clean, accessible way to hide frequently used information while keeping it just one click away. This pattern works best for:</p>
+<p>The hamburger menu script provides a clean, accessible way to hide frequently used information while keeping it just one click away. This pattern works best for:</p>
 <ul>
 <li>Secondary navigation options</li>
 <li>Frequently Asked Questions (FAQ)</li>
 <li>Documentation and instructions</li>
-<li>Quick links that don't warrant space in your primary navigation</li>
+<li>Quick links that don’t warrant space in your primary navigation</li>
 </ul>
-<p>Remember: Avoid hiding critical navigation or primary user paths in hamburger menus. For guidance on strategic implementation, see <a href="/kb/hamburger-menu-saga/">The Hamburger Menu Saga</a> which explains why hamburgers work best for supplementary content rather than main navigation.</p>
-<div class="air-lg"></div>
+<p>Remember: Avoid hiding critical navigation or primary user paths in hamburger menus. For guidance on strategic implementation, see <a href="/kb/hamburger-menu-saga/">The Hamburger Menu Saga</a> which explains why hamburgers work best for supplementary content rather than main navigation.</p>
 <h2>Implementation</h2>
-<p>First, place the hamburger script at the very end of your <code>&lt;body&gt;</code> element to ensure the DOM is fully loaded before the script runs:</p>
+<p>First, place the hamburger script at the very end of your <code>&lt;body&gt;</code> element to ensure the DOM is fully loaded before the script runs:</p>
 <pre><code class="language-html">&lt;script src=&quot;assets/js/hamburger.js&quot;&gt;&lt;/script&gt;
 &lt;/body&gt;
 </code></pre>
-<p>Second, structure your navigation. The script finds the panel by the <code>rd-js-hamburger-nav</code> hook class; presentational styling lives on a separate class (here <code>.nav-hamburger</code>). The panel should be hidden by default using CSS, and shown by the <code>rd-is-active</code> state class the script toggles:</p>
+<p class="callout">
+  ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
+</p>
+<p>Second, structure your navigation. The script finds the panel by the <code>rd-js-hamburger-nav</code> hook class; presentational styling lives on a separate class (here <code>.nav-hamburger</code>). The panel should be hidden by default using CSS, and shown by the <code>rd-is-active</code> state class the script toggles:</p>
 <pre><code class="language-css">.nav-hamburger {
   position: fixed;
   top: -100%;
@@ -387,13 +389,13 @@ js/hamburger.js<br>
 </code></pre>
 <pre><code class="language-html">&lt;div class=&quot;nav-hamburger rd-js-hamburger-nav&quot;&gt;…&lt;/div&gt;
 </code></pre>
-<p>Third, add the toggle button. The script hooks it via <code>rd-js-hamburger</code>; place it in your header or another accessible location:</p>
+<p>Third, add the toggle button. The script hooks it via <code>rd-js-hamburger</code>; place it in your header or another accessible location:</p>
 <pre><code class="language-html">&lt;button class=&quot;hamburger no-decoration rd-js-hamburger&quot; aria-label=&quot;Toggle navigation&quot;&gt;
   &lt;span class=&quot;hamburger__icon-menu&quot;&gt;&lt;/span&gt;
   &lt;span class=&quot;hamburger__icon-close&quot;&gt;&lt;/span&gt;
 &lt;/button&gt;
 </code></pre>
-<p>The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (Material Symbols ligatures rendered via <code>::before</code>), so markup carries no vendor icon class and no ligature text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this; standalone users need:</p>
+<p>The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (Material Symbols ligatures rendered via <code>:: before</code>), so markup carries no vendor icon class and no ligature text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this; standalone users need:</p>
 <pre><code class="language-css">.hamburger__icon-menu,
 .hamburger__icon-close {
   display: inline-block;
@@ -407,21 +409,21 @@ js/hamburger.js<br>
 .hamburger.rd-is-active .hamburger__icon-menu { display: none; }
 .hamburger.rd-is-active .hamburger__icon-close { display: inline-block; }
 </code></pre>
-<p>You can substitute any icon system or draw custom hamburger lines in CSS — the script only toggles state classes.</p>
+<p>You can substitute any icon system or draw custom hamburger lines in CSS — the script only toggles state classes.</p>
 <h2>Contract</h2>
 <ul>
 <li><code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code> are <strong>hooks</strong>: the script reads them, CSS never styles them</li>
-<li><code>rd-is-active</code> is <strong>state</strong>: the script writes it on both elements, CSS styles it</li>
-<li><code>aria-expanded</code> on the button mirrors the open/closed state on every toggle; if the panel has an <code>id</code>, the script also sets <code>aria-controls</code></li>
-<li><code>hamburger__icon-menu</code> / <code>hamburger__icon-close</code> are <strong>presentational</strong> BEM elements of the button — styled by CSS, invisible to the script</li>
-<li>If either hook is missing on a page, the script safely does nothing</li>
+<li><code>rd-is-active</code> is <strong>state</strong>: the script writes it on both elements, CSS styles it</li>
+<li><code>aria-expanded</code> on the button mirrors the open/closed state on every toggle; if the panel has an <code>id</code>, the script also sets <code>aria-controls</code></li>
+<li><code>hamburger__icon-menu</code> / <code>hamburger__icon-close</code> are <strong>presentational</strong> BEM elements of the button — styled by CSS, invisible to the script</li>
+<li>If either hook is missing on a page, the script safely does nothing</li>
 </ul>
 <h2>Functionality</h2>
 <p>The script automatically handles:</p>
 <ul>
 <li>Toggling the menu open/closed when clicking the hamburger button</li>
-<li>Closing the menu on a click outside the menu area or on <kbd>Escape</kbd> (both listeners are attached only while the menu is open)</li>
-<li>Adding/removing the <code>rd-is-active</code> state class and keeping <code>aria-expanded</code> in sync</li>
+<li>Closing the menu on a click outside the menu area or on <kbd>Escape</kbd> (both listeners are attached only while the menu is open)</li>
+<li>Adding/removing the <code>rd-is-active</code> state class and keeping <code>aria-expanded</code> in sync</li>
 </ul>
 <div class="air-md"></div>
 <details>
@@ -469,12 +471,12 @@ js/hamburger.js<br>
 <h2>Changelog</h2>
 <h3>v2.0.0</h3>
 <ul>
-<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script now finds elements via <code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code>, not <code>.hamburger</code> / <code>.nav-hamburger</code></li>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script now finds elements via <code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code>, not <code>.hamburger</code> / <code>.nav-hamburger</code></li>
 <li><strong>Breaking:</strong> state class renamed <code>.active</code> → <code>.rd-is-active</code></li>
-<li><strong>Breaking:</strong> icon elements renamed to BEM — <code>.icon-menu</code> / <code>.icon-close</code> → <code>.hamburger__icon-menu</code> / <code>.hamburger__icon-close</code> (CSS-only rename; the script never reads them)</li>
-<li>Added <code>aria-expanded</code> on the toggle button, plus <code>aria-controls</code> when the panel carries an <code>id</code></li>
-<li>Added <kbd>Escape</kbd> to close; outside-click and Escape listeners are attached only while the menu is open</li>
-<li>Added a guard: pages without the hooks no longer throw</li>
+<li><strong>Breaking:</strong> icon elements renamed to BEM — <code>.icon-menu</code> / <code>.icon-close</code> → <code>.hamburger__icon-menu</code> / <code>.hamburger__icon-close</code> (CSS-only rename; the script never reads them)</li>
+<li>Added <code>aria-expanded</code> on the toggle button, plus <code>aria-controls</code> when the panel carries an <code>id</code></li>
+<li>Added <kbd>Escape</kbd> to close; outside-click and Escape listeners are attached only while the menu is open</li>
+<li>Added a guard: pages without the hooks no longer throw</li>
 </ul>
 
     </article>

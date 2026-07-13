@@ -362,7 +362,7 @@ js/search.js<br>
 <p><a href="https://pagefind.app">Pagefind</a> is a fast and privacy-friendly search engine designed specifically for static sites. It scans the already-built HTML pages and creates a small client-side index, so search works instantly in the browser without any backend or third-party service. On Eleventy sites, Pagefind integrates right after the build step and indexes only what is actually deployed to production.</p>
 <h2>Installation</h2>
 <ol>
-<li>Run the installation command from the root directory of your project. This will add Pagefind to your development dependencies.</li>
+<li>Run the installation command from the root directory of your project. This will add Pagefind to your development dependencies.</li>
 </ol>
 <pre><code class="language-html">npm i -D pagefind
 </code></pre>
@@ -394,19 +394,51 @@ js/search.js<br>
   &lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
-<p>The search button is empty on purpose: the glyph is baked into <code>.icon-search</code> by CSS (<code>::before</code> with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.</p>
-<p>Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (<code>.searchbar { display: none; }</code>) and shown by the <code>rd-is-open</code> state class the script toggles. The script hooks the button via <code>rd-js-search</code>, the bar via <code>rd-js-search-bar</code>, and the Pagefind mount via <code>rd-js-search-ui</code>; open/closed state is mirrored to <code>aria-expanded</code> on the button.</p>
+<p>The search button is empty on purpose: the glyph is baked into <code>.icon-search</code> by CSS (<code>: before</code> with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.</p>
+<p>Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (<code>.searchbar { display: none; }</code>) and shown by the <code>rd-is-open</code> state class the script toggles. The script hooks the button via <code>rd-js-search</code>, the bar via <code>rd-js-search-bar</code>, and the Pagefind mount via <code>rd-js-search-ui</code>; open/closed state is mirrored to <code>aria-expanded</code> on the button.</p>
 <pre><code class="language-html">&lt;div class=&quot;search-wrapper&quot;&gt;
   &lt;div id=&quot;searchbar&quot; class=&quot;searchbar rd-js-search-bar&quot;&gt;
     &lt;div id=&quot;search&quot; class=&quot;search-input rd-js-search-ui&quot;&gt;&lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
-<p>All necessary styles are already included in Rare Styles. Pagefind also ships with its own default styles and JavaScript. Include them inside the <code>&lt;head&gt;</code> section of your layout:</p>
+<p>All necessary styles are already included in Rare Styles. Pagefind ships its <strong>own</strong> default styles (<code>pagefind-ui.css</code>) and JavaScript (<code>pagefind-ui.js</code>) — those are what render the actual search box.</p>
+<div class="caption">
+  <strong>The Rule: Pagefind must be loaded before the script mounts it.</strong>
+  The search script below does <strong>not</strong> load Pagefind; it only calls
+  <code>new PagefindUI()</code> once <code>window.PagefindUI</code> exists. If
+  Pagefind is never loaded, clicking the icon opens an <strong>empty box</strong>
+  and nothing happens. Wire it one of the two ways below — and if your site
+  already uses the lazy loader, never overwrite the search file with a generic
+  copy that drops it.
+</div>
+<p><strong>Option A — eager (simplest).</strong> Include Pagefind’s assets in the <code>&lt;head&gt;</code> of your layout. They load on every page (~100 KB + a render-blocking stylesheet), even for visitors who never search:</p>
 <pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;/pagefind/pagefind-ui.css&quot;&gt;
 &lt;script src=&quot;/pagefind/pagefind-ui.js&quot; defer&gt;&lt;/script&gt;
 </code></pre>
-<p>Now add a small JavaScript file that will initialize Pagefind UI and show/hide the search panel when the user clicks the button:</p>
+<p><strong>Option B — lazy (recommended for performance).</strong> Do <em>NOT</em> add the <code>&lt;head&gt;</code> includes; let the script pull Pagefind’s CSS + JS the first time search is opened, so the ~100 KB of search assets never touch a page until someone actually searches. Add this loader at the top of your search file:</p>
+<pre><code class="language-js">// Lazy-load Pagefind's CSS + JS on first open. Returns a promise that
+// resolves once PagefindUI is available.
+var pagefindPromise = null;
+function loadPagefind() {
+    if (pagefindPromise) return pagefindPromise;
+    pagefindPromise = new Promise(function (resolve, reject) {
+        var css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = '/pagefind/pagefind-ui.css';
+        document.head.appendChild(css);
+
+        var js = document.createElement('script');
+        js.src = '/pagefind/pagefind-ui.js';
+        js.onload = function () { resolve(window.PagefindUI); };
+        js.onerror = reject;
+        document.head.appendChild(js);
+    });
+    return pagefindPromise;
+}
+</code></pre>
+<p>…then wrap the <code>new PagefindUI (…)</code> call inside <code>openSearch ()</code> with <code>loadPagefind ().then (function () {… })</code>. This is exactly the pattern schnellreich.ru uses.</p>
+<p>Now add the small JavaScript file that initializes Pagefind UI and shows/hides the search panel when the user clicks the button. The version below uses <strong>Option A</strong> (it assumes <code>window.PagefindUI</code> is already loaded); for <strong>Option B</strong>, wrap the marked <code>new PagefindUI</code> block in <code>loadPagefind ().then (…)</code>:</p>
 <pre><code class="language-js">function initSearchUI() {
     if (document.body.classList.contains('page-search')) return;
     var btn = document.querySelector('.rd-js-search');
@@ -422,6 +454,7 @@ js/search.js<br>
         bar.classList.add('rd-is-open');
         btn.setAttribute('aria-expanded', 'true');
 
+        // Option B: wrap this block in loadPagefind().then(function () { ... })
         if (!initialized &amp;&amp; window.PagefindUI &amp;&amp; container) {
             if (!container.id) container.id = 'rd-search-ui';
             new PagefindUI({
@@ -471,8 +504,13 @@ if (document.readyState === 'loading') {
 <p>Finally, make sure this script is included at the end of the page, before <code>&lt;/body&gt;</code>:</p>
 <pre><code class="language-html">&lt;script src=&quot;/assets/js/search.js&quot;&gt;&lt;/script&gt;
 </code></pre>
-<p>After you start the site locally and Pagefind finishes indexing (for example by running <code>npm run start</code> from your terminal), the search UI should be fully functional.</p>
+<p>After you start the site locally and Pagefind finishes indexing (for example by running <code>npm run build</code> from your terminal), the search UI should be fully functional.</p>
 <p>You can always customize how the search results look by applying your own styles.</p>
+<!-- self-host notice pasted inline: this page is templateEngineOverride: md,
+     so a Liquid include tag would render as literal text here. -->
+<p class="callout">
+  ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
+</p>
 <h2>Indexing Controls</h2>
 <p>Pagefind gives you several simple HTML-based controls to fine-tune what gets indexed and how search results are ranked. These settings are added directly in your templates using attributes or meta tags. The full list of options is available in the official <a href="https://pagefind.app/docs/">documentation</a>, below are the ones you will most likely need in practice.</p>
 <h4>Excluding a page from the index</h4>
@@ -484,7 +522,7 @@ if (document.readyState === 'loading') {
   &lt;meta name=&quot;pagefind:exclude&quot; content=&quot;true&quot;&gt;
 {% endif %}
 </code></pre>
-<p>Any page with this flag will be completely removed from the index.</p>
+<p>Any page with this flag will be completely removed from the index.</p>
 <h4>Limiting the indexed area on a page</h4>
 <p>By default, Pagefind indexes the entire visible HTML. To prevent navigation bars, footers, hidden UI elements or banners from being indexed, you can explicitly mark only the “content” area using data-pagefind-body:</p>
 <pre><code class="language-html">&lt;header&gt; … navigation, logo … &lt;/header&gt;
@@ -512,7 +550,7 @@ if (document.readyState === 'loading') {
 <p>And for lower-priority pages:</p>
 <pre><code class="language-html">&lt;html data-pagefind-weight=&quot;2&quot;&gt;
 </code></pre>
-<p>Higher values result in higher ranking when relevance is equal.</p>
+<p>Higher values result in higher ranking when relevance is equal.</p>
 <h3>Additional configuration</h3>
 <p>Pagefind also supports optional configuration for translations, filters, metadata-based filtering, and other advanced options (for example: restricting results by tags, grouping by content type, or customizing UI strings). These features are configured either through HTML attributes or through the <code>PagefindUI</code> initialization options. Refer to the official <a href="https://pagefind.app/docs/">documentation</a> for the full list of supported options.</p>
 <h2>Search Page</h2>
@@ -575,10 +613,10 @@ if (document.body.classList.contains('page-search')) return;
 <h3>Changelog</h3>
 <h4>v2.0.0</h4>
 <ul>
-<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — <code>rd-js-search</code> (button), <code>rd-js-search-bar</code> (container), <code>rd-js-search-ui</code> (Pagefind mount); the <code>search-button</code> / <code>searchbar</code> / <code>search</code> IDs are no longer read</li>
-<li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-open</code> state class instead of the <code>hidden</code> attribute</li>
-<li>Removed the dead <code>has-query</code> class write (it was styled nowhere)</li>
-<li>Added <code>aria-expanded</code> on the toggle button; guard added for pages without the hooks</li>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — <code>rd-js-search</code> (button), <code>rd-js-search-bar</code> (container), <code>rd-js-search-ui</code> (Pagefind mount); the <code>search-button</code> / <code>searchbar</code> / <code>search</code> IDs are no longer read</li>
+<li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-open</code> state class instead of the <code>hidden</code> attribute</li>
+<li>Removed the dead <code>has-query</code> class write (it was styled nowhere)</li>
+<li>Added <code>aria-expanded</code> on the toggle button; guard added for pages without the hooks</li>
 </ul>
 
     </article>

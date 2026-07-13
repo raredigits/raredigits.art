@@ -353,9 +353,9 @@
     <article>
       <div class="meta-info">
     <p>js/copy-to-clipboard.js</p>
-    <p>v3.0.0 Stable (breaking: `rd-js-` hook) |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
-    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button> |
+    <p>v3.1.0 Stable |
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
+    <button class="copy-data-icon rd-js-copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
     <span class="material-symbols-outlined">download</span>
     </p>
@@ -365,7 +365,9 @@
 <p>The script doesn’t care about your layout, your CSS philosophy, or how deeply nested your markup is. It follows one simple rule: either you explicitly tell it what to copy, or you place it next to something marked as copyable.</p>
 <p>That’s the whole contract:</p>
 <ul>
-<li>The script hooks clicks via the <code>rd-js-copy</code> class; <code>copy-data-icon</code> stays as the presentational class (hooks are never styled).</li>
+<li>The script hooks clicks via the <code>rd-js-copy</code> class; <code>copy-data-icon</code> stays as the presentational class (hooks are never styled).</li>
+<li>The copy glyph is baked into the CSS (<code>content_copy</code>), so <strong>your markup needs no <code>data-icon</code></strong> — just <code>&lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;</code>. The script only sets <code>data-icon=&quot;check&quot;</code> on success, then removes it.</li>
+<li>The button needs no <code>title</code> either: the script labels bare icon-only buttons with <code>aria-label=&quot;Copy&quot;</code> for screen readers (any name you provide is kept).</li>
 <li>If the icon has <code>data-copy-target</code>, the script copies text from that element.</li>
 <li>If not, it looks for the nearest element marked with <code>data-copy</code>.</li>
 <li>If that element is a link, it copies the URL. Otherwise, it copies the text content.</li>
@@ -376,21 +378,21 @@ It works the same way on documentation sites, dashboards, crypto wallets, and 
 <h2>Basic usage</h2>
 <p><strong>Copy a link (URL, not label)</strong></p>
 <pre><code class="language-html">&lt;a href=&quot;https://cdn.jsdelivr.net/script.min.js&quot; data-copy&gt;Copy Link&lt;/a&gt;
-&lt;button class=&quot;copy-data-icon rd-js-copy&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
+&lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;
 </code></pre>
 <p>Clicking the icon copies the full CDN URL.</p>
-<p>Check it out: <a href="https://cdn.jsdelivr.net/script.min.js" data-copy>Copy Link</a> <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></p>
+<p>Check it out: <a href="https://cdn.jsdelivr.net/script.min.js" data-copy>Copy Link</a> <button class="copy-data-icon rd-js-copy"></button></p>
 <div class="air-md"></div>
 <p><strong>Copy plain text (addresses, hashes, IDs)</strong></p>
 <pre><code class="language-html">&lt;span data-copy&gt;0x9f1b...cA11&lt;/span&gt;
-&lt;button class=&quot;copy-data-icon rd-js-copy&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
+&lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;
 </code></pre>
 <p>Works exactly like wallet address copy buttons. Because that’s what it is.</p>
 <div class="air-md"></div>
 <p><strong>Copy code from a block</strong></p>
 <p>Use the <code>.code-block</code> wrapper and a <code>button</code> with the <code>copy-data-icon rd-js-copy</code> classes to create a classic code block with a copy button:</p>
 <pre><code class="language-html">&lt;div class=&quot;code-block&quot;&gt;
-    &lt;button class=&quot;copy-data-icon rd-js-copy&quot; title=&quot;Copy link&quot; data-icon=&quot;content_copy&quot;&gt;&lt;/button&gt;
+    &lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
 <p>To get a result like this:</p>
@@ -398,14 +400,13 @@ It works the same way on documentation sites, dashboards, crypto wallets, and 
     <pre><code id="snippet-1">npm i rare-scripts
 <span class="code-comment"># or</span>
 pnpm add rare-scripts</code></pre>
-    <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-1"></button>
+    <button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-1"></button>
 </div>
 <p>Use <code>data-copy-target</code> when proximity is not enough or would be ambiguous.</p>
 <h2>JavaScript</h2>
 <p>Include once per page:</p>
 <div class="code-block">
-<pre><code id="snippet-2" class="language-js">const ICON_DEFAULT = "content_copy";
-const ICON_SUCCESS = "check";
+<pre><code id="snippet-2" class="language-js">const ICON_SUCCESS = "check";
 const RESET_MS = 1200;
 
 function getCopyText(icon) {
@@ -450,7 +451,7 @@ document.addEventListener("click", async (e) => {
     icon.dataset.icon = ICON_SUCCESS;
     clearTimeout(icon._copyTimer);
     icon._copyTimer = setTimeout(() => {
-      icon.dataset.icon = ICON_DEFAULT;
+      delete icon.dataset.icon;
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };
@@ -462,8 +463,23 @@ document.addEventListener("click", async (e) => {
     if (fallbackCopy(text)) showSuccess();
     else delete icon.dataset.copyBusy;
   }
-});</code></pre>
-<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button></p>
+});
+
+// Icon-only buttons render just a CSS glyph, so give any bare .rd-js-copy an
+// accessible name (author-provided aria-label / title / text is respected).
+function labelCopyIcons() {
+  document.querySelectorAll(".rd-js-copy").forEach((icon) => {
+    if (!icon.getAttribute("aria-label") && !icon.getAttribute("title") && !icon.textContent.trim()) {
+      icon.setAttribute("aria-label", "Copy");
+    }
+  });
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", labelCopyIcons);
+} else {
+  labelCopyIcons();
+}</code></pre>
+<p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-2"></button></p>
 </div>
 <h2>Including the script</h2>
 <p>Don’t forget to actually include the script on the page.
@@ -473,28 +489,43 @@ Icons don’t copy things by positive thinking alone.</p>
 &lt;script src=&#34;/js/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;
 
 // CDN:
-&lt;script src=&#34;https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/copy-to-clipboard/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;</code></pre>
-<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button></p>
+&lt;script src=&#34;https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;</code></pre>
+<p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-3"></button></p>
 </div>
+<p class="callout">
+  ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
+</p>
 <p>Include it once per page, preferably near the end of the document or with defer.</p>
 <h2>Styling</h2>
 <p>Make it feel clickable, not decorative:<div class="code-block"></p>
-  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    font-family: &#34;Material Symbols Outlined&#34;;&#10;    position: relative;&#10;    top: 0.2em;&#10;    font-size: inherit;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;.copy-data-icon::before {&#10;    content: attr(data-icon);&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}</code></pre>
-<p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    font-family: &#34;Material Symbols Outlined&#34;;&#10;    position: relative;&#10;    top: 0.2em;&#10;    font-size: inherit;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;.copy-data-icon::before {&#10;    content: &#34;content_copy&#34;; /* default glyph — markup needs no data-icon */&#10;}&#10;&#10;.copy-data-icon[data-icon]::before {&#10;    content: attr(data-icon); /* the script sets data-icon=&#34;check&#34; on success */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* Optional: inverted icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon-inverted {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
+<p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button></p>
 </div>
 <h3>Recoloring</h3>
-<p>The default icon color can blend with dark or tinted surfaces. Both colors are exposed as component tokens — <code>--copy-icon-color</code> and <code>--copy-icon-color-hover</code> — so any container (or a single icon) can override them without fighting the selector:<div class="code-block"></p>
-  <pre><code id="snippet-5" class="language-html">&lt;!-- every copy icon inside this panel renders white --&gt;
-&lt;div class=&#34;dark-panel&#34; style=&#34;--copy-icon-color: #fff; --copy-icon-color-hover: var(--brand-color);&#34;&gt;
-    &lt;span data-copy&gt;0x9f1b...cA11&lt;/span&gt;
-    &lt;button class=&#34;copy-data-icon rd-js-copy&#34; title=&#34;Copy&#34; data-icon=&#34;content_copy&#34;&gt;&lt;/button&gt;
+<p>The copy icon defaults to a muted gray (<code>--text-color-light</code>), which can fade into some surfaces or clash with a brand. Both of its colors are exposed as component tokens — <code>--copy-icon-color</code> and <code>--copy-icon-color-hover</code> — so any container (or a single icon) can override them without fighting the selector. Set the token on whatever wraps the icon (here, a code block — its copy button is already pinned top-right by <code>.code-block</code>):<div class="code-block"></p>
+  <pre><code id="snippet-5" class="language-html">&lt;!-- recolor every copy icon inside this block --&gt;
+&lt;div class=&#34;code-block&#34; style=&#34;--copy-icon-color: var(--red);&#34;&gt;
+  &lt;pre&gt;&lt;code data-copy&gt;0x9f1b...cA11&lt;/code&gt;&lt;/pre&gt;
+  &lt;button class=&#34;copy-data-icon rd-js-copy&#34;&gt;&lt;/button&gt;
 &lt;/div&gt;</code></pre>
-<p><button class="copy-data-icon rd-js-copy" title="Copy example" data-icon="content_copy" data-copy-target="#snippet-5"></button></p>
+<p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-5"></button></p>
 </div>
-<p>Live — the same icon on a dark surface, recolored by the container token:</p>
-<div class="card" style="background: #222; color: #eee; padding: var(--space-md); --copy-icon-color: #fff; --copy-icon-color-hover: var(--brand-color);">
+<p>Live — the exact snippet above, rendered. The icon is red via the token; its top-right position comes from <code>.code-block</code> itself, so there is nothing extra to position:</p>
+<div class="code-block" style="--copy-icon-color: var(--red);">
+  <pre><code data-copy>0x9f1b...cA11</code></pre>
+  <button class="copy-data-icon rd-js-copy"></button>
+</div>
+<p><strong>Shortcut for dark surfaces.</strong> The most common recolor — a light icon so it stays visible on a dark background — ships as a ready-made class, <code>.copy-data-icon-inverted</code>. It just sets the two tokens (<code>--gray-lightest</code> / <code>--gray</code>), so put it on the icon or any ancestor instead of writing the inline style:</p>
+<pre><code class="language-html">&lt;!-- on the icon --&gt;
+&lt;button class=&quot;copy-data-icon rd-js-copy copy-data-icon-inverted&quot;&gt;&lt;/button&gt;
+
+&lt;!-- or on a container, to invert every copy icon inside --&gt;
+&lt;div class=&quot;dark-panel copy-data-icon-inverted&quot;&gt; … &lt;/div&gt;
+</code></pre>
+<p>Live — the inverted icon on a dark panel (light glyph, still visible), next to the default one for contrast:</p>
+<div class="card copy-data-icon-inverted" style="background: #222; color: #eee; padding: var(--space-md);">
     <span data-copy>0x9f1b...cA11</span>
-    <button class="copy-data-icon rd-js-copy" title="Copy" data-icon="content_copy"></button>
+    <button class="copy-data-icon rd-js-copy"></button>
 </div>
 <p>Design principles (why this won’t rot):</p>
 <ul>
@@ -509,16 +540,22 @@ If the icon should copy something specific, tell it where with <code>data-copy
 <p>Everything else is none of the script’s business.</p>
 <p><a id="changelog"></a></p>
 <h2>Changelog</h2>
+<h3>v3.1.0</h3>
+<ul>
+<li><code>data-icon</code> is now <strong>optional</strong>: the default <code>content_copy</code> glyph is baked into <code>.copy-data-icon</code> in CSS, and the script removes <code>data-icon</code> on reset instead of writing it back. Markup drops to <code>&lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;</code>. Backward compatible — existing <code>data-icon=&quot;content_copy&quot;</code> markup still works.</li>
+<li>The script now gives icon-only copy buttons an accessible name (<code>aria-label=&quot;Copy&quot;</code>) if they have none, so markup needs no <code>title</code> either. Author-provided <code>aria-label</code> / <code>title</code> is respected.</li>
+<li>Added the <code>.copy-data-icon-inverted</code> helper class (light icon for dark surfaces) — put it on the icon or any ancestor instead of inlining the recolor tokens.</li>
+</ul>
 <h3>v3.0.0</h3>
 <ul>
-<li><strong>Breaking:</strong> click hook moved to the <code>rd-js</code> contract — the script listens for <code>.rd-js-copy</code>; <code>.copy-data-icon</code> is presentational only and no longer read by the script</li>
-<li>Payload API unchanged: <code>data-copy</code>, <code>data-copy-target</code>, <code>data-icon</code> all work as before</li>
-<li>Icon colors are tokenized: <code>--copy-icon-color</code> / <code>--copy-icon-color-hover</code> override the defaults per container or per icon (CSS-only change, shipped with Rare Styles <code>v0.6.17</code>)</li>
+<li><strong>Breaking:</strong> click hook moved to the <code>rd-js</code> contract — the script listens for <code>.rd-js-copy</code>; <code>.copy-data-icon</code> is presentational only and no longer read by the script</li>
+<li>Payload API unchanged: <code>data-copy</code>, <code>data-copy-target</code>, <code>data-icon</code> all work as before</li>
+<li>Icon colors are tokenized: <code>--copy-icon-color</code> / <code>--copy-icon-color-hover</code> override the defaults per container or per icon (CSS-only change, shipped with Rare Styles <code>v0.6.17</code>)</li>
 </ul>
 <h3>v2.0.0</h3>
 <ul>
-<li>Changed required selector to <code>.copy-data-icon</code>, legacy markup no longer supported</li>
-<li>Updated CSS to render icons via: <code>::before</code> with <code>content: attr (data-icon)</code></li>
+<li>Changed required selector to <code>.copy-data-icon</code>, legacy markup no longer supported</li>
+<li>Updated CSS to render icons via: <code>: before</code> with <code>content: attr (data-icon)</code></li>
 <li>Replaced Material Icons <code>&lt;span&gt;</code> integration with a generic <code>&lt;button&gt;</code> element</li>
 <li>Introduced <code>data-icon</code> attribute for icon state control instead of inner text</li>
 <li>Improved clipboard API handling; deprecated fallback kept as backup</li>

@@ -1,5 +1,5 @@
 @charset "UTF-8";
-@import 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,200..400,0,0&display=block';
+@import 'https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined';
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -20789,7 +20789,7 @@ img {
   -webkit-font-smoothing: antialiased;
 }
 .copy-data-icon::before, .copy-data-icon:hover::before {
-  content: attr(data-icon);
+  content: "content_copy";
 }
 .copy-data-icon {
   line-height: inherit;
@@ -20800,10 +20800,19 @@ img {
   cursor: pointer;
 }
 
+.copy-data-icon[data-icon]::before {
+  content: attr(data-icon);
+}
+
 .copy-data-icon:hover {
   color: var(--copy-icon-color-hover, var(--primary-color));
   background: none;
   border: none;
+}
+
+.copy-data-icon-inverted {
+  --copy-icon-color: var(--gray-lightest);
+  --copy-icon-color-hover: var(--gray);
 }
 
 .code-block .copy-data-icon {
