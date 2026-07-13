@@ -48,9 +48,8 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 - Source of truth for the current released library version: `_data/versions.js` (`styles`). Codenames live in the Release summary table (end of the active roadmap, right before the archive) — no duplicate version claims elsewhere in this file.
 - Current released library version: `v0.6.17` (`Scripts Contract & Unified Rewrite`) — `rd-` namespace, six companion scripts on the `.rd-js-*` / `.rd-is-*` contract, carousel harvested. Changes recorded in [`Changelog.md`](./Changelog.md).
-- Current release (shipping now): `v0.6.17_1` — icon & script load regression patch: revert Material Symbols to the light `/icon?family=` cut (4.6× lighter), add the self-hosting advisory to the `/scripts/` docs, queue the icon-strategy overhaul (SVG set). Bug-fix `_1` patch, not a hotfix into `v0.6.17`.
+- Current release (shipping now): `v0.6.17_2` — audit bug patch: `.gap-xl` token collision fixed, invalid/dead declarations cleared, `.row-mobile`/`.column-mobile` removed (breaking, unused), package hygiene. `v0.6.17_1` (icon & script load regression patch) released earlier the same day.
 - Release sequence re-cut on 2026-07-13 (waypoint revision) — see the revision note under Key milestones.
-- Next (bug patch): `v0.6.17_2` — code-level defects from the 2026-07-13 audit (`CSS-098`/`CSS-099`/`CSS-106..109`/`CSS-115..117`), headlined by the `.gap-xl` token collision.
 - Then: `v0.6.18` — **Icon Strategy**: drop the Material Symbols font entirely (`CSS-095`), ship a library-owned SVG set (`CSS-096`).
 - Then: `v0.6.19` — **Lean Delivery**: consumer coverage measurement (`CSS-097`), downstream purge path with safelist contract (`CSS-210`), spacing-utility matrix prune (`CSS-079`).
 - Then: `v0.6.20` — **CDN Migration & Pages Sunset** (the scope previously numbered `v0.6.18`), with `CSS-T01` (npm + SRI) starting in parallel right after it.
@@ -64,6 +63,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 # Milestone `v0.6.17_2` — Audit Bug Patch
 
 **Goal:** clear the code-level defects surfaced by the 2026-07-13 four-slice audit. Strictly bugs and zero-render-change hygiene, per the `_1`/`_2` bug-fix release discipline — no features, no API additions. Everything larger from the audit was routed into the milestones below in the same planning pass (see the planning note).
+**Status:** ✅ shipped 2026-07-13 — all nine tasks done; side effect: `rare.css` 423.7 → 399.7 KB unminified (first time under the 400 KB `CSS-T01.7` budget), mostly from the invalid generated utilities removed with `CSS-098`. Details in [`Changelog.md`](./Changelog.md). Note on `CSS-106`: the audit's "global `td` leak" turned out to be a non-bug (Sass scopes every selector of a nested list) — landed as cosmetic cleanup, compiled output unchanged.
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
@@ -79,13 +79,13 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 ## Exit criteria
 
-- [ ] `.gap-xl` / `.gap-xxl` compute to `--space-xl` / `--space-xxl` (browser-verified); gap utilities are generated in exactly one place
-- [ ] No invalid declarations from the audit remain (`min-width: none` fixed)
-- [ ] `td` styling is scoped to `.table-bordered` only; no other unscoped comma-nesting in `_tables.scss`
-- [ ] `.row-mobile` / `.column-mobile` either behave responsively or are removed with a `Changelog.md` record
-- [ ] Pure-refactor items (`CSS-116`, `CSS-109`) produce no rendered-output change
-- [ ] `package.json` version/entry no longer contradict the released reality
-- [ ] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`
+- [x] `.gap-xl` / `.gap-xxl` compute to `--space-xl` / `--space-xxl` — browser-verified 48px / 96px; the gap family is generated only by `_spacing.scss` (grid duplicate removed, alias map reduced to non-colliding `s/m/l`)
+- [x] No invalid declarations from the audit remain — `min-width: none` → `0` (verified: remark min-width 173px desktop → 0px mobile); bonus: ~50 invalid alias longhands (`gap-top`, `width-top`, …) removed
+- [x] `td` scoping verified a non-bug: Sass always compiled `.table-bordered th, .table-bordered td`; nesting normalized cosmetically, compiled output identical
+- [x] `.row-mobile` / `.column-mobile` removed (zero usage across the three known consumers) with a `Changelog.md` breaking record
+- [x] Pure-refactor items produce no rendered-output change — color classes byte-identical (33 `-link` rules before/after), `h1` computed 56px via the new `--font-size-xxxl`
+- [x] `package.json`: `0.6.17`, `private: true`, dead `main` removed
+- [x] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`
 
 ---
 
@@ -797,8 +797,8 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.6.15` | Audit Hotfixes & Post-Harvest Cleanup | Bug-fix follow-up on top of `v0.6.14`: audit findings (`CSS-027..052`, with table bugs `CSS-053..055` already pulled forward), immediate downstream fixes, asset-path cleanup, and the narrow harvested additions `.boilerplate` / `.feature-row` |
 | `v0.6.16` | Font Self-Hosting | Kill the render-blocking `@import` waterfall: self-host the four text families (relative `fonts/…` woff2, `unicode-range`, `swap`), keep one scoped Material Symbols import (weights 200/400), drop legacy Material Icons. Pulled forward from `v0.7.1` (`CSS-030` / `CSS-032`) |
 | `v0.6.17` | Scripts Contract & Unified Rewrite | Audit and freeze the CSS↔scripts contract, adopt the `rd-` namespace (consuming `v0.7.0`), rewrite the five companion scripts onto `.rd-js-*` hooks / `.rd-is-*` states / baseline ARIA, and harvest the carousel from schnellreich.ru as the sixth script (`CSS-088`). **Breaking** — hard cut, downstream coordinated post-merge (version-pinned) |
-| `v0.6.17_1` | _current_ — Icon & Script Load Regression Patch | Revert Material Symbols to the light `/icon?family=` cut (~312 KB vs ~1.45 MB), add the self-host advisory to the `/scripts/` docs, queue the SVG icon-set overhaul (`CSS-095`/`CSS-096`) |
-| `v0.6.17_2` | Audit Bug Patch | Code-level defects from the 2026-07-13 audit: `.gap-xl` token collision (`CSS-098`), invalid/dead declarations, `.table-bordered` scoping, sidenote glyph dup, token/package hygiene (`CSS-099`/`CSS-106..109`/`CSS-115..117`) |
+| `v0.6.17_1` | Icon & Script Load Regression Patch | Revert Material Symbols to the light `/icon?family=` cut (~312 KB vs ~1.45 MB), add the self-host advisory to the `/scripts/` docs, queue the SVG icon-set overhaul (`CSS-095`/`CSS-096`) |
+| `v0.6.17_2` | _current_ — Audit Bug Patch | Code-level defects from the 2026-07-13 audit: `.gap-xl` token collision (`CSS-098`), invalid/dead declarations, sidenote glyph dup, `.row-mobile`/`.column-mobile` removal (breaking, unused), token/package hygiene (`CSS-099`/`CSS-106..109`/`CSS-115..117`); bundle 423.7 → 399.7 KB |
 | `v0.6.18` | Icon Strategy | Drop the Material Symbols icon font; ship a library-owned SVG icon set with Apache-2.0 attribution (`CSS-095` / `CSS-096`) |
 | `v0.6.19` | Lean Delivery | Consumer coverage measurement (`CSS-097`), downstream purge path with the `.rd-is-*`/`.rd-js-*` safelist contract (`CSS-210`), spacing-utility matrix prune (`CSS-079`) |
 | `v0.6.20` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets (`CSS-T00` umbrella included), then clear the path for Pages unpublish and legacy cleanup |

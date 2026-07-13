@@ -1,7 +1,7 @@
 {
   "name": "raredigits.art",
-  "version": "1.0.0",
-  "main": "index.js",
+  "version": "0.6.17",
+  "private": true,
   "engines": {
     "node": ">=24 <25"
   },

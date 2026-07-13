@@ -1,5 +1,7 @@
+@use "color-classes" as cc;
+
 :root {
-    // Base Colors 
+    // Base Colors
 
     --black: #000; // Text color
     --white: #fff; // Used for blocks highlighting
@@ -46,21 +48,4 @@ yellow,
 green,
 red;
 
-// Generate CSS variables for each color
-@each $color in $base_colors {
-    .#{$color + ""} {
-        color: var(--#{$color});
-    }
-
-    .#{$color + ""}-bg {
-        background-color: var(--#{$color});
-    }
-
-    .#{$color + ""}-link {
-        text-decoration-color: var(--#{$color});
-        background-image: linear-gradient(
-          to top,
-          color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
-        );
-    }
-}
+@include cc.color-classes($base_colors);

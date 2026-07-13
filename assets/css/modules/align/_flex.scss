@@ -2,14 +2,12 @@
     display: flex;
 }
 
-.row, 
-.row-mobile {
+.row {
     display: flex;
     flex-wrap: nowrap;
 }
 
-.column, 
-.column-mobile {
+.column {
     display: flex;
     flex-direction: column;
 }

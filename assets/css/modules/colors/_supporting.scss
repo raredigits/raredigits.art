@@ -1,3 +1,5 @@
+@use "color-classes" as cc;
+
 :root {
     --plum: #4e4153;
     --cherry: #86241a;
@@ -11,6 +13,9 @@
     --tiffany: #53c9e9;
     --ocean: #2f7395;
     --blueberry: #221e4d;
+
+    // Same hue as --brand-color by design — see the note in _brand.scss;
+    // .matrix* classes are consumed downstream, do not remove (CSS-115)
     --matrix: #00ff4e;
 }
 
@@ -29,21 +34,4 @@ ocean,
 blueberry,
 matrix;
 
-// Generate CSS variables for each color
-@each $color in $supporting_colors {
-    .#{"#{$color}"} {
-        color: var(--#{$color});
-    }
-
-    .#{"#{$color}"}-bg {
-        background-color: var(--#{$color});
-    }
-
-    .#{"#{$color}"}-link {
-        text-decoration-color: var(--#{$color});
-        background-image: linear-gradient(
-            to top,
-            color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
-        );
-    }
-}
+@include cc.color-classes($supporting_colors);

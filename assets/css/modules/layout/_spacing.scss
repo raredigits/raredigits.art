@@ -172,6 +172,11 @@ $gap-spaces: ();
   }
 }
 
+// moved from _grid.scss (CSS-098) — kept as the readable twin of .gap-0
+.gap-none {
+  gap: 0;
+}
+
 @mixin generate-responsive-spacings($properties, $prefix, $space-vars) {
   @each $space in $space-vars {
     @include bp.mobile {

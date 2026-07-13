@@ -3,7 +3,7 @@ h1, h2, h3, h4 {
 }
 
 h1 {
-    font-size: 3.5rem;
+    font-size: var(--font-size-xxxl);
     line-height: var(--line-height-sm);
 }
 
