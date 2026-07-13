@@ -3,12 +3,34 @@
 All notable changes to Rare Styles are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/). The library follows semantic versioning.
 
-Release manifest for `v0.6.14`: [`HARVEST_v0.6.14.md`](./HARVEST_v0.6.14.md).
 Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ---
 
 ## [Unreleased]
+
+## [v0.6.17_2] — 2026-07-13 — Audit Bug Patch
+
+Bug-fix patch clearing the code-level defects surfaced by the 2026-07-13 four-slice library audit. Strictly bugs and zero-render-change hygiene — no features, no API additions. Side effect: `rare.css` dropped 423.7 KB → 399.7 KB unminified — **first time under the 400 KB budget** (`CSS-T01.7`), mostly from removing invalid generated utilities.
+
+### Fixed
+
+- **`.gap-xl` / `.gap-xxl` computed the wrong token** (`CSS-098`). Gap utilities were generated in three places; the alias layer (`xl→lg`, `xxl→xl`), forwarded last, silently won — `.gap-xl` rendered `--space-lg` (32px) instead of `--space-xl` (48px), `.gap-xxl` rendered `--space-xl` instead of `--space-xxl`. Now `_spacing.scss` is the single generator for the gap family (the `_grid.scss` duplicate block is gone; `.gap-none` moved along and survives), and the gap alias map is reduced to the non-colliding `s/m/l` — an alias may never shadow a canonical name with a different value. Browser-verified: `.gap-xl` = 48px, `.gap-xxl` = 96px. **Behavioral fix downstream:** layouts authored against the buggy value (known: the crypto-story longread on schnellreich.ru uses `gap-xl`) get the honest, larger gap at their next pin bump — eyeball at migration.
+- **`.remark` could not shrink on tablet/mobile** (`CSS-099`). The intended cancel was `min-width: none` — invalid CSS, silently dropped — so the desktop `min-width: calc(var(--global-fr) * 2)` stayed active on small viewports. Now `min-width: 0`. No live `.remark` usage in current consumer markup; verified synthetically (desktop 173px → mobile 0px).
+- **`.sidenote-bookmark` rendered a paperclip** (`CSS-108`). A copy-paste leftover gave bookmark, attach and remark the same `attach_file` glyph; bookmark now renders `bookmark` — what its docs page always claimed. `.remark` keeps the paperclip deliberately, merged into one selector with `.sidenote-attach`.
+
+### Changed
+
+- **`h1` moved onto the type scale** (`CSS-109`): new token `--font-size-xxxl: 3.5rem`, consumed by `h1`. Rendering unchanged (browser-verified 56px).
+- **`package.json` no longer lies** (`CSS-117`): `version` `1.0.0` → `0.6.17` (the site package is not the future npm library, and a public `1.0.0` contradicted the 1.0-as-API-promise strategy), `"private": true` added, dead `main: index.js` removed.
+- **Color-class generator deduplicated** (`CSS-116`): the `.{hue}` / `.{hue}-bg` / `.{hue}-link` `@each` block existed as four drifting copies across the color modules; now one shared mixin (`colors/_color-classes.scss`). Compiled output verified identical (33 `-link` rules before and after, `plum` block byte-identical).
+- **`--brand-color` / `--matrix` duplicate documented as intentional** (`CSS-115`): both are `#00ff4e` by design — the brand green *is* matrix green. Kept as independent literals so the brand can drift without dragging `--matrix`; `.matrix*` classes are consumed downstream (schnellreich.ru) and must not be removed.
+- **`.table-bordered` nesting normalized** (`CSS-106`): `& th, td` → `th, td`. The audit flagged a global `td` leak, but Sass had always scoped both selectors of the list — the compiled output was and is `.table-bordered th, .table-bordered td`. Cosmetic cleanup, zero rendering change.
+
+### Removed
+
+- **`.row-mobile` / `.column-mobile`** (`CSS-107`, **breaking**): byte-identical to `.row` / `.column` — no media query, despite the name promising responsive behavior. Zero usage across the three known consumers; removed rather than given invented behavior.
+- **~50 invalid generated utilities** (found while fixing `CSS-098`): the alias generator emitted per-side longhands for properties that have none — `.gapt-* { gap-top: … }`, `.wt-* { width-top: … }`, `.hx-*`, and friends. Browsers dropped every one of them; pure dead bytes. Directional aliases now generate for margin/padding only.
 
 ## [v0.6.17_1] — 2026-07-13 — Icon & Script Load Regression Patch
 

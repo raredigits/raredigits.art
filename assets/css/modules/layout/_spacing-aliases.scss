@@ -9,8 +9,20 @@ $spacing-aliases: (
   xxl: xl
 );
 
-// Base generator (non-responsive)
-@mixin generate-spacing-aliases($map, $prefix, $properties) {
+// Gap uses the same short prefix as the canonical family in _spacing.scss,
+// so aliases whose names collide with canonical classes (`gap-xl`, `gap-xxl`)
+// are excluded — the alias layer must never shadow a canonical name with a
+// different value (CSS-098).
+$spacing-aliases-gap: (
+  s: xs,
+  m: sm,
+  l: md
+);
+
+// Base generator (non-responsive). $directions only makes sense for
+// margin/padding — `gap`, `width` and `height` have no per-side longhands,
+// so directional variants would emit invalid CSS (CSS-098).
+@mixin generate-spacing-aliases($map, $prefix, $properties, $directions: true) {
   @each $alias, $real in $map {
     .#{$prefix}-#{$alias} {
       @each $prop in $properties {
@@ -18,6 +30,7 @@ $spacing-aliases: (
       }
     }
 
+    @if $directions {
     .#{$prefix}t-#{$alias} {
       @each $prop in $properties {
         #{$prop}-top: var(--space-#{$real});
@@ -55,11 +68,12 @@ $spacing-aliases: (
         #{$prop}-bottom: var(--space-#{$real});
       }
     }
+    }
   }
 }
 
 // Responsive generator (mobile:, tablet:, desktop:)
-@mixin generate-responsive-spacing-aliases($map, $prefix, $properties) {
+@mixin generate-responsive-spacing-aliases($map, $prefix, $properties, $directions: true) {
   @each $alias, $real in $map {
     @include bp.mobile {
       .mobile\:#{$prefix}-#{$alias} {
@@ -68,6 +82,7 @@ $spacing-aliases: (
         }
       }
 
+      @if $directions {
       .mobile\:#{$prefix}t-#{$alias} {
         @each $prop in $properties {
           #{$prop}-top: var(--space-#{$real});
@@ -105,6 +120,7 @@ $spacing-aliases: (
           #{$prop}-bottom: var(--space-#{$real});
         }
       }
+      }
     }
 
     @include bp.tablet {
@@ -114,6 +130,7 @@ $spacing-aliases: (
         }
       }
 
+      @if $directions {
       .tablet\:#{$prefix}t-#{$alias} {
         @each $prop in $properties {
           #{$prop}-top: var(--space-#{$real});
@@ -151,6 +168,7 @@ $spacing-aliases: (
           #{$prop}-bottom: var(--space-#{$real});
         }
       }
+      }
     }
 
     @include bp.desktop {
@@ -160,6 +178,7 @@ $spacing-aliases: (
         }
       }
 
+      @if $directions {
       .desktop\:#{$prefix}t-#{$alias} {
         @each $prop in $properties {
           #{$prop}-top: var(--space-#{$real});
@@ -197,18 +216,21 @@ $spacing-aliases: (
           #{$prop}-bottom: var(--space-#{$real});
         }
       }
+      }
     }
   }
 }
 
-// Invocation
+// Invocation. gap/w/h: base form only — no per-side longhands exist for
+// these properties, and the gap map excludes the names that would collide
+// with the canonical `.gap-*` classes (CSS-098).
 @include generate-spacing-aliases($spacing-aliases, "p", ("padding"));
 @include generate-spacing-aliases($spacing-aliases, "m", ("margin"));
-@include generate-spacing-aliases($spacing-aliases, "gap", ("gap"));
-@include generate-spacing-aliases($spacing-aliases, "w", ("width"));
-@include generate-spacing-aliases($spacing-aliases, "h", ("height"));
+@include generate-spacing-aliases($spacing-aliases-gap, "gap", ("gap"), $directions: false);
+@include generate-spacing-aliases($spacing-aliases, "w", ("width"), $directions: false);
+@include generate-spacing-aliases($spacing-aliases, "h", ("height"), $directions: false);
 @include generate-responsive-spacing-aliases($spacing-aliases, "p", ("padding"));
 @include generate-responsive-spacing-aliases($spacing-aliases, "m", ("margin"));
-@include generate-responsive-spacing-aliases($spacing-aliases, "gap", ("gap"));
-@include generate-responsive-spacing-aliases($spacing-aliases, "w", ("width"));
-@include generate-responsive-spacing-aliases($spacing-aliases, "h", ("height"));
+@include generate-responsive-spacing-aliases($spacing-aliases-gap, "gap", ("gap"), $directions: false);
+@include generate-responsive-spacing-aliases($spacing-aliases, "w", ("width"), $directions: false);
+@include generate-responsive-spacing-aliases($spacing-aliases, "h", ("height"), $directions: false);

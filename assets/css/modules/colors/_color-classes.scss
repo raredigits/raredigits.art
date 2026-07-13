@@ -1,0 +1,23 @@
+// Shared generator for the per-hue utility classes (CSS-116):
+// .<hue> (text color), .<hue>-bg (background), .<hue>-link (underline +
+// translucent gradient highlight). Every color module calls this with its
+// own list — one source instead of four drifting copies of the same block.
+@mixin color-classes($colors) {
+    @each $color in $colors {
+        .#{$color + ""} {
+            color: var(--#{$color});
+        }
+
+        .#{$color + ""}-bg {
+            background-color: var(--#{$color});
+        }
+
+        .#{$color + ""}-link {
+            text-decoration-color: var(--#{$color});
+            background-image: linear-gradient(
+              to top,
+              color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
+            );
+        }
+    }
+}

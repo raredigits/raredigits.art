@@ -130,11 +130,11 @@ th:first-child {
 .table-bordered {
     border: 1px solid var(--border-color);
 
-    & thead {
+    thead {
         background-color: var(--gray-mid-light);
     }
 
-    & th, td {
+    th, td {
         padding: var(--space-sm);
     }
 
