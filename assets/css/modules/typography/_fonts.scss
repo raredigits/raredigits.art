@@ -1,6 +1,7 @@
 // The four text families are self-hosted and the Material Symbols icon font is
-// loaded scoped — all of it lives in `_font-faces.scss` (forwarded from the
-// typography index). This file owns only the font tokens and utility classes.
+// loaded via a single Google @import — all of it lives in `_font-faces.scss`
+// (forwarded from the typography index). This file owns only the font tokens
+// and utility classes.
 
 :root {
     --primary-font: 'Fira Sans', sans-serif;

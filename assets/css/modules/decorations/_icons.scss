@@ -26,13 +26,14 @@
 }
 
 // Read by copy-to-clipboard.js (contract: SCRIPTS_CONTRACT.md, v0.6.17) — the
-// script hooks clicks via the separate `.rd-js-copy` class and drives the glyph
-// through the `data-icon` attribute; this rule owns only the presentation.
-// Color is tokenized so the icon can be recolored per surface (dark panels,
-// brand backgrounds) without fighting the selector:
-// <div style="--copy-icon-color: #fff">…</div>
+// script hooks clicks via the separate `.rd-js-copy` class. The default glyph
+// (`content_copy`) is baked in here, so markup needs no `data-icon`:
+//   <button class="copy-data-icon rd-js-copy"></button>
+// The script only sets `data-icon="check"` on success (and removes it on reset);
+// the `[data-icon]` rule below lets that override the default. Color is tokenized
+// so the icon can be recolored per surface: <div style="--copy-icon-color: …">.
 .copy-data-icon {
-    @include sym.symbol;
+    @include sym.symbol("content_copy");
 
     line-height: inherit;
     background: none;
@@ -42,10 +43,23 @@
     cursor: pointer;
 }
 
+// Script-driven override (success = "check"); when absent, the baked default shows.
+.copy-data-icon[data-icon]::before {
+    content: attr(data-icon);
+}
+
 .copy-data-icon:hover {
     color: var(--copy-icon-color-hover, var(--primary-color));
     background: none;
     border: none;
+}
+
+// Inverted copy icon for dark surfaces — the default muted glyph disappears on
+// a dark background. Put this on the icon itself or on any ancestor (it only
+// sets the recolor tokens, which cascade), instead of inlining the tokens.
+.copy-data-icon-inverted {
+    --copy-icon-color: var(--gray-lightest);
+    --copy-icon-color-hover: var(--gray);
 }
 
 .code-block .copy-data-icon {

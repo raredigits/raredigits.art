@@ -358,8 +358,8 @@ js/collapsible.js<br>
     <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
-<p>The collapsible component provides a clean solution for managing large, secondary content or detailed information that might otherwise clutter the interface. When implemented correctly, it allows users to progressively discover content based on their interest level, maintaining a clean, focused interface by default.</p>
-<p>This pattern is particularly useful for:</p>
+<p>The collapsible component provides a clean solution for managing large, secondary content or detailed information that might otherwise clutter the interface. When implemented correctly, it allows users to progressively discover content based on their interest level, maintaining a clean, focused interface by default.</p>
+<p>This pattern is particularly useful for:</p>
 <ul>
 <li>FAQ sections</li>
 <li>Detailed specifications</li>
@@ -368,13 +368,13 @@ js/collapsible.js<br>
 </ul>
 <div class="air-lg"></div>
 <h3>Native HTML Solution</h3>
-<p>Basic HTML5 provides built-in <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
+<p>Basic HTML5 provides built-in <code>&lt;details&gt;</code> and <code>&lt;summary&gt;</code> elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
 <details>
 <summary>Native HTML Example</summary>
-<p>HTML5 provides built-in elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
+<p>HTML5 provides built-in elements for collapsible content that require no JavaScript and work across all modern browsers:</p>
 <pre><code class="language-html">&lt;details&gt;
-  &lt;summary&gt;Click to expand&lt;/summary&gt;
-  &lt;p&gt;This content is hidden by default and appears when the user clicks the summary.&lt;/p&gt;
+  &lt;summary&gt;Click to expand&lt;/summary&gt;
+  &lt;p&gt;This content is hidden by default and appears when the user clicks the summary.&lt;/p&gt;
 &lt;/details&gt;
 </code></pre>
 </details>
@@ -387,21 +387,21 @@ js/collapsible.js<br>
 </ul>
 <div class="air-lg"></div>
 <h3>JavaScript</h3>
-<p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available. Here it is, live:</p>
+<p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available. Here it is, live:</p>
 <div class="card collapsible-container">
     <p>
         <span class="section-icon material-symbols-outlined">code</span>
         <button class="collapsible-trigger rd-js-collapsible" aria-controls="collapsible-demo">Implementation Example<span class="collapsible-icon"></span></button>
     </p>
     <div id="collapsible-demo" class="collapsible-content rd-js-collapsible-content">
-        <p>This block is a live collapsible driven by the script from this page. The trigger carries the hook class <code>rd-js-collapsible</code>, this content block carries <code>rd-js-collapsible-content</code>, and the open state is the <code>rd-is-open</code> class plus <code>aria-expanded</code> on the trigger. The icon rotation is pure CSS — no glyph swapping.</p>
-        <p>Ready-to-paste markup for all three supported structures is right below.</p>
+        <p>This block is a live collapsible driven by the script from this page. The trigger carries the hook class <code>rd-js-collapsible</code>, this content block carries <code>rd-js-collapsible-content</code>, and the open state is the <code>rd-is-open</code> class plus <code>aria-expanded</code> on the trigger. The icon rotation is pure CSS — no glyph swapping.</p>
+        <p>Ready-to-paste markup for all three supported structures is right below.</p>
         <div class="air-md"></div>
     </div>
 </div>
 <div class="air-lg"></div>
 <h4>Ready-to-paste markup</h4>
-<p>The script resolves the content element in three ways, in order: explicit <code>aria-controls</code> pointing at the content's <code>id</code> (canonical), the trigger's next sibling, or the trigger's parent's next sibling.</p>
+<p>The script resolves the content element in three ways, in order: explicit <code>aria-controls</code> pointing at the content’s <code>id</code> (canonical), the trigger’s next sibling, or the trigger’s parent’s next sibling.</p>
 <p><strong>Canonical — explicit <code>aria-controls</code>:</strong></p>
 <div class="code-block">
     <pre><code id="snippet-collapsible-1" class="language-html">&lt;button class=&#34;collapsible-trigger rd-js-collapsible&#34; aria-controls=&#34;details-1&#34;&gt;
@@ -418,7 +418,7 @@ js/collapsible.js<br>
 &lt;div class=&#34;collapsible-content rd-js-collapsible-content&#34;&gt;Content goes here&lt;/div&gt;</code></pre>
     <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-collapsible-2"></button>
 </div>
-<p><strong>Structure 2 — trigger inside a parent (like a <code>&lt;p&gt;</code>), content right after that parent:</strong></p>
+<p><strong>Structure 2 — trigger inside a parent (like a <code>&lt;p&gt;</code>), content right after that parent:</strong></p>
 <div class="code-block">
     <pre><code id="snippet-collapsible-3" class="language-html">&lt;p&gt;
   &lt;span class=&#34;collapsible-trigger rd-js-collapsible&#34;&gt;Trigger&lt;/span&gt;
@@ -435,7 +435,7 @@ js/collapsible.js<br>
 &lt;/style&gt;</code></pre>
 <button class="copy-data-icon rd-js-copy" title="Copy setup" data-icon="content_copy" data-copy-target="#snippet-collapsible-4"></button></p>
 </div>
-<p>Note: The <code>.collapsible-icon</code> element is optional, and it is <strong>empty on purpose</strong> — the arrow glyph is baked into the class by CSS (Material Symbols ligature via <code>::before</code>), so markup carries no vendor icon class and no ligature text. The script never swaps icon glyphs — the open state rotates the icon via CSS (<code>[aria-expanded=&quot;true&quot;] .collapsible-icon</code>). Standalone users need:</p>
+<p>Note: The <code>.collapsible-icon</code> element is optional, and it is <strong>empty on purpose</strong> — the arrow glyph is baked into the class by CSS (Material Symbols ligature via <code>: before</code>), so markup carries no vendor icon class and no ligature text. The script never swaps icon glyphs — the open state rotates the icon via CSS (<code>[aria-expanded=&quot;true&quot;].collapsible-icon</code>). Standalone users need:</p>
 <div class="code-block">
     <pre><code id="snippet-collapsible-5" class="language-css">.collapsible-icon {
   display: inline-block;
@@ -448,16 +448,19 @@ transform: rotate(180deg);
 }</code></pre>
 <button class="copy-data-icon rd-js-copy" title="Copy icon CSS" data-icon="content_copy" data-copy-target="#snippet-collapsible-5"></button></p>
 </div>
+<p class="callout">
+  ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
+</p>
 <div class="air-lg"></div>
 <details>
 <summary>Technical Requirements</summary>
 <p>Pay attention for several points:</p>
 <ol>
-<li>The clickable element must carry the hook class <code>rd-js-collapsible</code> (keep a separate presentational class like <code>.collapsible-trigger</code> for styling — hooks are never styled)</li>
-<li>The content element must carry the hook class <code>rd-js-collapsible-content</code>, or be targeted explicitly via <code>aria-controls</code> + <code>id</code></li>
-<li>Optional: icon element with class <code>.collapsible-icon</code> — rotated by CSS when open, no glyph swapping</li>
-<li>The content must be hidden by default via CSS (<code>display: none;</code>) and shown by the state class the script toggles: <code>.rd-is-open { display: block; }</code></li>
-<li>The script mirrors open/closed state to <code>aria-expanded</code> on the trigger. A <code>&lt;button&gt;</code> trigger is preferred; for any other element the script adds <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and handles <kbd>Enter</kbd> / <kbd>Space</kbd>, so keyboard access works either way</li>
+<li>The clickable element must carry the hook class <code>rd-js-collapsible</code> (keep a separate presentational class like <code>.collapsible-trigger</code> for styling — hooks are never styled)</li>
+<li>The content element must carry the hook class <code>rd-js-collapsible-content</code>, or be targeted explicitly via <code>aria-controls</code> + <code>id</code></li>
+<li>Optional: icon element with class <code>.collapsible-icon</code> — rotated by CSS when open, no glyph swapping</li>
+<li>The content must be hidden by default via CSS (<code>display: none; </code>) and shown by the state class the script toggles: <code>.rd-is-open { display: block; }</code></li>
+<li>The script mirrors open/closed state to <code>aria-expanded</code> on the trigger. A <code>&lt;button&gt;</code> trigger is preferred; for any other element the script adds <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and handles <kbd>Enter</kbd> / <kbd>Space</kbd>, so keyboard access works either way</li>
 </ol>
 </details>
 <div class="air-md"></div>
@@ -525,18 +528,18 @@ transform: rotate(180deg);
 <h3>Changelog</h3>
 <h4>v2.0.0</h4>
 <ul>
-<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script finds elements via <code>rd-js-collapsible</code> / <code>rd-js-collapsible-content</code>; <code>.collapsible-trigger</code> / <code>.collapsible-content</code> remain as presentational classes only</li>
-<li><strong>Breaking:</strong> visibility is now expressed by the <code>rd-is-open</code> state class instead of inline <code>style.display</code></li>
-<li><strong>Breaking:</strong> the icon glyph is no longer swapped (<code>keyboard_arrow_down</code> ↔ <code>keyboard_arrow_up</code>); the icon rotates via CSS keyed off <code>aria-expanded</code></li>
-<li>Added <code>aria-expanded</code> / <code>aria-controls</code>; explicit <code>aria-controls</code> targeting is now the canonical structure</li>
-<li>Added keyboard access: non-<code>&lt;button&gt;</code> triggers get <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and toggle on <kbd>Enter</kbd> / <kbd>Space</kbd></li>
+<li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script finds elements via <code>rd-js-collapsible</code> / <code>rd-js-collapsible-content</code>; <code>.collapsible-trigger</code> / <code>.collapsible-content</code> remain as presentational classes only</li>
+<li><strong>Breaking:</strong> visibility is now expressed by the <code>rd-is-open</code> state class instead of inline <code>style.display</code></li>
+<li><strong>Breaking:</strong> the icon glyph is no longer swapped (<code>keyboard_arrow_down</code> ↔ <code>keyboard_arrow_up</code>); the icon rotates via CSS keyed off <code>aria-expanded</code></li>
+<li>Added <code>aria-expanded</code> / <code>aria-controls</code>; explicit <code>aria-controls</code> targeting is now the canonical structure</li>
+<li>Added keyboard access: non-<code>&lt;button&gt;</code> triggers get <code>tabindex=&quot;0&quot;</code> + <code>role=&quot;button&quot;</code> and toggle on <kbd>Enter</kbd> / <kbd>Space</kbd></li>
 </ul>
 <div class="air-lg"></div>
 <h3>Pseudo-Link Styling Cheat Sheet</h3>
-<p>Create a special style for pseudo-links.</p>
-<p>Following best practices, <code>.collapsible-trigger</code> elements should be visually distinguished to indicate their interactive nature.</p>
-<p>When designing the visual treatment for collapsible triggers, aim for a balance between subtlety and clarity. Users should recognize them as interactive elements without disrupting the flow of content.</p>
-<p>Bonus: If it’s part of a bigger text block, avoid <code>display: block</code> — it should feel natural inside the flow.</p>
+<p>Create a special style for pseudo-links.</p>
+<p>Following best practices, <code>.collapsible-trigger</code> elements should be visually distinguished to indicate their interactive nature.</p>
+<p>When designing the visual treatment for collapsible triggers, aim for a balance between subtlety and clarity. Users should recognize them as interactive elements without disrupting the flow of content.</p>
+<p>Bonus: If it’s part of a bigger text block, avoid <code>display: block</code> — it should feel natural inside the flow.</p>
 
     </article>
   </div>

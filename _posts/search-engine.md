@@ -18,7 +18,7 @@ For static sites the rational thing to do is: don’t roll your own. Not beca
 
 So you pick [Pagefind](https://pagefind.app). It’s basically the ETF of website search: low-overhead, passive, client-side, privacy-respecting, and costs nothing. You pipe your static site through Eleventy, Pagefind vacuums up the text and spits out an index, and the whole thing sits in the browser doing its job without servers or SaaS invoices. No vendor lock-in, no external API, no “your quota for this month is over.” Like a good index fund, it just quietly works.
 
-And because developers share one trait with bankers — if something “just works” we get suspicious — we wrote down a full step-by-step implementation so you can inspect every knob yourself rather than trusting black boxes. The guide is [here](/scripts/search/).
+And because developers share one trait with bankers — if something “just works” we get suspicious — we wrote down a full step-by-step implementation so you can inspect every knob yourself rather than trusting black boxes. The guide is [here](/scripts/search/). One detail it is blunt about: the little toggle script does not load Pagefind itself — forget to wire that in (or to keep the lazy loader), and the search box opens beautifully and does absolutely nothing, like a trading terminal with no market-data feed.
 
 ### Weights, or: how reality is rearranged
 
