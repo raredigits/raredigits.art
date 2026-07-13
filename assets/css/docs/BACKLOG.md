@@ -26,8 +26,9 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 ## Planning note
 
 - Source of truth for the current released library version: `_data/versions.js` (`styles`). Codenames live in the Release summary table at the bottom — no duplicate version claims elsewhere in this file.
-- Current released library version: `v0.6.16` (`Font Self-Hosting`) — self-hosted text families, one scoped Material Symbols import (weights 200/400), legacy Material Icons dropped. Changes recorded in [`Changelog.md`](./Changelog.md).
-- Current release (shipping now): `v0.6.17` — scripts contract & unified rewrite: audit the five `/scripts/` companions, adopt the `rd-` namespace (pulled forward from the dissolved `v0.7.0`), and rewrite the scripts onto `.rd-js-*` hooks + `.rd-is-*` states + baseline ARIA. **Breaking** — hard cut, no dual-hook window (scope decision 2026-07-12).
+- Current released library version: `v0.6.17` (`Scripts Contract & Unified Rewrite`) — `rd-` namespace, six companion scripts on the `.rd-js-*` / `.rd-is-*` contract, carousel harvested. Changes recorded in [`Changelog.md`](./Changelog.md).
+- Current release (shipping now): `v0.6.17_1` — icon & script load regression patch: revert Material Symbols to the light `/icon?family=` cut (4.6× lighter), add the self-hosting advisory to the `/scripts/` docs, queue the icon-strategy overhaul (SVG set). Bug-fix `_1` patch, not a hotfix into `v0.6.17`.
+- Then (near-term, queued from `v0.6.17_1`): **Icon Strategy** — drop the Material Symbols font entirely (`CSS-091`) and ship a library-owned SVG set (`CSS-092`).
 - Then: `v0.6.18` — docs/examples migration off GitHub Pages URLs, downstream CDN cutover, and Pages cleanup.
 - Then: `v0.6.19` — documentation skeleton pass: keep draft docs pages visible as module backlogs, fix dead-nav edges, and formalize the incomplete-page policy.
 - Then: `v0.6.20` — vendor/media kit prep for Rare Digits branding surfaces, attribution variants, and library-linking guidance.
@@ -229,6 +230,104 @@ Companion script set at [`/scripts/`](http://localhost:8080/scripts/) — `colla
 - [x] Downstream deliverables complete (`CSS-071`, 2026-07-13): `rare-scripts@v3.0.0` published and tagged, schnellreich.ru and raredigits.io migrated with their pin bumps, cookie-consent include re-pinned to the CDN — **all `v0.6.17` exit criteria met, release complete**
 - [x] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`
 - [x] Out-of-scope boundaries honored: no Pagefind UI rebuild, no full a11y batch, no cookie-consent UX changes (the anti-FOUC init-order fix is a bug fix, not a UX change)
+
+---
+
+# Milestone `v0.6.17_1` — Icon & Script Load Regression Patch
+
+**Goal:** bug-fix patch on top of `v0.6.17` — the release regressed load speed on the downstream sites (heavy icon font + per-script CDN round-trips). Fix the font weight now; queue the deeper icon-strategy overhaul. Per release discipline this is the `_1` patch, not a hotfix into `v0.6.17`.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-089` | perf | **Revert Material Symbols to the light `/icon?family=` cut. ✅ Done.** `_font-faces.scss` loaded the css2 variable font over `wght 200..400 + opsz 20..48 + FILL/GRAD` (**~1.45 MB**); reverted to the legacy `@import 'https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined'` — a single static wght-400 cut (**~312 KB, 4.6× lighter**), the `v0.6.15` shape. Tradeoff (accepted): the thin sidenote markers (`_sidenotes.scss`, `font-variation-settings: wght 200`) now render at the static 400 — variation settings are ignored on a static font. | P0 | S |
+| `CSS-090` | docs | **Self-hosting advisory on every `/scripts/` page. ✅ Done.** Per-script CDN loads add cross-origin round-trips. Added `_includes/special/self-host-notice.njk`, injected by `_layouts/page.njk` when `section == "Scripts"` (one edit → all six pages, works even under the search page's `templateEngineOverride: md`). Recommends downloading + self-hosting for production; CDN links kept for trials. | P1 | S |
+
+**Out of scope (handled downstream by the maintainer):** repointing the consuming sites' own font `@import`s off the CDN — the library change lightens the shared cut; each site drops its extra font round-trips itself.
+
+## Exit criteria
+
+- [x] `_font-faces.scss` loads the legacy `/icon?family=` Material Symbols cut; `rare.css` / `rare.min.css` rebuilt; still exactly one `@import`
+- [x] Self-host advisory renders on all six `/scripts/` pages and nowhere else
+- [x] `npm run lint:css` clean; icon glyphs still render (browser-verified: search, hamburger, collapsible, carousel arrows)
+
+---
+
+# Milestone — Icon Strategy (near-term, queued from `v0.6.17_1`)
+
+**Goal:** stop shipping a third-party icon *font* entirely and replace it with a small, library-owned **SVG** set. The `v0.6.17_1` font revert is a stopgap; this removes the Google dependency and the download weight for good. Supersedes the icon half of `CSS-087` (vendor-class sweep) and relates to the post-1.0 `CSS-303` (bundled icon set).
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-091` | perf | **Drop Material Symbols support from the library.** Remove the Google `@import` (`_font-faces.scss`) and the `.material-symbols-outlined` / `symbol()` machinery once `CSS-092` ships the SVG replacements. No third-party icon font in the shipped `rare.css`. Coordinate the markup migration with `CSS-087`. | P1 | M |
+| `CSS-092` | feat | **Ship a limited SVG icon set with the library.** Package the icons actually used across the ecosystem as inline/`<use>`-able SVGs under `assets/css/images/icons/**` (same public-asset contract as the vendor logos). Scope decision from the 2026-07-13 inventory below: the **library-core** set (used by Rare Styles' own components + docs) is small and mandatory; the **consumer-app** icons (mostly `raredigits.io` marketing UI) stay app-owned — the library ships the shared/core set, sites supply their own extras. | P1 | L |
+
+### Icon inventory (2026-07-13, across `raredigits.art` / `schnellreich.ru` / `raredigits.io`)
+
+58 unique Material Symbols glyphs in use. `art` marks the library's own component/doc surfaces (the mandatory core); `io` is dominated by app-level marketing icons.
+
+| Glyph | art | sch | io |
+|---|:--:|:--:|:--:|
+| `account_circle` | | | ✓ |
+| `arrow_forward` | | | ✓ |
+| `arrow_outward` | ✓ | | ✓ |
+| `attach_file` | ✓ | | |
+| `bedtime` | | | ✓ |
+| `bolt` | ✓ | | |
+| `bookmark` | | ✓ | |
+| `call` | | | ✓ |
+| `celebration` | | | ✓ |
+| `check` | ✓ | | |
+| `check_circle` | | | ✓ |
+| `chevron_left` | ✓ | | |
+| `chevron_right` | ✓ | | |
+| `close` | ✓ | | ✓ |
+| `code` | ✓ | | |
+| `cognition` | ✓ | | |
+| `construction` | ✓ | ✓ | ✓ |
+| `content_copy` | ✓ | | |
+| `currency_exchange` | | | ✓ |
+| `dashboard` | | | ✓ |
+| `description` | ✓ | | |
+| `download` | ✓ | | |
+| `drafts` | | | ✓ |
+| `error` | | | ✓ |
+| `favorite` | | | ✓ |
+| `festival` | | | ✓ |
+| `file_download` | | | ✓ |
+| `flag` | | | ✓ |
+| `folder_open` | | | ✓ |
+| `forum` | | | ✓ |
+| `groups` | | | ✓ |
+| `handshake` | | | ✓ |
+| `hub` | | | ✓ |
+| `inbox` | | ✓ | |
+| `info` | | | ✓ |
+| `insert_drive_file` | | ✓ | |
+| `keyboard_arrow_down` | ✓ | | |
+| `lightbulb_2` | ✓ | | |
+| `mail` | | | ✓ |
+| `menu` | ✓ | | |
+| `north_east` | | | ✓ |
+| `notifications` | | | ✓ |
+| `notifications_active` | | | ✓ |
+| `open_in_new` | ✓ | ✓ | |
+| `pause_circle` | | | ✓ |
+| `person_add` | | | ✓ |
+| `psychology` | | ✓ | |
+| `radio_button_unchecked` | | | ✓ |
+| `read_more` | | | ✓ |
+| `remove_circle` | | | ✓ |
+| `rss_feed` | | | ✓ |
+| `search` | ✓ | | ✓ |
+| `smart_toy` | | | ✓ |
+| `sms` | | | ✓ |
+| `south_west` | | | ✓ |
+| `subdirectory_arrow_right` | ✓ | ✓ | |
+| `trending_down` | | | ✓ |
+| `tune` | | | ✓ |
+| `warning` | | | ✓ |
+
+**Library-core set to ship** (`art` column — the icons Rare Styles' own components/docs render, so they must exist in the SVG set): `arrow_outward`, `attach_file`, `bolt`, `check`, `chevron_left`, `chevron_right`, `close`, `code`, `cognition`, `construction`, `content_copy`, `description`, `download`, `keyboard_arrow_down`, `lightbulb_2`, `menu`, `open_in_new`, `search`, `subdirectory_arrow_right`. The `sch`/`io`-only glyphs are consumer-owned and out of the library set unless promoted.
 
 ---
 
@@ -733,7 +832,8 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.6.14` | Cross-Project Enrichment | Harvest and normalize reusable classes/patterns from adjacent projects already using Rare Styles |
 | `v0.6.15` | Audit Hotfixes & Post-Harvest Cleanup | Bug-fix follow-up on top of `v0.6.14`: audit findings (`CSS-027..052`, with table bugs `CSS-053..055` already pulled forward), immediate downstream fixes, asset-path cleanup, and the narrow harvested additions `.boilerplate` / `.feature-row` |
 | `v0.6.16` | Font Self-Hosting | Kill the render-blocking `@import` waterfall: self-host the four text families (relative `fonts/…` woff2, `unicode-range`, `swap`), keep one scoped Material Symbols import (weights 200/400), drop legacy Material Icons. Pulled forward from `v0.7.1` (`CSS-030` / `CSS-032`) |
-| `v0.6.17` | _current_ — Scripts Contract & Unified Rewrite | Audit and freeze the CSS↔scripts contract, adopt the `rd-` namespace (consuming `v0.7.0`), rewrite the five companion scripts onto `.rd-js-*` hooks / `.rd-is-*` states / baseline ARIA, and harvest the carousel from schnellreich.ru as the sixth script (`CSS-088`). **Breaking** — hard cut, downstream coordinated pre-merge |
+| `v0.6.17` | Scripts Contract & Unified Rewrite | Audit and freeze the CSS↔scripts contract, adopt the `rd-` namespace (consuming `v0.7.0`), rewrite the five companion scripts onto `.rd-js-*` hooks / `.rd-is-*` states / baseline ARIA, and harvest the carousel from schnellreich.ru as the sixth script (`CSS-088`). **Breaking** — hard cut, downstream coordinated post-merge (version-pinned) |
+| `v0.6.17_1` | _current_ — Icon & Script Load Regression Patch | Revert Material Symbols to the light `/icon?family=` cut (~312 KB vs ~1.45 MB), add the self-host advisory to the `/scripts/` docs, queue the SVG icon-set overhaul (`CSS-091`/`CSS-092`) |
 | `v0.6.18` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets, then clear the path for Pages unpublish and legacy cleanup |
 | `v0.6.19` | Documentation Skeleton Pressure | Keep draft `/styles/` pages visible as intentional backlog pressure, while cleaning up broken anchors and incomplete-page policy |
 | `v0.6.20` | Rare Digits Media Kit Prep | Package Rare Digits branding surfaces, attribution variants, and library-link guidance as a reusable media-kit layer |

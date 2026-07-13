@@ -389,21 +389,24 @@
 <h2>How It Works</h2>
 <ol>
 <li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
-<li>If the cookie is present, the notice is hidden by adding the <code>rd-is-hidden</code> state class</li>
+<li>If the cookie is present, the notice is hidden by adding the <code>rd-is-hidden</code> state class</li>
 <li>When the user clicks the confirmation button, the cookie is set and the notice gets <code>rd-is-hidden</code></li>
 <li>The notice stays hidden for subsequent visits</li>
 </ol>
 <p>Default cookie lifetime: <strong>31 days</strong></p>
 <h2>Installation</h2>
+<p class="callout">
+  ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
+</p>
 <details>
 <summary>Required HTML Markup</summary>
-<p>The script expects the following <strong>mandatory hook classes</strong>. If they are missing or renamed, the script safely does nothing.</p>
+<p>The script expects the following <strong>mandatory hook classes</strong>. If they are missing or renamed, the script safely does nothing.</p>
 <div class="code-block">
     <pre><code id="snippet-1" class="language-html">&lt;div class=&#34;cookie-notice rd-js-cookie-consent&#34;&gt;
   &lt;div class=&#34;cookie-notice__content&#34;&gt;
     &lt;h3&gt;🍪&lt;/h3&gt;
-    &lt;p class=&#34;bold&#34;&gt;Help yourself to some cookies!&lt;/p&gt;
-    &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&#34;/legal/privacy&#34;&gt;Privacy Policy&lt;/a&gt;.&lt;/p&gt;
+    &lt;p class=&#34;bold&#34;&gt;Help yourself to some cookies!&lt;/p&gt;
+    &lt;p&gt;We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a &lt;a href=&#34;/legal/privacy&#34;&gt;Privacy Policy&lt;/a&gt;.&lt;/p&gt;
     &lt;div class=&#34;right&#34;&gt;
       &lt;button class=&#34;cookie-notice__button rd-js-cookie-accept&#34;&gt;Nice!&lt;/button&gt;
     &lt;/div&gt;
@@ -415,42 +418,42 @@
 <div class="air-md"></div>
 <details>
 <summary>Required hooks (Mandatory)</summary>
-<p>Be sure to include <strong>the mandatory hook classes</strong> on your HTML elements:</p>
+<p>Be sure to include <strong>the mandatory hook classes</strong> on your HTML elements:</p>
 <table class="table-small">
     <tr>
         <th>Hook class</th>
-        <th>Purpose</th> 
+        <th>Purpose</th>
     </tr>
     <tr>
         <td><code>rd-js-cookie-consent</code></td>
-        <td>Root container the script hides by toggling <code>rd-is-hidden</code></td>
+        <td>Root container the script hides by toggling <code>rd-is-hidden</code></td>
     </tr>
     <tr>
         <td><code>rd-js-cookie-accept</code></td>
         <td>Button (inside the container) that dismisses the notice</td>
     </tr>
 </table>
-<p>Hook classes are <strong>read by the JavaScript and never styled</strong> — presentational styling belongs to separate classes (<code>cookie-notice</code>, <code>cookie-notice__button</code>) which you are free to rename or replace.</p>
+<p>Hook classes are <strong>read by the JavaScript and never styled</strong> — presentational styling belongs to separate classes (<code>cookie-notice</code>, <code>cookie-notice__button</code>) which you are free to rename or replace.</p>
 </details>
 <div class="air-md"></div><details>
 <summary>Required CSS (Minimum)</summary>
-<p>The Rare Styles Library already includes styles for the cookie consent block (including the <code>rd-is-hidden</code> state). If you use this script on its own, make sure to add the required styles. At minimum, the <code>.rd-is-hidden { display: none; }</code> rule <strong>must exist</strong> — the script hides the notice by toggling that class, never by inline styles.</p>
+<p>The Rare Styles Library already includes styles for the cookie consent block (including the <code>rd-is-hidden</code> state). If you use this script on its own, make sure to add the required styles. At minimum, the <code>.rd-is-hidden { display: none; }</code> rule <strong>must exist</strong> — the script hides the notice by toggling that class, never by inline styles.</p>
 <div class="code-block">
     <pre><code id="snippet-2" class="language-css">.cookie-notice {&#10;    max-width: var(--site-max-width);&#10;    display: block;&#10;    position: fixed; &#10;    bottom: 10px; &#10;    left: 50%;&#10;    transform: translateX(-50%);&#10;    background: #f0f0f0;&#10;    color: #000;&#10;    padding: var(--space-lg) var(--space-lg) var(--space-md);&#10;    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);&#10;    border-radius: 15px;&#10;    box-sizing: border-box;&#10;    z-index: 1000;&#10;&#10;    @include bp.mobile {&#10;        padding: 15px 5%;&#10;        width: 90%;&#10;    }&#10;}&#10;&#10;.cookie-notice__content {&#10;    position: relative;&#10;}&#10;&#10;.cookie-notice__content h3 {&#10;    position: absolute;&#10;    margin: 0;&#10;    top: -50px;&#10;    font-size: 3.5em;&#10;&#10;    @include bp.mobile {&#10;        font-size: 2.5em;&#10;        top: -60px;&#10;    }&#10;}&#10;&#10;.cookie-notice__content a {&#10;    color: #000;&#10;    text-decoration: none;&#10;    border-bottom: 1px solid var(--brand-color);&#10;}&#10;&#10;.cookie-notice__content button {&#10;    position: relative;&#10;    display: inline-block;&#10;    margin-top: var(--space-md);&#10;}&#10;&#10;/* State class the script toggles — mandatory */&#10;.rd-is-hidden {&#10;    display: none;&#10;}</code></pre>
     <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-2"></button>
 </div>
-<p>You are free to fully replace these styles with your own design system.</p>
+<p>You are free to fully replace these styles with your own design system.</p>
 </details>
 <div class="air-md"></div><details>
 <summary>JavaScript Setup</summary>
-<p>Include the script <strong>synchronously, right after the notice markup</strong> (no <code>defer</code>, no <code>async</code>):</p>
+<p>Include the script <strong>synchronously, right after the notice markup</strong> (no <code>defer</code>, no <code>async</code>):</p>
 <div class="code-block">
     <pre><code id="snippet-3" class="language-html">&lt;script src=&#34;/assets/js/cookie-consent.js&#34;&gt;&lt;/script&gt;</code></pre>
     <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-3"></button>
 </div>
-<p>Placement matters: the script initializes immediately when the notice markup is already parsed, so the dismissal check runs <strong>before the browser paints the content that follows</strong> — a returning visitor never sees the notice flash. If the markup is not there yet, the script falls back to <code>DOMContentLoaded</code>. No configuration is required.</p>
+<p>Placement matters: the script initializes immediately when the notice markup is already parsed, so the dismissal check runs <strong>before the browser paints the content that follows</strong> — a returning visitor never sees the notice flash. If the markup is not there yet, the script falls back to <code>DOMContentLoaded</code>. No configuration is required.</p>
 <div class="air-md"></div>
-<p><strong>Optional anti-flash guard.</strong> If you load the script with <code>defer</code>/<code>async</code> or from a CDN late in the page, the paint-then-hide flash comes back for returning visitors. In that case add this one-liner right after the notice markup:<div class="code-block">
+<p><strong>Optional anti-flash guard.</strong> If you load the script with <code>defer</code>/<code>async</code> or from a CDN late in the page, the paint-then-hide flash comes back for returning visitors. In that case add this one-liner right after the notice markup:<div class="code-block">
 <pre><code id="snippet-4" class="language-html">&lt;script&gt;
 if (document.cookie.indexOf('cookie-notice-dismissed=true') !== -1) {
 document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
@@ -461,21 +464,21 @@ document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
 </details>
 <h2>Assumptions Made by the Script</h2>
 <ul>
-<li>JavaScript is enabled</li>
+<li>JavaScript is enabled</li>
 <li>Cookies are enabled</li>
-<li>The site operates on a single domain</li>
-<li>The notice markup exists on the page where the script runs</li>
+<li>The site operates on a single domain</li>
+<li>The notice markup exists on the page where the script runs</li>
 </ul>
-<p>If any of these assumptions are false, the script will fail silently.</p>
+<p>If any of these assumptions are false, the script will fail silently.</p>
 <h2>Customization</h2>
 <p>You may safely change:</p>
 <ul>
 <li>Text content</li>
 <li>Styles and class names</li>
-<li>Cookie lifetime (in days)</li>
+<li>Cookie lifetime (in days)</li>
 <li>Cookie name</li>
 </ul>
-<p>The <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> hook classes and the <code>rd-is-hidden</code> state class are the script's contract — if you rename them, you must update the script accordingly.</p>
+<p>The <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> hook classes and the <code>rd-is-hidden</code> state class are the script’s contract — if you rename them, you must update the script accordingly.</p>
 <h2>Changelog</h2>
 <h3>v3.0.0</h3>
 <ul>

@@ -1,7 +1,8 @@
 // Contract: SCRIPTS_CONTRACT.md (v0.6.17).
 // Hook: .rd-js-copy (delegated). Payload API unchanged: data-copy / data-copy-target.
-// data-icon / data-copy-busy stay — payload and internal flag, not layout state.
-const ICON_DEFAULT = "content_copy";
+// The default glyph is baked into CSS (.copy-data-icon), so markup needs no
+// data-icon. On success the script sets data-icon="check"; on reset it removes
+// the attribute, so the CSS default (content_copy) shows again.
 const ICON_SUCCESS = "check";
 const RESET_MS = 1200;
 
@@ -47,7 +48,7 @@ document.addEventListener("click", async (e) => {
     icon.dataset.icon = ICON_SUCCESS;
     clearTimeout(icon._copyTimer);
     icon._copyTimer = setTimeout(() => {
-      icon.dataset.icon = ICON_DEFAULT;
+      delete icon.dataset.icon;
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };
@@ -60,3 +61,24 @@ document.addEventListener("click", async (e) => {
     else delete icon.dataset.copyBusy;
   }
 });
+
+// Icon-only copy buttons render just a CSS glyph, so they have no accessible
+// name. Give any bare .rd-js-copy an aria-label (author-provided aria-label /
+// title / text is respected). One pass, not per-button listeners.
+function labelCopyIcons() {
+  document.querySelectorAll(".rd-js-copy").forEach((icon) => {
+    if (
+      !icon.getAttribute("aria-label") &&
+      !icon.getAttribute("title") &&
+      !icon.textContent.trim()
+    ) {
+      icon.setAttribute("aria-label", "Copy");
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", labelCopyIcons);
+} else {
+  labelCopyIcons();
+}

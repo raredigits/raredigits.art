@@ -10,6 +10,21 @@ Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ## [Unreleased]
 
+## [v0.6.17_1] — 2026-07-13 — Icon & Script Load Regression Patch
+
+Bug-fix patch on top of `v0.6.17`: the release regressed load speed downstream (heavy icon font + per-script CDN round-trips). Not hotfixed into `v0.6.17` — filed as the `_1` patch per release discipline.
+
+### Changed
+
+- **Material Symbols reverted to the light static cut** (`CSS-089`). `_font-faces.scss` was importing the css2 variable font over `wght 200..400 + opsz 20..48 + FILL/GRAD` (~1.45 MB); reverted to the legacy `@import 'https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined'` — a single static wght-400 cut (~312 KB, **4.6× lighter**), the `v0.6.15` shape. **Tradeoff (accepted):** the thin sidenote markers (`_sidenotes.scss`, `font-variation-settings: wght 200`) now render at the static 400 — variation settings are ignored on a static font.
+
+### Added
+
+- **`copy-to-clipboard`: lighter, still-accessible markup (script v3.1.0).** `data-icon` is now optional — the default `content_copy` glyph is baked into `.copy-data-icon` in CSS (`decorations/_icons.scss`) with a `[data-icon]` override, and the script removes `data-icon` on reset instead of writing it back. `title` is no longer needed either — the script sets `aria-label="Copy"` on bare icon-only buttons (author-provided `aria-label`/`title`/text is respected), so a nameless icon button is no longer read as its raw `content_copy` ligature. Markup drops to `<button class="copy-data-icon rd-js-copy"></button>`. Fully backward compatible. (Script + min rebuilt; `rare-scripts` needs a re-publish/re-tag for the CDN copy to match — hand-copied/old markup keeps working meanwhile.)
+- **`.copy-data-icon-inverted` helper class** (`decorations/_icons.scss`) — the common "light copy icon on a dark surface" recolor as a ready-made class (`--copy-icon-color: var(--gray-lightest)`, `--copy-icon-color-hover: var(--gray)`). Put it on the icon or any ancestor instead of inlining the tokens. Used on the dark swatches of `/styles/colors/`.
+- **Self-hosting advisory on every `/scripts/` page** (`CSS-090`). `_includes/special/self-host-notice.njk`, injected by `_layouts/page.njk` for `section == "Scripts"` — recommends downloading + self-hosting the scripts rather than the per-request CDN loads. CDN links kept for trials.
+- **Backlog: icon-strategy milestone** (`CSS-091` drop Material Symbols entirely, `CSS-092` ship a library-owned SVG set) with a 58-glyph cross-site inventory table — the font revert is a stopgap; the SVG set removes the Google dependency for good.
+
 ## [v0.6.17] — 2026-07-12 — Scripts Contract & Unified Rewrite
 
 **Breaking release, hard cut.** The five companion scripts (`collapsible`, `cookie-consent`, `copy-to-clipboard`, `hamburger`, `search`) move to one unified contract: `.rd-js-*` hook classes (read by JS, never styled), `.rd-is-*` state classes (written by JS, styled by CSS), baseline ARIA (`aria-expanded` / `aria-controls`), zero inline `style` writes for UI state (the clipboard fallback's off-screen `textarea` is mechanism, not state, and is the one documented exemption). The `rd-` namespace is adopted in the same release (consuming the dissolved `v0.7.0` — `CSS-060..063` → `CSS-067`). Full contract: [`SCRIPTS_CONTRACT.md`](./SCRIPTS_CONTRACT.md); policy: `STYLEGUIDE.md` → Namespace policy.

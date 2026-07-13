@@ -284,6 +284,35 @@ describe('copy-to-clipboard.js', () => {
     expect(icon.dataset.copyBusy).toBe('1');
   });
 
+  it('works without a data-icon in markup (default glyph is CSS-baked)', async () => {
+    const dom = page(
+      '<code id="s">x</code>' +
+      '<button class="copy-data-icon rd-js-copy" data-copy-target="#s"></button>' // no data-icon
+    );
+    const writeText = mockClipboard(dom);
+    boot(dom, SCRIPTS.copy);
+    const icon = dom.window.document.querySelector('.rd-js-copy');
+
+    expect(icon.hasAttribute('data-icon')).toBe(false);
+    icon.click();
+    await tick();
+
+    expect(writeText).toHaveBeenCalledWith('x');
+    expect(icon.dataset.icon).toBe('check'); // success glyph set even with no initial data-icon
+  });
+
+  it('labels a bare icon-only copy button with aria-label (a11y)', () => {
+    const dom = page('<code id="s">x</code><button class="copy-data-icon rd-js-copy" data-copy-target="#s"></button>');
+    boot(dom, SCRIPTS.copy);
+    expect(dom.window.document.querySelector('.rd-js-copy').getAttribute('aria-label')).toBe('Copy');
+  });
+
+  it('keeps an author-provided accessible name', () => {
+    const dom = page('<code id="s">x</code><button class="copy-data-icon rd-js-copy" aria-label="Копировать" data-copy-target="#s"></button>');
+    boot(dom, SCRIPTS.copy);
+    expect(dom.window.document.querySelector('.rd-js-copy').getAttribute('aria-label')).toBe('Копировать');
+  });
+
   it('copies the href of the nearest [data-copy] link', async () => {
     const dom = page(
       '<span><a href="https://cdn.example/x.js" data-copy>link</a>' +

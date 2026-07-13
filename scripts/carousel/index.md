@@ -8,16 +8,16 @@ scripts: [carousel]
 ---
 
 <div class="meta-info">
-js/carousel.js<br>
+js/carousel.js
 <p>
     v1.0.0 Stable |
     <a href="/assets/js/carousel.js">Download</a> <span class="material-symbols-outlined">download</span>
 </p>
 </div>
 
-A lightweight image carousel for a small set of related photos — one visible at a time, with previous/next arrows and a dot for each slide. Each slide is a `<figure>`, so an optional caption travels with its image instead of sitting still while the pictures change underneath it.
+A lightweight image carousel for a small set of related photos — one visible at a time, with previous/next arrows and a dot for each slide. Each slide is a `<figure>`, so an optional caption travels with its image instead of sitting still while the pictures change underneath it.
 
-It stays deliberately small: no autoplay, no infinite virtual scrolling, no touch-momentum physics. For a handful of images inside an article — a place, a building from three angles, a before/after — that is all it needs to be.
+It stays deliberately small: no autoplay, no infinite virtual scrolling, no touch-momentum physics. For a handful of images inside an article — a place, a building from three angles, a before/after — that is all it needs to be.
 
 ## Live example
 
@@ -43,21 +43,21 @@ It stays deliberately small: no autoplay, no infinite virtual scrolling, no touc
 </div>
 </div>
 
-Use the arrows, the dots, or the <kbd>←</kbd> / <kbd>→</kbd> keys while the carousel has focus.
+Use the arrows, the dots, or the <kbd>←</kbd> / <kbd>→</kbd> keys while the carousel has focus.
 
 ## Contract
 
-- `rd-js-carousel` on the root, `rd-js-carousel-track` on the slide container — the track's **element children are the slides**, so the script never depends on the slide's presentational class
-- `rd-js-carousel-prev` / `rd-js-carousel-next` on the arrow buttons; `rd-js-carousel-dots` on the (empty) dots container the script fills
-- State is `rd-is-active` on the current slide and its dot — CSS shows the active slide and stretches the active dot
-- A slide is a `<figure>` with an `<img>` and an optional `<figcaption class="carousel-caption">`; keeping the caption inside the slide is what makes it travel with the image
-- Reading order below the photo: caption first, then the dots — the dots live in normal flow under the carousel (dark by default), never overlaid on the caption or the photo
-- Any number of carousels can share one page — each is initialized independently
-- ARIA: the root is a `role="group"` / `aria-roledescription="carousel"`; arrows and dots are real `<button>`s with labels; inactive slides are `aria-hidden`
+- `rd-js-carousel` on the root, `rd-js-carousel-track` on the slide container — the track’s **element children are the slides**, so the script never depends on the slide’s presentational class
+- `rd-js-carousel-prev` / `rd-js-carousel-next` on the arrow buttons; `rd-js-carousel-dots` on the (empty) dots container the script fills
+- State is `rd-is-active` on the current slide and its dot — CSS shows the active slide and stretches the active dot
+- A slide is a `<figure>` with an `<img>` and an optional `<figcaption class="carousel-caption">`; keeping the caption inside the slide is what makes it travel with the image
+- Reading order below the photo: caption first, then the dots — the dots live in normal flow under the carousel (dark by default), never overlaid on the caption or the photo
+- Any number of carousels can share one page — each is initialized independently
+- ARIA: the root is a `role="group"` / `aria-roledescription="carousel"`; arrows and dots are real `<button>`s with labels; inactive slides are `aria-hidden`
 
 ## Ready-to-paste markup
 
-Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots container is left empty — the script builds one dot per slide.
+Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots container is left empty — the script builds one dot per slide.
 
 {% capture carouselMarkup %}
 <div class="carousel rd-js-carousel">
@@ -82,7 +82,7 @@ Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots con
     <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-carousel-1"></button>
 </div>
 
-The arrow buttons are empty on purpose — the chevron glyphs are baked into `.carousel-arrow-prev` / `-next` by CSS (via the `symbol()` mixin), so the markup carries no vendor icon class.
+The arrow buttons are empty on purpose — the chevron glyphs are baked into `.carousel-arrow-prev` / `-next` by CSS (via the `symbol ()` mixin), so the markup carries no vendor icon class.
 
 **Script include:**
 
@@ -95,9 +95,11 @@ The arrow buttons are empty on purpose — the chevron glyphs are baked into `.c
     <button class="copy-data-icon rd-js-copy" title="Copy include" data-icon="content_copy" data-copy-target="#snippet-carousel-2"></button>
 </div>
 
+{% include "special/self-host-notice.njk" %}
+
 ## Recoloring
 
-The arrows overlay the photo, so their defaults are fixed light-on-dark values; the dots sit **below** the carousel on the page background, so their defaults are dark. All four are component tokens, overridable per instance (e.g. a carousel on a dark surface wants light dots back):
+The arrows overlay the photo, so their defaults are fixed light-on-dark values; the dots sit **below** the carousel on the page background, so their defaults are dark. All four are component tokens, overridable per instance (e.g. a carousel on a dark surface wants light dots back):
 
 {% capture carouselRecolor %}
 <!-- carousel on a dark panel: light dots, brand arrows -->
@@ -193,9 +195,9 @@ function initCarousel(root) {
 
 ### v1.0.0
 
-- Harvested into Rare Scripts from schnellreich.ru and rebuilt on the `rd-js` / `rd-is` contract
-- **Multiple carousels per page now work** — each instance is initialized independently (the original collected every image on the page into one shared list, so only a single carousel worked)
-- Captions travel with their images: a slide is a `<figure>` holding the image and an optional `<figcaption>`
-- Arrows and dots are real `<button>`s; added keyboard navigation (<kbd>←</kbd> / <kbd>→</kbd>), `role`/`aria-roledescription`, per-control labels, and `aria-hidden` on inactive slides
-- Styles tokenized: hardcoded colors and sizes replaced with `--space-*` and the recolorable `--carousel-*` component tokens; the dead `transform` transition on the track was removed
-- Dots moved out of the photo overlay into normal flow below the carousel (they collided with the new travelling captions) and recolored dark for the page background; the arrows keep their light-on-photo overlay defaults
+- **Multiple carousels per page now work** — each instance is initialized independently (the original collected every image on the page into one shared list, so only a single carousel worked)
+- Captions travel with their images: a slide is a `<figure>` holding the image and an optional `<figcaption>`
+- Arrows and dots are real `<button>`s; added keyboard navigation (<kbd>←</kbd> / <kbd>→</kbd>), `role`/`aria-roledescription`, per-control labels, and `aria-hidden` on inactive slides
+- Styles tokenized: hardcoded colors and sizes replaced with `--space-*` and the recolorable `--carousel-*` component tokens; the dead `transform` transition on the track was removed
+- Dots moved out of the photo overlay into normal flow below the carousel (they collided with the new travelling captions) and recolored dark for the page background; the arrows keep their light-on-photo overlay defaults
+- Rebuilt on the `rd-js` / `rd-is` contract
