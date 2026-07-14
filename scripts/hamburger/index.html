@@ -6,8 +6,6 @@
     <title>Hamburger Menu Script | Rare Digits Art</title>
 
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     
     <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
@@ -355,7 +353,7 @@
 js/hamburger.js
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/hamburger.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/hamburger.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 <p>The hamburger menu script provides a clean, accessible way to hide frequently used information while keeping it just one click away. This pattern works best for:</p>
@@ -395,15 +393,19 @@ js/hamburger.js
   &lt;span class=&quot;hamburger__icon-close&quot;&gt;&lt;/span&gt;
 &lt;/button&gt;
 </code></pre>
-<p>The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (Material Symbols ligatures rendered via <code>:: before</code>), so markup carries no vendor icon class and no ligature text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this; standalone users need:</p>
-<pre><code class="language-css">.hamburger__icon-menu,
-.hamburger__icon-close {
+<p>The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (SVG masks drawn on <code>::before</code>), so markup carries no icon class and no icon text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this (icons included, under <code>images/icons/</code>); standalone users need the two SVGs plus:</p>
+<pre><code class="language-css">.hamburger__icon-menu::before,
+.hamburger__icon-close::before {
+  content: &quot;&quot;;
   display: inline-block;
-  font-family: &quot;Material Symbols Outlined&quot;;
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: no-repeat center / contain;
 }
 
-.hamburger__icon-menu::before { content: &quot;menu&quot;; }
-.hamburger__icon-close::before { content: &quot;close&quot;; }
+.hamburger__icon-menu::before { mask-image: url(&quot;images/icons/menu-400.svg&quot;); }
+.hamburger__icon-close::before { mask-image: url(&quot;images/icons/close-400.svg&quot;); }
 
 .hamburger__icon-close { display: none; }
 .hamburger.rd-is-active .hamburger__icon-menu { display: none; }

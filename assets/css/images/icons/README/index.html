@@ -1,0 +1,45 @@
+<h1>Rare Styles icon set</h1>
+<p>Static SVG cuts of <a href="https://fonts.google.com/icons">Material Symbols Outlined</a>
+(Google, <a href="./LICENSE">Apache-2.0</a>), shipped with the library so <code>rare.css</code>
+carries <strong>zero third-party font requests</strong> (milestone <code>v0.6.18</code>, <code>CSS-095</code>/<code>CSS-096</code>).</p>
+<p>Every glyph exists in two weights — <code>&lt;name&gt;-200.svg</code> (thin) and
+<code>&lt;name&gt;-400.svg</code> (regular). The CSS consumes them via <code>mask-image</code> with
+<code>background-color: currentColor</code> (see <code>modules/decorations/_icons.scss</code>), so
+the SVG fill color is irrelevant — only the path alpha matters — and icons
+recolor through normal <code>color</code> / token cascade.</p>
+<p>Each glyph becomes <strong>one self-contained class per weight</strong>: <code>.rd-icon-&lt;name&gt;</code>
+(400) and <code>.rd-icon-&lt;name&gt;-thin</code> (200). That is the public markup API — the
+glyph name is the class, there is no <code>data-icon</code> authoring attribute.</p>
+<h2>Updating or extending the set</h2>
+<ol>
+<li>
+<p>Edit the <code>ICONS</code> list in <a href="../../../../scripts/fetch-icons.py"><code>scripts/fetch-icons.py</code></a>
+(repo root). Glyph names are the Material Symbols names as shown on
+<a href="https://fonts.google.com/icons">fonts.google.com/icons</a> (e.g. <code>star_half</code>).
+For an axis variant of an existing glyph (a FILL/GRAD cut the CDN serves
+under an alternate URL segment, not a distinct name — e.g. the solid
+<code>star_fill</code>), add a <code>VARIANTS</code> entry instead: a logical name, its <code>src</code>
+glyph, and the per-weight CDN segments.</p>
+</li>
+<li>
+<p>From the repo root run:</p>
+<pre><code class="language-sh">python3 scripts/fetch-icons.py
+</code></pre>
+<p>The script fetches both weights for every listed glyph from Google's icon
+CDN and overwrites the files here. It exits non-zero if any glyph fails
+(usually a misspelled name — check the exact spelling on fonts.google.com).</p>
+</li>
+<li>
+<p>Mirror the change in the <code>$icons</code> list in
+<code>assets/css/modules/decorations/_icons.scss</code> — that list generates the
+per-glyph <code>.rd-icon-&lt;name&gt;</code> / <code>.rd-icon-&lt;name&gt;-thin</code> classes, so a glyph
+missing there has no class and will not render.</p>
+</li>
+<li>
+<p>Review the git diff, rebuild the CSS (<code>npm run build:css</code>), and record the
+set change in <code>assets/css/docs/Changelog.md</code>.</p>
+</li>
+</ol>
+<p>Do not hand-edit the SVGs — they are generated artifacts; re-run the script
+instead. New glyphs must be Material Symbols (the whole set is covered by the
+single Apache-2.0 license in this directory).</p>
