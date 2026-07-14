@@ -1,10 +1,10 @@
 @use "../../utilities/breakpoints" as bp;
-@use "../../utilities/symbols" as sym;
+@use "../../decorations/icons" as ico;
 
-// Glyph baked into the button class (utilities/_symbols.scss) — markup needs
+// Glyph baked into the button class (decorations/_icons.scss) — markup needs
 // no inner icon span at all: <button class="icon-search ..." aria-label="…"></button>
 .icon-search {
-    @include sym.symbol("search");
+    @include ico.icon("search");
 }
 
 .search-wrapper {

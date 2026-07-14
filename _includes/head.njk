@@ -5,13 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if title %}{{ title }} | {% endif %}{{ site.title }}</title>
 
-    {# Warm up the Google font origins ahead of the Material Symbols @import (the one
-       icon font still hosted by Google). Its gstatic woff2 URL is a content hash we
-       can't stably preload, so preconnect is the right lever — it removes DNS/TCP/TLS
-       latency from the icon-font chain, which matters under `display=block`. Not needed
-       for the text fonts: they're self-hosted and load from this origin. #}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {# No Google preconnects anymore: the Material Symbols icon font — the last
+       Google-hosted resource — was replaced by the self-hosted SVG icon set in
+       v0.6.18 (CSS-095). Text fonts are self-hosted since v0.6.16. #}
 
     {# Preload the above-the-fold self-hosted faces (latin) so body + headings paint
        without waiting on the CSS→@font-face discovery chain. woff2 are fetched in CORS

@@ -1,5 +1,4 @@
 @charset "UTF-8";
-@import 'https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined';
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -17358,8 +17357,6 @@ ol {
 .sidenote-link::before,
 .sidenote-bulb::before,
 .sidenote-memory::before {
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-variation-settings: "FILL" 0, "wght" 200, "GRAD" 0, "opsz" 48;
   font-size: var(--font-size-lg);
   position: absolute;
   top: -8px;
@@ -17379,24 +17376,44 @@ ol {
 }
 
 .sidenote-bookmark::before {
-  content: "bookmark";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/bookmark-200.svg") no-repeat center/contain;
 }
 
 .sidenote-attach::before,
 .remark::before {
-  content: "attach_file";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/attach_file-200.svg") no-repeat center/contain;
 }
 
 .sidenote-link::before {
-  content: "arrow_outward";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/arrow_outward-200.svg") no-repeat center/contain;
 }
 
 .sidenote-bulb::before {
-  content: "lightbulb_2";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/lightbulb_2-200.svg") no-repeat center/contain;
 }
 
 .sidenote-memory::before {
-  content: "cognition";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/cognition-200.svg") no-repeat center/contain;
 }
 
 :root {
@@ -17821,13 +17838,16 @@ pre code {
   position: relative;
 }
 .boilerplate p::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/info-400.svg") no-repeat center/contain;
   position: absolute;
   top: -0.2em;
   left: -1.2em;
-  font-family: "Material Symbols Outlined";
   font-size: var(--font-size-lg);
   vertical-align: middle;
-  content: "info";
 }
 
 table {
@@ -18840,44 +18860,36 @@ section {
 
 .hamburger__icon-menu {
   display: inline-block;
-  position: relative;
-  top: 0.2em;
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
 }
 .hamburger__icon-menu::before, .hamburger__icon-menu:hover::before {
-  content: "menu";
+  content: "";
+}
+.hamburger__icon-menu::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+  background-color: currentcolor;
+  mask-image: url("images/icons/menu-400.svg");
 }
 
 .hamburger__icon-close {
   display: inline-block;
-  position: relative;
-  top: 0.2em;
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
 }
 .hamburger__icon-close::before, .hamburger__icon-close:hover::before {
-  content: "close";
+  content: "";
+}
+.hamburger__icon-close::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+  background-color: currentcolor;
+  mask-image: url("images/icons/close-400.svg");
 }
 .hamburger__icon-close {
   display: none;
@@ -18947,23 +18959,19 @@ section {
 
 .icon-search {
   display: inline-block;
-  position: relative;
-  top: 0.2em;
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
 }
 .icon-search::before, .icon-search:hover::before {
-  content: "search";
+  content: "";
+}
+.icon-search::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+  background-color: currentcolor;
+  mask-image: url("images/icons/search-400.svg");
 }
 
 .search-wrapper {
@@ -19286,12 +19294,6 @@ h5.sidebar-header a:hover {
 }
 
 @media screen and (max-width: 768px) {
-  .sidebar-icon.material-symbols-outlined {
-    top: 0;
-  }
-}
-
-@media screen and (max-width: 768px) {
   .sidebar::before {
     content: "";
     display: block;
@@ -19396,80 +19398,6 @@ img {
 
 .vendor-logo.wa {
   background-image: url("images/vendors/whatsapp/wa-stripe.svg");
-}
-
-.material-symbols-outlined {
-  position: relative;
-  top: 0.2em;
-  font-size: inherit;
-}
-
-.section-icon.material-symbols-outlined {
-  display: inline-block;
-  position: relative;
-  top: 0.3em;
-  margin-left: -1.3rem;
-  font-size: 1.5rem;
-  color: var(--text-color-light);
-}
-
-.remark .material-symbols-outlined {
-  font-size: 1.2em;
-}
-
-@media (width <= 768px) {
-  .section-icon.material-symbols-outlined {
-    margin-left: 0;
-  }
-}
-.copy-data-icon {
-  display: inline-block;
-  position: relative;
-  top: 0.2em;
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
-}
-.copy-data-icon::before, .copy-data-icon:hover::before {
-  content: "content_copy";
-}
-.copy-data-icon {
-  line-height: inherit;
-  background: none;
-  color: var(--copy-icon-color, var(--text-color-light));
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.copy-data-icon[data-icon]::before {
-  content: attr(data-icon);
-}
-
-.copy-data-icon:hover {
-  color: var(--copy-icon-color-hover, var(--primary-color));
-  background: none;
-  border: none;
-}
-
-.copy-data-icon-inverted {
-  --copy-icon-color: var(--gray-lightest);
-  --copy-icon-color-hover: var(--gray);
-}
-
-.code-block .copy-data-icon {
-  position: absolute;
-  top: var(--space-sm);
-  right: var(--space-sm);
 }
 
 .bordered {
@@ -19645,6 +19573,1462 @@ img {
   margin: var(--space-xl) 0;
 }
 
+[class^=rd-icon-],
+[class*=" rd-icon-"] {
+  display: inline-block;
+}
+[class^=rd-icon-]::before, [class^=rd-icon-]:hover::before,
+[class*=" rd-icon-"]::before,
+[class*=" rd-icon-"]:hover::before {
+  content: "";
+}
+[class^=rd-icon-]::before,
+[class*=" rd-icon-"]::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+}
+
+.section-icon {
+  display: inline-block;
+  position: relative;
+  top: 0.3em;
+  margin-left: -1.3rem;
+  font-size: 1.5rem;
+  color: var(--text-color-light);
+}
+.section-icon::before {
+  top: 0;
+}
+
+.remark [class*=rd-icon-] {
+  font-size: 1.2em;
+}
+
+@media (width <= 768px) {
+  .section-icon {
+    margin-left: 0;
+  }
+}
+.copy-data-icon {
+  display: inline-block;
+}
+.copy-data-icon::before, .copy-data-icon:hover::before {
+  content: "";
+}
+.copy-data-icon::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+  background-color: currentcolor;
+  mask-image: url("images/icons/content_copy-400.svg");
+}
+.copy-data-icon {
+  line-height: inherit;
+  background: none;
+  color: var(--copy-icon-color, var(--text-color-light));
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.copy-data-icon[data-icon=check]::before {
+  mask-image: url("images/icons/check-400.svg");
+}
+
+.copy-data-icon:hover {
+  color: var(--copy-icon-color-hover, var(--primary-color));
+  background: none;
+  border: none;
+}
+
+.copy-data-icon-inverted {
+  --copy-icon-color: var(--gray-lightest);
+  --copy-icon-color-hover: var(--gray);
+}
+
+.code-block .copy-data-icon {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+}
+
+.rd-icon-account_balance::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_balance-400.svg");
+}
+
+.rd-icon-account_balance-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_balance-200.svg");
+}
+
+.rd-icon-account_circle::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_circle-400.svg");
+}
+
+.rd-icon-account_circle-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_circle-200.svg");
+}
+
+.rd-icon-account_tree::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_tree-400.svg");
+}
+
+.rd-icon-account_tree-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/account_tree-200.svg");
+}
+
+.rd-icon-arrow_drop_down::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_drop_down-400.svg");
+}
+
+.rd-icon-arrow_drop_down-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_drop_down-200.svg");
+}
+
+.rd-icon-arrow_drop_up::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_drop_up-400.svg");
+}
+
+.rd-icon-arrow_drop_up-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_drop_up-200.svg");
+}
+
+.rd-icon-arrow_forward::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_forward-400.svg");
+}
+
+.rd-icon-arrow_forward-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_forward-200.svg");
+}
+
+.rd-icon-arrow_outward::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_outward-400.svg");
+}
+
+.rd-icon-arrow_outward-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_outward-200.svg");
+}
+
+.rd-icon-arrow_right_alt::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_right_alt-400.svg");
+}
+
+.rd-icon-arrow_right_alt-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_right_alt-200.svg");
+}
+
+.rd-icon-attach_file::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/attach_file-400.svg");
+}
+
+.rd-icon-attach_file-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/attach_file-200.svg");
+}
+
+.rd-icon-attach_money::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/attach_money-400.svg");
+}
+
+.rd-icon-attach_money-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/attach_money-200.svg");
+}
+
+.rd-icon-auto_awesome::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/auto_awesome-400.svg");
+}
+
+.rd-icon-auto_awesome-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/auto_awesome-200.svg");
+}
+
+.rd-icon-auto_awesome_mosaic::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/auto_awesome_mosaic-400.svg");
+}
+
+.rd-icon-auto_awesome_mosaic-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/auto_awesome_mosaic-200.svg");
+}
+
+.rd-icon-balance::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/balance-400.svg");
+}
+
+.rd-icon-balance-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/balance-200.svg");
+}
+
+.rd-icon-bar_chart::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bar_chart-400.svg");
+}
+
+.rd-icon-bar_chart-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bar_chart-200.svg");
+}
+
+.rd-icon-bedtime::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bedtime-400.svg");
+}
+
+.rd-icon-bedtime-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bedtime-200.svg");
+}
+
+.rd-icon-bolt::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bolt-400.svg");
+}
+
+.rd-icon-bolt-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bolt-200.svg");
+}
+
+.rd-icon-bookmark::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bookmark-400.svg");
+}
+
+.rd-icon-bookmark-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bookmark-200.svg");
+}
+
+.rd-icon-bookmark_star::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bookmark_star-400.svg");
+}
+
+.rd-icon-bookmark_star-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/bookmark_star-200.svg");
+}
+
+.rd-icon-brush::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/brush-400.svg");
+}
+
+.rd-icon-brush-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/brush-200.svg");
+}
+
+.rd-icon-campaign::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/campaign-400.svg");
+}
+
+.rd-icon-campaign-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/campaign-200.svg");
+}
+
+.rd-icon-chat::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chat-400.svg");
+}
+
+.rd-icon-chat-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chat-200.svg");
+}
+
+.rd-icon-check::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/check-400.svg");
+}
+
+.rd-icon-check-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/check-200.svg");
+}
+
+.rd-icon-check_circle::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/check_circle-400.svg");
+}
+
+.rd-icon-check_circle-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/check_circle-200.svg");
+}
+
+.rd-icon-chess_knight::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chess_knight-400.svg");
+}
+
+.rd-icon-chess_knight-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chess_knight-200.svg");
+}
+
+.rd-icon-chevron_left::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chevron_left-400.svg");
+}
+
+.rd-icon-chevron_left-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chevron_left-200.svg");
+}
+
+.rd-icon-chevron_right::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chevron_right-400.svg");
+}
+
+.rd-icon-chevron_right-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/chevron_right-200.svg");
+}
+
+.rd-icon-close::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/close-400.svg");
+}
+
+.rd-icon-close-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/close-200.svg");
+}
+
+.rd-icon-code::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/code-400.svg");
+}
+
+.rd-icon-code-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/code-200.svg");
+}
+
+.rd-icon-cognition::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cognition-400.svg");
+}
+
+.rd-icon-cognition-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cognition-200.svg");
+}
+
+.rd-icon-construction::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/construction-400.svg");
+}
+
+.rd-icon-construction-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/construction-200.svg");
+}
+
+.rd-icon-content_copy::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/content_copy-400.svg");
+}
+
+.rd-icon-content_copy-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/content_copy-200.svg");
+}
+
+.rd-icon-corporate_fare::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/corporate_fare-400.svg");
+}
+
+.rd-icon-corporate_fare-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/corporate_fare-200.svg");
+}
+
+.rd-icon-credit_card::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/credit_card-400.svg");
+}
+
+.rd-icon-credit_card-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/credit_card-200.svg");
+}
+
+.rd-icon-currency_exchange::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/currency_exchange-400.svg");
+}
+
+.rd-icon-currency_exchange-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/currency_exchange-200.svg");
+}
+
+.rd-icon-dashboard::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/dashboard-400.svg");
+}
+
+.rd-icon-dashboard-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/dashboard-200.svg");
+}
+
+.rd-icon-delete::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/delete-400.svg");
+}
+
+.rd-icon-delete-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/delete-200.svg");
+}
+
+.rd-icon-description::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/description-400.svg");
+}
+
+.rd-icon-description-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/description-200.svg");
+}
+
+.rd-icon-diamond::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/diamond-400.svg");
+}
+
+.rd-icon-diamond-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/diamond-200.svg");
+}
+
+.rd-icon-directions_car::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/directions_car-400.svg");
+}
+
+.rd-icon-directions_car-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/directions_car-200.svg");
+}
+
+.rd-icon-download::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/download-400.svg");
+}
+
+.rd-icon-download-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/download-200.svg");
+}
+
+.rd-icon-draft::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/draft-400.svg");
+}
+
+.rd-icon-draft-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/draft-200.svg");
+}
+
+.rd-icon-drafts::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/drafts-400.svg");
+}
+
+.rd-icon-drafts-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/drafts-200.svg");
+}
+
+.rd-icon-edit_document::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/edit_document-400.svg");
+}
+
+.rd-icon-edit_document-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/edit_document-200.svg");
+}
+
+.rd-icon-error::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/error-400.svg");
+}
+
+.rd-icon-error-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/error-200.svg");
+}
+
+.rd-icon-error_outline::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/error_outline-400.svg");
+}
+
+.rd-icon-error_outline-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/error_outline-200.svg");
+}
+
+.rd-icon-event::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event-400.svg");
+}
+
+.rd-icon-event-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event-200.svg");
+}
+
+.rd-icon-event_available::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event_available-400.svg");
+}
+
+.rd-icon-event_available-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event_available-200.svg");
+}
+
+.rd-icon-event_repeat::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event_repeat-400.svg");
+}
+
+.rd-icon-event_repeat-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/event_repeat-200.svg");
+}
+
+.rd-icon-family_group::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/family_group-400.svg");
+}
+
+.rd-icon-family_group-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/family_group-200.svg");
+}
+
+.rd-icon-family_restroom::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/family_restroom-400.svg");
+}
+
+.rd-icon-family_restroom-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/family_restroom-200.svg");
+}
+
+.rd-icon-favorite::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/favorite-400.svg");
+}
+
+.rd-icon-favorite-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/favorite-200.svg");
+}
+
+.rd-icon-festival::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/festival-400.svg");
+}
+
+.rd-icon-festival-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/festival-200.svg");
+}
+
+.rd-icon-flag::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flag-400.svg");
+}
+
+.rd-icon-flag-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flag-200.svg");
+}
+
+.rd-icon-flag_2::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flag_2-400.svg");
+}
+
+.rd-icon-flag_2-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flag_2-200.svg");
+}
+
+.rd-icon-flight::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flight-400.svg");
+}
+
+.rd-icon-flight-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/flight-200.svg");
+}
+
+.rd-icon-folder::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/folder-400.svg");
+}
+
+.rd-icon-folder-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/folder-200.svg");
+}
+
+.rd-icon-folder_open::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/folder_open-400.svg");
+}
+
+.rd-icon-folder_open-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/folder_open-200.svg");
+}
+
+.rd-icon-format_paint::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/format_paint-400.svg");
+}
+
+.rd-icon-format_paint-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/format_paint-200.svg");
+}
+
+.rd-icon-forum::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/forum-400.svg");
+}
+
+.rd-icon-forum-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/forum-200.svg");
+}
+
+.rd-icon-function::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/function-400.svg");
+}
+
+.rd-icon-function-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/function-200.svg");
+}
+
+.rd-icon-grid_view::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/grid_view-400.svg");
+}
+
+.rd-icon-grid_view-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/grid_view-200.svg");
+}
+
+.rd-icon-group::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/group-400.svg");
+}
+
+.rd-icon-group-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/group-200.svg");
+}
+
+.rd-icon-group_add::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/group_add-400.svg");
+}
+
+.rd-icon-group_add-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/group_add-200.svg");
+}
+
+.rd-icon-groups::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/groups-400.svg");
+}
+
+.rd-icon-groups-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/groups-200.svg");
+}
+
+.rd-icon-handshake::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/handshake-400.svg");
+}
+
+.rd-icon-handshake-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/handshake-200.svg");
+}
+
+.rd-icon-home_work::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/home_work-400.svg");
+}
+
+.rd-icon-home_work-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/home_work-200.svg");
+}
+
+.rd-icon-hub::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/hub-400.svg");
+}
+
+.rd-icon-hub-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/hub-200.svg");
+}
+
+.rd-icon-inbox::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/inbox-400.svg");
+}
+
+.rd-icon-inbox-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/inbox-200.svg");
+}
+
+.rd-icon-info::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/info-400.svg");
+}
+
+.rd-icon-info-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/info-200.svg");
+}
+
+.rd-icon-insert_drive_file::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/insert_drive_file-400.svg");
+}
+
+.rd-icon-insert_drive_file-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/insert_drive_file-200.svg");
+}
+
+.rd-icon-insights::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/insights-400.svg");
+}
+
+.rd-icon-insights-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/insights-200.svg");
+}
+
+.rd-icon-inventory_2::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/inventory_2-400.svg");
+}
+
+.rd-icon-inventory_2-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/inventory_2-200.svg");
+}
+
+.rd-icon-keep::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keep-400.svg");
+}
+
+.rd-icon-keep-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keep-200.svg");
+}
+
+.rd-icon-key::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/key-400.svg");
+}
+
+.rd-icon-key-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/key-200.svg");
+}
+
+.rd-icon-key_vertical::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/key_vertical-400.svg");
+}
+
+.rd-icon-key_vertical-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/key_vertical-200.svg");
+}
+
+.rd-icon-keyboard_arrow_down::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keyboard_arrow_down-400.svg");
+}
+
+.rd-icon-keyboard_arrow_down-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keyboard_arrow_down-200.svg");
+}
+
+.rd-icon-lightbulb::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lightbulb-400.svg");
+}
+
+.rd-icon-lightbulb-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lightbulb-200.svg");
+}
+
+.rd-icon-lightbulb_2::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lightbulb_2-400.svg");
+}
+
+.rd-icon-lightbulb_2-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lightbulb_2-200.svg");
+}
+
+.rd-icon-local_shipping::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/local_shipping-400.svg");
+}
+
+.rd-icon-local_shipping-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/local_shipping-200.svg");
+}
+
+.rd-icon-login::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/login-400.svg");
+}
+
+.rd-icon-login-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/login-200.svg");
+}
+
+.rd-icon-logout::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/logout-400.svg");
+}
+
+.rd-icon-logout-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/logout-200.svg");
+}
+
+.rd-icon-mail::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mail-400.svg");
+}
+
+.rd-icon-mail-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mail-200.svg");
+}
+
+.rd-icon-menu::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/menu-400.svg");
+}
+
+.rd-icon-menu-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/menu-200.svg");
+}
+
+.rd-icon-movie::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/movie-400.svg");
+}
+
+.rd-icon-movie-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/movie-200.svg");
+}
+
+.rd-icon-music_note::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/music_note-400.svg");
+}
+
+.rd-icon-music_note-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/music_note-200.svg");
+}
+
+.rd-icon-new_releases::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/new_releases-400.svg");
+}
+
+.rd-icon-new_releases-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/new_releases-200.svg");
+}
+
+.rd-icon-north_east::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/north_east-400.svg");
+}
+
+.rd-icon-north_east-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/north_east-200.svg");
+}
+
+.rd-icon-notifications::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/notifications-400.svg");
+}
+
+.rd-icon-notifications-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/notifications-200.svg");
+}
+
+.rd-icon-open_in_new::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/open_in_new-400.svg");
+}
+
+.rd-icon-open_in_new-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/open_in_new-200.svg");
+}
+
+.rd-icon-pause_circle::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/pause_circle-400.svg");
+}
+
+.rd-icon-pause_circle-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/pause_circle-200.svg");
+}
+
+.rd-icon-payments::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/payments-400.svg");
+}
+
+.rd-icon-payments-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/payments-200.svg");
+}
+
+.rd-icon-person_add::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/person_add-400.svg");
+}
+
+.rd-icon-person_add-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/person_add-200.svg");
+}
+
+.rd-icon-pets::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/pets-400.svg");
+}
+
+.rd-icon-pets-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/pets-200.svg");
+}
+
+.rd-icon-priority_high::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/priority_high-400.svg");
+}
+
+.rd-icon-priority_high-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/priority_high-200.svg");
+}
+
+.rd-icon-psychology::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/psychology-400.svg");
+}
+
+.rd-icon-psychology-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/psychology-200.svg");
+}
+
+.rd-icon-query_stats::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/query_stats-400.svg");
+}
+
+.rd-icon-query_stats-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/query_stats-200.svg");
+}
+
+.rd-icon-radio_button_checked::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/radio_button_checked-400.svg");
+}
+
+.rd-icon-radio_button_checked-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/radio_button_checked-200.svg");
+}
+
+.rd-icon-radio_button_unchecked::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/radio_button_unchecked-400.svg");
+}
+
+.rd-icon-radio_button_unchecked-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/radio_button_unchecked-200.svg");
+}
+
+.rd-icon-read_more::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/read_more-400.svg");
+}
+
+.rd-icon-read_more-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/read_more-200.svg");
+}
+
+.rd-icon-real_estate_agent::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/real_estate_agent-400.svg");
+}
+
+.rd-icon-real_estate_agent-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/real_estate_agent-200.svg");
+}
+
+.rd-icon-receipt::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/receipt-400.svg");
+}
+
+.rd-icon-receipt-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/receipt-200.svg");
+}
+
+.rd-icon-receipt_long::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/receipt_long-400.svg");
+}
+
+.rd-icon-receipt_long-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/receipt_long-200.svg");
+}
+
+.rd-icon-record_voice_over::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/record_voice_over-400.svg");
+}
+
+.rd-icon-record_voice_over-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/record_voice_over-200.svg");
+}
+
+.rd-icon-recycling::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/recycling-400.svg");
+}
+
+.rd-icon-recycling-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/recycling-200.svg");
+}
+
+.rd-icon-remove_circle::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/remove_circle-400.svg");
+}
+
+.rd-icon-remove_circle-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/remove_circle-200.svg");
+}
+
+.rd-icon-restart_alt::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/restart_alt-400.svg");
+}
+
+.rd-icon-restart_alt-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/restart_alt-200.svg");
+}
+
+.rd-icon-restaurant::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/restaurant-400.svg");
+}
+
+.rd-icon-restaurant-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/restaurant-200.svg");
+}
+
+.rd-icon-rocket_launch::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/rocket_launch-400.svg");
+}
+
+.rd-icon-rocket_launch-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/rocket_launch-200.svg");
+}
+
+.rd-icon-rss_feed::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/rss_feed-400.svg");
+}
+
+.rd-icon-rss_feed-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/rss_feed-200.svg");
+}
+
+.rd-icon-schedule::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/schedule-400.svg");
+}
+
+.rd-icon-schedule-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/schedule-200.svg");
+}
+
+.rd-icon-search::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/search-400.svg");
+}
+
+.rd-icon-search-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/search-200.svg");
+}
+
+.rd-icon-send::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/send-400.svg");
+}
+
+.rd-icon-send-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/send-200.svg");
+}
+
+.rd-icon-settings::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/settings-400.svg");
+}
+
+.rd-icon-settings-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/settings-200.svg");
+}
+
+.rd-icon-show_chart::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/show_chart-400.svg");
+}
+
+.rd-icon-show_chart-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/show_chart-200.svg");
+}
+
+.rd-icon-smart_toy::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/smart_toy-400.svg");
+}
+
+.rd-icon-smart_toy-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/smart_toy-200.svg");
+}
+
+.rd-icon-sms::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sms-400.svg");
+}
+
+.rd-icon-sms-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sms-200.svg");
+}
+
+.rd-icon-south_west::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/south_west-400.svg");
+}
+
+.rd-icon-south_west-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/south_west-200.svg");
+}
+
+.rd-icon-speaker::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/speaker-400.svg");
+}
+
+.rd-icon-speaker-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/speaker-200.svg");
+}
+
+.rd-icon-speed::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/speed-400.svg");
+}
+
+.rd-icon-speed-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/speed-200.svg");
+}
+
+.rd-icon-star::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star-400.svg");
+}
+
+.rd-icon-star-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star-200.svg");
+}
+
+.rd-icon-star_fill::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star_fill-400.svg");
+}
+
+.rd-icon-star_fill-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star_fill-200.svg");
+}
+
+.rd-icon-star_half::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star_half-400.svg");
+}
+
+.rd-icon-star_half-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/star_half-200.svg");
+}
+
+.rd-icon-storefront::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/storefront-400.svg");
+}
+
+.rd-icon-storefront-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/storefront-200.svg");
+}
+
+.rd-icon-subdirectory_arrow_right::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/subdirectory_arrow_right-400.svg");
+}
+
+.rd-icon-subdirectory_arrow_right-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/subdirectory_arrow_right-200.svg");
+}
+
+.rd-icon-swap_horiz::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/swap_horiz-400.svg");
+}
+
+.rd-icon-swap_horiz-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/swap_horiz-200.svg");
+}
+
+.rd-icon-target::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/target-400.svg");
+}
+
+.rd-icon-target-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/target-200.svg");
+}
+
+.rd-icon-task_alt::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/task_alt-400.svg");
+}
+
+.rd-icon-task_alt-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/task_alt-200.svg");
+}
+
+.rd-icon-toggle_off::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/toggle_off-400.svg");
+}
+
+.rd-icon-toggle_off-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/toggle_off-200.svg");
+}
+
+.rd-icon-toggle_on::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/toggle_on-400.svg");
+}
+
+.rd-icon-toggle_on-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/toggle_on-200.svg");
+}
+
+.rd-icon-trending_down::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_down-400.svg");
+}
+
+.rd-icon-trending_down-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_down-200.svg");
+}
+
+.rd-icon-trending_up::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_up-400.svg");
+}
+
+.rd-icon-trending_up-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_up-200.svg");
+}
+
+.rd-icon-trip_origin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trip_origin-400.svg");
+}
+
+.rd-icon-trip_origin-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trip_origin-200.svg");
+}
+
+.rd-icon-tune::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/tune-400.svg");
+}
+
+.rd-icon-tune-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/tune-200.svg");
+}
+
+.rd-icon-visibility::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/visibility-400.svg");
+}
+
+.rd-icon-visibility-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/visibility-200.svg");
+}
+
+.rd-icon-warehouse::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/warehouse-400.svg");
+}
+
+.rd-icon-warehouse-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/warehouse-200.svg");
+}
+
+.rd-icon-warning::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/warning-400.svg");
+}
+
+.rd-icon-warning-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/warning-200.svg");
+}
+
+.rd-icon-waving_hand::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/waving_hand-400.svg");
+}
+
+.rd-icon-waving_hand-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/waving_hand-200.svg");
+}
+
 .cookie-notice {
   max-width: var(--site-max-width);
   display: block;
@@ -19753,23 +21137,19 @@ button.collapsible-trigger:hover {
 
 .collapsible-icon {
   display: inline-block;
-  position: relative;
-  top: 0.2em;
-  font-family: "Material Symbols Outlined", sans-serif;
-  font-size: inherit;
-  font-weight: normal;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  overflow-wrap: normal;
-  direction: ltr;
-  font-feature-settings: "liga";
-  -webkit-font-smoothing: antialiased;
 }
 .collapsible-icon::before, .collapsible-icon:hover::before {
-  content: "keyboard_arrow_down";
+  content: "";
+}
+.collapsible-icon::before {
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+  width: 1em;
+  height: 1em;
+  mask: no-repeat center/contain;
+  background-color: currentcolor;
+  mask-image: url("images/icons/keyboard_arrow_down-400.svg");
 }
 .collapsible-icon {
   text-decoration: none;
@@ -19862,7 +21242,6 @@ button.collapsible-trigger:hover {
   z-index: 2;
 }
 .carousel-arrow::before {
-  font-family: "Material Symbols Outlined", sans-serif;
   font-size: var(--font-size-xl);
   line-height: 1;
 }
@@ -19877,14 +21256,22 @@ button.collapsible-trigger:hover {
   left: var(--space-sm);
 }
 .carousel-arrow-prev::before {
-  content: "chevron_left";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/chevron_left-400.svg") no-repeat center/contain;
 }
 
 .carousel-arrow-next {
   right: var(--space-sm);
 }
 .carousel-arrow-next::before {
-  content: "chevron_right";
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/chevron_right-400.svg") no-repeat center/contain;
 }
 
 .carousel-dots {

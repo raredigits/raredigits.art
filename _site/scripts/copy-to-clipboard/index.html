@@ -6,8 +6,6 @@
     <title>Copy to Clipboard | Rare Digits Art</title>
 
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     
     <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
@@ -357,10 +355,10 @@
     <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
-    <span class="material-symbols-outlined">download</span>
+    <span class="rd-icon-download"></span>
     </p>
 </div>
-<p>This is a small utility that adds a “copy” <span class="material-symbols-outlined">content_copy</span> icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.</p>
+<p>This is a small utility that adds a “copy” <span class="rd-icon-content_copy"></span> icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.</p>
 <p>Click the icon, the data goes to the clipboard, the icon briefly turns into a checkmark, everyone is happy and moves on.</p>
 <p>The script doesn’t care about your layout, your CSS philosophy, or how deeply nested your markup is. It follows one simple rule: either you explicitly tell it what to copy, or you place it next to something marked as copyable.</p>
 <p>That’s the whole contract:</p>
@@ -498,7 +496,7 @@ Icons don’t copy things by positive thinking alone.</p>
 <p>Include it once per page, preferably near the end of the document or with defer.</p>
 <h2>Styling</h2>
 <p>Make it feel clickable, not decorative:<div class="code-block"></p>
-  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    font-family: &#34;Material Symbols Outlined&#34;;&#10;    position: relative;&#10;    top: 0.2em;&#10;    font-size: inherit;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;.copy-data-icon::before {&#10;    content: &#34;content_copy&#34;; /* default glyph — markup needs no data-icon */&#10;}&#10;&#10;.copy-data-icon[data-icon]::before {&#10;    content: attr(data-icon); /* the script sets data-icon=&#34;check&#34; on success */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* Optional: inverted icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon-inverted {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
+  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;/* The glyph is an SVG mask filled with currentcolor — ship the two SVGs&#10;   next to your CSS (Rare Styles bundles them under images/icons/) */&#10;.copy-data-icon::before {&#10;    content: &#34;&#34;;&#10;    display: inline-block;&#10;    position: relative;&#10;    top: 0.2em;&#10;    width: 1em;&#10;    height: 1em;&#10;    background-color: currentcolor;&#10;    mask: url(&#34;images/icons/content_copy-400.svg&#34;) no-repeat center / contain;&#10;}&#10;&#10;.copy-data-icon[data-icon=&#34;check&#34;]::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;); /* success glyph set by the script */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* Optional: inverted icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon-inverted {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
 <p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button></p>
 </div>
 <h3>Recoloring</h3>

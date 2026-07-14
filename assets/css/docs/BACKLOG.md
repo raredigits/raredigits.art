@@ -12,8 +12,8 @@ The destination is **`1.0.0` — a public, narrowly-positioned CSS library** (se
 | # | Waypoint | Why | Carried by | Status |
 |---|---|---|---|---|
 | 1 | **Own the runtime surface** — zero third-party requests in the shipped CSS | No render-blocking waterfalls, no Google dependency, stable long-term rendering for consumers | Self-hosted fonts (`v0.6.16` ✅) · scripts contract + `rd-` namespace (`v0.6.17` ✅) · library-owned SVG icon set (`v0.6.18` Icon Strategy — next) | in progress |
-| 2 | **Lean delivery** — consumers pay only for what they use | Observed reality (2026-07): consumers use 10–20% of the library, and `rare.css` is the main load bottleneck on their sites. The library must stop being the tax on its own ecosystem | Icon font → SVG (`v0.6.18`) · coverage measurement + downstream purge path + utility-matrix prune (`v0.6.19` Lean Delivery: `CSS-097` / `CSS-210` / `CSS-079`) · bundle budget (`CSS-T01.7`) | next |
-| 3 | **Own the distribution** — versioned, immutable delivery everywhere | Consumers pin versions and never break; the library is installable without touching our repos | CDN migration + Pages sunset (`v0.6.20`) · npm package + SRI (`CSS-T01` — parallel track, starts right after `v0.6.20`) | queued |
+| 2 | **Lean delivery** — consumers pay only for what they use | Observed reality (2026-07): consumers use 10–20% of the library, and `rare.css` is the main load bottleneck on their sites. The library must stop being the tax on its own ecosystem | Icon font → SVG (`v0.6.18`) · coverage measurement + downstream purge path + utility-matrix prune (`v0.6.19` Lean Delivery: `CSS-097` / `CSS-210` / `CSS-079`) · bundle budget (`CSS-T01.5`) | next |
+| 3 | **Own the distribution** — versioned, immutable delivery everywhere | Consumers pin versions and never break; the library is installable without touching our repos | CDN migration + Pages sunset (`v0.6.20`) · npm delivery (`v0.6.21`, `CSS-T01`) | queued |
 | 4 | **Stabilize & complete the core** — the two declared use cases work end-to-end | A trustworthy foundation: zero invalid CSS, real buttons/forms, a11y, semantic tokens. Story/Dashboard layouts are **harvested** from client projects where they are already nearly built, not designed from scratch | `v0.7.0` Interactive Core & `rd-` migration start · `v0.7.1` Stabilization · `v0.7.2` Data-View Primitives · `0.8.0` Layouts & Components Harvest · `0.8.1` Completeness (the `rd-` migration cuts gradually across `0.7.X`, `Q-11`) | planned |
 | 5 | **`1.0.0` — the API promise** | The semver commitment itself: freeze the public API, publish, stop breaking consumers | Slim `0.9.0` (identity docs, sibling integration, tagging, basic CI) → `1.0.0` | planned |
 
@@ -24,7 +24,9 @@ The destination is **`1.0.0` — a public, narrowly-positioned CSS library** (se
 
 Rule of thumb: a task that doesn't visibly serve one of these waypoints should be questioned before it is scheduled.
 
-> **Revision note (2026-07-13):** waypoints revised and the release plan reflowed in the same pass. Versions `v0.6.18` / `v0.6.19` / `v0.6.20` re-cut (Icon Strategy / Lean Delivery / CDN Migration & Pages Sunset); the old monolithic `0.8.0` split into `0.8.0` Layouts & Components Harvest + `0.8.1` Completeness; `0.9.0` slimmed; docs and maintainer infra moved to the **Continuous Tracks** section; `1.0.0` redefined as the API promise. Dissolved planning-stage milestones: Documentation Skeleton Pressure (→ `CSS-039`, docs track), Rare Digits Media Kit (→ `CSS-066`, parked).
+> **Revision note (2026-07-14):** the parallel `CSS-T01` distribution track is promoted to the concrete `v0.6.21` **npm Delivery** release immediately after `v0.6.20`. The package ships as `0.x`; npm availability does not imply the `1.0.0` API promise.
+>
+> **Earlier revision (2026-07-13):** waypoints revised and the release plan reflowed in the same pass. Versions `v0.6.18` / `v0.6.19` / `v0.6.20` re-cut (Icon Strategy / Lean Delivery / CDN Migration & Pages Sunset); the old monolithic `0.8.0` split into `0.8.0` Layouts & Components Harvest + `0.8.1` Completeness; `0.9.0` slimmed; docs and maintainer infra moved to the **Continuous Tracks** section; `1.0.0` redefined as the API promise. Dissolved planning-stage milestones: Documentation Skeleton Pressure (→ `CSS-039`, docs track), Rare Digits Media Kit (→ `CSS-066`, parked).
 
 ---
 
@@ -52,18 +54,19 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 - Release sequence re-cut on 2026-07-13 (waypoint revision) — see the revision note under Key milestones.
 - Then: `v0.6.18` — **Icon Strategy**: drop the Material Symbols font entirely (`CSS-095`), ship a library-owned SVG set (`CSS-096`).
 - Then: `v0.6.19` — **Lean Delivery**: consumer coverage measurement (`CSS-097`), downstream purge path with safelist contract (`CSS-210`), spacing-utility matrix prune (`CSS-079`).
-- Then: `v0.6.20` — **CDN Migration & Pages Sunset** (the scope previously numbered `v0.6.18`), with `CSS-T01` (npm + SRI) starting in parallel right after it.
+- Then: `v0.6.20` — **CDN Migration & Pages Sunset** (the scope previously numbered `v0.6.18`).
+- Then: `v0.6.21` — **npm Delivery**: publish `@raredigits/rare-styles@0.6.21`, with one release artifact feeding npm, GitHub Releases, jsDelivr and unpkg (`CSS-T01`).
 - Then: `v0.7.0` — **Interactive Core & `rd-` Migration Start** (number revived 2026-07-13; the original scope was consumed by `v0.6.17`): buttons and forms built `rd-`-native, semantic tokens + focus base as enablers, `rd-` slice map + slice 1. Per `Q-11` the migration is a **gradual cut across `0.7.X`** — each release migrates its slice.
 - Then: `v0.7.1` — stabilization (+ its `rd-` slice) → `v0.7.2` — **Data-View Primitives** (panel/stat/status/dense table/toolbar/alerts + dashboard example, pulled from `0.8.0`) → `0.8.0` Layouts & Components Harvest → `0.8.1` Completeness → slim `0.9.0` → `1.0.0`.
 - Shipped milestones (`v0.6.12` … `v0.6.17_1`) are archived at the bottom of this file, newest first — the roadmap above stays active-work-only.
-- The 2026-07-13 four-slice audit is fully routed (same day): bugs → `v0.6.17_2`; gaps → `CSS-118` (`v0.6.19`), `CSS-125..148` (`v0.7.1`), `CSS-156`/`CSS-159` (`v0.7.2`), `CSS-149`/`CSS-157`/`CSS-158`/`CSS-163` (`0.8.0`), `CSS-164..169` (`0.8.1`), `CSS-173`/`CSS-T01.8` (`0.9.0`/T01), `CSS-310..315` (post-1.0). Decisions recorded as `Q-07..Q-10` in Open Questions.
+- The 2026-07-13 four-slice audit is fully routed (same day): bugs → `v0.6.17_2`; gaps → `CSS-118` (`v0.6.19`), `CSS-125..148` (`v0.7.1`), `CSS-156`/`CSS-159` (`v0.7.2`), `CSS-149`/`CSS-157`/`CSS-158`/`CSS-163` (`0.8.0`), `CSS-164..169` (`0.8.1`), `CSS-173`/`CSS-T01.3` (`0.9.0`/`v0.6.21`), `CSS-310..315` (post-1.0). Decisions recorded as `Q-07..Q-10` in Open Questions.
 
 ---
 
 # Milestone `v0.6.17_2` — Audit Bug Patch
 
 **Goal:** clear the code-level defects surfaced by the 2026-07-13 four-slice audit. Strictly bugs and zero-render-change hygiene, per the `_1`/`_2` bug-fix release discipline — no features, no API additions. Everything larger from the audit was routed into the milestones below in the same planning pass (see the planning note).
-**Status:** ✅ shipped 2026-07-13 — all nine tasks done; side effect: `rare.css` 423.7 → 399.7 KB unminified (first time under the 400 KB `CSS-T01.7` budget), mostly from the invalid generated utilities removed with `CSS-098`. Details in [`Changelog.md`](./Changelog.md). Note on `CSS-106`: the audit's "global `td` leak" turned out to be a non-bug (Sass scopes every selector of a nested list) — landed as cosmetic cleanup, compiled output unchanged.
+**Status:** ✅ shipped 2026-07-13 — all nine tasks done; side effect: `rare.css` 423.7 → 399.7 KB unminified (first time under the 400 KB `CSS-T01.5` budget), mostly from the invalid generated utilities removed with `CSS-098`. Details in [`Changelog.md`](./Changelog.md). Note on `CSS-106`: the audit's "global `td` leak" turned out to be a non-bug (Sass scopes every selector of a nested list) — landed as cosmetic cleanup, compiled output unchanged.
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
@@ -97,6 +100,19 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 |---|---|---|---|---|
 | `CSS-095` | perf | **Drop Material Symbols support from the library.** Remove the Google `@import` (`_font-faces.scss`) and the `.material-symbols-outlined` / `symbol()` machinery once `CSS-096` ships the SVG replacements. No third-party icon font in the shipped `rare.css`. Coordinate the markup migration with `CSS-087`. | P1 | M |
 | `CSS-096` | feat | **Ship a limited SVG icon set with the library.** Package the icons actually used across the ecosystem as inline/`<use>`-able SVGs under `assets/css/images/icons/**` (same public-asset contract as the vendor logos). Scope decision from the 2026-07-13 inventory below: the **library-core** set (used by Rare Styles' own components + docs) is small and mandatory; the **consumer-app** icons (mostly `raredigits.io` marketing UI) stay app-owned — the library ships the shared/core set, sites supply their own extras. **License:** Material Symbols is Apache-2.0 — redistribution of a modified subset (extracted SVGs) is permitted; ship `assets/css/images/icons/LICENSE` (Apache-2.0) + an attribution line, mirroring the font-license pattern from `v0.6.16`. | P1 | L |
+| `CSS-119` | docs | **`/styles/icons/` documentation page — usage rules for the icon set.** First-pass page per the docs-audit policy: available glyph names (the shipped set), the one-class-per-icon markup API (`.rd-icon-<name>` / `.rd-icon-<name>-thin`), sizing (font-size drives the 1em mask box) and coloring (currentColor / tokens), the `icon()` / `icon-mask()` mixins for component-owned surfaces, and a user-facing "need an icon that isn't here?" path (Material Symbols font as a stopgap, Issue/PR to add it). The internal update pipeline (`scripts/fetch-icons.py` + `$icons`) stays in README/STYLEGUIDE, not the public page. Added 2026-07-14 by maintainer decision. | P1 | M |
+
+> **Scope note (2026-07-14, maintainer decisions at implementation):** the shipped set is **137 glyphs × 2 weights (200/400)** — every icon supports both, as static per-weight SVG cuts fetched by `scripts/fetch-icons.py` (updatable pipeline; instructions in `assets/css/images/icons/README.md`). Additions over the 2026-07-13 core list: `bookmark` + `info` (inventory gaps — the library's own `.sidenote-bookmark` and `.boilerplate` draw them); an extended maintainer-selected batch (`star`, `star_half`, `bookmark_star`, `flag_2`, `keep`, `flight`, `delete`, `recycling`, `login`, `logout`, `key`, `key_vertical`, `diamond`, `function`, `chess_knight`); and the **ecosystem batch** — every glyph `schnellreich.ru` (7 rendered) and `raredigits.io` (94 rendered — static markup, data-driven demo templates, YAML menu data, legacy `.material-icons` spans) uses that wasn't already in the set, promoted by maintainer decision (2026-07-14) **superseding the "consumer icons stay app-owned" half of the 2026-07-13 split**: one collection, one pipeline, sites host no icons of their own (the 2026-07-13 io inventory undercounted — live sweep found 75 unique glyphs there). Rendering technique: `mask-image` + `currentColor` (not inline `<use>`), so existing color tokens keep working and the public markup API is **one self-contained class per icon** (`.rd-icon-<name>` / `-thin`; the glyph name is the class — no `data-icon` attribute to learn), generated per glyph because CSS `attr()` can't feed `url()`. `data-icon` survives only as `copy-to-clipboard.js`'s internal success-swap channel. The icon mixins live in `decorations/_icons.scss` (maintainer decision; `utilities/_symbols.scss` is deleted). Side effects: the wght-200 sidenote markers are thin again (the `v0.6.17_1` static-font tradeoff is repaid); `CSS-087`'s markup sweep and the bare-selector drop are fully absorbed here; the dead `.sidebar-icon.material-symbols-outlined` rule (`_sidebar.scss`) removed.
+
+## Exit criteria
+
+- [ ] `rare.css` / `rare.min.css` make **zero third-party requests** (no Google `@import`; grep-clean of `fonts.googleapis`)
+- [ ] All 137 glyphs ship in both weights under `assets/css/images/icons/` with `LICENSE` (Apache-2.0) + `README.md` update instructions; `scripts/fetch-icons.py` regenerates the set
+- [ ] No `.material-symbols-outlined` in library CSS or site markup; `utilities/_symbols.scss` deleted; every icon surface (header, collapsible, carousel, sidenotes, boilerplate, copy button, section icons) renders from the SVG set
+- [ ] copy button's `content_copy` → `check` swap renders via the explicit `.copy-data-icon[data-icon="check"]` rule (the only surviving `data-icon` use)
+- [ ] `/styles/icons/` page published (`CSS-119`); typography-page icon section rewritten against the shipped reality
+- [ ] Downstream consumers (`schnellreich.ru`, `raredigits.io`) migrated in lockstep: markup on the `.rd-icon-<name>` class API (incl. `io` data-driven templates + YAML data + app-CSS selectors repointed to `[class*="rd-icon-"]`), jsDelivr pins bumped to `v0.6.18`; every rendered glyph cross-checked against the generated class set (both were version-pinned, so nothing breaks on sync; `io` additionally moves off the pre-contract script hooks its `v0.6.15` pin still used)
+- [ ] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt; bundle re-measured against the 400 KB budget (`CSS-T01.7`) with the delta explained
 
 ### Icon inventory (2026-07-13, across `raredigits.art` / `schnellreich.ru` / `raredigits.io`)
 
@@ -174,16 +190,16 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
-| `CSS-097` | perf | **Measure real selector coverage across consumers.** Instrument the three known consumers (raredigits.art, schnellreich.ru, raredigits.io): which selectors from `rare.css` actually match their DOM (coverage tooling or a PurgeCSS dry-run report per site). Output: a coverage table checked in next to this backlog, naming the heaviest unused selector families. Turns the "10–20% usage" observation into a prune target list for `CSS-079` and a baseline for the `CSS-T01.7` size budget. | P0 | S |
+| `CSS-097` | perf | **Measure real selector coverage across consumers.** Instrument the three known consumers (raredigits.art, schnellreich.ru, raredigits.io): which selectors from `rare.css` actually match their DOM (coverage tooling or a PurgeCSS dry-run report per site). Output: a coverage table checked in next to this backlog, naming the heaviest unused selector families. Turns the "10–20% usage" observation into a prune target list for `CSS-079` and a baseline for the `CSS-T01.5` size budget. | P0 | S |
 | `CSS-210` | perf | **Downstream purge path (moved from `0.9.0`, 2026-07-13).** PurgeCSS (or equivalent) recipe for the consuming site's build. Expected reduction: 308 KB → 15–30 KB. The library itself stays full; purge happens downstream. Must ship with a documented **safelist contract**: state classes toggled at runtime (`.rd-is-*`), JS hooks (`.rd-js-*`), Pagefind/search dynamic classes — anything the DOM only grows after load. Deliverables: a copy-paste config for Eleventy consumers + a short `/styles/` docs note. Applied to at least one real consumer as proof. | P0 | M |
-| `CSS-079` | perf | **Audit the generated spacing-utility matrix (moved from `v0.7.1`, 2026-07-13).** `_spacing.scss` emits 24 property families × 30 `$spaces` values × (base + 3 breakpoints) ≈ 2 900 selectors; `rare.css` is 406 KB unminified — already over the 400 KB budget set in `CSS-T01.7`, and this matrix is the main driver. Define the intentional property×value matrix (percentages and `auto` make no sense for several families — see `CSS-049` for the invalid-CSS slice), prune the generators, re-measure the bundle. Informed by the `CSS-097` coverage data. Prune candidates from the 2026-07-13 audit: the idiosyncratic `.air-*` spacer family, percentage paddings, `*-auto` in families where `auto` is meaningless. Coordinates with `CSS-136` / `CSS-137`. | P1 | M |
+| `CSS-079` | perf | **Audit the generated spacing-utility matrix (moved from `v0.7.1`, 2026-07-13).** `_spacing.scss` emits 24 property families × 30 `$spaces` values × (base + 3 breakpoints) ≈ 2 900 selectors; `rare.css` is 406 KB unminified — already over the 400 KB budget set in `CSS-T01.5`, and this matrix is the main driver. Define the intentional property×value matrix (percentages and `auto` make no sense for several families — see `CSS-049` for the invalid-CSS slice), prune the generators, re-measure the bundle. Informed by the `CSS-097` coverage data. Prune candidates from the 2026-07-13 audit: the idiosyncratic `.air-*` spacer family, percentage paddings, `*-auto` in families where `auto` is meaningless. Coordinates with `CSS-136` / `CSS-137`. | P1 | M |
 | `CSS-118` | dx | **Compiled-CSS smoke test.** All 15 vitest files test chart JS; the CSS half has zero tests. Add a cheap build-level test: `rare.css` compiles, key tokens are present, responsive alias classes carry no `\\:` regression (the `CSS-027` class of bugs), and gap utilities resolve to the right tokens (guards the `CSS-098` fix while `CSS-079` prunes the matrix). Cheaper near-term complement to `CSS-218`. | P1 | S |
 
 ## Exit criteria
 
 - [ ] Coverage report exists for all three known consumers; the heaviest unused selector families are named
 - [ ] A documented, copy-pasteable purge recipe (incl. the `.rd-is-*` / `.rd-js-*` safelist contract) is applied on at least one real consumer with measured before/after numbers
-- [ ] The spacing-utility matrix is pruned to an intentional property×value set; the bundle is re-measured against the 400 KB unminified budget (`CSS-T01.7`)
+- [ ] The spacing-utility matrix is pruned to an intentional property×value set; the bundle is re-measured against the 400 KB unminified budget (`CSS-T01.5`)
 - [ ] The compiled-CSS smoke test runs in `npm test` and guards the prune (alias classes, gap tokens, key custom properties)
 - [ ] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`
 
@@ -191,7 +207,7 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 # Milestone `v0.6.20` — CDN Migration & Pages Sunset Prep
 
-**Goal:** move docs, examples, and known consumers off mutable GitHub Pages asset URLs onto versioned jsDelivr targets, then clear the path for unpublishing the Pages surface and cleaning up its repository leftovers. Renumbered from `v0.6.18` on 2026-07-13; `CSS-T00` (the consumer-migration umbrella from `v0.7.1` Distribution hygiene) is consolidated here. `CSS-T01` (npm + SRI) starts in parallel once this ships.
+**Goal:** move docs, examples, and known consumers off mutable GitHub Pages asset URLs onto versioned jsDelivr targets, then clear the path for unpublishing the Pages surface and cleaning up its repository leftovers. Renumbered from `v0.6.18` on 2026-07-13; `CSS-T00` (the consumer-migration umbrella from `v0.7.1` Distribution hygiene) is consolidated here. Its completion unlocks the `v0.6.21` npm delivery release (`CSS-T01`).
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
@@ -212,20 +228,44 @@ Rule of thumb: if you change a module's code in `v0.7.0` or `v0.8.0`, you also w
 
 ---
 
-# Dedicated Track — `CSS-T01` Public Distribution (CDN + npm)
+# Milestone `v0.6.21` — npm Delivery
 
-Parallel track, re-anchored on 2026-07-13: starts as soon as `v0.6.20` (CDN Migration & Pages Sunset) ships — the npm package and SRI depend on distribution surfaces, not on `0.7.x` / `0.8.x` feature work. Treated as a single deliverable so distribution does not block feature work.
+**Goal:** make Rare Styles installable as `@raredigits/rare-styles@0.6.21` without turning the `raredigits.art` site package into the library package. `raredigits.art` remains the canonical source; `raredigits/rare-styles` remains the clean distribution repository. One immutable build artifact must feed npm, the GitHub tag/Release, jsDelivr and unpkg so the same version cannot resolve to different bytes on different channels.
 
-| ID | Type | Task | Estimate |
-|---|---|---|---|
-| `CSS-T01.1` | feat | Define `dist/` layout: `dist/rare.css`, `dist/rare.min.css`, `dist/rare.css.map`, `dist/rare.min.css.map`, plus per-module SCSS sources under `dist/scss/`. | S |
-| `CSS-T01.2` | feat | npm package **`@raredigits/rare-styles`** (matches the canonical library name). Set `main`, `style`, `sass`, `exports` fields. Mark `dist/` as the only published path via `files`. The compiled file stays `rare.css` / `rare.min.css` for continuity with existing consumers. | M |
-| `CSS-T01.3` | feat | GitHub Release pipeline: tag → build → publish to npm → push tag (jsDelivr/unpkg pick it up automatically). | M |
-| `CSS-T01.4` | docs | Install instructions for three flavors: `<link>` from jsDelivr, `npm install`, `@use` from SCSS source. Add to `README.md`. | S |
-| `CSS-T01.5` | feat | Subresource Integrity (SRI) hashes published with each release for the CDN flavor. | S |
-| `CSS-T01.6` | feat | `package.json` peerDependencies / engines: declare Node version, mark sass as a peer for source consumers. | S |
-| `CSS-T01.7` | dx | Pre-publish checks: `npm pack --dry-run` size budget (warn over 400 KB unminified), license check, no `node_modules` leakage. | S |
-| `CSS-T01.8` | dx | **Single-source the styles version** (audit 2026-07-13): `_data/versions.js` is a manual string while charts already solved this with `version.json` — one source feeding the site, `package.json`, and the release pipeline. Pairs with `CSS-117`. | S |
+**Scope rule:** this is a delivery release, not an API-stability release. It may package the existing public CSS/SCSS/assets contract and improve release infrastructure; it must not introduce new selectors, rename public API, or bundle the companion scripts. npm ships the library at `0.x`; the `1.0.0` semver promise remains a later milestone.
+
+**Depends on:** `v0.6.20` complete; legacy Pages delivery retired; canonical CDN paths and the `rare-styles` distribution repository verified. Before implementation, verify ownership/availability of the `@raredigits` npm scope and package name.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-T01.1` | feat | **Define the package artifact and build it reproducibly.** Add a clean staging/build command that creates `dist/rare.css`, `dist/rare.min.css`, source maps, `dist/scss/**`, `dist/fonts/**`, `dist/images/**`, plus the package metadata/docs required at the package root. Preserve package-local relative asset URLs. The command must start from a clean staging directory so removed source files cannot survive in a release. | P0 | M |
+| `CSS-T01.2` | feat | **Create the public manifest for `@raredigits/rare-styles`.** Keep the site root package private; generate or maintain a separate distribution `package.json` with `style`, `sass`, explicit `exports`, `files`, `sideEffects` for CSS, `license`, `repository`, `engines`, Sass peer dependency metadata, and `publishConfig.access: public`. Support the documented root CSS import, explicit minified CSS import, and SCSS entry point; do not advertise a nonexistent JavaScript `main`. | P0 | M |
+| `CSS-T01.3` | dx | **Single-source the styles version.** Add a styles `version.json` analogous to Rare Charts; derive `_data/versions.js`, the distribution manifest, banners, tag and release title from it. Validate exact mapping between npm `0.6.21` and git/CDN tag `v0.6.21`; fail the release on version drift or an already-published version. Supersedes the old placement of `CSS-T01.8`. | P0 | S |
+| `CSS-T01.4` | feat | **Replace the mutable CSS sync with a release-gated pipeline.** On a new version: install from lockfile, lint, test, build, assemble the clean package, validate it, sync the exact artifact to `raredigits/rare-styles`, commit/tag `v0.6.21`, create the GitHub Release, then publish that same artifact to npm. Normal `main` pushes between version bumps must not alter consumer-visible distribution. Use npm trusted publishing/OIDC with provenance if the registry/account supports it; otherwise use a narrowly scoped automation token. | P0 | L |
+| `CSS-T01.5` | dx | **Verify the packed consumer experience before publish.** Run `npm pack --dry-run`, inspect the allowlisted file inventory, enforce no `node_modules`/site/Eleventy/chart leakage, check license and asset presence, and keep the unminified CSS warning budget at 400 KB. Install the generated `.tgz` into a temporary fixture and compile both `import "@raredigits/rare-styles"` and `@use "@raredigits/rare-styles/scss"`; verify referenced fonts/images resolve from the installed package. | P0 | M |
+| `CSS-T01.6` | docs | **Document the three supported installation paths.** README and `/styles/usage/`: versioned jsDelivr `<link>`, `npm install @raredigits/rare-styles`, and Sass `@use`. State that `0.x` may contain breaking changes, recommend exact version pins, document exported subpaths/assets, and keep companion scripts explicitly separate. | P1 | S |
+| `CSS-T01.7` | feat | **Publish integrity metadata for the browser/CDN flavor.** Generate SHA-384 SRI values for `rare.css` and `rare.min.css` from the final artifact and attach them to the GitHub Release (and documentation where maintainable). The hash must be computed after the final build, from the exact bytes published. | P1 | S |
+| `CSS-T01.8` | chore | **Run a `0.6.21` release rehearsal, then publish.** Exercise the pipeline without registry mutation, inspect the tarball and release notes, then publish the real version. Verify from a clean external fixture that npm install, root CSS import, minified subpath, SCSS compilation, npm metadata, GitHub tag/Release, jsDelivr and unpkg all resolve to `0.6.21`; record hashes/URLs and add the release entry to `Changelog.md`. | P0 | M |
+
+## Release order
+
+1. Package boundary and single-source version (`CSS-T01.1`–`.3`).
+2. Pack/install verification and documentation (`CSS-T01.5`–`.7`).
+3. Release-gated automation (`CSS-T01.4`).
+4. Dry rehearsal, real publication and cross-channel verification (`CSS-T01.8`).
+
+## Exit criteria
+
+- [ ] `npm install @raredigits/rare-styles@0.6.21` works in a clean project
+- [ ] Root CSS, explicit minified CSS and SCSS `@use` entry points are covered by fixture tests
+- [ ] Fonts, images and source maps referenced by the package resolve without site-root assumptions
+- [ ] The npm tarball contains only the intentional library artifact, metadata, documentation and licenses; no site/build/chart leakage
+- [ ] `raredigits.art` remains `private: true`; the public manifest belongs only to the distribution artifact
+- [ ] One version source drives docs, manifest, tag and pipeline; npm `0.6.21` maps to git/CDN `v0.6.21`
+- [ ] Ordinary `main` pushes cannot mutate released distribution; only a new version triggers a release
+- [ ] npm, GitHub Release, jsDelivr and unpkg serve the same final CSS bytes; SHA-384 values are recorded
+- [ ] Install docs cover CDN, npm and SCSS, exact pins, `0.x` compatibility expectations and separate companion scripts
+- [ ] `npm run lint:css`, `npm run test:run`, CSS build and the packed-fixture smoke test pass in CI
 
 ---
 
@@ -233,7 +273,7 @@ Parallel track, re-anchored on 2026-07-13: starts as soon as `v0.6.20` (CDN Migr
 
 **Goal:** start the `rd-` era. The phased namespace migration begins (`CSS-133`: slice map + slice 1, with `CSS-141`), and the two biggest functional holes in the library — a real button system and form elements — are built **`rd-`-native in the same release**, so new API never ships under old names and never needs a second migration. Semantic color tokens and the accessibility/focus base land here as enablers: button and form states consume both. **Breaking (slice-sized)**; per decision `Q-11` the migration proceeds as a gradual cut across the `0.7.X` series — each release migrates its module-group slice and removes the old names in the same release.
 
-**Version-number note:** `v0.7.0` was retired on 2026-07-12 when its original scope (Namespace Foundations, `CSS-060..063`) was consumed by `v0.6.17`. Revived by maintainer decision on 2026-07-13 for the release series that completes the namespace story — the number returns to its original theme. Sequence: `v0.6.20` → `v0.7.0` → `v0.7.1` → `v0.7.2` → …
+**Version-number note:** `v0.7.0` was retired on 2026-07-12 when its original scope (Namespace Foundations, `CSS-060..063`) was consumed by `v0.6.17`. Revived by maintainer decision on 2026-07-13 for the release series that completes the namespace story — the number returns to its original theme. Sequence: `v0.6.20` → `v0.6.21` → `v0.7.0` → `v0.7.1` → `v0.7.2` → …
 
 ## Namespace migration (P0)
 
@@ -303,7 +343,7 @@ Per the docs-audit policy: buttons and forms are documented in the milestone tha
 | `CSS-023` | chore | Sweep low-risk Stylelint cleanup that is mostly mechanical: modern `rgb(... / ... )` notation, alpha percentages, hex shortening, empty-line normalization, operator spacing, argumentless mixin call style. | M |
 | `CSS-024` | chore | Triage duplicate/dead declarations reported by Stylelint and either remove them or document intent: `_icons.scss`, `_tags.scss`, `_header-container.scss`, `_grid.scss`, `_sidenotes.scss`. Note: `_icons.scss` was already simplified in `v0.6.16` (legacy Material Icons selectors removed) and `_sidenotes.scss` touched (marker `font-variation-settings`) — re-triage those two against their current state. | S |
 | `CSS-025` | chore | Clean up module hygiene issues reported by Stylelint: `@forward` without `.scss` extension in `navigation/_index.scss`, decide whether empty `special/_rare.scss` should be removed or kept as an intentional staging file. Audit 2026-07-13 adds: `utilities/_index.scss` forwards only display+resets while breakpoints/states/symbols are wired ad hoc elsewhere — make "utilities" one coherent forwarding surface. | S |
-| `CSS-087` | chore | **Migrate remaining markup off the vendor `.material-symbols-outlined` class.** `v0.6.17` introduced the `symbol()` mixin (`utilities/_symbols.scss`) and absorbed the icon font into the script-surface classes (`.hamburger__icon-*`, `.collapsible-icon`, `.icon-search`, `.copy-data-icon`); markup there is now vendor-free (`<span class="hamburger__icon-menu"></span>`). This task finishes the job: sweep the remaining ~30 usages (`.section-icon`, `.remark`, `.sidebar-icon`, download links, `construction-notice.njk`, docs pages), give each surface a component class with a baked or `data-icon` glyph, then decide whether the bare `.material-symbols-outlined` selector block in `_icons.scss` can be dropped. Coordinate with `CSS-024` (icons re-triage). | M |
+| `CSS-087` | chore | ~~**Migrate remaining markup off the vendor `.material-symbols-outlined` class.**~~ **Closed 2026-07-14 — fully absorbed by `v0.6.18` (Icon Strategy):** the sweep of the remaining markup usages, the per-surface migration to the `.rd-icon-<name>` class API, the bare `.material-symbols-outlined` selector drop, and the dead `.sidebar-icon` rule removal all shipped there. Nothing remains. | M |
 | `CSS-026` | chore | Audit the floating WhatsApp/contact button pattern as a reusable library primitive. Keep it in the library if it is genuinely cross-project, but clarify whether the API is brand-specific (`wa`) or a more general floating contact / floating action pattern. | S |
 
 ## Performance (P1)
@@ -617,7 +657,7 @@ The CSS library lives next to two siblings: `scripts/` (collapsible, cookies, co
 |---|---|---|---|
 | `CSS-211` | feat | Tag releases in git (`v0.6.12`, `v0.6.13`, `v0.7.0`, `v0.8.0`, `v0.9.0`). Use semver strictly. | S |
 | `CSS-213` | feat | Validate source maps shipped with `rare.min.css`. | S |
-| `CSS-250` | feat | **CDN + npm package** — see the dedicated `CSS-T01` track (anchored after `v0.6.20` since 2026-07-13). | L |
+| `CSS-250` | feat | **CDN + npm package** — see the `v0.6.21` npm Delivery milestone (`CSS-T01`), immediately after `v0.6.20`. | L |
 
 ## Build / performance (P0)
 
@@ -802,13 +842,13 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.6.18` | Icon Strategy | Drop the Material Symbols icon font; ship a library-owned SVG icon set with Apache-2.0 attribution (`CSS-095` / `CSS-096`) |
 | `v0.6.19` | Lean Delivery | Consumer coverage measurement (`CSS-097`), downstream purge path with the `.rd-is-*`/`.rd-js-*` safelist contract (`CSS-210`), spacing-utility matrix prune (`CSS-079`) |
 | `v0.6.20` | CDN Migration & Pages Sunset Prep | Move docs/examples and downstream consumers off GitHub Pages URLs to versioned jsDelivr targets (`CSS-T00` umbrella included), then clear the path for Pages unpublish and legacy cleanup |
+| `v0.6.21` | npm Delivery | Publish `@raredigits/rare-styles@0.6.21` from a clean, tested package artifact; one release-gated pipeline feeds npm, GitHub Releases, jsDelivr and unpkg (`CSS-T01`) |
 | `v0.7.0` | Interactive Core & `rd-` Migration Start | **Breaking (slice 1).** `rd-` slice map + first migration slice (`CSS-133`/`CSS-141`, gradual cut per `Q-11`), button system (`CSS-040..046`) and forms (`CSS-100..105`) built `rd-`-native, semantic tokens (`CSS-121`/`CSS-124`) + focus base (`CSS-110`/`CSS-111`) as enablers. (Number revived 2026-07-13; the original Namespace Foundations scope was consumed by `v0.6.17` — see archive) |
 | `v0.7.1` | Stabilization | Search tooling overhaul, quality-infra cleanup, remaining stabilization work after the `v0.7.0` breaking pass, plus its `rd-` migration slice; audit additions (2026-07-13): typographic/utility finishing (`CSS-125..146`) and the library-boundary pass (`CSS-147`/`CSS-148`) |
 | `v0.7.2` | Data-View Primitives | Minimal data-view core pulled from `0.8.0` (2026-07-13): panel family (`CSS-180..183a`), stat (`CSS-184`), dense table (`CSS-185`), status/badges (`CSS-186`), toolbar (`CSS-187`), alert variants (`CSS-156`), dashboard example (`CSS-159`); plus its `rd-` migration slice and the extended-set candidates (`CSS-174..178`: meter/progress, sparkline container, chart-token slice, delta chip, legend — P2, triage at release cut) |
 | `0.8.0` | Layouts & Components Harvest | Harvest `.layout-story` / `.layout-dashboard` and the remaining components (app-shell, tabs, TOC, card variants, skeleton — `CSS-188`, `CSS-149`/`CSS-157`/`CSS-158`/`CSS-163`) from client projects, plus its `rd-` migration slice; data-view primitives moved earlier, to `v0.7.2` |
 | `0.8.1` | Completeness: A11y & Architecture | A11y batch, surface/motion tokens, `@layer`, logical properties; audit additions (2026-07-13): fluid type, footnotes, table completeness, print, contrast modes, dark-ready tokens (`CSS-164..169`); forms and namespace finalization moved to `v0.7.0` |
 | `0.9.0` | Release Prep (slim) | Identity docs (README / STYLEGUIDE / CONTRIBUTING / LICENSE / THEMING), demo page, scripts/charts integration, tagging + basic CI — docs site and token pipeline moved to Continuous Tracks |
-| `CSS-T01` | (parallel, from `v0.6.20`) | CDN + npm distribution |
 | `1.0.0` | Public Release | Stable public API |
 
 ---

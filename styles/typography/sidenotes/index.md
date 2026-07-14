@@ -49,14 +49,18 @@ permalink: '/styles/typography/sidenotes/'
     </div>
 </div>
 
-The system is extensible—you can create your own sidenote types by adding custom selectors to your styles. Simply define a new class with a <code>::before</code> pseudo-element and specify any Material Icons name:
+The system is extensible—you can create your own sidenote types by adding custom selectors to your styles. Simply define a new class with a <code>::before</code> pseudo-element and mask any icon from the shipped SVG set (or your own SVG):
 
 <div class="text-content-width"><pre><code>.sidenote-memory::before {
-content: "cognition";
+content: "";
+width: 1em;
+height: 1em;
+background-color: currentcolor;
+mask: url("images/icons/cognition-200.svg") no-repeat center / contain;
 }
 </code></pre></div>
 <div class="sidenote-wrapper">
-    <p>This opens the door to domain-specific marginalia: <code>.sidenote-warning</code> for caveats, <code>.sidenote-experiment</code> for research notes, <code>.sidenote-coffee</code> for productivity tips that require caffeine. The only limit is your imagination and Google’s Material Icons library.</p>
+    <p>This opens the door to domain-specific marginalia: <code>.sidenote-warning</code> for caveats, <code>.sidenote-experiment</code> for research notes, <code>.sidenote-coffee</code> for productivity tips that require caffeine. The only limit is your imagination — and the set you ship: any Material Symbols glyph can be added via <code>scripts/fetch-icons.py</code> (see the <a href="/styles/icons/">Icons</a> page).</p>
     <div class="sidenote sidenote-memory">
         <p><strong>Memory Activation:</strong> Remember <a href="/manifesto/principles/">Rareism principles</a>. Just because you <em>can</em> create custom sidenote types doesn’t mean you <em>should</em> turn your margins into an icon bazaar.</p>
     </div>
@@ -65,12 +69,11 @@ content: "cognition";
 </section>
 
 <pre class="text-content-width">
-<code><span class="code-comment">// assets/css/modules/typography/_text-content.scss</span>
+<code><span class="code-comment">// assets/css/modules/typography/_sidenotes.scss</span>
 .sidenote-attach::before,
 .sidenote-link::before,
 .sidenote-bulb::before,
 .sidenote-memory::before {
-font-family: "Material Symbols Outlined";
 font-size: var(--font-size-lg);
 position: absolute;
 top: -8px;

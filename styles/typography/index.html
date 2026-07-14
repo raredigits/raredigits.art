@@ -64,7 +64,7 @@ permalink: '/styles/typography/'
 <p>There are tons of different standards and approaches to typography and fonts selection. This system sticks to the simplest one: <em>Content is king</em>.</p>
 <div class="card collapsible-container">
     <p>
-        <span class="section-icon material-symbols-outlined">description</span>
+        <span class="section-icon rd-icon-description"></span>
         <button class="collapsible-trigger rd-js-collapsible" aria-controls="typeface-101">There’s a solid write-up on this in 101<span class="collapsible-icon"></span></button>
     </p>
     <div id="typeface-101" class="collapsible-content rd-js-collapsible-content">
@@ -198,7 +198,7 @@ permalink: '/styles/typography/'
                 <span class="meta-info">
                     Google Fonts:
                     <a href="https://fonts.google.com/specimen/Fira+Sans/tester">Type tester</a>
-                    <span class="material-symbols-outlined">open_in_new</span>
+                    <span class="rd-icon-open_in_new"></span>
                 </span>
             </td>
             <td class="left">
@@ -212,7 +212,7 @@ permalink: '/styles/typography/'
                 <span class="meta-info">
                     Google Fonts:
                     <a href="https://fonts.google.com/specimen/Playfair+Display/tester">Type tester</a>
-                    <span class="material-symbols-outlined">open_in_new</span>
+                    <span class="rd-icon-open_in_new"></span>
                 </span>
             </td>
             <td class="left">
@@ -226,7 +226,7 @@ permalink: '/styles/typography/'
                 <span class="meta-info">
                     Google Fonts:
                     <a href="https://fonts.google.com/specimen/Cousine/tester">Type tester</a>
-                    <span class="material-symbols-outlined">open_in_new</span>
+                    <span class="rd-icon-open_in_new"></span>
                 </span>
             </td>
             <td class="left">
@@ -240,7 +240,7 @@ permalink: '/styles/typography/'
                 <span class="meta-info">
                     Google Fonts:
                     <a href="https://fonts.google.com/specimen/Caveat/tester">Type tester</a>
-                    <span class="material-symbols-outlined">open_in_new</span>
+                    <span class="rd-icon-open_in_new"></span>
                 </span>
             </td>
             <td class="left">
@@ -250,46 +250,40 @@ permalink: '/styles/typography/'
         </tr>
     </table>
     <div class="caption">
-        <span class="material-symbols-outlined">bolt</span>
+        <span class="rd-icon-bolt"></span>
         <strong>These four families are self-hosted.</strong> They ship with the library as subsetted <code>woff2</code> instead of being pulled from Google Fonts. Self-hosting removes the render-blocking <code>@import</code> waterfall — the browser no longer has to fetch the CSS, discover the imports, and only then reach out to a second origin for the fonts — so first paint arrives sooner. Building on Rare Styles? Do the same for any fonts you add: self-host the exact weights and scripts you use, serve them from the same origin as your CSS, and keep <code>font-display: swap</code>. It beats importing from a font CDN every time.
     </div>
 </section>
 
 <section>
-    <h3>Iconography: Material Symbols</h3>
+    <h3>Iconography: the Rare Styles icon set</h3>
     <p>
-        Every icon in the system is a glyph from
+        Icons are no longer a font. The library ships its own SVG icon set — static cuts of
         <a href="https://fonts.google.com/icons">Material Symbols Outlined</a>
-        <span class="material-symbols-outlined">open_in_new</span>,
-        rendered through the <code>.material-symbols-outlined</code> class. Unlike the text families above, the icon font stays loaded from Google Fonts — but as a <em>single</em> scoped request, not the old three-family import. The legacy <code>.material-icons</code> and <code>.material-icons-outlined</code> classes are no longer part of the library; use <code>.material-symbols-outlined</code> with a verified icon name.
+        <span class="rd-icon-open_in_new"></span> — self-hosted alongside the stylesheet and drawn via CSS masks, so an icon inherits its color from the surrounding text like any glyph would. No Google request, no icon-font download, no flash of raw ligature text. The vendor <code>.material-symbols-outlined</code> class is gone; each icon is placed with a single <code>.rd-icon-&lt;name&gt;</code> class.
     </p>
-    <p>The import is trimmed to the two axis weights the system actually uses:</p>
+    <p>Every icon ships in the two weights the system uses:</p>
     <table>
         <tr>
             <td class="top">
-                <p class="bold"><span class="material-symbols-outlined">search</span> Weight 400 — default</p>
+                <p class="bold"><span class="rd-icon-search"></span> Weight 400 — default</p>
             </td>
             <td class="left">
-                <p>Interface icons such as <code>search</code>, <code>menu</code>, <code>close</code>, and section markers. Applied with a plain <code>.material-symbols-outlined</code> — no extra setup.</p>
+                <p>Interface icons such as <code>search</code>, <code>menu</code>, <code>close</code>, and section markers: <code>&lt;span class="rd-icon-search"&gt;&lt;/span&gt;</code>.</p>
             </td>
         </tr>
         <tr>
             <td class="top">
-                <p class="bold"><span class="material-symbols-outlined" style="font-variation-settings: 'wght' 200;">arrow_outward</span> Weight 200 — thin</p>
+                <p class="bold"><span class="rd-icon-arrow_outward-thin"></span> Weight 200 — thin</p>
             </td>
             <td class="left">
-                <p>Quiet margin-note markers on sidenotes and remarks, set with <code>font-variation-settings: 'wght' 200</code> so the mark reads lighter than the surrounding UI icons.</p>
+                <p>Quiet margin-note markers on sidenotes and remarks. Add the <code>-thin</code> suffix (<code>.rd-icon-arrow_outward-thin</code>) to switch an icon to the light cut, so the mark reads lighter than the surrounding UI icons.</p>
             </td>
         </tr>
     </table>
     <p>
-        Since the icon font stays on Google, warm the connection instead of preloading it. Unlike the self-hosted text fonts — which you <code>preload</code> from your own origin — the Material Symbols <code>woff2</code> lives on <code>fonts.gstatic.com</code> under a content-hashed URL that can’t be preloaded stably. The right lever is a <code>preconnect</code> in your <code>&lt;head&gt;</code>, which strips the DNS/TCP/TLS latency off the icon-font chain (and, under <code>display: block</code>, shortens how long icons stay invisible):
+        The full rules — available names, sizing, coloring, and how components bake their own glyphs — live on the <a href="/styles/icons/">Icons</a> page.
     </p>
-    <pre>
-<code><span class="code-comment">&lt;!-- once, in the document head --&gt;</span>
-&lt;link rel="preconnect" href="https://fonts.googleapis.com"&gt;
-&lt;link rel="preconnect" href="https://fonts.gstatic.com" crossorigin&gt;</code>
-</pre>
 </section>
 
 <section>

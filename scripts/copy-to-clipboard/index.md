@@ -12,11 +12,11 @@ permalink: '/scripts/copy-to-clipboard/'
     <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
-    <span class="material-symbols-outlined">download</span>
+    <span class="rd-icon-download"></span>
     </p>
 </div>
 
-This is a small utility that adds a “copy” <span class="material-symbols-outlined">content_copy</span> icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.
+This is a small utility that adds a “copy” <span class="rd-icon-content_copy"></span> icon next to things people actually want to copy. Links. Addresses. Code snippets. Anything.
 
 Click the icon, the data goes to the clipboard, the icon briefly turns into a checkmark, everyone is happy and moves on.
 
@@ -197,10 +197,6 @@ Make it feel clickable, not decorative:
 {%- capture cssSnippet -%}
 .copy-data-icon {
     display: inline-block;
-    font-family: "Material Symbols Outlined";
-    position: relative;
-    top: 0.2em;
-    font-size: inherit;
     line-height: inherit;
     background: none;
     color: var(--copy-icon-color, var(--text-color-light));
@@ -209,12 +205,21 @@ Make it feel clickable, not decorative:
     cursor: pointer;
 }
 
+/* The glyph is an SVG mask filled with currentcolor — ship the two SVGs
+   next to your CSS (Rare Styles bundles them under images/icons/) */
 .copy-data-icon::before {
-    content: "content_copy"; /* default glyph — markup needs no data-icon */
+    content: "";
+    display: inline-block;
+    position: relative;
+    top: 0.2em;
+    width: 1em;
+    height: 1em;
+    background-color: currentcolor;
+    mask: url("images/icons/content_copy-400.svg") no-repeat center / contain;
 }
 
-.copy-data-icon[data-icon]::before {
-    content: attr(data-icon); /* the script sets data-icon="check" on success */
+.copy-data-icon[data-icon="check"]::before {
+    mask-image: url("images/icons/check-400.svg"); /* success glyph set by the script */
 }
 
 .copy-data-icon:hover {

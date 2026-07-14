@@ -1,4 +1,5 @@
 @use "../utilities/breakpoints" as *;
+@use "../decorations/icons" as ico;
 
 @mixin outdent {
     margin-left: calc(-1 * var(--space-lg));
@@ -367,7 +368,7 @@ pre code {
 // A muted text-notes / news block set off from the main prose by a top rule and
 // an `info` marker. Structural contract: a `.boilerplate` container holding one
 // or more `<p>` elements; the first-line `info` glyph is drawn on each `<p>`
-// via `::before` and depends on the canonical Material Symbols Outlined family.
+// via `::before` as a mask box (decorations/_icons.scss).
 // (Harvested from sibling projects in v0.6.15, CSS-059.)
 
 .boilerplate {
@@ -384,15 +385,12 @@ pre code {
     }
 
     p::before {
+        @include ico.icon-mask("info");
+
         position: absolute;
         top: -0.2em;
         left: -1.2em;
-
-        // Icon font — no generic family applies.
-        // stylelint-disable-next-line font-family-no-missing-generic-family-keyword
-        font-family: 'Material Symbols Outlined';
         font-size: var(--font-size-lg);
         vertical-align: middle;
-        content: 'info';
     }
 }

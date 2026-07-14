@@ -10,7 +10,7 @@ permalink: '/scripts/collapsible/'
 js/collapsible.js<br>
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/collapsible.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 
@@ -56,7 +56,7 @@ For cases requiring more complex behavior or specific design patterns that go 
 
 <div class="card collapsible-container">
     <p>
-        <span class="section-icon material-symbols-outlined">code</span>
+        <span class="section-icon rd-icon-code"></span>
         <button class="collapsible-trigger rd-js-collapsible" aria-controls="collapsible-demo">Implementation Example<span class="collapsible-icon"></span></button>
     </p>
     <div id="collapsible-demo" class="collapsible-content rd-js-collapsible-content">
@@ -130,16 +130,22 @@ The script resolves the content element in three ways, in order: explicit `ari
     <button class="copy-data-icon rd-js-copy" title="Copy setup" data-icon="content_copy" data-copy-target="#snippet-collapsible-4"></button>
 </div>
 
-Note: The `.collapsible-icon` element is optional, and it is **empty on purpose** — the arrow glyph is baked into the class by CSS (Material Symbols ligature via `: before`), so markup carries no vendor icon class and no ligature text. The script never swaps icon glyphs — the open state rotates the icon via CSS (`[aria-expanded="true"].collapsible-icon`). Standalone users need:
+Note: The `.collapsible-icon` element is optional, and it is **empty on purpose** — the arrow glyph is baked into the class by CSS (an SVG mask drawn on `::before`), so markup carries no icon class and no icon text. The script never swaps icon glyphs — the open state rotates the icon via CSS (`[aria-expanded="true"] .collapsible-icon`). Standalone users need the arrow SVG (Rare Styles bundles it under `images/icons/`) plus:
 
 {% capture collapsibleIconCss %}
 .collapsible-icon {
   display: inline-block;
-  font-family: "Material Symbols Outlined";
   transition: transform 0.2s ease;
 }
 
-.collapsible-icon::before { content: "keyboard_arrow_down"; }
+.collapsible-icon::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/keyboard_arrow_down-400.svg") no-repeat center / contain;
+}
 
 .collapsible-trigger[aria-expanded="true"] .collapsible-icon {
   transform: rotate(180deg);

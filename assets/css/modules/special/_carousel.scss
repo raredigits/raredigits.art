@@ -4,6 +4,8 @@
 // caption travels with its image. The active slide is shown via .rd-is-active;
 // controls are recolored per instance through the --carousel-* tokens.
 
+@use "../decorations/icons" as ico;
+
 .carousel {
     // Component tokens. The arrows overlay the photo, so their defaults are
     // fixed light-on-dark values; the dots sit below the carousel on the page
@@ -48,10 +50,11 @@
 }
 
 // Arrow controls — positioned flex <button>s. The glyph is drawn via ::before
-// (Material Symbols ligature), so the markup carries no vendor icon class. The
-// symbol() mixin is deliberately NOT used here: it sets position: relative /
-// display: inline-block for inline glyphs, which would fight this button's
-// absolute positioning and flex centering.
+// (mask box, decorations/_icons.scss), so the markup carries no icon class.
+// The full icon() mixin is deliberately NOT used here: it sets position:
+// relative / display: inline-block for inline glyphs, which would fight this
+// button's absolute positioning and flex centering — icon-mask() draws the
+// glyph and leaves layout to the flex centering.
 .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -70,7 +73,6 @@
     z-index: 2;
 
     &::before {
-        font-family: "Material Symbols Outlined", sans-serif;
         font-size: var(--font-size-xl);
         line-height: 1;
     }
@@ -88,7 +90,7 @@
     left: var(--space-sm);
 
     &::before {
-        content: "chevron_left";
+        @include ico.icon-mask("chevron_left");
     }
 }
 
@@ -96,7 +98,7 @@
     right: var(--space-sm);
 
     &::before {
-        content: "chevron_right";
+        @include ico.icon-mask("chevron_right");
     }
 }
 

@@ -10,7 +10,7 @@ permalink: '/styles/'
   /assets/css/rare.min.css
   <p>
       {{ versions.styles }} Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.min.css">CDN</a> | 
-      <a href="/assets/css/rare.min.css">Download</a> <span class="material-symbols-outlined">download</span>
+      <a href="/assets/css/rare.min.css">Download</a> <span class="rd-icon-download"></span>
   </p>
 </div>
 
