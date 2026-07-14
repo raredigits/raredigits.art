@@ -10,7 +10,7 @@ permalink: '/scripts/hamburger/'
 js/hamburger.js
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/hamburger.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/hamburger.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 
@@ -62,17 +62,21 @@ Third, add the toggle button. The script hooks it via `rd-js-hamburger`; place 
 </button>
 ```
 
-The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (Material Symbols ligatures rendered via `:: before`), so markup carries no vendor icon class and no ligature text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this; standalone users need:
+The icon spans are empty on purpose: the glyphs are baked into the classes by CSS (SVG masks drawn on `::before`), so markup carries no icon class and no icon text. The menu ↔ close swap is also pure CSS keyed off the state class — the script never touches the icons. Rare Styles ships all of this (icons included, under `images/icons/`); standalone users need the two SVGs plus:
 
 ```css
-.hamburger__icon-menu,
-.hamburger__icon-close {
+.hamburger__icon-menu::before,
+.hamburger__icon-close::before {
+  content: "";
   display: inline-block;
-  font-family: "Material Symbols Outlined";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: no-repeat center / contain;
 }
 
-.hamburger__icon-menu::before { content: "menu"; }
-.hamburger__icon-close::before { content: "close"; }
+.hamburger__icon-menu::before { mask-image: url("images/icons/menu-400.svg"); }
+.hamburger__icon-close::before { mask-image: url("images/icons/close-400.svg"); }
 
 .hamburger__icon-close { display: none; }
 .hamburger.rd-is-active .hamburger__icon-menu { display: none; }

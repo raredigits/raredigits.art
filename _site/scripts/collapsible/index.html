@@ -6,8 +6,6 @@
     <title>Collapsible Content | Rare Digits Art</title>
 
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     
     <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
@@ -355,7 +353,7 @@
 js/collapsible.js<br>
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/collapsible.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/collapsible.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 <p>The collapsible component provides a clean solution for managing large, secondary content or detailed information that might otherwise clutter the interface. When implemented correctly, it allows users to progressively discover content based on their interest level, maintaining a clean, focused interface by default.</p>
@@ -390,7 +388,7 @@ js/collapsible.js<br>
 <p>For cases requiring more complex behavior or specific design patterns that go beyond what native HTML elements provide, a custom JavaScript implementation is available. Here it is, live:</p>
 <div class="card collapsible-container">
     <p>
-        <span class="section-icon material-symbols-outlined">code</span>
+        <span class="section-icon rd-icon-code"></span>
         <button class="collapsible-trigger rd-js-collapsible" aria-controls="collapsible-demo">Implementation Example<span class="collapsible-icon"></span></button>
     </p>
     <div id="collapsible-demo" class="collapsible-content rd-js-collapsible-content">
@@ -435,14 +433,20 @@ js/collapsible.js<br>
 &lt;/style&gt;</code></pre>
 <button class="copy-data-icon rd-js-copy" title="Copy setup" data-icon="content_copy" data-copy-target="#snippet-collapsible-4"></button></p>
 </div>
-<p>Note: The <code>.collapsible-icon</code> element is optional, and it is <strong>empty on purpose</strong> — the arrow glyph is baked into the class by CSS (Material Symbols ligature via <code>: before</code>), so markup carries no vendor icon class and no ligature text. The script never swaps icon glyphs — the open state rotates the icon via CSS (<code>[aria-expanded=&quot;true&quot;].collapsible-icon</code>). Standalone users need:</p>
+<p>Note: The <code>.collapsible-icon</code> element is optional, and it is <strong>empty on purpose</strong> — the arrow glyph is baked into the class by CSS (an SVG mask drawn on <code>::before</code>), so markup carries no icon class and no icon text. The script never swaps icon glyphs — the open state rotates the icon via CSS (<code>[aria-expanded=&quot;true&quot;] .collapsible-icon</code>). Standalone users need the arrow SVG (Rare Styles bundles it under <code>images/icons/</code>) plus:</p>
 <div class="code-block">
     <pre><code id="snippet-collapsible-5" class="language-css">.collapsible-icon {
   display: inline-block;
-  font-family: &#34;Material Symbols Outlined&#34;;
   transition: transform 0.2s ease;
 }
-<p>.collapsible-icon::before { content: &quot;keyboard_arrow_down&quot;; }</p>
+<p>.collapsible-icon::before {
+content: &quot;&quot;;
+display: inline-block;
+width: 1em;
+height: 1em;
+background-color: currentcolor;
+mask: url(&quot;images/icons/keyboard_arrow_down-400.svg&quot;) no-repeat center / contain;
+}</p>
 <p>.collapsible-trigger[aria-expanded=&quot;true&quot;] .collapsible-icon {
 transform: rotate(180deg);
 }</code></pre>

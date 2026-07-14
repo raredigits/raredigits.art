@@ -1,19 +1,19 @@
 @use "../../utilities/breakpoints" as bp;
-@use "../../utilities/symbols" as sym;
+@use "../../decorations/icons" as ico;
 
 .hamburger {
     cursor: pointer;
     z-index: 1000;
 }
 
-// Glyphs are baked into the classes (utilities/_symbols.scss) — markup needs
+// Glyphs are baked into the classes (decorations/_icons.scss) — markup needs
 // no vendor icon class and no ligature text: <span class="hamburger__icon-menu"></span>
 .hamburger__icon-menu {
-    @include sym.symbol("menu");
+    @include ico.icon("menu");
 }
 
 .hamburger__icon-close {
-    @include sym.symbol("close");
+    @include ico.icon("close");
 
     display: none;
 }

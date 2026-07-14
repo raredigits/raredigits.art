@@ -11,7 +11,7 @@ scripts: [carousel]
 js/carousel.js
 <p>
     v1.0.0 Stable |
-    <a href="/assets/js/carousel.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/carousel.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 
@@ -90,7 +90,7 @@ Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots c
     <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-carousel-1"></button>
 </div>
 
-The arrow buttons are empty on purpose — the chevron glyphs are baked into `.carousel-arrow-prev` / `-next` by CSS (via the `symbol ()` mixin), so the markup carries no vendor icon class.
+The arrow buttons are empty on purpose — the chevron glyphs are baked into `.carousel-arrow-prev` / `-next` by CSS (SVG masks drawn on `::before` via the `icon-mask()` mixin), so the markup carries no icon class.
 
 **Script include:**
 

@@ -11,7 +11,7 @@ templateEngineOverride: md
 js/search.js<br>
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/search.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/search.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 
@@ -50,7 +50,7 @@ If the installation was successful, they should appear there automatically.
 
 ## Adding the Search UI to the Website
 
-First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-symbols-outlined">search</span> in the website header next to the hamburger menu:
+First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="rd-icon-search"></span> in the website header next to the hamburger menu:
 
 ```html
 <div class="header-icons">
@@ -62,7 +62,7 @@ First, we need an element that will allow users to open the search interface.
 </div>
 ```
 
-The search button is empty on purpose: the glyph is baked into `.icon-search` by CSS (`: before` with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.
+The search button is empty on purpose: the glyph is baked into `.icon-search` by CSS (an SVG mask drawn on `::before`), so markup carries no icon class and no icon text.
 
 Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (`.searchbar { display: none; }`) and shown by the `rd-is-open` state class the script toggles. The script hooks the button via `rd-js-search`, the bar via `rd-js-search-bar`, and the Pagefind mount via `rd-js-search-ui`; open/closed state is mirrored to `aria-expanded` on the button.
 

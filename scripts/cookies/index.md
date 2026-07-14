@@ -13,7 +13,7 @@ permalink: '/scripts/cookies/'
     <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button> |
     <a href="/assets/js/cookie-consent.js">Download</a>
-    <span class="material-symbols-outlined">download</span>
+    <span class="rd-icon-download"></span>
     </p>
 </div>
 

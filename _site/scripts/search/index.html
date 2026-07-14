@@ -6,8 +6,6 @@
     <title>Search | Rare Digits Art</title>
 
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     
     <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
@@ -355,7 +353,7 @@
 js/search.js<br>
 <p>
     v2.0.0 Stable (breaking: `rd-js-` hook) | 
-    <a href="/assets/js/search.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/search.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 <p>If you need search on a static website, the easiest and most reliable option is to use a ready-made library instead of building your own search from scratch. It works out of the box, is free to use, and has already been tested on many real websites. One such library — and the one used on this site — is Pagefind.</p>
@@ -385,7 +383,7 @@ js/search.js<br>
 </code></pre>
 <p>If the installation was successful, they should appear there automatically.</p>
 <h2>Adding the Search UI to the Website</h2>
-<p>First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="material-symbols-outlined">search</span> in the website header next to the hamburger menu:</p>
+<p>First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="rd-icon-search"></span> in the website header next to the hamburger menu:</p>
 <pre><code class="language-html">&lt;div class=&quot;header-icons&quot;&gt;
   &lt;button class=&quot;icon-search no-decoration rd-js-search&quot; aria-label=&quot;Поиск&quot;&gt;&lt;/button&gt;
   &lt;button class=&quot;hamburger no-decoration rd-js-hamburger&quot; aria-label=&quot;Toggle navigation&quot;&gt;
@@ -394,7 +392,7 @@ js/search.js<br>
   &lt;/button&gt;
 &lt;/div&gt;
 </code></pre>
-<p>The search button is empty on purpose: the glyph is baked into <code>.icon-search</code> by CSS (<code>: before</code> with a Material Symbols ligature), so markup carries no vendor icon class and no ligature text.</p>
+<p>The search button is empty on purpose: the glyph is baked into <code>.icon-search</code> by CSS (an SVG mask drawn on <code>::before</code>), so markup carries no icon class and no icon text.</p>
 <p>Next, create a container that will hold both the search input and the search results. It is hidden by default in CSS (<code>.searchbar { display: none; }</code>) and shown by the <code>rd-is-open</code> state class the script toggles. The script hooks the button via <code>rd-js-search</code>, the bar via <code>rd-js-search-bar</code>, and the Pagefind mount via <code>rd-js-search-ui</code>; open/closed state is mirrored to <code>aria-expanded</code> on the button.</p>
 <pre><code class="language-html">&lt;div class=&quot;search-wrapper&quot;&gt;
   &lt;div id=&quot;searchbar&quot; class=&quot;searchbar rd-js-search-bar&quot;&gt;

@@ -1,6 +1,13 @@
+@use "icons";
 @forward "media";
 @forward "icons";
 @forward "borders";
 @forward "shadows";
 @forward "skeleton";
 @forward "separators";
+
+// Icon classes are emitted here — at the decorations cascade slot — via the
+// classes() mixin: earlier modules (typography, navigation) @use "icons" for
+// the icon mixins, and top-level CSS in _icons.scss would relocate up-cascade
+// to the first loader (the colors/_color-classes.scss pattern, CSS-116).
+@include icons.classes;

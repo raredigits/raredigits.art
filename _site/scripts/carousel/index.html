@@ -6,8 +6,6 @@
     <title>Carousel | Rare Digits Art</title>
 
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     
     <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
@@ -355,7 +353,7 @@
 js/carousel.js
 <p>
     v1.0.0 Stable |
-    <a href="/assets/js/carousel.js">Download</a> <span class="material-symbols-outlined">download</span>
+    <a href="/assets/js/carousel.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
 <p>A lightweight image carousel for a small set of related photos — one visible at a time, with previous/next arrows and a dot for each slide. Each slide is a <code>&lt;figure&gt;</code>, so an optional caption travels with its image instead of sitting still while the pictures change underneath it.</p>
@@ -421,7 +419,7 @@ js/carousel.js
 &lt;/div&gt;</code></pre>
     <button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy" data-copy-target="#snippet-carousel-1"></button>
 </div>
-<p>The arrow buttons are empty on purpose — the chevron glyphs are baked into <code>.carousel-arrow-prev</code> / <code>-next</code> by CSS (via the <code>symbol ()</code> mixin), so the markup carries no vendor icon class.</p>
+<p>The arrow buttons are empty on purpose — the chevron glyphs are baked into <code>.carousel-arrow-prev</code> / <code>-next</code> by CSS (SVG masks drawn on <code>::before</code> via the <code>icon-mask()</code> mixin), so the markup carries no icon class.</p>
 <p><strong>Script include:</strong></p>
 <div class="code-block">
     <pre><code id="snippet-carousel-2" class="language-html">&lt;script src=&#34;/assets/js/carousel.js&#34;&gt;&lt;/script&gt;</code></pre>

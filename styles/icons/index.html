@@ -1,0 +1,144 @@
+---
+layout: page.njk
+title: "Icons"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/icons/'
+---
+
+<h2>The Rare Styles Icon Set</h2>
+<div class="meta-info">
+    css/modules/decorations/_icons.scss
+</div>
+
+<section>
+    <p>
+        Icons in Rare Styles are <strong>not a font</strong>. The library ships its own SVG icon set —
+        static cuts of <a href="https://fonts.google.com/icons">Material Symbols Outlined</a>
+        <span class="rd-icon-open_in_new"></span> (Apache-2.0) — self-hosted next to the stylesheet and
+        drawn via CSS masks filled with <code>currentColor</code>. That buys three things: zero
+        third-party requests in the shipped CSS, no icon-font download (~312&nbsp;KB gone), and no flash
+        of raw ligature text while a font loads.
+    </p>
+    <p>
+        Because the glyph is a mask filled with <code>currentColor</code>, an icon behaves like a
+        character of text: <code>font-size</code> sizes it, <code>color</code> — or any color token in
+        the cascade — colors it. No extra API to learn.
+    </p>
+</section>
+
+<section>
+    <h3>Usage</h3>
+    <p>One class per icon — the glyph name is the class. Nothing else to add:</p>
+    <pre>
+<code>&lt;span class="rd-icon-download"&gt;&lt;/span&gt;</code>
+</pre>
+    <p>
+        Renders: <span class="rd-icon-download"></span> — and inherits the surrounding text color and
+        size. Only names from the shipped set have a class; a typo just renders nothing rather than
+        broken text.
+    </p>
+    <table>
+        <tr>
+            <td class="top">
+                <p class="bold"><span class="rd-icon-search"></span> Weight 400 — default</p>
+            </td>
+            <td class="left">
+                <p>Interface icons: <code>&lt;span class="rd-icon-search"&gt;&lt;/span&gt;</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td class="top">
+                <p class="bold"><span class="rd-icon-arrow_outward-thin"></span> Weight 200 — thin</p>
+            </td>
+            <td class="left">
+                <p>Quiet marks (the sidenote markers use this cut). Add the <code>-thin</code> suffix — one class, no separate base: <code>&lt;span class="rd-icon-arrow_outward-thin"&gt;&lt;/span&gt;</code>.</p>
+            </td>
+        </tr>
+    </table>
+    <p>
+        Sizing and coloring are plain CSS — set them on the icon or any ancestor:
+    </p>
+    <pre>
+<code>&lt;span class="rd-icon-bolt" style="font-size: 2em; color: var(--orange)"&gt;&lt;/span&gt;</code>
+</pre>
+    <p>
+        Renders: <span class="rd-icon-bolt" style="font-size: 2em; color: var(--orange)"></span>
+    </p>
+</section>
+
+<section>
+    <h3>The set</h3>
+    <p>
+        {{ icons.size }} glyphs, each in both weights: the library-core names consumed by Rare
+        Styles' own components and docs, maintainer-selected extras, and every glyph the known
+        consumer sites render — promoted into the one shared collection. Hover any icon for
+        its name.
+    </p>
+    <div class="flex wrap gap-md" style="font-size: 1.5rem;">
+        {% for name in icons %}<span class="rd-icon-{{ name }}" title="{{ name }}"></span>
+        {% endfor %}
+    </div>
+    <p>The same set in the thin cut:</p>
+    <div class="flex wrap gap-md" style="font-size: 1.5rem;">
+        {% for name in icons %}<span class="rd-icon-{{ name }}-thin" title="{{ name }}"></span>
+        {% endfor %}
+    </div>
+</section>
+
+<section>
+    <h3>Component-owned icons</h3>
+    <p>
+        Library components don't carry an icon class in markup — they bake their glyph into their own
+        class with the <code>icon()</code> mixin, so the markup stays semantic and empty:
+    </p>
+    <pre>
+<code><span class="code-comment">// SCSS — the component owns the glyph</span>
+.collapsible-icon {
+    @include ico.icon("keyboard_arrow_down");
+}
+
+<span class="code-comment">// weight as the second argument for thin marks</span>
+.sidenote-link::before {
+    @include ico.icon-mask("arrow_outward", 200);
+}</code>
+</pre>
+    <p>
+        <code>icon()</code> draws an inline 1em box on the element's <code>::before</code> — the everyday
+        form. <code>icon-mask()</code> emits only the mask box, for components whose <code>::before</code>
+        manages its own positioning and size (carousel arrows, sidenote markers). Both live in
+        <code>modules/decorations/_icons.scss</code>.
+    </p>
+</section>
+
+<section>
+    <h3>Need an icon that isn't here?</h3>
+    <p>
+        The set covers what the Rare Styles ecosystem actually uses, so it is deliberately finite. If
+        the glyph you need has no <code>.rd-icon-*</code> class:
+    </p>
+    <ul>
+        <li>
+            <strong>Quick, one-off:</strong> pull in the
+            <a href="https://fonts.google.com/icons">Material Symbols</a> font for that single page and
+            use it directly — the SVG set is extracted from the same family, so a glyph you add this way
+            matches the ones the library ships.
+            <pre>
+<code>&lt;link rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"&gt;
+&lt;span class="material-symbols-outlined"&gt;rocket_launch&lt;/span&gt;</code>
+</pre>
+        </li>
+        <li>
+            <strong>Properly, for good:</strong> open an issue or a pull request on the
+            <a href="https://github.com/raredigits/rare-styles">Rare Styles repo</a> asking for the glyph.
+            Once it lands in the set it ships in both weights with a real <code>.rd-icon-*</code> class,
+            and the one-off font link can go.
+        </li>
+    </ul>
+</section>
+
+<div class="teaser-bottom">
+    <p>Next:</p>
+    <h3><a href="/styles/special/">Special</a></h3>
+</div>

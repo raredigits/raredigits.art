@@ -1,5 +1,5 @@
 @use "../utilities/breakpoints" as bp;
-@use "../utilities/symbols" as sym;
+@use "../decorations/icons" as ico;
 
 .collapsible-container {
     padding: var(--space-md) var(--space-lg);
@@ -48,10 +48,10 @@ button.collapsible-trigger {
     }
 }
 
-// Glyph baked into the class (utilities/_symbols.scss) — markup needs no vendor
+// Glyph baked into the class (decorations/_icons.scss) — markup needs no vendor
 // icon class and no ligature text: <span class="collapsible-icon"></span>
 .collapsible-icon {
-    @include sym.symbol("keyboard_arrow_down");
+    @include ico.icon("keyboard_arrow_down");
 
     text-decoration: none;
     transition: transform 0.2s ease;
