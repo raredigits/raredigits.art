@@ -8,8 +8,8 @@ permalink: '/scripts/copy-to-clipboard/'
 
 <div class="meta-info">
     <p>js/copy-to-clipboard.js</p>
-    <p>v3.1.0 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
+    <p>v3.2.0 Stable |
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.2.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
     <span class="rd-icon-download"></span>
@@ -83,6 +83,35 @@ pnpm add rare-scripts</code></pre>
 
 Use `data-copy-target` when proximity is not enough or would be ambiguous.
 
+<div class="air-md"></div>
+
+**Copy a literal — no payload on the page**
+
+Sometimes the thing to copy is not written anywhere: you want the snippet that *would* produce what the reader is looking at. `data-copy-text` carries it literally, so nothing has to exist in the DOM to be copied from:
+
+```html
+<button class="rd-icon-download rd-js-copy"
+        data-copy-text='<span class="rd-icon-download"></span>'></button>
+```
+
+That is what the glyph grids on [the icons page](/styles/icons/) do — every tile is a `<button>` that hands you its own markup.
+
+Prefer it over `data-copy` whenever many hooks share one parent: the `[data-copy]` lookup scans the parent’s subtree and takes the **first** match, so in a flat grid every hook would copy the same neighbour’s payload. A literal is read off the element itself and cannot drift.
+
+<div class="air-md"></div>
+
+**No icon required**
+
+Nothing in the script is icon-specific — the click is delegated, so `rd-js-copy` makes **any** element a copy control, a whole block included:
+
+```html
+<div class="rd-js-copy" data-copy-text="curl -sL example.com/install | sh">
+  Click anywhere in this block to copy the install command
+</div>
+```
+
+The copy icon is just the most common carrier, not a requirement. Give a block-sized control a visible affordance of its own (`cursor: pointer`, a hint in the text) — see **Styling** below for the success state.
+
 ## JavaScript
 
 Include once per page:
@@ -90,9 +119,12 @@ Include once per page:
 <div class="code-block">
 {% raw %}
 <pre><code id="snippet-2" class="language-js">const ICON_SUCCESS = "check";
+const STATE_COPIED = "rd-is-copied";
 const RESET_MS = 1200;
 
 function getCopyText(icon) {
+  if (icon.dataset.copyText != null) return icon.dataset.copyText;
+
   if (icon.dataset.copyTarget) {
     const target = document.querySelector(icon.dataset.copyTarget);
     return target?.textContent?.trim() || "";
@@ -132,9 +164,11 @@ document.addEventListener("click", async (e) => {
 
   const showSuccess = () => {
     icon.dataset.icon = ICON_SUCCESS;
+    icon.classList.add(STATE_COPIED);
     clearTimeout(icon._copyTimer);
     icon._copyTimer = setTimeout(() => {
       delete icon.dataset.icon;
+      icon.classList.remove(STATE_COPIED);
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };
@@ -178,7 +212,7 @@ You can either host the file locally or load it from a CDN. Both options work
 <script src="/js/copy-to-clipboard.min.js"></script>
 
 // CDN:
-<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.1.0/copy-to-clipboard/copy-to-clipboard.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.2.0/copy-to-clipboard/copy-to-clipboard.min.js"></script>
 {%- endcapture -%}
 
 <div class="code-block">
@@ -228,8 +262,26 @@ Make it feel clickable, not decorative:
     border: none;
 }
 
-/* Optional: inverted icon for dark surfaces (put on the icon or any ancestor) */
-.copy-data-icon-inverted {
+/* The general success state. data-icon above only drives .copy-data-icon, so
+   anything else that carries rd-js-copy — a block, or a glyph that is itself
+   the control — styles .rd-is-copied instead. Here: any Rare Styles glyph
+   flips to a check for ~1.2s. The per-glyph masks are single-class rules, so
+   the extra .rd-is-copied outranks them. */
+[class*="rd-icon-"].rd-is-copied::before {
+    mask-image: url("images/icons/check-400.svg");
+}
+
+/* Optional: park the icon in a container's top-right instead of the flow.
+   The container needs a positioning context of its own (position: relative).
+   Rare Styles applies this to .code-block automatically. */
+.copy-data-icon--pinned {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+/* Optional: light icon for dark surfaces (put on the icon or any ancestor) */
+.copy-data-icon--light {
     --copy-icon-color: #fafafa;
     --copy-icon-color-hover: #ccc;
 }
@@ -239,6 +291,8 @@ Make it feel clickable, not decorative:
   <pre><code id="snippet-4">{{ cssSnippet | escape | replace: '\n', '&#10;' }}</code></pre>
   <button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button>
 </div>
+
+There are two success channels and{N}the script writes both. `data-icon="check"` is{N}the older one{N}and{N}is{N}read by{N}exactly one{N}rule, `.copy-data-icon`’s — it{N}is{N}an{N}internal channel, never something you{N}author. `rd-is-copied` is{N}the general one: it{N}lands on{N}whatever was clicked, so{N}it{N}is{N}what a{N}block or{N}a{N}bare glyph should style. A{N}control with no{N}success state copies silently, which reads as{N}broken — give every carrier one.
 
 ### Recoloring
 
@@ -264,22 +318,24 @@ Live — the exact snippet above, rendered. The icon is red via the token; its 
   <button class="copy-data-icon rd-js-copy"></button>
 </div>
 
-**Shortcut for dark surfaces.** The most common recolor — a light icon so it stays visible on a dark background — ships as a ready-made class, `.copy-data-icon-inverted`. It just sets the two tokens (`--gray-lightest` / `--gray`), so put it on the icon or any ancestor instead of writing the inline style:
+**Shortcut for dark surfaces.** The most common recolor — a light icon so it stays visible on a dark background — ships as a ready-made class, `.copy-data-icon--light`. It just sets the two tokens (`--gray-lightest` / `--gray`), so put it on the icon or any ancestor instead of writing the inline style:
 
 ```html
 <!-- on the icon -->
-<button class="copy-data-icon rd-js-copy copy-data-icon-inverted"></button>
+<button class="copy-data-icon rd-js-copy copy-data-icon--light"></button>
 
 <!-- or on a container, to invert every copy icon inside -->
-<div class="dark-panel copy-data-icon-inverted"> … </div>
+<div class="dark-panel copy-data-icon--light"> … </div>
 ```
 
-Live — the inverted icon on a dark panel (light glyph, still visible), next to the default one for contrast:
+Live — a light glyph on a dark panel, parked in the corner with `.copy-data-icon--pinned`:
 
-<div class="card copy-data-icon-inverted" style="background: #222; color: #eee; padding: var(--space-md);">
+<div class="card copy-data-icon--light" style="background: #222; color: #eee; padding: var(--space-md);">
     <span data-copy>0x9f1b...cA11</span>
-    <button class="copy-data-icon rd-js-copy"></button>
+    <button class="copy-data-icon copy-data-icon--pinned rd-js-copy"></button>
 </div>
+
+**Pinning.** A copy icon inside a `.code-block` is parked in the top-right corner for you — that rule is wired up by ancestor, so code blocks need no extra class. Anywhere else the icon stays in the flow, which on a column-flex container like `.card` drops it onto its own line. `.copy-data-icon--pinned` is the same affordance by name; the container has to establish a positioning context, which `.card` and `.code-block` already do — anything else needs `position: relative` of its own.
 
 Design principles (why this won’t rot):
 
@@ -297,6 +353,16 @@ Everything else is none of the script’s business.
 <a id="changelog"></a>
 
 ## Changelog
+### v3.2.0
+
+- **Breaking: `.copy-data-icon-inverted` → `.copy-data-icon--light`.** Same class, renamed onto the library's modifier convention (`--` modifies, `__` is for elements), and named for the ink rather than the surface, like `.carousel-dots--dark`. Update the class name in markup; nothing else about it changed. Consumers pinned to an older Rare Styles are unaffected until they bump.
+- **`.copy-data-icon--pinned`** — parks the icon in the container's top-right instead of leaving it in the flow. This affordance already existed but was reachable only by putting the icon inside a `.code-block`; it now has a name for every other surface. The container must establish a positioning context (`.code-block` and `.card` already do).
+
+- **`data-copy-text` — copy a literal.** The payload no longer has to exist on the page: the attribute carries the string itself. It is checked first, so it also settles the one case the older `data-copy` lookup gets wrong — many hooks under one parent, where the subtree scan hands every hook the **first** sibling’s payload. Powers the click-to-copy glyph grids on [the icons page](/styles/icons/).
+- **`rd-is-copied` — a success state for carriers that are not the copy icon.** On success the script now adds the class alongside `data-icon="check"`, and removes it on reset. `data-icon` only ever drove the `.copy-data-icon` glyph swap, so a block — or an `rd-icon-*` glyph that is itself the control — had no way to confirm the copy. CSS decides what the state looks like; Rare Styles flips an `rd-icon-*` to a check.
+- Documented what was already true: the click is delegated, so `rd-js-copy` works on **any** element, a whole block included — the copy icon is a carrier, not a requirement.
+- Backward compatible: both additions are purely additive, and every existing `data-copy` / `data-copy-target` / `data-icon` markup keeps working untouched.
+
 ### v3.1.0
 
 - `data-icon` is now **optional**: the default `content_copy` glyph is baked into `.copy-data-icon` in CSS, and the script removes `data-icon` on reset instead of writing it back. Markup drops to `<button class="copy-data-icon rd-js-copy"></button>`. Backward compatible — existing `data-icon="content_copy"` markup still works.

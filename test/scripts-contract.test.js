@@ -327,6 +327,66 @@ describe('copy-to-clipboard.js', () => {
     expect(writeText).toHaveBeenCalledWith('https://cdn.example/x.js');
   });
 
+  it('copies a literal from data-copy-text — no icon, no payload element', async () => {
+    const dom = page(
+      '<button class="rd-icon-download rd-js-copy" data-copy-text=\'<span class="rd-icon-download"></span>\'></button>'
+    );
+    const writeText = mockClipboard(dom);
+    boot(dom, SCRIPTS.copy);
+
+    dom.window.document.querySelector('.rd-js-copy').click();
+    await tick();
+
+    expect(writeText).toHaveBeenCalledWith('<span class="rd-icon-download"></span>');
+  });
+
+  it('a literal payload beats the [data-copy] sibling scan', async () => {
+    // A flat grid shares one parent, so the sibling scan would hand every hook
+    // the first sibling's payload. data-copy-text must win outright.
+    const dom = page(
+      '<div>' +
+      '<a href="https://cdn.example/other.js" data-copy>someone else\'s payload</a>' +
+      '<button id="mine" class="rd-js-copy" data-copy-text="MINE"></button>' +
+      '</div>'
+    );
+    const writeText = mockClipboard(dom);
+    boot(dom, SCRIPTS.copy);
+
+    dom.window.document.getElementById('mine').click();
+    await tick();
+
+    expect(writeText).toHaveBeenCalledWith('MINE');
+  });
+
+  it('marks the carrier rd-is-copied on success and clears it on reset', async () => {
+    vi.useFakeTimers();
+    const dom = page('<code id="s">x</code><button class="rd-js-copy" data-copy-target="#s"></button>');
+    const writeText = mockClipboard(dom);
+    boot(dom, SCRIPTS.copy);
+    const icon = dom.window.document.querySelector('.rd-js-copy');
+
+    icon.click();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(writeText).toHaveBeenCalledWith('x');
+    expect(icon.classList.contains('rd-is-copied')).toBe(true);
+
+    await vi.advanceTimersByTimeAsync(1200);
+    expect(icon.classList.contains('rd-is-copied')).toBe(false);
+    expect(icon.hasAttribute('data-icon')).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it('a plain block carries the hook — the copy icon is not required', async () => {
+    const dom = page('<div class="rd-js-copy" data-copy-text="from a block">Click anywhere here</div>');
+    const writeText = mockClipboard(dom);
+    boot(dom, SCRIPTS.copy);
+
+    dom.window.document.querySelector('.rd-js-copy').click();
+    await tick();
+
+    expect(writeText).toHaveBeenCalledWith('from a block');
+  });
+
   it('ignores clicks with nothing to copy and elements without the hook', async () => {
     const dom = page(
       '<button class="rd-js-copy" data-icon="content_copy"></button><p id="plain">text</p>'
@@ -365,12 +425,12 @@ describe('carousel.js', () => {
     `<figure class="carousel-slide${active ? ' rd-is-active' : ''}">` +
     `<img src="/i/${n}.jpg" alt="${n}"><figcaption class="carousel-caption">cap ${n}</figcaption></figure>`;
 
-  const carousel = (n, { id = '' } = {}) =>
+  const carousel = (n, { id = '', dots = true } = {}) =>
     `<div class="carousel rd-js-carousel"${id ? ` id="${id}"` : ''}>` +
     `<div class="carousel-track rd-js-carousel-track">${Array.from({ length: n }, (_, i) => slide(i + 1, i === 0)).join('')}</div>` +
     '<button class="rd-js-carousel-prev" aria-label="prev"></button>' +
     '<button class="rd-js-carousel-next" aria-label="next"></button>' +
-    '<div class="carousel-dots rd-js-carousel-dots"></div>' +
+    (dots ? '<div class="carousel-dots rd-js-carousel-dots"></div>' : '') +
     '</div>';
 
   const active = (root) => {
@@ -463,6 +523,20 @@ describe('carousel.js', () => {
     expect(root.querySelectorAll('.carousel-dot').length).toBe(0);
     expect(root.querySelector('.rd-js-carousel-prev').hidden).toBe(true);
     expect(root.querySelector('.rd-js-carousel-next').hidden).toBe(true);
+  });
+
+  it('the dots container is optional — arrows and keys still drive the slides', () => {
+    const dom = page(carousel(3, { dots: false }));
+    expect(() => boot(dom, SCRIPTS.carousel)).not.toThrow();
+    const doc = dom.window.document;
+    const root = doc.querySelector('.rd-js-carousel');
+    expect(root.querySelectorAll('.carousel-dot').length).toBe(0);
+
+    doc.querySelector('.rd-js-carousel-next').click();
+    expect(active(root)).toBe(1);
+    root.dispatchEvent(new dom.window.KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
+    expect(active(root)).toBe(0);
+    expect(root.querySelector('.carousel-slide').getAttribute('aria-hidden')).toBe('false');
   });
 
   it('does nothing (and does not throw) without a track', () => {

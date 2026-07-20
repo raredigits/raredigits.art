@@ -4,3 +4,20 @@
    serves the Rare Digits logo from the package-local images/vendors/ surface.
    Keep this file as the intentional site-override layer; add new site-only
    rules here, not in the library SCSS. */
+
+/* /styles/icons/ — the glyph grids are click-to-copy, so every tile is a real
+   <button> (focusable, Enter/Space for free) instead of the <span> the page
+   documents. Strip the UA chrome so a tile still renders as a plain character
+   of text: `font` because a button does not inherit font-size, so the 1em mask
+   box would collapse to the UA's 13.3px and ignore the grid's 1.5rem.
+   Site-only on purpose — the library's icon API is the class, and this is a
+   docs affordance, not a component. The copied-state check swap it pairs with
+   IS library (modules/decorations/_icons.scss), since the script sets it. */
+.icon-grid button {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}

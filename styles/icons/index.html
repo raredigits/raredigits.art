@@ -73,15 +73,16 @@ permalink: '/styles/icons/'
         {{ icons.size }} glyphs, each in both weights: the library-core names consumed by Rare
         Styles' own components and docs, maintainer-selected extras, and every glyph the known
         consumer sites render — promoted into the one shared collection. Hover any icon for
-        its name.
+        its name, <strong>click it to copy its markup</strong> — the glyph turns into a check
+        when the snippet is on your clipboard.
     </p>
-    <div class="flex wrap gap-md" style="font-size: 1.5rem;">
-        {% for name in icons %}<span class="rd-icon-{{ name }}" title="{{ name }}"></span>
+    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+        {% for name in icons %}<button class="rd-icon-{{ name }} rd-js-copy" title="{{ name }}" aria-label="Copy markup for {{ name }}" data-copy-text='<span class="rd-icon-{{ name }}"></span>'></button>
         {% endfor %}
     </div>
     <p>The same set in the thin cut:</p>
-    <div class="flex wrap gap-md" style="font-size: 1.5rem;">
-        {% for name in icons %}<span class="rd-icon-{{ name }}-thin" title="{{ name }}"></span>
+    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+        {% for name in icons %}<button class="rd-icon-{{ name }}-thin rd-js-copy" title="{{ name }}" aria-label="Copy markup for {{ name }}, thin cut" data-copy-text='<span class="rd-icon-{{ name }}-thin"></span>'></button>
         {% endfor %}
     </div>
 </section>

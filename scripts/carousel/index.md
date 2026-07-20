@@ -10,7 +10,7 @@ scripts: [carousel]
 <div class="meta-info">
 js/carousel.js
 <p>
-    v1.0.0 Stable |
+    v1.1.0 Stable |
     <a href="/assets/js/carousel.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
@@ -56,16 +56,16 @@ Use the arrows, the dots, or the <kbd>←</kbd> / <kbd>→</kbd> keys while the
 ## Contract
 
 - `rd-js-carousel` on the root, `rd-js-carousel-track` on the slide container — the track’s **element children are the slides**, so the script never depends on the slide’s presentational class
-- `rd-js-carousel-prev` / `rd-js-carousel-next` on the arrow buttons; `rd-js-carousel-dots` on the (empty) dots container the script fills
+- `rd-js-carousel-prev` / `rd-js-carousel-next` on the arrow buttons; `rd-js-carousel-dots` on the (empty) dots container the script fills — **the dots container is optional**: leave it out and the script builds no dots
 - State is `rd-is-active` on the current slide and its dot — CSS shows the active slide and stretches the active dot
 - A slide is a `<figure>` with an `<img>` and an optional `<figcaption class="carousel-caption">`; keeping the caption inside the slide is what makes it travel with the image
-- Reading order below the photo: caption first, then the dots — the dots live in normal flow under the carousel (dark by default), never overlaid on the caption or the photo
+- Dots and arrows overlay the **photo**, never the caption — the root is a two-row grid (photo · caption) whose active slide spans both rows via subgrid, so the controls anchor to the photo’s row while the caption keeps its own row below it
 - Any number of carousels can share one page — each is initialized independently
 - ARIA: the root is a `role="group"` / `aria-roledescription="carousel"`; arrows and dots are real `<button>`s with labels; inactive slides are `aria-hidden`
 
 ## Ready-to-paste markup
 
-Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots container is left empty — the script builds one dot per slide.
+Each slide is a `<figure>`. The first slide carries `rd-is-active`; the dots container is left empty — the script builds one dot per slide. Drop that line to go without dots: the carousel then runs on its arrows and the <kbd>←</kbd> / <kbd>→</kbd> keys alone.
 
 {% capture carouselMarkup %}
 <div class="carousel rd-js-carousel">
@@ -107,12 +107,19 @@ The arrow buttons are empty on purpose — the chevron glyphs are baked into `.c
 
 ## Recoloring
 
-The arrows overlay the photo, so their defaults are fixed light-on-dark values; the dots sit **below** the carousel on the page background, so their defaults are dark. All four are component tokens, overridable per instance (e.g. a carousel on a dark surface wants light dots back):
+The arrows and the dots both overlay the photo, so their defaults are light-on-dark: a dark pill behind the chevrons, translucent white dots that go solid white when active.
+
+The dots ship in two cuts, which settles the usual choice without writing any CSS:
+
+- `carousel-dots` — the default. White at 50%, solid white when active; for photos dark enough to carry it.
+- `carousel-dots carousel-dots--dark` — the inverted cut. Black at 25%, `--primary-color` when active; for pale photos that would swallow white dots.
+
+Past those two, all four controls are component tokens, overridable per instance — red dots, for example:
 
 {% capture carouselRecolor %}
-<!-- carousel on a dark panel: light dots, brand arrows -->
+<!-- red dots -->
 <div class="carousel rd-js-carousel"
-     style="--carousel-dot-color: rgb(255 255 255 / 50%); --carousel-dot-active: var(--white); --carousel-control-bg: var(--brand-color);">
+     style="--carousel-dot-color: rgb(255 0 0 / 40%); --carousel-dot-active: red;">
   …
 </div>
 {% endcapture %}
@@ -123,6 +130,8 @@ The arrows overlay the photo, so their defaults are fixed light-on-dark values;
 </div>
 
 Available tokens: `--carousel-control-bg`, `--carousel-control-color`, `--carousel-dot-color`, `--carousel-dot-active`.
+
+The two cuts and the tokens do not stack: `carousel-dots--dark` sets those same dot tokens on the **container**, which sits nearer the dots than the root does, so it beats an override written on the root rather than merging with it. To recolor the dark cut, put the tokens on the container itself — `<div class="carousel-dots carousel-dots--dark rd-js-carousel-dots" style="--carousel-dot-active: red;">`.
 
 <details>
     <summary>Raw code</summary>
@@ -200,6 +209,16 @@ function initCarousel(root) {
 </details>
 
 ## Changelog
+
+### v1.1.0
+
+- **The dots overlay the photo again** — they sit on the image at its bottom edge instead of in normal flow under the caption, so a long caption no longer pushes them away from the picture they belong to. Their defaults go back to light-on-dark (`--carousel-dot-color`, `--carousel-dot-active`) because they render on the photo now, not on the page background.
+- **`carousel-dots--dark`** — the inverted cut, shipped as a class: black at 25%, `--primary-color` when active, for pale photos that would swallow white dots. It re-points the two dot tokens rather than restyling the dots, so the recoloring API still reaches them — on the container, which is where the modifier writes them and therefore where an override has to go.
+- **The dots container is optional** — omit `<div class="carousel-dots rd-js-carousel-dots"></div>` and the carousel runs on its arrows and the <kbd>←</kbd> / <kbd>→</kbd> keys. The script always guarded for it; the guard is now documented and held by a regression test.
+- Captions are left-aligned (were centered) — they read as prose under the photo rather than as a title over it.
+- Arrows are centered on the **photo** — they used to center on the photo-plus-caption box, which hung them ~32 px below the image’s middle whenever a slide carried a caption. Their `--space-sm` inset from the photo’s edges is unchanged.
+- Layout rebuilt as a two-row grid — photo, then caption — with the active slide spanning both rows through subgrid. That is what gives the photo a box of its own for the controls to anchor to, since the caption lives inside the slide and would otherwise be part of anything they anchor to.
+- **No markup change.** `carousel.js` is untouched apart from comments and the contract is the same, so a `v1.0.0` carousel needs no edit — the dots container went from expected to optional, which is the only contract move, and it loosens rather than tightens. What does change is how it looks: dots on the photo and white by default, caption left-aligned. A carousel of pale photos wants `carousel-dots--dark` added, or the dots will wash out.
 
 ### v1.0.0
 

@@ -1,6 +1,0 @@
-/* Site-layer overrides for raredigits.art.
-   The `.header-logo` brand surface moved into the SCSS pipeline in v0.6.15
-   (CSS-058): see modules/navigation/header/_header-container.scss, which now
-   serves the Rare Digits logo from the package-local images/vendors/ surface.
-   Keep this file as the intentional site-override layer; add new site-only
-   rules here, not in the library SCSS. */

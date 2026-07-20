@@ -3,39 +3,60 @@
 // A slide is a <figure> holding an <img> plus an optional <figcaption>, so the
 // caption travels with its image. The active slide is shown via .rd-is-active;
 // controls are recolored per instance through the --carousel-* tokens.
+// Layout: the root is a two-row grid — [photo] [caption] — and the rows are
+// handed down through track → slide by subgrid, so the photo's box is a row that
+// the slide's *siblings* can address. That is what lets the dots and the arrows
+// overlay the photo: the caption lives inside the slide, so it is inside the
+// root's box too, and a control anchored to the root would sit over the caption.
+// The markup contract is unchanged from v1.0.0 — this is a restyle, not a
+// re-structure, so existing carousels need no edit.
 
 @use "../decorations/icons" as ico;
 
 .carousel {
-    // Component tokens. The arrows overlay the photo, so their defaults are
-    // fixed light-on-dark values; the dots sit below the carousel on the page
-    // background, so their defaults are dark. Override per instance:
+    // Component tokens. Arrows and dots both overlay the photo, so their
+    // defaults are light-on-dark. Override per instance:
     // <div class="carousel rd-js-carousel" style="--carousel-dot-active: …">
     --carousel-control-bg: rgb(0 0 0 / 50%);
     --carousel-control-color: var(--white);
-    --carousel-dot-color: rgb(0 0 0 / 25%);
-    --carousel-dot-active: var(--primary-color);
+    --carousel-dot-color: rgb(255 255 255 / 50%);
+    --carousel-dot-active: var(--white);
 
     position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto; // 1: photo · 2: caption
     width: 100%;
     margin: 0 auto;
     overflow: hidden;
 }
 
+// The track passes the root's rows down to the slides rather than laying
+// anything out itself. `display: contents` would do the same in fewer lines, but
+// it would silently drop any box a consumer had styled onto the track — so the
+// track stays a real box and subgrids instead.
 .carousel-track {
-    width: 100%;
+    grid-row: 1 / -1;
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: subgrid;
 }
 
 // Slides: only the active one renders. The <figure> wraps image + caption so
-// both change together.
+// both change together; subgrid maps the pair onto the root's two rows.
 .carousel-slide {
     display: none;
 
     &.rd-is-active {
-        display: block;
+        display: grid;
+        grid-row: 1 / -1;
+        grid-column: 1;
+        grid-template-rows: subgrid;
     }
 
     img {
+        grid-row: 1;
         display: block;
         width: 100%;
         object-fit: cover;
@@ -43,10 +64,11 @@
 }
 
 .carousel-caption {
+    grid-row: 2;
     margin-top: var(--space-md);
     font-size: var(--font-size-sm);
     color: var(--text-color-light);
-    text-align: center;
+    text-align: left;
 }
 
 // Arrow controls — positioned flex <button>s. The glyph is drawn via ::before
@@ -55,7 +77,13 @@
 // relative / display: inline-block for inline glyphs, which would fight this
 // button's absolute positioning and flex centering — icon-mask() draws the
 // glyph and leaves layout to the flex centering.
+// The grid placement is what scopes them to the photo: an abspos child of a
+// grid container is positioned against its grid area, and both lines must be
+// explicit — an `auto` end line would resolve to the root's padding edge and
+// drag the arrows down over the caption.
 .carousel-arrow {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -102,18 +130,28 @@
     }
 }
 
-// Dots — built by the script, one <button> per slide. They live in normal
-// flow BELOW the carousel content (not overlaid on the photo or the caption),
-// which is why their default color is dark: they render on the page background.
+// Dots — built by the script, one <button> per slide. The container is optional
+// markup: omit it and the script builds nothing. It shares the photo's grid cell
+// with the slide and hangs off the bottom of it, which is why the dot defaults
+// are light — they render on the image, not on the page background.
 .carousel-dots {
+    grid-row: 1 / 2;
+    grid-column: 1 / 2;
+    align-self: end;
     display: flex;
     justify-content: center;
     gap: var(--space-xs);
-    margin-top: var(--space-md);
+    margin-bottom: var(--space-md);
+    z-index: 1;
+}
 
-    &:empty {
-        margin-top: 0;
-    }
+// The one variant that ships: dark dots for pale photos. It re-points the same
+// tokens rather than restyling the dots, so it composes with the recoloring API
+// — but it does so on the container, which is nearer the dots than .carousel is.
+// A custom color therefore has to be set here too, not on the root, to beat it.
+.carousel-dots--dark {
+    --carousel-dot-color: rgb(0 0 0 / 25%);
+    --carousel-dot-active: var(--primary-color);
 }
 
 .carousel-dot {

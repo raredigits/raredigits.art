@@ -30,6 +30,11 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets/css/rare-website.css");
   eleventyConfig.addPassthroughCopy("assets/charts");
 
+  // Worked-example assets (v0.6.20 auto-shop harvest). Each example owns its
+  // skin + media under its own assets/ folder; the folder is passed through
+  // verbatim so /examples/styles/<name>/assets/... resolves at that path.
+  eleventyConfig.addPassthroughCopy("examples/styles/hetke/landing/assets");
+
   eleventyConfig.addWatchTarget("./assets/css/rare.css");
   eleventyConfig.addWatchTarget("./assets/css/examples/rare-styles-main.css");
   eleventyConfig.addWatchTarget("./assets/css/");

@@ -72,6 +72,13 @@ ICONS = [
     "recycling",
     "star",
     "star_half",
+    # extended (2026-07-17)
+    "business_center",
+    "explore",
+    "filter_alt",
+    "people_alt",
+    "savings",
+    "work",
     # ecosystem (2026-07-14): schnellreich.ru
     "arrow_right_alt",
     "inbox",

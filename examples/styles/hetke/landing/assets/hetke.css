@@ -1,0 +1,446 @@
+/* ============================================================================
+   Hetke GCP — worked-example skin  (Rare Styles v0.6.20, auto-shop harvest)
+   ----------------------------------------------------------------------------
+   This file holds ONLY what the library does not: the dark brand theme, the
+   display type, the hero, the pricing list, the image-tile visuals, and the
+   header/footer chrome. Structure comes from the library, applied as classes
+   in index.html:
+     · .grid / .grid-cols-3 / .grid-cols-2 / mobile:grid-cols-1  — column layouts
+     · .feature-row (+ .feature-row__item)                       — scroll galleries
+     · .iframe-video                                             — responsive map
+     · .uppercase / .right                                       — utilities
+     · the spacing scale                                         — rhythm
+
+   Everything here is scoped under `.hetke` (set on <body>) so it overrides the
+   library's page-level base rules — body / header / section / h1… / a — by both
+   specificity and load order, without patching the library. That the skin needs
+   this much override surface is the concrete case for the embedded-library split
+   planned in v0.6.21 (CSS-318/319): today the library themes the *page*, so
+   dropping it into a foreign design means re-theming the page back.
+   ========================================================================== */
+
+.hetke {
+    --hetke-yellow: #f9d50b;
+    --hetke-yellow-hover: #fbe66d;
+    --hetke-red: #c70001;
+    --hetke-green: #18aa26;
+    --hetke-ink: #fff;
+    --hetke-bg: #000;
+    --hetke-max-width: 1400px;
+}
+
+/* --- Page base: re-theme the library's bare-element rules ----------------- */
+
+body.hetke {
+    height: 100%;
+    color: var(--hetke-ink);
+    background-color: var(--hetke-bg);
+    background-image: url('img/background.svg');
+    background-repeat: repeat;
+    background-size: 100%;
+    font-family: "Sofia Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 18px;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hetke a {
+    color: var(--hetke-ink);
+    text-decoration: none;
+    background-image: none;
+}
+
+.hetke a:hover {
+    color: var(--hetke-yellow);
+    text-decoration: underline;
+    background-image: none;
+}
+
+/* Display type — headings and a couple of text surfaces run Unbounded/uppercase. */
+.hetke h1,
+.hetke h2,
+.hetke h4,
+.hetke .heroText,
+.hetke .priceTitle,
+.hetke .serviceItem {
+    font-family: "Unbounded", sans-serif;
+    font-optical-sizing: auto;
+    text-transform: uppercase;
+}
+
+.hetke h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 70px;
+    line-height: 75px;
+}
+
+.hetke h2 {
+    margin: 0 0 20px;
+    font-weight: 700;
+    font-size: 50px;
+    line-height: 45px;
+}
+
+.hetke h4 {
+    margin: 0 0 10px;
+}
+
+.hetke main {
+    width: 100%;
+    max-width: var(--hetke-max-width);
+    margin: 0 auto;
+    padding: 100px 30px 30px;
+}
+
+.hetke section {
+    margin-bottom: 0;
+    padding: 30px 0 40px 40px;
+}
+
+.hetke footer {
+    width: 100%;
+    color: var(--hetke-ink);
+    background: var(--hetke-bg);
+    font-size: inherit;
+}
+
+/* --- Brand colour utilities ---------------------------------------------- */
+
+.hetke .yellow { color: var(--hetke-yellow); }
+.hetke .red    { color: var(--hetke-red); }
+.hetke .yellowBg { background-color: var(--hetke-yellow); }
+.hetke .yellowBg:hover { background-color: var(--hetke-yellow-hover); }
+.hetke .whiteBg { background-color: #fff; }
+.hetke .greenBg { background-color: var(--hetke-green); }
+
+.hetke .whiteIcon { filter: brightness(0) invert(1); }
+
+/* Inline-block beats the library's `img { display: block }`, which otherwise
+   drops the glyph onto its own line and defeats the <nobr> in the CTA label. */
+.hetke .icon {
+    display: inline-block;
+    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+}
+
+/* --- Header + navigation -------------------------------------------------- */
+
+.hetke header {
+    position: fixed;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+    height: auto;
+    text-transform: uppercase;
+    background-color: var(--hetke-bg);
+}
+
+.hetke .headerWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--hetke-max-width);
+    margin: 0 auto;
+}
+
+.hetke .logo {
+    width: 135px;
+    height: 54px;
+    margin: 5px 0 5px 20px;
+    background-image: url('img/hetke_logo.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.hetke .menu-toggle {
+    display: none;
+    width: auto;
+    padding: 0;
+    color: #fff;
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hetke nav {
+    display: flex;
+    flex-direction: row;
+    margin-right: 20px;
+}
+
+.hetke nav ul {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    list-style: none;
+}
+
+.hetke nav li {
+    min-height: 0;
+    padding: 7px 20px;
+}
+
+.hetke nav a { color: #fff; }
+.hetke nav a:hover { color: var(--hetke-yellow); border-bottom: none; }
+
+/* Nav CTA pills (Call / WhatsApp). Background comes from .yellowBg / .whiteBg,
+   which outweigh the library's .button background; here we only reset the box. */
+.hetke nav .button {
+    display: block;
+    width: auto;
+    margin-left: 20px;
+    padding: 6px 15px;
+    border: none;
+    border-radius: 20px;
+}
+
+.hetke nav .button a { color: #000; }
+.hetke nav .button a:hover { text-decoration: none; }
+
+/* --- Hero ----------------------------------------------------------------- */
+
+.hetke .hero {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 550px;
+    padding: 0;
+    border-radius: 40px;
+    background-image: url('img/main/hero-2.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.hetke .heroText {
+    width: 50%;
+    height: 100%;
+    text-transform: uppercase;
+}
+
+.hetke .heroText h1 {
+    position: absolute;
+    bottom: 70px;
+    left: 50px;
+}
+
+.hetke .book {
+    padding: 10px 20px;
+    border-radius: 20px;
+}
+
+.hetke .heroText .book {
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+}
+
+.hetke .book a { color: #000; text-decoration: none; }
+
+.hetke .heroStamp {
+    position: absolute;
+    top: 50px;
+    right: 50px;
+    width: 135px;
+    height: 135px;
+    background-image: url('img/main/heroStamp.svg');
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+/* --- Section intro copy --------------------------------------------------- */
+
+.hetke .sectionText {
+    width: 50%;
+    padding: 0 0 20px 50px;
+}
+
+/* --- Services — tiles inside .grid .grid-cols-3 --------------------------- */
+
+.hetke .serviceItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 205px;
+    border-radius: 20px;
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: cover;
+}
+
+.hetke .servicePainting      { background-image: url('img/main/painting.png'); }
+.hetke .serviceCustomization { background-image: url('img/main/customization.png'); }
+.hetke .serviceMechanical    { background-image: url('img/main/mechanical.png'); }
+
+/* --- Team — portrait tiles inside .grid .grid-cols-3 ---------------------- */
+
+.hetke .teamItem {
+    height: 205px;
+    border-radius: 20px;
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: cover;
+}
+
+.hetke .teamSlawa  { background-image: url('img/main/slawa.png'); }
+.hetke .teamMeli   { background-image: url('img/main/meli.png'); }
+.hetke .teamSergei { background-image: url('img/main/sergei.png'); }
+
+.hetke .teamText { padding: 0 0 20px 50px; }
+
+/* --- Works & Limits — captioned images inside .feature-row --------------- */
+
+/* Caption sits above the image; feature-row items are flex columns. */
+.hetke .feature-row__item > p {
+    margin: 0 0 10px;
+    font-size: 20px;
+    white-space: normal;
+}
+
+.hetke .workImg {
+    width: 100%;
+    aspect-ratio: 554 / 300;
+    border-radius: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.hetke .workCayene    { background-image: url('img/main/works/cayene.png'); }
+.hetke .workCharger   { background-image: url('img/main/works/charger.png'); }
+.hetke .workBuggy     { background-image: url('img/main/works/buggy.png'); }
+.hetke .workTiffany   { background-image: url('img/main/works/tiffany.png'); }
+.hetke .work911orange { background-image: url('img/main/works/911-orange.png'); }
+.hetke .workReem      { background-image: url('img/main/works/reem.png'); }
+.hetke .workLights    { background-image: url('img/main/works/lights.png'); }
+
+.hetke .limitPalette { background-image: url('img/main/works/palette.png'); background-size: 150%; }
+.hetke .limitLeopard { background-image: url('img/main/works/leopard.png'); }
+.hetke .limitValues  { background-image: url('img/main/works/values.png'); }
+.hetke .limitTaste   { background-image: url('img/main/works/taste.png'); }
+.hetke .limitMadness { background-image: url('img/main/works/madness.png'); }
+
+/* --- Prices — site-specific list (per maintainer decision) ---------------- */
+
+.hetke .priceGrid {
+    width: 90%;
+    padding-left: 50px;
+}
+
+.hetke .priceItem {
+    width: 100%;
+    padding: 20px 0;
+}
+
+.hetke .priceTitle {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.hetke .borderBottom { border-bottom: 1px solid #fff; }
+
+/* --- Partners — logo row inside .feature-row ------------------------------ */
+
+.hetke .partnerRow {
+    align-items: center;
+    gap: 25px;
+}
+
+.hetke .partnerRow a { flex: 0 0 auto; }
+
+.hetke .partnerRow img {
+    height: 50px;
+    width: auto;
+}
+
+/* --- Location — text column + social icons ------------------------------- */
+
+.hetke .columnText {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 0 10px 20px 50px;
+}
+
+.hetke .socials a img {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    margin-right: 12px;
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.hetke .footerWrapper {
+    max-width: var(--hetke-max-width);
+    margin: 0 auto;
+    padding: 20px 70px 70px;
+}
+
+.hetke footer a { color: #fff; border-bottom: none; }
+.hetke footer a:hover { color: var(--hetke-yellow); border-bottom: none; }
+
+/* ============================================================================
+   Mobile — 768px matches the library's own `mobile` breakpoint, so the skin
+   and the mobile:grid-cols-1 collapse switch at the same width.
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    body.hetke { background-size: 150%; }
+
+    .hetke main { padding: 40px 10px; }
+
+    .hetke .logo { height: 44px; }
+
+    /* Off-canvas drawer toggled by the site's hamburger.js (adds .active).
+       Column direction lets the single <ul> stretch to the panel width so
+       right-aligned items reach the edge and buttons span it. */
+    .hetke nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        flex-direction: column;
+        width: 250px;
+        height: 100%;
+        margin-right: 0;
+        padding: 20px 10px;
+        text-align: right;
+        background-color: rgba(0, 0, 0, 0.8);
+        border-radius: 20px;
+        transition: right 0.3s ease-in-out;
+    }
+
+    /* Drawer: full-width, right-aligned items — restore stretch over the
+       desktop centring so links right-align and buttons span the panel. */
+    .hetke nav ul { flex-direction: column; align-items: stretch; gap: 15px; }
+    .hetke nav li { padding: 5px 0; }
+    .hetke nav .button { width: 100%; margin-left: 0; padding: 5px 15px 8px; text-align: center; }
+    .hetke nav.active { right: 0; }
+
+    .hetke .menu-toggle { display: block; }
+
+    .hetke .hero { height: 350px; border-radius: 10px; }
+    .hetke .heroText { width: 100%; }
+    .hetke .heroText h1 { bottom: 70px; left: 20px; font-size: 25px; line-height: 30px; }
+    .hetke .heroText .book { bottom: 15px; left: 20px; }
+    .hetke .heroStamp { top: 55px; right: 15px; width: 85px; height: 85px; }
+
+    .hetke section { padding: 20px 0 10px 5px; }
+    .hetke h2 { margin-bottom: 10px; font-size: 30px; line-height: 25px; }
+    .hetke .sectionText { width: 90%; padding: 0 0 20px 20px; }
+    .hetke .teamText { padding: 0 0 20px 20px; }
+    .hetke .priceGrid { width: 100%; padding: 0; }
+    .hetke .columnText { padding: 0 0 20px 0; }
+
+    .hetke .footerWrapper { padding: 20px 15px 70px; }
+}

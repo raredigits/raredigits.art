@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ title }}</title>
+    {% if description %}<meta name="description" content="{{ description }}">{% endif %}
+
+    {# Keep this worked example out of the docs search index — it is a demo
+       landing, not a documentation page. #}
+    <meta name="pagefind:exclude" content="true">
+
+    {# The library, then the example's own skin. Order matters: hetke.css owns
+       the dark brand theme and overrides the library's page-level base rules
+       (body/header/section/h1…) by source order. The library contributes
+       structure only — grid utilities, .feature-row, .iframe-video, alignment,
+       .uppercase, spacing. #}
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    <link rel="stylesheet" href="/examples/styles/hetke/landing/assets/hetke.css">
+
+    {# Brand display faces. This example is allowed a third-party font link;
+       the library itself stays request-free (fonts self-hosted since v0.6.16). #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sofia+Sans:ital,wght@0,1..1000;1,1..1000&family=Unbounded:wght@200..900&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/svg+xml" href="/examples/styles/hetke/landing/assets/img/favicon/favicon.svg">
+    <link rel="shortcut icon" href="/examples/styles/hetke/landing/assets/img/favicon/favicon.ico">
+</head>
+<body class="hetke">
+    {{ content | safe }}
+
+    <script src="/examples/styles/hetke/landing/assets/js/painter.js"></script>
+    <script src="/examples/styles/hetke/landing/assets/js/hamburger.js"></script>
+</body>
+</html>

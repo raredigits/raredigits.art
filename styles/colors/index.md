@@ -63,35 +63,35 @@ The core grayscale palette consists of three primary and five supplementary sha
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched gray-trans-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched gray-trans-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>gray-trans</div>
             <div>
                 <span data-copy>#888888</span>
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched gray-mid-dark-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched gray-mid-dark-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>gray-mid-dark</div>
             <div>
                 <span data-copy>#666666</span>
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched gray-dark-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched gray-dark-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>gray-dark</div>
             <div>
                 <span data-copy>#333333</span>
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched gray-darkest-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched gray-darkest-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>gray-darkest</div>
             <div>
                 <span data-copy>#191919</span>
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched black-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched black-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>black</div>
             <div>
                 <span data-copy>#000000</span>
@@ -162,7 +162,7 @@ Technical colors are used to highlight important info: statuses, warnings, and 
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched green-bg white width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched green-bg white width-100 padding-md copy-data-icon--light">
             <div>green — for success</div>
             <div>
                 <span data-copy>#389e0d</span>
@@ -196,7 +196,7 @@ A limited set of supporting colors is available for specific purposes like da
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched ocean-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched ocean-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>ocean</div>
             <div>
                 <span data-copy>#2f7395</span>
@@ -231,7 +231,7 @@ A limited set of supporting colors is available for specific purposes like da
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched purple-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched purple-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>purple</div>
             <div>
                 <span data-copy>#722ed1</span>
@@ -252,7 +252,7 @@ A limited set of supporting colors is available for specific purposes like da
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
-        <div class="flex stretched blueberry-bg gray-light width-100 padding-md copy-data-icon-inverted">
+        <div class="flex stretched blueberry-bg gray-light width-100 padding-md copy-data-icon--light">
             <div>blueberry</div>
             <div>
                 <span data-copy>#221e4d</span>

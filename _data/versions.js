@@ -5,6 +5,6 @@
 const { version: charts } = require('../assets/charts/src/version.json');
 
 module.exports = {
-  styles: 'v0.6.18',
+  styles: 'v0.6.19',
   charts,
 };

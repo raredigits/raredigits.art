@@ -37,6 +37,7 @@ $icons: (
     "bookmark",
     "bookmark_star",
     "brush",
+    "business_center",
     "campaign",
     "chat",
     "check",
@@ -66,10 +67,12 @@ $icons: (
     "event",
     "event_available",
     "event_repeat",
+    "explore",
     "family_group",
     "family_restroom",
     "favorite",
     "festival",
+    "filter_alt",
     "flag",
     "flag_2",
     "flight",
@@ -109,6 +112,7 @@ $icons: (
     "open_in_new",
     "pause_circle",
     "payments",
+    "people_alt",
     "person_add",
     "pets",
     "priority_high",
@@ -127,6 +131,7 @@ $icons: (
     "restaurant",
     "rocket_launch",
     "rss_feed",
+    "savings",
     "schedule",
     "search",
     "send",
@@ -154,7 +159,8 @@ $icons: (
     "visibility",
     "warehouse",
     "warning",
-    "waving_hand"
+    "waving_hand",
+    "work"
 );
 
 // Bare mask box — just the glyph drawing, no layout opinions. For component
@@ -269,18 +275,55 @@ $icons: (
         mask-image: url("images/icons/check-400.svg");
     }
 
+    // Copy feedback for a glyph that is the copy control itself, rather than a
+    // copy icon sitting next to one:
+    //   <button class="rd-icon-download rd-js-copy" data-copy-text="…"></button>
+    // The script adds .rd-is-copied for ~1.2s and the glyph flips to a check —
+    // the same success language as .copy-data-icon above, which data-icon cannot
+    // carry here: that attribute is only read by the .copy-data-icon rule, and
+    // reviving it for rd-icon-* would undo the v0.6.18 decision that the glyph
+    // name IS the class. The per-glyph masks are single-class rules, so the
+    // extra .rd-is-copied outranks them wherever this sits in the cascade.
+    [class*="rd-icon-"].rd-is-copied::before {
+        mask-image: url("images/icons/check-400.svg");
+    }
+
+    // Thin glyphs get the thin check, so the swap keeps the row's weight.
+    // Both forms are needed because [class$=] tests the whole attribute, not one
+    // token: a hook class after the glyph ("rd-icon-x-thin rd-js-copy") ends the
+    // attribute in something else, so match a following space as well. The extra
+    // [class*="rd-icon-"] outranks the 400 rule above rather than relying on
+    // source order.
+    [class*="rd-icon-"][class*="-thin "].rd-is-copied::before,
+    [class*="rd-icon-"][class$="-thin"].rd-is-copied::before {
+        mask-image: url("images/icons/check-200.svg");
+    }
+
     .copy-data-icon:hover {
         color: var(--copy-icon-color-hover, var(--primary-color));
         background: none;
         border: none;
     }
 
-    // Inverted copy icon for dark surfaces — the default muted glyph disappears
-    // on a dark background. Put this on the icon itself or on any ancestor (it
-    // only sets the recolor tokens, which cascade), instead of inlining them.
-    .copy-data-icon-inverted {
+    // Light copy icon for dark surfaces — the default muted glyph disappears on
+    // a dark background. It only re-points the recolor tokens, which cascade, so
+    // it goes on the icon itself or on any ancestor that wraps a group of them.
+    // Named for the ink, not the surface, like .carousel-dots--dark.
+    .copy-data-icon--light {
         --copy-icon-color: var(--gray-lightest);
         --copy-icon-color-hover: var(--gray);
+    }
+
+    // Park the icon in the container's top-right instead of leaving it in flow.
+    // The .code-block rule below is this same affordance, wired up by ancestor
+    // so code blocks need no extra class; every other surface (panel, card,
+    // swatch) opts in by name. The container must establish a positioning
+    // context — .code-block and .card already do; anything else needs
+    // `position: relative` of its own.
+    .copy-data-icon--pinned {
+        position: absolute;
+        top: var(--space-sm);
+        right: var(--space-sm);
     }
 
     .code-block .copy-data-icon {

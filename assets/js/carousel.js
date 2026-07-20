@@ -1,7 +1,7 @@
 // Contract: SCRIPTS_CONTRACT.md (v0.6.17).
 // Hooks: .rd-js-carousel (root/scope), .rd-js-carousel-track (its element
 // children are the slides), .rd-js-carousel-prev / -next (arrow buttons),
-// .rd-js-carousel-dots (container the script populates).
+// .rd-js-carousel-dots (optional container the script populates).
 // State: .rd-is-active on the current slide and its dot.
 // Each carousel is initialized independently, so any number can coexist on a
 // page (the original schnellreich version collected every image on the page
@@ -33,7 +33,9 @@ function initCarousel(root) {
     if (!root.getAttribute('role')) root.setAttribute('role', 'group');
     if (!root.getAttribute('aria-roledescription')) root.setAttribute('aria-roledescription', 'carousel');
 
-    // Build one dot per slide (skipped for a single-slide carousel)
+    // Build one dot per slide. Skipped when the container is absent — the dots
+    // are optional markup — and for a single-slide carousel, which has nothing
+    // to navigate between.
     const dots = [];
     if (dotsBox && slides.length > 1) {
         slides.forEach(function (_, i) {
