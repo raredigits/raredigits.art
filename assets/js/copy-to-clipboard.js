@@ -1,12 +1,25 @@
 // Contract: SCRIPTS_CONTRACT.md (v0.6.17).
-// Hook: .rd-js-copy (delegated). Payload API unchanged: data-copy / data-copy-target.
+// Hook: .rd-js-copy (delegated) — nothing here is icon-specific. Any element
+// carrying the hook is clickable, a whole block included; the copy icon is just
+// its most common carrier.
+// Payload API: data-copy-text (a literal) / data-copy-target (a selector, copies
+// that element's text) / data-copy (a neighbour's href or text).
 // The default glyph is baked into CSS (.copy-data-icon), so markup needs no
-// data-icon. On success the script sets data-icon="check"; on reset it removes
-// the attribute, so the CSS default (content_copy) shows again.
+// data-icon. On success the script sets data-icon="check" and adds .rd-is-copied;
+// on reset both go, so the CSS default (content_copy) shows again. data-icon
+// stays the .copy-data-icon glyph channel and is never an authoring API;
+// .rd-is-copied is the general state hook for every other carrier.
 const ICON_SUCCESS = "check";
+const STATE_COPIED = "rd-is-copied";
 const RESET_MS = 1200;
 
 function getCopyText(icon) {
+  // A literal wins: it is the only payload that need not exist in the DOM as
+  // text, and the only one that stays unambiguous when many hooks share a
+  // parent — the [data-copy] scan below would hand them all the first
+  // sibling's payload.
+  if (icon.dataset.copyText != null) return icon.dataset.copyText;
+
   if (icon.dataset.copyTarget) {
     const target = document.querySelector(icon.dataset.copyTarget);
     return target?.textContent?.trim() || "";
@@ -46,9 +59,11 @@ document.addEventListener("click", async (e) => {
 
   const showSuccess = () => {
     icon.dataset.icon = ICON_SUCCESS;
+    icon.classList.add(STATE_COPIED);
     clearTimeout(icon._copyTimer);
     icon._copyTimer = setTimeout(() => {
       delete icon.dataset.icon;
+      icon.classList.remove(STATE_COPIED);
       delete icon.dataset.copyBusy;
     }, RESET_MS);
   };

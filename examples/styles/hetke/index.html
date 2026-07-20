@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building an Auto Workshop Landing | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="current">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+    
+  <section class="page-title">
+    <h1>Building an Auto Workshop Landing</h1>
+  </section>
+
+    <article>
+      <p>So here is a fair question: what happens when you point Rare Styles at something loud? A car-painting shop in Dubai — a black-red-and-yellow brand that wants to shout. No prose column, no muted palette. Nothing this library calls <em>home</em>.</p>
+<p>That is exactly why it is a good test. A narrow, opinionated CSS library earns its keep when it holds up <em>off</em> its home turf — when it carries the boring structural weight while you paint something that looks nothing like the docs.</p>
+<p>Let's build the landing and find out where the seams are.</p>
+<h2>The brief</h2>
+<p>The designers hand over a single mockup — the whole page, top to bottom.</p>
+<figure class="scroll-container margin-y-md" style="max-height: 640px;">
+    <img src="/assets/img/illustrations/examples/hetke-v2.avif" alt="Hetke auto-shop landing — the designer mockup, full page">
+</figure>
+<p><strong>The classic handoff:</strong> a dark, brand-forward landing with a hero, service tiles, work galleries, a team, testimonials, a service menu, partners, and a booking form.</p>
+<p>Looks like a lot. It isn’t. Scroll it once and the same half-dozen shapes keep coming back.</p>
+<h2>Reading the mockup</h2>
+<p>Squint past the paint and the page is structurally plain:</p>
+<ul>
+<li><strong>Stacked sections</strong> — a hero, then heading-plus-content bands all the way down.</li>
+<li><strong>A three-up tile grid</strong> — the services (<em>Painting · Customization · Mechanical</em>), and again for the experts.</li>
+<li><strong>Horizontal-scroll strips</strong> — the works gallery and the partner logos run off the right edge instead of wrapping.</li>
+<li><strong>A map, a form, an accordion</strong> — the long tail.</li>
+</ul>
+<p>Every one of those is a shape Rare Styles already ships. The grid is <code>.grid</code> + <code>.grid-cols-*</code>. The scroll strip is <code>.feature-row</code>. The map is <code>.iframe-video</code>. So the plan is not to fight the library — it is to let it carry the <strong>skeleton</strong> and paint our own <strong>skin</strong> on top.</p>
+<p>Get that division right and the loud design costs almost nothing structurally.</p>
+<h2>Step 1 — Wire up the library, then a skin of our own</h2>
+<p>Two stylesheets. The library first, a local <code>hetke.css</code> second — so when the two disagree, ours wins on load order.</p>
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@latest/rare.min.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;/assets/css/hetke.css&quot;&gt;
+...
+&lt;body class=&quot;hetke&quot;&gt;
+</code></pre>
+<p>The <code>class=&quot;hetke&quot;</code> on <code>&lt;body&gt;</code> is the whole trick behind the skin. Rare Styles themes bare elements — <code>body</code>, <code>header</code>, <code>section</code>, <code>h1</code>, <code>a</code> — because on its home turf it owns the page. On someone else's page that is presumptuous, so every rule we write is scoped under <code>.hetke</code> and wins by specificity, without patching the library itself.</p>
+<h2>Step 2 — Re-point the tokens</h2>
+<p>Before a single section is built, re-point what repeats. Brand colours and display fonts become tokens; the page-level defaults get re-themed once.</p>
+<pre><code class="language-css">.hetke {
+    --hetke-yellow: #f9d50b;
+    --hetke-red:    #c70001;
+    --hetke-ink:    #fff;
+    --hetke-bg:     #000;
+}
+
+body.hetke {
+    color: var(--hetke-ink);
+    background: var(--hetke-bg) url('img/background.svg');
+    font-family: &quot;Sofia Sans&quot;, sans-serif;
+}
+
+.hetke h1, .hetke h2 {
+    font-family: &quot;Unbounded&quot;, sans-serif;
+    text-transform: uppercase;
+}
+
+/* One rule sets the rhythm for every section on the page. */
+.hetke section { padding: 30px 0 40px 40px; }
+</code></pre>
+<p>Because the library themes bare elements, a few dozen lines re-skin the entire page at once — black canvas, white ink, the display face on every heading. We never touched a component to do it.</p>
+<h2>Step 3 — Assemble, then tune</h2>
+<p>Now the page is mostly composition. The three service tiles are a grid; each tile is our skin.</p>
+<pre><code class="language-html">&lt;div class=&quot;grid grid-cols-3 mobile:grid-cols-1&quot;&gt;
+    &lt;div class=&quot;serviceItem servicePainting&quot;&gt;Paintings&lt;/div&gt;
+    &lt;div class=&quot;serviceItem serviceCustomization&quot;&gt;Customization&lt;/div&gt;
+    &lt;div class=&quot;serviceItem serviceMechanical&quot;&gt;Mechanical Works&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<p>The works gallery is the same move sideways — a <code>.feature-row</code> that scrolls instead of wrapping:</p>
+<pre><code class="language-html">&lt;div class=&quot;feature-row&quot;&gt;
+    &lt;div class=&quot;feature-row__item&quot;&gt;
+        &lt;p&gt;Exclusive car paint design&lt;/p&gt;
+        &lt;div class=&quot;workImg workCayene&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- …more items scroll off the right edge --&gt;
+&lt;/div&gt;
+</code></pre>
+<p><code>.grid-cols-3</code> collapses to one column on mobile with <code>mobile:grid-cols-1</code>; <code>.feature-row</code> keeps its horizontal scroll on every width. Two library classes, zero media queries written by us.</p>
+<p>The <strong>hero</strong> is the exception, and it always is. An absolutely-positioned headline over a full-bleed photo with a corner stamp is bespoke by nature — no library should have an opinion about it, so it's hand-built in <code>hetke.css</code> and left alone.</p>
+<h3>Tuning the library to our tokens</h3>
+<p>The interesting part is the friction — the handful of places where the library's defaults, written for a document, meet a design that isn't one. Two examples worth keeping.</p>
+<p><strong>An inline icon inside a button.</strong> The library sets <code>img { display: block }</code> — correct for content images, wrong for a phone glyph that has to sit <em>inside</em> a &quot;Call us&quot; label. Left alone, the glyph drops onto its own line and the <code>&lt;nobr&gt;</code> can't save it. One override puts it back inline:</p>
+<pre><code class="language-css">.hetke .icon { display: inline-block; vertical-align: middle; }
+</code></pre>
+<p><strong>A header the library wants to theme.</strong> <code>header</code>, <code>nav</code> and <code>.button</code> all arrive pre-styled for the docs chrome. Our dark bar re-points them under <code>.hetke</code> — vertically centring the nav, and sizing the CTA pills to their content plus padding instead of letting them stretch:</p>
+<pre><code class="language-css">.hetke .headerWrapper { align-items: center; }
+.hetke nav ul        { align-items: center; }
+.hetke nav .button   { padding: 6px 15px; }   /* content + padding, not stretched */
+</code></pre>
+<p>That is the honest cost of embedding today: the base layer assumes it owns the page, so you re-point it where it clashes. It is also exactly the assumption the library is scheduled to make opt-in — at which point this section gets shorter.</p>
+<div class="highlight">Bring the structure from the library.<br>Paint the skin yourself.</div>
+<p>Touch the base only where the library's page-level assumptions get in the way — which, for now, is the header and one stubborn icon.</p>
+<h2>The result</h2>
+<p>Same mockup, built on the library: <strong><a href="/examples/styles/hetke/landing/">open the finished landing →</a></strong></p>
+<p>The skeleton — every grid, every scroll strip, the map — came from Rare Styles. <code>hetke.css</code> is only the skin: the black canvas, the yellow, the display type, the hero, and the few base rules we re-pointed to fit. That is the split the library is aiming for as a default — structure you inherit, skin you own — proved out on a design that is about as far from a longread as a page can get.</p>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>

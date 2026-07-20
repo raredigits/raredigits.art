@@ -352,7 +352,7 @@
       <div class="meta-info">
 js/carousel.js
 <p>
-    v1.0.0 Stable |
+    v1.1.0 Stable |
     <a href="/assets/js/carousel.js">Download</a> <span class="rd-icon-download"></span>
 </p>
 </div>
@@ -392,15 +392,15 @@ js/carousel.js
 <h2>Contract</h2>
 <ul>
 <li><code>rd-js-carousel</code> on the root, <code>rd-js-carousel-track</code> on the slide container — the track’s <strong>element children are the slides</strong>, so the script never depends on the slide’s presentational class</li>
-<li><code>rd-js-carousel-prev</code> / <code>rd-js-carousel-next</code> on the arrow buttons; <code>rd-js-carousel-dots</code> on the (empty) dots container the script fills</li>
+<li><code>rd-js-carousel-prev</code> / <code>rd-js-carousel-next</code> on the arrow buttons; <code>rd-js-carousel-dots</code> on the (empty) dots container the script fills — <strong>the dots container is optional</strong>: leave it out and the script builds no dots</li>
 <li>State is <code>rd-is-active</code> on the current slide and its dot — CSS shows the active slide and stretches the active dot</li>
 <li>A slide is a <code>&lt;figure&gt;</code> with an <code>&lt;img&gt;</code> and an optional <code>&lt;figcaption class=&quot;carousel-caption&quot;&gt;</code>; keeping the caption inside the slide is what makes it travel with the image</li>
-<li>Reading order below the photo: caption first, then the dots — the dots live in normal flow under the carousel (dark by default), never overlaid on the caption or the photo</li>
+<li>Dots and arrows overlay the <strong>photo</strong>, never the caption — the root is a two-row grid (photo · caption) whose active slide spans both rows via subgrid, so the controls anchor to the photo’s row while the caption keeps its own row below it</li>
 <li>Any number of carousels can share one page — each is initialized independently</li>
 <li>ARIA: the root is a <code>role=&quot;group&quot;</code> / <code>aria-roledescription=&quot;carousel&quot;</code>; arrows and dots are real <code>&lt;button&gt;</code>s with labels; inactive slides are <code>aria-hidden</code></li>
 </ul>
 <h2>Ready-to-paste markup</h2>
-<p>Each slide is a <code>&lt;figure&gt;</code>. The first slide carries <code>rd-is-active</code>; the dots container is left empty — the script builds one dot per slide.</p>
+<p>Each slide is a <code>&lt;figure&gt;</code>. The first slide carries <code>rd-is-active</code>; the dots container is left empty — the script builds one dot per slide. Drop that line to go without dots: the carousel then runs on its arrows and the <kbd>←</kbd> / <kbd>→</kbd> keys alone.</p>
 <div class="code-block">
     <pre><code id="snippet-carousel-1" class="language-html">&lt;div class=&#34;carousel rd-js-carousel&#34;&gt;
   &lt;div class=&#34;carousel-track rd-js-carousel-track&#34;&gt;
@@ -429,16 +429,23 @@ js/carousel.js
   ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
 </p>
 <h2>Recoloring</h2>
-<p>The arrows overlay the photo, so their defaults are fixed light-on-dark values; the dots sit <strong>below</strong> the carousel on the page background, so their defaults are dark. All four are component tokens, overridable per instance (e.g. a carousel on a dark surface wants light dots back):</p>
+<p>The arrows and the dots both overlay the photo, so their defaults are light-on-dark: a dark pill behind the chevrons, translucent white dots that go solid white when active.</p>
+<p>The dots ship in two cuts, which settles the usual choice without writing any CSS:</p>
+<ul>
+<li><code>carousel-dots</code> — the default. White at 50%, solid white when active; for photos dark enough to carry it.</li>
+<li><code>carousel-dots carousel-dots--dark</code> — the inverted cut. Black at 25%, <code>--primary-color</code> when active; for pale photos that would swallow white dots.</li>
+</ul>
+<p>Past those two, all four controls are component tokens, overridable per instance — red dots, for example:</p>
 <div class="code-block">
-    <pre><code id="snippet-carousel-3" class="language-html">&lt;!-- carousel on a dark panel: light dots, brand arrows --&gt;
+    <pre><code id="snippet-carousel-3" class="language-html">&lt;!-- red dots --&gt;
 &lt;div class=&#34;carousel rd-js-carousel&#34;
-     style=&#34;--carousel-dot-color: rgb(255 255 255 / 50%); --carousel-dot-active: var(--white); --carousel-control-bg: var(--brand-color);&#34;&gt;
+     style=&#34;--carousel-dot-color: rgb(255 0 0 / 40%); --carousel-dot-active: red;&#34;&gt;
   …
 &lt;/div&gt;</code></pre>
     <button class="copy-data-icon rd-js-copy" title="Copy example" data-icon="content_copy" data-copy-target="#snippet-carousel-3"></button>
 </div>
 <p>Available tokens: <code>--carousel-control-bg</code>, <code>--carousel-control-color</code>, <code>--carousel-dot-color</code>, <code>--carousel-dot-active</code>.</p>
+<p>The two cuts and the tokens do not stack: <code>carousel-dots--dark</code> sets those same dot tokens on the <strong>container</strong>, which sits nearer the dots than the root does, so it beats an override written on the root rather than merging with it. To recolor the dark cut, put the tokens on the container itself — <code>&lt;div class=&quot;carousel-dots carousel-dots--dark rd-js-carousel-dots&quot; style=&quot;--carousel-dot-active: red;&quot;&gt;</code>.</p>
 <details>
     <summary>Raw code</summary>
 <pre><code class="language-js">document.addEventListener('DOMContentLoaded', function () {
@@ -512,6 +519,16 @@ function initCarousel(root) {
 </code></pre>
 </details>
 <h2>Changelog</h2>
+<h3>v1.1.0</h3>
+<ul>
+<li><strong>The dots overlay the photo again</strong> — they sit on the image at its bottom edge instead of in normal flow under the caption, so a long caption no longer pushes them away from the picture they belong to. Their defaults go back to light-on-dark (<code>--carousel-dot-color</code>, <code>--carousel-dot-active</code>) because they render on the photo now, not on the page background.</li>
+<li><strong><code>carousel-dots--dark</code></strong> — the inverted cut, shipped as a class: black at 25%, <code>--primary-color</code> when active, for pale photos that would swallow white dots. It re-points the two dot tokens rather than restyling the dots, so the recoloring API still reaches them — on the container, which is where the modifier writes them and therefore where an override has to go.</li>
+<li><strong>The dots container is optional</strong> — omit <code>&lt;div class=&quot;carousel-dots rd-js-carousel-dots&quot;&gt;&lt;/div&gt;</code> and the carousel runs on its arrows and the <kbd>←</kbd> / <kbd>→</kbd> keys. The script always guarded for it; the guard is now documented and held by a regression test.</li>
+<li>Captions are left-aligned (were centered) — they read as prose under the photo rather than as a title over it.</li>
+<li>Arrows are centered on the <strong>photo</strong> — they used to center on the photo-plus-caption box, which hung them ~32 px below the image’s middle whenever a slide carried a caption. Their <code>--space-sm</code> inset from the photo’s edges is unchanged.</li>
+<li>Layout rebuilt as a two-row grid — photo, then caption — with the active slide spanning both rows through subgrid. That is what gives the photo a box of its own for the controls to anchor to, since the caption lives inside the slide and would otherwise be part of anything they anchor to.</li>
+<li><strong>No markup change.</strong> <code>carousel.js</code> is untouched apart from comments and the contract is the same, so a <code>v1.0.0</code> carousel needs no edit — the dots container went from expected to optional, which is the only contract move, and it loosens rather than tightens. What does change is how it looks: dots on the photo and white by default, caption left-aligned. A carousel of pale photos wants <code>carousel-dots--dark</code> added, or the dots will wash out.</li>
+</ul>
 <h3>v1.0.0</h3>
 <ul>
 <li><strong>Multiple carousels per page now work</strong> — each instance is initialized independently (the original collected every image on the page into one shared list, so only a single carousel worked)</li>
