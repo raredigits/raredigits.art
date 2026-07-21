@@ -1,5 +1,6 @@
 node_modules/
 .claude/
+_site/
 # Build artifacts — rebuilt from assets/charts/src by npm run charts:build (CI rebuilds on deploy/sync)
 assets/charts/rare-charts.js
 assets/charts/rare-charts.min.js
