@@ -12,9 +12,7 @@ RareCharts provides three circular chart types that share a common API and them
 
 The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="chart-donut"></div>
-</div>
+<div id="chart-donut" class="text-content-caption card-dashboard-bordered"></div>
 
 <div class="air-md"></div>
 
@@ -31,9 +29,7 @@ The default circular chart. A ring with a center area — the center gives you
 
 Pass `legendPosition: 'right'` to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="chart-donut-legend-right"></div>
-</div>
+<div id="chart-donut-legend-right" class="text-content-caption card-dashboard-bordered"></div>
 
 <div class="air-md"></div>
 
@@ -43,13 +39,35 @@ Pass `legendPosition: 'right'` to place the legend in a vertical column beside t
   height:         340,
 }).setData(segments);</code></pre>
 
+### Drill-down (hierarchy mode)
+
+Hand Donut a **tree** — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.
+
+<div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
+
+<div class="air-md"></div>
+
+Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a **remainder** — the undisclosed gap — which draws as a muted slice once you surface it with `showRemainder: true` or a per-node `remainderLabel`. And a **named-but-undisclosed** item (`value: null`) has no magnitude, so it cannot be a slice; the ring notes it as “*N not disclosed*” beneath the chart instead. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.
+
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  showRemainder: true,
+}).setData({
+  label: 'Portfolio', value: 1400,
+  children: [
+    { label: 'World Liberty Financial', value: 536.4, remainderLabel: 'Other', children: [
+      { label: 'Ethereum Key', value: 106 },
+      { label: 'USDC Key',     value: 56 },
+    ] },
+    { label: 'Stablecoin proceeds', value: 196.9 },
+    { label: 'NFT INT, LLC',        value: null },   <span class="code-comment">// undisclosed → noted, not drawn</span>
+  ],
+});</code></pre>
+
 ## Pie
 
 A pie is a donut with `innerRadius: 0`. The class name is `Donut` — `Pie` is an alias. Same API, same options, same behavior.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="chart-pie"></div>
-</div>
+<div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
 
 A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.
 
@@ -120,6 +138,31 @@ The arc geometry is fully configurable:
   color:        '#ff3b5c',         <span class="code-comment">// fill arc</span>
 });</code></pre>
 
+### Speedometer — half-circle and needle
+
+Two ingredients make the automotive-indicator look:
+
+- **Sweep.** `startAngle` / `endAngle` set the arc in radians, clockwise from 12 o'clock. The default `±Math.PI * 0.75` is a 270° horseshoe; `-Math.PI / 2 … Math.PI / 2` is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.
+- **Needle.** `needle: true` draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with `needleColor` (default: theme text).
+
+<div class="card-row-bordered card-caption margin-y-md">
+  <div class="card-row-bordered-item">
+    <div id="chart-gauge-speed"></div>
+  </div>
+  <div class="card-row-bordered-item">
+    <div id="chart-gauge-needle"></div>
+  </div>
+</div>
+
+<pre class="text-content-caption"><code>new RareCharts.Gauge('#chart', {
+  startAngle:  -Math.PI / 2,   <span class="code-comment">// 9 o'clock</span>
+  endAngle:     Math.PI / 2,   <span class="code-comment">// 3 o'clock — a 180° sweep</span>
+  needle:       true,
+  max:          240,
+  centerText:   v => v,
+  centerLabel:  'km/h',
+}).setData(87);</code></pre>
+
 ## Data format
 
 All three types use the same segment data structure:
@@ -131,6 +174,8 @@ All three types use the same segment data structure:
 ]</code></pre>
 
 Only positive finite values are rendered. Zero and negative values are filtered out.
+
+Passing a single root **object** instead of a flat array switches Donut into drill-down mode, where the data is a tree — see the Drill-down section above.
 
 Colors can be provided per item. If omitted, the chart uses the active theme palette in order.
 
@@ -216,6 +261,16 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
             <td>Secondary line below center text</td>
         </tr>
         <tr>
+            <td><code>valueFormat</code></td>
+            <td>locale number</td>
+            <td><code>function(value) =&gt; string</code> — center total and default tooltip value</td>
+        </tr>
+        <tr>
+            <td><code>percentFormat</code></td>
+            <td><code>.1%</code></td>
+            <td><code>function(pct) =&gt; string</code> — outer-label and tooltip percents</td>
+        </tr>
+        <tr>
             <td><code>animate</code></td>
             <td><code>true</code></td>
             <td>Animate on first render</td>
@@ -226,9 +281,29 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
             <td>Animation duration ms</td>
         </tr>
         <tr>
+            <td><code>ease</code></td>
+            <td><code>'cubicOut'</code></td>
+            <td><code>'cubicOut'</code> / <code>'cubicInOut'</code> / <code>'linear'</code></td>
+        </tr>
+        <tr>
             <td><code>tooltipFormat</code></td>
             <td>built-in</td>
             <td><code>function({label, value, percent, color}) =&gt; html</code></td>
+        </tr>
+        <tr>
+            <td><code>showRemainder</code></td>
+            <td><code>false</code></td>
+            <td>Drill-down mode: draw a muted slice for each node’s undisclosed remainder (value − Σ children)</td>
+        </tr>
+        <tr>
+            <td><code>remainderLabel</code></td>
+            <td><code>'Other'</code></td>
+            <td>Drill-down mode: fallback label for a surfaced remainder</td>
+        </tr>
+        <tr>
+            <td><code>strict</code></td>
+            <td><code>false</code></td>
+            <td>Drill-down mode: throw when a node’s children exceed its stated value (default: warn, leave the negative remainder undrawn)</td>
         </tr>
         <tr class="table-section">
             <td colspan="3"><h5>Gauge</h5></td>
@@ -269,6 +344,16 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
             <td>Arc end rounding px</td>
         </tr>
         <tr>
+            <td><code>needle</code></td>
+            <td><code>false</code></td>
+            <td>Speedometer pointer pivoting at the dial center; the center readout moves below the hub</td>
+        </tr>
+        <tr>
+            <td><code>needleColor</code></td>
+            <td>theme text</td>
+            <td>Needle and hub color</td>
+        </tr>
+        <tr>
             <td><code>color</code></td>
             <td><code>theme.accent</code></td>
             <td>Fill arc color</td>
@@ -299,6 +384,16 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
             <td>Animate fill on first render</td>
         </tr>
         <tr>
+            <td><code>duration</code></td>
+            <td><code>800</code></td>
+            <td>Animation duration ms</td>
+        </tr>
+        <tr>
+            <td><code>ease</code></td>
+            <td><code>'cubicOut'</code></td>
+            <td><code>'cubicOut'</code> / <code>'cubicInOut'</code> / <code>'linear'</code></td>
+        </tr>
+        <tr>
             <td><code>tooltipFormat</code></td>
             <td>built-in</td>
             <td><code>function({value, max, min, percent}) =&gt; html</code></td>
@@ -308,3 +403,4 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>
+<script src="/assets/charts/examples/pie-and-donut/donut-drilldown.js"></script>

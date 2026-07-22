@@ -30,6 +30,7 @@ export { Line       } from './charts/Line.js';
 export { TimeSeries } from './charts/TimeSeries.js';
 export { Overview   } from './charts/Overview.js';
 export { Bar        } from './charts/Bar.js';
+export { HierarchicalBar } from './charts/HierarchicalBar.js';
 export { DualAxes   } from './charts/DualAxes.js';
 export { Donut      } from './charts/Donut.js';
 export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut with innerRadius: 0

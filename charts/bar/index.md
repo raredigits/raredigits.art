@@ -10,9 +10,7 @@ Bar charts are the simplest and most reliable way to compare things. If you ha
 
 The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="bar-chart-revenue"></div>
-</div>
+<div id="bar-chart-revenue" class="text-content-caption card-dashboard-bordered"></div>
 
 Orientation and reading comfort
 
@@ -55,6 +53,8 @@ In that mode the chart uses a time scale on the X axis, which means it can also 
 chart.setData(data);</code></pre>
 
 Timeframe controls apply only to the date-based vertical mode. They do not apply to ordinary categorical bars or horizontal rank-style bars.
+
+There is a third shape: hand Bar series-major data `[{ name, values }]` and it switches into the stacked mode — segments per category, an auto-built legend, and a `'percent'` variant. See <a href="/charts/bar/stacked-bar/">Stacked Bar</a>.
 
 ### Long labels (without ruining the axis)
 
@@ -190,6 +190,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>CSS color</td>
             <td>theme accent</td>
             <td>Uniform fill color for all bars.</td>
+        </tr>
+        <tr>
+            <td><code>barWidthRatio</code></td>
+            <td>number</td>
+            <td><code>0.72</code></td>
+            <td>Bar width as a fraction of the slot in the date-based mode.</td>
         </tr>
         <tr>
             <td><code>labelMaxLength</code></td>

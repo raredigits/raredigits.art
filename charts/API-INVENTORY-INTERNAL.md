@@ -227,6 +227,8 @@
 | `percentFormat` | fn | `.1%` | |
 | `tooltipFormat` | fn({label, value, percent, color}) => html | встроенный | ⚠️ своя сигнатура payload |
 
+✅ **0.9.8_2 — иерархия + drill-down (реализовано):** объект-корень на входе включает drill-down (breadcrumb, клик-вниз/центр-вверх), `showRemainder`/`remainderLabel`/`strict` — опции графика; плоский массив = прежний донат. Полный контракт — раздел «Hierarchy — normalizer + tree consumers» ниже.
+
 ---
 
 ## Gauge
@@ -236,9 +238,11 @@
 | Опция | Тип | Дефолт | Примечание |
 |-------|-----|--------|------------|
 | `min` / `max` | number | `0` / `100` | читаются только в конструкторе |
-| `startAngle` / `endAngle` | number (рад) | `∓0.75π` | |
+| `startAngle` / `endAngle` | number (рад) | `∓0.75π` | геометрия сама центрирует любой разворот; для мелких дуг (полукруг ±½π) резервируется место под текст снизу (0.9.8_2) |
 | `thickness` | number 0..1 | `0.18` | доля внешнего радиуса |
 | `cornerRadius` | number px | `6` | |
+| `needle` | boolean | `false` | 0.9.8_2: стрелка-спидометр с втулкой в центре, анимируется вместе с заливкой; показания съезжают под втулку (value y=22, label y=44) |
+| `needleColor` | string | `theme.text` | 0.9.8_2 | 
 | `color` | string | `theme.accent` | ⚠️ единичный vs палитра у остальных |
 | `trackColor` | string | `theme.grid` | |
 | `showCenter` | boolean | `true` | |
@@ -316,6 +320,108 @@
 
 ---
 
+## Hierarchy — normalizer + tree consumers (v0.9.8_2 — ✅ released 2026-07-22)
+
+Решение 2026-07-21 (с владельцем). Реализовано и проверено в браузере: **`stacked` на Bar** (`Bar.js`), **новый класс `HierarchicalBar`** (`charts/HierarchicalBar.js`), **drill-down на `Donut`** (`Donut.js`), общий нормализатор (`core/hierarchy.js`). Тесты: `test/hierarchy.test.js` (25), `test/hierarchical-charts.test.js`, `test/bar-stacked.test.js`; полный сюит 251/251. Доки: `/charts/bar/stacked-bar/`, `/charts/bar/hierarchical-bar/`, drill-down-секция на `/charts/circular/`. Развилка А закрыта: `Hierarchies` (пространственные виды — treemap/pack/sunburst) остаётся post-1.0 и потребляет **тот же** контракт; `HierarchicalBar` — его линейный/outline вид. Выпущено в **v0.9.8_2** (2026-07-22); stacked area (Line) и `DivergingBar` перенесены в _3.
+
+Ниже — **фактический** замороженный контракт (сверено с кодом), плюс расхождения для аудита 0.9.9.
+
+### Единый атом
+
+`atom = { label: string, value: number | null, color?: string }` — форма и имена ключей **те же, что у Donut** (раздел «Donut / Pie» выше). Отличие, добавленное реализацией: `value` тристейтный — число `> 0` (раскрыто), `null` (**missing**-плейсхолдер: kept, `missing:true`, вне сумм, рисуется «?»), либо отсутствует/`≤0`/не-конечное (лист отбрасывается). Один атом во всех потребителях, каждый добавляет одну ось:
+
+| Класс | Форма | Добавляет к атому |
+|-------|-------|-------------------|
+| Donut | `[ atom ]` (плоский) или дерево (drill-down) | — / глубину |
+| Bar `stacked` | `[{ name, values: [ atom ] }]` | ось **категорий** (серия × категория) |
+| HierarchicalBar / Donut-drilldown | `atom & { children?: [node] }` | **глубину** (дерево) |
+
+Одинаковы **форма и имена ключей**, не правила валидации (Donut отбрасывает `≤ 0`, Bar разрешает негативы, узел дерева считает субтотал). Проекции «вниз по размерности» (дерево → верхнее кольцо → donut) — **явными адаптерами**, не сниффингом формы в классе: `topLevel(tree)` / `flatten(tree, {depth})` → `[atom]` (в духе `adapters/index.js`). Donut **не** учим принимать `children` неявно — это тот же смелл, что автодетект time-series в `Bar.js:70`; drill-down включается деревом на входе явно.
+
+**Правило `name ↔ label`.** Серия живёт поперёк категорий и опознаётся `name` (Line/DualAxes/stacked); часть/срез — `label` (Donut/Bar-категории/узел дерева). Единственная точка ремапа — коллапс stacked в одну категорию: `series.name → slice.label`. Зафиксировать в доках, не «чинить».
+
+### Контракт дерева (замораживается в 1.0)
+
+```
+node = {
+  label:           string,   // обязателен и непустой; пустой/пробельный → drop
+  value?:          number | null,  // тристейт: >0 раскрыто · null = missing «?» · отсутствует → лист drop / родитель = Σ children
+  color?:          string,   // override; поднимается в атом. Наследования по поддереву НЕТ (см. блокер 8)
+  children?:       [node],   // наличие ⇒ внутренний узел
+  remainderLabel?: string,   // подпись остатка (см. ниже). showRemainder — опция графика, НЕ поле узла
+}
+```
+
+| Решение | Значение (как реализовано) | Обоснование |
+|---------|----------------------------|-------------|
+| **`value` родителя** | **авторитетно, может быть > Σ children**. Σ children считает только числовые дети — missing-дети (`null`) **не** уменьшают остаток | Расследовательские данные: тотал известен, разбивка частична; неизвестное не вычесть. |
+| **Остаток** | `remainder = value − Σ children` **только у внутреннего узла** (у листа и узла без своего value → `0`); рисуется **только** при `remainderLabel` или опции `showRemainder: true` | Никогда не молча. Незаполненная часть целого = «Other / not disclosed». |
+| **Σ children > value** | `overflow: true` + `console.warn`, отрицательный остаток виден, но **не рисуется**; опция `strict: true` → `throw` | Явная политика вместо молчаливого отрицательного сегмента (донат его не нарисует). |
+| **Домен значения** | лист принимается только при `value > 0`; `0`/отриц./не-конечное → drop | Композиционные чарты рисуют только положительную величину; централизовано в нормализаторе (Donut больше не фильтрует сам в hier-режиме). |
+| **`value: null` (лист)** | kept как **missing**-плейсхолдер: `missing:true`, вне сумм, «?» в баре / нота «N not disclosed» в донате | Названный, но нераскрытый элемент ≠ остаток (аноним) ≠ пропуск. |
+| **Лист без `value`** | отбрасывается | Зеркально фильтру адаптеров (`adapters/index.js`). |
+| **Стабильный id** | **двухфазный**: фаза 1 — структура, фаза 2 — id сверху вниз, дизамбигуация ключа сиблинга протянута в префикс → уникальность на любой глубине (одинаковые сиблинг-**поддеревья** различимы); синтетический остаток в своём namespace, не сталкивается с реальным «Other». `path` — метки предков (для breadcrumb) | Наивный «path = ancestorLabels ⧺ label» давал коллизии внуков (блокер 1). |
+| **Цвет** | нормализатор только **поднимает** `node.color` в атом (`node.color`), наследования нет. Затухание по depth и палитра веток — выбор рендера `HierarchicalBar`, не контракт | Bar/donut нужна категориальная различимость; hue-семьи — задача пространственного `Hierarchies` (блокер 8). |
+
+### Нормализатор (shared core)
+
+`normalizeHierarchy(input, opts) → normTree`. Единственный вход для всех потребителей. Опции — **только на уровне графика/нормализатора** (`showRemainder`, `remainderLabel`, `strict`), не на узле.
+
+- принимает **один корневой объект или массив корней** (лес); одиночный невалидный корень → `null`;
+- пустой/пробельный `label` → drop узла; лист без числового `value>0` → drop; `value:null` → сохраняется missing-плейсхолдером;
+- считает субтоталы (`value ?? Σ числовых children`) и остаток (у внутреннего узла с собственным value);
+- политика overflow (`Σ children > value`): `overflow:true`+warn, либо throw при `strict`;
+- назначает стабильные id двухфазно (см. таблицу выше);
+- эмитит одно нормализованное дерево `{ id, label, value, depth, path, children, remainder, color?, missing?, isRemainder?, overflow?, data }`, **идентичное** для `HierarchicalBar` и `Donut`.
+
+Место: `src/core/hierarchy.js` (не адаптер — богаче: ids, субтоталы, остатки). ✅ Покрыто `test/hierarchy.test.js` (25 кейсов: overflow+strict, `value>0` vs null-missing, remainder листа=0, глубокая уникальность id, коллизия remainder↔реальный «Other», blank-label, color-атом).
+
+### HierarchicalBar (новый класс — ✅ реализовано)
+
+**Форма:** корень или лес → нормализованное дерево. **Рендер:** плоский обход в глубину, строки переменной высоты (SVG высота = rows × `rowHeight`), горизонтальный бар на строку на общей линейной шкале, отступ по `depth`, корень нейтральный (`theme.muted`), ветки — палитра + затухание по глубине, «?» для missing, остаток — приглушённый сегмент.
+
+| Опция | Дефолт | Заметка |
+|-------|--------|---------|
+| `showRoot` | `true` | `false` → одиночный корень скрыт, дети становятся верхними строками |
+| `rowHeight` / `indent` / `barHeight` | `44` / `16` / `9` | |
+| `maxDepth` | `∞` | предел глубины отрисовки |
+| `showValues` / `valueFormat` | `true` / `,.0f` | ⚠️ `valueFormat` принимает **узел** (`n => …n.value`), а у Bar — `d={label,value}`. Расхождение сигнатуры → аудит 0.9.9 |
+| `missingGlyph` | `'?'` | маркер для `value:null` |
+| `labelMaxLength` | — | обрезка + полный текст в тултипе (как у Bar) |
+| `showRemainder` / `remainderLabel` / `strict` | `false` / `'Other'` / `false` | проброс в нормализатор |
+| `animate` / `duration` / `ease` | `true` / `500` / `cubicOut` | ✅ моторный блок как у Bar (нет `stagger`) |
+| `tooltipFormat` | — | `(node) => html` |
+
+Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_4); текущий вид статический (весь outline сразу).
+
+### Donut drill-down (расширение стабильного класса — ✅ реализовано)
+
+⚠️ Вносит **интерактив + навигационное состояние** (`_trail`) в статический класс — замораживается в 1.0. Поведение: показать непосредственных детей корня → клик по сектору с детьми = вход → breadcrumb (клик по крошке — прыжок к предку) + клик в центр = вверх → лист не проваливается. Остаток — приглушённый сектор при `showRemainder`/`remainderLabel`. Missing (`value:null`) **не** рисуется сектором (донат кодирует величину) — нота «N not disclosed» под кольцом.
+
+| Опция / API | Решение | Заметка |
+|-------------|---------|---------|
+| дискриминатор входа | **массив → плоский легаси; объект-корень → hier** | по типу входа, не сниффинг полей (блокер 6). `.data(arcs, d=>d.data.id ?? d.data.label)` — ключ по id |
+| `showRemainder` / `remainderLabel` / `strict` | опции графика | проброс в нормализатор |
+| ~~`drilldown` тумблер~~ | ❌ не нужен | дерева на входе достаточно — снято |
+| ~~`onDrill` колбэк~~ | ❌ не в v1 | навигация внутренняя; можно добавить аддитивно позже |
+| методы | `drillTo(node)` / `drillUp()` / `drillToDepth(i)` | публичные |
+
+### Bar `stacked` (режим — ✅ реализовано)
+
+**Форма:** серии-major `[{ name, values: [{ label, value }] }]` (как DualAxes), автодетект по `values`-массиву. Категории = упорядоченное объединение меток; пропуск категории серией → 0. `d3.stack` под капотом, обе ориентации.
+
+| Опция | Дефолт | Заметка |
+|-------|--------|---------|
+| `stacked` | auto | `'percent'` → нормировка к 100% (`stackOffsetExpand`) |
+| `legend` | auto | строится из имён серий (палитра по порядку); свой `legend` перекрывает |
+| `tooltipFormat` | — | ⚠️ `(seg)` где `seg={name, cat, value, total}` — ещё одна сигнатура (у Bar одиночный `d`, у Donut `{label,value,percent,color}`). Аудит 0.9.9 |
+| `value ≥ 0` | — | стек кодирует кумулятивную длину; знаковые сравнения → `DivergingBar` |
+| date-режим стекинга | ⏳ | отложен в follow-up; сейчас только категориальный |
+
+**Расхождения сигнатур для аудита 0.9.9:** `valueFormat`/`tooltipFormat` теперь имеют разные payload'ы across HierarchicalBar (`node`), stacked (`seg`), Bar (`d`), Donut (`{label,value,percent,color}`). Свести к общему принципу до заморозки (см. «Открытые вопросы» — блок форматтеров).
+
+---
+
 ## Открытые вопросы к заморозке
 
 Решения — проход в 0.9.9, после боевого тестирования. Сгруппировано по весу.
@@ -335,7 +441,8 @@
 ### Унификация имён и дефолтов (⚠️ из таблиц выше, сводно)
 
 - **Моторный блок:** `duration` — 650 (Line/DualAxes/Donut) vs 500 (Bar) vs 800 (Gauge); `stagger` только у Bar; у TimeSeries/Overview блока нет вообще (опции молча игнорируются).
-- **`tooltipFormat` — 5+ несовместимых сигнатур:** `{date, points[]}` (Line/DualAxes) vs `(d)` (TimeSeries/Bar) vs `{label, value, percent, color}` (Donut) vs `{value, max, min, percent}` (Gauge) vs `{feature, item}` (Map).
+- **`tooltipFormat` — 7+ несовместимых сигнатур:** `{date, points[]}` (Line/DualAxes) vs `(d)` (TimeSeries/Bar) vs `{label, value, percent, color}` (Donut) vs `{value, max, min, percent}` (Gauge) vs `{feature, item}` (Map) vs `(node)` (HierarchicalBar) vs `(seg={name,cat,value,total})` (Bar stacked). Новые из 0.9.8_2 добавились — свести до заморозки.
+- **`valueFormat` — payload расходится:** `d={label,value}` (Bar) vs `(v)` число (Donut) vs `(node)` (HierarchicalBar) vs `(seg)` (Bar stacked). Выбрать один принцип (аргумент — всегда объект-датум?) до 1.0.
 - **Три семантики `area`:** Line — boolean + `areaOpacity`/`areaBaseline`; TimeSeries — `false|true|number`; Overview — `false` задокументирован, но не реализован.
 - **Дефолты форматтеров/тиков:** `yTicks` 4 vs 5; `xTickFormat` `'%m/%d'` vs `'%b'`; `yTickFormat` TimeSeries хардкодит `$`; `curve` `'monotone'` (Line/TS) vs `'linear'` (DualAxes); `strokeWidth` per-series 2 (Line) vs `theme.strokeWidth ?? 1.5` (TS); `barWidthRatio` 0.72 (Bar) vs 0.65 (DualAxes).
 - **`centerText`/`centerLabel`:** сигнатуры и дефолты Donut vs Gauge расходятся; у Gauge нет `valueFormat`/`percentFormat`.

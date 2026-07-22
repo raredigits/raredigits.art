@@ -15,6 +15,11 @@
 //   thickness    — ring thickness as fraction of outer radius (default: 0.18)
 //   cornerRadius — arc end rounding px (default: 6)
 //
+//   needle       — speedometer-style pointer pivoting at the dial center,
+//                  animated to the value together with the fill (default: false).
+//                  The center readout moves below the hub, dial-style.
+//   needleColor  — needle and hub color (default: theme text)
+//
 //   color        — fill arc color (default: theme.accent)
 //   trackColor   — background arc color (default: theme.grid)
 //
@@ -78,6 +83,7 @@ export class Gauge extends Chart {
     applySvgA11y(this.svg, this.options);
 
     this.gArc    = this.svg.append('g').attr('class', 'rc-gauge-arc');
+    this.gNeedle = this.svg.append('g').attr('class', 'rc-gauge-needle');
     this.gCenter = this.svg.append('g').attr('class', 'rc-gauge-center');
   }
 
@@ -99,8 +105,10 @@ export class Gauge extends Chart {
     const duration   = motionDuration(o.duration ?? 800);
     const ease       = resolveEase(o.ease ?? 'cubicOut');
 
-    const trackColor = o.trackColor ?? t.grid;
-    const fillColor  = o.color      ?? t.accent;
+    const trackColor  = o.trackColor  ?? t.grid;
+    const fillColor   = o.color       ?? t.accent;
+    const needle      = o.needle === true;
+    const needleColor = o.needleColor ?? t.text;
 
     // ── Geometry ──────────────────────────────────────────────────────────────
     // Arc angles use "clockwise from top" convention:
@@ -113,12 +121,31 @@ export class Gauge extends Chart {
     // Total arc height = outerR * (1 + |cos(endAngle)|)
 
     const bottomFrac = Math.abs(Math.cos(endAngle));        // 0.707 for ±135°
-    const cx     = W / 2;
-    const outerR = Math.min(cx, H / (1 + bottomFrac)) - 4;
+    const cx = W / 2;
+
+    // Room the center text needs BELOW the circle center. For deep arcs
+    // (default ±135°) the arc itself reaches lower and the text sits inside
+    // the ring; for shallow arcs (half-circle speedometer: endAngle ±90°,
+    // bottomFrac → 0) the text defines the block's bottom edge — without this
+    // reserve the center label would clip against the svg bottom.
+    const hasCenter = o.showCenter !== false;
+    // With a needle the readout drops below the hub (dial-style), so the
+    // reserve below the circle center grows accordingly.
+    const textBelow = hasCenter
+      ? (needle ? (o.centerLabel != null ? 52 : 34)
+                : (o.centerLabel != null ? 21 : 10))
+      : (needle ? 8 : 0);
+
+    // Largest radius whose block — R above the circle center plus whatever
+    // hangs below it (arc bottom or text) — fits the svg height.
+    const fitDeep    = (H - 8) / (1 + bottomFrac);          // arc bottom rules
+    const fitShallow = H - 8 - textBelow;                   // text bottom rules
+    const outerR = Math.min(cx - 4, fitDeep * bottomFrac >= textBelow ? fitDeep : fitShallow);
     const innerR = outerR * (1 - thickness);
 
-    // Vertically center the arc in SVG space
-    const centerY = (H + outerR * (1 - bottomFrac)) / 2;
+    // Vertically center the whole block (arc + any protruding text).
+    const below   = Math.max(outerR * bottomFrac, textBelow);
+    const centerY = (H - (outerR + below)) / 2 + outerR;
 
     this.gArc.attr('transform',    `translate(${cx},${centerY})`);
     this.gCenter.attr('transform', `translate(${cx},${centerY})`);
@@ -171,6 +198,37 @@ export class Gauge extends Chart {
       this._didAnimateIn = true;
     }
 
+    // ── Needle (speedometer pointer) ──────────────────────────────────────────
+    this.gNeedle.attr('transform', `translate(${cx},${centerY})`);
+    this.gNeedle.selectAll('*').remove();
+    if (needle) {
+      const tipR  = (innerR + outerR) / 2;         // reaches the middle of the band
+      const baseW = Math.max(3, outerR * 0.035);
+      const hubR  = Math.max(4, outerR * 0.055);
+      const deg   = a => a * 180 / Math.PI;
+
+      const pointer = this.gNeedle.append('path')
+        .attr('class', 'rc-gauge-needle-pointer')
+        .attr('d', `M ${-baseW} 0 L 0 ${-tipR} L ${baseW} 0 Z`)
+        .attr('fill', needleColor);
+
+      this.gNeedle.append('circle')
+        .attr('class', 'rc-gauge-needle-hub')
+        .attr('r', hubR)
+        .attr('fill', needleColor);
+
+      if (animate) {
+        pointer.attr('transform', `rotate(${deg(startAngle)})`)
+          .transition().duration(duration).ease(ease)
+          .attrTween('transform', () => {
+            const interp = d3.interpolate(deg(startAngle), deg(fillEnd));
+            return tt => `rotate(${interp(tt)})`;
+          });
+      } else {
+        pointer.attr('transform', `rotate(${deg(fillEnd)})`);
+      }
+    }
+
     // ── Tooltip ───────────────────────────────────────────────────────────────
     const pct = fraction;
     const tooltipHtml = o.tooltipFormat
@@ -200,11 +258,9 @@ export class Gauge extends Chart {
         .attr('class',             'rc-gauge-center-value')
         .attr('text-anchor',       'middle')
         .attr('dominant-baseline', 'middle')
-        .attr('y',     centerLabel ? -10 : 0)
+        .attr('y',     needle ? 22 : (centerLabel ? -10 : 0))
         .attr('fill',  t.text)
-        .style('font-family', t.numericFont)
         .style('font-size',   `${Math.max(16, innerR * 0.32)}px`)
-        .style('font-weight', 'bold')
         .text(centerVal);
 
       if (centerLabel) {
@@ -212,10 +268,8 @@ export class Gauge extends Chart {
           .attr('class',             'rc-gauge-center-label')
           .attr('text-anchor',       'middle')
           .attr('dominant-baseline', 'middle')
-          .attr('y',    14)
+          .attr('y',    needle ? 44 : 14)
           .attr('fill', t.muted)
-          .style('font-family', t.font)
-          .style('font-size',   t.fontSize)
           .text(centerLabel);
       }
     }

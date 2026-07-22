@@ -57,7 +57,14 @@
             { "title": "Annotations", "url": "/charts/line/annotations/" }
           ]
       },
-      { "title": "Bar", "url": "/charts/bar/" },
+      {
+          "title": "Bar",
+          "url": "/charts/bar/",
+          "subitems": [
+            { "title": "Stacked Bar", "url": "/charts/bar/stacked-bar/" },
+            { "title": "Hierarchical Bar", "url": "/charts/bar/hierarchical-bar/" }
+          ]
+      },
       { "title": "Dual Axes", "url": "/charts/dual-axes/" },
       { "title": "Combined", "url": "/charts/combined/" },
       { "title": "Circular", "url": "/charts/circular/" },
