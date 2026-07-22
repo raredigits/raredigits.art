@@ -697,8 +697,6 @@ export class Graph extends Chart {
             .attr('text-anchor',      'middle')
             .attr('dominant-baseline','hanging')
             .attr('fill',             t.text)
-            .style('font-family',     t.font)
-            .style('font-size',       '11px')
             .style('pointer-events',  'none')
             .style('user-select',     'none');
 
@@ -808,10 +806,6 @@ export class Graph extends Chart {
                                     : Math.cos(d.angle) < -0.35 ? 'end' : 'middle')
       .attr('dominant-baseline', 'middle')
       .attr('fill',              t.muted)
-      .style('font-family',      t.font)
-      .style('font-size',        '10px')
-      .style('letter-spacing',   '0.08em')
-      .style('text-transform',   'uppercase')
       .style('pointer-events',   'none')
       .text(d => d.key);
 
@@ -826,10 +820,7 @@ export class Graph extends Chart {
       .attr('x',            104)   // clears the zoom-controls row bottom-left
       .attr('y',            H - 14)
       .attr('fill',         t.muted)
-      .style('font-family', t.font)
-      .style('font-size',   '10px')
       .style('cursor',      'pointer')
-      .style('text-decoration', 'underline')
       .attr('role',         'button')
       .attr('tabindex',     0)
       .text(d => d)
@@ -851,9 +842,6 @@ export class Graph extends Chart {
       .attr('x',            8)
       .attr('y',            d => d.y + 3)
       .attr('fill',         t.muted)
-      .style('font-family', t.font)
-      .style('font-size',   '10px')
-      .style('letter-spacing', '0.05em')
       .text(d => `${d.hops} hop${d.hops !== 1 ? 's' : ''}${d.shortest ? ' · shortest' : ''}`);
 
     // ── Hidden-nodes control: the way back from right-click hiding ──
@@ -868,10 +856,7 @@ export class Graph extends Chart {
       .attr('y',                H - 8)
       .attr('text-anchor',      'end')
       .attr('fill',             t.muted)
-      .style('font-family',     t.font)
-      .style('font-size',       '10px')
       .style('cursor',          'pointer')
-      .style('text-decoration', 'underline')
       .text(d => d)
       .on('click', () => {
         this._hidden.clear();

@@ -298,6 +298,22 @@
               
               
               
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <a href="/charts/bar/stacked-bar/">Stacked Bar</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/charts/bar/hierarchical-bar/">Hierarchical Bar</a>
+                      
+                    </li>
+                  
+                </ul>
+              
               
             </li>
           
@@ -414,9 +430,7 @@
     <article>
       <p>Bar charts are the simplest and most reliable way to compare things. If you have categories and numbers, and you want people to understand the difference between them without decoding a visual puzzle, you use bars. Revenue by month. Product sales. Survey answers. Demographics. Anything where the question is basically “how much?” or “which one is bigger?”</p>
 <p>The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="bar-chart-revenue"></div>
-</div>
+<div id="bar-chart-revenue" class="text-content-caption card-dashboard-bordered"></div>
 <p>Orientation and reading comfort</p>
 <p>The Bar chart supports two orientations: <code>vertical</code> (default) and <code>horizontal</code>. Vertical bars work well for short labels and compact comparisons. Horizontal bars are usually the better default when labels are long or when you want the chart to read like a ranked list.</p>
 <p>In horizontal mode, the category axis is on the left and values run along the bottom. In vertical mode, categories sit at the bottom and values are on the right, which matches how most business dashboards place numeric scales.</p>
@@ -446,6 +460,7 @@
 
 chart.setData(data);</code></pre>
 <p>Timeframe controls apply only to the date-based vertical mode. They do not apply to ordinary categorical bars or horizontal rank-style bars.</p>
+<p>There is a third shape: hand Bar series-major data <code>[{ name, values }]</code> and it switches into the stacked mode — segments per category, an auto-built legend, and a <code>'percent'</code> variant. See <a href="/charts/bar/stacked-bar/">Stacked Bar</a>.</p>
 <h3>Long labels (without ruining the axis)</h3>
 <p>Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports <code>labelMaxLength</code>, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.</p>
 <p>This is one of those details you only miss when you do not have it.</p>
@@ -557,6 +572,12 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td>CSS color</td>
             <td>theme accent</td>
             <td>Uniform fill color for all bars.</td>
+        </tr>
+        <tr>
+            <td><code>barWidthRatio</code></td>
+            <td>number</td>
+            <td><code>0.72</code></td>
+            <td>Bar width as a fraction of the slot in the date-based mode.</td>
         </tr>
         <tr>
             <td><code>labelMaxLength</code></td>

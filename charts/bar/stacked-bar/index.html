@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rare Charts | Rare Digits Art</title>
+    <title>Stacked Bar | Rare Digits Art</title>
 
     
 
@@ -277,7 +277,7 @@
     
       <h5 class="sidebar-header">
           
-            Charts
+            <a href="/charts/">Charts</a>
           
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -297,6 +297,22 @@
                 <a href="/charts/bar/">Bar</a>
               
               
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Stacked Bar</span>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/charts/bar/hierarchical-bar/">Hierarchical Bar</a>
+                      
+                    </li>
+                  
+                </ul>
               
               
             </li>
@@ -408,70 +424,96 @@
     
     
   <section class="page-title">
-    <h1>Rare Charts</h1>
+    <h1>Stacked Bar</h1>
   </section>
 
     <article>
-      <div class="meta-info">
-  /charts/rare-charts.js
-  <p>
-      v0.9.8_2 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_2/rare-charts.min.js">CDN</a> |
-      <a href="/assets/charts/rare-charts.js">Download</a> <span class="rd-icon-download"></span>
-  </p>
-</div>
-<p>RareCharts is a charting library for professional data presentation. It is built for situations where numbers actually matter: financial reporting, KPI dashboards, operational analytics, strategic reviews. This is not a decorative widget and not a playground for “look, animations”.</p>
-<h3>Interpretation time is not abstract. It is cost</h3>
-<p>Text can be precise. Tables can be structured. But both require sequential reading and mental calculation. A chart compresses that process. It turns numbers into shape, direction, magnitude and change — things the brain reads almost instantly.</p>
-<p>If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4</em>”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.</p>
-<div class="card text-content-caption card-dashboard-bordered black-bg">
-    <div id="line-chart-demo-revenue"></div>
-</div>
-<h2>RareCharts</h2>
-<div class="sidenote-wrapper">
-  <div>
-    <p>RareCharts is part of <a href="/styles/">Rare Styles</a>, professional design system for business interfaces. This means its visual language, typography and spacing are aligned with a broader system. At the same time, the library <strong>can work independently</strong> in any project without requiring the rest of Rare Styles.</p>
-  </div>
-  <div class="sidenote">
-    <h5>Built on D3</h5>
-    <p>RareCharts is built on top of D3.js, a long-established data visualization library trusted in production environments for years. We rely on D3 for scale systems, rendering precision, performance and flexibility. RareCharts adds structure, defaults and business-oriented conventions on top of that foundation.</p>
-  </div>
-  <div>
-    <p>You can integrate it into an existing product, an internal dashboard, a reporting tool, or a public-facing analytics page. Architecturally it does not impose a design ideology. It provides a structured base.</p>
-    <p>The library includes:</p>
-    <ul>
-      <li>Line and time-series charts</li>
-      <li>Bars and dual-axis combinations</li>
-      <li>Circulars: donut, pie, gauge</li>
-      <li>Geographic maps</li>
-      <li>Network graphs</li>
-    </ul>
-  </div>
-</div>
-<p>The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.</p>
-<p>This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.</p>
-<h2>Standard Structure</h2>
-<p>Every chart follows a consistent composition: title, subtitle, legend, chart area and data source. These elements are configurable. They can be provided, extended, overridden or omitted entirely.</p>
-<p>The structure is there to support professional reporting standards. It keeps charts from turning into isolated visual fragments and instead makes them part of a coherent document.</p>
-<h3>Data Handling</h3>
-<p>RareCharts works with internal datasets as well as JSON and CSV inputs. This makes it naturally compatible with APIs, backend responses and analytics pipelines. If your data is structured, it can be visualized.</p>
-<p>The data model is explicit and predictable, which becomes critical when multiple charts consume data from different sources but must behave consistently.</p>
-<h3>Styling and Themes</h3>
-<p>The library includes a built-in styling system and predefined themes that can be overridden or extended. By default, a chart occupies 100% of the parent container’s width, while its height is defined per instance. This ensures predictable behavior in responsive layouts.</p>
-<p>There are no hidden layout “surprises”. Control remains with the developer.</p>
-<h3>Professional Considerations</h3>
-<div class="sidenote-wrapper">
-  <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
-  <div class="sidenote">
-    <div id="bar-chart-understanding"></div>
-  </div>
-  <div>
-    <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>
-    <p>The following sections of the documentation explore each chart type in depth, including configuration parameters, customization patterns and edge cases. Complexity is not removed. It is organized.</p>
-  </div>
-</div>
+      <p>A stacked bar chart answers a different question than a plain bar. A plain bar compares totals: which category is biggest. A stacked bar keeps that comparison but splits each bar into the parts it is made of — so you read the total <em>and</em> its composition in the same place. Revenue by quarter, split by product line. Headcount by department, split by team. Energy by year, split by source. Composition over a category axis is the most common analytics figure after the plain line.</p>
+<p>It is a <strong>mode of the <a href="/charts/bar/">Bar</a> chart</strong>, not a separate class. Hand <code>Bar</code> a set of series instead of a flat list and it stacks them. It draws <strong>vertically</strong> (the default) or <strong>horizontally</strong> — set <code>orientation: 'horizontal'</code> for a ranked, composed list; axes, grid, and animation all behave as they do for an ordinary bar.</p>
+<div id="stacked-revenue" class="text-content-caption card-dashboard-bordered"></div>
+<p>This is composition <strong>within a category</strong> — several series sharing one axis. That is a different shape from the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a>, which breaks a single total down a <em>tree</em> of parents and children. Same instinct — “what is this made of?” — different structure: stacking adds a series dimension, a hierarchy adds depth.</p>
+<h3>Data format</h3>
+<p>Pass an array of <strong>series</strong>, each with a <code>name</code> and its <code>values</code>:</p>
+<pre class="text-content-caption"><code>[
+    { name: 'Cloud',    values: [{ label: 'Q1', value: 42 }, { label: 'Q2', value: 48 }] },
+    { name: 'Licenses', values: [{ label: 'Q1', value: 30 }, { label: 'Q2', value: 29 }] },
+    { name: 'Services', values: [{ label: 'Q1', value: 18 }, { label: 'Q2', value: 20 }] },
+]</code></pre>
+<p><code>Bar</code> switches into stacked mode automatically when it sees this series-major shape (a <code>values</code> array on the first item), so there is no separate class to import and no flag to remember for the common case. The categories are the <strong>ordered union</strong> of every series’ labels — a series that skips a category simply contributes nothing there, and the stack closes up. Segments stack in the order the series are given, bottom to top (or left to right when horizontal).</p>
+<p>Values are expected to be <strong>non-negative</strong> — a stacked bar encodes cumulative length, and a negative slice has no coherent place in the pile. For signed comparisons (before/after, gains/losses around a baseline) use a diverging bar instead.</p>
+<h3>Percent (100%) mode</h3>
+<p>When the story is the <em>shifting share</em> rather than the absolute total, normalize every bar to fill the axis: pass <code>stacked: 'percent'</code>. Each category then reads as parts of 100%, which makes a changing mix legible even when the totals move underneath it.</p>
+<div id="stacked-energy" class="text-content-caption card-dashboard-bordered margin-b-md"></div>
+<pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
+    stacked: 'percent',
+}).setData(series);</code></pre>
+<h3>Orientation and legend</h3>
+<p>Both orientations work. <code>vertical</code> (default) reads as composition over time; <code>horizontal</code> reads as a ranked, composed list and handles long category labels better. Set it the usual way:</p>
+<pre class="text-content-caption"><code>new RareCharts.Bar('#chart', { orientation: 'horizontal' }).setData(series);</code></pre>
+<p>A legend is <strong>built automatically</strong> from the series names, colored to match the segments. Pass your own <code>legend</code> array to override it — see the <a href="/charts/settings/">Settings</a> page for the legend format.</p>
+<h3>Colors and tooltips</h3>
+<p>Each series takes the next color from the theme palette, in order. Override a single series with a <code>color</code> on it:</p>
+<pre class="text-content-caption"><code>{ name: 'Cloud', color: '#00c97a', values: [ ... ] }</code></pre>
+<p>Hovering a segment shows its category, series name, value, and share of that category’s total. Customize it with <code>tooltipFormat: (seg) =&gt; html</code>, where <code>seg</code> is <code>{ name, cat, value, total }</code>.</p>
+<h2>Stacked options</h2>
+<p>Stacked bars share the <a href="/charts/bar/">Bar</a> chart’s options — grid, axis visibility, tick formatters, animation, <code>labelMaxLength</code>, and margins all apply. The options specific to stacking:</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>stacked</code></td>
+            <td><code>true</code> | <code>'percent'</code></td>
+            <td>auto</td>
+            <td>Stacking is enabled automatically by the series-major data shape. Set <code>'percent'</code> to normalize each bar to 100%.</td>
+        </tr>
+        <tr>
+            <td><code>orientation</code></td>
+            <td><code>'vertical'</code> | <code>'horizontal'</code></td>
+            <td><code>'vertical'</code></td>
+            <td>Stack upward (vertical) or rightward (horizontal).</td>
+        </tr>
+        <tr>
+            <td><code>legend</code></td>
+            <td>array</td>
+            <td>auto</td>
+            <td>Auto-built from series names. Pass your own to override.</td>
+        </tr>
+        <tr>
+            <td><code>yTickFormat</code> / <code>xTickFormat</code></td>
+            <td>function</td>
+            <td><code>.2s</code> / <code>.0%</code></td>
+            <td><code>(value) =&gt; string</code> for the value axis (Y in vertical, X in horizontal). Defaults to a compact number, or a percent format in <code>'percent'</code> mode.</td>
+        </tr>
+        <tr>
+            <td><code>yTicks</code> / <code>xTicks</code></td>
+            <td>number</td>
+            <td><code>4</code></td>
+            <td>Value-axis interval count — the niced domain is divided into exactly this many intervals. <code>yTickValues</code> / <code>xTickValues</code> override with explicit positions.</td>
+        </tr>
+        <tr>
+            <td><code>valueFormat</code></td>
+            <td>function</td>
+            <td>comma number</td>
+            <td><code>(seg) =&gt; string</code> — formats the value inside the default segment tooltip.</td>
+        </tr>
+        <tr>
+            <td><code>tooltipFormat</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td><code>(seg) =&gt; html</code> where <code>seg</code> is <code>{ name, cat, value, total }</code>. Default shows the category, the series and value, and the share of the category total.</td>
+        </tr>
+    </tbody>
+</table>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/bar/bar-chart-understanding.js"></script>
-<script src="/assets/charts/examples/line/line-chart-revenue.js"></script>
+<script src="/assets/charts/examples/bar/stacked-bar-revenue.js"></script>
+<script src="/assets/charts/examples/bar/stacked-bar-energy.js"></script>
 
     </article>
   </div>

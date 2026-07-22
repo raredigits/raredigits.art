@@ -87,15 +87,14 @@ export function renderZeroBaseline(g, scale, W, theme) {
  * @param {object}       theme
  */
 export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
+  g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
   const apply = (n) => {
     g.attr('transform', `translate(0,${H})`)
       .call(d3.axisBottom(scale).ticks(n).tickSize(0).tickPadding(6).tickFormat(tickFormat))
       .call(sel => {
         sel.selectAll('text')
           .attr('fill', theme.muted)
-          .attr('dy', '0.71em')
-          .style('font-family', theme.numericFont)
-          .style('font-size', theme.fontSize);
+          .attr('dy', '0.71em');
         sel.select('.domain').remove();
         sel.selectAll('line').remove();
       });
@@ -143,15 +142,14 @@ export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = tr
   const axis = tickValues
     ? d3.axisRight(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
     : d3.axisRight(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
+  g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
   g.attr('transform', `translate(${W},0)`)
     .call(axis)
     .call(sel => {
       sel.selectAll('text')
         .attr('fill', theme.muted)
         .attr('text-anchor', 'start')
-        .attr('x', 8)
-        .style('font-family', theme.numericFont)
-        .style('font-size', theme.fontSize);
+        .attr('x', 8);
 
       if (labelsOnly) {
         sel.select('.domain').remove();
@@ -179,15 +177,14 @@ export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, 
   const axis = tickValues
     ? d3.axisLeft(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
     : d3.axisLeft(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
+  g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
   g.attr('transform', 'translate(0,0)')
     .call(axis)
     .call(sel => {
       sel.selectAll('text')
         .attr('fill', theme.muted)
         .attr('text-anchor', 'end')
-        .attr('x', -8)
-        .style('font-family', theme.numericFont)
-        .style('font-size', theme.fontSize);
+        .attr('x', -8);
 
       if (labelsOnly) {
         sel.select('.domain').remove();
@@ -236,8 +233,6 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
     .attr('class', 'rc-end-label')
     .attr('dy', '0.35em')
     .attr('fill', d => d.color)
-    .style('font-family', theme.numericFont)
-    .style('font-size', theme.fontSize)
     .text(d => tickFormat(d.value));
 
   // Fit rect to text bounding box with small horizontal padding
@@ -287,9 +282,7 @@ export function renderAxisTitles(g, W, y1Title, y2Title, theme, opts = {}) {
     .attr('class', d => `rc-axis-title rc-axis-title-${d.axis}`)
     .attr('x', d => (d.axis === 'y1' ? W + 8 : -8))
     .attr('y', -28)
-    .attr('fill', theme.muted)
-    .style('font-family', theme.font)
-    .style('font-size', theme.fontSize);
+    .attr('fill', theme.muted);
 
   sel.each(function (d) {
     const node  = this;
@@ -607,8 +600,6 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     .attr('text-anchor', 'middle')
     .attr('dy', '0.71em')
     .attr('fill', d => d.color)
-    .style('font-family', theme.font)
-    .style('font-size', theme.fontSize)
     .text(d => d.label);
 
   vLabelGroups.each(function () {
@@ -660,8 +651,6 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     .attr('class', 'rc-annotation-h-label')
     .attr('text-anchor', d => d.labelPosition === 'right' ? 'end' : 'start')
     .attr('fill', d => d.color)
-    .style('font-family', theme.font)
-    .style('font-size', theme.fontSize)
     .text(d => d.label);
 
   hLabelGroups.each(function () {

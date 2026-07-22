@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Circular Charts | Rare Digits Art</title>
+    <title>Hierarchical Bar | Rare Digits Art</title>
 
     
 
@@ -298,6 +298,22 @@
               
               
               
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <a href="/charts/bar/stacked-bar/">Stacked Bar</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <span class="bold">Hierarchical Bar</span>
+                      
+                    </li>
+                  
+                </ul>
+              
               
             </li>
           
@@ -321,7 +337,7 @@
           
             <li>
               
-                <span class="bold">Circular</span>
+                <a href="/charts/circular/">Circular</a>
               
               
               
@@ -408,361 +424,188 @@
     
     
   <section class="page-title">
-    <h1>Circular Charts</h1>
+    <h1>Hierarchical Bar</h1>
   </section>
 
     <article>
-      <p>RareCharts provides three circular chart types that share a common API and theme system: <strong>Donut</strong>, <strong>Pie</strong>, and <strong>Gauge</strong>. Each answers a different question.</p>
-<h2>Donut</h2>
-<p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
-<div id="chart-donut" class="text-content-caption card-dashboard-bordered"></div>
-<div class="air-md"></div>
-<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
-  title:       'Revenue by Product',
-  source:      'Source: Internal accounting',
-  legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
-  height:      300,
-  centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
-  centerLabel: 'Revenue',
-}).setData(segments);</code></pre>
-<h3>Legend to the right</h3>
-<p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
-<div id="chart-donut-legend-right" class="text-content-caption card-dashboard-bordered"></div>
-<div class="air-md"></div>
-<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
-  legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
-  legendPosition: 'right',
-  height:         340,
-}).setData(segments);</code></pre>
-<h3>Drill-down (hierarchy mode)</h3>
-<p>Hand Donut a <strong>tree</strong> — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.</p>
-<div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
-<div class="air-md"></div>
-<p>Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a <strong>remainder</strong> — the undisclosed gap — which draws as a muted slice once you surface it with <code>showRemainder: true</code> or a per-node <code>remainderLabel</code>. And a <strong>named-but-undisclosed</strong> item (<code>value: null</code>) has no magnitude, so it cannot be a slice; the ring notes it as “<em>N not disclosed</em>” beneath the chart instead. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.</p>
-<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
-  showRemainder: true,
+      <p>A hierarchical bar chart is what you reach for when your data is not a flat list but a tree — a whole that breaks into parts, and those parts break down further. A portfolio splits into asset classes, and each class into holdings. A budget splits into departments, and each department into line items. An org splits into teams. The question is no longer just “how much?” but “how much, and what is it made of?”</p>
+<p><code>HierarchicalBar</code> answers that as an outline: one row per node, indented by depth, each with its own bar on a shared scale. Parent rows carry their subtotal; nested rows read underneath them. You get the top-line comparison and the composition in a single figure, top to bottom, without a legend and without asking the reader to decode nested rectangles.</p>
+<div id="hbar-portfolio" class="text-content-caption card-dashboard-bordered"></div>
+<p>This is the linear view of a shallow hierarchy. For the spatial views of a deep one — treemap, pack, sunburst — that is a different tool. Bars are for reading a breakdown as a ranked, labeled list.</p>
+<h3>Data format</h3>
+<p><code>HierarchicalBar</code> takes a <strong>tree</strong>, not an array of rows. A node is:</p>
+<pre class="text-content-caption"><code>{
+    label: 'World Liberty Financial',
+    value: 536.4,
+    children: [
+        { label: 'Ethereum Key', value: 106 },
+        { label: 'USDC Key',     value: 56 },
+    ]
+}</code></pre>
+<p>Pass one root object, or an array of roots (a forest — several top-level items with no shared total). Only <code>label</code> is required. <code>children</code> marks an internal node; <code>color</code> and <code>remainderLabel</code> are optional.</p>
+<p>The same tree feeds the drill-down <a href="/charts/circular/">Donut</a> — one data shape, two representations. Build the object once and hand it to whichever view fits the page.</p>
+<div id="hbar-org" class="text-content-caption card-dashboard-bordered"></div>
+<h3>Value is authoritative — and the remainder is real</h3>
+<p>A parent’s <code>value</code> is taken as stated. It may be <strong>larger</strong> than the sum of its listed children, and that difference is not an error to be normalized away — it is a genuine remainder: the undisclosed, the “other”, the part that was never itemized. In the portfolio above, World Liberty Financial is stated at $536.4M but its named holdings add up to $243.2M; the $293.2M gap is drawn as its own muted segment labeled <em>Other token &amp; equity sales</em>.</p>
+<p>The remainder is never surfaced silently. It appears only when you ask for it:</p>
+<ul>
+<li>set <code>remainderLabel</code> on a node to surface that node’s remainder with a specific label, or</li>
+<li>pass <code>showRemainder: true</code> to the chart to surface every node’s remainder using a fallback label.</li>
+</ul>
+<p>If a parent’s children <em>exceed</em> its stated value, the data is inconsistent — the chart warns in the console and leaves the (negative) remainder undrawn, or throws instead when you pass <code>strict: true</code>.</p>
+<h3>Undisclosed items</h3>
+<p>Real breakdowns have holes: a line item you know exists but whose amount was never published. Give it <code>value: null</code> and it is kept as a <strong>placeholder</strong> — drawn with a <code>?</code> marker, excluded from every sum, and left out of the parent’s remainder (an unknown can’t be subtracted). It is not the same as omitting the item, and not the same as a remainder: the remainder is a <em>quantified</em> gap, a <code>null</code> is a <em>named but unquantified</em> item.</p>
+<pre class="text-content-caption"><code>{ label: 'License agreement with NFT INT, LLC', value: null }
+<span class="code-comment">// → drawn as “?”, counted in nothing</span></code></pre>
+<p>A leaf with no usable value at all — absent, zero, or negative — is simply dropped, since a compositional bar can only draw a positive magnitude.</p>
+<h3>Root, depth, and color</h3>
+<p>By default the root row is drawn as a neutral full-width total, and each <strong>top-level branch</strong> takes the next color from the theme palette. Descendants inherit their branch’s hue and fade one step per level, so nesting reads as shade without a second encoding. A node’s own <code>color</code> always wins.</p>
+<p>Set <code>showRoot: false</code> to drop a single root entirely and start from its children — the root then reads as the chart title/total rather than a bar. Use <code>maxDepth</code> to cap how deep the outline expands. Indentation is <code>indent</code> px per level; row height is <code>rowHeight</code>.</p>
+<h3>Value labels and long names</h3>
+<p>Each bar prints its value at the end (<code>showValues</code>, on by default), flipping inside the bar when space is tight. Format it with <code>valueFormat: (node) =&gt; string</code>. Because holding and line-item names run long, the label sits on its own line above the bar rather than in a cramped left gutter; <code>labelMaxLength</code> truncates it and keeps the full text in the tooltip.</p>
+<h3>Quick example</h3>
+<pre class="text-content-caption"><code>new RareCharts.HierarchicalBar('#chart', {
+  valueFormat: n => '$' + n.value + 'M',
+  showRoot: false,       <span class="code-comment">// root becomes the header, not a bar</span>
 }).setData({
-  label: 'Portfolio', value: 1400,
+  label: 'Portfolio', value: 100,
   children: [
-    { label: 'World Liberty Financial', value: 536.4, remainderLabel: 'Other', children: [
-      { label: 'Ethereum Key', value: 106 },
-      { label: 'USDC Key',     value: 56 },
+    { label: 'Equities', value: 60, remainderLabel: 'Other', children: [
+      { label: 'US Large Cap', value: 35 },
+      { label: 'International', value: 18 },
     ] },
-    { label: 'Stablecoin proceeds', value: 196.9 },
-    { label: 'NFT INT, LLC',        value: null },   <span class="code-comment">// undisclosed → noted, not drawn</span>
+    { label: 'Bonds', value: 30 },
+    { label: 'Cash',  value: null },   <span class="code-comment">// undisclosed → “?”</span>
   ],
 });</code></pre>
-<h2>Pie</h2>
-<p>A pie is a donut with <code>innerRadius: 0</code>. The class name is <code>Donut</code> — <code>Pie</code> is an alias. Same API, same options, same behavior.</p>
-<div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
-<p>A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.</p>
-<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
-  height:     300,
-  showLabels: true,
-}).setData(segments);</code></pre>
-<h3>Outer labels</h3>
-<p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically.</p>
-<p>Control what appears with <code>labelContent</code>:</p>
-<ul>
-<li><code>'both'</code> — category name + percentage (default)</li>
-<li><code>'label'</code> — category name only</li>
-<li><code>'percent'</code> — percentage only</li>
-</ul>
-<div class="air-md"></div>
-<pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
-  showLabels:   true,
-  labelContent: 'percent',   <span class="code-comment">// just percentages</span>
-  labelMinPct:  0.05,        <span class="code-comment">// hide labels below 5%</span>
-}).setData(segments);</code></pre>
-<h2>Gauge</h2>
-<p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
-<div class="card-row-bordered card-caption">
-  <div class="card-row-bordered-item">
-    <div id="chart-gauge-progress"></div>
-  </div>
-  <div class="card-row-bordered-item">
-    <div id="chart-gauge-target"></div>
-  </div>
-  <div class="card-row-bordered-item">
-    <div id="chart-gauge-thin"></div>
-  </div>
-</div>
-<p><code>setData()</code> accepts a plain number, or an object to override <code>max</code> and <code>min</code> per render:</p>
-<pre class="text-content-caption"><code><span class="code-comment">// 73 out of 100 (default max)</span>
-new RareCharts.Gauge('#chart', {
-  centerLabel: 'Complete',
-}).setData(73);
-
-<span class="code-comment">// 50 achieved out of 80 plan — fills to 62.5%</span>
-new RareCharts.Gauge('#chart', {
-  max:         80,
-  color:       '#00c97a',
-  centerText:  (value, max) => `${value}/${max}`,
-  centerLabel: 'Achieved',
-}).setData(50);
-
-<span class="code-comment">// Override max at render time</span>
-gauge.setData({ value: 50, max: 80 });</code></pre>
-<p>The arc geometry is fully configurable:</p>
-<pre class="text-content-caption"><code>new RareCharts.Gauge('#chart', {
-  startAngle:   -Math.PI * 0.75,   <span class="code-comment">// -135° (default)</span>
-  endAngle:      Math.PI * 0.75,   <span class="code-comment">// +135° (default, 270° sweep)</span>
-  thickness:    0.18,              <span class="code-comment">// ring thickness as fraction of radius</span>
-  cornerRadius: 6,
-  trackColor:   '#e8e8e8',         <span class="code-comment">// background arc</span>
-  color:        '#ff3b5c',         <span class="code-comment">// fill arc</span>
-});</code></pre>
-<h3>Speedometer — half-circle and needle</h3>
-<p>Two ingredients make the automotive-indicator look:</p>
-<ul>
-<li><strong>Sweep.</strong> <code>startAngle</code> / <code>endAngle</code> set the arc in radians, clockwise from 12 o'clock. The default <code>±Math.PI * 0.75</code> is a 270° horseshoe; <code>-Math.PI / 2 … Math.PI / 2</code> is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.</li>
-<li><strong>Needle.</strong> <code>needle: true</code> draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with <code>needleColor</code> (default: theme text).</li>
-</ul>
-<div class="card-row-bordered card-caption margin-y-md">
-  <div class="card-row-bordered-item">
-    <div id="chart-gauge-speed"></div>
-  </div>
-  <div class="card-row-bordered-item">
-    <div id="chart-gauge-needle"></div>
-  </div>
-</div>
-<pre class="text-content-caption"><code>new RareCharts.Gauge('#chart', {
-  startAngle:  -Math.PI / 2,   <span class="code-comment">// 9 o'clock</span>
-  endAngle:     Math.PI / 2,   <span class="code-comment">// 3 o'clock — a 180° sweep</span>
-  needle:       true,
-  max:          240,
-  centerText:   v => v,
-  centerLabel:  'km/h',
-}).setData(87);</code></pre>
-<h2>Data format</h2>
-<p>All three types use the same segment data structure:</p>
-<pre class="text-content-caption"><code>[
-  { label: 'Subscriptions', value: 42000, color: '#00c97a' },
-  { label: 'Services',      value: 18000 },
-  { label: 'Other',         value:  6000 }
-]</code></pre>
-<p>Only positive finite values are rendered. Zero and negative values are filtered out.</p>
-<p>Passing a single root <strong>object</strong> instead of a flat array switches Donut into drill-down mode, where the data is a tree — see the Drill-down section above.</p>
-<p>Colors can be provided per item. If omitted, the chart uses the active theme palette in order.</p>
-<h2>Slice geometry</h2>
-<p><code>padAngle</code> controls the gap between slices (a small default keeps separation without turning the chart into a flower). <code>cornerRadius</code> rounds slice corners. Both have sensible defaults and adjust slightly between Pie and Donut mode.</p>
-<p>Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:</p>
-<pre class="text-content-caption"><code>tooltipFormat: ({ label, value, percent, color }) => `
-  &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
-  &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
-  &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
-`</code></pre>
-<h2>Circular charts options</h2>
+<h2>Hierarchical Bar options</h2>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
 <table class="table-bordered card-caption">
     <thead>
         <tr>
             <th>Option</th>
+            <th>Type</th>
             <th>Default</th>
             <th>Description</th>
         </tr>
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="3"><h5>Donut / Pie</h5></td>
+            <td colspan="4"><h5>Layout</h5></td>
         </tr>
         <tr>
-            <td><code>height</code></td>
-            <td><code>280</code></td>
-            <td>Chart height px</td>
+            <td><code>rowHeight</code></td>
+            <td>number</td>
+            <td><code>44</code></td>
+            <td>Height in px of each row. Chart height is content-driven — rows × <code>rowHeight</code> — and width is always 100% of the container.</td>
         </tr>
         <tr>
-            <td><code>innerRadius</code></td>
-            <td><code>0.58</code></td>
-            <td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
+            <td><code>indent</code></td>
+            <td>number</td>
+            <td><code>16</code></td>
+            <td>Horizontal indent in px per depth level, applied to both the label and its bar.</td>
         </tr>
         <tr>
-            <td><code>padAngle</code></td>
-            <td><code>0.018</code></td>
-            <td>Gap between slices (radians)</td>
+            <td><code>barHeight</code></td>
+            <td>number</td>
+            <td><code>9</code></td>
+            <td>Bar thickness in px.</td>
         </tr>
         <tr>
-            <td><code>cornerRadius</code></td>
-            <td><code>3</code></td>
-            <td>Rounded slice corners px</td>
-        </tr>
-        <tr>
-            <td><code>showLabels</code></td>
-            <td><code>false</code></td>
-            <td>Show outer leader-line labels</td>
-        </tr>
-        <tr>
-            <td><code>labelContent</code></td>
-            <td><code>'both'</code></td>
-            <td><code>'both'</code> / <code>'label'</code> / <code>'percent'</code></td>
-        </tr>
-        <tr>
-            <td><code>labelMinPct</code></td>
-            <td><code>0.04</code></td>
-            <td>Hide label when slice &lt; this fraction</td>
-        </tr>
-        <tr>
-            <td><code>legendPosition</code></td>
-            <td>—</td>
-            <td><code>'right'</code> to place legend in vertical aside</td>
-        </tr>
-        <tr>
-            <td><code>showCenter</code></td>
-            <td><code>true</code> (donut)</td>
-            <td>Show center text hole</td>
-        </tr>
-        <tr>
-            <td><code>centerText</code></td>
-            <td>formatted total</td>
-            <td>String or <code>function(data) =&gt; string</code></td>
-        </tr>
-        <tr>
-            <td><code>centerLabel</code></td>
-            <td><code>'Total'</code></td>
-            <td>Secondary line below center text</td>
-        </tr>
-        <tr>
-            <td><code>valueFormat</code></td>
-            <td>locale number</td>
-            <td><code>function(value) =&gt; string</code> — center total and default tooltip value</td>
-        </tr>
-        <tr>
-            <td><code>percentFormat</code></td>
-            <td><code>.1%</code></td>
-            <td><code>function(pct) =&gt; string</code> — outer-label and tooltip percents</td>
-        </tr>
-        <tr>
-            <td><code>animate</code></td>
+            <td><code>showRoot</code></td>
+            <td>boolean</td>
             <td><code>true</code></td>
-            <td>Animate on first render</td>
+            <td>Draw the root row(s). When <code>false</code>, a single root is dropped and its children become the top rows — the root reads as the header/total instead of a bar. No effect on a forest.</td>
         </tr>
         <tr>
-            <td><code>duration</code></td>
-            <td><code>650</code></td>
-            <td>Animation duration ms</td>
+            <td><code>maxDepth</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>Deepest level to render, counted from the top row. Default: no limit.</td>
         </tr>
-        <tr>
-            <td><code>ease</code></td>
-            <td><code>'cubicOut'</code></td>
-            <td><code>'cubicOut'</code> / <code>'cubicInOut'</code> / <code>'linear'</code></td>
-        </tr>
-        <tr>
-            <td><code>tooltipFormat</code></td>
-            <td>built-in</td>
-            <td><code>function({label, value, percent, color}) =&gt; html</code></td>
-        </tr>
-        <tr>
-            <td><code>showRemainder</code></td>
-            <td><code>false</code></td>
-            <td>Drill-down mode: draw a muted slice for each node’s undisclosed remainder (value − Σ children)</td>
+        <tr class="table-section">
+            <td colspan="4"><h5>Composition</h5></td>
         </tr>
         <tr>
             <td><code>remainderLabel</code></td>
+            <td>string</td>
             <td><code>'Other'</code></td>
-            <td>Drill-down mode: fallback label for a surfaced remainder</td>
+            <td>Per-node (in the data) it labels and surfaces that node’s remainder. As a chart option it is the fallback label used when <code>showRemainder</code> is on.</td>
+        </tr>
+        <tr>
+            <td><code>showRemainder</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Surface every node’s remainder as a muted segment, using each node’s own <code>remainderLabel</code> or the fallback above.</td>
         </tr>
         <tr>
             <td><code>strict</code></td>
+            <td>boolean</td>
             <td><code>false</code></td>
-            <td>Drill-down mode: throw when a node’s children exceed its stated value (default: warn, leave the negative remainder undrawn)</td>
+            <td>Throw when a node’s children exceed its stated value. Off by default: the chart warns and leaves the negative remainder undrawn.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="3"><h5>Gauge</h5></td>
+            <td colspan="4"><h5>Value labels</h5></td>
         </tr>
         <tr>
-            <td><code>height</code></td>
-            <td><code>220</code></td>
-            <td>Chart height px</td>
-        </tr>
-        <tr>
-            <td><code>min</code></td>
-            <td><code>0</code></td>
-            <td>Minimum value</td>
-        </tr>
-        <tr>
-            <td><code>max</code></td>
-            <td><code>100</code></td>
-            <td>Maximum value</td>
-        </tr>
-        <tr>
-            <td><code>startAngle</code></td>
-            <td><code>-¾π</code></td>
-            <td>Arc start (radians, clockwise from top)</td>
-        </tr>
-        <tr>
-            <td><code>endAngle</code></td>
-            <td><code>+¾π</code></td>
-            <td>Arc end (270° sweep by default)</td>
-        </tr>
-        <tr>
-            <td><code>thickness</code></td>
-            <td><code>0.18</code></td>
-            <td>Ring thickness as fraction of outer radius</td>
-        </tr>
-        <tr>
-            <td><code>cornerRadius</code></td>
-            <td><code>6</code></td>
-            <td>Arc end rounding px</td>
-        </tr>
-        <tr>
-            <td><code>needle</code></td>
-            <td><code>false</code></td>
-            <td>Speedometer pointer pivoting at the dial center; the center readout moves below the hub</td>
-        </tr>
-        <tr>
-            <td><code>needleColor</code></td>
-            <td>theme text</td>
-            <td>Needle and hub color</td>
-        </tr>
-        <tr>
-            <td><code>color</code></td>
-            <td><code>theme.accent</code></td>
-            <td>Fill arc color</td>
-        </tr>
-        <tr>
-            <td><code>trackColor</code></td>
-            <td><code>theme.grid</code></td>
-            <td>Background arc color</td>
-        </tr>
-        <tr>
-            <td><code>showCenter</code></td>
+            <td><code>showValues</code></td>
+            <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show center text</td>
+            <td>Print each value at the bar end, flipping inside the bar when space is tight.</td>
         </tr>
         <tr>
-            <td><code>centerText</code></td>
-            <td><code>'63%'</code></td>
-            <td>String or <code>function(value, max, min) =&gt; string</code></td>
-        </tr>
-        <tr>
-            <td><code>centerLabel</code></td>
+            <td><code>valueFormat</code></td>
+            <td>function</td>
             <td>—</td>
-            <td>Secondary line below center text</td>
+            <td><code>(node) =&gt; string</code>. Default: comma-formatted integer. Note the argument is the node, so you can read <code>node.value</code>, <code>node.label</code>, <code>node.depth</code>.</td>
+        </tr>
+        <tr>
+            <td><code>missingGlyph</code></td>
+            <td>string</td>
+            <td><code>'?'</code></td>
+            <td>Marker drawn where a <code>value: null</code> node’s bar would be.</td>
+        </tr>
+        <tr>
+            <td><code>labelMaxLength</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>Truncate a label to N characters and add an ellipsis. The full label stays in the tooltip.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Animation</h5></td>
         </tr>
         <tr>
             <td><code>animate</code></td>
+            <td>boolean</td>
             <td><code>true</code></td>
-            <td>Animate fill on first render</td>
+            <td>Grow bars from zero on first render. Plays once per chart instance.</td>
         </tr>
         <tr>
             <td><code>duration</code></td>
-            <td><code>800</code></td>
-            <td>Animation duration ms</td>
+            <td>number</td>
+            <td><code>500</code></td>
+            <td>Animation duration in ms.</td>
         </tr>
         <tr>
             <td><code>ease</code></td>
+            <td>string</td>
             <td><code>'cubicOut'</code></td>
-            <td><code>'cubicOut'</code> / <code>'cubicInOut'</code> / <code>'linear'</code></td>
+            <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
+        </tr>
+        <tr class="table-section">
+            <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
-            <td>built-in</td>
-            <td><code>function({value, max, min, percent}) =&gt; html</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td><code>(node) =&gt; html</code>. Default shows the label, the value (or “not disclosed”), and its share of the total.</td>
         </tr>
     </tbody>
 </table>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>
-<script src="/assets/charts/examples/pie-and-donut/donut-drilldown.js"></script>
+<script src="/assets/charts/examples/bar/hierarchical-bar-portfolio.js"></script>
+<script src="/assets/charts/examples/bar/hierarchical-bar-org.js"></script>
 
     </article>
   </div>

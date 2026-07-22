@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.8_1 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_2 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -3376,6 +3376,7 @@ var RareCharts = (() => {
     DualAxes: () => DualAxes,
     Gauge: () => Gauge,
     Graph: () => Graph2,
+    HierarchicalBar: () => HierarchicalBar,
     Line: () => Line,
     Map: () => Map2,
     MultiChart: () => MultiChart,
@@ -3398,11 +3399,717 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = '@import url(\'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap\');\n\n/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  --rc-font-family: "Fira Sans", sans-serif;\n  --rc-font-family-numeric: "Cousine", monospace;\n  --rc-font-size: 16px;\n  --rc-font-size-sm: 14px;\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.\n     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-breadcrumbs        { order: 1; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-chart-footer { order: 5; }\n\n.rc-chart > svg {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n  /* Let the plot shrink inside the fixed-height card so a tall footer (a long\n     source line or a multi-sentence note) never overflows and gets clipped \u2014\n     without min-height:0 a flex item refuses to shrink below its content. */\n  min-height: 0;\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  grid-template-areas:\n    "title range"\n    "subtitle range"\n    "legend legend";\n  column-gap: var(--space-md);\n  row-gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  grid-area: title;\n  min-width: 0;\n  margin: 0;\n  font-family: var(--rc-font-family);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  grid-area: subtitle;\n  min-width: 0;\n  font-size: var(--rc-font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* Links inside the source line \u2014 inherit the source text color, set apart by\n   the underline (so they adapt to light/dark theme automatically). */\n.rc-chart-source a {\n  color: inherit;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n/* Multi-part (array) source: let it wrap so several attributions/links all\n   stay visible instead of being cut off by the single-line ellipsis. */\n.rc-chart-source--rich {\n  white-space: normal;\n  overflow: visible;\n  text-overflow: clip;\n}\n\n/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.\n   Wraps freely (unlike source) since it can be a sentence or two; color is\n   set from theme.muted in JS so it reads as secondary to the source. */\n.rc-chart-note {\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  line-height: 1.4;\n  margin: var(--space-xs) 0 var(--space-sm);\n  text-align: left;\n  /* Long words / URLs break instead of pushing the note past the card edge. */\n  overflow-wrap: anywhere;\n}\n\n.rc-chart-source + .rc-chart-note {\n  margin-top: 0;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  grid-area: range;\n  justify-self: end;\n  align-self: start;\n  min-width: max-content;\n  padding-right: 60px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  grid-area: legend;\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  font-size: var(--rc-font-size-sm);\n  user-select: none;\n}\n\n@media (max-width: 768px) {\n  .rc-chart-header {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      "title"\n      "subtitle"\n      "range"\n      "legend";\n  }\n\n  .rc-chart-range-row {\n    justify-self: start;\n    min-width: 0;\n    padding-right: 0;\n  }\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Graph legend items are controls, not static labels. */\n.rc-graph-legend-item,\n.rc-graph-legend-reset {\n  appearance: none;\n  border: 0;\n  padding: 2px 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n}\n\n.rc-graph-legend-item:not(:disabled),\n.rc-graph-legend-reset {\n  cursor: pointer;\n}\n\n.rc-graph-legend-item:disabled { cursor: default; }\n\n.rc-graph-legend-item:focus-visible,\n.rc-graph-legend-reset:focus-visible,\n.rc-graph-breadcrumbs button:focus-visible,\n.rc-graph-overflow button:focus-visible {\n  outline: 2px solid currentColor;\n  outline-offset: 2px;\n}\n\n.rc-graph-legend-reset {\n  text-decoration: underline;\n  opacity: 0.7;\n}\n\n.rc-graph-breadcrumbs {\n  display: block;\n  padding: 4px 0;\n  font-family: var(--rc-font-family);\n  font-size: 11px;\n  line-height: 1.4;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-graph-breadcrumbs[hidden],\n.rc-graph-overflow[hidden] { display: none; }\n\n.rc-graph-breadcrumbs button {\n  appearance: none;\n  border: 0;\n  padding: 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  cursor: pointer;\n}\n\n.rc-graph-breadcrumbs button:disabled {\n  cursor: default;\n  font-weight: 600;\n  opacity: 1;\n}\n\n.rc-graph-overflow {\n  position: absolute;\n  z-index: 4;\n  left: 104px;\n  bottom: 34px;\n  width: min(320px, calc(100% - 120px));\n  max-height: min(300px, 55%);\n  overflow: hidden;\n  padding: 12px;\n  border: 1px solid rgba(127, 127, 127, 0.35);\n  border-radius: 6px;\n  background: var(--background-color, #fff);\n  color: var(--primary-color, #111);\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);\n  font-family: var(--rc-font-family);\n  font-size: 12px;\n}\n\n.rc-graph-overflow-title {\n  padding-right: 28px;\n  margin-bottom: 8px;\n  font-weight: 600;\n}\n\n.rc-graph-overflow-list {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  max-height: 240px;\n  overflow: auto;\n}\n\n.rc-graph-overflow-item {\n  appearance: none;\n  width: 100%;\n  border: 0;\n  border-radius: 3px;\n  padding: 6px 8px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: left;\n  cursor: pointer;\n}\n\n.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }\n\n.rc-graph-overflow-close {\n  position: absolute;\n  top: 6px;\n  right: 7px;\n  appearance: none;\n  border: 0;\n  padding: 2px 5px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  font-size: 18px;\n  cursor: pointer;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dashed line \u2014 for forecast / projected series */\n.rc-legend-line--dashed {\n  background-color: transparent;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */\n.rc-legend-band {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 2px;\n  opacity: 0.85;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */\n.rc-band {\n  pointer-events: none;\n}\n\n/* Axis tick labels */\n.rc-axis text {\n  font-variant-numeric: tabular-nums;\n}\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */\n.rc-annotation-line,\n.rc-annotation-range-edge,\n.rc-annotation-h-line,\n.rc-annotation-h-range-edge {\n  stroke-width: 1;\n}\n\n.rc-annotation-label,\n.rc-annotation-h-label {\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  pointer-events: none;\n}\n\n.rc-annotation-h-label {\n  dominant-baseline: text-after-edge;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 5;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--rc-font-size-sm);\n  font-family: var(--rc-font-family);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--rc-font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.\n   Entry/update motion driven by D3 (JS) is gated separately via\n   motionDuration() in core/utils.js. */\n@media (prefers-reduced-motion: reduce) {\n  .rc-chart,\n  .rc-chart * {\n    transition-duration: 0.01ms !important;\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n  }\n}\n';
+  var rare_charts_default = `@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap');
+
+/* RareCharts \u2014 charts.css
+   Structure and positioning.
+   Colors \u2014 via theme (JS), not CSS. */
+
+/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-chart {
+  --rc-font-family: "Fira Sans", sans-serif;
+  --rc-font-family-numeric: "Cousine", monospace;
+  --rc-font-size: 16px;
+  --rc-font-size-sm: 14px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.
+     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */
+  overflow: hidden;
+}
+
+.rc-chart > .rc-chart-header { order: 0; }
+.rc-graph-breadcrumbs        { order: 1; }
+.rc-graph-legend             { order: 2; }
+.rc-chart > svg              { order: 3; }
+.rc-chart > .rc-chart-navigator { order: 4; }
+.rc-chart > .rc-chart-footer { order: 5; }
+
+.rc-chart > svg {
+  font-family: var(--rc-font-family);
+  /* Small size is the chart-text default (axis ticks, labels, values). Charts
+     no longer set font-size inline; the few larger texts (donut/gauge center)
+     set their own. */
+  font-size: var(--rc-font-size-sm);
+  overflow: visible; /* otherwise end labels and crosshair dots are clipped */
+  /* Let the plot shrink inside the fixed-height card so a tall footer (a long
+     source line or a multi-sentence note) never overflows and gets clipped \u2014
+     without min-height:0 a flex item refuses to shrink below its content. */
+  min-height: 0;
+}
+
+.rc-chart-header,
+.rc-chart-subtitle,
+.rc-legend,
+.rc-chart-source {
+  color: var(--primary-color);
+}
+
+/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-chart-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title range"
+    "subtitle range"
+    "legend legend";
+  column-gap: var(--space-md);
+  row-gap: var(--space-xs);
+  position: relative;
+  user-select: none;
+}
+
+.rc-chart-title {
+  grid-area: title;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--rc-font-family);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-chart-subtitle {
+  grid-area: subtitle;
+  min-width: 0;
+  font-size: var(--rc-font-size-sm);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-chart-footer {
+  user-select: none;
+}
+
+.rc-chart-source {
+  font-style: italic;
+  font-size: var(--rc-font-size-sm);
+  font-weight: initial;
+  margin: var(--space-sm) 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Links inside the source line \u2014 inherit the source text color, set apart by
+   the underline (so they adapt to light/dark theme automatically). */
+.rc-chart-source a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Multi-part (array) source: let it wrap so several attributions/links all
+   stay visible instead of being cut off by the single-line ellipsis. */
+.rc-chart-source--rich {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.
+   Wraps freely (unlike source) since it can be a sentence or two; color is
+   set from theme.muted in JS so it reads as secondary to the source. */
+.rc-chart-note {
+  font-size: var(--rc-font-size-sm);
+  font-weight: initial;
+  line-height: 1.4;
+  margin: var(--space-xs) 0 var(--space-sm);
+  text-align: left;
+  /* Long words / URLs break instead of pushing the note past the card edge. */
+  overflow-wrap: anywhere;
+}
+
+.rc-chart-source + .rc-chart-note {
+  margin-top: 0;
+}
+
+.rc-chart-navigator {
+  width: 100%;
+}
+
+.rc-chart-range-row {
+  grid-area: range;
+  justify-self: end;
+  align-self: start;
+  min-width: max-content;
+  padding-right: 60px;
+}
+
+/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-legend {
+  grid-area: legend;
+  padding: var(--space-sm) 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: var(--rc-font-size-sm);
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .rc-chart-header {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "subtitle"
+      "range"
+      "legend";
+  }
+
+  .rc-chart-range-row {
+    justify-self: start;
+    min-width: 0;
+    padding-right: 0;
+  }
+}
+
+.rc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* Graph legend items are controls, not static labels. */
+.rc-graph-legend-item,
+.rc-graph-legend-reset {
+  appearance: none;
+  border: 0;
+  padding: 2px 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.rc-graph-legend-item:not(:disabled),
+.rc-graph-legend-reset {
+  cursor: pointer;
+}
+
+.rc-graph-legend-item:disabled { cursor: default; }
+
+.rc-graph-legend-item:focus-visible,
+.rc-graph-legend-reset:focus-visible,
+.rc-graph-breadcrumbs button:focus-visible,
+.rc-graph-overflow button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.rc-graph-legend-reset {
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+.rc-graph-breadcrumbs {
+  display: block;
+  padding: 4px 0;
+  font-family: var(--rc-font-family);
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rc-graph-breadcrumbs[hidden],
+.rc-graph-overflow[hidden] { display: none; }
+
+.rc-graph-breadcrumbs button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rc-graph-breadcrumbs button:disabled {
+  cursor: default;
+  font-weight: 600;
+  opacity: 1;
+}
+
+.rc-graph-overflow {
+  position: absolute;
+  z-index: 4;
+  left: 104px;
+  bottom: 34px;
+  width: min(320px, calc(100% - 120px));
+  max-height: min(300px, 55%);
+  overflow: hidden;
+  padding: 12px;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 6px;
+  background: var(--background-color, #fff);
+  color: var(--primary-color, #111);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  font-family: var(--rc-font-family);
+  font-size: 12px;
+}
+
+.rc-graph-overflow-title {
+  padding-right: 28px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rc-graph-overflow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.rc-graph-overflow-item {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  padding: 6px 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
+
+.rc-graph-overflow-close {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  appearance: none;
+  border: 0;
+  padding: 2px 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Line \u2014 for line series */
+.rc-legend-line {
+  width: 16px;
+  height: 2px;
+  display: inline-block;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Dashed line \u2014 for forecast / projected series */
+.rc-legend-line--dashed {
+  background-color: transparent;
+}
+
+/* Dot \u2014 for bar / donut / scatter */
+.rc-legend-dot {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
+.rc-legend-band {
+  width: var(--space-sm);
+  height: var(--space-sm);
+  display: inline-block;
+  border-radius: 2px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* Only positioning and transition. */
+/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */
+
+.rc-tooltip {
+  position: absolute;
+  pointer-events: none;
+  padding: var(--space-sm) var(--space-md);
+  opacity: 0;
+  transition: opacity 0.1s;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.rc-tooltip.is-visible {
+  opacity: 0.9;
+}
+
+/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+/* Zero baseline \u2014 visible only when domain crosses zero */
+.rc-zero-line {
+  stroke-width: 1.5;
+  opacity: 0.9;
+}
+
+/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */
+.rc-band {
+  pointer-events: none;
+}
+
+/* Axis tick labels. Charts add .rc-axis (numeric/value axis) or .rc-axis-cat
+   (category axis, inherits the regular font) to the axis group. font-size is
+   set here to override d3-axis's default font-size="10" attribute on the group. */
+.rc-axis text,
+.rc-axis-cat text {
+  /* Override d3-axis's font-size="10" / font-family="sans-serif" group attrs. */
+  font-size: var(--rc-font-size-sm, 14px);
+}
+
+.rc-axis text {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.rc-axis-cat text {
+  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+}
+
+/* Numeric SVG text set by charts (bar value labels, donut percents, center
+   totals). Regular-font text inherits the svg default, so only these need the
+   numeric family. Center texts keep their computed size (set in JS). */
+.rc-bar-value,
+.rc-donut-label-pct,
+.rc-donut-center-value,
+.rc-gauge-center-value {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.rc-donut-center-value,
+.rc-gauge-center-value {
+  font-weight: bold;
+}
+
+/* Graph (experimental) SVG labels. */
+.rc-graph-node-label { font-size: 11px; }
+
+.rc-graph-sector-label,
+.rc-graph-note,
+.rc-graph-row-label,
+.rc-graph-hidden-note {
+  font-size: 10px;
+}
+
+.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-graph-row-label    { letter-spacing: 0.05em; }
+.rc-graph-note,
+.rc-graph-hidden-note  { text-decoration: underline; }
+
+/* Axis titles (used in DualAxes) */
+.rc-axis-title {
+  text-transform: uppercase;
+  dominant-baseline: hanging;
+}
+
+.rc-axis-title-y1 { text-anchor: start; }
+.rc-axis-title-y2 { text-anchor: end; }
+
+/* End labels \u2014 last-value labels on the right edge */
+.rc-end-label {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-variant-numeric: tabular-nums;
+  background-color: var(--white);
+  padding: var(--space-xs);
+}
+
+/* Hierarchical bar \u2014 row label + value text.
+   Fonts come from the theme CSS variables declared on .rc-chart, so the chart
+   code sets only data-driven attributes (fill, position), not font styles. */
+.rc-hbar-label {
+  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+  font-size: var(--rc-font-size-sm, 14px);
+}
+
+.rc-hbar-value {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-size: var(--rc-font-size-sm, 14px);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Markers */
+.rc-marker-circle,
+.rc-marker-shape {
+  stroke-width: 1.5;
+}
+
+/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */
+.rc-annotation-line,
+.rc-annotation-range-edge,
+.rc-annotation-h-line,
+.rc-annotation-h-range-edge {
+  stroke-width: 1;
+}
+
+.rc-annotation-label,
+.rc-annotation-h-label {
+  font-size: var(--rc-font-size-sm);
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.rc-annotation-h-label {
+  dominant-baseline: text-after-edge;
+}
+
+/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/*
+ * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
+ * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended
+ * before _initSVG runs). Explicit rows fix placement regardless of DOM order.
+ */
+
+.rc-chart--legend-right {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */
+}
+
+/* Pin each element to its row \u2014 overrides DOM insertion order */
+.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
+.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
+.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }
+
+/* Aside spans the full chart block in column 2 */
+.rc-chart--legend-right > .rc-chart-legend-aside {
+  grid-column: 2;
+  grid-row: 1 / 5;
+  display: flex;
+  align-items: center;
+  padding-left: var(--space-lg);
+}
+
+/* Stack legend items vertically when in aside */
+.rc-chart-legend-aside .rc-legend {
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: 0;
+}
+
+/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-multichart-grid {
+  display: grid;
+  gap: var(--space-lg, 16px);
+  order: 1;   /* sits between header (0) and footer (3) in the flex column */
+}
+
+.rc-multichart-cell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;    /* prevent grid blowout */
+  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */
+}
+
+/* The inner div that receives the child Chart instance.
+   Height is set inline by the child chart constructor \u2014 do not override with flex.
+   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */
+.rc-multichart-chart-wrapper {
+  min-width: 0;
+}
+
+.rc-multichart-chart-wrapper.rc-chart {
+  overflow: visible;
+}
+
+.rc-multichart-cell-title {
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm);
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  margin-bottom: 4px;
+}
+
+/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+}
+
+.rc-demo-group {
+  width: 48%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-sm);
+  padding: var(--space-sm);
+}
+
+.rc-demo-group-label {
+  padding-left: var(--space-sm);
+  font-size: var(--rc-font-size-sm);
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.rc-demo-btn-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.rc-demo-btn {
+  background: none;
+  border: 1px solid var(--border-color, #ccc);
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm);
+  padding: 3px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  color: inherit;
+  transition: background 0.08s, border-color 0.08s, color 0.08s;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.rc-demo-btn:hover {
+  border-color: var(--text-color, #000);
+}
+
+.rc-demo-btn.is-active {
+  background: var(--text-color, #000);
+  border-color: var(--text-color, #000);
+  color: var(--bg-color, #fff);
+}
+
+@media  (max-width: 768px) {
+    .rc-demo-group {
+        width: 100%;
+    }
+}
+
+/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */
+
+.price-chart-header {
+  width: calc(100% - 60px);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.price-chart-ticker {
+  font-size: var(--font-size-xl);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.price-chart-price {
+  font-size: var(--font-size-xl);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change {
+  font-size: var(--font-size-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change.up   { color: var(--positive-color, #389e0d); }
+.price-chart-change.down { color: var(--negative-color, #ff0000); }
+
+/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.price-chart-range-bar,
+.rc-chart-range-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.range-btn,
+.rc-range-btn {
+  background: none;
+  font-size: var(--rc-font-size-sm);
+  font-family: var(--rc-font-family);
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background-color 0.1s, border-color 0.1s;
+  color: var(--text-color-light);
+}
+
+.range-btn:hover,
+.rc-range-btn:hover {
+  color: var(--primary-text-color);
+  border-color: var(--primary-color);
+}
+
+.range-btn.active,
+.rc-range-btn.active {
+  color: var(--primary-text-color);
+  background-color: var(--white);
+  border-color: var(--primary-color);
+}
+
+/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.price-chart-stats {
+  width: calc(100% - 56px);
+  margin-left: -8px;
+}
+
+.price-chart-stat {
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--rc-font-size-sm);
+}
+
+.price-chart-stat-label {
+  color: var(--muted-color, #666);
+}
+
+.price-chart-stat-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+   Honour \`prefers-reduced-motion: reduce\` for CSS transitions inside a chart.
+   Entry/update motion driven by D3 (JS) is gated separately via
+   motionDuration() in core/utils.js. */
+@media (prefers-reduced-motion: reduce) {
+  .rc-chart,
+  .rc-chart * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+`;
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.8_1"
+    version: "v0.9.8_2"
   };
 
   // node_modules/d3/src/index.js
@@ -11182,18 +11889,18 @@ var RareCharts = (() => {
   }
   function add(tree, x4, y4, d) {
     if (isNaN(x4) || isNaN(y4)) return tree;
-    var parent, node = tree._root, leaf = { data: d }, x06 = tree._x0, y06 = tree._y0, x12 = tree._x1, y12 = tree._y1, xm, ym, xp, yp, right2, bottom2, i, j;
-    if (!node) return tree._root = leaf, tree;
+    var parent, node = tree._root, leaf2 = { data: d }, x06 = tree._x0, y06 = tree._y0, x12 = tree._x1, y12 = tree._y1, xm, ym, xp, yp, right2, bottom2, i, j;
+    if (!node) return tree._root = leaf2, tree;
     while (node.length) {
       if (right2 = x4 >= (xm = (x06 + x12) / 2)) x06 = xm;
       else x12 = xm;
       if (bottom2 = y4 >= (ym = (y06 + y12) / 2)) y06 = ym;
       else y12 = ym;
-      if (parent = node, !(node = node[i = bottom2 << 1 | right2])) return parent[i] = leaf, tree;
+      if (parent = node, !(node = node[i = bottom2 << 1 | right2])) return parent[i] = leaf2, tree;
     }
     xp = +tree._x.call(null, node.data);
     yp = +tree._y.call(null, node.data);
-    if (x4 === xp && y4 === yp) return leaf.next = node, parent ? parent[i] = leaf : tree._root = leaf, tree;
+    if (x4 === xp && y4 === yp) return leaf2.next = node, parent ? parent[i] = leaf2 : tree._root = leaf2, tree;
     do {
       parent = parent ? parent[i] = new Array(4) : tree._root = new Array(4);
       if (right2 = x4 >= (xm = (x06 + x12) / 2)) x06 = xm;
@@ -11201,7 +11908,7 @@ var RareCharts = (() => {
       if (bottom2 = y4 >= (ym = (y06 + y12) / 2)) y06 = ym;
       else y12 = ym;
     } while ((i = bottom2 << 1 | right2) === (j = (yp >= ym) << 1 | xp >= xm));
-    return parent[j] = node, parent[i] = leaf, tree;
+    return parent[j] = node, parent[i] = leaf2, tree;
   }
   function addAll(data) {
     var d, i, n = data.length, x4, y4, xz = new Array(n), yz = new Array(n), x06 = Infinity, y06 = Infinity, x12 = -Infinity, y12 = -Infinity;
@@ -11434,9 +12141,9 @@ var RareCharts = (() => {
     this._y1 = y12;
     this._root = void 0;
   }
-  function leaf_copy(leaf) {
-    var copy3 = { data: leaf.data }, next = copy3;
-    while (leaf = leaf.next) next = next.next = { data: leaf.data };
+  function leaf_copy(leaf2) {
+    var copy3 = { data: leaf2.data }, next = copy3;
+    while (leaf2 = leaf2.next) next = next.next = { data: leaf2.data };
     return copy3;
   }
   var treeProto = quadtree.prototype = Quadtree.prototype;
@@ -21441,9 +22148,10 @@ var RareCharts = (() => {
     g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale2(0)).attr("y2", scale2(0)).attr("stroke", theme.border);
   }
   function renderAxisX(g, scale2, H, tickFormat2, theme, ticks2 = 6) {
+    g.classed("rc-axis", true);
     const apply = (n) => {
       g.attr("transform", `translate(0,${H})`).call(axisBottom(scale2).ticks(n).tickSize(0).tickPadding(6).tickFormat(tickFormat2)).call((sel) => {
-        sel.selectAll("text").attr("fill", theme.muted).attr("dy", "0.71em").style("font-family", theme.numericFont).style("font-size", theme.fontSize);
+        sel.selectAll("text").attr("fill", theme.muted).attr("dy", "0.71em");
         sel.select(".domain").remove();
         sel.selectAll("line").remove();
       });
@@ -21473,8 +22181,9 @@ var RareCharts = (() => {
   }
   function renderAxisYRight(g, scale2, W, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
     const axis2 = tickValues ? axisRight(scale2).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisRight(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
+    g.classed("rc-axis", true);
     g.attr("transform", `translate(${W},0)`).call(axis2).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "start").attr("x", 8).style("font-family", theme.numericFont).style("font-size", theme.fontSize);
+      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "start").attr("x", 8);
       if (labelsOnly) {
         sel.select(".domain").remove();
         sel.selectAll("line").remove();
@@ -21486,8 +22195,9 @@ var RareCharts = (() => {
   }
   function renderAxisYLeft(g, scale2, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
     const axis2 = tickValues ? axisLeft(scale2).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisLeft(scale2).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
+    g.classed("rc-axis", true);
     g.attr("transform", "translate(0,0)").call(axis2).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "end").attr("x", -8).style("font-family", theme.numericFont).style("font-size", theme.fontSize);
+      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "end").attr("x", -8);
       if (labelsOnly) {
         sel.select(".domain").remove();
         sel.selectAll("line").remove();
@@ -21505,7 +22215,7 @@ var RareCharts = (() => {
     });
     const groups2 = g.selectAll(".rc-end-label-g").data(points, (d) => d.name).join("g").attr("class", "rc-end-label-g").attr("transform", (d) => `translate(${W + 10},${yScale(d.value)})`);
     groups2.append("rect").attr("class", "rc-end-label-bg").attr("fill", theme.service);
-    groups2.append("text").attr("class", "rc-end-label").attr("dy", "0.35em").attr("fill", (d) => d.color).style("font-family", theme.numericFont).style("font-size", theme.fontSize).text((d) => tickFormat2(d.value));
+    groups2.append("text").attr("class", "rc-end-label").attr("dy", "0.35em").attr("fill", (d) => d.color).text((d) => tickFormat2(d.value));
     groups2.each(function() {
       const bbox = select_default2(this).select("text").node().getBBox();
       const px = 2, py = 0;
@@ -21517,7 +22227,7 @@ var RareCharts = (() => {
     if (y2Title) titles.push({ axis: "y2", full: String(y2Title), avail: opts.y2Avail });
     if (y1Title) titles.push({ axis: "y1", full: String(y1Title), avail: opts.y1Avail });
     const maxLen = Number.isFinite(opts.maxLength) ? opts.maxLength : Infinity;
-    const sel = g.selectAll(".rc-axis-title").data(titles, (d) => d.axis).join("text").attr("class", (d) => `rc-axis-title rc-axis-title-${d.axis}`).attr("x", (d) => d.axis === "y1" ? W + 8 : -8).attr("y", -28).attr("fill", theme.muted).style("font-family", theme.font).style("font-size", theme.fontSize);
+    const sel = g.selectAll(".rc-axis-title").data(titles, (d) => d.axis).join("text").attr("class", (d) => `rc-axis-title rc-axis-title-${d.axis}`).attr("x", (d) => d.axis === "y1" ? W + 8 : -8).attr("y", -28).attr("fill", theme.muted);
     sel.each(function(d) {
       const node = this;
       const avail = Number.isFinite(d.avail) ? d.avail : Infinity;
@@ -21642,7 +22352,7 @@ var RareCharts = (() => {
     const gVLabels = g.append("g").attr("class", "rc-annotation-labels");
     const vLabelGroups = gVLabels.selectAll(".rc-annotation-label-g").data(vLabelData, (d) => d.key).join("g").attr("class", "rc-annotation-label-g").attr("transform", (d) => `translate(${d.cx},${-labelHeight + 2})`);
     vLabelGroups.append("rect").attr("class", "rc-annotation-label-bg").attr("fill", theme.bg);
-    vLabelGroups.append("text").attr("class", "rc-annotation-label").attr("text-anchor", "middle").attr("dy", "0.71em").attr("fill", (d) => d.color).style("font-family", theme.font).style("font-size", theme.fontSize).text((d) => d.label);
+    vLabelGroups.append("text").attr("class", "rc-annotation-label").attr("text-anchor", "middle").attr("dy", "0.71em").attr("fill", (d) => d.color).text((d) => d.label);
     vLabelGroups.each(function() {
       const node = select_default2(this);
       const bbox = node.select("text").node().getBBox();
@@ -21671,7 +22381,7 @@ var RareCharts = (() => {
       return `translate(${tx},${d.cy})`;
     });
     hLabelGroups.append("rect").attr("class", "rc-annotation-h-label-bg").attr("fill", theme.bg);
-    hLabelGroups.append("text").attr("class", "rc-annotation-h-label").attr("text-anchor", (d) => d.labelPosition === "right" ? "end" : "start").attr("fill", (d) => d.color).style("font-family", theme.font).style("font-size", theme.fontSize).text((d) => d.label);
+    hLabelGroups.append("text").attr("class", "rc-annotation-h-label").attr("text-anchor", (d) => d.labelPosition === "right" ? "end" : "start").attr("fill", (d) => d.color).text((d) => d.label);
     hLabelGroups.each(function() {
       const node = select_default2(this);
       const bbox = node.select("text").node().getBBox();
@@ -22098,6 +22808,11 @@ var RareCharts = (() => {
   };
 
   // assets/charts/src/charts/Bar.js
+  var SEG_SEP = String.fromCharCode(31);
+  function stackTickValues(scale2, count3) {
+    const [d0, d1] = scale2.domain();
+    return range(count3 + 1).map((i) => d0 + (d1 - d0) * (i / count3));
+  }
   var Bar = class extends Chart {
     constructor(selector, options = {}) {
       const { margin: _margin, ...restOptions } = options;
@@ -22116,12 +22831,19 @@ var RareCharts = (() => {
       });
       this._data = [];
       this._isTimeSeries = false;
+      this._isStacked = false;
+      this._hasUserLegend = options.legend != null;
+      this._series = [];
+      this._categories = [];
       this._didAnimateIn = false;
       this._tooltip = new Tooltip(this.container, this.theme);
       this._initSVG();
     }
     setData(data) {
+      const first = Array.isArray(data) ? data[0] : null;
+      if (first && Array.isArray(first.values)) return this._setStackedData(data);
       const isTimeSeries = Array.isArray(data) && data[0] && "date" in data[0] && "value" in data[0];
+      this._isStacked = false;
       this._isTimeSeries = isTimeSeries;
       this._data = isTimeSeries ? data.map((d) => ({
         ...d,
@@ -22148,7 +22870,7 @@ var RareCharts = (() => {
       this.gGrid = this.g.append("g");
       this.gBars = this.g.append("g");
       this.gAxisX = this.g.append("g");
-      this.gAxisY = this.g.append("g");
+      this.gAxisY = this.g.append("g").classed("rc-axis", true);
     }
     _formatLabel(label) {
       const max5 = this.options.labelMaxLength;
@@ -22159,6 +22881,10 @@ var RareCharts = (() => {
       return this.options.tooltipFormat ? this.options.tooltipFormat(d) : `<div>${d.label || timeFormat("%b %d, %Y")(d.date)}</div><div>${format(",")(d.value)}</div>`;
     }
     render() {
+      if (this._isStacked) {
+        this._renderStacked();
+        return;
+      }
       if (!this._data.length) return;
       const W = this.width, H = this.height;
       if (W <= 0 || H <= 0) return;
@@ -22192,6 +22918,7 @@ var RareCharts = (() => {
     }
     // ─── Horizontal ───────────────────────────────────────────────────────────
     _renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
+      this.gAxisX.classed("rc-axis-cat", true).classed("rc-axis", false);
       const y4 = band().domain(this._data.map((d) => d.label)).range([0, H]).padding(0.25);
       const maxVal = max(this._data, (d) => d.value);
       const minVal = min(this._data, (d) => d.value);
@@ -22220,13 +22947,11 @@ var RareCharts = (() => {
         (exit) => exit.remove()
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("y", (d) => y4(d.label)).attr("height", y4.bandwidth());
+      this._didAnimateIn = true;
       if (animate) {
-        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX)).on("end", (d, i, nodes) => {
-          if (i === nodes.length - 1) this._didAnimateIn = true;
-        });
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX));
       } else {
-        bars.attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX));
-        this._didAnimateIn = true;
+        bars.interrupt().attr("x", (d) => Math.min(zeroX, x4(d.value))).attr("width", (d) => Math.abs(x4(d.value) - zeroX));
       }
       if (showValues) {
         const placeValue = (sel) => {
@@ -22239,7 +22964,7 @@ var RareCharts = (() => {
             select_default2(nodes[i]).attr("x", xPos).attr("text-anchor", anchor).attr("fill", inside ? t.bg : t.text);
           });
         };
-        const values = this.gBars.selectAll(".rc-bar-value").data(this._data, (d) => d.label).join("text").attr("class", "rc-bar-value").attr("y", (d) => y4(d.label) + y4.bandwidth() / 2).attr("dy", "0.35em").style("font-family", t.numericFont).style("font-size", t.fontSize).attr("opacity", animate ? 0 : 1).text((d) => valueFormat(d));
+        const values = this.gBars.selectAll(".rc-bar-value").data(this._data, (d) => d.label).join("text").attr("class", "rc-bar-value").attr("y", (d) => y4(d.label) + y4.bandwidth() / 2).attr("dy", "0.35em").attr("opacity", animate ? 0 : 1).text((d) => valueFormat(d));
         if (animate) {
           values.attr("x", zeroX + valueOffset).transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("opacity", 1).on("end", (d, i, nodes) => placeValue(select_default2(nodes[i])));
           setTimeout(() => placeValue(values), duration + (this._data.length - 1) * stagger + 10);
@@ -22251,7 +22976,7 @@ var RareCharts = (() => {
       }
       if (showYAxis) {
         this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").attr("stroke", t.border);
           this._bindLabelTooltips(g, "left");
         });
@@ -22260,7 +22985,7 @@ var RareCharts = (() => {
       }
       if (showXAxis) {
         this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(this.options.xTickValues ?? null).ticks(this.options.xTicks ?? 4).tickFormat(xTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").remove();
           g.selectAll("line").remove();
           const ticks2 = g.selectAll(".tick text");
@@ -22273,6 +22998,7 @@ var RareCharts = (() => {
     }
     // ─── Vertical ─────────────────────────────────────────────────────────────
     _renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
+      this.gAxisX.classed("rc-axis-cat", true).classed("rc-axis", false);
       const x4 = band().domain(this._data.map((d) => d.label)).range([0, W]).padding(0.25);
       const maxVal = max(this._data, (d) => d.value);
       const minVal = min(this._data, (d) => d.value);
@@ -22297,17 +23023,15 @@ var RareCharts = (() => {
         (exit) => exit.remove()
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("x", (d) => x4(d.label)).attr("width", x4.bandwidth());
+      this._didAnimateIn = true;
       if (animate) {
-        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY)).on("end", (d, i, nodes) => {
-          if (i === nodes.length - 1) this._didAnimateIn = true;
-        });
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
       } else {
-        bars.attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
-        this._didAnimateIn = true;
+        bars.interrupt().attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
       }
       if (showXAxis) {
         this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").attr("stroke", t.border);
           this._bindLabelTooltips(g, "bottom");
         });
@@ -22316,7 +23040,7 @@ var RareCharts = (() => {
       }
       if (showYAxis) {
         this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").remove();
           g.selectAll("line").remove();
         });
@@ -22325,6 +23049,7 @@ var RareCharts = (() => {
       }
     }
     _renderTimeSeries({ data, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent }) {
+      this.gAxisX.classed("rc-axis", true).classed("rc-axis-cat", false);
       const xPad = 8;
       const x4 = time().domain(viewExtent).range([xPad, W - xPad]);
       const minValue = min(data, (d) => d.value) ?? 0;
@@ -22351,17 +23076,15 @@ var RareCharts = (() => {
         (exit) => exit.remove()
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("x", (d) => x4(d.date) - barW / 2).attr("width", barW);
+      this._didAnimateIn = true;
       if (animate) {
-        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY)).on("end", (d, i, nodes) => {
-          if (i === nodes.length - 1) this._didAnimateIn = true;
-        });
+        bars.transition().duration(duration).delay((d, i) => i * stagger).ease(ease).attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
       } else {
-        bars.attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
-        this._didAnimateIn = true;
+        bars.interrupt().attr("y", (d) => y4(Math.max(0, d.value))).attr("height", (d) => Math.abs(y4(d.value) - zeroY));
       }
       if (showXAxis) {
         this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 6).tickSize(0).tickFormat(xTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").remove();
           g.selectAll("line").remove();
         });
@@ -22370,12 +23093,194 @@ var RareCharts = (() => {
       }
       if (showYAxis) {
         this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize);
+          g.selectAll("text").attr("fill", t.muted);
           g.select(".domain").remove();
           g.selectAll("line").remove();
         });
       } else {
         this.gAxisY.selectAll("*").remove();
+      }
+    }
+    // ─── Stacked (multi-series composition) ─────────────────────────────────────
+    _setStackedData(data) {
+      this._isStacked = true;
+      this._isTimeSeries = false;
+      this._series = (data ?? []).map((s2) => ({
+        name: s2.name ?? "",
+        color: s2.color,
+        values: (s2.values ?? []).map((v2) => ({ label: String(v2.label ?? ""), value: +v2.value }))
+      }));
+      const seen = /* @__PURE__ */ new Set();
+      this._categories = [];
+      this._series.forEach((s2) => s2.values.forEach((v2) => {
+        if (v2.label && !seen.has(v2.label)) {
+          seen.add(v2.label);
+          this._categories.push(v2.label);
+        }
+      }));
+      this._ensureStackedLegend();
+      this.render();
+      return this;
+    }
+    // Auto-build a legend from the series names unless the caller passed their own.
+    _ensureStackedLegend() {
+      if (!this._hasUserLegend) {
+        const palette = this.theme.colors ?? [];
+        this.options.legend = this._series.map((s2, i) => ({
+          label: s2.name || `Series ${i + 1}`,
+          type: "bar",
+          color: s2.color ?? palette[i % palette.length] ?? this.theme.accent
+        }));
+      }
+      this._renderHeader();
+    }
+    _computeStack() {
+      const keys = this._series.map((_, i) => String(i));
+      const rows = this._categories.map((cat3) => {
+        const row = { label: cat3, _total: 0 };
+        this._series.forEach((s2, i) => {
+          const hit = s2.values.find((v2) => v2.label === cat3);
+          const val = hit && Number.isFinite(hit.value) && hit.value > 0 ? hit.value : 0;
+          row[String(i)] = val;
+          row._total += val;
+        });
+        return row;
+      });
+      const percent = this.options.stacked === "percent";
+      const gen = stack_default().keys(keys);
+      if (percent) gen.offset(expand_default);
+      return { layers: gen(rows), maxTotal: percent ? 1 : max(rows, (r) => r._total) || 0, percent };
+    }
+    _stackSegments(layers) {
+      const segs = [];
+      layers.forEach((layer, i) => {
+        layer.forEach((d, j) => {
+          const value = d.data[String(i)];
+          if (!(value > 0)) return;
+          segs.push({
+            i,
+            name: this._series[i].name || `Series ${i + 1}`,
+            cat: this._categories[j],
+            v0: d[0],
+            v1: d[1],
+            value,
+            total: d.data._total
+          });
+        });
+      });
+      return segs;
+    }
+    _segTooltipHtml(seg) {
+      if (this.options.tooltipFormat) return this.options.tooltipFormat(seg);
+      const valFmt = this.options.valueFormat ?? ((d) => format(",")(d.value));
+      const pct = seg.total > 0 ? seg.value / seg.total : 0;
+      return `<div>${seg.cat}</div>
+      <div>${seg.name}: ${valFmt(seg)}</div>
+      <div>${format(".1%")(pct)}</div>`;
+    }
+    _renderStacked() {
+      this.gAxisX.classed("rc-axis-cat", true).classed("rc-axis", false);
+      if (!this._series.length || !this._categories.length) return;
+      const W = this.width, H = this.height;
+      if (W <= 0 || H <= 0) return;
+      const t = this.theme;
+      const palette = t.colors ?? [];
+      const colorFor = (i) => this._series[i].color ?? palette[i % palette.length] ?? t.accent;
+      const { layers, maxTotal, percent } = this._computeStack();
+      const segs = this._stackSegments(layers);
+      const horizontal = this.options.orientation === "horizontal";
+      const animate = (this.options.animate ?? true) && !this._didAnimateIn;
+      const duration = motionDuration(this.options.duration ?? 500);
+      const ease = resolveEase(this.options.ease ?? "cubicOut");
+      const showGrid = this.options.showGrid ?? true;
+      const showXAxis = this.options.showXAxis ?? true;
+      const showYAxis = this.options.showYAxis ?? true;
+      const onOver = (event, d) => {
+        select_default2(event.currentTarget).attr("opacity", 0.8);
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, this._segTooltipHtml(d));
+      };
+      const onOut = (event) => {
+        select_default2(event.currentTarget).attr("opacity", 1);
+        this._tooltip.hide();
+      };
+      const cat3 = band().domain(this._categories).padding(0.25).range(horizontal ? [0, H] : [0, W]);
+      const valPercentFmt = percent ? ((d) => format(".0%")(d)) : ((d) => format(".2s")(d));
+      if (horizontal) {
+        const xTicks = this.options.xTicks ?? 4;
+        const x4 = linear3().domain([0, maxTotal || 1]).nice(xTicks).range([0, W]);
+        const xTickValues = this.options.xTickValues ?? stackTickValues(x4, xTicks);
+        if (showGrid) {
+          this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(xTickValues).tickSize(-H).tickFormat("")).call((g) => {
+            g.selectAll("line").attr("stroke", t.grid);
+            g.select(".domain").remove();
+            g.selectAll("text").remove();
+          });
+        } else {
+          this.gGrid.selectAll("*").remove();
+        }
+        const rects2 = this.gBars.selectAll(".rc-bar-seg").data(segs, (d) => d.cat + SEG_SEP + d.i).join("rect").attr("class", "rc-bar-seg").attr("y", (d) => cat3(d.cat)).attr("height", cat3.bandwidth()).attr("x", (d) => x4(d.v0)).attr("width", (d) => Math.max(0, x4(d.v1) - x4(d.v0))).attr("fill", (d) => colorFor(d.i)).on("mouseover", onOver).on("mouseout", onOut);
+        this._animateSegments(rects2, animate, duration, ease);
+        if (showYAxis) {
+          this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(cat3).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+            g.selectAll("text").attr("fill", t.muted);
+            g.select(".domain").attr("stroke", t.border);
+            this._bindLabelTooltips(g, "left");
+          });
+        } else {
+          this.gAxisX.selectAll("*").remove();
+        }
+        if (showXAxis) {
+          this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x4).tickValues(xTickValues).tickFormat(this.options.xTickFormat ?? valPercentFmt)).call((g) => {
+            g.selectAll("text").attr("fill", t.muted);
+            g.select(".domain").remove();
+            g.selectAll("line").remove();
+            const ticks2 = g.selectAll(".tick text");
+            const n = ticks2.size();
+            ticks2.attr("text-anchor", (d, i) => i === 0 ? "start" : i === n - 1 ? "end" : "middle");
+          });
+        } else {
+          this.gAxisY.selectAll("*").remove();
+        }
+        return;
+      }
+      const yTicks = this.options.yTicks ?? 4;
+      const y4 = linear3().domain([0, maxTotal || 1]).nice(yTicks).range([H, 0]);
+      const yTickValues = this.options.yTickValues ?? stackTickValues(y4, yTicks);
+      if (showGrid) {
+        renderGrid(this.gGrid, y4, W, yTicks, t, yTickValues);
+      } else {
+        this.gGrid.selectAll("*").remove();
+      }
+      const rects = this.gBars.selectAll(".rc-bar-seg").data(segs, (d) => d.cat + SEG_SEP + d.i).join("rect").attr("class", "rc-bar-seg").attr("x", (d) => cat3(d.cat)).attr("width", cat3.bandwidth()).attr("y", (d) => y4(d.v1)).attr("height", (d) => Math.max(0, y4(d.v0) - y4(d.v1))).attr("fill", (d) => colorFor(d.i)).on("mouseover", onOver).on("mouseout", onOut);
+      this._animateSegments(rects, animate, duration, ease);
+      if (showXAxis) {
+        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(cat3).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+          g.selectAll("text").attr("fill", t.muted);
+          g.select(".domain").attr("stroke", t.border);
+          this._bindLabelTooltips(g, "bottom");
+        });
+      } else {
+        this.gAxisX.selectAll("*").remove();
+      }
+      if (showYAxis) {
+        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y4).tickValues(yTickValues).tickFormat(this.options.yTickFormat ?? valPercentFmt)).call((g) => {
+          g.selectAll("text").attr("fill", t.muted);
+          g.select(".domain").remove();
+          g.selectAll("line").remove();
+        });
+      } else {
+        this.gAxisY.selectAll("*").remove();
+      }
+    }
+    _animateSegments(rects, animate, duration, ease) {
+      if (animate) {
+        rects.attr("opacity", 0).transition().duration(duration).ease(ease).attr("opacity", 1).on("end", (d, i, n) => {
+          if (i === n.length - 1) this._didAnimateIn = true;
+        });
+      } else {
+        rects.attr("opacity", 1);
+        this._didAnimateIn = true;
       }
     }
     // ─── Label tooltip on truncated axis labels ────────────────────────────────
@@ -22385,6 +23290,272 @@ var RareCharts = (() => {
         const [mx, my] = pointer_default(event, this.container);
         this._tooltip.show(mx, my, `<div>${fullLabel}</div>`);
       }).on("mouseout", () => this._tooltip.hide());
+    }
+  };
+
+  // assets/charts/src/core/hierarchy.js
+  var REMAINDER_DEFAULT = "Other";
+  var SEP = String.fromCharCode(31);
+  var REMAINDER_NS = SEP + "remainder" + SEP;
+  var EPS = 1e-9;
+  function parseValue(raw) {
+    if (!Object.prototype.hasOwnProperty.call(raw, "value") || raw.value === void 0) {
+      return { kind: "none", value: null };
+    }
+    if (raw.value === null) return { kind: "missing", value: null };
+    const n = +raw.value;
+    if (Number.isFinite(n) && n > 0) return { kind: "disclosed", value: n };
+    return { kind: "none", value: null };
+  }
+  function atom(raw, label, depth, value) {
+    const { children: _drop, ...data } = raw;
+    const node = { id: "", label, value, depth, path: [], children: [], remainder: 0, data };
+    if (typeof raw.color === "string" && raw.color) node.color = raw.color;
+    return node;
+  }
+  function leaf(raw, label, depth, value, missing) {
+    const node = atom(raw, label, depth, value);
+    if (missing) node.missing = true;
+    return node;
+  }
+  function buildNode(raw, depth, opts) {
+    if (raw == null || typeof raw !== "object") return null;
+    const label = String(raw.label ?? "").trim();
+    if (!label) return null;
+    const { kind, value: ownValue } = parseValue(raw);
+    const children2 = Array.isArray(raw.children) ? raw.children.map((c6) => buildNode(c6, depth + 1, opts)).filter(Boolean) : [];
+    if (children2.length === 0) {
+      if (kind === "disclosed") return leaf(raw, label, depth, ownValue, false);
+      if (kind === "missing") return leaf(raw, label, depth, null, true);
+      return null;
+    }
+    const childrenSum = children2.reduce(
+      (s2, c6) => s2 + (typeof c6.value === "number" ? c6.value : 0),
+      0
+    );
+    const hasOwn = kind === "disclosed";
+    const value = hasOwn ? ownValue : childrenSum;
+    const remainder = hasOwn ? ownValue - childrenSum : 0;
+    const node = atom(raw, label, depth, value);
+    node.children = children2;
+    node.remainder = remainder;
+    if (remainder < -EPS) {
+      if (opts.strict) {
+        throw new Error(
+          `RareCharts.normalizeHierarchy: children of "${label}" sum to ${childrenSum}, exceeding its stated value ${ownValue}.`
+        );
+      }
+      node.overflow = true;
+      if (typeof console !== "undefined" && console.warn) {
+        console.warn(
+          `RareCharts.normalizeHierarchy: children of "${label}" (${childrenSum}) exceed its stated value ${ownValue}; remainder left negative, not drawn.`
+        );
+      }
+    }
+    const surface = remainder > EPS && (raw.remainderLabel != null || opts.showRemainder);
+    if (surface) {
+      const rLabel = String(raw.remainderLabel ?? opts.remainderLabel).trim() || REMAINDER_DEFAULT;
+      const rem = atom({ label: rLabel }, rLabel, depth + 1, remainder);
+      rem.isRemainder = true;
+      rem.data = { label: rLabel, value: remainder, isRemainder: true };
+      node.children = [...children2, rem];
+    }
+    return node;
+  }
+  function assignIdentity(node, id2, labelPath) {
+    node.id = id2;
+    node.path = labelPath;
+    const seen = /* @__PURE__ */ new Map();
+    for (const child of node.children) {
+      const base = (child.isRemainder ? REMAINDER_NS : "") + child.label;
+      const n = seen.get(base) ?? 0;
+      seen.set(base, n + 1);
+      const key = n === 0 ? base : `${base}${SEP}#${n}`;
+      assignIdentity(child, `${id2}${SEP}${key}`, [...labelPath, child.label]);
+    }
+    return node;
+  }
+  function normalizeHierarchy(input, opts = {}) {
+    const options = {
+      showRemainder: opts.showRemainder ?? false,
+      remainderLabel: opts.remainderLabel ?? REMAINDER_DEFAULT,
+      strict: opts.strict ?? false
+    };
+    if (Array.isArray(input)) {
+      const seen = /* @__PURE__ */ new Map();
+      return input.map((root4) => buildNode(root4, 0, options)).filter(Boolean).map((root4) => {
+        const n = seen.get(root4.label) ?? 0;
+        seen.set(root4.label, n + 1);
+        const id2 = n === 0 ? root4.label : `${root4.label}${SEP}#${n}`;
+        return assignIdentity(root4, id2, [root4.label]);
+      });
+    }
+    const root3 = buildNode(input, 0, options);
+    return root3 ? assignIdentity(root3, root3.label, [root3.label]) : null;
+  }
+
+  // assets/charts/src/charts/HierarchicalBar.js
+  var HierarchicalBar = class extends Chart {
+    constructor(selector, options = {}) {
+      const { margin: _m, ...rest } = options;
+      super(selector, {
+        height: options.height ?? 200,
+        // content-driven; kept for base getters
+        margin: {
+          top: options.margin?.top ?? 8,
+          right: options.margin?.right ?? 8,
+          bottom: options.margin?.bottom ?? 8,
+          left: options.margin?.left ?? 0
+        },
+        ...rest
+      });
+      this._tree = null;
+      this._didAnimateIn = false;
+      this._tooltip = new Tooltip(this.container, this.theme);
+      this._initSVG();
+    }
+    setData(input) {
+      this._tree = normalizeHierarchy(input, {
+        showRemainder: this.options.showRemainder ?? false,
+        remainderLabel: this.options.remainderLabel ?? "Other",
+        strict: this.options.strict ?? false
+      });
+      this._didAnimateIn = false;
+      this.render();
+      return this;
+    }
+    _initSVG() {
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").style("display", "block");
+      applySvgA11y(this.svg, this.options);
+      this.g = this.svg.append("g");
+      this.gRows = this.g.append("g");
+    }
+    _formatLabel(label) {
+      const max5 = this.options.labelMaxLength;
+      if (!max5 || label.length <= max5) return label;
+      return label.slice(0, max5).trimEnd() + "\u2026";
+    }
+    // Depth-first flatten into render rows, assigning each a branch color and a
+    // depth fade. The branch head — the level that seeds a palette color — is the
+    // root's children when the root is shown, otherwise the top rows themselves.
+    _flatten() {
+      const roots = Array.isArray(this._tree) ? this._tree : this._tree ? [this._tree] : [];
+      if (!roots.length) return [];
+      const showRoot = this.options.showRoot ?? true;
+      const maxDepth2 = this.options.maxDepth ?? Infinity;
+      const palette = this.theme.colors ?? [];
+      const singleRoot = roots.length === 1;
+      const startNodes = showRoot || !singleRoot ? roots : roots[0].children ?? [];
+      const branchDepth = showRoot && singleRoot ? 1 : 0;
+      const rows = [];
+      let branch = 0;
+      const walk = (node, renderDepth, inherited) => {
+        if (renderDepth > maxDepth2) return;
+        let color2;
+        if (renderDepth < branchDepth) color2 = this.theme.muted;
+        else if (renderDepth === branchDepth) color2 = node.color ?? palette[branch++ % palette.length] ?? this.theme.accent;
+        else color2 = node.color ?? inherited;
+        if (node.isRemainder) color2 = this.theme.muted;
+        const fade = Math.max(0, renderDepth - branchDepth);
+        const opacity = node.isRemainder ? 0.55 : Math.max(0.5, 1 - fade * 0.16);
+        rows.push({ node, renderDepth, color: color2, opacity });
+        if (renderDepth < maxDepth2 && node.children?.length) {
+          node.children.forEach((c6) => walk(c6, renderDepth + 1, color2));
+        }
+      };
+      startNodes.forEach((n) => walk(n, 0, null));
+      return rows;
+    }
+    _tooltipHtml(node, pct) {
+      if (this.options.tooltipFormat) return this.options.tooltipFormat(node);
+      const t = this.theme;
+      const valueFmt = this.options.valueFormat ?? ((n) => format(",")(n.value));
+      const value = node.missing ? `<span style="color:${t.muted}">not disclosed</span>` : valueFmt(node);
+      const pctLine = node.missing || pct == null ? "" : `<div style="color:${t.muted}">${format(".1%")(pct)}</div>`;
+      return `<div>${node.label}</div><div>${value}</div>${pctLine}`;
+    }
+    render() {
+      const rows = this._tree ? this._flatten() : [];
+      if (!rows.length) {
+        this.gRows.selectAll("*").remove();
+        return;
+      }
+      const W = this.width;
+      if (W <= 0) return;
+      const t = this.theme;
+      const rowHeight = this.options.rowHeight ?? 44;
+      const indent = this.options.indent ?? 16;
+      const probe = this.gRows.append("text").attr("class", "rc-hbar-value").text("0");
+      const fontPx = parseFloat(typeof getComputedStyle !== "undefined" && getComputedStyle(probe.node()).fontSize || "") || 14;
+      probe.remove();
+      const barHeight = this.options.barHeight ?? Math.round(fontPx + 2);
+      const labelY = 14;
+      const barGap = 6;
+      const showValues = this.options.showValues ?? true;
+      const valueFmt = this.options.valueFormat ?? ((n) => format(",")(n.value));
+      const glyph = this.options.missingGlyph ?? "?";
+      const animate = (this.options.animate ?? true) && !this._didAnimateIn;
+      const duration = motionDuration(this.options.duration ?? 500);
+      const ease = resolveEase(this.options.ease ?? "cubicOut");
+      const plotH = rows.length * rowHeight;
+      this.svg.attr("height", plotH + this.margin.top + this.margin.bottom);
+      this.g.attr("transform", `translate(${this.margin.left},${this.margin.top})`);
+      const rootValue = max(rows, (r) => typeof r.node.value === "number" ? r.node.value : 0) || 1;
+      const x4 = linear3().domain([0, rootValue]).range([0, W]);
+      const valueGap = 46;
+      rows.forEach((r, i) => {
+        r.top = i * rowHeight;
+        r.barX = Math.min(r.renderDepth * indent, W - 12);
+        r.barY = r.top + labelY + barGap;
+        r.barW = typeof r.node.value === "number" ? Math.max(0, Math.min(x4(r.node.value), W - r.barX)) : 0;
+        r.pct = typeof r.node.value === "number" ? r.node.value / rootValue : null;
+      });
+      const sel = this.gRows.selectAll("g.rc-hbar-row").data(rows, (r) => r.node.id).join(
+        (enter) => {
+          const g = enter.append("g").attr("class", "rc-hbar-row");
+          g.append("rect").attr("class", "rc-hbar-bar");
+          g.append("text").attr("class", "rc-hbar-label");
+          g.append("text").attr("class", "rc-hbar-value");
+          return g;
+        },
+        (update) => update,
+        (exit) => exit.remove()
+      );
+      sel.each((r, i, nodes) => {
+        const g = select_default2(nodes[i]);
+        g.select(".rc-hbar-label").attr("x", r.barX).attr("y", r.top + labelY).attr("fill", r.node.isRemainder ? t.muted : t.text).text(this._formatLabel(r.node.label));
+        g.select(".rc-hbar-bar").attr("x", r.barX).attr("y", r.barY).attr("height", barHeight).attr("rx", 2).attr("fill", r.color).attr("opacity", r.opacity).attr("display", r.node.missing ? "none" : null);
+        const vsel = g.select(".rc-hbar-value").attr("y", r.barY + barHeight / 2).attr("dy", "0.35em");
+        if (r.node.missing) {
+          vsel.attr("x", r.barX).attr("text-anchor", "start").attr("fill", t.muted).text(glyph);
+        } else if (showValues) {
+          const end = r.barX + r.barW;
+          const inside = W - end < valueGap;
+          vsel.attr("x", inside ? Math.max(r.barX + 4, end - 6) : end + 6).attr("text-anchor", inside ? "end" : "start").attr("fill", inside ? t.bg : t.muted).text(valueFmt(r.node));
+        } else {
+          vsel.text("");
+        }
+        const move = (event) => {
+          const [mx, my] = pointer_default(event, this.container);
+          this._tooltip.show(mx, my, this._tooltipHtml(r.node, r.pct));
+        };
+        g.style("cursor", "default").on("mouseenter", (event) => {
+          g.select(".rc-hbar-bar").attr("opacity", Math.min(1, r.opacity + 0.2));
+          move(event);
+        }).on("mousemove", move).on("mouseleave", () => {
+          g.select(".rc-hbar-bar").attr("opacity", r.opacity);
+          this._tooltip.hide();
+        });
+      });
+      const bars = sel.select(".rc-hbar-bar");
+      if (animate) {
+        bars.attr("width", 0).transition().duration(duration).ease(ease).attr("width", (r) => r.barW).on("end", (d, i, n) => {
+          if (i === n.length - 1) this._didAnimateIn = true;
+        });
+      } else {
+        bars.attr("width", (r) => r.barW);
+        this._didAnimateIn = true;
+      }
     }
   };
 
@@ -22661,6 +23832,15 @@ var RareCharts = (() => {
   };
 
   // assets/charts/src/charts/Donut.js
+  function fitTextNode(node, full, avail) {
+    if (!node.getComputedTextLength) return;
+    let s2 = String(full);
+    node.textContent = s2;
+    while (s2.length > 1 && node.getComputedTextLength() > avail) {
+      s2 = s2.slice(0, -1).trimEnd();
+      node.textContent = s2 + "\u2026";
+    }
+  }
   var Donut = class extends Chart {
     constructor(selector, options = {}) {
       super(selector, {
@@ -22671,10 +23851,30 @@ var RareCharts = (() => {
       this._data = [];
       this._didAnimateIn = false;
       this._tooltip = new Tooltip(this.container, this.theme);
+      this._mode = "flat";
+      this._tree = null;
+      this._trail = [];
       this._initSVG();
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
+    // A plain ARRAY is the classic flat donut. A single root OBJECT switches on
+    // drill-down: the tree is normalized once and navigated in place.
     setData(data) {
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        this._mode = "hier";
+        this._tree = normalizeHierarchy(data, {
+          showRemainder: this.options.showRemainder ?? false,
+          remainderLabel: this.options.remainderLabel ?? "Other",
+          strict: this.options.strict ?? false
+        });
+        this._trail = this._tree ? [this._tree] : [];
+        this._didAnimateIn = false;
+        this.render();
+        return this;
+      }
+      this._mode = "flat";
+      this._tree = null;
+      this._trail = [];
       this._data = (data ?? []).filter((d) => Number.isFinite(+d.value) && +d.value > 0);
       this.render();
       return this;
@@ -22687,10 +23887,50 @@ var RareCharts = (() => {
       this.gSlices = this.svg.append("g").attr("class", "rc-donut-slices");
       this.gLabels = this.svg.append("g").attr("class", "rc-donut-labels");
       this.gCenter = this.svg.append("g").attr("class", "rc-donut-center");
+      this.gCrumb = this.svg.append("g").attr("class", "rc-donut-crumb");
+    }
+    // ─── Drill-down (hierarchy mode) ────────────────────────────────────────────
+    _focus() {
+      return this._trail[this._trail.length - 1] ?? null;
+    }
+    _drillable(node) {
+      return !!node && !node.isRemainder && Array.isArray(node.children) && node.children.some((c6) => typeof c6.value === "number");
+    }
+    drillTo(node) {
+      if (!this._drillable(node)) return this;
+      this._trail = [...this._trail, node];
+      this._didAnimateIn = false;
+      this.render();
+      return this;
+    }
+    drillToDepth(index3) {
+      if (index3 < 0 || index3 >= this._trail.length - 1) return this;
+      this._trail = this._trail.slice(0, index3 + 1);
+      this._didAnimateIn = false;
+      this.render();
+      return this;
+    }
+    drillUp() {
+      return this.drillToDepth(this._trail.length - 2);
     }
     // ─── Render ───────────────────────────────────────────────────────────────
     render() {
-      if (!this._data.length) return;
+      const hier = this._mode === "hier";
+      let focus = null;
+      let missingChildren = [];
+      if (hier) {
+        focus = this._focus();
+        if (!focus) {
+          [this.gSlices, this.gLabels, this.gCenter, this.gCrumb].forEach((g) => g.selectAll("*").remove());
+          return;
+        }
+        this._data = (focus.children ?? []).filter((d) => typeof d.value === "number");
+        missingChildren = (focus.children ?? []).filter((d) => d.missing);
+      }
+      if (!this._data.length) {
+        this.gCrumb.selectAll("*").remove();
+        return;
+      }
       const W = this.width + this.margin.left + this.margin.right;
       const H = this.height + this.margin.top + this.margin.bottom;
       if (W <= 0 || H <= 0) return;
@@ -22705,16 +23945,17 @@ var RareCharts = (() => {
       const cornerR = o.cornerRadius ?? (isPie ? 1 : 3);
       const showLabels = o.showLabels ?? false;
       const showCenter = o.showCenter ?? !isPie;
+      const inset = hier ? 24 : 0;
       const cx = W / 2;
-      const cy = H / 2;
+      const cy = inset + (H - inset) / 2;
       const labelRoom = showLabels ? 36 : 0;
-      const outerR = Math.min(cx, cy) - labelRoom - 4;
+      const outerR = Math.min(cx, (H - inset) / 2) - labelRoom - 4;
       const innerR = outerR * innerFrac;
       const total = sum(this._data, (d) => +d.value);
       const valueFmt = o.valueFormat ?? ((v2) => format(",")(v2));
       const percentFmt = o.percentFormat ?? ((p) => format(".1%")(p));
       const palette = t.colors ?? [];
-      const colorFor = (d, i) => d.color ?? palette[i % palette.length] ?? t.accent;
+      const colorFor = (d, i) => d.isRemainder ? t.muted : d.color ?? palette[i % palette.length] ?? t.accent;
       const arc = arc_default().innerRadius(innerR).outerRadius(outerR).padAngle(padAngle).cornerRadius(cornerR);
       const arcHover = arc_default().innerRadius(innerR).outerRadius(outerR + 6).padAngle(padAngle).cornerRadius(cornerR);
       const pie = pie_default().value((d) => +d.value).sort(null).padAngle(padAngle);
@@ -22722,7 +23963,7 @@ var RareCharts = (() => {
       this.gSlices.attr("transform", `translate(${cx},${cy})`);
       this.gLabels.attr("transform", `translate(${cx},${cy})`);
       this.gCenter.attr("transform", `translate(${cx},${cy})`);
-      const slices = this.gSlices.selectAll(".rc-donut-slice").data(arcs, (d) => d.data.label).join(
+      const slices = this.gSlices.selectAll(".rc-donut-slice").data(arcs, (d) => d.data.id ?? d.data.label).join(
         (enter) => enter.append("path").attr("class", "rc-donut-slice").attr("fill", (d, i) => colorFor(d.data, i)).attr(
           "d",
           animate ? (d) => arc({ ...d, endAngle: d.startAngle }) : (d) => arc(d)
@@ -22741,7 +23982,9 @@ var RareCharts = (() => {
       }).on("mouseout", (event, d) => {
         select_default2(event.currentTarget).transition().duration(180).ease(quadOut).attr("d", arc(d));
         this._tooltip.hide();
-      });
+      }).on("click", (event, d) => {
+        if (hier && this._drillable(d.data)) this.drillTo(d.data);
+      }).style("cursor", (d) => hier && this._drillable(d.data) ? "pointer" : "default");
       if (animate) {
         slices.transition().duration(duration).ease(ease).attrTween("d", function(d) {
           const i = value_default({ startAngle: d.startAngle, endAngle: d.startAngle }, d);
@@ -22770,38 +24013,96 @@ var RareCharts = (() => {
         const showName = content !== "percent";
         const showPct = content !== "label";
         const lineCount = (showName ? 1 : 0) + (showPct ? 1 : 0);
+        const blockH = lineCount * lineH;
+        const entries = [];
         arcs.forEach((d) => {
           const pct = d.data.value / total;
           if (pct < labelMinPct) return;
           const mid = (d.startAngle + d.endAngle) / 2;
-          const isRight = Math.sin(mid) >= 0;
-          const x12 = Math.sin(mid) * outerR;
-          const y12 = -Math.cos(mid) * outerR;
-          const x22 = Math.sin(mid) * (outerR + lineLen);
-          const y22 = -Math.cos(mid) * (outerR + lineLen);
-          const x32 = x22 + (isRight ? tickLen : -tickLen);
-          const y32 = y22;
-          this.gLabels.append("polyline").attr("class", "rc-donut-leader").attr("points", `${x12},${y12} ${x22},${y22} ${x32},${y32}`).attr("fill", "none").attr("stroke", t.border).attr("stroke-width", 1);
-          const tx = x32 + (isRight ? labelGap : -labelGap);
-          const anchor = isRight ? "start" : "end";
-          const topY = y32 - (lineCount - 1) * lineH / 2;
+          entries.push({
+            d,
+            pct,
+            isRight: Math.sin(mid) >= 0,
+            x1: Math.sin(mid) * outerR,
+            // on the outer arc edge
+            y1: -Math.cos(mid) * outerR,
+            x2: Math.sin(mid) * (outerR + lineLen),
+            // leader elbow
+            y: -Math.cos(mid) * (outerR + lineLen)
+          });
+        });
+        const spreadSide = (side) => {
+          const list = entries.filter((e) => e.isRight === side).sort((a4, b) => a4.y - b.y);
+          const gap = blockH + 4;
+          const top2 = inset - cy + blockH / 2 + 2;
+          const bottom2 = H - cy - blockH / 2 - 2;
+          for (let i = 1; i < list.length; i++) {
+            if (list[i].y < list[i - 1].y + gap) list[i].y = list[i - 1].y + gap;
+          }
+          for (let i = list.length - 1; i >= 0; i--) {
+            const maxY2 = i === list.length - 1 ? bottom2 : list[i + 1].y - gap;
+            if (list[i].y > maxY2) list[i].y = maxY2;
+            if (list[i].y < top2) list[i].y = top2;
+          }
+        };
+        spreadSide(true);
+        spreadSide(false);
+        entries.forEach((e) => {
+          const x32 = e.x2 + (e.isRight ? tickLen : -tickLen);
+          this.gLabels.append("polyline").attr("class", "rc-donut-leader").attr("points", `${e.x1},${e.y1} ${e.x2},${e.y} ${x32},${e.y}`).attr("fill", "none").attr("stroke", t.border).attr("stroke-width", 1);
+          const tx = x32 + (e.isRight ? labelGap : -labelGap);
+          const anchor = e.isRight ? "start" : "end";
+          const topY = e.y - (lineCount - 1) * lineH / 2;
           let lineIdx = 0;
           if (showName) {
-            this.gLabels.append("text").attr("class", "rc-donut-label").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.text).style("font-family", t.font).style("font-size", t.fontSize).text(d.data.label);
+            const name = this.gLabels.append("text").attr("class", "rc-donut-label").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.text).text(e.d.data.label);
+            fitTextNode(name.node(), e.d.data.label, cx - Math.abs(tx) - 2);
           }
           if (showPct) {
-            this.gLabels.append("text").attr("class", "rc-donut-label-pct").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.muted).style("font-family", t.numericFont).style("font-size", t.fontSize).text(percentFmt(pct));
+            this.gLabels.append("text").attr("class", "rc-donut-label-pct").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.muted).text(percentFmt(e.pct));
           }
         });
       }
       this.gCenter.selectAll("*").remove();
       if (showCenter && innerR > 0) {
         const rawCenter = o.centerText;
-        const centerVal = typeof rawCenter === "function" ? rawCenter(this._data) : rawCenter ?? valueFmt(total);
-        const centerLabel = o.centerLabel ?? "Total";
-        this.gCenter.append("text").attr("class", "rc-donut-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", centerLabel ? -10 : 0).attr("fill", t.text).style("font-family", t.numericFont).style("font-size", `${Math.max(14, innerR * 0.28)}px`).style("font-weight", "bold").text(centerVal);
+        const centerVal = hier ? valueFmt(focus.value) : typeof rawCenter === "function" ? rawCenter(this._data) : rawCenter ?? valueFmt(total);
+        const centerLabel = hier ? this._trail.length > 1 ? focus.label : o.centerLabel ?? "Total" : o.centerLabel ?? "Total";
+        const holeAvail = 2 * innerR - 12;
+        const valueSize = Math.max(14, innerR * 0.28);
+        const valueSel = this.gCenter.append("text").attr("class", "rc-donut-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", centerLabel ? -10 : 0).attr("fill", t.text).style("font-size", `${valueSize}px`).text(centerVal);
+        const vNode = valueSel.node();
+        const vLen = vNode.getComputedTextLength ? vNode.getComputedTextLength() : 0;
+        if (vLen > holeAvail) valueSel.style("font-size", `${Math.max(11, valueSize * holeAvail / vLen)}px`);
         if (centerLabel) {
-          this.gCenter.append("text").attr("class", "rc-donut-center-label").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize).text(centerLabel);
+          const labelSel = this.gCenter.append("text").attr("class", "rc-donut-center-label").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", 14).attr("fill", t.muted).text(centerLabel);
+          fitTextNode(labelSel.node(), centerLabel, holeAvail);
+        }
+      }
+      this.gCrumb.selectAll("*").remove();
+      if (hier) {
+        if (this._trail.length > 1) {
+          let cursorX = 0;
+          this._trail.forEach((node, idx) => {
+            if (idx > 0) {
+              this.gCrumb.append("text").attr("x", cursorX).attr("y", 14).attr("fill", t.muted).text("\u203A");
+              cursorX += 12;
+            }
+            const isLast = idx === this._trail.length - 1;
+            const label = node.label.length > 22 ? node.label.slice(0, 22).trimEnd() + "\u2026" : node.label;
+            const txt = this.gCrumb.append("text").attr("x", cursorX).attr("y", 14).attr("fill", isLast ? t.text : t.accent).style("cursor", isLast ? "default" : "pointer").text(label);
+            if (!isLast) txt.on("click", () => this.drillToDepth(idx));
+            const len = txt.node().getComputedTextLength ? txt.node().getComputedTextLength() : 0;
+            cursorX += (len || label.length * 7) + 8;
+          });
+        }
+        if (missingChildren.length) {
+          this.gCrumb.append("text").attr("x", W / 2).attr("y", H - 6).attr("text-anchor", "middle").attr("fill", t.muted).text(`${missingChildren.length} not disclosed`).append("title").text(missingChildren.map((m3) => m3.label).join(", "));
+        }
+        if (this._trail.length > 1) {
+          this.gCenter.style("cursor", "pointer").on("click", () => this.drillUp());
+        } else {
+          this.gCenter.style("cursor", "default").on("click", null);
         }
       }
     }
@@ -22840,6 +24141,7 @@ var RareCharts = (() => {
       this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
       applySvgA11y(this.svg, this.options);
       this.gArc = this.svg.append("g").attr("class", "rc-gauge-arc");
+      this.gNeedle = this.svg.append("g").attr("class", "rc-gauge-needle");
       this.gCenter = this.svg.append("g").attr("class", "rc-gauge-center");
     }
     // ─── Render ───────────────────────────────────────────────────────────────
@@ -22858,11 +24160,18 @@ var RareCharts = (() => {
       const ease = resolveEase(o.ease ?? "cubicOut");
       const trackColor = o.trackColor ?? t.grid;
       const fillColor = o.color ?? t.accent;
+      const needle = o.needle === true;
+      const needleColor = o.needleColor ?? t.text;
       const bottomFrac = Math.abs(Math.cos(endAngle));
       const cx = W / 2;
-      const outerR = Math.min(cx, H / (1 + bottomFrac)) - 4;
+      const hasCenter = o.showCenter !== false;
+      const textBelow = hasCenter ? needle ? o.centerLabel != null ? 52 : 34 : o.centerLabel != null ? 21 : 10 : needle ? 8 : 0;
+      const fitDeep = (H - 8) / (1 + bottomFrac);
+      const fitShallow = H - 8 - textBelow;
+      const outerR = Math.min(cx - 4, fitDeep * bottomFrac >= textBelow ? fitDeep : fitShallow);
       const innerR = outerR * (1 - thickness);
-      const centerY = (H + outerR * (1 - bottomFrac)) / 2;
+      const below = Math.max(outerR * bottomFrac, textBelow);
+      const centerY = (H - (outerR + below)) / 2 + outerR;
       this.gArc.attr("transform", `translate(${cx},${centerY})`);
       this.gCenter.attr("transform", `translate(${cx},${centerY})`);
       const clamp = (v2) => Math.max(this._min, Math.min(this._max, v2));
@@ -22884,6 +24193,24 @@ var RareCharts = (() => {
         fillPath.attr("d", fillArc.endAngle(fillEnd)());
         this._didAnimateIn = true;
       }
+      this.gNeedle.attr("transform", `translate(${cx},${centerY})`);
+      this.gNeedle.selectAll("*").remove();
+      if (needle) {
+        const tipR = (innerR + outerR) / 2;
+        const baseW = Math.max(3, outerR * 0.035);
+        const hubR = Math.max(4, outerR * 0.055);
+        const deg = (a4) => a4 * 180 / Math.PI;
+        const pointer = this.gNeedle.append("path").attr("class", "rc-gauge-needle-pointer").attr("d", `M ${-baseW} 0 L 0 ${-tipR} L ${baseW} 0 Z`).attr("fill", needleColor);
+        this.gNeedle.append("circle").attr("class", "rc-gauge-needle-hub").attr("r", hubR).attr("fill", needleColor);
+        if (animate) {
+          pointer.attr("transform", `rotate(${deg(startAngle)})`).transition().duration(duration).ease(ease).attrTween("transform", () => {
+            const interp = value_default(deg(startAngle), deg(fillEnd));
+            return (tt) => `rotate(${interp(tt)})`;
+          });
+        } else {
+          pointer.attr("transform", `rotate(${deg(fillEnd)})`);
+        }
+      }
       const pct = fraction;
       const tooltipHtml = o.tooltipFormat ? o.tooltipFormat({ value: this._value, max: this._max, min: this._min, percent: pct }) : `<div>${format(".1%")(pct)}</div>
          <div style="color:${t.muted}">${this._value} / ${this._max}</div>`;
@@ -22896,9 +24223,9 @@ var RareCharts = (() => {
         const rawText = o.centerText;
         const centerVal = typeof rawText === "function" ? rawText(this._value, this._max, this._min) : rawText ?? format(".0%")(fraction);
         const centerLabel = o.centerLabel ?? null;
-        this.gCenter.append("text").attr("class", "rc-gauge-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", centerLabel ? -10 : 0).attr("fill", t.text).style("font-family", t.numericFont).style("font-size", `${Math.max(16, innerR * 0.32)}px`).style("font-weight", "bold").text(centerVal);
+        this.gCenter.append("text").attr("class", "rc-gauge-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", needle ? 22 : centerLabel ? -10 : 0).attr("fill", t.text).style("font-size", `${Math.max(16, innerR * 0.32)}px`).text(centerVal);
         if (centerLabel) {
-          this.gCenter.append("text").attr("class", "rc-gauge-center-label").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", t.fontSize).text(centerLabel);
+          this.gCenter.append("text").attr("class", "rc-gauge-center-label").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", needle ? 44 : 14).attr("fill", t.muted).text(centerLabel);
         }
       }
     }
@@ -28018,7 +29345,7 @@ var RareCharts = (() => {
           g.filter((d) => !d.image && !!this._nodeIcons?.[d.group]).append("path").attr("class", "rc-graph-node-icon").style("pointer-events", "none");
           g.filter((d) => !!d.image).append("image").attr("class", "rc-graph-node-image").attr("href", (d) => d.image).attr("x", (d) => -nodeR(d) + 2).attr("y", (d) => -nodeR(d) + 2).attr("width", (d) => (nodeR(d) - 2) * 2).attr("height", (d) => (nodeR(d) - 2) * 2).attr("clip-path", (d) => `circle(${nodeR(d) - 2}px at center)`).style("pointer-events", "none");
           g.append("rect").attr("class", "rc-graph-node-label-bg").attr("rx", 3).attr("fill", t.bg ?? "#ffffff").attr("opacity", 0.75).style("pointer-events", "none");
-          g.append("text").attr("class", "rc-graph-node-label").attr("text-anchor", "middle").attr("dominant-baseline", "hanging").attr("fill", t.text).style("font-family", t.font).style("font-size", "11px").style("pointer-events", "none").style("user-select", "none");
+          g.append("text").attr("class", "rc-graph-node-label").attr("text-anchor", "middle").attr("dominant-baseline", "hanging").attr("fill", t.text).style("pointer-events", "none").style("user-select", "none");
           return g;
         },
         (update) => update,
@@ -28075,9 +29402,9 @@ var RareCharts = (() => {
         else if (!(this._view === "ego" && d.id === this._root)) this.focus(d.id);
       });
       const showSectors = o.sectorLabels === true && (sectors?.length ?? 0) > 1;
-      this.gSectors.selectAll(".rc-graph-sector-label").data(showSectors ? sectors : [], (d) => d.key).join("text").attr("class", "rc-graph-sector-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => Math.cos(d.angle) > 0.35 ? "start" : Math.cos(d.angle) < -0.35 ? "end" : "middle").attr("dominant-baseline", "middle").attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("letter-spacing", "0.08em").style("text-transform", "uppercase").style("pointer-events", "none").text((d) => d.key);
+      this.gSectors.selectAll(".rc-graph-sector-label").data(showSectors ? sectors : [], (d) => d.key).join("text").attr("class", "rc-graph-sector-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => Math.cos(d.angle) > 0.35 ? "start" : Math.cos(d.angle) < -0.35 ? "end" : "middle").attr("dominant-baseline", "middle").attr("fill", t.muted).style("pointer-events", "none").text((d) => d.key);
       const note = this._view === "ego" && this._hiddenCount > 0 ? [`+${this._hiddenCount} more \u2014 enlarge the chart or recenter to reveal`] : [];
-      this.gRoot.selectAll(".rc-graph-note").data(note).join("text").attr("class", "rc-graph-note").attr("x", 104).attr("y", H - 14).attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("cursor", "pointer").style("text-decoration", "underline").attr("role", "button").attr("tabindex", 0).text((d) => d).on("click", () => this._toggleOverflow()).on("keydown", (event) => {
+      this.gRoot.selectAll(".rc-graph-note").data(note).join("text").attr("class", "rc-graph-note").attr("x", 104).attr("y", H - 14).attr("fill", t.muted).style("cursor", "pointer").attr("role", "button").attr("tabindex", 0).text((d) => d).on("click", () => this._toggleOverflow()).on("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           this._toggleOverflow();
@@ -28085,9 +29412,9 @@ var RareCharts = (() => {
       });
       this._renderOverflow();
       const rowLabels = this._view === "path" && this._rows?.length ? this._rows : [];
-      this.gRoot.selectAll(".rc-graph-row-label").data(rowLabels, (d, i) => i).join("text").attr("class", "rc-graph-row-label").attr("x", 8).attr("y", (d) => d.y + 3).attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("letter-spacing", "0.05em").text((d) => `${d.hops} hop${d.hops !== 1 ? "s" : ""}${d.shortest ? " \xB7 shortest" : ""}`);
+      this.gRoot.selectAll(".rc-graph-row-label").data(rowLabels, (d, i) => i).join("text").attr("class", "rc-graph-row-label").attr("x", 8).attr("y", (d) => d.y + 3).attr("fill", t.muted).text((d) => `${d.hops} hop${d.hops !== 1 ? "s" : ""}${d.shortest ? " \xB7 shortest" : ""}`);
       const hiddenNote = this._view === "ego" && this._hidden.size > 0 ? [`${this._hidden.size} hidden \xB7 restore`] : [];
-      this.gRoot.selectAll(".rc-graph-hidden-note").data(hiddenNote).join("text").attr("class", "rc-graph-hidden-note").attr("x", W - 10).attr("y", H - 8).attr("text-anchor", "end").attr("fill", t.muted).style("font-family", t.font).style("font-size", "10px").style("cursor", "pointer").style("text-decoration", "underline").text((d) => d).on("click", () => {
+      this.gRoot.selectAll(".rc-graph-hidden-note").data(hiddenNote).join("text").attr("class", "rc-graph-hidden-note").attr("x", W - 10).attr("y", H - 8).attr("text-anchor", "end").attr("fill", t.muted).style("cursor", "pointer").text((d) => d).on("click", () => {
         this._hidden.clear();
         this.render();
       });

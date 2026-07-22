@@ -462,7 +462,7 @@
 <tr>
 <td>Hierarchies</td>
 <td><code>RareCharts.Hierarchies</code></td>
-<td>Hierarchical data views such as tree, treemap, cluster, pack, or related structures for nested datasets and ownership-style breakdowns.</td>
+<td>Spatial hierarchy views — treemap, pack, sunburst, cluster — over the tree contract that shipped in v0.9.8_2 (see <a href="/charts/bar/hierarchical-bar/">Hierarchical Bar</a> for the linear outline and the node shape; <a href="/charts/circular/">Donut</a> drills the same tree).</td>
 </tr>
 <tr>
 <td>Scatter</td>
@@ -482,18 +482,18 @@
 <p><tr class="table-section">
 <td colspan="3">
 <h5>Composition &amp; stacking</h5>
-<p>Stacking is currently absent from the library: <code>Bar</code> draws one series, and multi-series <code>Line</code> areas overlap rather than accumulate.</p>
+<p>Stacked bars ship on <code>Bar</code> in v0.9.8_2 — see <a href="/charts/bar/stacked-bar/">Stacked Bar</a>. Multi-series <code>Line</code> areas still overlap rather than accumulate; items below extend composition.</p>
 </td>
-</tr>
-<tr>
-<td>Stacked bars</td>
-<td><code>stacked: true</code> with multi-series data on <code>RareCharts.Bar</code></td>
-<td>Accept <code>[{ name, values }]</code> series and stack segments within each category or date slot, with a per-segment tooltip and legend. Composition over time — revenue by segment, index membership — is the most common analytics figure after lines. <strong>Targeted for v0.9.8_2.</strong></td>
 </tr>
 <tr>
 <td>Stacked area</td>
 <td><code>stacked: true</code> on <code>RareCharts.Line</code> area series</td>
-<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_2.</strong></td>
+<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_3.</strong></td>
+</tr>
+<tr>
+<td>Stacked bars on date slots</td>
+<td><code>[{ name, values: [{ date, value }] }]</code> on <code>RareCharts.Bar</code></td>
+<td>Extend the v0.9.8_2 categorical stack to the time-series bar mode: segments stacked per date slot, with the shared timeframe controls.</td>
 </tr>
 <tr>
 <td>All chart types in MultiChart</td>
@@ -538,7 +538,7 @@
 <tr>
 <td>Diverging bar chart</td>
 <td><code>RareCharts.DivergingBar</code></td>
-<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_2.</strong></td>
+<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_3.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">

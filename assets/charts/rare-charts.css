@@ -28,7 +28,10 @@
 
 .rc-chart > svg {
   font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size);
+  /* Small size is the chart-text default (axis ticks, labels, values). Charts
+     no longer set font-size inline; the few larger texts (donut/gauge center)
+     set their own. */
+  font-size: var(--rc-font-size-sm);
   overflow: visible; /* otherwise end labels and crosshair dots are clipped */
   /* Let the plot shrink inside the fixed-height card so a tall footer (a long
      source line or a multi-sentence note) never overflows and gets clipped —
@@ -364,10 +367,54 @@
   pointer-events: none;
 }
 
-/* Axis tick labels */
+/* Axis tick labels. Charts add .rc-axis (numeric/value axis) or .rc-axis-cat
+   (category axis, inherits the regular font) to the axis group. font-size is
+   set here to override d3-axis's default font-size="10" attribute on the group. */
+.rc-axis text,
+.rc-axis-cat text {
+  /* Override d3-axis's font-size="10" / font-family="sans-serif" group attrs. */
+  font-size: var(--rc-font-size-sm, 14px);
+}
+
 .rc-axis text {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
   font-variant-numeric: tabular-nums;
 }
+
+.rc-axis-cat text {
+  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+}
+
+/* Numeric SVG text set by charts (bar value labels, donut percents, center
+   totals). Regular-font text inherits the svg default, so only these need the
+   numeric family. Center texts keep their computed size (set in JS). */
+.rc-bar-value,
+.rc-donut-label-pct,
+.rc-donut-center-value,
+.rc-gauge-center-value {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-variant-numeric: tabular-nums;
+}
+
+.rc-donut-center-value,
+.rc-gauge-center-value {
+  font-weight: bold;
+}
+
+/* Graph (experimental) SVG labels. */
+.rc-graph-node-label { font-size: 11px; }
+
+.rc-graph-sector-label,
+.rc-graph-note,
+.rc-graph-row-label,
+.rc-graph-hidden-note {
+  font-size: 10px;
+}
+
+.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-graph-row-label    { letter-spacing: 0.05em; }
+.rc-graph-note,
+.rc-graph-hidden-note  { text-decoration: underline; }
 
 /* Axis titles (used in DualAxes) */
 .rc-axis-title {
@@ -380,9 +427,24 @@
 
 /* End labels — last-value labels on the right edge */
 .rc-end-label {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
   font-variant-numeric: tabular-nums;
   background-color: var(--white);
   padding: var(--space-xs);
+}
+
+/* Hierarchical bar — row label + value text.
+   Fonts come from the theme CSS variables declared on .rc-chart, so the chart
+   code sets only data-driven attributes (fill, position), not font styles. */
+.rc-hbar-label {
+  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+  font-size: var(--rc-font-size-sm, 14px);
+}
+
+.rc-hbar-value {
+  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-size: var(--rc-font-size-sm, 14px);
+  font-variant-numeric: tabular-nums;
 }
 
 /* Markers */

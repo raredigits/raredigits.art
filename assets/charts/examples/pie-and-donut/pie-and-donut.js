@@ -20,7 +20,7 @@
     subtitle:    'Share of total revenue, 2024',
     source:      'Source: Internal Accounting',
     legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
-    height:      300,
+    height:      420,
     centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
     centerLabel: 'Revenue',
     valueFormat: v => '$' + d3.format(',.0f')(v) + 'K',
@@ -38,7 +38,7 @@
     source:         'Source: Internal Accounting',
     legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
     legendPosition: 'right',
-    height:         340,
+    height:         420,
     centerText:     data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
     centerLabel:    'Revenue',
   }).setData(segments);
@@ -48,7 +48,7 @@
     title:       'Revenue by Product',
     subtitle:    'Same data as Pie (innerRadius: 0)',
     source:      'Source: Internal Accounting',
-    height:      300,
+    height:      420,
     innerRadius: 0,
     showLabels:  true,
     valueFormat: v => '$' + d3.format(',.0f')(v) + 'K',
@@ -83,5 +83,32 @@
     centerText:  v => d3.format('.0%')(v / 100),
     centerLabel: 'Used',
   }).setData(78);
+
+  // ── Gauge: half-circle (speedometer) ──────────────────────────────────────
+  // A 180° sweep via startAngle/endAngle — the automotive-indicator look.
+  new Gauge('#chart-gauge-speed', {
+    title:       'Engine Load',
+    height:      220,
+    startAngle:  -Math.PI / 2,
+    endAngle:     Math.PI / 2,
+    color:       '#fa8c16',
+    centerText:  v => v + '%',
+    centerLabel: 'Load',
+  }).setData(64);
+
+  // ── Gauge: speedometer needle ─────────────────────────────────────────────
+  // needle: true pivots a pointer at the dial center; the readout moves below
+  // the hub, dial-style.
+  new Gauge('#chart-gauge-needle', {
+    title:       'Speed',
+    height:      220,
+    startAngle:  -Math.PI / 2,
+    endAngle:     Math.PI / 2,
+    needle:      true,
+    max:         240,
+    color:       '#00aaff',
+    centerText:  v => v,
+    centerLabel: 'km/h',
+  }).setData(87);
 
 })();
