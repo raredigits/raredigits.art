@@ -5,7 +5,7 @@
 **Backlog revision this was written against:** 1275 lines, 266 `CSS-NNN` ids, latest `CSS-341`. All references below were verified against that revision.
 **Purpose:** record what a fourth live consumer needs from the library and how that changes the release order, so the two can be reviewed together and folded into the main backlog.
 
-New work carries temporary `GUT-NNN` ids to avoid collisions; the `CSS-NNN` sequence is occupied through `CSS-341`, so these renumber from `CSS-342` on merge.
+New work carries temporary `GUT-NNN` ids to avoid collisions; the `CSS-NNN` sequence is occupied through `CSS-341`, so these renumber from the next free id on merge (`CSS-342` is taken by the `v0.6.26` review umbrella that schedules this triage).
 
 ## The candidate consumer
 
