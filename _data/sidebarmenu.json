@@ -68,7 +68,13 @@
       { "title": "Dual Axes", "url": "/charts/dual-axes/" },
       { "title": "Combined", "url": "/charts/combined/" },
       { "title": "Circular", "url": "/charts/circular/" },
-      { "title": "Graph", "url": "/charts/graph/" },
+      {
+          "title": "Graph",
+          "url": "/charts/graph/",
+          "subitems": [
+            { "title": "Flow view", "url": "/charts/graph/flow/" }
+          ]
+      },
       { "title": "Map", "url": "/charts/map/" },
       { "title": "Sankey", "url": "/charts/sankey/" },
       { "title": "Multi Charts", "url": "/charts/multi/" },

@@ -735,3 +735,13 @@
 /* ─── Sankey ─────────────────────────────────────────────────────────────── */
 .rc-sankey-label { font-size: 11px; }
 .rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* ─── Graph flow view ────────────────────────────────────────────────────── */
+.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-flow-node-label { font-size: 12px; }
+.rc-flow-node-sub,
+.rc-flow-link-label { font-size: 11px; font-family: var(--font-mono, ui-monospace, monospace); }
+.rc-flow-hull-label { font-size: 11px; }
+/* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
+.rc-flow-node:focus { outline: none; }
+.rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
