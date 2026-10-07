@@ -70,6 +70,7 @@
       { "title": "Circular", "url": "/charts/circular/" },
       { "title": "Graph", "url": "/charts/graph/" },
       { "title": "Map", "url": "/charts/map/" },
+      { "title": "Sankey", "url": "/charts/sankey/" },
       { "title": "Multi Charts", "url": "/charts/multi/" },
       { "title": "Installation", "url": "/charts/installation/" },
       { "title": "Data Import", "url": "/charts/data-import/" },

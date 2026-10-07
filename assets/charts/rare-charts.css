@@ -718,3 +718,20 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ─── Screen-reader-only content (data-table fallbacks) ──────────────────── */
+.rc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Sankey ─────────────────────────────────────────────────────────────── */
+.rc-sankey-label { font-size: 11px; }
+.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

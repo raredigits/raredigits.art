@@ -83,6 +83,7 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 | `CSS-078` | chore | **Reset/normalization stance** (re-scoped 2026-10-02). `vendor/normalize`, the `* { margin: 0; padding: 0 }` reset and `box-sizing` now apply only inside `.rd` — so the per-artifact question is gone. What remains: confirm the reset is acceptable for islands (an island zeroes margins of everything inside it — expected, but documented) and decide whether normalize stays whole or trims to what the library relies on. | P1 | S |
 | `CSS-344` | chore | **Migrate the in-repo surfaces onto `.rd`.** raredigits.art layouts get `<html class="rd">`; the standalone example layouts (`_layouts/examples/*`, the hetke landing) get `.rd` on their own root or islands as fits; the `/styles/` and `/charts/` docs render identically (visual spot check on the key pages, desktop + mobile). | P0 | S |
 | `CSS-321` | docs | **Document the gate** (re-scoped 2026-10-02 — was "document the two artifacts"). `/styles/getting-started/` (`CSS-282`) leads with it: page mode `<html class="rd">`, island mode `class="rd"`, what an island does and does not get (tag styles + classes; no page shell, no base typography), tokens stay on `:root` and are overridden by client styles loaded after `rare.css`, layout modes need `rd` on `<html>`, the known caveat (the gate protects the host from the library, not the library from the host's own same-named classes), the workaround for foreign non-iframe markup (put `.rd` on your own containers instead of `<html>`), and the one-line migration. | P0 | S |
+| `CSS-354` | bug | **Header overflows narrow viewports** (found 2026-10-07 while testing RareCharts Sankey on `/charts/sankey/`). At a 375 px viewport the document is 462 px wide: the site header (`header.padding-x-md` → `.header-container` → nav `li`/`a`, `.header-icons`, `button.icon-search`) extends past the viewport, so every page scrolls sideways on phones. Library module: `modules/navigation/header/`. Reproduce at 320 / 375 / 414 px, find which header row refuses to shrink or wrap (nav items, icon group), fix inside the header module and verify on the gated build in page mode; check the hamburger breakpoint still switches. | P1 | S |
 
 ## Exit criteria
 
@@ -92,6 +93,7 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 - [ ] raredigits.art and the in-repo examples render identically on `.rd` (`CSS-344`); the getting-started docs explain the gate and the migration (`CSS-321`)
 - [ ] `Q-12` and `Q-13` closed via `Q-14`; `CSS-318` / `CSS-319` / `CSS-320` closed as superseded
 - [ ] `npm run lint:css` clean; bundle rebuilt; raw **and** gzip/brotli deltas recorded in `Changelog.md`
+- [ ] No horizontal page overflow at 320 / 375 / 414 px on raredigits.art pages — the header fits the viewport (`CSS-354`)
 
 ---
 

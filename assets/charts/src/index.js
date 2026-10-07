@@ -39,6 +39,7 @@ export { Graph, linkPresets } from './charts/Graph.js';
 export { memorySource } from './graph/source.js';
 export { MultiChart        } from './charts/MultiChart.js';
 export { Map        } from './charts/Map.js';
+export { Sankey     } from './charts/Sankey.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
 export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
 export { defaultTimeframes } from './core/Chart.js';
