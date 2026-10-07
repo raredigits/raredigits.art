@@ -363,7 +363,9 @@ graph.focus('peter-thiel', {
 });
 graph.connect('peter-thiel', 'target');  // routes between two nodes
 graph.overview();                        // community overview
-graph.setData({ nodes, links });         // static payload: memorySource + focus
+graph.setData({ nodes, links });         // static payload: memorySource + focus on the best-connected node
+graph.setData({ nodes, links }).focus('peter-thiel');
+                                         // start elsewhere: chain it, no whenReady() in between
 graph.add({ links: [{ source: 'a', target: 'b', type: 'deal' }] });
                                          // incremental: merge one news-sized payload
 graph.hide('noisy-node');                // declutter; show(id) brings it back

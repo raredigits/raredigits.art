@@ -16,6 +16,16 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- **`Graph.setData()` no longer draws a throwaway default view** (`src/charts/Graph.js`). `setData()` still focuses the best-connected node by default, but a `focus()`, `connect()` or `overview()` chained in the same tick now replaces that default instead of running after it: `graph.setData(data).focus(id)` fetches and renders `id` once. Previously the best-connected ego was built, rendered and immediately discarded. No `whenReady()` is needed between `setData()` and the first view call — and adding one now costs that extra default render. `whenReady()` after `setData()` alone still resolves after the default ego is drawn.
+
+### Fixed
+
+- **Investigated: “empty canvas after `setData()` → `focus()`”** (field note 2026-07-31). Not reproducible as a queue race — both calls were already serialized, verified in jsdom, in a real browser and on the reporting site's own dataset. The observed blank canvas comes from a page that is not being painted (background tab, hidden pane): nodes enter at opacity 0 and the fade-in, like `ResizeObserver`, waits for the next paint; the graph completes as soon as the page is visible. The change above removes the double render that made it look intermittent. Regression tests: `test/graph-ready.test.js`.
+
 ## [v0.9.8_2] — 2026-07-22 — Composition & Hierarchy
 
 The composition release: stacking arrives on `Bar`, and tree-shaped data gets a first-class contract with two views over one shape — a new `HierarchicalBar` outline and an interactive drill-down mode on `Donut`, both fed by a shared normalizer. Around them, the circular charts grew up: outer labels stopped overlapping and overflowing, the gauge learned the speedometer look (any sweep + a needle), and a real `Bar` animation race was found and fixed. Stacked area (`Line`) and `DivergingBar` from the original plan move to v0.9.8_3.
