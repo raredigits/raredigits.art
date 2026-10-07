@@ -59,7 +59,9 @@
 //   focus(id, { types? }) — ego view around id (click-recenter uses this too)
 //   connect(a, b)  — path view between a and b
 //   overview()     — cluster view
-//   setData(data)  — wrap data in memorySource and focus the best-connected node
+//   setData(data)  — wrap data in memorySource and focus the best-connected node;
+//                    a focus/connect/overview chained in the same tick replaces
+//                    that default (no whenReady() needed in between)
 //   add(payload)   — merge an incremental { nodes?, links } payload and refresh
 //   hide(id) / show(id) — toggle a node out of / back into the ego view
 //   setRelationTypes(types) / clearRelationTypes() — filter ego relations
@@ -107,6 +109,7 @@ export class Graph extends Chart {
     this._manual   = new Map();          // node id → dragged position override
     this._hidden   = new Set(options.hiddenNodes ?? []);
     this._ready    = Promise.resolve();
+    this._autoFocusId = null;            // setData's default ego, unless a view is requested first
     this._switching = false;             // guards semantic-zoom feedback loops
     this._hasRendered = false;
     this._tooltip  = new Tooltip(this.container, this.theme);
@@ -136,35 +139,39 @@ export class Graph extends Chart {
   // Ego view around `id`: fetch its neighborhood, merge into the model,
   // lay out from the accumulated graph.
   focus(id, { types } = {}) {
-    return this._enqueue(async () => {
-      // The filter is applied inside the queued task: two rapid focus() calls
-      // with different filters must each fetch with their own, not both with
-      // whichever was set last.
-      if (types !== undefined) this._setRelationTypesState(types);
-      const depth = this.options.depth ?? 2;
-      const activeTypes = this._activeRelationTypes();
-      const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
-      this._model.merge(sub);
-      (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
-      this._view = 'ego';
-      this._root = id;
-      this._paths = null;
-      this._ctxIds = null;
-      this._shortestKeys = null;
-      this._rows = null;
-      this._manual = new Map();
-      this._anchors = new Set([id]);
-      this._viewData = this._model.neighborhood(id, depth, { types: activeTypes });
-      this.render();
-      this._recordHistory({ view: 'ego', root: id, types: activeTypes });
-      this._resetZoomSilently();
-    });
+    this._autoFocusId = null;
+    return this._enqueue(() => this._focusTask(id, { types }));
+  }
+
+  async _focusTask(id, { types } = {}) {
+    // The filter is applied inside the queued task: two rapid focus() calls
+    // with different filters must each fetch with their own, not both with
+    // whichever was set last.
+    if (types !== undefined) this._setRelationTypesState(types);
+    const depth = this.options.depth ?? 2;
+    const activeTypes = this._activeRelationTypes();
+    const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
+    this._model.merge(sub);
+    (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
+    this._view = 'ego';
+    this._root = id;
+    this._paths = null;
+    this._ctxIds = null;
+    this._shortestKeys = null;
+    this._rows = null;
+    this._manual = new Map();
+    this._anchors = new Set([id]);
+    this._viewData = this._model.neighborhood(id, depth, { types: activeTypes });
+    this.render();
+    this._recordHistory({ view: 'ego', root: id, types: activeTypes });
+    this._resetZoomSilently();
   }
 
   // Path view: up to `pathCount` routes between a and b.
   // Pathfinding is the source's job (server-side on a real backend) — the
   // client only ever holds the neighborhoods it has walked.
   connect(a, b) {
+    this._autoFocusId = null;
     return this._enqueue(async () => {
       const o = this.options;
       const res = await this._requireSource().paths(a, b, { k: o.pathCount ?? 3 });
@@ -238,6 +245,7 @@ export class Graph extends Chart {
   // Cluster view: communities as meta-nodes. Clicking one recenters the ego
   // view on its most-connected member.
   overview() {
+    this._autoFocusId = null;
     return this._enqueue(async () => {
       const agg = await this._requireSource().aggregates();
       const maxSize = Math.max(1, ...agg.communities.map(c => c.size));
@@ -267,7 +275,9 @@ export class Graph extends Chart {
   }
 
   // Static payload convenience: simulate a backend over the given data and
-  // focus the best-connected node.
+  // focus the best-connected node — unless a view change (focus, connect,
+  // overview) is requested in the same tick: `setData(d).focus(id)` then
+  // renders `id` once, without first drawing and discarding the default ego.
   setData(data = {}) {
     this._source = memorySource(data);
     this._model = new GraphModel();
@@ -278,8 +288,16 @@ export class Graph extends Chart {
     });
     const best = [...score.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
       ?? (data.nodes ?? [])[0]?.id;
-    if (best != null) this.focus(best);
-    return this;
+    if (best == null) return this;
+    this._autoFocusId = best;
+    // Queued now (so whenReady() covers it), decided when it runs — after the
+    // caller's synchronous chain: a view method called meanwhile has cleared
+    // _autoFocusId and queued its own task behind this one.
+    return this._enqueue(async () => {
+      const id = this._autoFocusId;
+      this._autoFocusId = null;
+      if (id != null) await this._focusTask(id);
+    });
   }
 
   // Merge an incremental payload — e.g. a news item asserting a new tie —

@@ -13,6 +13,15 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <p>Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header in <code>scripts/build-charts.mjs</code>.</p>
 </blockquote>
 <hr>
+<h2>[Unreleased]</h2>
+<h3>Changed</h3>
+<ul>
+<li><strong><code>Graph.setData()</code> no longer draws a throwaway default view</strong> (<code>src/charts/Graph.js</code>). <code>setData()</code> still focuses the best-connected node by default, but a <code>focus()</code>, <code>connect()</code> or <code>overview()</code> chained in the same tick now replaces that default instead of running after it: <code>graph.setData(data).focus(id)</code> fetches and renders <code>id</code> once. Previously the best-connected ego was built, rendered and immediately discarded. No <code>whenReady()</code> is needed between <code>setData()</code> and the first view call — and adding one now costs that extra default render. <code>whenReady()</code> after <code>setData()</code> alone still resolves after the default ego is drawn.</li>
+</ul>
+<h3>Fixed</h3>
+<ul>
+<li><strong>Investigated: “empty canvas after <code>setData()</code> → <code>focus()</code>”</strong> (field note 2026-07-31). Not reproducible as a queue race — both calls were already serialized, verified in jsdom, in a real browser and on the reporting site's own dataset. The observed blank canvas comes from a page that is not being painted (background tab, hidden pane): nodes enter at opacity 0 and the fade-in, like <code>ResizeObserver</code>, waits for the next paint; the graph completes as soon as the page is visible. The change above removes the double render that made it look intermittent. Regression tests: <code>test/graph-ready.test.js</code>.</li>
+</ul>
 <h2>[v0.9.8_2] — 2026-07-22 — Composition &amp; Hierarchy</h2>
 <p>The composition release: stacking arrives on <code>Bar</code>, and tree-shaped data gets a first-class contract with two views over one shape — a new <code>HierarchicalBar</code> outline and an interactive drill-down mode on <code>Donut</code>, both fed by a shared normalizer. Around them, the circular charts grew up: outer labels stopped overlapping and overflowing, the gauge learned the speedometer look (any sweep + a needle), and a real <code>Bar</code> animation race was found and fixed. Stacked area (<code>Line</code>) and <code>DivergingBar</code> from the original plan move to v0.9.8_3.</p>
 <h3>Added</h3>

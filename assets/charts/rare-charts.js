@@ -28932,6 +28932,7 @@ var RareCharts = (() => {
       this._manual = /* @__PURE__ */ new Map();
       this._hidden = new Set(options.hiddenNodes ?? []);
       this._ready = Promise.resolve();
+      this._autoFocusId = null;
       this._switching = false;
       this._hasRendered = false;
       this._tooltip = new Tooltip(this.container, this.theme);
@@ -28949,31 +28950,34 @@ var RareCharts = (() => {
     // Ego view around `id`: fetch its neighborhood, merge into the model,
     // lay out from the accumulated graph.
     focus(id2, { types } = {}) {
-      return this._enqueue(async () => {
-        if (types !== void 0) this._setRelationTypesState(types);
-        const depth = this.options.depth ?? 2;
-        const activeTypes = this._activeRelationTypes();
-        const sub = await this._requireSource().neighbors(id2, { depth, types: activeTypes });
-        this._model.merge(sub);
-        (sub.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
-        this._view = "ego";
-        this._root = id2;
-        this._paths = null;
-        this._ctxIds = null;
-        this._shortestKeys = null;
-        this._rows = null;
-        this._manual = /* @__PURE__ */ new Map();
-        this._anchors = /* @__PURE__ */ new Set([id2]);
-        this._viewData = this._model.neighborhood(id2, depth, { types: activeTypes });
-        this.render();
-        this._recordHistory({ view: "ego", root: id2, types: activeTypes });
-        this._resetZoomSilently();
-      });
+      this._autoFocusId = null;
+      return this._enqueue(() => this._focusTask(id2, { types }));
+    }
+    async _focusTask(id2, { types } = {}) {
+      if (types !== void 0) this._setRelationTypesState(types);
+      const depth = this.options.depth ?? 2;
+      const activeTypes = this._activeRelationTypes();
+      const sub = await this._requireSource().neighbors(id2, { depth, types: activeTypes });
+      this._model.merge(sub);
+      (sub.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
+      this._view = "ego";
+      this._root = id2;
+      this._paths = null;
+      this._ctxIds = null;
+      this._shortestKeys = null;
+      this._rows = null;
+      this._manual = /* @__PURE__ */ new Map();
+      this._anchors = /* @__PURE__ */ new Set([id2]);
+      this._viewData = this._model.neighborhood(id2, depth, { types: activeTypes });
+      this.render();
+      this._recordHistory({ view: "ego", root: id2, types: activeTypes });
+      this._resetZoomSilently();
     }
     // Path view: up to `pathCount` routes between a and b.
     // Pathfinding is the source's job (server-side on a real backend) — the
     // client only ever holds the neighborhoods it has walked.
     connect(a4, b) {
+      this._autoFocusId = null;
       return this._enqueue(async () => {
         const o = this.options;
         const res = await this._requireSource().paths(a4, b, { k: o.pathCount ?? 3 });
@@ -29036,6 +29040,7 @@ var RareCharts = (() => {
     // Cluster view: communities as meta-nodes. Clicking one recenters the ego
     // view on its most-connected member.
     overview() {
+      this._autoFocusId = null;
       return this._enqueue(async () => {
         const agg = await this._requireSource().aggregates();
         const maxSize = Math.max(1, ...agg.communities.map((c6) => c6.size));
@@ -29064,7 +29069,9 @@ var RareCharts = (() => {
       });
     }
     // Static payload convenience: simulate a backend over the given data and
-    // focus the best-connected node.
+    // focus the best-connected node — unless a view change (focus, connect,
+    // overview) is requested in the same tick: `setData(d).focus(id)` then
+    // renders `id` once, without first drawing and discarding the default ego.
     setData(data = {}) {
       this._source = memorySource(data);
       this._model = new GraphModel();
@@ -29074,8 +29081,13 @@ var RareCharts = (() => {
         score2.set(l.target, (score2.get(l.target) ?? 0) + 1);
       });
       const best = [...score2.entries()].sort((a4, b) => b[1] - a4[1])[0]?.[0] ?? (data.nodes ?? [])[0]?.id;
-      if (best != null) this.focus(best);
-      return this;
+      if (best == null) return this;
+      this._autoFocusId = best;
+      return this._enqueue(async () => {
+        const id2 = this._autoFocusId;
+        this._autoFocusId = null;
+        if (id2 != null) await this._focusTask(id2);
+      });
     }
     // Merge an incremental payload — e.g. a news item asserting a new tie —
     // into the accumulated model and refresh the current ego view. Nodes
