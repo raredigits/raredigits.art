@@ -132,13 +132,19 @@ Each link requires `source` and `target` node ids:
       <td><code>source</code></td>
       <td>string</td>
       <td>—</td>
-      <td>Source node id (required)</td>
+      <td>Source node id (required). <code>from</code> is accepted as an alias</td>
     </tr>
     <tr>
       <td><code>target</code></td>
       <td>string</td>
       <td>—</td>
-      <td>Target node id (required)</td>
+      <td>Target node id (required). <code>to</code> is accepted as an alias</td>
+    </tr>
+    <tr>
+      <td><code>id</code></td>
+      <td>string</td>
+      <td>derived</td>
+      <td>Identity of the tie. Without it, the same pair and <code>type</code> is one tie: loading it again updates it in place</td>
     </tr>
     <tr>
       <td><code>type</code></td>
@@ -156,10 +162,18 @@ Each link requires `source` and `target` node ids:
       <td><code>label</code></td>
       <td>string</td>
       <td>—</td>
-      <td>Available in <code>tooltipFormat</code>, not rendered on the graph</td>
+      <td>Shown in the tie's tooltip, not rendered on the graph</td>
+    </tr>
+    <tr>
+      <td><code>sources</code></td>
+      <td>array</td>
+      <td>—</td>
+      <td><code>[{ url, title }]</code> or URL strings — evidence for the tie, listed as links in its tooltip (click the tie to pin it and follow them)</td>
     </tr>
   </tbody>
 </table>
+
+**Several ties between one pair.** A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a `+N` badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once.
 
 Note the division of labor: link **weight** is data you bring (observable ties), while node **importance** is computed — the model runs degree and betweenness centrality over everything loaded, so "who has the most connections" and "who do the paths run through" are answers, not inputs.
 
@@ -343,6 +357,12 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td><code>({ node, links }) =&gt; html</code> — custom tooltip renderer</td>
         </tr>
         <tr>
+            <td><code>linkTooltipFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ link, source, target }) =&gt; html</code> — tooltip for a tie; <code>source</code>/<code>target</code> are the endpoint nodes</td>
+        </tr>
+        <tr>
             <td><code>duration</code></td>
             <td>number</td>
             <td><code>500</code></td>
@@ -382,6 +402,8 @@ await graph.whenReady();</code></pre>
 **Recenter on click** — clicking a node fetches its neighborhood and re-lays the view around it; shared nodes animate to their new positions so you keep your bearings while walking the graph. In the cluster view, clicking a community recenters on its most-connected member.
 
 **Focus + context on hover** — hovering a node highlights its direct neighborhood and fades everything else, along with a tooltip listing connections by type.
+
+**Ties: hover and pin** — hovering a tie highlights it and its two endpoints and shows its tooltip: endpoints, type, label, value, period and `sources`. Clicking a tie pins the tooltip, so links inside it can be followed; a click elsewhere or Escape releases it.
 
 **Filter relations from the legend** — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the `neighbors()` query and the client-side neighborhood. "Show all" clears the filter. Graphs whose links have no explicit `type` continue to work as a single `default` relation type.
 

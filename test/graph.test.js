@@ -583,3 +583,181 @@ describe('Graph viewport', () => {
     expect(() => g.destroy()).not.toThrow();
   });
 });
+
+// ─── GraphModel — multigraph storage (A2, 0.9.8_3) ─────────────────────────────
+
+describe('GraphModel — multigraph storage', () => {
+  const multi = {
+    nodes: [{ id: 'trump' }, { id: 'kushner' }, { id: 'x' }],
+    links: [
+      { source: 'trump', target: 'kushner', type: 'family' },
+      { source: 'trump', target: 'kushner', type: 'investment' },
+      { source: 'kushner', target: 'trump', type: 'employment' },
+      { source: 'kushner', target: 'x', type: 'investment' },
+    ],
+  };
+
+  it('keeps every typed tie of a pair, in both directions', () => {
+    const m = new GraphModel(multi);
+    const ties = m.links('trump', 'kushner');
+    expect(ties.map(l => l.type).sort()).toEqual(['employment', 'family', 'investment']);
+    expect(ties.every(l => typeof l.id === 'string')).toBe(true);
+    expect(m.link('trump', 'kushner')).not.toBeNull();   // compat accessor
+  });
+
+  it('re-merging is idempotent; same pair + type updates in place', () => {
+    const m = new GraphModel(multi);
+    m.merge(multi);
+    expect(m.links('trump', 'kushner')).toHaveLength(3);
+    m.merge({ links: [{ source: 'trump', target: 'kushner', type: 'family', label: 'son-in-law' }] });
+    const fam = m.links('trump', 'kushner').find(l => l.type === 'family');
+    expect(fam.label).toBe('son-in-law');
+    expect(m.links('trump', 'kushner')).toHaveLength(3);
+  });
+
+  it('caller ids are the identity; from/to aliases are accepted', () => {
+    const m = new GraphModel({ links: [
+      { id: 'tx1', from: 'a', to: 'b', type: 'swap' },
+      { id: 'tx2', from: 'a', to: 'b', type: 'swap' },
+    ] });
+    expect(m.links('a', 'b').map(l => l.id).sort()).toEqual(['tx1', 'tx2']);
+    expect(m.links('a', 'b')[0]).not.toHaveProperty('from');
+  });
+
+  it('analytics see one tie per pair: degree is not inflated by parallel ties', () => {
+    const m = new GraphModel(multi);
+    expect(m.degree('trump')).toBe(1);
+    expect(m.degree('kushner')).toBe(2);
+  });
+
+  it('the type filter applies per tie: isolating a type keeps only that tie of the pair', () => {
+    const m = new GraphModel(multi);
+    const sub = m.neighborhood('trump', 1, { types: ['investment'] });
+    expect(sub.links.map(l => l.type)).toEqual(['investment']);
+    expect(sub.nodes.map(n => n.id).sort()).toEqual(['kushner', 'trump']);
+  });
+
+  it('memorySource paths ignore direction and return every tie along the route', async () => {
+    const src = memorySource({ links: [
+      { source: 'b', target: 'a', type: 'family' },
+      { source: 'a', target: 'b', type: 'deal' },
+      { source: 'c', target: 'b' },
+    ] });
+    const res = await src.paths('a', 'c', { k: 1 });
+    expect(res.paths[0]).toEqual(['a', 'b', 'c']);
+    expect(res.links.map(l => l.type ?? 'default').sort()).toEqual(['deal', 'default', 'family']);
+  });
+});
+
+// ─── Graph viewport — parallel ties and tie tooltips (A2/A3, 0.9.8_3) ──────────
+
+describe('Graph viewport — ties', () => {
+  let host;
+  const mount = id => {
+    const el = document.createElement('div');
+    el.id = id;
+    document.body.appendChild(el);
+    return el;
+  };
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    host = mount('chart');
+  });
+
+  const pairData = types => ({
+    nodes: [{ id: 'trump', label: 'Trump' }, { id: 'kushner', label: 'Kushner' }],
+    links: types.map(type => ({ source: 'trump', target: 'kushner', type })),
+  });
+
+  it('draws parallel typed ties of one pair as separate arcs', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment']));
+    await g.whenReady();
+    const paths = [...host.querySelectorAll('.rc-graph-link')];
+    expect(paths).toHaveLength(3);
+    expect(new Set(paths.map(p => p.getAttribute('d'))).size).toBe(3);   // fanned, not stacked
+    expect(host.querySelectorAll('.rc-graph-link-hit')).toHaveLength(3);
+  });
+
+  it('collapses a pair with more than 3 ties into one line with a +N badge', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment', 'deal', 'conflict']));
+    await g.whenReady();
+    expect(host.querySelectorAll('.rc-graph-link')).toHaveLength(1);
+    expect(host.querySelector('.rc-graph-link-more').textContent).toBe('+4');
+  });
+
+  it('click on a tie pins a tooltip with working source links', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData({
+      nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+      links: [{
+        source: 'a', target: 'b', type: 'deal', label: '<b>merger</b>',
+        sources: [{ url: 'https://example.com/1', title: 'Post 1' },
+                  { url: 'javascript:alert(1)', title: 'Bad' }],
+      }],
+    });
+    await g.whenReady();
+    const hit = host.querySelector('.rc-graph-link-hit');
+    hit.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const tt = host.querySelector('.rc-tooltip');
+    expect(tt.classList.contains('is-pinned')).toBe(true);
+    const anchors = [...tt.querySelectorAll('a')];
+    expect(anchors.map(a => a.getAttribute('href'))).toEqual(['https://example.com/1']);
+    expect(tt.innerHTML).toContain('&lt;b&gt;merger&lt;/b&gt;');   // payload text is escaped
+  });
+
+  it('linkTooltipFormat receives the canonical link and both endpoint nodes', async () => {
+    const seen = [];
+    const g = new Graph('#chart', {
+      duration: 0,
+      linkTooltipFormat: ({ link, source, target }) => {
+        seen.push({ link, source, target });
+        return 'custom';
+      },
+    }).setData({ nodes: [{ id: 'a', label: 'A' }, { id: 'b' }], links: [{ from: 'a', to: 'b' }] });
+    await g.whenReady();
+    host.querySelector('.rc-graph-link-hit').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(seen[0].link.source).toBe('a');
+    expect(seen[0].link).not.toHaveProperty('from');
+    expect(seen[0].source.label).toBe('A');
+    expect(seen[0].target.id).toBe('b');
+  });
+
+  it('arrow marker ids are unique per instance', async () => {
+    const other = mount('chart2');
+    const g1 = new Graph('#chart', { duration: 0 }).setData(pairData(['family']));
+    const g2 = new Graph('#chart2', { duration: 0 }).setData(pairData(['family']));
+    await Promise.all([g1.whenReady(), g2.whenReady()]);
+    const m1 = host.querySelector('marker').id;
+    const m2 = other.querySelector('marker').id;
+    expect(m1).not.toBe(m2);
+    expect(host.querySelector('.rc-graph-link').getAttribute('marker-end')).toBe(`url(#${m1})`);
+  });
+
+  it('isolating a type in the legend keeps only that arc of the pair', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment']));
+    await g.whenReady();
+    await g.setRelationTypes(['investment']).whenReady();
+    const paths = [...host.querySelectorAll('.rc-graph-link')];
+    expect(paths).toHaveLength(1);
+  });
+});
+
+describe('Graph viewport — focus + context fade', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="chart"></div>';
+  });
+
+  it('hovering a node actually fades the others (style, not a shadowed attribute)', async () => {
+    const host = document.getElementById('chart');
+    const g = new Graph('#chart', { duration: 0 }).setData(fixture).focus('a');
+    await g.whenReady();
+    const nodes = [...host.querySelectorAll('.rc-graph-node')];
+    nodes.find(n => n.__data__.id === 'e').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    const faded = nodes.filter(n => n.style.opacity === '0.25').map(n => n.__data__.id).sort();
+    expect(faded).toEqual(['b', 'c']);           // e's only neighbor is a
+    nodes[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+    expect(nodes.every(n => n.style.opacity === '1')).toBe(true);
+  });
+});

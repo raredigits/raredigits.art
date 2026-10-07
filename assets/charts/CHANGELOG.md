@@ -18,12 +18,20 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+### Added
+
+- **Several ties between one pair, and ties you can open** (`src/graph/model.js`, `src/charts/Graph.js`; Graph is experimental). The model keeps every tie between two nodes — family, investment and employment between the same pair no longer collapse to whichever came first — and draws them as parallel arcs (more than three collapse into one line with a `+N` badge listing them all). Legend filtering isolates a type's arc instead of hiding the pair. Ties are now interactive: hover shows a tie tooltip (endpoints, type, label, value, period, `sources`), click pins it so links inside can be followed; custom rendering via the new `linkTooltipFormat({ link, source, target })`. Links accept `from`/`to` as endpoint aliases and an optional `id`.
+- **Shared link layer** (`src/core/links.js`) for the relation charts: link normalization (aliases, stable ids), time on links (`start`/`end`; numbers below 10000 are years), time windows (`hide`/`dim`), value → width scales. Used by Graph now; Sankey and the Graph flow view build on it.
+- **Pinnable tooltip** (`src/core/Tooltip.js`, `rare-charts.css` → `.rc-tooltip.is-pinned`). Opt-in `pin()`/`unpin()`: the tooltip stays put, takes pointer events and wraps; it closes on an outside click or Escape. Hover `show()`/`hide()` are unchanged for every chart.
+
 ### Changed
 
 - **`Graph.setData()` no longer draws a throwaway default view** (`src/charts/Graph.js`). `setData()` still focuses the best-connected node by default, but a `focus()`, `connect()` or `overview()` chained in the same tick now replaces that default instead of running after it: `graph.setData(data).focus(id)` fetches and renders `id` once. Previously the best-connected ego was built, rendered and immediately discarded. No `whenReady()` is needed between `setData()` and the first view call — and adding one now costs that extra default render. `whenReady()` after `setData()` alone still resolves after the default ego is drawn.
 
 ### Fixed
 
+- **Graph hover never faded the rest of the graph** (`src/charts/Graph.js` → `_highlight`). Focus + context set the `opacity` attribute on nodes, but the enter/update transition sets the `opacity` style, which wins — so the fade was computed and never shown. Now applied as a style; links were unaffected.
+- **Graph arrow markers collided between instances** (`src/charts/Graph.js`). Marker ids were `rc-arrow-<type>`, so a second graph on the page could resolve the first one's markers; ids now carry a per-instance suffix.
 - **Investigated: “empty canvas after `setData()` → `focus()`”** (field note 2026-07-31). Not reproducible as a queue race — both calls were already serialized, verified in jsdom, in a real browser and on the reporting site's own dataset. The observed blank canvas comes from a page that is not being painted (background tab, hidden pane): nodes enter at opacity 0 and the fade-in, like `ResizeObserver`, waits for the next paint; the graph completes as soon as the page is visible. The change above removes the double render that made it look intermittent. Regression tests: `test/graph-ready.test.js`.
 
 ## [v0.9.8_2] — 2026-07-22 — Composition & Hierarchy

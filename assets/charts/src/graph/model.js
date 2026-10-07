@@ -3,7 +3,16 @@
 // No DOM. Wraps graphology; consumed by the Graph viewport and memorySource.
 //
 // Node shape: { id, label, group?, size?, color?, image?, ... }
-// Link shape: { source, target, type?, weight?, strength?, ... }
+// Link shape: { id?, source, target, type?, weight?, strength?, ... }
+//             (`from`/`to` accepted as endpoint aliases)
+//
+// Two graphs, one truth (decision 2026-10-07, API-INVENTORY → "Flows"):
+// - storage `g` is a directed multigraph — every tie is kept as given, so a
+//   pair can carry several typed ties and both directions (A2);
+// - analytics (degree, centrality, Louvain, shortest paths) run on an
+//   undirected simple projection built lazily from storage. Louvain does not
+//   support true mixed graphs, and directed paths/betweenness would change
+//   what the ego/path/cluster views show. The projection keeps them exact.
 
 import Graphology from 'graphology';
 import louvain from 'graphology-communities-louvain';
@@ -24,10 +33,30 @@ function mulberry32(seed) {
 
 const edgeWeight = (edge, attrs) => attrs.weight ?? attrs.strength ?? 1;
 
+// Storage key for a tie without a caller id: ordered pair + type. Re-merging
+// the same payload updates in place; another type between the same pair, or
+// the reverse direction, is a separate tie.
+const tieKey = (source, target, type) => `${source}→${target}|${type ?? 'default'}`;
+
 export class GraphModel {
   constructor(data = null) {
-    this.g = new Graphology({ type: 'undirected', multi: false });
+    this.g = new Graphology({ type: 'directed', multi: true });
+    this._proj = null;   // undirected simple projection, rebuilt lazily
     if (data) this.merge(data);
+  }
+
+  // Undirected simple view of storage for analytics. Parallel and reversed
+  // ties collapse to one edge carrying the first tie's attributes — exactly
+  // what the pre-multigraph model stored.
+  projection() {
+    if (this._proj) return this._proj;
+    const p = new Graphology({ type: 'undirected', multi: false });
+    this.g.forEachNode(id => p.addNode(id));
+    this.g.forEachEdge((edge, attrs, s, t) => {
+      if (!p.hasEdge(s, t)) p.addEdge(s, t, attrs);
+    });
+    this._proj = p;
+    return p;
   }
 
   get order() { return this.g.order; }
@@ -38,13 +67,22 @@ export class GraphModel {
     return this.g.hasNode(id) ? { id, ...this.g.getNodeAttributes(id) } : null;
   }
 
-  degree(id) { return this.g.hasNode(id) ? this.g.degree(id) : 0; }
+  // Number of distinct neighbors (projection): parallel ties don't inflate it.
+  degree(id) { return this.g.hasNode(id) ? this.projection().degree(id) : 0; }
 
-  link(a, b) {
-    const edge = this.g.hasNode(a) && this.g.hasNode(b) ? this.g.edge(a, b) : undefined;
-    return edge === undefined ? null
-      : { source: a, target: b, ...this.g.getEdgeAttributes(edge) };
+  // Every tie between a and b, both directions, in canonical link shape.
+  links(a, b) {
+    if (!this.g.hasNode(a) || !this.g.hasNode(b)) return [];
+    const keys = new Set();
+    this.g.forEachEdge(a, (key, attrs, s, t) => {
+      if ((s === a && t === b) || (s === b && t === a)) keys.add(key);
+    });
+    return [...keys].map(key => this._linkOf(key));
   }
+
+  // First tie between a and b, or null. Kept for callers that predate the
+  // multigraph; prefer links(a, b).
+  link(a, b) { return this.links(a, b)[0] ?? null; }
 
   // Merge a { nodes, links } payload into the accumulated graph.
   // Repeated merges are how the user "walks" the graph: each recenter adds
@@ -56,12 +94,17 @@ export class GraphModel {
       this.g.mergeNode(id, attrs);
     });
     links.forEach(l => {
-      const { source, target, ...attrs } = l;
-      if (source === target) return;
+      const { source: src, target: tgt, from, to, id, ...attrs } = l;
+      const source = src ?? from;
+      const target = tgt ?? to;
+      if (source == null || target == null || source === target) return;
       if (!this.g.hasNode(source)) this.g.addNode(source);
       if (!this.g.hasNode(target)) this.g.addNode(target);
-      if (!this.g.hasEdge(source, target)) this.g.addEdge(source, target, attrs);
+      const key = id != null ? String(id) : tieKey(source, target, attrs.type);
+      if (this.g.hasEdge(key)) this.g.mergeEdgeAttributes(key, attrs);
+      else this.g.addEdgeWithKey(key, source, target, attrs);
     });
+    this._proj = null;
     return this;
   }
 
@@ -99,9 +142,10 @@ export class GraphModel {
   // degree ~ "who has the most connections"; betweenness ~ "who do the
   // shortest paths run through" (finds brokers invisible to the eye).
   centrality() {
+    const p = this.projection();
     return {
-      degree: degreeCentrality(this.g),
-      betweenness: betweennessCentrality(this.g, { getEdgeWeight: null }),
+      degree: degreeCentrality(p),
+      betweenness: betweennessCentrality(p, { getEdgeWeight: null }),
     };
   }
 
@@ -110,10 +154,11 @@ export class GraphModel {
   communitySummary() {
     if (!this.g.order) return { communities: [], links: [], assignment: {} };
 
-    const assignment = louvain(this.g, { getEdgeWeight: edgeWeight, rng: mulberry32(42) });
+    const p = this.projection();
+    const assignment = louvain(p, { getEdgeWeight: edgeWeight, rng: mulberry32(42) });
 
     const members = new Map();
-    this.g.forEachNode(id => {
+    p.forEachNode(id => {
       const c = assignment[id];
       if (!members.has(c)) members.set(c, []);
       members.get(c).push(id);
@@ -121,7 +166,7 @@ export class GraphModel {
 
     const communities = [...members.entries()].map(([c, ids]) => {
       const top = ids.slice().sort((x, y) =>
-        (this.g.degree(y) - this.g.degree(x)) || (x < y ? -1 : 1))[0];
+        (p.degree(y) - p.degree(x)) || (x < y ? -1 : 1))[0];
       return {
         id: `c${c}`,
         size: ids.length,
@@ -132,7 +177,7 @@ export class GraphModel {
     }).sort((a, b) => (b.size - a.size) || (a.id < b.id ? -1 : 1));
 
     const counts = new Map();
-    this.g.forEachEdge((edge, attrs, s, t) => {
+    p.forEachEdge((edge, attrs, s, t) => {
       const cs = assignment[s], ct = assignment[t];
       if (cs === ct) return;
       const key = cs < ct ? `c${cs}|c${ct}` : `c${ct}|c${cs}`;
@@ -149,7 +194,7 @@ export class GraphModel {
   // Full accumulated graph in RareCharts { nodes, links } shape.
   toData() {
     const nodes = this.g.mapNodes((id, attrs) => ({ id, ...attrs }));
-    const links = this.g.mapEdges((edge, attrs, s, t) => ({ source: s, target: t, ...attrs }));
+    const links = this.g.mapEdges(key => this._linkOf(key));
     return { nodes, links };
   }
 
@@ -163,9 +208,19 @@ export class GraphModel {
         if (seen.has(edge) || !depths.has(s) || !depths.has(t)) return;
         if (pass && !pass(attrs)) return;
         seen.add(edge);
-        links.push({ source: s, target: t, ...attrs });
+        links.push(this._linkOf(edge));
       });
     });
     return { nodes, links };
+  }
+
+  // Canonical link object for a storage edge: the key doubles as the id.
+  _linkOf(key) {
+    return {
+      id: key,
+      source: this.g.source(key),
+      target: this.g.target(key),
+      ...this.g.getEdgeAttributes(key),
+    };
   }
 }

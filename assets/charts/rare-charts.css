@@ -354,6 +354,20 @@
   opacity: 0.9;
 }
 
+/* Pinned (opt-in, relation charts): stays put, takes pointer events so links
+   inside it work, wraps long content. Closes on outside click or Escape. */
+.rc-tooltip.is-pinned {
+  pointer-events: auto;
+  white-space: normal;
+  max-width: 320px;
+  opacity: 1;
+}
+
+.rc-tooltip.is-pinned a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 /* ─── SVG elements ───────────────────────────────────────────────────────── */
 
 /* Zero baseline — visible only when domain crosses zero */

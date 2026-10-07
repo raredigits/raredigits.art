@@ -15,7 +15,10 @@
 //
 // Data format:
 //   nodes: [{ id, label, group?, size?, color?, image? }, ...]
-//   links: [{ source, target, type?, weight?, strength?, label? }, ...]
+//   links: [{ id?, source, target, type?, weight?, strength?, label?, ... }, ...]
+//          (`from`/`to` accepted as endpoint aliases). A pair may carry several
+//          ties of different types — drawn as parallel arcs (up to 3; more
+//          collapse into one line with a +N badge, all listed in its tooltip).
 //
 // Options:
 //   view          — initial view: 'ego' | 'path' | 'cluster' (default: 'ego')
@@ -53,6 +56,9 @@
 //   breadcrumbs   — show clickable view history (default: true)
 //   historyLimit  — max states kept for breadcrumbs/back() (default: 12)
 //   tooltipFormat — function({ node, links }) => html
+//   linkTooltipFormat — function({ link, source, target }) => html for a tie's
+//                   hover/pinned tooltip; click a tie to pin it (links inside
+//                   a pinned tooltip are clickable; outside click/Esc closes)
 //   duration      — transition ms (default: 500; reduced-motion aware)
 //
 // Methods (each returns `this`; use whenReady() to await the fetch+render):
@@ -72,12 +78,18 @@ import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
 import { applySvgA11y } from '../core/renderHelpers.js';
 import { motionDuration } from '../core/utils.js';
+import { dedupeUndirected, parallelIndex, pairKey } from '../core/links.js';
 import { GraphModel }    from '../graph/model.js';
 import { memorySource }  from '../graph/source.js';
 import { defaultNodeIcons } from '../graph/icons.js';
 import { egoLayout }     from '../graph/layouts/ego.js';
 import { pathLayout }    from '../graph/layouts/path.js';
 import { clusterLayout } from '../graph/layouts/cluster.js';
+
+// Tooltip HTML is assembled from payload strings: escape them.
+const escapeHtml = v => String(v).replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const safeUrl = url => typeof url === 'string' && /^(https?:|\/|#)/i.test(url.trim());
 
 export class Graph extends Chart {
   constructor(selector, options = {}) {
@@ -113,6 +125,9 @@ export class Graph extends Chart {
     this._switching = false;             // guards semantic-zoom feedback loops
     this._hasRendered = false;
     this._tooltip  = new Tooltip(this.container, this.theme);
+    // Per-instance suffix for <defs> ids: two graphs on a page must not
+    // resolve each other's arrow markers.
+    this._uid      = Math.random().toString(36).slice(2, 8);
     // linkTypes: pass a preset (e.g. linkPresets.personal) or your own map.
     this._linkTypes = options.linkTypes ?? {
       default: { color: '#888888', dash: null, label: 'Connection' },
@@ -266,7 +281,9 @@ export class Graph extends Chart {
           _top: c.top,
           _size: c.size,
         })),
-        links: agg.links.map(l => ({ ...l, strength: Math.min(1, l.weight / 8) })),
+        links: agg.links.map(l => ({
+          ...l, id: pairKey(l.source, l.target), strength: Math.min(1, l.weight / 8),
+        })),
       };
       this.render();
       this._recordHistory({ view: 'cluster', root: this._root, types: this._activeRelationTypes() });
@@ -373,7 +390,13 @@ export class Graph extends Chart {
     this.gZoom    = this.gRoot.append('g').attr('class', 'rc-graph-zoom');
     this.gSectors = this.gZoom.append('g').attr('class', 'rc-graph-sectors');
     this.gLinks   = this.gZoom.append('g').attr('class', 'rc-graph-links');
+    // Invisible wide strokes over the links: hover/click targets for thin
+    // ties. Below the nodes, so a node always wins where they overlap.
+    this.gLinkHits = this.gZoom.append('g').attr('class', 'rc-graph-link-hits');
     this.gNodes   = this.gZoom.append('g').attr('class', 'rc-graph-nodes');
+    // +N badges of collapsed pairs sit above the nodes: on a tight grid the
+    // tie's visible stretch is often covered by an endpoint's label.
+    this.gLinkBadges = this.gZoom.append('g').attr('class', 'rc-graph-link-badges');
 
     // Legend — HTML element, rendered outside SVG so it never overlaps nodes
     this._legendEl = document.createElement('div');
@@ -553,7 +576,30 @@ export class Graph extends Chart {
   _draw(positions, W, H, sectors = null) {
     const t = this.theme;
     const o = this.options;
-    const { nodes, links } = this._shown ?? this._viewData;
+    const { nodes, links: viewLinks } = this._shown ?? this._viewData;
+    // A redraw invalidates a pinned tie's highlight and anchor point.
+    if (this._tooltip?.isPinned) this._tooltip.unpin();
+
+    // ── Ties (A2) ──
+    // These views ignore direction: the same tie listed both ways collapses.
+    // Different types between one pair are parallel ties and fan out as arcs;
+    // past MAX_PARALLEL one line stands for the pair with a +N badge, and its
+    // tooltip lists them all.
+    const MAX_PARALLEL = 3;
+    const allTies = dedupeUndirected(viewLinks.map(l =>
+      l.id != null ? l : { ...l, id: pairKey(l.source, l.target) }));
+    const byPair = new Map();
+    allTies.forEach(l => {
+      const k = pairKey(l.source, l.target);
+      if (!byPair.has(k)) byPair.set(k, []);
+      byPair.get(k).push(l);
+    });
+    const links = [];
+    byPair.forEach(group => {
+      if (group.length <= MAX_PARALLEL) links.push(...group);
+      else links.push({ ...group[0], _siblings: group });
+    });
+    const par = parallelIndex(links);
     const baseR = o.nodeRadius ?? 22;
     // Uniform node size by default — size is not an encoding channel unless
     // asked for: sizeBy 'degree' computes it from connectivity, 'field' reads
@@ -581,13 +627,14 @@ export class Graph extends Chart {
     const strokeOf = d => anchors.has(d.id) ? t.text : (t.border ?? t.muted);
 
     // ── Arrow markers (one per link type present in the view) ──
-    const typesInUse = Array.from(new Set(links.map(l => l.type ?? 'default')));
+    const typesInUse = Array.from(new Set(allTies.map(l => l.type ?? 'default')));
+    const markerId = type => `rc-arrow-${this._uid}-${String(type).replace(/[^\w-]/g, '_')}`;
     this._defs.selectAll('.rc-arrow').remove();
     typesInUse.forEach(type => {
       const cfg = this._linkTypes[type] ?? { color: t.muted };
       // Open chevron, stroked not filled — quieter than a solid triangle
       this._defs.append('marker')
-        .attr('id',           `rc-arrow-${type}`)
+        .attr('id',           markerId(type))
         .attr('class',        'rc-arrow')
         .attr('viewBox',      '0 -3 7 6')
         .attr('refX',         6)
@@ -608,29 +655,51 @@ export class Graph extends Chart {
     // centers are collinear, so a straight line would run exactly through
     // the nodes sitting between its endpoints. Path/cluster links connect
     // adjacent columns or a sparse circle — straight is fine there.
-    const linkD = d => {
+    //
+    // Parallel ties of a pair fan out symmetrically around that base. The
+    // offset is measured on the pair's canonical normal (lower id → higher),
+    // so A→B and B→A ties of one pair land on opposite sides, never on top
+    // of each other.
+    const linkGeom = d => {
       const s = positions.get(d.source);
       const e = positions.get(d.target);
-      if (!s || !e) return '';
+      if (!s || !e) return null;
       const rT = nodeR(byId.get(d.target)) + 6;
       const dx = e.x - s.x, dy = e.y - s.y;
       const len = Math.hypot(dx, dy) || 1;
       const ex = e.x - (dx / len) * rT;
       const ey = e.y - (dy / len) * rT;
-      if (this._view !== 'ego' || len < 40) return `M${s.x},${s.y}L${ex},${ey}`;
-      const bow = Math.min(26, len * 0.08);
+      const { index = 0, count = 1 } = par.get(d.id) ?? {};
+      const base = this._view === 'ego' && len >= 40 ? Math.min(26, len * 0.08) : 0;
+      const flip = d.source > d.target ? -1 : 1;
+      const fan = count > 1 ? (index - (count - 1) / 2) * 16 * flip : 0;
+      const bow = base + fan;
       const nx = -dy / len, ny = dx / len;   // fixed-handedness unit normal
-      const mx = (s.x + ex) / 2 + nx * bow;
-      const my = (s.y + ey) / 2 + ny * bow;
-      return `M${s.x},${s.y}Q${mx},${my} ${ex},${ey}`;
+      const cx = (s.x + ex) / 2 + nx * bow;
+      const cy = (s.y + ey) / 2 + ny * bow;
+      // The path starts at the source center (under the node); the visible
+      // stretch begins at the source rim. Its middle anchors the +N badge.
+      const rS = nodeR(byId.get(d.source));
+      const vx = s.x + (dx / len) * rS, vy = s.y + (dy / len) * rS;
+      const mid = { x: (vx + ex) / 2 + nx * bow * 0.5, y: (vy + ey) / 2 + ny * bow * 0.5 };
+      return { s, e: { x: ex, y: ey }, c: { x: cx, y: cy }, mid, curved: bow !== 0 };
     };
+    const linkD = d => {
+      const g = linkGeom(d);
+      if (!g) return '';
+      return g.curved
+        ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}`
+        : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
+    };
+    // Middle of the tie's visible stretch — badge anchor.
+    const linkMid = d => linkGeom(d)?.mid ?? { x: 0, y: 0 };
 
-    const linkKey = d =>
-      d.source < d.target ? `${d.source}|${d.target}` : `${d.target}|${d.source}`;
+    // Route emphasis in the path view is per pair, whatever ties it carries.
+    const linkKey = d => pairKey(d.source, d.target);
 
     // ── Links ──
     const linkSel = this.gLinks.selectAll('.rc-graph-link')
-      .data(links, linkKey)
+      .data(links, d => d.id)
       .join(
         enter => enter.append('path')
           .attr('class', 'rc-graph-link')
@@ -646,7 +715,7 @@ export class Graph extends Chart {
         return this._shortestKeys?.has(linkKey(d)) ? Math.max(2, w * 1.6) : w;
       })
       .attr('stroke-dasharray', d => (this._linkTypes[d.type ?? 'default'] ?? {}).dash ?? null)
-      .attr('marker-end',       d => `url(#rc-arrow-${d.type ?? 'default'})`);
+      .attr('marker-end',       d => `url(#${markerId(d.type ?? 'default')})`);
 
     // Path view is layered: context ties whisper, alternative routes speak,
     // the shortest route carries the message.
@@ -662,6 +731,71 @@ export class Graph extends Chart {
     (dur ? linkSel.transition().duration(dur) : linkSel)
       .attr('d', linkD)
       .attr('stroke-opacity', linkOpacity);
+
+    // +N badge on a pair that carries more ties than MAX_PARALLEL
+    const badgeSel = this.gLinkBadges.selectAll('.rc-graph-link-more')
+      .data(links.filter(l => l._siblings), d => d.id)
+      .join('text')
+      .attr('class',             'rc-graph-link-more')
+      .attr('text-anchor',       'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill',              t.text)
+      .attr('stroke',            t.bg)          // halo keeps it legible over lines/labels
+      .attr('stroke-width',      3)
+      .attr('paint-order',       'stroke')
+      .style('pointer-events',   'none')
+      .text(d => `+${d._siblings.length - 1}`);
+    const placeBadges = sel => sel
+      .attr('x', d => linkMid(d).x)
+      .attr('y', d => linkMid(d).y);
+    placeBadges(badgeSel);
+
+    // ── Tie hit targets (A3): hover = tooltip, click = pin it ──
+    const hitSel = this.gLinkHits.selectAll('.rc-graph-link-hit')
+      .data(links, d => d.id)
+      .join('path')
+      .attr('class',          'rc-graph-link-hit')
+      .attr('fill',           'none')
+      .attr('stroke',         'transparent')
+      .attr('stroke-width',   12)
+      .style('pointer-events', 'stroke')
+      .style('cursor',        'pointer')
+      .attr('d', linkD);
+
+    const tieHtml = d => {
+      const source = this._model.node(d.source) ?? { id: d.source };
+      const target = this._model.node(d.target) ?? { id: d.target };
+      return o.linkTooltipFormat
+        ? o.linkTooltipFormat({ link: d, source, target })
+        : this._defaultLinkTooltip(d, source, target);
+    };
+    hitSel
+      .on('mouseover', (event, d) => {
+        if (this._tooltip.isPinned) return;
+        const [mx, my] = d3.pointer(event, this.container);
+        this._tooltip.show(mx, my, tieHtml(d));
+        this._highlightTie(d, nodeSel, linkSel);
+      })
+      .on('mouseout', () => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        this._highlight(null, nodeSel, linkSel);
+      })
+      .on('click', (event, d) => {
+        event.stopPropagation();
+        const [mx, my] = d3.pointer(event, this.container);
+        this._highlightTie(d, nodeSel, linkSel);
+        this._tooltip.pin(mx, my, tieHtml(d), {
+          onClose: () => this._highlight(null, nodeSel, linkSel),
+        });
+      });
+
+    this._redrawTies = id => {
+      const touches = l => l.source === id || l.target === id;
+      linkSel.filter(touches).attr('d', linkD);
+      hitSel.filter(touches).attr('d', linkD);
+      placeBadges(badgeSel.filter(touches));
+    };
 
     // ── Node groups (circle + label) ──
     const nodeSel = this.gNodes.selectAll('.rc-graph-node')
@@ -769,7 +903,7 @@ export class Graph extends Chart {
     // ── Node dragging: no simulation to wake — move the node, redraw its
     // links, remember the spot until the next view change ──
     if (o.draggable !== false) {
-      nodeSel.call(this._dragBehavior(positions, linkSel, linkD));
+      nodeSel.call(this._dragBehavior(positions));
     }
 
     // ── Hover: tooltip + focus-and-context highlight ──
@@ -778,8 +912,9 @@ export class Graph extends Chart {
         d3.select(event.currentTarget).select('.rc-graph-node-ring')
           .attr('stroke', t.accent)
           .attr('opacity', 0.5);
+        if (this._tooltip.isPinned) return;   // a pinned tie keeps the stage
 
-        const nodeLinks = links.filter(l => l.source === d.id || l.target === d.id);
+        const nodeLinks = allTies.filter(l => l.source === d.id || l.target === d.id);
         const html = o.tooltipFormat
           ? o.tooltipFormat({ node: d, links: nodeLinks })
           : this._defaultTooltip(d, nodeLinks);
@@ -791,6 +926,7 @@ export class Graph extends Chart {
       .on('mouseout', (event) => {
         d3.select(event.currentTarget).select('.rc-graph-node-ring')
           .attr('opacity', 0);
+        if (this._tooltip.isPinned) return;
         this._tooltip.hide();
         this._highlight(null, nodeSel, linkSel);
       });
@@ -888,7 +1024,7 @@ export class Graph extends Chart {
 
   // ─── Node dragging ────────────────────────────────────────────────────────
 
-  _dragBehavior(positions, linkSel, linkD) {
+  _dragBehavior(positions) {
     const self = this;
     // `this` inside d3 listeners = the dragged <g> element. Never derive the
     // element from sourceEvent.target: on mousemove that is whatever sits
@@ -905,9 +1041,7 @@ export class Graph extends Chart {
         p.y = event.y;
         self._manual.set(d.id, { x: event.x, y: event.y });
         d3.select(this).attr('transform', `translate(${event.x},${event.y})`);
-        linkSel
-          .filter(l => l.source === d.id || l.target === d.id)
-          .attr('d', linkD);
+        self._redrawTies?.(d.id);
       })
       .on('end', function () {
         d3.select(this).style('cursor', 'pointer');
@@ -916,9 +1050,12 @@ export class Graph extends Chart {
 
   // ─── Focus + context: highlight the hovered neighborhood, fade the rest ────
 
+  // Node fades go through the `opacity` *style*: the enter/update transition
+  // sets that style, and a style beats the presentation attribute — fading
+  // via attr('opacity') silently did nothing.
   _highlight(node, nodeSel, linkSel) {
     if (!node) {
-      nodeSel.attr('opacity', 1);
+      nodeSel.style('opacity', d => d._ctx ? 0.55 : 1);
       linkSel.attr('stroke-opacity', l => this._linkOpacity?.(l) ?? 0.7);
       return;
     }
@@ -927,9 +1064,15 @@ export class Graph extends Chart {
       if (l.source === node.id) near.add(l.target);
       if (l.target === node.id) near.add(l.source);
     });
-    nodeSel.attr('opacity', d => near.has(d.id) ? 1 : 0.25);
+    nodeSel.style('opacity', d => near.has(d.id) ? 1 : 0.25);
     linkSel.attr('stroke-opacity', l =>
       (l.source === node.id || l.target === node.id) ? 1 : 0.08);
+  }
+
+  // A single tie: it and its two endpoints stay, everything else fades.
+  _highlightTie(tie, nodeSel, linkSel) {
+    nodeSel.style('opacity', d => (d.id === tie.source || d.id === tie.target) ? 1 : 0.25);
+    linkSel.attr('stroke-opacity', l => l.id === tie.id ? 1 : 0.08);
   }
 
   // ─── Semantic zoom: zooming out of ego = cluster overview, and back ────────
@@ -1187,6 +1330,49 @@ export class Graph extends Chart {
       <div style="color:${t.muted};font-size:11px">${total} connection${total !== 1 ? 's' : ''}</div>
       ${rows}
       ${footer}
+    </div>`;
+  }
+
+  // Tie tooltip: endpoints, type, then whatever the payload carries — label,
+  // value, period, and `sources` (posts proving the tie) as links, which is
+  // why a clicked tie pins its tooltip. A pair collapsed under a +N badge
+  // lists every tie it stands for.
+  _defaultLinkTooltip(link, source, target) {
+    const t = this.theme;
+    const esc = escapeHtml;
+    const name = n => esc(n.label ?? n.id);
+    const ties = link._siblings ?? [link];
+    const typeRow = l => {
+      const cfg = this._linkTypes[l.type ?? 'default'] ?? { color: t.muted };
+      return `<span style="color:${cfg.color};font-size:10px;text-transform:uppercase;
+        letter-spacing:0.06em">${esc(cfg.label ?? l.type ?? 'connection')}</span>`;
+    };
+    const detail = l => {
+      const rows = [];
+      if (l.label) rows.push(`<div>${esc(l.label)}</div>`);
+      if (l.value != null && l.value !== '') {
+        const v = typeof l.value === 'number' ? l.value.toLocaleString() : l.value;
+        rows.push(`<div style="color:${t.muted};font-size:11px">${esc(v)}</div>`);
+      }
+      if (l.start != null || l.end != null) {
+        const period = [l.start, l.end].filter(v => v != null && v !== '').map(esc).join(' – ');
+        rows.push(`<div style="color:${t.muted};font-size:11px">${period}</div>`);
+      }
+      const sources = Array.isArray(l.sources) ? l.sources : [];
+      if (sources.length) {
+        rows.push(`<div style="margin-top:4px;font-size:11px">${sources.map(src => {
+          const url = typeof src === 'string' ? src : src?.url;
+          const title = typeof src === 'string' ? src : (src?.title ?? src?.url);
+          return safeUrl(url)
+            ? `<div><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></div>`
+            : `<div>${esc(title ?? '')}</div>`;
+        }).join('')}</div>`);
+      }
+      return rows.join('');
+    };
+    return `<div style="max-width:300px">
+      <div style="font-weight:bold;margin-bottom:2px">${name(source)} → ${name(target)}</div>
+      ${ties.map(l => `<div style="margin-top:4px">${typeRow(l)}${detail(l)}</div>`).join('')}
     </div>`;
   }
 
