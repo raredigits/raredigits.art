@@ -19,6 +19,19 @@ import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js'
  * @param {d3.Selection} svg     — the root <svg> selection
  * @param {object}       options — chart options (reads ariaLabel, title, subtitle)
  */
+// Truncate a text node's content with an ellipsis until it fits `avail` px.
+// The full text stays available in the tooltip. No-op where text measurement
+// is unavailable (jsdom).
+export function fitTextNode(node, full, avail) {
+  if (!node.getComputedTextLength) return;
+  let s = String(full);
+  node.textContent = s;
+  while (s.length > 1 && node.getComputedTextLength() > avail) {
+    s = s.slice(0, -1).trimEnd();
+    node.textContent = s + '…';
+  }
+}
+
 export function applySvgA11y(svg, options = {}) {
   if (!svg) return;
   const explicit = typeof options.ariaLabel === 'string' ? options.ariaLabel.trim() : '';

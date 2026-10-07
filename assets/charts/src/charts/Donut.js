@@ -42,21 +42,9 @@ import * as d3 from 'd3';
 import { Chart }       from '../core/Chart.js';
 import { Tooltip }     from '../core/Tooltip.js';
 import { resolveEase, motionDuration } from '../core/utils.js';
-import { applySvgA11y } from '../core/renderHelpers.js';
+import { applySvgA11y, fitTextNode } from '../core/renderHelpers.js';
 import { normalizeHierarchy } from '../core/hierarchy.js';
 
-// Truncate a text node's content with an ellipsis until it fits `avail` px.
-// The full text stays available in the tooltip. No-op where text measurement
-// is unavailable (jsdom).
-function fitTextNode(node, full, avail) {
-  if (!node.getComputedTextLength) return;
-  let s = String(full);
-  node.textContent = s;
-  while (s.length > 1 && node.getComputedTextLength() > avail) {
-    s = s.slice(0, -1).trimEnd();
-    node.textContent = s + '…';
-  }
-}
 
 export class Donut extends Chart {
   constructor(selector, options = {}) {

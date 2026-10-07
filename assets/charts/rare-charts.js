@@ -3382,6 +3382,7 @@ var RareCharts = (() => {
     MultiChart: () => MultiChart,
     Overview: () => Overview,
     Pie: () => Donut,
+    Sankey: () => Sankey,
     TimeSeries: () => TimeSeries,
     VERSION: () => VERSION,
     createTheme: () => createTheme,
@@ -4119,6 +4120,23 @@ var RareCharts = (() => {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* \u2500\u2500\u2500 Screen-reader-only content (data-table fallbacks) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* \u2500\u2500\u2500 Sankey \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-sankey-label { font-size: 11px; }
+.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 `;
 
   // assets/charts/src/version.json
@@ -22188,6 +22206,15 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/core/renderHelpers.js
+  function fitTextNode(node, full, avail) {
+    if (!node.getComputedTextLength) return;
+    let s2 = String(full);
+    node.textContent = s2;
+    while (s2.length > 1 && node.getComputedTextLength() > avail) {
+      s2 = s2.slice(0, -1).trimEnd();
+      node.textContent = s2 + "\u2026";
+    }
+  }
   function applySvgA11y(svg2, options = {}) {
     if (!svg2) return;
     const explicit = typeof options.ariaLabel === "string" ? options.ariaLabel.trim() : "";
@@ -23893,15 +23920,6 @@ var RareCharts = (() => {
   };
 
   // assets/charts/src/charts/Donut.js
-  function fitTextNode(node, full, avail) {
-    if (!node.getComputedTextLength) return;
-    let s2 = String(full);
-    node.textContent = s2;
-    while (s2.length > 1 && node.getComputedTextLength() > avail) {
-      s2 = s2.slice(0, -1).trimEnd();
-      node.textContent = s2 + "\u2026";
-    }
-  }
   var Donut = class extends Chart {
     constructor(selector, options = {}) {
       super(selector, {
@@ -24293,6 +24311,44 @@ var RareCharts = (() => {
   };
 
   // assets/charts/src/core/links.js
+  function endpoints(raw) {
+    const source = raw.source ?? raw.from;
+    const target = raw.target ?? raw.to;
+    if (source == null || target == null) return null;
+    return { source: String(source), target: String(target) };
+  }
+  function normalizeLinks(list, { warn = true } = {}) {
+    if (!Array.isArray(list)) return [];
+    const seen = /* @__PURE__ */ new Map();
+    const out = [];
+    list.forEach((raw, i) => {
+      if (!raw || typeof raw !== "object") return;
+      const ends = endpoints(raw);
+      if (!ends) {
+        if (warn) console.warn(`RareCharts: link #${i} has no source/target \u2014 dropped`);
+        return;
+      }
+      const { from, to, ...rest } = raw;
+      const link3 = { ...rest, ...ends };
+      if (link3.id == null) {
+        const pair2 = `${ends.source}\u2192${ends.target}`;
+        const n = seen.get(pair2) ?? 0;
+        seen.set(pair2, n + 1);
+        link3.id = `${pair2}#${n}`;
+      } else {
+        link3.id = String(link3.id);
+      }
+      out.push(link3);
+    });
+    return out;
+  }
+  function normalizeLinkData(data = {}, opts) {
+    return {
+      ...data,
+      nodes: data.nodes ?? [],
+      links: normalizeLinks(data.links ?? data.flows ?? [], opts)
+    };
+  }
   var pairKey = (a4, b) => a4 < b ? `${a4}|${b}` : `${b}|${a4}`;
   function dedupeUndirected(links) {
     const seen = /* @__PURE__ */ new Set();
@@ -29902,23 +29958,23 @@ var RareCharts = (() => {
     // lists every tie it stands for.
     _defaultLinkTooltip(link3, source, target) {
       const t = this.theme;
-      const esc = escapeHtml;
-      const name = (n) => esc(n.label ?? n.id);
+      const esc2 = escapeHtml;
+      const name = (n) => esc2(n.label ?? n.id);
       const ties = link3._siblings ?? [link3];
       const typeRow = (l) => {
         const cfg = this._linkTypes[l.type ?? "default"] ?? { color: t.muted };
         return `<span style="color:${cfg.color};font-size:10px;text-transform:uppercase;
-        letter-spacing:0.06em">${esc(cfg.label ?? l.type ?? "connection")}</span>`;
+        letter-spacing:0.06em">${esc2(cfg.label ?? l.type ?? "connection")}</span>`;
       };
       const detail = (l) => {
         const rows = [];
-        if (l.label) rows.push(`<div>${esc(l.label)}</div>`);
+        if (l.label) rows.push(`<div>${esc2(l.label)}</div>`);
         if (l.value != null && l.value !== "") {
           const v2 = typeof l.value === "number" ? l.value.toLocaleString() : l.value;
-          rows.push(`<div style="color:${t.muted};font-size:11px">${esc(v2)}</div>`);
+          rows.push(`<div style="color:${t.muted};font-size:11px">${esc2(v2)}</div>`);
         }
         if (l.start != null || l.end != null) {
-          const period2 = [l.start, l.end].filter((v2) => v2 != null && v2 !== "").map(esc).join(" \u2013 ");
+          const period2 = [l.start, l.end].filter((v2) => v2 != null && v2 !== "").map(esc2).join(" \u2013 ");
           rows.push(`<div style="color:${t.muted};font-size:11px">${period2}</div>`);
         }
         const sources = Array.isArray(l.sources) ? l.sources : [];
@@ -29926,7 +29982,7 @@ var RareCharts = (() => {
           rows.push(`<div style="margin-top:4px;font-size:11px">${sources.map((src) => {
             const url = typeof src === "string" ? src : src?.url;
             const title = typeof src === "string" ? src : src?.title ?? src?.url;
-            return safeUrl(url) ? `<div><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></div>` : `<div>${esc(title ?? "")}</div>`;
+            return safeUrl(url) ? `<div><a href="${esc2(url)}" target="_blank" rel="noopener noreferrer">${esc2(title)}</a></div>` : `<div>${esc2(title ?? "")}</div>`;
           }).join("")}</div>`);
         }
         return rows.join("");
@@ -30416,6 +30472,522 @@ var RareCharts = (() => {
     }
     destroy() {
       this._tooltip?.hide?.();
+      super.destroy();
+    }
+  };
+
+  // assets/charts/src/core/sankey.js
+  function sankeyLayout({ nodes = [], links = [] } = {}, {
+    width = 600,
+    height = 400,
+    nodeWidth = 12,
+    nodePadding = 12,
+    align = "justify",
+    sort: sort2 = null,
+    iterations: iterations2 = 6
+  } = {}) {
+    const N = nodes.map((data, index3) => ({
+      id: String(data.id),
+      data,
+      index: index3,
+      sourceLinks: [],
+      targetLinks: []
+    }));
+    const byId = new Map(N.map((n) => [n.id, n]));
+    const L = links.map((data, index3) => {
+      const source = byId.get(String(data.source));
+      const target = byId.get(String(data.target));
+      if (!source || !target) {
+        throw new Error(`RareCharts.Sankey: link "${data.id ?? index3}" references a missing node`);
+      }
+      const l = { id: data.id ?? String(index3), data, index: index3, source, target, value: +data.value };
+      source.sourceLinks.push(l);
+      target.targetLinks.push(l);
+      return l;
+    });
+    assertAcyclic(N);
+    const sum4 = (arr) => arr.reduce((s2, l) => s2 + l.value, 0);
+    N.forEach((n) => {
+      n.value = Math.max(sum4(n.sourceLinks), sum4(n.targetLinks));
+    });
+    const order = topoOrder(N);
+    N.forEach((n) => {
+      n.depth = 0;
+      n.height = 0;
+    });
+    order.forEach((n) => n.sourceLinks.forEach((l) => {
+      l.target.depth = Math.max(l.target.depth, n.depth + 1);
+    }));
+    order.slice().reverse().forEach((n) => n.targetLinks.forEach((l) => {
+      l.source.height = Math.max(l.source.height, n.height + 1);
+    }));
+    const maxDepth2 = N.reduce((m3, n) => Math.max(m3, n.depth), 0);
+    N.forEach((n) => {
+      let layer;
+      if (align === "left") layer = n.depth;
+      else if (align === "right") layer = maxDepth2 - n.height;
+      else if (align === "center") {
+        layer = n.targetLinks.length ? n.depth : n.sourceLinks.length ? Math.min(...n.sourceLinks.map((l) => l.target.depth)) - 1 : 0;
+      } else {
+        layer = n.sourceLinks.length ? n.depth : maxDepth2;
+      }
+      const manual = n.data.column;
+      n.layer = Number.isInteger(manual) && manual >= 0 ? manual : Math.max(0, layer);
+    });
+    const columnsCount = N.reduce((m3, n) => Math.max(m3, n.layer + 1), 0);
+    const columns = Array.from({ length: columnsCount }, () => []);
+    N.forEach((n) => columns[n.layer].push(n));
+    const sortColumn = (col) => {
+      if (typeof sort2 === "function") col.sort((a4, b) => sort2(a4.data, b.data) || a4.index - b.index);
+      else if (sort2 === "value") col.sort((a4, b) => b.value - a4.value || a4.index - b.index);
+      else if (sort2 === "auto") col.sort((a4, b) => a4.y0 - b.y0 || a4.index - b.index);
+      else col.sort((a4, b) => a4.index - b.index);
+    };
+    const step = columnsCount > 1 ? (width - nodeWidth) / (columnsCount - 1) : 0;
+    N.forEach((n) => {
+      n.x0 = columnsCount > 1 ? n.layer * step : (width - nodeWidth) / 2;
+      n.x1 = n.x0 + nodeWidth;
+    });
+    const maxPerColumn = columns.reduce((m3, c6) => Math.max(m3, c6.length), 0);
+    const py = maxPerColumn > 1 ? Math.min(nodePadding, height / (maxPerColumn - 1) / 2) : 0;
+    const ky2 = columns.reduce((k2, col) => {
+      const total = col.reduce((s2, n) => s2 + n.value, 0);
+      if (!total) return k2;
+      return Math.min(k2, (height - (col.length - 1) * py) / total);
+    }, Infinity);
+    const kyFinal = Number.isFinite(ky2) && ky2 > 0 ? ky2 : 0;
+    columns.forEach((col) => {
+      sortColumn(col);
+      const used = col.reduce((s2, n) => s2 + n.value * kyFinal, 0) + (col.length - 1) * py;
+      let y4 = Math.max(0, (height - used) / 2);
+      col.forEach((n) => {
+        n.y0 = y4;
+        n.y1 = y4 + n.value * kyFinal;
+        y4 = n.y1 + py;
+      });
+    });
+    const centre = (n) => (n.y0 + n.y1) / 2;
+    const relax = (cols, alpha, incoming) => {
+      cols.forEach((col) => {
+        col.forEach((n) => {
+          const ls = incoming ? n.targetLinks : n.sourceLinks;
+          if (!ls.length) return;
+          let w = 0, acc = 0;
+          ls.forEach((l) => {
+            const other = incoming ? l.source : l.target;
+            acc += centre(other) * l.value;
+            w += l.value;
+          });
+          if (!w) return;
+          const dy = (acc / w - centre(n)) * alpha;
+          n.y0 += dy;
+          n.y1 += dy;
+        });
+        if (sort2 === "auto") sortColumn(col);
+        resolveCollisions(col, py, height);
+      });
+    };
+    for (let i = 0; i < iterations2; i++) {
+      const alpha = Math.pow(0.99, i);
+      const beta = Math.max(1 - alpha, (i + 1) / iterations2);
+      relax(columns.slice(1), beta, true);
+      relax(columns.slice(0, -1).reverse(), beta, false);
+    }
+    N.forEach((n) => {
+      n.sourceLinks.sort((a4, b) => a4.target.y0 - b.target.y0 || a4.index - b.index);
+      n.targetLinks.sort((a4, b) => a4.source.y0 - b.source.y0 || a4.index - b.index);
+    });
+    L.forEach((l) => {
+      l.width = l.value * kyFinal;
+    });
+    N.forEach((n) => {
+      let y4 = n.y0;
+      n.sourceLinks.forEach((l) => {
+        l.y0 = y4 + l.width / 2;
+        y4 += l.width;
+      });
+      y4 = n.y0;
+      n.targetLinks.forEach((l) => {
+        l.y1 = y4 + l.width / 2;
+        y4 += l.width;
+      });
+    });
+    return { nodes: N, links: L, columns: columnsCount, ky: kyFinal };
+  }
+  function resolveCollisions(col, py, height) {
+    let y4 = 0;
+    col.forEach((n) => {
+      const dy = y4 - n.y0;
+      if (dy > 0) {
+        n.y0 += dy;
+        n.y1 += dy;
+      }
+      y4 = n.y1 + py;
+    });
+    const overflow = y4 - py - height;
+    if (overflow > 0) {
+      y4 = height;
+      for (let i = col.length - 1; i >= 0; i--) {
+        const n = col[i];
+        const dy = n.y1 - y4;
+        if (dy > 0) {
+          n.y0 -= dy;
+          n.y1 -= dy;
+        }
+        y4 = n.y0 - py;
+      }
+    }
+  }
+  function topoOrder(N) {
+    const indeg = new Map(N.map((n) => [n, n.targetLinks.length]));
+    const queue = N.filter((n) => indeg.get(n) === 0);
+    const out = [];
+    while (queue.length) {
+      const n = queue.shift();
+      out.push(n);
+      n.sourceLinks.forEach((l) => {
+        indeg.set(l.target, indeg.get(l.target) - 1);
+        if (indeg.get(l.target) === 0) queue.push(l.target);
+      });
+    }
+    return out;
+  }
+  function assertAcyclic(N) {
+    const state = /* @__PURE__ */ new Map();
+    const stack = [];
+    const visit = (n) => {
+      state.set(n, 1);
+      stack.push(n);
+      for (const l of n.sourceLinks) {
+        const t = l.target;
+        if (state.get(t) === 1) {
+          const from = stack.indexOf(t);
+          const cycle = [...stack.slice(from), t].map((x4) => x4.id).join(" \u2192 ");
+          throw new Error(`RareCharts.Sankey: links form a cycle (${cycle}); a sankey must be acyclic`);
+        }
+        if (!state.get(t)) visit(t);
+      }
+      stack.pop();
+      state.set(n, 2);
+    };
+    N.forEach((n) => {
+      if (!state.get(n)) visit(n);
+    });
+  }
+
+  // assets/charts/src/charts/Sankey.js
+  var esc = (v2) => String(v2).replace(/[&<>"']/g, (c6) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c6]);
+  var Sankey = class extends Chart {
+    constructor(selector, options = {}) {
+      const legend = options.legend ?? (options.linkColor === "type" && options.linkTypes ? Object.entries(options.linkTypes).map(([type2, cfg]) => ({
+        label: cfg.label ?? type2,
+        color: cfg.color,
+        type: "bar"
+      })) : void 0);
+      super(selector, {
+        height: 400,
+        margin: { top: 8, right: 8, bottom: 8, left: 8 },
+        ...options,
+        ...legend ? { legend } : {}
+      });
+      this._baseHeight = this.options.height;
+      this._nodes = [];
+      this._links = [];
+      this._didAnimateIn = false;
+      this._uid = Math.random().toString(36).slice(2, 8);
+      this._tooltip = new Tooltip(this.container, this.theme);
+      this._initSVG();
+    }
+    // ─── Data ─────────────────────────────────────────────────────────────────
+    setData(data = {}) {
+      const { nodes: rawNodes, links: rawLinks } = normalizeLinkData(data);
+      const links = [];
+      rawLinks.forEach((l) => {
+        const v2 = +l.value;
+        if (l.value == null || l.value === "" || !Number.isFinite(v2) || v2 <= 0) {
+          console.warn(`RareCharts.Sankey: link ${l.source} \u2192 ${l.target} has no positive value \u2014 dropped`);
+          return;
+        }
+        links.push({ ...l, value: v2 });
+      });
+      let nodes;
+      if (rawNodes.length) {
+        nodes = rawNodes.map((n) => ({ ...n, id: String(n.id) }));
+        const known = new Set(nodes.map((n) => n.id));
+        for (let i = links.length - 1; i >= 0; i--) {
+          const l = links[i];
+          if (!known.has(l.source) || !known.has(l.target)) {
+            console.warn(`RareCharts.Sankey: link ${l.source} \u2192 ${l.target} references an unknown node \u2014 dropped`);
+            links.splice(i, 1);
+          }
+        }
+      } else {
+        const seen = /* @__PURE__ */ new Map();
+        links.forEach((l) => [l.source, l.target].forEach((id2) => {
+          if (!seen.has(id2)) seen.set(id2, { id: id2, label: id2 });
+        }));
+        nodes = [...seen.values()];
+      }
+      const merged = /* @__PURE__ */ new Map();
+      links.forEach((l) => {
+        const key = `${l.source}\u2192${l.target}|${l.type ?? ""}`;
+        const prev = merged.get(key);
+        if (prev) {
+          console.warn(`RareCharts.Sankey: repeated link ${l.source} \u2192 ${l.target}${l.type ? ` (${l.type})` : ""} \u2014 values summed`);
+          prev.value += l.value;
+        } else {
+          merged.set(key, { ...l });
+        }
+      });
+      this._nodes = nodes;
+      this._links = [...merged.values()];
+      sankeyLayout({ nodes: this._nodes, links: this._links }, { width: 100, height: 100, iterations: 0 });
+      this._didAnimateIn = false;
+      this.render();
+      return this;
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG() {
+      this.container.style.height = this.options.height + "px";
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      applySvgA11y(this.svg, this.options);
+      this._defs = this.svg.append("defs");
+      this.gRoot = this.svg.append("g").attr("class", "rc-sankey");
+      this.gLinks = this.gRoot.append("g").attr("class", "rc-sankey-links");
+      this.gNodes = this.gRoot.append("g").attr("class", "rc-sankey-nodes");
+      this.gLabels = this.gRoot.append("g").attr("class", "rc-sankey-labels");
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    _orientation() {
+      const o = this.options;
+      if (o.orientation === "horizontal" || o.orientation === "vertical") return o.orientation;
+      const w = this.container.clientWidth;
+      return w > 0 && w <= (o.mobileBreakpoint ?? 480) ? "vertical" : "horizontal";
+    }
+    render() {
+      const o = this.options;
+      const t = this.theme;
+      if (!this._links.length) {
+        [this.gLinks, this.gNodes, this.gLabels].forEach((g) => g.selectAll("*").remove());
+        this._renderTable([]);
+        return;
+      }
+      const vertical = this._orientation() === "vertical";
+      this._vertical = vertical;
+      const pre = sankeyLayout(
+        { nodes: this._nodes, links: this._links },
+        { width: 100, height: 100, iterations: 0, align: o.nodeAlign ?? "justify" }
+      );
+      const columnsEstimate = pre.columns;
+      const chromeH = (this._headerEl ? this._headerEl.offsetHeight + 8 : 0) + (this._footerEl ? this._footerEl.offsetHeight + 6 : 0) + this.margin.top + this.margin.bottom;
+      const targetH = vertical ? Math.max(200, columnsEstimate * (o.rowHeight ?? 140)) + chromeH : this._baseHeight;
+      if (this.options.height !== targetH) {
+        this.options.height = targetH;
+        this.container.style.height = targetH + "px";
+      }
+      const W = this.width + this.margin.left + this.margin.right;
+      const H = this.height + this.margin.top + this.margin.bottom;
+      if (W <= 0 || H <= 0) return;
+      const labelGap = 6;
+      const pad3 = 8;
+      const fmt = o.valueFormat ?? ((v2) => Number(v2).toLocaleString());
+      const labelText = (n) => o.showValues === false ? this._name(n) : `${this._name(n)} \xB7 ${fmt(n.value)}`;
+      let gutter = 0;
+      if (!vertical && o.labels !== false && pre.columns > 1) {
+        const probe = this.gLabels.append("text").attr("class", "rc-sankey-label");
+        const widest = pre.nodes.filter((n) => n.layer === pre.columns - 1).reduce((m3, n) => {
+          probe.text(labelText(n));
+          return Math.max(m3, probe.node().getComputedTextLength?.() ?? 0);
+        }, 0);
+        probe.remove();
+        gutter = widest ? Math.min(widest + labelGap * 2, W * 0.3) : 0;
+      }
+      const lane = vertical ? { x: pad3, y: 18, w: W - pad3 * 2, h: H - 36 } : { x: pad3, y: pad3, w: W - pad3 * 2 - gutter, h: H - pad3 * 2 };
+      const layout = sankeyLayout({ nodes: this._nodes, links: this._links }, {
+        width: vertical ? lane.h : lane.w,
+        height: vertical ? lane.w : lane.h,
+        nodeWidth: o.nodeWidth ?? 12,
+        nodePadding: o.nodePadding ?? 12,
+        align: o.nodeAlign ?? "justify",
+        sort: o.nodeSort ?? null,
+        iterations: o.iterations ?? 6
+      });
+      this._layout = layout;
+      const P = vertical ? (flow, cross2) => [lane.x + cross2, lane.y + flow] : (flow, cross2) => [lane.x + flow, lane.y + cross2];
+      const nodeRect = (n) => {
+        const [x06, y06] = P(n.x0, n.y0);
+        const [x12, y12] = P(n.x1, n.y1);
+        return { x: Math.min(x06, x12), y: Math.min(y06, y12), w: Math.abs(x12 - x06), h: Math.abs(y12 - y06) };
+      };
+      const bandPath2 = (l) => {
+        const [sx, sy] = P(l.source.x1, l.y0);
+        const [tx, ty] = P(l.target.x0, l.y1);
+        if (vertical) {
+          const my = (sy + ty) / 2;
+          return `M${sx},${sy}C${sx},${my} ${tx},${my} ${tx},${ty}`;
+        }
+        const mx = (sx + tx) / 2;
+        return `M${sx},${sy}C${mx},${sy} ${mx},${ty} ${tx},${ty}`;
+      };
+      const palette = t.colors ?? ["#888"];
+      const nodeColor = (n) => n.data.color ?? palette[n.index % palette.length];
+      const linkTypes = o.linkTypes ?? {};
+      const mode2 = o.linkColor ?? "source";
+      const gradId = (l) => `rc-sankey-grad-${this._uid}-${l.index}`;
+      const linkStroke = (l) => {
+        if (mode2 === "source") return nodeColor(l.source);
+        if (mode2 === "target") return nodeColor(l.target);
+        if (mode2 === "type") return linkTypes[l.data.type]?.color ?? t.muted;
+        if (mode2 === "gradient") return `url(#${gradId(l)})`;
+        return mode2;
+      };
+      this._defs.selectAll("linearGradient").remove();
+      if (mode2 === "gradient") {
+        layout.links.forEach((l) => {
+          const [sx, sy] = P(l.source.x1, l.y0);
+          const [tx, ty] = P(l.target.x0, l.y1);
+          const g = this._defs.append("linearGradient").attr("id", gradId(l)).attr("gradientUnits", "userSpaceOnUse").attr("x1", sx).attr("y1", sy).attr("x2", tx).attr("y2", ty);
+          g.append("stop").attr("offset", "0%").attr("stop-color", nodeColor(l.source));
+          g.append("stop").attr("offset", "100%").attr("stop-color", nodeColor(l.target));
+        });
+      }
+      const baseOpacity = o.linkOpacity ?? 0.45;
+      const animate = (o.animate ?? true) && !this._didAnimateIn;
+      const dur = animate ? motionDuration(o.duration ?? 600) : 0;
+      const ease = resolveEase(o.ease ?? "cubicOut");
+      this._didAnimateIn = true;
+      const linkSel = this.gLinks.selectAll(".rc-sankey-link").data(layout.links, (l) => l.id).join("path").attr("class", "rc-sankey-link").attr("fill", "none").attr("d", bandPath2).attr("stroke", linkStroke).attr("stroke-width", (l) => Math.max(1, l.width)).attr("role", "img").attr("aria-label", (l) => `${this._name(l.source)} \u2192 ${this._name(l.target)}: ${fmt(l.value)}`).style("cursor", "pointer");
+      if (dur) {
+        linkSel.interrupt().attr("stroke-opacity", 0).transition().duration(dur).ease(ease).attr("stroke-opacity", baseOpacity);
+      } else {
+        linkSel.interrupt().attr("stroke-opacity", baseOpacity);
+      }
+      const nodeSel = this.gNodes.selectAll(".rc-sankey-node").data(layout.nodes, (n) => n.id).join("rect").attr("class", "rc-sankey-node").attr("x", (n) => nodeRect(n).x).attr("y", (n) => nodeRect(n).y).attr("width", (n) => Math.max(1, nodeRect(n).w)).attr("height", (n) => Math.max(1, nodeRect(n).h)).attr("fill", nodeColor).attr("tabindex", 0).attr("role", "img").attr("aria-label", (n) => `${this._name(n)}: ${fmt(n.value)}`).style("cursor", "pointer");
+      const minLabel = o.minLabelSize ?? 10;
+      const labelled = o.labels === false ? [] : layout.nodes.filter((n) => vertical ? nodeRect(n).w >= Math.max(minLabel, 24) : nodeRect(n).h >= minLabel);
+      const lastCol = layout.columns - 1;
+      const labelPos = (n) => {
+        const r = nodeRect(n);
+        if (vertical) {
+          if (n.layer === 0) return { x: r.x + r.w / 2, y: r.y - 6, anchor: "middle", base: "auto" };
+          if (n.layer === lastCol) return { x: r.x + r.w / 2, y: r.y + r.h + 12, anchor: "middle", base: "hanging" };
+          return { x: r.x + r.w / 2, y: r.y + r.h / 2, anchor: "middle", base: "middle" };
+        }
+        return { x: r.x + r.w + labelGap, y: r.y + r.h / 2, anchor: "start", base: "middle" };
+      };
+      const colStep = layout.columns > 1 ? (lane.w - (o.nodeWidth ?? 12)) / (layout.columns - 1) : lane.w / 2;
+      const labelRoom = (n) => vertical ? nodeRect(n).w + (o.nodePadding ?? 12) - 4 : n.layer === lastCol && layout.columns > 1 ? gutter - labelGap : colStep - (o.nodeWidth ?? 12) - labelGap * 2;
+      this.gLabels.selectAll(".rc-sankey-label").data(labelled, (n) => n.id).join("text").attr("class", "rc-sankey-label").attr("x", (n) => labelPos(n).x).attr("y", (n) => labelPos(n).y).attr("text-anchor", (n) => labelPos(n).anchor).attr("dominant-baseline", (n) => labelPos(n).base).attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").style("pointer-events", "none").each(function(n) {
+        fitTextNode(this, labelText(n), labelRoom(n));
+      });
+      const reset = () => {
+        linkSel.attr("stroke-opacity", baseOpacity);
+        nodeSel.style("opacity", 1);
+      };
+      const highlightNode = (n) => {
+        const touches = (l) => l.source === n || l.target === n;
+        linkSel.attr("stroke-opacity", (l) => touches(l) ? Math.min(1, baseOpacity + 0.35) : 0.12);
+        const near = /* @__PURE__ */ new Set([n]);
+        n.sourceLinks.forEach((l) => near.add(l.target));
+        n.targetLinks.forEach((l) => near.add(l.source));
+        nodeSel.style("opacity", (x4) => near.has(x4) ? 1 : 0.35);
+      };
+      const highlightLink = (l) => {
+        linkSel.attr("stroke-opacity", (x4) => x4 === l ? Math.min(1, baseOpacity + 0.4) : 0.12);
+        nodeSel.style("opacity", (x4) => x4 === l.source || x4 === l.target ? 1 : 0.35);
+      };
+      const pointer = (event) => pointer_default(event, this.container);
+      const centerOf = (el) => {
+        const b = el.getBoundingClientRect?.();
+        const c6 = this.container.getBoundingClientRect?.();
+        return b && c6 ? [b.x - c6.x + b.width / 2, b.y - c6.y + b.height / 2] : [0, 0];
+      };
+      nodeSel.on("mouseover", (event, n) => {
+        if (this._tooltip.isPinned) return;
+        const [mx, my] = pointer(event);
+        this._tooltip.show(mx, my, this._nodeHtml(n, fmt));
+        highlightNode(n);
+      }).on("mouseout", () => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        reset();
+      }).on("keydown", (event, n) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        const [mx, my] = centerOf(event.currentTarget);
+        highlightNode(n);
+        this._tooltip.pin(mx, my, this._nodeHtml(n, fmt), { onClose: reset });
+      });
+      linkSel.on("mouseover", (event, l) => {
+        if (this._tooltip.isPinned) return;
+        const [mx, my] = pointer(event);
+        this._tooltip.show(mx, my, this._linkHtml(l, fmt));
+        highlightLink(l);
+      }).on("mouseout", () => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        reset();
+      }).on("click", (event, l) => {
+        event.stopPropagation();
+        const [mx, my] = pointer(event);
+        highlightLink(l);
+        this._tooltip.pin(mx, my, this._linkHtml(l, fmt), { onClose: reset });
+      });
+      this._renderTable(layout.links, fmt);
+    }
+    // ─── Text ─────────────────────────────────────────────────────────────────
+    _name(n) {
+      return n.data.label ?? n.id;
+    }
+    _nodeHtml(n, fmt) {
+      const o = this.options;
+      if (o.tooltipFormat) {
+        return o.tooltipFormat({
+          node: n.data,
+          incoming: n.targetLinks.map((l) => l.data),
+          outgoing: n.sourceLinks.map((l) => l.data)
+        });
+      }
+      const t = this.theme;
+      const inV = n.targetLinks.reduce((s2, l) => s2 + l.value, 0);
+      const outV = n.sourceLinks.reduce((s2, l) => s2 + l.value, 0);
+      const row = (k2, v2) => `<div><span style="color:${t.muted}">${k2}</span> ${esc(fmt(v2))}</div>`;
+      return `<div style="font-weight:bold;margin-bottom:2px">${esc(this._name(n))}</div>
+      ${n.targetLinks.length ? row("in", inV) : ""}
+      ${n.sourceLinks.length ? row("out", outV) : ""}`;
+    }
+    _linkHtml(l, fmt) {
+      const o = this.options;
+      if (o.linkTooltipFormat) {
+        return o.linkTooltipFormat({ link: l.data, source: l.source.data, target: l.target.data });
+      }
+      const t = this.theme;
+      const out = l.source.sourceLinks.reduce((s2, x4) => s2 + x4.value, 0);
+      const share = out ? ` \xB7 ${Math.round(l.value / out * 100)}% of ${esc(this._name(l.source))}` : "";
+      const type2 = l.data.type ? `<div style="color:${t.muted};font-size:11px">${esc(o.linkTypes?.[l.data.type]?.label ?? l.data.type)}</div>` : "";
+      const label = l.data.label ? `<div>${esc(l.data.label)}</div>` : "";
+      return `<div style="font-weight:bold;margin-bottom:2px">${esc(this._name(l.source))} \u2192 ${esc(this._name(l.target))}</div>
+      <div>${esc(fmt(l.value))}<span style="color:${t.muted};font-size:11px">${share}</span></div>
+      ${type2}${label}`;
+    }
+    // Visually hidden table: the flows as data, for screen readers.
+    _renderTable(links, fmt = (v2) => v2) {
+      this._tableEl?.remove();
+      this._tableEl = null;
+      if (this.options.tableFallback === false || !links.length) return;
+      const table = document.createElement("table");
+      table.className = "rc-sr-only rc-sankey-table";
+      const caption = this.options.title ? `<caption>${esc(this.options.title)}</caption>` : "";
+      table.innerHTML = `${caption}<thead><tr><th scope="col">From</th><th scope="col">To</th><th scope="col">Value</th></tr></thead>
+      <tbody>${links.map((l) => `<tr><td>${esc(this._name(l.source))}</td><td>${esc(this._name(l.target))}</td><td>${esc(fmt(l.value))}</td></tr>`).join("")}</tbody>`;
+      this.container.appendChild(table);
+      this._tableEl = table;
+    }
+    // ─── Cleanup ──────────────────────────────────────────────────────────────
+    destroy() {
+      this._tooltip?.destroy();
+      this._tooltip = null;
+      this._tableEl?.remove();
       super.destroy();
     }
   };
