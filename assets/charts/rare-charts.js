@@ -3755,6 +3755,20 @@ var RareCharts = (() => {
   opacity: 0.9;
 }
 
+/* Pinned (opt-in, relation charts): stays put, takes pointer events so links
+   inside it work, wraps long content. Closes on outside click or Escape. */
+.rc-tooltip.is-pinned {
+  pointer-events: auto;
+  white-space: normal;
+  max-width: 320px;
+  opacity: 1;
+}
+
+.rc-tooltip.is-pinned a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 /* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 /* Zero baseline \u2014 visible only when domain crosses zero */
@@ -21981,6 +21995,8 @@ var RareCharts = (() => {
     constructor(container, theme) {
       this._container = container;
       this.theme = theme;
+      this._pinned = false;
+      this._onClose = null;
       const tt = theme.tooltip ?? {};
       this.el = document.createElement("div");
       this.el.className = "rc-tooltip";
@@ -21993,20 +22009,65 @@ var RareCharts = (() => {
         boxShadow: tt.shadow ?? "none"
       });
       container.appendChild(this.el);
+      this._onDocPointer = (event) => {
+        if (this._pinned && !this.el.contains(event.target)) this.unpin();
+      };
+      this._onDocKey = (event) => {
+        if (this._pinned && event.key === "Escape") this.unpin();
+      };
+    }
+    get isPinned() {
+      return this._pinned;
     }
     show(x4, y4, html2) {
+      if (this._pinned) return;
+      this._place(x4, y4, html2);
+    }
+    hide() {
+      if (this._pinned) return;
+      this.el.classList.remove("is-visible");
+    }
+    // Pin at (x, y). Re-pinning replaces the content in place. `onClose` runs
+    // once when the pin is released (outside click, Escape, or unpin()).
+    pin(x4, y4, html2, { onClose = null } = {}) {
+      const wasPinned = this._pinned;
+      if (wasPinned) this._releaseCallback();
+      this._pinned = true;
+      this._onClose = onClose;
+      this.el.classList.add("is-pinned");
+      this._place(x4, y4, html2);
+      if (!wasPinned) {
+        setTimeout(() => {
+          if (!this._pinned) return;
+          document.addEventListener("pointerdown", this._onDocPointer, true);
+          document.addEventListener("keydown", this._onDocKey);
+        }, 0);
+      }
+    }
+    unpin() {
+      if (!this._pinned) return;
+      this._pinned = false;
+      this.el.classList.remove("is-pinned", "is-visible");
+      document.removeEventListener("pointerdown", this._onDocPointer, true);
+      document.removeEventListener("keydown", this._onDocKey);
+      this._releaseCallback();
+    }
+    destroy() {
+      this.unpin();
+      this.el.remove();
+    }
+    _releaseCallback() {
+      const cb = this._onClose;
+      this._onClose = null;
+      if (cb) cb();
+    }
+    _place(x4, y4, html2) {
       this.el.innerHTML = html2;
       this.el.classList.add("is-visible");
       const maxX = this._container.clientWidth - this.el.offsetWidth - 12;
       const maxY2 = this._container.clientHeight - this.el.offsetHeight - 8;
       this.el.style.left = `${Math.min(x4 + 12, maxX)}px`;
       this.el.style.top = `${Math.min(Math.max(y4 - 20, 8), maxY2)}px`;
-    }
-    hide() {
-      this.el.classList.remove("is-visible");
-    }
-    destroy() {
-      this.el.remove();
     }
   };
 
@@ -24230,6 +24291,31 @@ var RareCharts = (() => {
       }
     }
   };
+
+  // assets/charts/src/core/links.js
+  var pairKey = (a4, b) => a4 < b ? `${a4}|${b}` : `${b}|${a4}`;
+  function dedupeUndirected(links) {
+    const seen = /* @__PURE__ */ new Set();
+    return links.filter((l) => {
+      const key = `${pairKey(l.source, l.target)}|${l.type ?? "default"}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  function parallelIndex(links) {
+    const groups2 = /* @__PURE__ */ new Map();
+    links.forEach((l) => {
+      const k2 = pairKey(l.source, l.target);
+      if (!groups2.has(k2)) groups2.set(k2, []);
+      groups2.get(k2).push(l);
+    });
+    const out = /* @__PURE__ */ new Map();
+    groups2.forEach((group2) => {
+      group2.forEach((l, index3) => out.set(l.id, { index: index3, count: group2.length }));
+    });
+    return out;
+  }
 
   // node_modules/graphology/dist/graphology.mjs
   var import_events = __toESM(require_events(), 1);
@@ -28484,10 +28570,25 @@ var RareCharts = (() => {
     };
   }
   var edgeWeight = (edge, attrs) => attrs.weight ?? attrs.strength ?? 1;
+  var tieKey = (source, target, type2) => `${source}\u2192${target}|${type2 ?? "default"}`;
   var GraphModel = class {
     constructor(data = null) {
-      this.g = new Graph({ type: "undirected", multi: false });
+      this.g = new Graph({ type: "directed", multi: true });
+      this._proj = null;
       if (data) this.merge(data);
+    }
+    // Undirected simple view of storage for analytics. Parallel and reversed
+    // ties collapse to one edge carrying the first tie's attributes — exactly
+    // what the pre-multigraph model stored.
+    projection() {
+      if (this._proj) return this._proj;
+      const p = new Graph({ type: "undirected", multi: false });
+      this.g.forEachNode((id2) => p.addNode(id2));
+      this.g.forEachEdge((edge, attrs, s2, t) => {
+        if (!p.hasEdge(s2, t)) p.addEdge(s2, t, attrs);
+      });
+      this._proj = p;
+      return p;
     }
     get order() {
       return this.g.order;
@@ -28498,12 +28599,23 @@ var RareCharts = (() => {
     node(id2) {
       return this.g.hasNode(id2) ? { id: id2, ...this.g.getNodeAttributes(id2) } : null;
     }
+    // Number of distinct neighbors (projection): parallel ties don't inflate it.
     degree(id2) {
-      return this.g.hasNode(id2) ? this.g.degree(id2) : 0;
+      return this.g.hasNode(id2) ? this.projection().degree(id2) : 0;
     }
+    // Every tie between a and b, both directions, in canonical link shape.
+    links(a4, b) {
+      if (!this.g.hasNode(a4) || !this.g.hasNode(b)) return [];
+      const keys = /* @__PURE__ */ new Set();
+      this.g.forEachEdge(a4, (key, attrs, s2, t) => {
+        if (s2 === a4 && t === b || s2 === b && t === a4) keys.add(key);
+      });
+      return [...keys].map((key) => this._linkOf(key));
+    }
+    // First tie between a and b, or null. Kept for callers that predate the
+    // multigraph; prefer links(a, b).
     link(a4, b) {
-      const edge = this.g.hasNode(a4) && this.g.hasNode(b) ? this.g.edge(a4, b) : void 0;
-      return edge === void 0 ? null : { source: a4, target: b, ...this.g.getEdgeAttributes(edge) };
+      return this.links(a4, b)[0] ?? null;
     }
     // Merge a { nodes, links } payload into the accumulated graph.
     // Repeated merges are how the user "walks" the graph: each recenter adds
@@ -28515,12 +28627,17 @@ var RareCharts = (() => {
         this.g.mergeNode(id2, attrs);
       });
       links.forEach((l) => {
-        const { source, target, ...attrs } = l;
-        if (source === target) return;
+        const { source: src, target: tgt, from, to, id: id2, ...attrs } = l;
+        const source = src ?? from;
+        const target = tgt ?? to;
+        if (source == null || target == null || source === target) return;
         if (!this.g.hasNode(source)) this.g.addNode(source);
         if (!this.g.hasNode(target)) this.g.addNode(target);
-        if (!this.g.hasEdge(source, target)) this.g.addEdge(source, target, attrs);
+        const key = id2 != null ? String(id2) : tieKey(source, target, attrs.type);
+        if (this.g.hasEdge(key)) this.g.mergeEdgeAttributes(key, attrs);
+        else this.g.addEdgeWithKey(key, source, target, attrs);
       });
+      this._proj = null;
       return this;
     }
     // BFS neighborhood: all nodes within `depth` hops of rootId (nodes annotated
@@ -28554,24 +28671,26 @@ var RareCharts = (() => {
     // degree ~ "who has the most connections"; betweenness ~ "who do the
     // shortest paths run through" (finds brokers invisible to the eye).
     centrality() {
+      const p = this.projection();
       return {
-        degree: (0, import_degree.degreeCentrality)(this.g),
-        betweenness: (0, import_betweenness.default)(this.g, { getEdgeWeight: null })
+        degree: (0, import_degree.degreeCentrality)(p),
+        betweenness: (0, import_betweenness.default)(p, { getEdgeWeight: null })
       };
     }
     // Louvain communities collapsed into meta-nodes + inter-community links.
     // Each community is labelled after its highest-degree member.
     communitySummary() {
       if (!this.g.order) return { communities: [], links: [], assignment: {} };
-      const assignment = (0, import_graphology_communities_louvain.default)(this.g, { getEdgeWeight: edgeWeight, rng: mulberry32(42) });
+      const p = this.projection();
+      const assignment = (0, import_graphology_communities_louvain.default)(p, { getEdgeWeight: edgeWeight, rng: mulberry32(42) });
       const members = /* @__PURE__ */ new Map();
-      this.g.forEachNode((id2) => {
+      p.forEachNode((id2) => {
         const c6 = assignment[id2];
         if (!members.has(c6)) members.set(c6, []);
         members.get(c6).push(id2);
       });
       const communities = [...members.entries()].map(([c6, ids]) => {
-        const top2 = ids.slice().sort((x4, y4) => this.g.degree(y4) - this.g.degree(x4) || (x4 < y4 ? -1 : 1))[0];
+        const top2 = ids.slice().sort((x4, y4) => p.degree(y4) - p.degree(x4) || (x4 < y4 ? -1 : 1))[0];
         return {
           id: `c${c6}`,
           size: ids.length,
@@ -28581,7 +28700,7 @@ var RareCharts = (() => {
         };
       }).sort((a4, b) => b.size - a4.size || (a4.id < b.id ? -1 : 1));
       const counts = /* @__PURE__ */ new Map();
-      this.g.forEachEdge((edge, attrs, s2, t) => {
+      p.forEachEdge((edge, attrs, s2, t) => {
         const cs = assignment[s2], ct = assignment[t];
         if (cs === ct) return;
         const key = cs < ct ? `c${cs}|c${ct}` : `c${ct}|c${cs}`;
@@ -28596,7 +28715,7 @@ var RareCharts = (() => {
     // Full accumulated graph in RareCharts { nodes, links } shape.
     toData() {
       const nodes = this.g.mapNodes((id2, attrs) => ({ id: id2, ...attrs }));
-      const links = this.g.mapEdges((edge, attrs, s2, t) => ({ source: s2, target: t, ...attrs }));
+      const links = this.g.mapEdges((key) => this._linkOf(key));
       return { nodes, links };
     }
     _induced(depths, pass = null) {
@@ -28608,10 +28727,19 @@ var RareCharts = (() => {
           if (seen.has(edge) || !depths.has(s2) || !depths.has(t)) return;
           if (pass && !pass(attrs)) return;
           seen.add(edge);
-          links.push({ source: s2, target: t, ...attrs });
+          links.push(this._linkOf(edge));
         });
       });
       return { nodes, links };
+    }
+    // Canonical link object for a storage edge: the key doubles as the id.
+    _linkOf(key) {
+      return {
+        id: key,
+        source: this.g.source(key),
+        target: this.g.target(key),
+        ...this.g.getEdgeAttributes(key)
+      };
     }
   };
 
@@ -28628,7 +28756,7 @@ var RareCharts = (() => {
       // Good enough to answer "how are these two connected" for a demo backend.
       async paths(a4, b, { k: k2 = 3 } = {}) {
         if (!model.has(a4) || !model.has(b)) return { paths: [], nodes: [], links: [] };
-        const work = model.g.copy();
+        const work = model.projection().copy();
         const paths = [];
         for (let i = 0; i < k2; i++) {
           const p = (0, import_unweighted.bidirectional)(work, a4, b);
@@ -28642,10 +28770,11 @@ var RareCharts = (() => {
         const links = [];
         paths.forEach((p) => {
           for (let j = 0; j < p.length - 1; j++) {
-            const key = p[j] < p[j + 1] ? `${p[j]}|${p[j + 1]}` : `${p[j + 1]}|${p[j]}`;
-            if (seen.has(key)) continue;
-            seen.add(key);
-            links.push(model.link(p[j], p[j + 1]));
+            model.links(p[j], p[j + 1]).forEach((l) => {
+              if (seen.has(l.id)) return;
+              seen.add(l.id);
+              links.push(l);
+            });
           }
         });
         return { paths, nodes, links };
@@ -28906,6 +29035,8 @@ var RareCharts = (() => {
   var linkPresets = { personal, knowledge, org, tech, causal };
 
   // assets/charts/src/charts/Graph.js
+  var escapeHtml = (v2) => String(v2).replace(/[&<>"']/g, (c6) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c6]);
+  var safeUrl = (url) => typeof url === "string" && /^(https?:|\/|#)/i.test(url.trim());
   var Graph2 = class extends Chart {
     constructor(selector, options = {}) {
       super(selector, {
@@ -28936,6 +29067,7 @@ var RareCharts = (() => {
       this._switching = false;
       this._hasRendered = false;
       this._tooltip = new Tooltip(this.container, this.theme);
+      this._uid = Math.random().toString(36).slice(2, 8);
       this._linkTypes = options.linkTypes ?? {
         default: { color: "#888888", dash: null, label: "Connection" }
       };
@@ -29061,7 +29193,11 @@ var RareCharts = (() => {
             _top: c6.top,
             _size: c6.size
           })),
-          links: agg.links.map((l) => ({ ...l, strength: Math.min(1, l.weight / 8) }))
+          links: agg.links.map((l) => ({
+            ...l,
+            id: pairKey(l.source, l.target),
+            strength: Math.min(1, l.weight / 8)
+          }))
         };
         this.render();
         this._recordHistory({ view: "cluster", root: this._root, types: this._activeRelationTypes() });
@@ -29156,7 +29292,9 @@ var RareCharts = (() => {
       this.gZoom = this.gRoot.append("g").attr("class", "rc-graph-zoom");
       this.gSectors = this.gZoom.append("g").attr("class", "rc-graph-sectors");
       this.gLinks = this.gZoom.append("g").attr("class", "rc-graph-links");
+      this.gLinkHits = this.gZoom.append("g").attr("class", "rc-graph-link-hits");
       this.gNodes = this.gZoom.append("g").attr("class", "rc-graph-nodes");
+      this.gLinkBadges = this.gZoom.append("g").attr("class", "rc-graph-link-badges");
       this._legendEl = document.createElement("div");
       this._legendEl.className = "rc-graph-legend rc-legend";
       this.container.appendChild(this._legendEl);
@@ -29288,7 +29426,22 @@ var RareCharts = (() => {
     _draw(positions, W, H, sectors = null) {
       const t = this.theme;
       const o = this.options;
-      const { nodes, links } = this._shown ?? this._viewData;
+      const { nodes, links: viewLinks } = this._shown ?? this._viewData;
+      if (this._tooltip?.isPinned) this._tooltip.unpin();
+      const MAX_PARALLEL = 3;
+      const allTies = dedupeUndirected(viewLinks.map((l) => l.id != null ? l : { ...l, id: pairKey(l.source, l.target) }));
+      const byPair = /* @__PURE__ */ new Map();
+      allTies.forEach((l) => {
+        const k2 = pairKey(l.source, l.target);
+        if (!byPair.has(k2)) byPair.set(k2, []);
+        byPair.get(k2).push(l);
+      });
+      const links = [];
+      byPair.forEach((group2) => {
+        if (group2.length <= MAX_PARALLEL) links.push(...group2);
+        else links.push({ ...group2[0], _siblings: group2 });
+      });
+      const par = parallelIndex(links);
       const baseR = o.nodeRadius ?? 22;
       const sizeOf = (n) => {
         if (n?._ctx) return 0.7;
@@ -29306,37 +29459,50 @@ var RareCharts = (() => {
       const isDark = (d) => anchors.has(d.id) || !!d.color;
       const fillOf = (d) => d.color ?? (anchors.has(d.id) ? t.text : t.surface ?? t.bg);
       const strokeOf = (d) => anchors.has(d.id) ? t.text : t.border ?? t.muted;
-      const typesInUse = Array.from(new Set(links.map((l) => l.type ?? "default")));
+      const typesInUse = Array.from(new Set(allTies.map((l) => l.type ?? "default")));
+      const markerId = (type2) => `rc-arrow-${this._uid}-${String(type2).replace(/[^\w-]/g, "_")}`;
       this._defs.selectAll(".rc-arrow").remove();
       typesInUse.forEach((type2) => {
         const cfg = this._linkTypes[type2] ?? { color: t.muted };
-        this._defs.append("marker").attr("id", `rc-arrow-${type2}`).attr("class", "rc-arrow").attr("viewBox", "0 -3 7 6").attr("refX", 6).attr("refY", 0).attr("markerWidth", 5).attr("markerHeight", 5).attr("orient", "auto").append("path").attr("d", "M0,-2.5L6,0L0,2.5").attr("fill", "none").attr("stroke", cfg.color).attr("stroke-width", 1.2).attr("stroke-linecap", "round");
+        this._defs.append("marker").attr("id", markerId(type2)).attr("class", "rc-arrow").attr("viewBox", "0 -3 7 6").attr("refX", 6).attr("refY", 0).attr("markerWidth", 5).attr("markerHeight", 5).attr("orient", "auto").append("path").attr("d", "M0,-2.5L6,0L0,2.5").attr("fill", "none").attr("stroke", cfg.color).attr("stroke-width", 1.2).attr("stroke-linecap", "round");
       });
-      const linkD = (d) => {
+      const linkGeom = (d) => {
         const s2 = positions.get(d.source);
         const e = positions.get(d.target);
-        if (!s2 || !e) return "";
+        if (!s2 || !e) return null;
         const rT = nodeR(byId.get(d.target)) + 6;
         const dx = e.x - s2.x, dy = e.y - s2.y;
         const len = Math.hypot(dx, dy) || 1;
         const ex = e.x - dx / len * rT;
         const ey = e.y - dy / len * rT;
-        if (this._view !== "ego" || len < 40) return `M${s2.x},${s2.y}L${ex},${ey}`;
-        const bow = Math.min(26, len * 0.08);
+        const { index: index3 = 0, count: count3 = 1 } = par.get(d.id) ?? {};
+        const base = this._view === "ego" && len >= 40 ? Math.min(26, len * 0.08) : 0;
+        const flip = d.source > d.target ? -1 : 1;
+        const fan = count3 > 1 ? (index3 - (count3 - 1) / 2) * 16 * flip : 0;
+        const bow = base + fan;
         const nx = -dy / len, ny = dx / len;
-        const mx = (s2.x + ex) / 2 + nx * bow;
-        const my = (s2.y + ey) / 2 + ny * bow;
-        return `M${s2.x},${s2.y}Q${mx},${my} ${ex},${ey}`;
+        const cx = (s2.x + ex) / 2 + nx * bow;
+        const cy = (s2.y + ey) / 2 + ny * bow;
+        const rS = nodeR(byId.get(d.source));
+        const vx = s2.x + dx / len * rS, vy = s2.y + dy / len * rS;
+        const mid = { x: (vx + ex) / 2 + nx * bow * 0.5, y: (vy + ey) / 2 + ny * bow * 0.5 };
+        return { s: s2, e: { x: ex, y: ey }, c: { x: cx, y: cy }, mid, curved: bow !== 0 };
       };
-      const linkKey = (d) => d.source < d.target ? `${d.source}|${d.target}` : `${d.target}|${d.source}`;
-      const linkSel = this.gLinks.selectAll(".rc-graph-link").data(links, linkKey).join(
+      const linkD = (d) => {
+        const g = linkGeom(d);
+        if (!g) return "";
+        return g.curved ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}` : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
+      };
+      const linkMid = (d) => linkGeom(d)?.mid ?? { x: 0, y: 0 };
+      const linkKey = (d) => pairKey(d.source, d.target);
+      const linkSel = this.gLinks.selectAll(".rc-graph-link").data(links, (d) => d.id).join(
         (enter) => enter.append("path").attr("class", "rc-graph-link").attr("fill", "none").attr("d", linkD).attr("stroke-opacity", 0),
         (update) => update,
         (exit) => exit.remove()
       ).attr("stroke", (d) => (this._linkTypes[d.type ?? "default"] ?? {}).color ?? t.muted).attr("stroke-width", (d) => {
         const w = Math.max(0.75, 1.4 * (d.strength ?? d.weight ?? 0.5));
         return this._shortestKeys?.has(linkKey(d)) ? Math.max(2, w * 1.6) : w;
-      }).attr("stroke-dasharray", (d) => (this._linkTypes[d.type ?? "default"] ?? {}).dash ?? null).attr("marker-end", (d) => `url(#rc-arrow-${d.type ?? "default"})`);
+      }).attr("stroke-dasharray", (d) => (this._linkTypes[d.type ?? "default"] ?? {}).dash ?? null).attr("marker-end", (d) => `url(#${markerId(d.type ?? "default")})`);
       const linkOpacity = (l) => {
         if (l._ctx) return 0.25;
         if (this._view === "path" && this._shortestKeys) {
@@ -29346,6 +29512,38 @@ var RareCharts = (() => {
       };
       this._linkOpacity = linkOpacity;
       (dur ? linkSel.transition().duration(dur) : linkSel).attr("d", linkD).attr("stroke-opacity", linkOpacity);
+      const badgeSel = this.gLinkBadges.selectAll(".rc-graph-link-more").data(links.filter((l) => l._siblings), (d) => d.id).join("text").attr("class", "rc-graph-link-more").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").style("pointer-events", "none").text((d) => `+${d._siblings.length - 1}`);
+      const placeBadges = (sel) => sel.attr("x", (d) => linkMid(d).x).attr("y", (d) => linkMid(d).y);
+      placeBadges(badgeSel);
+      const hitSel = this.gLinkHits.selectAll(".rc-graph-link-hit").data(links, (d) => d.id).join("path").attr("class", "rc-graph-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 12).style("pointer-events", "stroke").style("cursor", "pointer").attr("d", linkD);
+      const tieHtml = (d) => {
+        const source = this._model.node(d.source) ?? { id: d.source };
+        const target = this._model.node(d.target) ?? { id: d.target };
+        return o.linkTooltipFormat ? o.linkTooltipFormat({ link: d, source, target }) : this._defaultLinkTooltip(d, source, target);
+      };
+      hitSel.on("mouseover", (event, d) => {
+        if (this._tooltip.isPinned) return;
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, tieHtml(d));
+        this._highlightTie(d, nodeSel, linkSel);
+      }).on("mouseout", () => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        this._highlight(null, nodeSel, linkSel);
+      }).on("click", (event, d) => {
+        event.stopPropagation();
+        const [mx, my] = pointer_default(event, this.container);
+        this._highlightTie(d, nodeSel, linkSel);
+        this._tooltip.pin(mx, my, tieHtml(d), {
+          onClose: () => this._highlight(null, nodeSel, linkSel)
+        });
+      });
+      this._redrawTies = (id2) => {
+        const touches = (l) => l.source === id2 || l.target === id2;
+        linkSel.filter(touches).attr("d", linkD);
+        hitSel.filter(touches).attr("d", linkD);
+        placeBadges(badgeSel.filter(touches));
+      };
       const nodeSel = this.gNodes.selectAll(".rc-graph-node").data(nodes, (d) => d.id).join(
         (enter) => {
           const g = enter.append("g").attr("class", "rc-graph-node").attr("transform", (d) => {
@@ -29383,17 +29581,19 @@ var RareCharts = (() => {
         return p ? `translate(${p.x},${p.y})` : null;
       }).style("opacity", (d) => d._ctx ? 0.55 : 1);
       if (o.draggable !== false) {
-        nodeSel.call(this._dragBehavior(positions, linkSel, linkD));
+        nodeSel.call(this._dragBehavior(positions));
       }
       nodeSel.on("mouseover", (event, d) => {
         select_default2(event.currentTarget).select(".rc-graph-node-ring").attr("stroke", t.accent).attr("opacity", 0.5);
-        const nodeLinks = links.filter((l) => l.source === d.id || l.target === d.id);
+        if (this._tooltip.isPinned) return;
+        const nodeLinks = allTies.filter((l) => l.source === d.id || l.target === d.id);
         const html2 = o.tooltipFormat ? o.tooltipFormat({ node: d, links: nodeLinks }) : this._defaultTooltip(d, nodeLinks);
         const [mx, my] = pointer_default(event, this.container);
         this._tooltip.show(mx, my, html2);
         this._highlight(d, nodeSel, linkSel);
       }).on("mouseout", (event) => {
         select_default2(event.currentTarget).select(".rc-graph-node-ring").attr("opacity", 0);
+        if (this._tooltip.isPinned) return;
         this._tooltip.hide();
         this._highlight(null, nodeSel, linkSel);
       });
@@ -29434,7 +29634,7 @@ var RareCharts = (() => {
       else this._renderLegend(typesInUse, t);
     }
     // ─── Node dragging ────────────────────────────────────────────────────────
-    _dragBehavior(positions, linkSel, linkD) {
+    _dragBehavior(positions) {
       const self = this;
       return drag_default().clickDistance(5).on("start", function() {
         select_default2(this).style("cursor", "grabbing");
@@ -29445,15 +29645,18 @@ var RareCharts = (() => {
         p.y = event.y;
         self._manual.set(d.id, { x: event.x, y: event.y });
         select_default2(this).attr("transform", `translate(${event.x},${event.y})`);
-        linkSel.filter((l) => l.source === d.id || l.target === d.id).attr("d", linkD);
+        self._redrawTies?.(d.id);
       }).on("end", function() {
         select_default2(this).style("cursor", "pointer");
       });
     }
     // ─── Focus + context: highlight the hovered neighborhood, fade the rest ────
+    // Node fades go through the `opacity` *style*: the enter/update transition
+    // sets that style, and a style beats the presentation attribute — fading
+    // via attr('opacity') silently did nothing.
     _highlight(node, nodeSel, linkSel) {
       if (!node) {
-        nodeSel.attr("opacity", 1);
+        nodeSel.style("opacity", (d) => d._ctx ? 0.55 : 1);
         linkSel.attr("stroke-opacity", (l) => this._linkOpacity?.(l) ?? 0.7);
         return;
       }
@@ -29462,8 +29665,13 @@ var RareCharts = (() => {
         if (l.source === node.id) near.add(l.target);
         if (l.target === node.id) near.add(l.source);
       });
-      nodeSel.attr("opacity", (d) => near.has(d.id) ? 1 : 0.25);
+      nodeSel.style("opacity", (d) => near.has(d.id) ? 1 : 0.25);
       linkSel.attr("stroke-opacity", (l) => l.source === node.id || l.target === node.id ? 1 : 0.08);
+    }
+    // A single tie: it and its two endpoints stay, everything else fades.
+    _highlightTie(tie, nodeSel, linkSel) {
+      nodeSel.style("opacity", (d) => d.id === tie.source || d.id === tie.target ? 1 : 0.25);
+      linkSel.attr("stroke-opacity", (l) => l.id === tie.id ? 1 : 0.08);
     }
     // ─── Semantic zoom: zooming out of ego = cluster overview, and back ────────
     _maybeSemanticZoom(k2) {
@@ -29686,6 +29894,46 @@ var RareCharts = (() => {
       <div style="color:${t.muted};font-size:11px">${total} connection${total !== 1 ? "s" : ""}</div>
       ${rows}
       ${footer}
+    </div>`;
+    }
+    // Tie tooltip: endpoints, type, then whatever the payload carries — label,
+    // value, period, and `sources` (posts proving the tie) as links, which is
+    // why a clicked tie pins its tooltip. A pair collapsed under a +N badge
+    // lists every tie it stands for.
+    _defaultLinkTooltip(link3, source, target) {
+      const t = this.theme;
+      const esc = escapeHtml;
+      const name = (n) => esc(n.label ?? n.id);
+      const ties = link3._siblings ?? [link3];
+      const typeRow = (l) => {
+        const cfg = this._linkTypes[l.type ?? "default"] ?? { color: t.muted };
+        return `<span style="color:${cfg.color};font-size:10px;text-transform:uppercase;
+        letter-spacing:0.06em">${esc(cfg.label ?? l.type ?? "connection")}</span>`;
+      };
+      const detail = (l) => {
+        const rows = [];
+        if (l.label) rows.push(`<div>${esc(l.label)}</div>`);
+        if (l.value != null && l.value !== "") {
+          const v2 = typeof l.value === "number" ? l.value.toLocaleString() : l.value;
+          rows.push(`<div style="color:${t.muted};font-size:11px">${esc(v2)}</div>`);
+        }
+        if (l.start != null || l.end != null) {
+          const period2 = [l.start, l.end].filter((v2) => v2 != null && v2 !== "").map(esc).join(" \u2013 ");
+          rows.push(`<div style="color:${t.muted};font-size:11px">${period2}</div>`);
+        }
+        const sources = Array.isArray(l.sources) ? l.sources : [];
+        if (sources.length) {
+          rows.push(`<div style="margin-top:4px;font-size:11px">${sources.map((src) => {
+            const url = typeof src === "string" ? src : src?.url;
+            const title = typeof src === "string" ? src : src?.title ?? src?.url;
+            return safeUrl(url) ? `<div><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></div>` : `<div>${esc(title ?? "")}</div>`;
+          }).join("")}</div>`);
+        }
+        return rows.join("");
+      };
+      return `<div style="max-width:300px">
+      <div style="font-weight:bold;margin-bottom:2px">${name(source)} \u2192 ${name(target)}</div>
+      ${ties.map((l) => `<div style="margin-top:4px">${typeRow(l)}${detail(l)}</div>`).join("")}
     </div>`;
     }
     // ─── Internals ────────────────────────────────────────────────────────────
