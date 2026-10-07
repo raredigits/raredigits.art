@@ -467,17 +467,22 @@
 <tr>
 <td>Scatter</td>
 <td><code>RareCharts.Scatter</code></td>
-<td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any &quot;rank N items on two axes&quot; figure. <strong>Targeted for v0.9.8_3.</strong></td>
+<td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any &quot;rank N items on two axes&quot; figure. <strong>Targeted for v0.9.8_5.</strong></td>
 </tr>
 <tr>
 <td>Heatmap</td>
 <td><code>RareCharts.Heatmap</code></td>
-<td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_3.</strong></td>
+<td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_5.</strong></td>
 </tr>
 <tr>
 <td>Waterfall</td>
 <td><code>RareCharts.Waterfall</code></td>
-<td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_3.</strong></td>
+<td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_5.</strong></td>
+</tr>
+<tr>
+<td>Sankey</td>
+<td><code>RareCharts.Sankey</code></td>
+<td>Flow diagram over <code>{ nodes, links: [{ source, target, value, type? }] }</code>: node columns joined by bands whose width is the flow value — budgets, money trails, conversion funnels, energy balances. Link tooltips, path highlighting, and a vertical orientation for narrow screens. Ships as experimental. <strong>Targeted for v0.9.8_3.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -488,7 +493,7 @@
 <tr>
 <td>Stacked area</td>
 <td><code>stacked: true</code> on <code>RareCharts.Line</code> area series</td>
-<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_3.</strong></td>
+<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_5.</strong></td>
 </tr>
 <tr>
 <td>Stacked bars on date slots</td>
@@ -498,7 +503,7 @@
 <tr>
 <td>All chart types in MultiChart</td>
 <td><code>type: 'Donut' | 'Gauge' | 'DualAxes' | ...</code> in <code>charts</code> descriptors</td>
-<td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_4.</strong></td>
+<td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -508,12 +513,12 @@
 <tr>
 <td>Logarithmic Y scale</td>
 <td><code>yScale: 'log'</code> on <code>Line</code> / <code>TimeSeries</code> / <code>DualAxes</code></td>
-<td>Log-scale toggle for long-horizon price and index series, where a linear scale visually overstates recent moves. Requires positive-domain guards and log-aware tick generation. <strong>Targeted for v0.9.8_4.</strong></td>
+<td>Log-scale toggle for long-horizon price and index series, where a linear scale visually overstates recent moves. Requires positive-domain guards and log-aware tick generation. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr>
 <tr>
 <td>Series rebase / normalization</td>
 <td><code>normalize: 'rebase' | 'percent'</code> on <code>RareCharts.Line</code></td>
-<td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_4.</strong></td>
+<td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -538,7 +543,7 @@
 <tr>
 <td>Diverging bar chart</td>
 <td><code>RareCharts.DivergingBar</code></td>
-<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_3.</strong></td>
+<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_5.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -563,12 +568,17 @@
 <tr>
 <td>Directed and multiple graph relations</td>
 <td>optional edge direction, identity and labels</td>
-<td>Support directed relations and multiple simultaneous relations between the same pair of nodes. Allow optional edge labels and values such as ownership percentages, while keeping the minimum link payload at <code>{ source, target }</code>. Direction, relation IDs, percentages and other domain fields must enrich the result when present, not become required input.</td>
+<td>Support directed relations and multiple simultaneous relations between the same pair of nodes. Allow optional edge labels and values such as ownership percentages, while keeping the minimum link payload at <code>{ source, target }</code>. Direction, relation IDs, percentages and other domain fields must enrich the result when present, not become required input. <strong>Targeted for v0.9.8_3.</strong></td>
 </tr>
 <tr>
 <td>Graph details panel</td>
 <td>node and relation details surface</td>
 <td>Add a proper HTML details surface for a selected node or relation. It should show whatever metadata is available — relation type, share, dates, source, confidence and the full filterable connection list — without requiring any of those fields. The hover tooltip remains a compact summary and links to the details surface when more information exists.</td>
+</tr>
+<tr>
+<td>Graph flow view</td>
+<td><code>view: 'flow'</code></td>
+<td>A trace view for value moving between entities — money trails, supply chains, address investigations. Nodes sit in ordered lanes (networks, stages, jurisdictions) and flow left to right; edges are directed, may repeat between the same pair, and carry value (width), category (color), certainty (dash) and labels. Node shapes by kind, group outlines, filters, a time window, and node/edge selection that drives an external details panel. <strong>Targeted for v0.9.8_3</strong> with layout from data hints; automatic in-lane layout, aggregation and collapsible groups are <strong>targeted for v0.9.8_4</strong>.</td>
 </tr>
 <tr>
 <td>Graph ownership layout</td>
@@ -593,7 +603,7 @@
 <tr>
 <td>Legend series isolation</td>
 <td><code>legendInteractive: true</code></td>
-<td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_4.</strong></td>
+<td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr>
 <tr>
 <td>Tooltip header style</td>
