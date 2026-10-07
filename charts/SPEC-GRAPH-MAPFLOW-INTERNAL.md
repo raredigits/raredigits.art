@@ -45,23 +45,23 @@ new RareCharts.MapFlow('#chart', {
     { id: 'GB-LON', label: 'Лондон', coords: [-0.12, 51.5] },  // точные координаты…
     { id: 'CN', label: 'Китай', country: '156' },              // …или ISO-код → центроид фичи
   ],
-  flows: [
+  links: [                                   // `flows` принимается как алиас
     { from: 'IN', to: 'CN', type: 'opium', value: 3,
-      dateStart: 1773, dateEnd: 1860, label: 'опиум из Бенгалии' },
+      start: 1773, end: 1860, label: 'опиум из Бенгалии' },
   ],
   linkTypes: { opium: { color: '…', dash: null, label: 'опиум' } },  // контракт Graph, переиспользовать
   timeWindow: [1839, 1860],   // null = все
-  fitTo: 'features' | 'flows',
+  fitTo: 'features' | 'links',
 });
-chart.setData({ nodes, flows });
-chart.setTimeWindow(from, to);  // фильтр: пересечение [dateStart, dateEnd] с окном; null-границы = открытый интервал
+chart.setData({ nodes, links });   // концы: source/target, алиас from/to
+chart.setTimeWindow(from, to);  // фильтр: пересечение [start, end] с окном (timeWindowMode: 'hide' по умолчанию); null-границы = открытый интервал
 ```
 Даты — годы (number) или ISO-строки; сравнение унифицировать.
 
 ### Рендер
 - Дуги больших кругов (`d3.geoInterpolate`/`geoPath` по LineString), направление — стрелка у цели или сужение хвоста к источнику (выбрать в дизайне, одно из двух).
 - Толщина = `value` через sqrt-шкалу с клампом; цвет/дэш = `type` через `linkTypes` (без типа → `t.muted`).
-- Узлы: точка + label; коллизии лейблов — приоритет узлам с большей суммой value; тултипы узлов и дуг (`tooltipFormat`, `flowTooltipFormat`).
+- Узлы: точка + label; коллизии лейблов — приоритет узлам с большей суммой value; тултипы узлов и дуг (`tooltipFormat`, `linkTooltipFormat`).
 - Легенда типов — реюз legend-компонента, интерактивная фильтрация как в Graph.
 - Тема/подписи/attribution — общие механизмы библиотеки; `prefers-reduced-motion` — без анимаций появления; a11y — accessible-name, `aria-label` на дугах.
 
