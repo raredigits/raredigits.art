@@ -6,6 +6,9 @@
 //             angular sectors by relation type (graph/layouts/ego.js)
 //   path    — layered "how are A and B connected" routes (layouts/path.js)
 //   cluster — communities collapsed into meta-nodes (layouts/cluster.js)
+//   flow    — a trace in ordered lanes: directed, value-weighted ties between
+//             entities, laid out from data hints (graph/views/flow.js;
+//             set `view: 'flow'` and call setData — see "Flow view" below)
 //
 // Data arrives through a source adapter (graph/source.js contract):
 //   { neighbors(id, {depth, types}), paths(a, b, {k}), aggregates() }
@@ -61,6 +64,25 @@
 //                   a pinned tooltip are clickable; outside click/Esc closes)
 //   duration      — transition ms (default: 500; reduced-motion aware)
 //
+// Flow view options (view: 'flow'; spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md):
+//   lanes         — [{ id, label, weight? }] in left-to-right order
+//   laneBy        — node field (or fn) naming its lane (default: 'lane')
+//   nodeGroups    — { group: { color, label } } — node color + legend
+//   nodeShapes    — { kind: 'circle' | 'square' | 'diamond' | 'stack' | svgPath }
+//   shapeBy       — node field (or fn) keyed into nodeShapes (default: 'kind')
+//   linkColorBy   — tie field (or fn) keyed into linkTypes (default: 'type')
+//   linkWidth     — { by: 'value', scale: 'sqrt' | 'linear', min, max }
+//   linkDash      — tie => boolean: dashed (e.g. derived amounts)
+//   linkLabels    — draw tie labels (default: true)
+//   hulls         — [{ id, label, members: ids | node => bool, color? }]
+//   timeWindowMode — 'dim' (default) | 'hide' for setTimeWindow
+//   onSelect      — ({ node, link, event }) => void — drive a details panel
+//   minWidth      — px; narrower containers scroll sideways (default: 0)
+//   nodeRadius    — default 18 in the flow view
+// Node hints: lane, row (0 main line, ±1…), col (sub-column), x/y (0..1
+// fractions), sub (second line), terminal. Ties: source/target (from/to),
+// value, start/end, label, bend.
+//
 // Methods (each returns `this`; use whenReady() to await the fetch+render):
 //   focus(id, { types? }) — ego view around id (click-recenter uses this too)
 //   connect(a, b)  — path view between a and b
@@ -72,13 +94,16 @@
 //   hide(id) / show(id) — toggle a node out of / back into the ego view
 //   setRelationTypes(types) / clearRelationTypes() — filter ego relations
 //   back() / clearHistory() — navigate the graph view history
+//   flow view: setFilter(fn) · setTimeWindow(from, to) · select(id | { link })
+//              · clearSelection() · setLinkLabels(bool) · setHulls(list)
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
 import { applySvgA11y } from '../core/renderHelpers.js';
 import { motionDuration } from '../core/utils.js';
-import { dedupeUndirected, parallelIndex, pairKey } from '../core/links.js';
+import { dedupeUndirected, parallelIndex, pairKey, normalizeLinkData } from '../core/links.js';
+import { FlowView } from '../graph/views/flow.js';
 import { GraphModel }    from '../graph/model.js';
 import { memorySource }  from '../graph/source.js';
 import { defaultNodeIcons } from '../graph/icons.js';
@@ -296,6 +321,7 @@ export class Graph extends Chart {
   // overview) is requested in the same tick: `setData(d).focus(id)` then
   // renders `id` once, without first drawing and discarding the default ego.
   setData(data = {}) {
+    if (this._view === 'flow') return this._setFlowData(data);
     this._source = memorySource(data);
     this._model = new GraphModel();
     const score = new Map();
@@ -315,6 +341,71 @@ export class Graph extends Chart {
       this._autoFocusId = null;
       if (id != null) await this._focusTask(id);
     });
+  }
+
+  // ─── Flow view ────────────────────────────────────────────────────────────
+
+  // The flow view draws the given trace whole — it is the query result — so
+  // there is no source to walk and no default focus.
+  _setFlowData(data) {
+    const norm = normalizeLinkData(data);
+    const nodes = norm.nodes.map(n => ({ ...n, id: String(n.id) }));
+    const known = new Set(nodes.map(n => n.id));
+    // Endpoint-only nodes are created, as in the other views.
+    norm.links.forEach(l => [l.source, l.target].forEach(id => {
+      if (!known.has(id)) { known.add(id); nodes.push({ id }); }
+    }));
+    this._model = new GraphModel({ nodes, links: norm.links });
+    this._flow().setData({ nodes, links: norm.links });
+    this._viewData = { nodes, links: norm.links };
+    this.render();
+    return this;
+  }
+
+  _flow() {
+    if (!this._flowView) this._flowView = new FlowView(this);
+    return this._flowView;
+  }
+
+  // Show only nodes/ties passing fn(item); a tie hides with either end.
+  // Positions do not move. null clears.
+  setFilter(fn) {
+    this._flow().filter = typeof fn === 'function' ? fn : null;
+    this.render();
+    return this;
+  }
+
+  // Ties outside [from, to] dim (or hide, timeWindowMode: 'hide'); nodes
+  // whose ties are all outside fade. null bounds are open.
+  setTimeWindow(from = null, to = null) {
+    this._flow().window = from == null && to == null ? null : { from, to };
+    this.render();
+    return this;
+  }
+
+  // Select a node (id) or a tie ({ link: id }), as a click would.
+  select(target) {
+    const f = this._flow();
+    const sel = target == null ? null
+      : typeof target === 'object' ? (target.link != null ? { link: String(target.link) } : null)
+      : { node: String(target) };
+    if (f._select) f._select(sel); else f.selected = sel;
+    return this;
+  }
+
+  clearSelection() { return this.select(null); }
+
+  // Replace the group outlines ([] or null removes them).
+  setHulls(hulls) {
+    this.options.hulls = hulls ?? [];
+    this.render();
+    return this;
+  }
+
+  setLinkLabels(on = true) {
+    this._flow().labels = !!on;
+    this.render();
+    return this;
   }
 
   // Merge an incremental payload — e.g. a news item asserting a new tie —
@@ -481,6 +572,13 @@ export class Graph extends Chart {
   render() {
     if (!this._viewData?.nodes?.length) return;
 
+    if (this._view === 'flow') {
+      // Narrow containers scroll sideways instead of crushing the lanes.
+      const minW = this.options.minWidth ?? 0;
+      this.svg.style('min-width', minW ? `${minW}px` : null);
+      this.container.style.overflowX = minW ? 'auto' : '';
+    }
+
     // Measure the svg itself: the base Chart's width/height getters model
     // axis charts and can disagree with the real viewport by the header
     // height — a grid layout that uses the full area would get clipped.
@@ -488,6 +586,19 @@ export class Graph extends Chart {
     const W = svgEl?.clientWidth  || this.width;
     const H = svgEl?.clientHeight || this.height;
     if (W <= 0 || H <= 0) return;
+
+    if (this._view === 'flow') {
+      // One view owns the canvas: clear what ego/path/cluster left behind.
+      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes]
+        .forEach(g => g?.selectAll('*').remove());
+      this.gRoot.selectAll('.rc-graph-note, .rc-graph-row-label, .rc-graph-hidden-note').remove();
+      if (this._tooltip?.isPinned) this._tooltip.unpin();
+      this._flow().render(W, H);
+      this._pinZoomControls(svgEl, H);
+      this._hasRendered = true;
+      return;
+    }
+    this._flowView?.clear();
 
     // Ego view: drop user-hidden nodes (they stay in the model), then cap to
     // what this canvas can hold legibly. Path and cluster views are small by
@@ -534,16 +645,18 @@ export class Graph extends Chart {
 
     this._draw(positions, W, H, sectors);
 
-    // Pin the zoom controls to the bottom-left corner of the svg itself
-    // (the container also holds the header, legend, and footer).
-    if (this._zoomControlsEl && svgEl?.getBoundingClientRect) {
-      const svgTop = svgEl.getBoundingClientRect().top
-        - this.container.getBoundingClientRect().top;
-      this._zoomControlsEl.style.bottom = '';
-      this._zoomControlsEl.style.top = `${Math.max(0, svgTop + H - 34)}px`;
-    }
-
+    this._pinZoomControls(svgEl, H);
     this._hasRendered = true;
+  }
+
+  // Pin the zoom controls to the bottom-left corner of the svg itself
+  // (the container also holds the header, legend, and footer).
+  _pinZoomControls(svgEl, H) {
+    if (!this._zoomControlsEl || !svgEl?.getBoundingClientRect) return;
+    const svgTop = svgEl.getBoundingClientRect().top
+      - this.container.getBoundingClientRect().top;
+    this._zoomControlsEl.style.bottom = '';
+    this._zoomControlsEl.style.top = `${Math.max(0, svgTop + H - 34)}px`;
   }
 
   // How many nodes fit: one per comfortable grid cell (~96×74 px with the

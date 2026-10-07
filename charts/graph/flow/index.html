@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graph — Flow view | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/"
+               class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/"
+               class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/"
+               class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/"
+               class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/"
+               class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/"
+               class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/"
+               class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/101/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Flow view</span>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/map/">Map</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/sankey/">Sankey</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/multi/">Multi Charts</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title">
+    <h1>Graph — Flow view</h1>
+  </section>
+
+    <article>
+      <p>The flow view draws a <strong>trace</strong>: value moving between entities, left to right through ordered lanes — networks, stages, jurisdictions. Ties are directed, may repeat between the same pair (a swap there and back, a deposit and a withdrawal), and carry value (width), category (color), certainty (dash) and a label. It is the view for money trails, supply chains and address investigations.</p>
+<div class="card text-content-caption card-dashboard-bordered">
+  <p><strong>⚠️ Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. This release lays nodes out from hints in the data; automatic in-lane layout, aggregation and collapsible groups come next.</p>
+</div>
+<div class="flex-row flex-wrap gap-sm text-content-caption" role="group" aria-label="Graph options">
+  <label><input type="checkbox" id="flow-opt-crowd"> Crowdsale #631</label>
+  <label><input type="checkbox" id="flow-opt-cluster" checked> Owner cluster</label>
+  <label><input type="checkbox" id="flow-opt-noise"> Noise (address poisoning)</label>
+  <label><input type="checkbox" id="flow-opt-labels" checked> Tie labels</label>
+  <label>Until <input type="range" id="flow-opt-time" min="0" max="31" step="1" value="31"> <output id="flow-opt-time-out">2026-04</output></label>
+</div>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="graph-flow-octra"></div>
+</div>
+<div class="card text-content-caption card-dashboard-bordered" id="graph-flow-octra-panel" aria-live="polite"></div>
+<p>Select a node or a tie: the chart reports it through <code>onSelect</code>, and the page renders the details panel above — the library draws, your page explains. The checkboxes and the slider call <code>setFilter</code>, <code>setHulls</code>, <code>setLinkLabels</code> and <code>setTimeWindow</code>; positions never move.</p>
+<h2>Data</h2>
+<p>The same <code>{ nodes, links }</code> contract as every Graph view. Hints on the nodes place them; any extra field passes through to <code>onSelect</code> and the tooltips untouched.</p>
+<pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
+  view: 'flow',
+  lanes: [{ id: 'osmosis', label: 'Osmosis' }, { id: 'ethereum', label: 'Ethereum', weight: 3 }],
+  laneBy: 'net',                                  <span class="code-comment">// node field naming its lane</span>
+  nodeGroups: { church: { color: '#2c5d8f', label: 'Church' } },
+  nodeShapes: { wallet: 'circle', contract: 'square', exchange: 'diamond', crowd: 'stack' },
+  linkColorBy: 'asset',
+  linkTypes: { ETH: { color: '#3d4a5c', label: 'ETH' } },
+  linkWidth: { by: 'value', scale: 'sqrt', min: 1.6, max: 22 },
+  linkDash: link => link.basis === 'derived',
+  hulls: [{ id: 'owner', label: 'one key on five networks', members: n => n.cluster }],
+  onSelect: ({ node, link }) => showDetails(node ?? link),
+}).setData({
+  nodes: [
+    { id: 'osmo', label: 'Osmosis main', sub: 'osmo1uvkv…w7zs', group: 'church', kind: 'wallet', net: 'osmosis', row: 0 },
+  ],
+  links: [
+    { from: 'osmo', to: 'pools', asset: 'ATOM', value: 530, label: '61.38 ATOM', start: '2023-09' },
+  ],
+});</code></pre>
+<h3>Placing nodes</h3>
+<ul>
+<li><strong><code>lane</code></strong> (or the field named by <code>laneBy</code>) puts a node in a lane. Lanes split the width by <code>weight</code>, in the order given; a lane only the data mentions is appended.</li>
+<li><strong><code>row</code></strong> is the vertical slot: <code>0</code> is the main line, <code>-1</code>, <code>-2</code> above, <code>1</code>, <code>2</code> below. A node without a row takes the next free slot of its cell.</li>
+<li><strong><code>col</code></strong> splits a wide lane into sub-columns (<code>0</code>, <code>1</code>, …).</li>
+<li><strong><code>x</code> / <code>y</code></strong> override both, as fractions <code>0..1</code> of the lane width and of the drawing height.</li>
+</ul>
+<h3>Ties</h3>
+<ul>
+<li><code>source</code> / <code>target</code> (or <code>from</code> / <code>to</code>), plus any fields you need. Several ties between one pair fan out; <code>bend</code> adjusts a curve by hand.</li>
+<li><strong>Width</strong> comes from <code>linkWidth</code> — <code>value</code> through a square-root scale by default; a tie without a value gets the minimum width.</li>
+<li><strong>Color</strong> comes from <code>linkColorBy</code> (a field or a function) resolved against <code>linkTypes</code>; <strong>dash</strong> from the type or from <code>linkDash(link)</code>.</li>
+<li><strong>Time:</strong> <code>start</code> / <code>end</code> (years, <code>YYYY-MM</code> or ISO dates). <code>setTimeWindow(from, to)</code> dims ties outside the window — and fades nodes whose ties are all outside — or hides them with <code>timeWindowMode: 'hide'</code>.</li>
+</ul>
+<h2>Methods</h2>
+<pre class="text-content-caption"><code>graph.setFilter(item => !item.noise);   <span class="code-comment">// nodes and ties; a tie hides with either end</span>
+graph.setTimeWindow(null, '2024-01');    <span class="code-comment">// open start, through January 2024</span>
+graph.select('osmo');                    <span class="code-comment">// or select({ link: id }); clearSelection()</span>
+graph.setLinkLabels(false);
+graph.setHulls([]);</code></pre>
+<h2>Interaction</h2>
+<p><strong>Select</strong> — click a node or a tie: its neighbourhood stays, the rest fades, and <code>onSelect({ node, link, event })</code> fires; click the background or press Escape to clear. Without <code>onSelect</code>, clicking a tie pins its tooltip instead.</p>
+<p><strong>Keyboard</strong> — nodes are in the Tab order lane by lane; Enter or Space selects; → follows an outgoing tie, ← an incoming one, ↑ / ↓ move within a lane.</p>
+<p><strong>Legend</strong> — node groups and tie categories; click a category to hide or show its ties.</p>
+<p><strong>Narrow screens</strong> — set <code>minWidth</code> and the chart scrolls sideways instead of crushing the lanes.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/graph/graph-flow-octra.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3>🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>
