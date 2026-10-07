@@ -392,7 +392,7 @@ node = {
 | `animate` / `duration` / `ease` | `true` / `500` / `cubicOut` | ✅ моторный блок как у Bar (нет `stagger`) |
 | `tooltipFormat` | — | `(node) => html` |
 
-Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_4); текущий вид статический (весь outline сразу).
+Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_6); текущий вид статический (весь outline сразу).
 
 ### Donut drill-down (расширение стабильного класса — ✅ реализовано)
 
