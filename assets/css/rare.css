@@ -4658,36 +4658,6 @@ body:where(.rd, html.rd > *) {
   margin-bottom: var(--space-auto);
 }
 
-.padding-auto:where(.rd, .rd *) {
-  padding: var(--space-auto);
-}
-
-.padding-t-auto:where(.rd, .rd *) {
-  padding-top: var(--space-auto);
-}
-
-.padding-r-auto:where(.rd, .rd *) {
-  padding-right: var(--space-auto);
-}
-
-.padding-b-auto:where(.rd, .rd *) {
-  padding-bottom: var(--space-auto);
-}
-
-.padding-l-auto:where(.rd, .rd *) {
-  padding-left: var(--space-auto);
-}
-
-.padding-x-auto:where(.rd, .rd *) {
-  padding-left: var(--space-auto);
-  padding-right: var(--space-auto);
-}
-
-.padding-y-auto:where(.rd, .rd *) {
-  padding-top: var(--space-auto);
-  padding-bottom: var(--space-auto);
-}
-
 .air-auto:where(.rd, .rd *) {
   width: 100%;
   height: var(--space-auto);
@@ -8479,21 +8449,6 @@ body:where(.rd, html.rd > *) {
   }
 }
 @media screen and (max-width: 768px) {
-  .mobile\:padding-auto:where(.rd, .rd *) {
-    padding: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-auto:where(.rd, .rd *) {
-    padding: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-auto:where(.rd, .rd *) {
-    padding: var(--space-auto);
-  }
-}
-@media screen and (max-width: 768px) {
   .mobile\:padding-t-px:where(.rd, .rd *) {
     padding-top: var(--space-px);
   }
@@ -8926,21 +8881,6 @@ body:where(.rd, html.rd > *) {
 @media screen and (min-width: 1024px) {
   .desktop\:padding-t-0:where(.rd, .rd *) {
     padding-top: var(--space-0);
-  }
-}
-@media screen and (max-width: 768px) {
-  .mobile\:padding-t-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-t-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-t-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
   }
 }
 @media screen and (max-width: 768px) {
@@ -9379,21 +9319,6 @@ body:where(.rd, html.rd > *) {
   }
 }
 @media screen and (max-width: 768px) {
-  .mobile\:padding-r-auto:where(.rd, .rd *) {
-    padding-right: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-r-auto:where(.rd, .rd *) {
-    padding-right: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-r-auto:where(.rd, .rd *) {
-    padding-right: var(--space-auto);
-  }
-}
-@media screen and (max-width: 768px) {
   .mobile\:padding-b-px:where(.rd, .rd *) {
     padding-bottom: var(--space-px);
   }
@@ -9829,21 +9754,6 @@ body:where(.rd, html.rd > *) {
   }
 }
 @media screen and (max-width: 768px) {
-  .mobile\:padding-b-auto:where(.rd, .rd *) {
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-b-auto:where(.rd, .rd *) {
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-b-auto:where(.rd, .rd *) {
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (max-width: 768px) {
   .mobile\:padding-l-px:where(.rd, .rd *) {
     padding-left: var(--space-px);
   }
@@ -10276,21 +10186,6 @@ body:where(.rd, html.rd > *) {
 @media screen and (min-width: 1024px) {
   .desktop\:padding-l-0:where(.rd, .rd *) {
     padding-left: var(--space-0);
-  }
-}
-@media screen and (max-width: 768px) {
-  .mobile\:padding-l-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-l-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-l-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
   }
 }
 @media screen and (max-width: 768px) {
@@ -10816,24 +10711,6 @@ body:where(.rd, html.rd > *) {
   }
 }
 @media screen and (max-width: 768px) {
-  .mobile\:padding-y-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-y-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-y-auto:where(.rd, .rd *) {
-    padding-top: var(--space-auto);
-    padding-bottom: var(--space-auto);
-  }
-}
-@media screen and (max-width: 768px) {
   .mobile\:padding-x-px:where(.rd, .rd *) {
     padding-left: var(--space-px);
     padding-right: var(--space-px);
@@ -11353,24 +11230,6 @@ body:where(.rd, html.rd > *) {
   .desktop\:padding-x-0:where(.rd, .rd *) {
     padding-left: var(--space-0);
     padding-right: var(--space-0);
-  }
-}
-@media screen and (max-width: 768px) {
-  .mobile\:padding-x-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
-    padding-right: var(--space-auto);
-  }
-}
-@media screen and (min-width: 769px) and (max-width: 1023px) {
-  .tablet\:padding-x-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
-    padding-right: var(--space-auto);
-  }
-}
-@media screen and (min-width: 1024px) {
-  .desktop\:padding-x-auto:where(.rd, .rd *) {
-    padding-left: var(--space-auto);
-    padding-right: var(--space-auto);
   }
 }
 @media screen and (max-width: 768px) {

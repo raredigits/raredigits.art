@@ -43,6 +43,8 @@ permalink: '/styles/layout/spacing/'
 
 <p>Special values: <code>--space-0</code> (0), <code>--space-auto</code> (auto), and percentage tokens for layout sizing — <code>--space-5</code>, <code>--space-10</code>, <code>--space-25</code>, <code>--space-50</code>, <code>--space-100</code>, and the rest in between.</p>
 
+<p><code>auto</code> exists only where CSS accepts it: <code>.margin-*-auto</code>, <code>.width-auto</code>, <code>.height-auto</code> and the inset classes (<code>.top-auto</code> …). There is no <code>.padding-*-auto</code> or <code>.gap-*-auto</code> — <code>padding</code> and <code>gap</code> have no <code>auto</code> value. The padding variants shipped until <code>v0.6.19</code> silently computed to <code>0</code>; use <code>.padding-*-0</code> instead.</p>
+
 <h2>Utility classes</h2>
 
 <p>For every token in the scale, the library generates utility classes for the common spacing properties. Replace <code>{token}</code> with any value from the scale (<code>xs</code>, <code>md</code>, <code>xxl</code>, <code>50</code>, …).</p>
