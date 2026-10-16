@@ -1,0 +1,81 @@
+<!doctype html>
+<!-- CSS-338 hostile host: a foreign page with its own aggressive reset and
+     styling for the same bare elements Rare Styles themes, plus class names
+     that collide with library classes (.button, .card, .grid, .container,
+     .header-container, .sidebar, .table-bordered). No `.rd` anywhere except
+     the #island block, which the island tests opt in. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hostile host</title>
+<style id="host">
+  *, *::before, *::after { box-sizing: content-box; margin: 4px; padding: 2px; }
+  html { line-height: 2; font-size: 20px; }
+  body { display: grid; font-family: Georgia, serif; color: rgb(10, 20, 30); background: rgb(250, 240, 230); }
+  header { position: sticky; top: 0; height: 77px; }
+  main { padding: 11px; }
+  article { display: grid; }
+  section { margin-bottom: 33px; }
+  footer { font-size: 9px; }
+  nav a { color: rgb(200, 0, 0); }
+  h1, h2, h3 { font-family: Impact, sans-serif; text-transform: lowercase; }
+  p { margin: 7px 0; }
+  a { color: rgb(0, 128, 0); text-decoration: none; }
+  ul, ol { padding-left: 13px; }
+  button, .button { border: 3px solid rgb(1, 1, 1); border-radius: 0; }
+  input, select, textarea { font: inherit; border: 1px dotted rgb(9, 9, 9); }
+  table { border-collapse: separate; }
+  th, td { padding: 5px; }
+  pre, code { font-family: Courier, monospace; }
+  blockquote { font-style: italic; }
+  .card { border: 1px solid rgb(2, 2, 2); }
+  .grid { display: flex; }
+  .container { max-width: 900px; }
+</style>
+</head>
+<body>
+  <header>
+    <div class="header-container">
+      <nav><ul><li><a href="#">Home</a></li><li><a href="#">About</a></li></ul></nav>
+      <button class="icon-search">Search</button>
+    </div>
+  </header>
+  <main class="container">
+    <article>
+      <h1>Host heading</h1>
+      <h2>Second</h2>
+      <p>Paragraph with <a href="#">a link</a>, <code>code</code>, <mark>mark</mark>, <small>small</small>, <sub>sub</sub> and <sup>sup</sup>.</p>
+      <ul><li>One</li><li>Two</li></ul>
+      <ol><li>First</li></ol>
+      <blockquote><p>Quote</p><cite>Someone</cite></blockquote>
+      <dl><dt>Term</dt><dd>Definition</dd><dt>Term 2</dt><dd>Def 2</dd></dl>
+      <pre><code>let x = 1;</code></pre>
+      <hr>
+      <figure><img src="data:," alt="" width="10" height="10"><figcaption>Caption</figcaption></figure>
+      <table class="table-bordered"><thead><tr><th>A</th><th>B</th></tr></thead><tbody><tr><td>1</td><td>2</td></tr></tbody></table>
+      <details><summary>More</summary><p>Hidden</p></details>
+    </article>
+    <section class="grid">
+      <div class="card"><h3>Card</h3><p>Body</p><a class="button" href="#">Go</a></div>
+      <aside class="sidebar"><a href="#">Side link</a></aside>
+    </section>
+    <form>
+      <fieldset><legend>Form</legend>
+        <input type="text" value="x"> <select><option>1</option></select>
+        <textarea>t</textarea> <button type="submit">Send</button> <progress value="1" max="2"></progress>
+      </fieldset>
+    </form>
+  </main>
+  <div id="island-host">
+    <div id="island">
+      <h1>Island heading</h1>
+      <p>Island paragraph with <a href="#">a link</a>.</p>
+      <table><tr><th>X</th><td>1</td></tr></table>
+      <a class="button" href="#">Library button</a>
+      <section id="island-section"><header id="island-header">Not a shell</header><footer id="island-footer"><a href="#">f</a></footer></section>
+      <nav id="island-nav"><a href="#">n</a></nav>
+    </div>
+  </div>
+  <footer><a href="#">Host footer link</a></footer>
+</body>
+</html>
