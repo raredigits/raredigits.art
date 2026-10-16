@@ -16,7 +16,6 @@ const SITE = resolve('_site');
 // Known, tracked exceptions. Each one names the task that removes it.
 const EXCEPTIONS = [
   { from: '/old/', reason: 'legacy page kept for reference; not linked from the site' },
-  { from: '/styles/modules/table-of-contents/', anchorsOnly: true, reason: 'CSS-362: TOC anchors end in "/" and the docs headings have no ids' },
 ];
 
 function pages(dir) {

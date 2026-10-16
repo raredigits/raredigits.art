@@ -3,62 +3,61 @@
     "category": "Layouts",
     "url": "/styles/layout/",
     "topics": [
-      { "title": "Grid", "url": "/styles/layout/#grid/" },
-      { "title": "Template Structure", "url": "/styles/layout/#template-structure/" },
-      { "title": "Responsive Design", "url": "/styles/layout/#responsive-design/" },
-      { "title": "Full-Width Layout", "url": "/styles/layout/#full-width-layout/" },
-      { "title": "Themes", "url": "/styles/layout/#themes/" }
+      { "title": "Grid", "url": "/styles/layout/#grid-architecture" },
+      { "title": "Template Structure", "url": "/styles/layout/#template-structure" },
+      { "title": "Responsive Design", "url": "/styles/layout/#responsive-behavior" },
+      { "title": "Full-Width Layout", "url": "/styles/layout/#full-width-layout-option" },
+      { "title": "Themes", "url": "/styles/themes/" }
     ]
   },
   {
     "category": "Typography",
         "url": "/styles/typography/",
         "topics": [
-        { "title": "Font Families", "url": "/styles/typography/#font-families/" },
-        { "title": "Copy Hierarchy", "url": "/styles/typography/#copy-hierarchy/" },
-        { "title": "Headings", "url": "/styles/typography/#headings/" },
-        { "title": "Body Text", "url": "/styles/typography/#body-text/" },
-        { "title": "Blockquotes", "url": "/styles/typography/#blockquotes/" },
-        { "title": "Code", "url": "/styles/typography/#code/" },
-        { "title": "Sidenotes", "url": "/styles/typography/#inline-elements/" },
-        { "title": "Horizontal Rules", "url": "/styles/typography/#horizontal-rules/" }
+        { "title": "Font Families", "url": "/styles/typography/#typeface-selection" },
+        { "title": "Copy Hierarchy", "url": "/styles/typography/#copy-hierarchy" },
+        { "title": "Headings", "url": "/styles/typography/#heading-levels" },
+        { "title": "Body Text", "url": "/styles/typography/text-content/#body-text" },
+        { "title": "Blockquotes", "url": "/styles/typography/text-content/#blockquote" },
+        { "title": "Code", "url": "/styles/typography/text-content/#raw-code" },
+        { "title": "Sidenotes", "url": "/styles/typography/sidenotes/" }
         ]
   },
   {
     "category": "Interactive Elements",
     "url": "/styles/typography/interactive/",
     "topics": [
-      { "title": "Links", "url": "/styles/typography/interactive/#links/" },
-      { "title": "Buttons", "url": "/styles/typography/interactive/#buttons/" },
-      { "title": "Forms", "url": "/styles/typography/interactive/#forms/" }
+      { "title": "Links", "url": "/styles/typography/interactive/#links" },
+      { "title": "Buttons", "url": "/styles/typography/interactive/#buttons" },
+      { "title": "Forms", "url": "/styles/typography/interactive/#forms" }
     ]
   },
   {
     "category": "Lists & Columns",
     "url": "/styles/typography/lists/",
     "topics": [
-      { "title": "Lists", "url": "/styles/typography/lists/#lists/" },
-      { "title": "Columns", "url": "/styles/typography/lists/#columns/" },
-      { "title": "Multigroup & Fixed Rows", "url": "/styles/typography/lists/#when-mechanical-columns-fall-short/" },
-      { "title": "Feed List", "url": "/styles/typography/lists/#feed-list/" },
-      { "title": "Directory List", "url": "/styles/typography/lists/#directory-list/" }
+      { "title": "Lists", "url": "/styles/typography/lists/#lists" },
+      { "title": "Columns", "url": "/styles/typography/lists/#multi-column-list-layouts" },
+      { "title": "Multigroup & Fixed Rows", "url": "/styles/typography/lists/#list-group-pack" },
+      { "title": "Feed List", "url": "/styles/typography/lists/#feed-lists" },
+      { "title": "Catalog List", "url": "/styles/typography/lists/#catalog-lists" }
     ]
   },
   {
     "category": "Tables",
     "url": "/styles/typography/tables/",
     "topics": [
-      { "title": "Preset Tables", "url": "/styles/typography/tables/#preset-tables/" }
+      { "title": "Preset Tables", "url": "/styles/typography/tables/#preset-tables" }
     ]
   },
   {
     "category": "Colors",
     "url": "/styles/colors/",
     "topics": [
-      { "title": "Grayscale Palette", "url": "/styles/colors/#grayscale-palette/" },
-      { "title": "Brand Color", "url": "/styles/colors/#brand-color/" },
-      { "title": "Technical Colors", "url": "/styles/colors/#technical-colors/" },
-      { "title": "Supporting Colors", "url": "/styles/colors/#supporting-colors/" }
+      { "title": "Grayscale Palette", "url": "/styles/colors/#grayscale-palette" },
+      { "title": "Brand Color", "url": "/styles/colors/#brand-color" },
+      { "title": "Technical Colors", "url": "/styles/colors/#technical-colors" },
+      { "title": "Supporting Colors", "url": "/styles/colors/#supporting-colors" }
     ]
   }
 ]

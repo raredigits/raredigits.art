@@ -1,4 +1,10 @@
+const { IdAttributePlugin } = require("@11ty/eleventy");
+
 module.exports = function(eleventyConfig) {
+  // Stable ids on every heading, so section links and the docs table of
+  // contents have targets (CSS-362). Headings that already carry an id keep it.
+  eleventyConfig.addPlugin(IdAttributePlugin);
+
   eleventyConfig.addCollection("kb", collection =>
     collection.getFilteredByGlob("_posts/*.{md,html}")
   );
