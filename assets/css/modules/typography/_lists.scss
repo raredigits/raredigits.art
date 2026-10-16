@@ -237,5 +237,22 @@
         column-fill: balance;
         height: auto;
     }
+
+    // Balanced mode: the gap between groups is padding, not margin. When a
+    // `break-inside: avoid` group moves to the next column, WebKit carries the
+    // previous group's bottom margin to the top of that column, so the second
+    // column starts ~16px low (Safari, CSS-366). Padding stays inside the box.
+    // The last item's own margin is zeroed so it no longer collapses into the
+    // group's margin, which keeps the total gap at --space-md.
+    @include bp.multi-breakpoint("mobile", "tablet") {
+        > * {
+            margin-bottom: 0;
+            padding-bottom: var(--space-md);
+        }
+
+        > .index-list > ul > li:last-child {
+            margin-bottom: 0;
+        }
+    }
 }
 

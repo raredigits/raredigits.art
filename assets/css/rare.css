@@ -17144,6 +17144,24 @@ ol:where(.rd, .rd *) {
     height: auto;
   }
 }
+@media screen and (width < 769px) {
+  .list-group-pack > *:where(.rd, .rd *) {
+    margin-bottom: 0;
+    padding-bottom: var(--space-md);
+  }
+  .list-group-pack > .index-list > ul > li:last-child:where(.rd, .rd *) {
+    margin-bottom: 0;
+  }
+}
+@media screen and (769px <= width < 1024px) {
+  .list-group-pack > *:where(.rd, .rd *) {
+    margin-bottom: 0;
+    padding-bottom: var(--space-md);
+  }
+  .list-group-pack > .index-list > ul > li:last-child:where(.rd, .rd *) {
+    margin-bottom: 0;
+  }
+}
 
 .remarked:where(.rd, .rd *) {
   display: flex;
