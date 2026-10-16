@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -432,8 +426,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Hierarchical Bar</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="hierarchical-bar">Hierarchical Bar</h1>
   </section>
 
     <article>
@@ -441,7 +435,7 @@
 <p><code>HierarchicalBar</code> answers that as an outline: one row per node, indented by depth, each with its own bar on a shared scale. Parent rows carry their subtotal; nested rows read underneath them. You get the top-line comparison and the composition in a single figure, top to bottom, without a legend and without asking the reader to decode nested rectangles.</p>
 <div id="hbar-portfolio" class="text-content-caption card-dashboard-bordered"></div>
 <p>This is the linear view of a shallow hierarchy. For the spatial views of a deep one — treemap, pack, sunburst — that is a different tool. Bars are for reading a breakdown as a ranked, labeled list.</p>
-<h3>Data format</h3>
+<h3 id="data-format">Data format</h3>
 <p><code>HierarchicalBar</code> takes a <strong>tree</strong>, not an array of rows. A node is:</p>
 <pre class="text-content-caption"><code>{
     label: 'World Liberty Financial',
@@ -454,7 +448,7 @@
 <p>Pass one root object, or an array of roots (a forest — several top-level items with no shared total). Only <code>label</code> is required. <code>children</code> marks an internal node; <code>color</code> and <code>remainderLabel</code> are optional.</p>
 <p>The same tree feeds the drill-down <a href="/charts/circular/">Donut</a> — one data shape, two representations. Build the object once and hand it to whichever view fits the page.</p>
 <div id="hbar-org" class="text-content-caption card-dashboard-bordered"></div>
-<h3>Value is authoritative — and the remainder is real</h3>
+<h3 id="value-is-authoritative-and-the-remainder-is-real">Value is authoritative — and the remainder is real</h3>
 <p>A parent’s <code>value</code> is taken as stated. It may be <strong>larger</strong> than the sum of its listed children, and that difference is not an error to be normalized away — it is a genuine remainder: the undisclosed, the “other”, the part that was never itemized. In the portfolio above, World Liberty Financial is stated at $536.4M but its named holdings add up to $243.2M; the $293.2M gap is drawn as its own muted segment labeled <em>Other token &amp; equity sales</em>.</p>
 <p>The remainder is never surfaced silently. It appears only when you ask for it:</p>
 <ul>
@@ -462,17 +456,17 @@
 <li>pass <code>showRemainder: true</code> to the chart to surface every node’s remainder using a fallback label.</li>
 </ul>
 <p>If a parent’s children <em>exceed</em> its stated value, the data is inconsistent — the chart warns in the console and leaves the (negative) remainder undrawn, or throws instead when you pass <code>strict: true</code>.</p>
-<h3>Undisclosed items</h3>
+<h3 id="undisclosed-items">Undisclosed items</h3>
 <p>Real breakdowns have holes: a line item you know exists but whose amount was never published. Give it <code>value: null</code> and it is kept as a <strong>placeholder</strong> — drawn with a <code>?</code> marker, excluded from every sum, and left out of the parent’s remainder (an unknown can’t be subtracted). It is not the same as omitting the item, and not the same as a remainder: the remainder is a <em>quantified</em> gap, a <code>null</code> is a <em>named but unquantified</em> item.</p>
 <pre class="text-content-caption"><code>{ label: 'License agreement with NFT INT, LLC', value: null }
 <span class="code-comment">// → drawn as “?”, counted in nothing</span></code></pre>
 <p>A leaf with no usable value at all — absent, zero, or negative — is simply dropped, since a compositional bar can only draw a positive magnitude.</p>
-<h3>Root, depth, and color</h3>
+<h3 id="root-depth-and-color">Root, depth, and color</h3>
 <p>By default the root row is drawn as a neutral full-width total, and each <strong>top-level branch</strong> takes the next color from the theme palette. Descendants inherit their branch’s hue and fade one step per level, so nesting reads as shade without a second encoding. A node’s own <code>color</code> always wins.</p>
 <p>Set <code>showRoot: false</code> to drop a single root entirely and start from its children — the root then reads as the chart title/total rather than a bar. Use <code>maxDepth</code> to cap how deep the outline expands. Indentation is <code>indent</code> px per level; row height is <code>rowHeight</code>.</p>
-<h3>Value labels and long names</h3>
+<h3 id="value-labels-and-long-names">Value labels and long names</h3>
 <p>Each bar prints its value at the end (<code>showValues</code>, on by default), flipping inside the bar when space is tight. Format it with <code>valueFormat: (node) =&gt; string</code>. Because holding and line-item names run long, the label sits on its own line above the bar rather than in a cramped left gutter; <code>labelMaxLength</code> truncates it and keeps the full text in the tooltip.</p>
-<h3>Quick example</h3>
+<h3 id="quick-example">Quick example</h3>
 <pre class="text-content-caption"><code>new RareCharts.HierarchicalBar('#chart', {
   valueFormat: n => '$' + n.value + 'M',
   showRoot: false,       <span class="code-comment">// root becomes the header, not a bar</span>
@@ -487,9 +481,10 @@
     { label: 'Cash',  value: null },   <span class="code-comment">// undisclosed → “?”</span>
   ],
 });</code></pre>
-<h2>Hierarchical Bar options</h2>
+<h2 id="hierarchical-bar-options">Hierarchical Bar options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -500,7 +495,7 @@
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
         </tr>
         <tr>
             <td><code>rowHeight</code></td>
@@ -533,7 +528,7 @@
             <td>Deepest level to render, counted from the top row. Default: no limit.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Composition</h5></td>
+            <td colspan="4"><h5 id="composition">Composition</h5></td>
         </tr>
         <tr>
             <td><code>remainderLabel</code></td>
@@ -554,7 +549,7 @@
             <td>Throw when a node’s children exceed its stated value. Off by default: the chart warns and leaves the negative remainder undrawn.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Value labels</h5></td>
+            <td colspan="4"><h5 id="value-labels">Value labels</h5></td>
         </tr>
         <tr>
             <td><code>showValues</code></td>
@@ -581,7 +576,7 @@
             <td>Truncate a label to N characters and add an ellipsis. The full label stays in the tooltip.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Animation</h5></td>
+            <td colspan="4"><h5 id="animation">Animation</h5></td>
         </tr>
         <tr>
             <td><code>animate</code></td>
@@ -602,7 +597,7 @@
             <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
+            <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
@@ -612,6 +607,7 @@
         </tr>
     </tbody>
 </table>
+</div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/hierarchical-bar-portfolio.js"></script>
 <script src="/assets/charts/examples/bar/hierarchical-bar-org.js"></script>
@@ -636,7 +632,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <span class="bold">The Idea</span>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -416,32 +419,32 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>The Idea</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="the-idea">The Idea</h1>
   </section>
 
     <article>
       <p>Most teams don't have a shortage of components. They have the opposite.</p>
 <p>There's a BI tool, an ERP, a couple of internal portals, a brand book, a design system, and usually a second design system that was meant to replace the first. Each one makes sense on its own. Put them together and you get the familiar situation where everybody has tools, everybody has data, everybody has a format — and every important screen still opens with an argument about what's actually important.</p>
 <p>That argument is the problem Rare Styles solves. Not the data — the data is usually fine. What's missing is a shared answer to one question: when someone opens this page, what should they understand, compare, trust, ignore, or act on?</p>
-<h2>What it actually is</h2>
+<h2 id="what-it-actually-is">What it actually is</h2>
 <p>Rare Styles is a CSS library for business and data-heavy pages — dashboards, reports, internal tools, documentation, investor decks, the screens people make decisions on.</p>
 <p>It sits <strong>on top of</strong> your existing stack, not in place of it. ERP stays ERP. BI stays BI. Your workflows, permissions, and data models don't move. What changes is the presentation layer: how the page is structured, what gets emphasis, how dense information stays readable.</p>
 <p>And it's not a bucket of neutral utilities you assemble into a house style from scratch. It ships a ready shell — page rhythm, hierarchy, supporting text, data surfaces, tables, notes, metrics — already designed to work together. Change the colors, match it to your brand, and get on with the actual work. The thing you <em>don't</em> rebuild every sprint is the logic of presentation itself.</p>
-<h2>The one question it makes you ask</h2>
+<h2 id="the-one-question-it-makes-you-ask">The one question it makes you ask</h2>
 <p>Most design debate is &quot;what should this block look like?&quot; That question never ends, because taste never ends.</p>
 <p>Rare Styles quietly swaps it for a better one: &quot;what is this block doing for the reader?&quot; Answer that, and most visual choices stop being mysterious. A number that changes a decision gets emphasis. A note that supports the argument doesn't compete with it. A table is readable before it's impressive. A highlight has to earn its volume.</p>
 <div class="highlight">Clarity isn't an aesthetic preference here.<br>It's an operating requirement.</div>
-<h2>Why it's so opinionated</h2>
+<h2 id="why-its-so-opinionated">Why it's so opinionated</h2>
 <p>This is the practical side of <a href="/manifesto/">Digital Rareism</a> — our short way of saying: remove what doesn't help a decision, keep what does, make the difference visible.</p>
 <p>Most CSS libraries optimize for flexibility. Flexibility is great when your problem is creative possibility. It's a liability when your problem is that six teams already show the same revenue number six slightly different ways. So Rare Styles decides a lot up front — reading rhythm, density limits, how emphasis behaves, the line between narrative, data, and system content. You could call that restrictive. We'd call it governance.</p>
-<h2>What's in it for you</h2>
+<h2 id="whats-in-it-for-you">What's in it for you</h2>
 <p><strong>If you're the one making the call</strong> — this is the page to hand your designer or your team. It resets the conversation from &quot;look at what we built&quot; to &quot;what do you actually need to decide?&quot; You stop being shown features and start being shown the next move — less <em>isn't this pretty</em>, more <em>here's what matters</em>.</p>
 <p><strong>If you run engineering</strong> — one presentation standard your teams stop re-litigating. Fewer one-off hierarchy decisions, less drift between screens, pages that still make sense two years from now.</p>
 <p><strong>If you're a product manager</strong> — a way to talk about business purpose instead of visual preference. &quot;Does this help the right person decide?&quot; is a much shorter meeting than &quot;I'd make that card bigger.&quot;</p>
 <p><strong>If you're a frontend developer</strong> — defaults strong enough that you're not reinventing hierarchy on every screen. Less CSS to write, fewer bespoke layouts to maintain, pages that read well before you've touched them.</p>
 <p><strong>If you're a designer</strong> — a doctrine that survives stakeholder weather, so your time goes to the hard 10% instead of re-deriving the basics on every project.</p>
-<h2>The promise</h2>
+<h2 id="the-promise">The promise</h2>
 <p>Rare Styles won't end design opinions forever — that would be a religious claim, and that market's already crowded. It promises something more useful: fewer arbitrary decisions, fewer visual negotiations, fewer pages that treat every fact as equally important, fewer interfaces where the reader has to supply the structure themselves.</p>
 <p>The business gets closer to the signal.</p>
 <p>That's the idea.</p>
@@ -466,7 +469,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

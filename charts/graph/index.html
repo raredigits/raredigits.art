@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -426,8 +420,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Graph (Network)</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="graph-network">Graph (Network)</h1>
   </section>
 
     <article>
@@ -435,19 +429,19 @@
 <div class="card text-content-caption card-dashboard-bordered">
   <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
 </div>
-<h3>Ego view</h3>
+<h3 id="ego-view">Ego view</h3>
 <p>Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node <code>group</code>) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80%), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).</p>
 <div id="graph-ego"></div>
-<h3>Path view</h3>
+<h3 id="path-view">Path view</h3>
 <p>&quot;How are A and B connected?&quot; — up to <code>pathCount</code> edge-disjoint routes, laid out left to right: columns are hops, each route gets its own row with a hop-count caption, and the shortest route is visually emphasized while the alternatives recede. Each endpoint's other connections fan out behind it, faded — showing that both nodes are well connected beyond these routes (disable with <code>pathContext: false</code>). Pathfinding is the data source's job (server-side on a real backend), because the client only holds the neighborhoods it has walked.</p>
 <div id="graph-path"></div>
-<h3>Cluster view</h3>
+<h3 id="cluster-view">Cluster view</h3>
 <p>The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.</p>
 <div id="graph-cluster"></div>
-<h3>Example: warm-intro routing</h3>
+<h3 id="example-warm-intro-routing">Example: warm-intro routing</h3>
 <p>A CRM-style scenario: the ego view is centered on a sales rep, and target leads — deliberately not connected to the rep — are marked with a star glyph. Clicking a lead answers the question that matters: <em>who can introduce me?</em> The <code>onNodeClick</code> callback switches to the path view with the warm-intro routes; clicking the rep restores the ego view. Category glyphs (person, company, partner org, ★ lead) carry the node semantics, so all the color stays on the relationship types.</p>
 <div id="graph-columbus"></div>
-<h3>Data source</h3>
+<h3 id="data-source">Data source</h3>
 <p>Graph reads data through a source adapter with three async queries — the same contract a real graph backend would implement:</p>
 <pre class="text-content-caption"><code>{
   neighbors(id, { depth, types })  // → { nodes, links }         — ego view
@@ -459,9 +453,10 @@
 new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</code></pre>
 <p>The option is named <code>dataSource</code> because <code>source</code> keeps its usual RareCharts meaning — the attribution line in the chart footer.</p>
 <p>Everything the user walks through accumulates in a client-side model, so revisiting a node doesn't refetch it. Swapping <code>memorySource</code> for a real backend adapter changes nothing else.</p>
-<h3>Nodes</h3>
+<h3 id="nodes">Nodes</h3>
 <p>Each node requires only <code>id</code>. <code>label</code> and every other field are optional; when no label is supplied, Graph displays the id:</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Field</th>
@@ -515,9 +510,11 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
     </tr>
   </tbody>
 </table>
-<h3>Links</h3>
+</div>
+<h3 id="links">Links</h3>
 <p>Each link requires <code>source</code> and <code>target</code> node ids:</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Field</th>
@@ -571,9 +568,10 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
     </tr>
   </tbody>
 </table>
+</div>
 <p><strong>Several ties between one pair.</strong> A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a <code>+N</code> badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once.</p>
 <p>Note the division of labor: link <strong>weight</strong> is data you bring (observable ties), while node <strong>importance</strong> is computed — the model runs degree and betweenness centrality over everything loaded, so &quot;who has the most connections&quot; and &quot;who do the paths run through&quot; are answers, not inputs.</p>
-<h3>Link types</h3>
+<h3 id="link-types">Link types</h3>
 <p>The <code>type</code> field on a link is resolved against the <code>linkTypes</code> map you pass in. Each entry defines how that type looks:</p>
 <pre class="text-content-caption"><code>{
   professional: { color: '#00aaff', dash: null, label: 'Professional' },
@@ -615,8 +613,9 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
 </tr>
 </tbody>
 </table>
-<h3>Options</h3>
-<table class="table-bordered card-caption">
+<h3 id="options">Options</h3>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -808,10 +807,12 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
         </tr>
     </tbody>
 </table>
-<h3>Sizing</h3>
+</div>
+<h3 id="sizing">Sizing</h3>
 <p>Graph lays nodes out on a grid: one node per cell of about <strong>96 × 50 px</strong> (the node and its label). The drawing area therefore decides how many nodes fit — roughly <code>floor(width / 96) × floor(height / 50) − 1</code> around the focused node. A larger neighbourhood is capped to the best-connected nodes; a <code>+N more</code> button in the footer lists the rest — pick one to recenter on it — and the <strong>full-screen</strong> button (⛶) gives the graph the whole screen, so more of it fits (see <code>maxNodes</code>, <code>fullscreen</code>).</p>
 <p><code>height</code> is the whole card — title, legend, breadcrumbs and footer included; the drawing gets what is left, typically 80–120 px less.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>View</th>
@@ -826,12 +827,13 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
         <tr><td>Flow</td><td><code>minWidth</code> ≈ 120–170 px per lane</td><td>~110 px per row in use + 160</td><td>lanes scroll sideways below <code>minWidth</code></td></tr>
     </tbody>
 </table>
+</div>
 <ul>
 <li><strong>Neighbourhood bigger than the card?</strong> Enlarge <code>height</code> first (width is usually fixed by the page column), then lower <code>depth</code> to 1, or set <code>maxNodes</code> to show a curated top slice.</li>
 <li><strong>Narrow screens.</strong> Below ~480 px an ego neighbourhood of more than ~15 nodes does not read; use <code>depth: 1</code>, a smaller <code>maxNodes</code>, or the flow view with <code>minWidth</code> and sideways scrolling.</li>
 <li><strong>Long labels</strong> are cut to the cell width with an ellipsis; the full name is in the tooltip.</li>
 </ul>
-<h3>Methods</h3>
+<h3 id="methods">Methods</h3>
 <p>All methods return the chart instance; fetching and rendering are async — <code>whenReady()</code> resolves when queued view changes are done.</p>
 <pre class="text-content-caption"><code>const graph = new RareCharts.Graph('#chart', { dataSource, depth: 2 });
 
@@ -855,7 +857,7 @@ graph.toggleFullscreen();                // full screen on/off (also the ⛶ but
 await graph.whenReady();</code></pre>
 <p>The flow view adds <code>setFilter</code>, <code>setTimeWindow</code>, <code>select</code> / <code>clearSelection</code>, <code>setLinkLabels</code> and <code>setHulls</code> — see the Methods section of <a href="/charts/graph/flow/">Flow view</a>.</p>
 <p><code>add()</code> is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id.</p>
-<h3>Interaction</h3>
+<h3 id="interaction">Interaction</h3>
 <p><strong>Recenter on click</strong> — clicking a node fetches its neighborhood and re-lays the view around it; shared nodes animate to their new positions so you keep your bearings while walking the graph. In the cluster view, clicking a community recenters on its most-connected member.</p>
 <p><strong>Focus + context on hover</strong> — hovering a node highlights its direct neighborhood and fades everything else, along with a tooltip listing connections by type.</p>
 <p><strong>Ties: hover and pin</strong> — hovering a tie highlights it and its two endpoints and shows its tooltip: endpoints, type, label, value, period and <code>sources</code>. Clicking a tie pins the tooltip, so links inside it can be followed; a click elsewhere or Escape releases it.</p>
@@ -866,12 +868,12 @@ await graph.whenReady();</code></pre>
 <p><strong>Node dragging</strong> — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change. A click with a slight tremor (under 6 px) stays a click.</p>
 <p><strong>Hide on right-click</strong> — right-click any node in the ego view to hide it (the focused center is exempt); an &quot;N hidden · restore&quot; button in the footer tools brings everything back. Same mechanism as the <code>hidden</code> field and <code>hide(id)</code>/<code>show(id)</code> — the node stays in the model and in path routes.</p>
 <p><strong>Semantic zoom</strong> — zooming far out of an ego view switches to the cluster overview; zooming into the overview returns to the last ego view. Disable with <code>semanticZoom: false</code>.</p>
-<h3>Minimal example</h3>
+<h3 id="minimal-example">Minimal example</h3>
 <pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
   linkTypes: RareCharts.linkPresets.personal,
   depth: 2,
 }).setData({ nodes, links });</code></pre>
-<h3>Notes</h3>
+<h3 id="notes">Notes</h3>
 <p>The demos on this page run on a ~300-node synthetic network around Peter Thiel (generated deterministically — a stand-in for a graph database). The layouts are deterministic by design: grid cells, category corners and route maps encode what is known about the data instead of asking a physics simulation to discover it. If a view still looks busy, reduce <code>depth</code>, filter link types, or let the cluster view do the summarizing.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/graph/demo-data.js"></script>
@@ -901,7 +903,7 @@ await graph.whenReady();</code></pre>
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

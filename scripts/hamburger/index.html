@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="current">
+            <a href="/scripts/" class="current">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="scripts">
           
             <a href="/scripts/">Scripts</a>
           
@@ -344,8 +338,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Hamburger Menu Script</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="hamburger-menu-script">Hamburger Menu Script</h1>
   </section>
 
     <article>
@@ -364,7 +358,7 @@ js/hamburger.js
 <li>Quick links that don’t warrant space in your primary navigation</li>
 </ul>
 <p>Remember: Avoid hiding critical navigation or primary user paths in hamburger menus. For guidance on strategic implementation, see <a href="/kb/hamburger-menu-saga/">The Hamburger Menu Saga</a> which explains why hamburgers work best for supplementary content rather than main navigation.</p>
-<h2>Implementation</h2>
+<h2 id="implementation">Implementation</h2>
 <p>First, place the hamburger script at the very end of your <code>&lt;body&gt;</code> element to ensure the DOM is fully loaded before the script runs:</p>
 <pre><code class="language-html">&lt;script src=&quot;assets/js/hamburger.js&quot;&gt;&lt;/script&gt;
 &lt;/body&gt;
@@ -412,7 +406,7 @@ js/hamburger.js
 .hamburger.rd-is-active .hamburger__icon-close { display: inline-block; }
 </code></pre>
 <p>You can substitute any icon system or draw custom hamburger lines in CSS — the script only toggles state classes.</p>
-<h2>Contract</h2>
+<h2 id="contract">Contract</h2>
 <ul>
 <li><code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code> are <strong>hooks</strong>: the script reads them, CSS never styles them</li>
 <li><code>rd-is-active</code> is <strong>state</strong>: the script writes it on both elements, CSS styles it</li>
@@ -420,7 +414,7 @@ js/hamburger.js
 <li><code>hamburger__icon-menu</code> / <code>hamburger__icon-close</code> are <strong>presentational</strong> BEM elements of the button — styled by CSS, invisible to the script</li>
 <li>If either hook is missing on a page, the script safely does nothing</li>
 </ul>
-<h2>Functionality</h2>
+<h2 id="functionality">Functionality</h2>
 <p>The script automatically handles:</p>
 <ul>
 <li>Toggling the menu open/closed when clicking the hamburger button</li>
@@ -470,8 +464,8 @@ js/hamburger.js
 });
 </code></pre>
 </details>
-<h2>Changelog</h2>
-<h3>v2.0.0</h3>
+<h2 id="changelog">Changelog</h2>
+<h3 id="v2-0-0">v2.0.0</h3>
 <ul>
 <li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script now finds elements via <code>rd-js-hamburger</code> / <code>rd-js-hamburger-nav</code>, not <code>.hamburger</code> / <code>.nav-hamburger</code></li>
 <li><strong>Breaking:</strong> state class renamed <code>.active</code> → <code>.rd-is-active</code></li>
@@ -501,7 +495,7 @@ js/hamburger.js
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

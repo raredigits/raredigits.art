@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="current">
+            <a href="/scripts/" class="current">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="scripts">
           
             <a href="/scripts/">Scripts</a>
           
@@ -344,15 +338,15 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Copy to Clipboard</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="copy-to-clipboard">Copy to Clipboard</h1>
   </section>
 
     <article>
       <div class="meta-info">
     <p>js/copy-to-clipboard.js</p>
     <p>v3.2.0 Stable |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.2.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy>CDN</a> (minified)
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.2.0/copy-to-clipboard/copy-to-clipboard.min.js" data-copy="">CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy"></button> |
     <a href="/assets/js/copy-to-clipboard.js">Download</a>
     <span class="rd-icon-download"></span>
@@ -373,13 +367,13 @@
 <p>No duplicated data. No hard-coded containers. No assumptions about structure.
 It works the same way on documentation sites, dashboards, crypto wallets, and boring corporate pages.</p>
 <p>This is intentional. The script stays dumb. The HTML stays expressive.</p>
-<h2>Basic usage</h2>
+<h2 id="basic-usage">Basic usage</h2>
 <p><strong>Copy a link (URL, not label)</strong></p>
 <pre><code class="language-html">&lt;a href=&quot;https://cdn.jsdelivr.net/script.min.js&quot; data-copy&gt;Copy Link&lt;/a&gt;
 &lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;
 </code></pre>
 <p>Clicking the icon copies the full CDN URL.</p>
-<p>Check it out: <a href="https://cdn.jsdelivr.net/script.min.js" data-copy>Copy Link</a> <button class="copy-data-icon rd-js-copy"></button></p>
+<p>Check it out: <a href="https://cdn.jsdelivr.net/script.min.js" data-copy="">Copy Link</a> <button class="copy-data-icon rd-js-copy"></button></p>
 <div class="air-md"></div>
 <p><strong>Copy plain text (addresses, hashes, IDs)</strong></p>
 <pre><code class="language-html">&lt;span data-copy&gt;0x9f1b...cA11&lt;/span&gt;
@@ -417,7 +411,7 @@ pnpm add rare-scripts</code></pre>
 &lt;/div&gt;
 </code></pre>
 <p>The copy icon is just the most common carrier, not a requirement. Give a block-sized control a visible affordance of its own (<code>cursor: pointer</code>, a hint in the text) — see <strong>Styling</strong> below for the success state.</p>
-<h2>JavaScript</h2>
+<h2 id="javascript">JavaScript</h2>
 <p>Include once per page:</p>
 <div class="code-block">
 <pre><code id="snippet-2" class="language-js">const ICON_SUCCESS = "check";
@@ -500,10 +494,10 @@ if (document.readyState === "loading") {
 }</code></pre>
 <p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-2"></button></p>
 </div>
-<h2>Including the script</h2>
+<h2 id="including-the-script">Including the script</h2>
 <p>Don’t forget to actually include the script on the page.
 Icons don’t copy things by positive thinking alone.</p>
-<p>You can either host the file locally or load it from a CDN. Both options work the same way.<div class="code-block"></p>
+<p>You can either host the file locally or load it from a CDN. Both options work the same way.</p><div class="code-block"><p></p>
   <pre><code id="snippet-3">// Local file:
 &lt;script src=&#34;/js/copy-to-clipboard.min.js&#34;&gt;&lt;/script&gt;
 
@@ -515,14 +509,14 @@ Icons don’t copy things by positive thinking alone.</p>
   ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
 </p>
 <p>Include it once per page, preferably near the end of the document or with defer.</p>
-<h2>Styling</h2>
-<p>Make it feel clickable, not decorative:<div class="code-block"></p>
+<h2 id="styling">Styling</h2>
+<p>Make it feel clickable, not decorative:</p><div class="code-block"><p></p>
   <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;/* The glyph is an SVG mask filled with currentcolor — ship the two SVGs&#10;   next to your CSS (Rare Styles bundles them under images/icons/) */&#10;.copy-data-icon::before {&#10;    content: &#34;&#34;;&#10;    display: inline-block;&#10;    position: relative;&#10;    top: 0.2em;&#10;    width: 1em;&#10;    height: 1em;&#10;    background-color: currentcolor;&#10;    mask: url(&#34;images/icons/content_copy-400.svg&#34;) no-repeat center / contain;&#10;}&#10;&#10;.copy-data-icon[data-icon=&#34;check&#34;]::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;); /* success glyph set by the script */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* The general success state. data-icon above only drives .copy-data-icon, so&#10;   anything else that carries rd-js-copy — a block, or a glyph that is itself&#10;   the control — styles .rd-is-copied instead. Here: any Rare Styles glyph&#10;   flips to a check for ~1.2s. The per-glyph masks are single-class rules, so&#10;   the extra .rd-is-copied outranks them. */&#10;[class*=&#34;rd-icon-&#34;].rd-is-copied::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;);&#10;}&#10;&#10;/* Optional: park the icon in a container&#39;s top-right instead of the flow.&#10;   The container needs a positioning context of its own (position: relative).&#10;   Rare Styles applies this to .code-block automatically. */&#10;.copy-data-icon--pinned {&#10;    position: absolute;&#10;    top: 8px;&#10;    right: 8px;&#10;}&#10;&#10;/* Optional: light icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon--light {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
 <p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button></p>
 </div>
 <p>There are two success channels and{N}the script writes both. <code>data-icon=&quot;check&quot;</code> is{N}the older one{N}and{N}is{N}read by{N}exactly one{N}rule, <code>.copy-data-icon</code>’s — it{N}is{N}an{N}internal channel, never something you{N}author. <code>rd-is-copied</code> is{N}the general one: it{N}lands on{N}whatever was clicked, so{N}it{N}is{N}what a{N}block or{N}a{N}bare glyph should style. A{N}control with no{N}success state copies silently, which reads as{N}broken — give every carrier one.</p>
-<h3>Recoloring</h3>
-<p>The copy icon defaults to a muted gray (<code>--text-color-light</code>), which can fade into some surfaces or clash with a brand. Both of its colors are exposed as component tokens — <code>--copy-icon-color</code> and <code>--copy-icon-color-hover</code> — so any container (or a single icon) can override them without fighting the selector. Set the token on whatever wraps the icon (here, a code block — its copy button is already pinned top-right by <code>.code-block</code>):<div class="code-block"></p>
+<h3 id="recoloring">Recoloring</h3>
+<p>The copy icon defaults to a muted gray (<code>--text-color-light</code>), which can fade into some surfaces or clash with a brand. Both of its colors are exposed as component tokens — <code>--copy-icon-color</code> and <code>--copy-icon-color-hover</code> — so any container (or a single icon) can override them without fighting the selector. Set the token on whatever wraps the icon (here, a code block — its copy button is already pinned top-right by <code>.code-block</code>):</p><div class="code-block"><p></p>
   <pre><code id="snippet-5" class="language-html">&lt;!-- recolor every copy icon inside this block --&gt;
 &lt;div class=&#34;code-block&#34; style=&#34;--copy-icon-color: var(--red);&#34;&gt;
   &lt;pre&gt;&lt;code data-copy&gt;0x9f1b...cA11&lt;/code&gt;&lt;/pre&gt;
@@ -532,7 +526,7 @@ Icons don’t copy things by positive thinking alone.</p>
 </div>
 <p>Live — the exact snippet above, rendered. The icon is red via the token; its top-right position comes from <code>.code-block</code> itself, so there is nothing extra to position:</p>
 <div class="code-block" style="--copy-icon-color: var(--red);">
-  <pre><code data-copy>0x9f1b...cA11</code></pre>
+  <pre><code data-copy="">0x9f1b...cA11</code></pre>
   <button class="copy-data-icon rd-js-copy"></button>
 </div>
 <p><strong>Shortcut for dark surfaces.</strong> The most common recolor — a light icon so it stays visible on a dark background — ships as a ready-made class, <code>.copy-data-icon--light</code>. It just sets the two tokens (<code>--gray-lightest</code> / <code>--gray</code>), so put it on the icon or any ancestor instead of writing the inline style:</p>
@@ -544,7 +538,7 @@ Icons don’t copy things by positive thinking alone.</p>
 </code></pre>
 <p>Live — a light glyph on a dark panel, parked in the corner with <code>.copy-data-icon--pinned</code>:</p>
 <div class="card copy-data-icon--light" style="background: #222; color: #eee; padding: var(--space-md);">
-    <span data-copy>0x9f1b...cA11</span>
+    <span data-copy="">0x9f1b...cA11</span>
     <button class="copy-data-icon copy-data-icon--pinned rd-js-copy"></button>
 </div>
 <p><strong>Pinning.</strong> A copy icon inside a <code>.code-block</code> is parked in the top-right corner for you — that rule is wired up by ancestor, so code blocks need no extra class. Anywhere else the icon stays in the flow, which on a column-flex container like <code>.card</code> drops it onto its own line. <code>.copy-data-icon--pinned</code> is the same affordance by name; the container has to establish a positioning context, which <code>.card</code> and <code>.code-block</code> already do — anything else needs <code>position: relative</code> of its own.</p>
@@ -560,8 +554,8 @@ Icons don’t copy things by positive thinking alone.</p>
 If the icon should copy something specific, tell it where with <code>data-copy-target</code>.</p>
 <p>Everything else is none of the script’s business.</p>
 <p><a id="changelog"></a></p>
-<h2>Changelog</h2>
-<h3>v3.2.0</h3>
+<h2 id="changelog-2">Changelog</h2>
+<h3 id="v3-2-0">v3.2.0</h3>
 <ul>
 <li>
 <p><strong>Breaking: <code>.copy-data-icon-inverted</code> → <code>.copy-data-icon--light</code>.</strong> Same class, renamed onto the library's modifier convention (<code>--</code> modifies, <code>__</code> is for elements), and named for the ink rather than the surface, like <code>.carousel-dots--dark</code>. Update the class name in markup; nothing else about it changed. Consumers pinned to an older Rare Styles are unaffected until they bump.</p>
@@ -582,19 +576,19 @@ If the icon should copy something specific, tell it where with <code>data-copy
 <p>Backward compatible: both additions are purely additive, and every existing <code>data-copy</code> / <code>data-copy-target</code> / <code>data-icon</code> markup keeps working untouched.</p>
 </li>
 </ul>
-<h3>v3.1.0</h3>
+<h3 id="v3-1-0">v3.1.0</h3>
 <ul>
 <li><code>data-icon</code> is now <strong>optional</strong>: the default <code>content_copy</code> glyph is baked into <code>.copy-data-icon</code> in CSS, and the script removes <code>data-icon</code> on reset instead of writing it back. Markup drops to <code>&lt;button class=&quot;copy-data-icon rd-js-copy&quot;&gt;&lt;/button&gt;</code>. Backward compatible — existing <code>data-icon=&quot;content_copy&quot;</code> markup still works.</li>
 <li>The script now gives icon-only copy buttons an accessible name (<code>aria-label=&quot;Copy&quot;</code>) if they have none, so markup needs no <code>title</code> either. Author-provided <code>aria-label</code> / <code>title</code> is respected.</li>
 <li>Added the <code>.copy-data-icon-inverted</code> helper class (light icon for dark surfaces) — put it on the icon or any ancestor instead of inlining the recolor tokens.</li>
 </ul>
-<h3>v3.0.0</h3>
+<h3 id="v3-0-0">v3.0.0</h3>
 <ul>
 <li><strong>Breaking:</strong> click hook moved to the <code>rd-js</code> contract — the script listens for <code>.rd-js-copy</code>; <code>.copy-data-icon</code> is presentational only and no longer read by the script</li>
 <li>Payload API unchanged: <code>data-copy</code>, <code>data-copy-target</code>, <code>data-icon</code> all work as before</li>
 <li>Icon colors are tokenized: <code>--copy-icon-color</code> / <code>--copy-icon-color-hover</code> override the defaults per container or per icon (CSS-only change, shipped with Rare Styles <code>v0.6.17</code>)</li>
 </ul>
-<h3>v2.0.0</h3>
+<h3 id="v2-0-0">v2.0.0</h3>
 <ul>
 <li>Changed required selector to <code>.copy-data-icon</code>, legacy markup no longer supported</li>
 <li>Updated CSS to render icons via: <code>: before</code> with <code>content: attr (data-icon)</code></li>
@@ -623,7 +617,7 @@ If the icon should copy something specific, tell it where with <code>data-copy
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

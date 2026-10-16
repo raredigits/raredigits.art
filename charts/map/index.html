@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -416,8 +410,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Map</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="map">Map</h1>
   </section>
 
     <article>
@@ -432,7 +426,7 @@
 <li><strong>Value data</strong> — an array of items that match those regions by ID.</li>
 </ol>
 <p>The map provides the geometry; your data decides what gets highlighted.</p>
-<h2>Geographic data</h2>
+<h2 id="geographic-data">Geographic data</h2>
 <p>Pass a URL to fetch, or an inline object — whichever fits your pipeline.</p>
 <pre class="text-content-caption"><code><span class="code-comment">// TopoJSON from a local file</span>
 new RareCharts.Map('#chart', {
@@ -451,7 +445,7 @@ new RareCharts.Map('#chart', {
 });</code></pre>
 <p>RareCharts supports both <strong>GeoJSON</strong> and <strong>TopoJSON</strong>.</p>
 <p>In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.</p>
-<h3>Open geographic datasets</h3>
+<h3 id="open-geographic-datasets">Open geographic datasets</h3>
 <p>A convenient public source of world map data is the <strong>world-atlas</strong> dataset: <a href="https://cdn.jsdelivr.net/npm/world-atlas@2/">https://cdn.jsdelivr.net/npm/world-atlas@2/</a>.</p>
 <p>It provides several ready-to-use TopoJSON files that differ only by geometric detail:</p>
 <table>
@@ -482,7 +476,7 @@ new RareCharts.Map('#chart', {
     topoObject: 'countries'
 });</code></pre>
 <p>These files use <a href="https://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3166-1 numeric country codes</a> as <code>feature.id</code>, which makes them easy to match with data items.</p>
-<h2>Value data</h2>
+<h2 id="value-data">Value data</h2>
 <p>Each item in the data array identifies a geographic feature and optionally carries a value and color:</p>
 <pre class="text-content-caption"><code>chart.setData([
     { id: '250', label: 'France',  color: '#00aaff' },
@@ -496,7 +490,7 @@ new RareCharts.Map('#chart', {
 <li>other datasets often store identifiers inside <code>feature.properties</code></li>
 </ul>
 <p>If needed, use the <code>idField</code> option to tell the chart which property should be used.</p>
-<h2>Projections</h2>
+<h2 id="projections">Projections</h2>
 <p>RareCharts supports five projections:</p>
 <table>
 <thead>
@@ -529,7 +523,7 @@ new RareCharts.Map('#chart', {
 </tbody>
 </table>
 <p>The chart automatically fits the projection to the loaded features using <code>fitExtent</code>, so you normally do not need to set scale or center manually.</p>
-<h2>Coloring</h2>
+<h2 id="coloring">Coloring</h2>
 <p>Regions are colored in three ways, in order of priority:</p>
 <ol>
 <li><strong>Per-item <code>color</code></strong> — explicit CSS color on a data item.</li>
@@ -539,7 +533,7 @@ new RareCharts.Map('#chart', {
 <p>For a simple highlight map (visited countries, market presence), a single <code>matchFill</code> is usually enough.</p>
 <p>For a choropleth map, you will typically compute colors yourself using a scale and pass them through the <code>color</code> field.</p>
 <p>Default colors used by the chart come from the RareCharts theme. They are defined in: <code>/src/core/theme.js</code>. The map section of the theme defines values such as <code>matchFill</code>, <code>unmatchedFill</code>, <code>border</code>, and hover behavior. In most cases it is better to adjust those defaults in the theme rather than overriding colors in every chart instance.</p>
-<h2>Tooltip</h2>
+<h2 id="tooltip">Tooltip</h2>
 <p>The default tooltip shows the region name and, if present, the <code>value</code> for every region on the map, including regions with no matching data item.</p>
 <p>If you need something more specific, override it:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ feature, item }) => `
@@ -547,9 +541,10 @@ new RareCharts.Map('#chart', {
     &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
 `</code></pre>
 <p>The formatter receives both the raw <code>feature</code> and the matched <code>item</code>, so you can display whatever makes sense. For unmatched regions, <code>item</code> will be <code>null</code>.</p>
-<h2>Map chart options</h2>
+<h2 id="map-chart-options">Map chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -560,7 +555,7 @@ new RareCharts.Map('#chart', {
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -575,7 +570,7 @@ new RareCharts.Map('#chart', {
             <td>Padding in px around the feature bounds when fitting the projection.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Geographic data</h5></td>
+            <td colspan="4"><h5 id="geographic-data-2">Geographic data</h5></td>
         </tr>
         <tr>
             <td><code>geoUrl</code></td>
@@ -632,7 +627,7 @@ new RareCharts.Map('#chart', {
             </td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Projection</h5></td>
+            <td colspan="4"><h5 id="projection">Projection</h5></td>
         </tr>
         <tr>
             <td><code>projection</code></td>
@@ -653,7 +648,7 @@ new RareCharts.Map('#chart', {
             <td>Optional projection rotation passed to <code>projection.rotate([lambda, phi, gamma])</code> when supported by the chosen projection.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Colors</h5></td>
+            <td colspan="4"><h5 id="colors">Colors</h5></td>
         </tr>
         <tr>
             <td><code>defaultFill</code></td>
@@ -692,7 +687,7 @@ new RareCharts.Map('#chart', {
             <td>Border stroke-width in px.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
+            <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>zoom</code></td>
@@ -714,8 +709,10 @@ new RareCharts.Map('#chart', {
         </tr>
     </tbody>
 </table>
+</div>
 <p><strong>Data fields</strong></p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -746,7 +743,8 @@ new RareCharts.Map('#chart', {
         </tr>
     </tbody>
 </table>
-<h3>Minimal example</h3>
+</div>
+<h3 id="minimal-example">Minimal example</h3>
 <pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
     title:      'Market Presence',
     topoUrl:    '/assets/charts/data/countries-110m.json',
@@ -790,7 +788,7 @@ new RareCharts.Map('#chart', {
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

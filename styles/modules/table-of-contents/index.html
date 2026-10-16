@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -426,8 +429,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Table of Contents</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="table-of-contents">Table of Contents</h1>
   </section>
 
     <article>
@@ -443,23 +446,23 @@
         <ul>
           
             <li>
-              <a href="/styles/layout/#grid/">Grid</a>
+              <a href="/styles/layout/#grid-architecture">Grid</a>
             </li>
           
             <li>
-              <a href="/styles/layout/#template-structure/">Template Structure</a>
+              <a href="/styles/layout/#template-structure">Template Structure</a>
             </li>
           
             <li>
-              <a href="/styles/layout/#responsive-design/">Responsive Design</a>
+              <a href="/styles/layout/#responsive-behavior">Responsive Design</a>
             </li>
           
             <li>
-              <a href="/styles/layout/#full-width-layout/">Full-Width Layout</a>
+              <a href="/styles/layout/#full-width-layout-option">Full-Width Layout</a>
             </li>
           
             <li>
-              <a href="/styles/layout/#themes/">Themes</a>
+              <a href="/styles/themes/">Themes</a>
             </li>
           
         </ul>
@@ -475,35 +478,31 @@
         <ul>
           
             <li>
-              <a href="/styles/typography/#font-families/">Font Families</a>
+              <a href="/styles/typography/#typeface-selection">Font Families</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#copy-hierarchy/">Copy Hierarchy</a>
+              <a href="/styles/typography/#copy-hierarchy">Copy Hierarchy</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#headings/">Headings</a>
+              <a href="/styles/typography/#heading-levels">Headings</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#body-text/">Body Text</a>
+              <a href="/styles/typography/text-content/#body-text">Body Text</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#blockquotes/">Blockquotes</a>
+              <a href="/styles/typography/text-content/#blockquote">Blockquotes</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#code/">Code</a>
+              <a href="/styles/typography/text-content/#raw-code">Code</a>
             </li>
           
             <li>
-              <a href="/styles/typography/#inline-elements/">Sidenotes</a>
-            </li>
-          
-            <li>
-              <a href="/styles/typography/#horizontal-rules/">Horizontal Rules</a>
+              <a href="/styles/typography/sidenotes/">Sidenotes</a>
             </li>
           
         </ul>
@@ -519,15 +518,15 @@
         <ul>
           
             <li>
-              <a href="/styles/typography/interactive/#links/">Links</a>
+              <a href="/styles/typography/interactive/#links">Links</a>
             </li>
           
             <li>
-              <a href="/styles/typography/interactive/#buttons/">Buttons</a>
+              <a href="/styles/typography/interactive/#buttons">Buttons</a>
             </li>
           
             <li>
-              <a href="/styles/typography/interactive/#forms/">Forms</a>
+              <a href="/styles/typography/interactive/#forms">Forms</a>
             </li>
           
         </ul>
@@ -543,23 +542,23 @@
         <ul>
           
             <li>
-              <a href="/styles/typography/lists/#lists/">Lists</a>
+              <a href="/styles/typography/lists/#lists">Lists</a>
             </li>
           
             <li>
-              <a href="/styles/typography/lists/#columns/">Columns</a>
+              <a href="/styles/typography/lists/#multi-column-list-layouts">Columns</a>
             </li>
           
             <li>
-              <a href="/styles/typography/lists/#when-mechanical-columns-fall-short/">Multigroup &amp; Fixed Rows</a>
+              <a href="/styles/typography/lists/#list-group-pack">Multigroup &amp; Fixed Rows</a>
             </li>
           
             <li>
-              <a href="/styles/typography/lists/#feed-list/">Feed List</a>
+              <a href="/styles/typography/lists/#feed-lists">Feed List</a>
             </li>
           
             <li>
-              <a href="/styles/typography/lists/#directory-list/">Directory List</a>
+              <a href="/styles/typography/lists/#catalog-lists">Catalog List</a>
             </li>
           
         </ul>
@@ -575,7 +574,7 @@
         <ul>
           
             <li>
-              <a href="/styles/typography/tables/#preset-tables/">Preset Tables</a>
+              <a href="/styles/typography/tables/#preset-tables">Preset Tables</a>
             </li>
           
         </ul>
@@ -591,19 +590,19 @@
         <ul>
           
             <li>
-              <a href="/styles/colors/#grayscale-palette/">Grayscale Palette</a>
+              <a href="/styles/colors/#grayscale-palette">Grayscale Palette</a>
             </li>
           
             <li>
-              <a href="/styles/colors/#brand-color/">Brand Color</a>
+              <a href="/styles/colors/#brand-color">Brand Color</a>
             </li>
           
             <li>
-              <a href="/styles/colors/#technical-colors/">Technical Colors</a>
+              <a href="/styles/colors/#technical-colors">Technical Colors</a>
             </li>
           
             <li>
-              <a href="/styles/colors/#supporting-colors/">Supporting Colors</a>
+              <a href="/styles/colors/#supporting-colors">Supporting Colors</a>
             </li>
           
         </ul>
@@ -632,7 +631,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

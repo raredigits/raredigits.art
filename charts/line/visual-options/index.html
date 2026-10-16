@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -444,15 +438,15 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Line Chart Visual Options</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="line-chart-visual-options">Line Chart Visual Options</h1>
   </section>
 
     <article>
       <p>Line charts are not only about data. They are also about how that data is read. The same numbers can look stable, volatile, aggressive, or conservative depending on curve interpolation, stroke style, area fill and point markers.</p>
 <p>This demo exposes the core visual options available in Line. Instead of listing them abstractly, it allows you to toggle them and see how the chart reacts in real time.</p>
 <div id="rc-demo-root"></div>
-<h3>Curve</h3>
+<h3 id="curve">Curve</h3>
 <p>The curve option controls interpolation between points. Interpolation changes the perceived smoothness and direction of movement. Available values:</p>
 <ul>
 <li>
@@ -468,17 +462,17 @@
 <p><code>step</code>, <code>stepBefore</code>, and <code>stepAfter</code> are useful when values represent discrete changes rather than continuous movement.</p>
 </li>
 </ul>
-<h3>On Smoothing and Visual Honesty</h3>
+<h3 id="on-smoothing-and-visual-honesty">On Smoothing and Visual Honesty</h3>
 <p>Smoothing is powerful. It can make a volatile series look readable. It can also make it look calmer than it actually is.</p>
 <p>Curves like basis or cardinal interpolate between points and may introduce shapes that were not present in the original data. This is not an error — it is mathematics. But it does change perception. A sharp drawdown can become a soft dip. A sudden jump can become a gradual slope.</p>
 <p>If your chart represents precise financial performance, risk metrics, or operational events, prefer linear or monotone. They preserve the direction of movement without inventing additional curvature.</p>
 <p>Use stronger smoothing only when you are visualizing long-term tendencies and individual point accuracy is less important than overall structure.</p>
 <p>A chart is not just a visual object. It is an argument. The interpolation method becomes part of that argument.</p>
 <p>Choose it consciously.</p>
-<h3>Stroke Style</h3>
+<h3 id="stroke-style">Stroke Style</h3>
 <p>The <code>strokeDash</code> option controls line pattern: <code>null</code> (<code>solid</code>) | <code>dashed</code> | <code>dotted</code> | <code>dashDot</code> | <code>longDash</code></p>
 <p>This is useful when color alone is not enough to differentiate series, or when you want to emphasize one line without changing its weight.</p>
-<h3>Area Fill</h3>
+<h3 id="area-fill">Area Fill</h3>
 <p>The area option enables fill under the line. This can be useful for highlighting magnitude rather than only direction.</p>
 <p>When enabled, the baseline can be controlled via areaBaseline:</p>
 <ul>
@@ -493,7 +487,7 @@
   areaOpacity: 0.12
 }).setData(series);</code></pre>
 <p>Area fill is powerful, but it changes the visual weight of the series. In multi-series comparisons, use it deliberately.</p>
-<h3>Markers</h3>
+<h3 id="markers">Markers</h3>
 <p>Markers highlight individual data points. They are disabled by default because dense time series do not need extra noise.</p>
 <p>When enabled:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
@@ -502,9 +496,9 @@
   markerSize: 4
 }).setData(series);</code></pre>
 <p>Markers are useful when data is sparse, exact sampling points matter and the chart is presented statically (e.g. in a PDF). They are usually unnecessary for dense daily or intraday data.</p>
-<h3>Combined Usage</h3>
+<h3 id="combined-usage">Combined Usage</h3>
 <p>All visual options can be combined. The demo above regenerates the chart and shows the corresponding configuration snippet. This mirrors how the library is typically used: you define options once, pass data, and let the chart instance handle rendering.</p>
-<h3>Notes on Formatting</h3>
+<h3 id="notes-on-formatting">Notes on Formatting</h3>
 <p>In the example, the Y axis uses a custom formatter:</p>
 <pre class="text-content-caption"><code>yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1)</code></pre>
 <p>This is intentional. In performance-style charts, sign clarity matters. The library allows full control over tick formatting so you can enforce business-specific conventions without rewriting rendering logic.</p>
@@ -530,7 +524,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

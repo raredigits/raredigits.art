@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -450,17 +453,17 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Text Elements / Lists &amp; Columns</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="text-elements-lists-and-columns">Text Elements / Lists &amp; Columns</h1>
   </section>
 
     <article>
-      <h2>Lists</h2>
+      <h2 id="lists">Lists</h2>
 <div class="meta-info">css/modules/typography/_lists.scss</div>
 <p>This module handles two related jobs. First, it gives the project a small set of reusable list patterns: plain resets, section indexes, feeds, and browseable catalogs. Second, it provides three ways to lay long lists out across multiple columns when a single vertical stack becomes too tall to scan comfortably.</p>
 <p>Use native <code>&lt;ul&gt;</code> and <code>&lt;ol&gt;</code> whenever the default document flow is enough. Reach for these classes when the list needs a clearer visual role, richer item metadata, or a deliberate multi-column layout. Definition lists (<code>&lt;dl&gt;</code>) are covered with the <a href="/styles/typography/text-content/">special text elements</a> — they are a text pattern, not a list pattern.</p>
-<h2>Small building blocks</h2>
-<h3><code>.list-unstyled</code></h3>
+<h2 id="small-building-blocks">Small building blocks</h2>
+<h3 id="list-unstyled"><code>.list-unstyled</code></h3>
 <p>The base reset for structural lists. It removes bullets and left padding but keeps the semantic list markup intact.</p>
 <ul class="list-unstyled">
     <li>Navigation remains a real list</li>
@@ -468,7 +471,7 @@
     <li>Indentation resets to zero</li>
 </ul>
 <p>Use it for navigation blocks, groups of links, table-of-contents lists, and any custom list pattern where the marker would be visual noise.</p>
-<h3><code>.list-title</code></h3>
+<h3 id="list-title"><code>.list-title</code></h3>
 <p>An uppercase, bold label for a list group. It works above unstyled lists, inside <code>.list-group-pack</code> columns, and as the title of an <code>.index-list</code>. It is a pure label utility: it carries no margins of its own — vertical rhythm belongs to the surrounding context. A plain <code>&lt;span&gt;</code> is the right element for it — the label is a visual marker, not a document heading; the utility pins <code>font-family</code> and <code>font-size: 1em</code> so it stays stable even if it lands on a heading element.</p>
 <p><span class="list-title">Reference</span></p>
 <ul class="list-unstyled">
@@ -476,8 +479,8 @@
     <li>Changelog</li>
     <li>Migration Notes</li>
 </ul>
-<h2>Index lists</h2>
-<h3><code>.index-list</code></h3>
+<h2 id="index-lists">Index lists</h2>
+<h3 id="index-list"><code>.index-list</code></h3>
 <p><code>index-list</code> is the compact &quot;section title + short link list&quot; pattern used for table-of-contents style navigation. The title is the thing you scan first; the items underneath stay tight and quiet.</p>
 <p>The markup is deliberately plain: a <code>.list-title</code> label on a <code>&lt;span&gt;</code>, then a bare <code>&lt;ul&gt;</code> — the component styles its own <code>ul</code>/<code>li</code> (resets markers, sets item rhythm), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (<code>margin-bottom</code>), so stacked or packed index lists separate cleanly — it is also the canonical content unit inside <code>.list-group-pack</code> columns.</p>
 <div class="index-list">
@@ -489,8 +492,9 @@
     </ul>
 </div>
 <p>Use it when each list needs a named category above it. If the items themselves need metadata or a richer browse-to-pick reading, move up to <code>.catalog-list</code>.</p>
-<h2>Multi-column list layouts</h2>
+<h2 id="multi-column-list-layouts">Multi-column list layouts</h2>
 <p>All three utilities below solve the same problem in different ways: a list is too tall to read comfortably as one vertical stack. The right choice depends on what you want to control.</p>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -521,14 +525,15 @@
 </tr>
 </tbody>
 </table>
-<h3>How to choose quickly</h3>
+</div>
+<h3 id="how-to-choose-quickly">How to choose quickly</h3>
 <ul>
 <li>Use <code>.list-columns</code> when you have one long plain list and just want it to become shorter on screen.</li>
 <li>Use <code>.list-group-pack</code> when the list is made of named groups and each group should stay whole.</li>
 <li>Use <code>.list-fixed-rows</code> when you want a strict visual rhythm, for example exactly 3 or 4 rows. For a fixed two-column layout (most commonly a table of contents), set <code>--list-rows</code> to half the item count — the columns come out equal-width automatically.</li>
 </ul>
 <p>In short: <code>.list-columns</code> controls columns, <code>.list-group-pack</code> protects groups, <code>.list-fixed-rows</code> controls rows.</p>
-<h3><code>.list-columns</code></h3>
+<h3 id="list-columns"><code>.list-columns</code></h3>
 <div class="sidenote-wrapper">
     <p>The default packer for a single flat list. It removes markers, flows items into two columns by default, and can be expanded with <code>.list-columns-3</code>, <code>.list-columns-4</code>, or <code>.list-columns-5</code>.</p>
     <div class="sidenote">
@@ -558,11 +563,11 @@
         <p>Use it when mechanical balancing is acceptable. If list items belong to named groups that must not split across a column edge, use <code>.list-group-pack</code> instead.</p>
     </div>
 </div>
-<h3><code>.list-group-pack</code></h3>
+<h3 id="list-group-pack"><code>.list-group-pack</code></h3>
 <p>For grouped sublists with subheadings. This utility packs the groups into columns sequentially and keeps each child block intact with <code>break-inside: avoid</code>, so a label and its items travel together. The canonical child is an <code>.index-list</code> — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.</p>
-<p>Important: <code>column-fill: auto</code> only does useful work when the container has a height. Add a height utility such as <code>.height-xxxl</code> or set a custom height inline. You can also tune the minimum column width with <code>--list-group-pack-min</code>.</p>
+<p>Important: <code>column-fill: auto</code> only does useful work when the container has a height. Add a height utility such as <code>.height-xxxxl</code>, or set a custom height inline, tall enough for the groups at the narrowest desktop width; otherwise the extra columns spill out to the right. You can also tune the minimum column width with <code>--list-group-pack-min</code>.</p>
 <p>On narrow viewports the utility ignores the height-driven packing and falls back to a balanced fixed-count layout: 2 columns on mobile, 3 on tablet.</p>
-<div class="list-group-pack height-xxxl" style="--list-group-pack-min: 11rem;">
+<div class="list-group-pack height-xxxxl" style="--list-group-pack-min: 11rem;">
     <div class="index-list">
         <span class="list-title">Foundations</span>
         <ul>
@@ -599,7 +604,7 @@
         </ul>
     </div>
 </div>
-<h3><code>.list-fixed-rows</code></h3>
+<h3 id="list-fixed-rows"><code>.list-fixed-rows</code></h3>
 <p>The grid-based option. Instead of choosing a column count, you choose the number of rows with the custom property <code>--list-rows</code>. The browser then fills columns automatically in source order.</p>
 <p>This is useful when visual rhythm depends on a fixed row count rather than on balanced columns.</p>
 <p>On mobile the fixed-row contract is dropped: the list reflows into two equal columns in row order. If two columns are too tight or too loose for your items, override the count with the responsive grid utilities — <code>mobile:grid-cols-1</code>, <code>mobile:grid-cols-3</code>, and so on — right on the same element.</p>
@@ -611,7 +616,7 @@
     <li>Verify responsive behavior</li>
     <li>Link the next typography page</li>
 </ol>
-<h4>Two equal columns (tables of contents)</h4>
+<h4 id="two-equal-columns-tables-of-contents">Two equal columns (tables of contents)</h4>
 <p>A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and <code>--list-rows: 4</code>, the grid fills four rows and wraps into two equal-width columns — <code>.list-fixed-rows</code> sizes its implicit columns with <code>minmax(0, 1fr)</code>, so they stay equal without any extra class.</p>
 <div class="note">Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</div>
 <ol class="list-fixed-rows" style="--list-rows: 4;">
@@ -624,13 +629,13 @@
     <li>Navigation</li>
     <li>Decorations</li>
 </ol>
-<h2>Feed lists</h2>
-<h3><code>.feed-list</code>, <code>.feed-list__item</code>, <code>.feed-list__title</code>, <code>.feed-list__meta</code></h3>
+<h2 id="feed-lists">Feed lists</h2>
+<h3 id="feed-list-feed-list-item-feed-list-title-feed-list-meta"><code>.feed-list</code>, <code>.feed-list__item</code>, <code>.feed-list__title</code>, <code>.feed-list__meta</code></h3>
 <p>A feed is a chronological vertical stream — and a navigation surface, not body copy. Authors put content into a feed precisely because it deserves the reader's attention, so the pattern spends visual budget on it: full-size titles and generous vertical whitespace between line-separated items signal that the entries are valuable. Each item gets a top rule, a title, and a quiet meta line that keeps dates and tags from competing with the title. The pattern is intentionally narrow: it is for updates, logs, changelogs, or knowledge-base streams where sequence matters more than per-item detail.</p>
 <div class="feed-list">
     <div class="feed-list__item">
         <span class="feed-list__meta">10.06.2026</span>
-        <h4 class="feed-list__title"><a href="">Lists module harvested and normalized</a></h4>
+        <h4 class="feed-list__title" id="lists-module-harvested-and-normalized"><a href="">Lists module harvested and normalized</a></h4>
         <div class="feed-list__meta">
             <span class="tag">#release</span>
             <span class="tag">#typography</span>
@@ -638,7 +643,7 @@
     </div>
     <div class="feed-list__item">
         <span class="feed-list__meta">06.06.2026</span>
-        <h4 class="feed-list__title"><a href="">Audit findings for v0.6.14_1 prepared</a></h4>
+        <h4 class="feed-list__title" id="audit-findings-for-v0-6-14-1-prepared"><a href="">Audit findings for v0.6.14_1 prepared</a></h4>
         <div class="feed-list__meta">
             <span class="tag">#audit</span>
             <span class="tag">#maintenance</span>
@@ -646,7 +651,7 @@
     </div>
     <div class="feed-list__item">
         <span class="feed-list__meta">01.06.2026</span>
-        <h4 class="feed-list__title"><a href="">Cross-project enrichment started</a></h4>
+        <h4 class="feed-list__title" id="cross-project-enrichment-started"><a href="">Cross-project enrichment started</a></h4>
         <div class="feed-list__meta">
             <span class="tag">#harvest</span>
             <span class="tag">#release</span>
@@ -654,12 +659,12 @@
     </div>
 </div>
 <p>Use a feed when each item is mostly &quot;date + title + optional tags&quot;. If readers need to compare entries as options rather than follow them as a timeline, <code>.catalog-list</code> is usually the better fit.</p>
-<h2>Catalog lists</h2>
-<h3><code>.catalog-list</code>, <code>.catalog-list__item</code></h3>
+<h2 id="catalog-lists">Catalog lists</h2>
+<h3 id="catalog-list-catalog-list-item"><code>.catalog-list</code>, <code>.catalog-list__item</code></h3>
 <p>The browseable list pattern for catalogs, search results, documentation indexes, portfolios, and other &quot;pick one of these&quot; situations. The component is deliberately minimal: it owns the item rhythm, the title and the meta line — nothing else. Tag chips sit inline in the meta line; any extra content (a short summary paragraph, a nested list) is host content and renders with document defaults.</p>
-<h3><code>.catalog-list__title</code></h3>
+<h3 id="catalog-list-title"><code>.catalog-list__title</code></h3>
 <p>The entry title. The visual anchor of each record.</p>
-<h3><code>.catalog-list__meta</code></h3>
+<h3 id="catalog-list-meta"><code>.catalog-list__meta</code></h3>
 <p>Muted supporting metadata. Links inside stay muted too, so they remain part of the meta line instead of competing with the title. <code>.tag</code> chips can sit directly in the meta line — no dedicated wrapper needed.</p>
 <div class="text-content-caption card padding-x-lg padding-y-md">
     <div class="catalog-list">
@@ -684,7 +689,7 @@
     </div>
 </div>
 <p>The summary paragraphs above are plain <code>&lt;p&gt;</code> elements — host content, not component API.</p>
-<h3><code>.catalog-list--nest</code></h3>
+<h3 id="catalog-list-nest"><code>.catalog-list--nest</code></h3>
 <p>Indents everything under the title, so each entry reads as a parent with its nested contents: the children of the thing named in the title. Use it for file trees, API surfaces, section maps, and other hierarchical indexes.</p>
 <div class="catalog-list catalog-list--nest">
     <div class="catalog-list__item">
@@ -707,7 +712,7 @@
 </div>
 <div class="teaser-bottom">
     <p>Next:</p>
-    <h3><a href="/styles/typography/tables/">Tables</a></h3>
+    <h3 id="tables"><a href="/styles/typography/tables/">Tables</a></h3>
 </div>
 
     </article>
@@ -730,7 +735,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

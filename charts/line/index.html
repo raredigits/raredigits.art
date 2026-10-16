@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -444,8 +438,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Line Charts</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="line-charts">Line Charts</h1>
   </section>
 
     <article>
@@ -484,7 +478,7 @@
 ]);</code>
 </pre>
 <p>Dates are parsed via <code>parseDate (…)</code>, so strings, timestamps, and Date objects are accepted as long as they can be converted to a valid date.</p>
-<h3>Built-in timeframe controls</h3>
+<h3 id="built-in-timeframe-controls">Built-in timeframe controls</h3>
 <p>Line charts can expose built-in timeframe buttons directly in the chart header. This is useful when the chart is date-based and you want users to jump between common windows such as one month, six months, one year, or the full history without wiring a separate control bar.</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
     timeframes: true,
@@ -511,7 +505,7 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
     navigator: true,
 });</code>
 </pre>
-<h2>Styling and Themes</h2>
+<h2 id="styling-and-themes">Styling and Themes</h2>
 <div class="sidenote-wrapper">
     <p>RareCharts inherits its look from the active theme (and aligns with Rare Styles when used together). You can still override per-series colors directly, and you can tune presentation without rewriting chart logic.</p>
     <div class="sidenote">
@@ -519,12 +513,12 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
     </div>
     <p>Two practical defaults matter here. First, <strong>the SVG width is always 100%</strong> of the parent container. Second, height is explicit and controlled per chart instance (<code>height, default 240</code>). That combination keeps layouts stable: the chart stretches horizontally with the page, and you decide how much vertical “reading room” it gets.</p>
 </div>
-<h3>Configuration</h3>
+<h3 id="configuration">Configuration</h3>
 <p>The Line chart exposes a set of options that focus on business readability: formatting, tick density, baseline clarity, end labels, crosshair inspection, and line/area styling.</p>
-<h3>Layout and animation</h3>
+<h3 id="layout-and-animation">Layout and animation</h3>
 <p><code>height</code> sets the chart height (default 240). <code>margin</code> controls the inner padding (top/right/bottom/left); by default, the right margin is wider (60) to accommodate the Y axis labels.</p>
 <p>Animation is enabled on the first render by default (<code>animate: true</code>). You can control timing via duration (default 650 ms) and easing via <code>ease</code> (<code>cubicOut</code> by default; supported values include <code>cubicOut</code>, <code>cubicInOut</code>, <code>linear</code>).</p>
-<h3>Y axis formatting</h3>
+<h3 id="y-axis-formatting">Y axis formatting</h3>
 <p>RareCharts can format the Y axis automatically or explicitly.</p>
 <p><code>yFormat</code> supports <code>auto</code> (default), <code>percent</code>, and <code>number</code>. In <code>auto</code> mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes 12%). If you already store values as real numbers and still happen to be below 1, you probably want to force <code>number</code> to avoid accidental percent formatting.</p>
 <p>Zero is treated carefully: values with <code>|v| &lt; zeroEpsilon</code> are printed as <code>0</code> (default <code>1e-6</code>). This prevents the classic “-0.00%” or “+0.00%” artifacts that make charts look broken even when the data is correct.</p>
@@ -536,34 +530,35 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-left-axis-demo"></div>
 </div>
-<h3>X axis formatting</h3>
+<h3 id="x-axis-formatting">X axis formatting</h3>
 <p><code>xTickFormat</code> is a function <code>(date) =&gt; string</code>. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:</p>
 <pre class="text-content-caption"><code>xTickFormat: d3.timeFormat('%b %d')   <span class="code-comment">// Jan 05</span>
 // or
 xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</span>
 ]);</code>
 </pre>
-<h3>Baseline, grid, and “relative to zero”</h3>
+<h3 id="baseline-grid-and-relative-to-zero">Baseline, grid, and “relative to zero”</h3>
 <p>The chart renders a grid and a zero baseline layer. This is not a decorative choice: performance charts are usually read relative to zero, so a clear zero reference is essential. (You can still customize how the baseline looks via theme styles.)</p>
-<h3>End labels</h3>
+<h3 id="end-labels">End labels</h3>
 <p><code>endLabels</code> (default true) renders the last value for each series on the right edge. It is extremely useful in multi-series charts because it reduces legend-hunting: you look at the line, then you read its last value where the story ends.</p>
 <p>If you disable it, the chart clears that layer.</p>
-<h3>Crosshair and tooltip</h3>
+<h3 id="crosshair-and-tooltip">Crosshair and tooltip</h3>
 <p><code>crosshair</code> is enabled by default. It provides a vertical tracker line, dots at the nearest points, and a tooltip.</p>
 <p>You can override tooltip content via:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, value, color }, …] }) => html</code></pre>
 <p>If you need a plain-text tooltip, return simple HTML with minimal markup, or keep the default and let the library handle it.</p>
-<h3>Line shape, area fills, and markers</h3>
+<h3 id="line-shape-area-fills-and-markers">Line shape, area fills, and markers</h3>
 <p>Line interpolation is controlled by curve (default <code>monotone</code>). You can use <code>linear</code>, <code>basis</code>, <code>cardinal</code>, <code>step</code>, and other D3 curve names supported by the library. If you choose <code>cardinal</code>, you can tune the smoothing via <code>curveTension</code> (0.1, default 0).</p>
 <p>Area under the line can be enabled globally via <code>area: true</code>. <code>areaOpacity</code> defaults to 0.12. <code>areaBaseline</code> supports <code>zero</code>, <code>min</code>, or a numeric value.</p>
 <p>Markers (point dots) are supported via <code>markers</code> (default false), with <code>markerShape</code> (default <code>circle</code>) and <code>markerSize</code> (default 4). Markers are useful when data is sparse or you want to emphasize sampling points, but they can clutter dense series, so they’re off by default for a reason.</p>
-<h3>Per-series overrides</h3>
+<h3 id="per-series-overrides">Per-series overrides</h3>
 <p>In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include <code>curve</code>, <code>strokeWidth</code>, <code>area</code>, <code>areaOpacity</code>, and <code>areaBaseline</code>. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.</p>
-<h3>Annotations</h3>
+<h3 id="annotations">Annotations</h3>
 <p>Line charts support event markers and reference levels via the <code>annotations</code> option — vertical lines and bands for date events (halvings, releases, freeze windows), horizontal lines and bands for reference levels (break-even, KPI targets, support zones). See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API and behavior.</p>
-<h2>Line chart options</h2>
+<h2 id="line-chart-options">Line chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings page</a>.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -574,7 +569,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -622,7 +617,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Y axis</h5></td>
+            <td colspan="4"><h5 id="y-axis">Y axis</h5></td>
         </tr>
         <tr>
             <td><code>yFormat</code></td>
@@ -679,7 +674,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Values with <code>|v|</code> below this threshold are printed as <code>0</code>. Prevents <code>+0.00%</code> artifacts.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>X axis</h5></td>
+            <td colspan="4"><h5 id="x-axis">X axis</h5></td>
         </tr>
         <tr>
             <td><code>xTickFormat</code></td>
@@ -688,7 +683,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td><code>(date) =&gt; string</code> — controls X tick labels.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Line style</h5></td>
+            <td colspan="4"><h5 id="line-style">Line style</h5></td>
         </tr>
         <tr>
             <td><code>curve</code></td>
@@ -709,7 +704,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>SVG <code>stroke-dasharray</code> applied to all series globally (e.g. <code>'4,3'</code>).</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Area fill</h5></td>
+            <td colspan="4"><h5 id="area-fill">Area fill</h5></td>
         </tr>
         <tr>
             <td><code>area</code></td>
@@ -730,7 +725,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Where the fill anchors — bottom of chart, minimum data value, or a fixed Y value.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Markers</h5></td>
+            <td colspan="4"><h5 id="markers">Markers</h5></td>
         </tr>
         <tr>
             <td><code>markers</code></td>
@@ -751,7 +746,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Marker radius in px.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Visibility</h5></td>
+            <td colspan="4"><h5 id="visibility">Visibility</h5></td>
         </tr>
         <tr>
             <td><code>showGrid</code></td>
@@ -772,7 +767,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Show the Y (value) axis. Its side margin collapses once <code>endLabels</code> is off too — the axis and the end labels share that gutter. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
+            <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>
@@ -793,7 +788,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Render the last value of each series at the right edge.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Annotations</h5></td>
+            <td colspan="4"><h5 id="annotations-2">Annotations</h5></td>
         </tr>
         <tr>
             <td><code>annotations</code></td>
@@ -808,7 +803,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td>Pixels reserved above the chart for vertical annotation labels.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Animation</h5></td>
+            <td colspan="4"><h5 id="animation">Animation</h5></td>
         </tr>
         <tr>
             <td><code>animate</code></td>
@@ -830,7 +825,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
         </tr>
         <tr class="table-section">
             <td colspan="4">
-                <h5>Single-series shortcuts</h5>
+                <h5 id="single-series-shortcuts">Single-series shortcuts</h5>
                 <p>These only apply when data is passed as a flat <code>[{date, value}]</code> array:</p>
             </td>
         </tr>
@@ -848,7 +843,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
         </tr>
         <tr class="table-section">
             <td colspan="4">
-                <h5>Per-series overrides (multi-series)</h5>
+                <h5 id="per-series-overrides-multi-series">Per-series overrides (multi-series)</h5>
                 <p>Each series object in the data array can include these fields to override global settings:</p>
             </td>
         </tr>
@@ -908,9 +903,10 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
         </tr>
     </tbody>
 </table>
+</div>
 <div class="teaser-bottom">
     <p>Next:</p>
-    <h3><a href="/charts/line/visual-options/">Detailed visual options examples</a></h3>
+    <h3 id="detailed-visual-options-examples"><a href="/charts/line/visual-options/">Detailed visual options examples</a></h3>
 </div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance.js"></script>
@@ -936,7 +932,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

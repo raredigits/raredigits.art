@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -432,8 +426,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Bar Charts</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="bar-charts">Bar Charts</h1>
   </section>
 
     <article>
@@ -446,7 +440,7 @@
 <div class="text-content-width">
     <div id="bar-chart-coder-gender"></div>
 </div>
-<h3>Data format</h3>
+<h3 id="data-format">Data format</h3>
 <p>Bar expects a simple dataset:</p>
 <pre class="text-content-caption"><code>[
     { label: 'Sales', value: 128000 },
@@ -470,14 +464,14 @@
 chart.setData(data);</code></pre>
 <p>Timeframe controls apply only to the date-based vertical mode. They do not apply to ordinary categorical bars or horizontal rank-style bars.</p>
 <p>There is a third shape: hand Bar series-major data <code>[{ name, values }]</code> and it switches into the stacked mode — segments per category, an auto-built legend, and a <code>'percent'</code> variant. See <a href="/charts/bar/stacked-bar/">Stacked Bar</a>.</p>
-<h3>Long labels (without ruining the axis)</h3>
+<h3 id="long-labels-without-ruining-the-axis">Long labels (without ruining the axis)</h3>
 <p>Real category labels are rarely “A, B, C”. They are usually “Dubai Marina - Contract Renewals (Enterprise)”. For that, Bar supports <code>labelMaxLength</code>, which truncates the rendered axis label to a fixed number of characters and adds an ellipsis. Importantly, the full label remains available via tooltip when the label was truncated, so you do not lose information, you just stop the axis from turning into a paragraph.</p>
 <p>This is one of those details you only miss when you do not have it.</p>
-<h3>Value formatting and units</h3>
+<h3 id="value-formatting-and-units">Value formatting and units</h3>
 <p>In vertical mode, the Y axis uses <code>yTickFormat</code>. If you do not provide it, Bar falls back to a compact number formatter and supports <code>yPrefix</code> and <code>ySuffix</code> for units.</p>
 <p>In horizontal mode, the X axis uses <code>xTickFormat</code> (again, compact by default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”.</p>
 <p>Tooltips can be customized via <code>tooltipFormat (d) =&gt; html</code>, where <code>d</code> is <code>{ label, value }</code>. By default it shows the label and the value with comma formatting.</p>
-<h3>Built-in timeframe controls</h3>
+<h3 id="built-in-timeframe-controls">Built-in timeframe controls</h3>
 <p>When the bar chart is running in time-based mode, the shared view API is available:</p>
 <ul>
 <li><code>timeframes</code> renders the built-in range buttons in the chart header.</li>
@@ -493,18 +487,18 @@ chart.setData(data);</code></pre>
     defaultTimeframe: '1Y',
     navigator: true,
 });</code></pre>
-<h3>Showing values on bars (horizontal)</h3>
+<h3 id="showing-values-on-bars-horizontal">Showing values on bars (horizontal)</h3>
 <p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
 <p>This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.</p>
-<h3>Animation (if you must)</h3>
+<h3 id="animation-if-you-must">Animation (if you must)</h3>
 <p>Bar can animate on first render (<code>animate: true</code> by default). The timing is controlled by duration, per-bar delay by stagger, and easing via <code>ease</code> (<code>cubicOut</code>, <code>cubicInOut</code>, or <code>linear</code>). The chart only animates once per instance by design, so it does not turn normal updates into a circus.</p>
-<h3>Hiding axes and grid</h3>
+<h3 id="hiding-axes-and-grid">Hiding axes and grid</h3>
 <p>Sometimes the cleanest chart is one with less chrome. All three visual layers — grid lines, X axis, and Y axis — can be independently hidden:</p>
 <pre class="text-content-caption"><code>showGrid:  false   <span class="code-comment">// no grid lines</span>
 showXAxis: false   <span class="code-comment">// no bottom axis</span>
 showYAxis: false   <span class="code-comment">// no side axis</span></code></pre>
 <p>This is especially useful inside a <code>MultiChart</code> when panels share the same category labels: suppress the Y axis on panels after the first to eliminate duplication and give bars more horizontal room.</p>
-<h3>Quick example</h3>
+<h3 id="quick-example">Quick example</h3>
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
   orientation: 'horizontal',
   height: 260,
@@ -513,9 +507,10 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
   valueFormat: d => d3.format(',.0f')(d.value),
   xTickFormat: d => d3.format('.2s')(d),
 }).setData(data);</code></pre>
-<h2>Bar chart options</h2>
+<h2 id="bar-chart-options">Bar chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -526,7 +521,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -574,7 +569,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td>Built-in overview strip with brush selection under date-based vertical bars. Ignored for categorical and horizontal bars.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Bar style</h5></td>
+            <td colspan="4"><h5 id="bar-style">Bar style</h5></td>
         </tr>
         <tr>
             <td><code>barColor</code></td>
@@ -598,7 +593,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             </td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Animation</h5></td>
+            <td colspan="4"><h5 id="animation">Animation</h5></td>
         </tr>
         <tr>
             <td><code>animate</code></td>
@@ -625,7 +620,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td>Easing: <code>'cubicOut'</code>, <code>'cubicInOut'</code>, <code>'linear'</code>.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Value labels (horizontal mode only)</h5></td>
+            <td colspan="4"><h5 id="value-labels-horizontal-mode-only">Value labels (horizontal mode only)</h5></td>
         </tr>
         <tr>
             <td><code>showValues</code></td>
@@ -657,7 +652,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             </td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Axis formatting</h5></td>
+            <td colspan="4"><h5 id="axis-formatting">Axis formatting</h5></td>
         </tr>
         <tr>
             <td><code>yTickFormat</code></td>
@@ -708,7 +703,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td>Explicit Y tick positions in vertical mode. Overrides <code>yTicks</code>.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Visibility</h5></td>
+            <td colspan="4"><h5 id="visibility">Visibility</h5></td>
         </tr>
         <tr>
             <td><code>showGrid</code></td>
@@ -739,7 +734,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             </td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
+            <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
@@ -752,6 +747,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
         </tr>
     </tbody>
 </table>
+</div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-revenue.js"></script>
 <script src="/assets/charts/examples/bar/bar-chart-coder-gender.js"></script>
@@ -776,7 +772,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

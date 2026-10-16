@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -416,18 +410,19 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Settings</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="settings">Settings</h1>
   </section>
 
     <article>
       <p>Every chart type in RareCharts extends a shared base class. That means there's a set of options that work the same way everywhere — you don't need to re-learn them for each chart type.</p>
 <p>This page documents those shared options. Chart-specific options (axis formatting, link types, bar orientation, etc.) are documented on each chart's own page.</p>
-<h2>Anatomy — the text slots</h2>
+<h2 id="anatomy-the-text-slots">Anatomy — the text slots</h2>
 <p>Every piece of text around a chart — the headline, the explanatory line, the legend, the attribution — is an <strong>option you pass to the constructor</strong>. The component renders it, in the system's typography and spacing, in the right place. You do not hand-build a title, a source line, or a caption in your own markup around the chart container. Feed the options and let the chart own the layout.</p>
 <p>This matters because hardcoded structure drifts. A title written as a full sentence, a source without the <code>Source:</code> framing, an interpretive caption bolted on as a stray <code>&lt;div&gt;</code> — each one is a chart that no longer looks like the rest of the document. The slots below exist so the same data always reads the same way.</p>
 <p>Each slot has a job. Use the right one and the chart composes correctly on its own.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Slot</th>
@@ -463,6 +458,7 @@
         </tr>
     </tbody>
 </table>
+</div>
 <p>A correctly composed header and footer, then, is just options:</p>
 <pre class="text-content-caption"><code>new RareCharts.DualAxes('#chart', {
   title:    'Revenue Dynamics',
@@ -474,12 +470,12 @@
   ],
 }).setData(series);</code></pre>
 <p>The reference for each slot's exact type and behavior follows below.</p>
-<h2>The constructor</h2>
+<h2 id="the-constructor">The constructor</h2>
 <p>All charts are created the same way:</p>
 <pre class="text-content-caption"><code>new RareCharts.ChartType(selector, options)</code></pre>
 <p><code>selector</code> is a CSS selector string (<code>'#my-chart'</code>) or a direct DOM element reference. If the element is not found, the chart throws immediately — which is better than silently rendering into nothing and leaving you confused for twenty minutes.</p>
 <p><code>options</code> is a plain object. Everything is optional.</p>
-<h2>Header options</h2>
+<h2 id="header-options">Header options</h2>
 <p>The chart header sits above the chart area and can contain a title, a subtitle, and a legend.</p>
 <table>
 <thead>
@@ -513,7 +509,7 @@
 </tbody>
 </table>
 <p>If none of these are provided, no header element is created — the chart starts right at the top of the container.</p>
-<h3>Legend format</h3>
+<h3 id="legend-format">Legend format</h3>
 <p>Pass an array of items and the chart renders them as a horizontal row of labeled indicators:</p>
 <pre class="text-content-caption"><code>legend: [
   { label: 'Portfolio A', color: '#00c97a' },
@@ -527,7 +523,7 @@
 </ul>
 <p>For line charts, use the default (line indicator). For bar and donut charts, use <code>type: 'bar'</code> — it renders a square dot instead of a line, which actually matches the shape of what you're labeling.</p>
 <p><code>legendPosition: 'right'</code> places the legend in a vertical column to the right of the chart. Useful when you have many series and don't want the legend eating into the chart's vertical space. The chart area automatically adjusts its width.</p>
-<h2>Footer</h2>
+<h2 id="footer">Footer</h2>
 <table>
 <thead>
 <tr>
@@ -566,7 +562,7 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   { text: 'Bloomberg', href: 'https://bloomberg.com' },
   ', Internal calculations',     <span class="code-comment">// plain, no link</span>
 ]</code></pre>
-<h2>Layout</h2>
+<h2 id="layout">Layout</h2>
 <table>
 <thead>
 <tr>
@@ -596,7 +592,7 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   height: 320,
   margin: { top: 8, right: 50, bottom: 16, left: 40 },
 })</code></pre>
-<h2>Theme</h2>
+<h2 id="theme">Theme</h2>
 <table>
 <thead>
 <tr>
@@ -622,7 +618,7 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   theme: { accent: '#ff6200' },
 }).setData(data);</code></pre>
-<h2>Colors</h2>
+<h2 id="colors">Colors</h2>
 <p>Chart colors follow a clear resolution order. Understanding it tells you exactly where to set a color and how overrides interact.</p>
 <p>For each series, the chart resolves color in this order:</p>
 <ol>
@@ -641,7 +637,7 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   lineColor: '#00c97a',
 }).setData([{ date, value }, ...]);</code></pre>
 <p>Area fills inherit the series <code>color</code>. Their opacity is controlled separately via <code>areaOpacity</code> (default <code>0.12</code>). Bar fill opacity is <code>barOpacity</code> (default <code>0.35</code>). Both can be set as chart options or through the theme.</p>
-<h2>Axis labels</h2>
+<h2 id="axis-labels">Axis labels</h2>
 <p>Y axis tick labels support two levels of customization.</p>
 <p><strong>Prefix and suffix</strong> (Line charts) attach a fixed string before or after each auto-formatted value:</p>
 <pre class="text-content-caption"><code>yPrefix: '$'    <span class="code-comment">// → $1.2M</span>
@@ -652,11 +648,11 @@ ySuffix: '%'    <span class="code-comment">// → 12.5%</span></code></pre>
 <pre class="text-content-caption"><code>y1TickFormat: v => '$' + d3.format(',.2f')(v),
 y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
 <p>When <code>yTickFormat</code> is provided, <code>yPrefix</code>, <code>ySuffix</code>, and <code>yFormat</code> are all ignored — the format function takes full ownership.</p>
-<h2>Crosshair and tooltip</h2>
+<h2 id="crosshair-and-tooltip">Crosshair and tooltip</h2>
 <p>The crosshair is a vertical tracker that follows the cursor, snaps to the nearest data point on each series, and shows a tooltip. It is enabled by default on Line, TimeSeries, and DualAxes charts.</p>
 <p>To disable it entirely (removes both the tracker line and the tooltip):</p>
 <pre class="text-content-caption"><code>crosshair: false</code></pre>
-<h3>Custom tooltip</h3>
+<h3 id="custom-tooltip">Custom tooltip</h3>
 <p><code>tooltipFormat</code> replaces the default tooltip with your own HTML:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ date, points }) => {
   const d = d3.timeFormat('%b %d, %Y')(date);
@@ -666,7 +662,7 @@ y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
     ).join('');
 }</code></pre>
 <p><code>points</code> is an array of <code>{ name, value, color, fmt }</code> — one entry per series. <code>fmt</code> is the value already run through <code>yTickFormat</code> (or the default formatter), so you don't need to reformat it yourself.</p>
-<h3>Tooltip styling</h3>
+<h3 id="tooltip-styling">Tooltip styling</h3>
 <p>Tooltip colors and shadow are controlled through <code>theme.tooltip</code>:</p>
 <pre class="text-content-caption"><code>theme: {
   tooltip: {
@@ -678,7 +674,7 @@ y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
   }
 }</code></pre>
 <p>For structural changes (padding, border-radius, font size), target the <code>.rc-tooltip</code> CSS class directly. The crosshair line uses <code>.rc-cross-line</code>.</p>
-<h2>setData()</h2>
+<h2 id="setdata">setData()</h2>
 <p>All charts expose a <code>setData(data)</code> method that accepts the chart-specific data format and triggers a render. You can call it multiple times — the chart will update in place without re-initializing.</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', options);
 
@@ -686,10 +682,10 @@ chart.setData(initialData);
 
 <span class="code-comment">// Later — same chart, new data, no flicker</span>
 chart.setData(updatedData);</code></pre>
-<h2>destroy()</h2>
+<h2 id="destroy">destroy()</h2>
 <p>Cleans up the chart: disconnects the resize observer and clears the container. Call this when removing a chart from the page to avoid memory leaks.</p>
 <pre class="text-content-caption"><code>chart.destroy();</code></pre>
-<h2>Complete example</h2>
+<h2 id="complete-example">Complete example</h2>
 <pre class="text-content-caption"><code>new RareCharts.Line('#revenue-chart', {
   title:          'Monthly Revenue',
   subtitle:       'USD, last 12 months',
@@ -722,7 +718,7 @@ chart.setData(updatedData);</code></pre>
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

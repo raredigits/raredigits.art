@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="current">
+            <a href="/kb/" class="current">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -271,7 +265,7 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="knowledge-base">
           <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -299,14 +293,14 @@
       </nav>
     </aside>
     
-  <section class="page-title">
-    <h1>Hamburger Menu Saga</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="hamburger-menu-saga">Hamburger Menu Saga</h1>
   </section>
 
     <article>
       <p>The web design world has developed a curious obsession with hamburger menus, those three stacked lines hiding navigation options like a magician's secret compartment. They've become nearly universal in mobile design, a default solution whenever navigation doesn't fit neatly into a phone screen.</p>
 <p>This widespread adoption followed a predictable pattern: designers embraced them enthusiastically, users grudgingly learned to tap them, and businesses quietly suffered the consequences.</p>
-<h2>The Problem with Patties</h2>
+<h2 id="the-problem-with-patties">The Problem with Patties</h2>
 <p>The fundamental issue with hamburger menus isn't their recognizability (users have indeed figured them out) but their profound uninformativeness. A hamburger menu tells users absolutely nothing about what lurks behind those three lines. It's like labeling all the doors in your house &quot;Door&quot; – technically accurate but spectacularly unhelpful.</p>
 <div class="sidenote-wrapper">
 <p>This informational vacuum creates a motivational desert. Without visible cues about what content awaits, users have little incentive to explore. The result? <strong>Usage metrics for hidden navigation items consistently underperform</strong> compared to visible alternatives.</p>
@@ -316,11 +310,11 @@
 </div>
 </div>
 <p>Major news and content-first organizations, whose business models depend entirely on maximizing pageviews and content discovery, have largely <a href="https://techcrunch.com/2016/05/03/spotify-ditches-the-controversial-hamburger-menu-in-ios-app-redesign/">abandoned hamburger-only navigation</a> in their designs. When companies whose financial existence depends on users finding more content decide a design pattern reduces content discovery, that should probably raise a few eyebrows.</p>
-<h2>A Better Recipe</h2>
+<h2 id="a-better-recipe">A Better Recipe</h2>
 <p>The solution isn't particularly complex: <strong>don't hide important stuff in hamburgers</strong>.</p>
 <p>Primary navigation items, key conversion pathways, and frequently accessed content should remain visible, using horizontal scrolling menus, tabs, or streamlined navigation bars that expose actual information rather than concealing it.</p>
 <p>The hamburger finds its true calling as a container for secondary information: site maps, instruction manuals, help documentation, and utility links that users seek occasionally but don't need constantly.</p>
-<h2>The Rare Digits Approach</h2>
+<h2 id="the-rare-digits-approach">The Rare Digits Approach</h2>
 <p>Rare Digits promotes training users to think of hamburger menus not as primary navigation but as quick-access utility drawers – places to find FAQ sections or specialized shortcuts not warranted in main navigation. This reframing changes user expectations and behavior, transforming the hamburger from a navigation dead-end into a genuinely useful tool.</p>
 <p>It's worth remembering that interface design, like financial markets, often becomes inefficient when everyone follows the same patterns without questioning the underlying assumptions. The widespread adoption of hamburger menus represents exactly this kind of inefficiency – a solution that became standard not because it was optimal, but because it was convenient for designers.</p>
 <p>Like any market inefficiency, this creates opportunity for those willing to take a more thoughtful approach.</p>
@@ -345,7 +339,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

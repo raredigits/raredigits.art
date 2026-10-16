@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -416,8 +419,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Building Blocks</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="building-blocks">Building Blocks</h1>
   </section>
 
     <article>
@@ -442,16 +445,16 @@
 </section>
 
 <section>
-    <h2>Card vs Panel</h2>
+    <h2 id="card-vs-panel">Card vs Panel</h2>
     <p>Both are surfaces, but they answer different questions, and keeping them separate keeps the intent of a screen legible.</p>
     <div class="grid grid-cols-2 gap-md mobile:grid-cols-1">
         <div class="card bordered padding-lg column gap-sm">
-            <h4><code>.card</code> — narrative</h4>
+            <h4 id="card-narrative"><code>.card</code> — narrative</h4>
             <p>Authorial, human, story-like. An article preview, a person, a project, a pricing block, a visual fragment.</p>
             <p class="note">Soft surface, no rigid internal frame. Holds whatever the author needs.</p>
         </div>
         <div class="card bordered padding-lg column gap-sm">
-            <h4><code>.panel</code> — data</h4>
+            <h4 id="panel-data"><code>.panel</code> — data</h4>
             <p>System-facing, structured, scannable. A KPI, a status block, settings, a log, a metrics readout.</p>
             <p class="note">Explicit internal structure (header / body / footer) for content that benefits from a predictable frame.</p>
         </div>
@@ -460,7 +463,7 @@
 </section>
 
 <section>
-    <h2>Section</h2>
+    <h2 id="section">Section</h2>
     <div class="meta-info">css/modules/bricks/_sections.scss</div>
     <p>The section is the basic semantic block, thematically uniting <em>primarily text elements</em>. Think of it as the foundation piece in your construction set. It is visually separated with <code>margin-bottom: var(--space-lg)</code>:</p>
     <div class="card text-content-caption padding-lg gap-sm">
@@ -485,38 +488,38 @@
 </section>
 
 <section>
-    <h3>Wide Background</h3>
+    <h3 id="wide-background">Wide Background</h3>
     <p>Sometimes a section needs more canvas than the normal reading column allows: a full-bleed image, a contextual band, or a wide visual insert. <code>.wide-background</code> breaks the outer section to the viewport edge, while <code>.wide-background-text-content-wrapper</code> brings inner prose back to the normal line.</p>
     <div class="wide-background wide-section gray-dark-bg white">
         <div class="wide-background-text-content-wrapper">
-            <h4>A full-bleed band with a disciplined inner text line</h4>
+            <h4 id="a-full-bleed-band-with-a-disciplined-inner-text-line">A full-bleed band with a disciplined inner text line</h4>
             <p>The outer surface can carry color, imagery, or other wide media. The inner wrapper returns content to the same reading track the rest of the page uses, so a dramatic section does not force the prose to become chaotic.</p>
         </div>
     </div>
 </section>
 
 <section>
-    <h3>Feature Row</h3>
+    <h3 id="feature-row">Feature Row</h3>
     <p>When a set of features, offerings, or highlights reads better as a scannable horizontal strip than as a wrapping grid, <code>.feature-row</code> lays its <code>.feature-row__item</code> children out in a single row that scrolls sideways instead of squashing. Each item is a flex column — media on top, copy below — pinned to a fixed responsive width (<code>clamp(280px, 30vw, 420px)</code>), so the cards keep a comfortable size and the row simply runs past the edge when there are more than fit.</p>
     <div class="feature-row">
         <div class="feature-row__item">
             <div>
                 <img src="/assets/img/illustrations/duck-newspaper.png" alt="">
-                <h4>Read the table</h4>
+                <h4 id="read-the-table">Read the table</h4>
                 <p class="note">Surface the one number that changes the next move — not the whole hand.</p>
             </div>
         </div>
         <div class="feature-row__item">
             <div>
                 <img src="/assets/img/illustrations/smoking-nun.png" alt="">
-                <h4>Stay flexible</h4>
+                <h4 id="stay-flexible">Stay flexible</h4>
                 <p class="note">Match it to your brand without bending the underlying presentation logic.</p>
             </div>
         </div>
         <div class="feature-row__item">
             <div>
                 <img src="/assets/img/illustrations/doggy-underwater.png" alt="">
-                <h4>Cut the noise</h4>
+                <h4 id="cut-the-noise">Cut the noise</h4>
                 <p class="note">Every tile earns its place, or it doesn’t get one.</p>
             </div>
         </div>
@@ -525,7 +528,7 @@
 </section>
 
 <section>
-    <h2>Card</h2>
+    <h2 id="card">Card</h2>
     <div class="meta-info">css/modules/bricks/_cards.scss</div>
     <p>Cards provide distinct content separation, letting you build complex hierarchies and group related elements. By default they stand out through background color, and they lay out as a <em>flex column</em>.</p>
     <div class="card center-center padding-lg">
@@ -543,7 +546,7 @@
 </section>
 
 <section>
-    <h2>Card Grid</h2>
+    <h2 id="card-grid">Card Grid</h2>
     <div class="meta-info">css/modules/bricks/_cards.scss</div>
     <p>When one card is not enough and the cards form a regular, repeated set, <code>.card-grid</code> is the special case that arranges <code>.card-grid__item</code> tiles into a responsive grid. It is the one place where the card surface owns its own layout, because the tiles are uniform by design. Column count defaults to five via the <code>--cols-2</code> / <code>--cols-3</code> / <code>--cols-4</code> modifiers (or the <code>--card-grid-cols</code> custom property); below desktop every variant collapses to two so tiles stay legible.</p>
 
@@ -574,14 +577,14 @@
 </section>
 
 <section>
-    <h2>Composing cards — no new class required</h2>
+    <h2 id="composing-cards-no-new-class-required">Composing cards — no new class required</h2>
     <p>There is no <code>.card-deck</code> selector, and there never needs to be. A “card deck” is not a thing the library ships; it is just several cards arranged together, and arrangement is already a solved problem. Any block-level element — a <code>&lt;div&gt;</code>, a <code>&lt;section&gt;</code>, or another <code>.card</code> — can serve as the wrapper, and the alignment, positioning, spacing, and grid utilities do the placement.</p>
     <div class="card-inverted padding-b-lg text-content-width">
         <div>
             <img src="/assets/img/illustrations/poker.jpg" alt="">
         </div>
         <div class="card-header padding-md">
-            <h4>A “deck” is just composition</h4>
+            <h4 id="a-deck-is-just-composition">A “deck” is just composition</h4>
         </div>
         <div class="padding-x-md">
             <p>This block is a <code>.card-inverted</code> wrapping an image, a header, prose, and a nested card — no special deck class involved.</p>
@@ -597,7 +600,7 @@
 </section>
 
 <section>
-    <h3>Helper Selectors</h3>
+    <h3 id="helper-selectors">Helper Selectors</h3>
     <p>The same principle, pushed further. Everything below is built from cards plus decoration, color, spacing, and positioning utilities — no bespoke classes. Combine them freely to satisfy virtually any design requirement.</p>
     <div class="grid grid-cols-3 gap-md">
         <div class="card rounded-sm gray-bg col-span-2 center-center">
@@ -633,7 +636,7 @@
             <div class="width-25 square purple-bg absolute right-5 top-5 z-index-1"></div>
             <div class="width-25 square green-bg absolute z-index-0" style="left: -5%; top: -10%;"></div>
             <div class="width-25 square yellow-bg absolute z-index-0" style="right: -5%; top: -10%;"></div>
-            <h3 class="padding-t-md">Composed entirely from utilities</h3>
+            <h3 class="padding-t-md" id="composed-entirely-from-utilities">Composed entirely from utilities</h3>
             <cite class="absolute right-md bottom-md">.bordered</cite>
         </div>
     </div>
@@ -659,7 +662,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

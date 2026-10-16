@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -444,8 +438,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Time Series</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="time-series">Time Series</h1>
   </section>
 
     <article>
@@ -463,7 +457,7 @@
   <div class="price-chart-header">
       <div>
           <span class="price-chart-ticker">RARE</span>
-          <span class="price-chart-price"  id="hd-price">—</span>
+          <span class="price-chart-price" id="hd-price">—</span>
           <span class="price-chart-change" id="hd-change">—</span>
       </div>
   </div>
@@ -498,7 +492,7 @@
   </div>
 </div>
 <div class="air-md"></div>
-<h3>What problem it solves</h3>
+<h3 id="what-problem-it-solves">What problem it solves</h3>
 <p>The plain <code>Line</code> chart is enough when one view is enough. <code>TimeSeries</code> exists for the next step: when you want one chart instance to support “show me the last month”, “show me the last year”, and “show me everything” without wiring a second component tree around it.</p>
 <p>This example uses:</p>
 <ul>
@@ -508,7 +502,7 @@
 <li>a few stats below the chart</li>
 </ul>
 <p>Only the first two are specific to the module. The tooltip and stats are just ordinary page code around it.</p>
-<h3>Range buttons</h3>
+<h3 id="range-buttons">Range buttons</h3>
 <p>Range buttons are controlled by the <code>timeframes</code> option.</p>
 <pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
   timeframes: true,
@@ -522,7 +516,7 @@
 <li>if you pass <code>timeframes: true</code>, you get the built-in preset set</li>
 <li>if you pass <code>['1Y', 'ALL']</code>, you get exactly those two buttons</li>
 </ul>
-<h3>Navigator</h3>
+<h3 id="navigator">Navigator</h3>
 <p>The gray strip under the chart is controlled by <code>navigator</code>.</p>
 <pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
   navigator: true,
@@ -539,7 +533,7 @@
 });
 </code></pre>
 <p>If enabled, the navigator always reflects the full dataset and highlights the current <code>view</code>. Dragging the brush updates the main chart. Clicking a range button also updates the brush. Same state, two controls, fewer bugs.</p>
-<h3>Programmatic control</h3>
+<h3 id="programmatic-control">Programmatic control</h3>
 <p>The visible window is part of the chart API.</p>
 <pre><code class="language-js">chart.setView([start, end]);
 const current = chart.getView();
@@ -549,7 +543,7 @@ chart.onViewChange(extent =&gt; {
 });
 </code></pre>
 <p>This matters when the date range is driven by router state, saved user settings, query params, or another piece of UI that insists on being in charge.</p>
-<h3>Custom ranges</h3>
+<h3 id="custom-ranges">Custom ranges</h3>
 <p>If the built-in shortcuts are not enough, you can define your own buttons.</p>
 <pre><code class="language-js">const end = data[data.length - 1].date;
 
@@ -576,11 +570,12 @@ timeframes: [
 <li>the final range is clamped to the real data extent, so overshooting the dataset is safe</li>
 <li>if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active</li>
 </ul>
-<h3>Annotations</h3>
+<h3 id="annotations">Annotations</h3>
 <p>Time Series supports event markers and reference levels via the <code>annotations</code> option — useful for marking halvings, earnings dates, or product releases on a long-running price feed, and for placing horizontal levels (break-even, cost basis, target) on top of the area. Annotations stay in sync with zoom and pan: out-of-range entries are skipped, range bands are clamped to the visible window. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.</p>
-<h2>Time Series chart options</h2>
+<h2 id="time-series-chart-options">Time Series chart options</h2>
 <p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -591,7 +586,7 @@ timeframes: [
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Layout</h5></td>
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -630,7 +625,7 @@ timeframes: [
             <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Axes</h5></td>
+            <td colspan="4"><h5 id="axes">Axes</h5></td>
         </tr>
         <tr>
             <td><code>xTickFormat</code></td>
@@ -663,7 +658,7 @@ timeframes: [
             <td>Show only Y labels and suppress the axis line.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Visibility</h5></td>
+            <td colspan="4"><h5 id="visibility">Visibility</h5></td>
         </tr>
         <tr>
             <td><code>showGrid</code></td>
@@ -684,7 +679,7 @@ timeframes: [
             <td>Show the Y (price) axis on the right. Hiding it also collapses the right margin. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Line and Area</h5></td>
+            <td colspan="4"><h5 id="line-and-area">Line and Area</h5></td>
         </tr>
         <tr>
             <td><code>curve</code></td>
@@ -705,7 +700,7 @@ timeframes: [
             <td>Area fill color.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Interaction</h5></td>
+            <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
@@ -714,7 +709,7 @@ timeframes: [
             <td><code>(point) =&gt; html</code> — custom tooltip renderer for the active point.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Annotations</h5></td>
+            <td colspan="4"><h5 id="annotations-2">Annotations</h5></td>
         </tr>
         <tr>
             <td><code>annotations</code></td>
@@ -730,8 +725,10 @@ timeframes: [
         </tr>
     </tbody>
 </table>
-<h2>Time Series instance methods</h2>
-<table class="table-bordered card-caption">
+</div>
+<h2 id="time-series-instance-methods">Time Series instance methods</h2>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Method</th>
@@ -767,6 +764,7 @@ timeframes: [
         </tr>
     </tbody>
 </table>
+</div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-time-series.js"></script>
 
@@ -790,7 +788,7 @@ timeframes: [
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

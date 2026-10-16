@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -450,17 +453,46 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Text Elements / Interactive Elements</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="text-elements-interactive-elements">Text Elements / Interactive Elements</h1>
   </section>
 
     <article>
       <div class="meta-info">
-    css/modules/typography/_text-content.scss
+    css/modules/navigation/_links.scss · css/modules/elements/_buttons.scss · css/modules/utilities/_a11y.scss
 </div>
-<h2>Links</h2>
-<h2>Buttons</h2>
-<h2>Forms</h2>
+<h2 id="keyboard-focus">Keyboard focus</h2>
+<p>Every focusable element inside <code>.rd</code> (links, buttons, form fields, <code>summary</code>, carousel controls) shows the same ring when it is reached from the keyboard. The rule is <code>:focus-visible</code>, so the browser decides when to show it: clicking a link or a button shows no ring, while clicking into a text field does, because typing follows. Press <kbd>Tab</kbd> on this page to see it.</p>
+<p>The ring is 2px of <code>--focus-ring-color</code>, offset by 2px. The default <code>--blue</code> keeps at least 3:1 contrast on every library surface, light and dark. Restyle it with the tokens; don't remove it.</p>
+<pre><code class="language-css">:root {
+  --focus-ring-color: var(--blue);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+</code></pre>
+<p>On macOS, Safari moves <kbd>Tab</kbd> only between form fields unless &quot;Press Tab to highlight each item on a webpage&quot; is enabled (Safari → Settings → Advanced); <kbd>Option</kbd>+<kbd>Tab</kbd> reaches links and buttons either way. Firefox follows the system setting &quot;Keyboard navigation&quot; (System Settings → Keyboard).</p>
+<h2 id="links">Links</h2>
+<p>A text link is underlined in <code>--brand-color-dark</code>. On hover a soft fill of the same colour rises from the bottom of the line. With reduced motion it appears without the animation.</p>
+<p>A paragraph with <a href="/styles/typography/">a text link</a> in it, and a <a class="link-thick" href="/styles/typography/lists/">thicker link</a> with <code>.link-thick</code>.</p>
+<p>At rest a link has exactly one line, the underline. Until <code>v0.7.0</code> the hover fill sat at rest as a 1px strip just below the text box. Chrome clipped it, but Safari showed it as a second, lighter underline.</p>
+<p>Links that are not text links (icons, cards, logos) take <code>.no-decoration</code>.</p>
+<h2 id="buttons">Buttons</h2>
+<p><code>.button</code> turns a link or a <code>&lt;button&gt;</code> into a rounded control sized to its content.</p>
+<p>
+    <a class="button" href="/styles/getting-started/">Link as a button</a>
+</p>
+<p>
+    <button class="button" type="button">Button element</button>
+</p>
+<p>The full button system (variants, sizes, states) arrives with the interactive core in <code>v0.7.9</code>.</p>
+<h2 id="forms">Forms</h2>
+<p>Form fields are not styled by the library yet; that is the forms work of <code>v0.7.9</code>. Inside <code>.rd</code> they already inherit the page font and size (from normalize) and show the focus ring.</p>
+<form class="padding-y-md" onsubmit="return false">
+    <p><label>Name<br><input type="text" name="name" placeholder="Your name"></label></p>
+    <p><label>Topic<br><select name="topic"><option>Styles</option><option>Charts</option></select></label></p>
+    <p><label><input type="checkbox" name="news"> Send me release notes</label></p>
+    <p><button class="button" type="submit">Send</button></p>
+</form>
 
     </article>
   </div>
@@ -482,7 +514,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

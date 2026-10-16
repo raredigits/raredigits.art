@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -315,6 +318,16 @@
                 <a href="/styles/layout/">Layout</a>
               
               
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Spacing</span>
+                      
+                    </li>
+                  
+                </ul>
               
               
             </li>
@@ -416,8 +429,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Spacing Presets</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="spacing-presets">Spacing Presets</h1>
   </section>
 
     <article>
@@ -426,7 +439,7 @@
 
 <p>Spacing in Rare Styles is derived from a single base unit. Every margin, padding, gap and container width is a multiple of one number. The result is rhythm: blocks align, edges echo, scrolling feels predictable. Nothing is random.</p>
 
-<h2>Base Unit</h2>
+<h2 id="base-unit">Base Unit</h2>
 
 <p>The base unit is <strong>16px</strong>, exposed as <code>--base-unit</code>. It matches the browser default font size and anchors every spacing token, every grid gap, and several layout primitives — grid columns, header height, <code>fr</code> fractions.</p>
 
@@ -434,7 +447,7 @@
 
 <pre><code>:root { --base-unit: 14px; }   /* tighter scale across the entire site */</code></pre>
 
-<h2>Scale</h2>
+<h2 id="scale">Scale</h2>
 
 <p>The scale is intentionally non-linear: small steps for micro-adjustments inside components, wider doublings for layout-scale spacing. Each step carries a semantic shift, not a gradual visual nudge.</p>
 
@@ -459,7 +472,9 @@
 
 <p>Special values: <code>--space-0</code> (0), <code>--space-auto</code> (auto), and percentage tokens for layout sizing — <code>--space-5</code>, <code>--space-10</code>, <code>--space-25</code>, <code>--space-50</code>, <code>--space-100</code>, and the rest in between.</p>
 
-<h2>Utility classes</h2>
+<p><code>auto</code> exists only where CSS accepts it: <code>.margin-*-auto</code>, <code>.width-auto</code>, <code>.height-auto</code> and the inset classes (<code>.top-auto</code> …). There is no <code>.padding-*-auto</code> or <code>.gap-*-auto</code> — <code>padding</code> and <code>gap</code> have no <code>auto</code> value. The padding variants shipped until <code>v0.6.19</code> silently computed to <code>0</code>; use <code>.padding-*-0</code> instead.</p>
+
+<h2 id="utility-classes">Utility classes</h2>
 
 <p>For every token in the scale, the library generates utility classes for the common spacing properties. Replace <code>{token}</code> with any value from the scale (<code>xs</code>, <code>md</code>, <code>xxl</code>, <code>50</code>, …).</p>
 
@@ -477,13 +492,13 @@
 
 <pre><code>&lt;div class="padding-md gap-x-lg margin-y-xl"&gt;</code></pre>
 
-<h2>Responsive prefixes</h2>
+<h2 id="responsive-prefixes">Responsive prefixes</h2>
 
 <p>Every spacing utility is available with breakpoint prefixes: <code>mobile:</code>, <code>tablet:</code>, <code>desktop:</code>. Prefixed utilities apply only inside the named breakpoint and override the unprefixed value.</p>
 
 <pre><code>&lt;div class="padding-md mobile:padding-sm desktop:padding-lg"&gt;</code></pre>
 
-<h2>Aliases</h2>
+<h2 id="aliases">Aliases</h2>
 
 <p>Shorter aliases are available for the most-used spacing utilities, intended for finer typographic control inside content blocks. Each alias is one step smaller than its core counterpart — useful when the literal name would interrupt the reading flow of inline class lists.</p>
 
@@ -497,7 +512,7 @@
 
 <p>The same shape works for <code>.m-*</code> (margin), <code>.gap-*</code>, <code>.w-*</code> (width), <code>.h-*</code> (height), with all per-side variants (<code>.pt-s</code>, <code>.mx-l</code>, <code>.gy-xl</code>, …).</p>
 
-<h2>Override</h2>
+<h2 id="override">Override</h2>
 
 <p>To customize a single token without forking the library, override it at <code>:root</code> or on a specific element:</p>
 
@@ -529,7 +544,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

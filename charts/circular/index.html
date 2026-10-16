@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -416,13 +410,13 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Circular Charts</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="circular-charts">Circular Charts</h1>
   </section>
 
     <article>
       <p>RareCharts provides three circular chart types that share a common API and theme system: <strong>Donut</strong>, <strong>Pie</strong>, and <strong>Gauge</strong>. Each answers a different question.</p>
-<h2>Donut</h2>
+<h2 id="donut">Donut</h2>
 <p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
 <div id="chart-donut" class="text-content-caption card-dashboard-bordered"></div>
 <div class="air-md"></div>
@@ -434,7 +428,7 @@
   centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
   centerLabel: 'Revenue',
 }).setData(segments);</code></pre>
-<h3>Legend to the right</h3>
+<h3 id="legend-to-the-right">Legend to the right</h3>
 <p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
 <div id="chart-donut-legend-right" class="text-content-caption card-dashboard-bordered"></div>
 <div class="air-md"></div>
@@ -443,7 +437,7 @@
   legendPosition: 'right',
   height:         340,
 }).setData(segments);</code></pre>
-<h3>Drill-down (hierarchy mode)</h3>
+<h3 id="drill-down-hierarchy-mode">Drill-down (hierarchy mode)</h3>
 <p>Hand Donut a <strong>tree</strong> — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.</p>
 <div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
 <div class="air-md"></div>
@@ -461,7 +455,7 @@
     { label: 'NFT INT, LLC',        value: null },   <span class="code-comment">// undisclosed → noted, not drawn</span>
   ],
 });</code></pre>
-<h2>Pie</h2>
+<h2 id="pie">Pie</h2>
 <p>A pie is a donut with <code>innerRadius: 0</code>. The class name is <code>Donut</code> — <code>Pie</code> is an alias. Same API, same options, same behavior.</p>
 <div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
 <p>A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.</p>
@@ -469,7 +463,7 @@
   height:     300,
   showLabels: true,
 }).setData(segments);</code></pre>
-<h3>Outer labels</h3>
+<h3 id="outer-labels">Outer labels</h3>
 <p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically.</p>
 <p>Control what appears with <code>labelContent</code>:</p>
 <ul>
@@ -483,7 +477,7 @@
   labelContent: 'percent',   <span class="code-comment">// just percentages</span>
   labelMinPct:  0.05,        <span class="code-comment">// hide labels below 5%</span>
 }).setData(segments);</code></pre>
-<h2>Gauge</h2>
+<h2 id="gauge">Gauge</h2>
 <p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
 <div class="card-row-bordered card-caption">
   <div class="card-row-bordered-item">
@@ -521,7 +515,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
   trackColor:   '#e8e8e8',         <span class="code-comment">// background arc</span>
   color:        '#ff3b5c',         <span class="code-comment">// fill arc</span>
 });</code></pre>
-<h3>Speedometer — half-circle and needle</h3>
+<h3 id="speedometer-half-circle-and-needle">Speedometer — half-circle and needle</h3>
 <p>Two ingredients make the automotive-indicator look:</p>
 <ul>
 <li><strong>Sweep.</strong> <code>startAngle</code> / <code>endAngle</code> set the arc in radians, clockwise from 12 o'clock. The default <code>±Math.PI * 0.75</code> is a 270° horseshoe; <code>-Math.PI / 2 … Math.PI / 2</code> is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.</li>
@@ -543,7 +537,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
   centerText:   v => v,
   centerLabel:  'km/h',
 }).setData(87);</code></pre>
-<h2>Data format</h2>
+<h2 id="data-format">Data format</h2>
 <p>All three types use the same segment data structure:</p>
 <pre class="text-content-caption"><code>[
   { label: 'Subscriptions', value: 42000, color: '#00c97a' },
@@ -553,7 +547,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
 <p>Only positive finite values are rendered. Zero and negative values are filtered out.</p>
 <p>Passing a single root <strong>object</strong> instead of a flat array switches Donut into drill-down mode, where the data is a tree — see the Drill-down section above.</p>
 <p>Colors can be provided per item. If omitted, the chart uses the active theme palette in order.</p>
-<h2>Slice geometry</h2>
+<h2 id="slice-geometry">Slice geometry</h2>
 <p><code>padAngle</code> controls the gap between slices (a small default keeps separation without turning the chart into a flower). <code>cornerRadius</code> rounds slice corners. Both have sensible defaults and adjust slightly between Pie and Donut mode.</p>
 <p>Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ label, value, percent, color }) => `
@@ -561,8 +555,9 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
   &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
   &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
 `</code></pre>
-<h2>Circular charts options</h2>
-<table class="table-bordered card-caption">
+<h2 id="circular-charts-options">Circular charts options</h2>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -572,7 +567,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="3"><h5>Donut / Pie</h5></td>
+            <td colspan="3"><h5 id="donut-pie">Donut / Pie</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -675,7 +670,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
             <td>Drill-down mode: throw when a node’s children exceed its stated value (default: warn, leave the negative remainder undrawn)</td>
         </tr>
         <tr class="table-section">
-            <td colspan="3"><h5>Gauge</h5></td>
+            <td colspan="3"><h5 id="gauge-2">Gauge</h5></td>
         </tr>
         <tr>
             <td><code>height</code></td>
@@ -769,6 +764,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
         </tr>
     </tbody>
 </table>
+</div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>
 <script src="/assets/charts/examples/pie-and-donut/donut-drilldown.js"></script>
@@ -793,7 +789,7 @@ gauge.setData({ value: 50, max: 80 });</code></pre>
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

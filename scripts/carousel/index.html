@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="current">
+            <a href="/scripts/" class="current">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="scripts">
           
             <a href="/scripts/">Scripts</a>
           
@@ -344,8 +338,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Carousel</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="carousel">Carousel</h1>
   </section>
 
     <article>
@@ -358,7 +352,7 @@ js/carousel.js
 </div>
 <p>A lightweight image carousel for a small set of related photos — one visible at a time, with previous/next arrows and a dot for each slide. Each slide is a <code>&lt;figure&gt;</code>, so an optional caption travels with its image instead of sitting still while the pictures change underneath it.</p>
 <p>It stays deliberately small: no autoplay, no infinite virtual scrolling, no touch-momentum physics. For a handful of images inside an article — a place, a building from three angles, a before/after — that is all it needs to be.</p>
-<h2>Live example</h2>
+<h2 id="live-example">Live example</h2>
 <div class="text-content-caption">
 <div class="carousel rd-js-carousel">
   <div class="carousel-track rd-js-carousel-track">
@@ -389,7 +383,7 @@ js/carousel.js
 </div>
 </div>
 <p>Use the arrows, the dots, or the <kbd>←</kbd> / <kbd>→</kbd> keys while the carousel has focus.</p>
-<h2>Contract</h2>
+<h2 id="contract">Contract</h2>
 <ul>
 <li><code>rd-js-carousel</code> on the root, <code>rd-js-carousel-track</code> on the slide container — the track’s <strong>element children are the slides</strong>, so the script never depends on the slide’s presentational class</li>
 <li><code>rd-js-carousel-prev</code> / <code>rd-js-carousel-next</code> on the arrow buttons; <code>rd-js-carousel-dots</code> on the (empty) dots container the script fills — <strong>the dots container is optional</strong>: leave it out and the script builds no dots</li>
@@ -399,7 +393,7 @@ js/carousel.js
 <li>Any number of carousels can share one page — each is initialized independently</li>
 <li>ARIA: the root is a <code>role=&quot;group&quot;</code> / <code>aria-roledescription=&quot;carousel&quot;</code>; arrows and dots are real <code>&lt;button&gt;</code>s with labels; inactive slides are <code>aria-hidden</code></li>
 </ul>
-<h2>Ready-to-paste markup</h2>
+<h2 id="ready-to-paste-markup">Ready-to-paste markup</h2>
 <p>Each slide is a <code>&lt;figure&gt;</code>. The first slide carries <code>rd-is-active</code>; the dots container is left empty — the script builds one dot per slide. Drop that line to go without dots: the carousel then runs on its arrows and the <kbd>←</kbd> / <kbd>→</kbd> keys alone.</p>
 <div class="code-block">
     <pre><code id="snippet-carousel-1" class="language-html">&lt;div class=&#34;carousel rd-js-carousel&#34;&gt;
@@ -428,7 +422,7 @@ js/carousel.js
 <p class="callout">
   ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
 </p>
-<h2>Recoloring</h2>
+<h2 id="recoloring">Recoloring</h2>
 <p>The arrows and the dots both overlay the photo, so their defaults are light-on-dark: a dark pill behind the chevrons, translucent white dots that go solid white when active.</p>
 <p>The dots ship in two cuts, which settles the usual choice without writing any CSS:</p>
 <ul>
@@ -518,8 +512,8 @@ function initCarousel(root) {
 }
 </code></pre>
 </details>
-<h2>Changelog</h2>
-<h3>v1.1.0</h3>
+<h2 id="changelog">Changelog</h2>
+<h3 id="v1-1-0">v1.1.0</h3>
 <ul>
 <li><strong>The dots overlay the photo again</strong> — they sit on the image at its bottom edge instead of in normal flow under the caption, so a long caption no longer pushes them away from the picture they belong to. Their defaults go back to light-on-dark (<code>--carousel-dot-color</code>, <code>--carousel-dot-active</code>) because they render on the photo now, not on the page background.</li>
 <li><strong><code>carousel-dots--dark</code></strong> — the inverted cut, shipped as a class: black at 25%, <code>--primary-color</code> when active, for pale photos that would swallow white dots. It re-points the two dot tokens rather than restyling the dots, so the recoloring API still reaches them — on the container, which is where the modifier writes them and therefore where an override has to go.</li>
@@ -529,7 +523,7 @@ function initCarousel(root) {
 <li>Layout rebuilt as a two-row grid — photo, then caption — with the active slide spanning both rows through subgrid. That is what gives the photo a box of its own for the controls to anchor to, since the caption lives inside the slide and would otherwise be part of anything they anchor to.</li>
 <li><strong>No markup change.</strong> <code>carousel.js</code> is untouched apart from comments and the contract is the same, so a <code>v1.0.0</code> carousel needs no edit — the dots container went from expected to optional, which is the only contract move, and it loosens rather than tightens. What does change is how it looks: dots on the photo and white by default, caption left-aligned. A carousel of pale photos wants <code>carousel-dots--dark</code> added, or the dots will wash out.</li>
 </ul>
-<h3>v1.0.0</h3>
+<h3 id="v1-0-0">v1.0.0</h3>
 <ul>
 <li><strong>Multiple carousels per page now work</strong> — each instance is initialized independently (the original collected every image on the page into one shared list, so only a single carousel worked)</li>
 <li>Captions travel with their images: a slide is a <code>&lt;figure&gt;</code> holding the image and an optional <code>&lt;figcaption&gt;</code></li>
@@ -559,7 +553,7 @@ function initCarousel(root) {
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

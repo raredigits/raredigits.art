@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="current">
+            <a href="/kb/" class="current">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -271,7 +265,7 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="knowledge-base">
           <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -299,19 +293,19 @@
       </nav>
     </aside>
     
-  <section class="page-title">
-    <h1>New Project Workflow</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="new-project-workflow">New Project Workflow</h1>
   </section>
 
     <article>
-      <h2>Project Roadmap Overview</h2>
+      <h2 id="project-roadmap-overview">Project Roadmap Overview</h2>
 <p>This guide provides a comprehensive, step-by-step checklist for launching a new project using the Rare Styles system. It covers the entire project lifecycle from initial concept to final delivery and ongoing maintenance.</p>
 <p class="note">Note: This is a living document following the MVP (Minimum Viable Product) concept. We're starting with the core framework and will expand each section over time with more detailed guides and resources. Links will be activated as content becomes available.</p>
-<h3>1. Preparation: Understanding the Problem</h3>
+<h3 id="1-preparation-understanding-the-problem">1. Preparation: Understanding the Problem</h3>
 <p>The groundwork for success happens before a single line of code is written.</p>
 <p>Start with the assumption that <strong>the first articulation of the problem is incomplete or incorrect</strong>. Your initial task is to discover what you're actually solving.</p>
 <div class="card full-width-caption padding-lg">
-    <h5>Briefing Tasks:</h5> 
+    <h5 id="briefing-tasks">Briefing Tasks:</h5> 
     <div class="prose-columns">
         <li>Identify the key stakeholders and decision-makers. Kick off middlemen</li>
         <li>Identify the real users (often different from stakeholders)</li>
@@ -323,10 +317,10 @@
 </div>
 <p><strong>Outcome:</strong> A project brief that defines the actual problem to be solved, key constraints, and success metrics.</p>
 <p>→ <a href="">Detailed guide to problem definition</a> (Coming soon)</p>
-<h3>2. Research Phase</h3>
+<h3 id="2-research-phase">2. Research Phase</h3>
 <p>Before designing solutions, <strong>understand the context</strong> and develop a viable concept.</p>
 <div class="card full-width-caption padding-lg">
-    <h5>Researh Tasks:</h5> 
+    <h5 id="researh-tasks">Researh Tasks:</h5> 
     <div class="prose-columns">
         <li>Research user needs and patterns through interviews/observation</li>
         <li>Identify the Core Value they needed</li>
@@ -342,10 +336,10 @@
 <p><strong>Outcome:</strong> A validated concept and MVP definition that stakeholders agree addresses the core problem.</p>
 <p>→ <a href="">Research methodology guide</a> (Coming soon)<br>
 → <a href="">MVP definition framework</a> (Coming soon)</p>
-<h3>3. Design Implementation</h3>
+<h3 id="3-design-implementation">3. Design Implementation</h3>
 <p>Translate concepts into concrete designs using Rare Styles principles.</p>
 <div class="card full-width-caption padding-lg">
-    <h5>Design Tasks:</h5> 
+    <h5 id="design-tasks">Design Tasks:</h5> 
     <div class="prose-columns">
         <li>Sort and deliver Core Values to the interfaces</li>
         <li>Map user journeys between screens/pages</li>
@@ -368,10 +362,10 @@
 <li>[ ] Validate designs with stakeholders and potential users</li>
 </ul>
 <p><strong>Outcome:</strong> A complete design package ready for development implementation.</p>
-<p>→ <a href="guides/project-launch/grid-implementation/">Implementing Rare Styles grid system</a> (Coming soon)<br>
-→ <a href="guides/project-launch/typography/">Typography implementation guide</a> (Coming soon)<br>
-→ <a href="guides/project-launch/component-system/">Component system development</a> (Coming soon)</p>
-<h2>4. Production Phase</h2>
+<p>→ Implementing Rare Styles grid system (Coming soon)<br>
+→ Typography implementation guide (Coming soon)<br>
+→ Component system development (Coming soon)</p>
+<h2 id="4-production-phase">4. Production Phase</h2>
 <p>Transform designs into functioning code and infrastructure.</p>
 <ul>
 <li>[ ] Set up development environment and version control</li>
@@ -387,10 +381,10 @@
 <li>[ ] Deploy to production environment</li>
 </ul>
 <p><strong>Outcome:</strong> A functioning product that meets the defined requirements.</p>
-<p>→ <a href="guides/project-launch/dev-setup/">Development environment setup</a> (Coming soon)<br>
-→ <a href="guides/project-launch/styles-implementation/">Rare Styles implementation guide</a> (Coming soon)<br>
-→ <a href="guides/project-launch/testing/">Testing methodology</a> (Coming soon)</p>
-<h2>5. Project Completion</h2>
+<p>→ Development environment setup (Coming soon)<br>
+→ Rare Styles implementation guide (Coming soon)<br>
+→ Testing methodology (Coming soon)</p>
+<h2 id="5-project-completion">5. Project Completion</h2>
 <p>Ensure a smooth transition from development to ongoing operation.</p>
 <ul>
 <li>[ ] Conduct project retrospective to document lessons learned</li>
@@ -403,9 +397,9 @@
 <li>[ ] Celebrate the team's achievements</li>
 </ul>
 <p><strong>Outcome:</strong> A successfully delivered project with clear path for future development.</p>
-<p>→ <a href="guides/project-launch/retrospective/">Project retrospective guide</a> (Coming soon)<br>
-→ <a href="guides/project-launch/documentation/">Documentation standards</a> (Coming soon)</p>
-<h2>The Iterative Process</h2>
+<p>→ Project retrospective guide (Coming soon)<br>
+→ Documentation standards (Coming soon)</p>
+<h2 id="the-iterative-process">The Iterative Process</h2>
 <p>Remember that this roadmap represents an ideal linear progression, but real projects rarely follow a perfectly sequential path. Expect to cycle back through earlier phases as you learn more about the problem and solution space.</p>
 <p>The strength of the Rare Styles system is that it provides a solid foundation that can adapt to changing requirements without requiring a complete rebuild. Use this flexibility to your advantage as your project evolves.</p>
 <p>We'll continue to expand this guide with more detailed resources for each phase of the project lifecycle. Check back regularly for updates, or <a href="https://rarestyles.com/newsletter/">subscribe to our newsletter</a> for notifications when new guides are published.</p>
@@ -430,7 +424,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

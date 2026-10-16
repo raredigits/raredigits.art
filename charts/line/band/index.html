@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -444,8 +438,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Bands</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="bands">Bands</h1>
   </section>
 
     <article>
@@ -455,7 +449,7 @@
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-demo-band"></div>
 </div>
-<h3>Data format</h3>
+<h3 id="data-format">Data format</h3>
 <p>A band series carries <code>{ date, lower, upper }</code> points. It mixes freely with ordinary line series in the same <code>setData</code> call — order matters only for layering, and bands are always drawn behind lines regardless.</p>
 <pre class="text-content-caption"><code>chart.setData([
     {
@@ -481,7 +475,7 @@
 ]);</code>
 </pre>
 <p>A series is treated as a band when it has <code>type: 'band'</code>, or when its first point contains both <code>lower</code> and <code>upper</code>. Dates are parsed via <code>parseDate (…)</code>, so strings, timestamps, and Date objects are all accepted.</p>
-<h3>How bands behave</h3>
+<h3 id="how-bands-behave">How bands behave</h3>
 <p>A band sits behind the lines but stays part of the readout:</p>
 <ul>
 <li>drawn behind every line and area, above the grid</li>
@@ -491,7 +485,7 @@
 <li>both <code>lower</code> and <code>upper</code> participate in the Y scale, so the axis always grows to contain the full range</li>
 </ul>
 <p>The fill uses the series <code>color</code> at <code>fillOpacity</code> (default <code>0.16</code>). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.</p>
-<h3>Forecasts</h3>
+<h3 id="forecasts">Forecasts</h3>
 <p>The most common use is a forecast: actuals up to today, a central path beyond it, and a widening range that makes the growing uncertainty visible instead of pretending the future is a single number.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-demo-forecast"></div>
@@ -532,9 +526,10 @@ new RareCharts.Line('#chart', {
 ]</code>
 </pre>
 <p>Stacking several bands — for example P10–P90 around an inner P25–P75 — is just two band series with different opacities. Draw the wider, lighter range first so the tighter one reads on top.</p>
-<h2>Band series options</h2>
+<h2 id="band-series-options">Band series options</h2>
 <p>A band is configured entirely through fields on its series object. It shares the common chart options (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) documented on the <a href="/charts/settings/">Settings</a> page, and lives inside a standard <a href="/charts/line/">Line</a> chart, so all of that chart’s axis and layout options apply too.</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -545,7 +540,7 @@ new RareCharts.Line('#chart', {
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Band series</h5></td>
+            <td colspan="4"><h5 id="band-series">Band series</h5></td>
         </tr>
         <tr>
             <td><code>type</code></td>
@@ -585,9 +580,10 @@ new RareCharts.Line('#chart', {
         </tr>
     </tbody>
 </table>
+</div>
 <div class="teaser-bottom">
     <p>Related:</p>
-    <h3><a href="/charts/line/annotations/">Annotations — reference levels and event markers</a></h3>
+    <h3 id="annotations-reference-levels-and-event-markers"><a href="/charts/line/annotations/">Annotations — reference levels and event markers</a></h3>
 </div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-band.js"></script>
@@ -613,7 +609,7 @@ new RareCharts.Line('#chart', {
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

@@ -1,4 +1,421 @@
-<h1>RareCharts — Changelog</h1>
+<!DOCTYPE html>
+<html lang="en" class="rd">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RareCharts Changelog | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/" class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/" class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/" class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/" class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/" class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/" class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/" class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header" id="charts">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/dual-axes/">Dual Axes</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/map/">Map</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/sankey/">Sankey</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/multi/">Multi Charts</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title" id="main-content">
+    <h1 id="rarecharts-changelog">RareCharts Changelog</h1>
+  </section>
+
+    <article>
+      <h1 id="rarecharts-changelog-2">RareCharts — Changelog</h1>
 <p>All notable changes to RareCharts are documented in this file.
 Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The library follows semantic versioning.</p>
 <p>Roadmap and planned features: <a href="https://raredigits.art/charts/backlog/">raredigits.art/charts/backlog</a>.</p>
@@ -13,10 +430,10 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <p>Whenever the public API surface changes (new chart class, new adapter, the construction pattern), update the banner's machine-readable header in <code>scripts/build-charts.mjs</code>.</p>
 </blockquote>
 <hr>
-<h2>[Unreleased]</h2>
-<h2>[v0.9.8_3] — 2026-10-16 — Flows I</h2>
+<h2 id="unreleased">[Unreleased]</h2>
+<h2 id="v0-9-8-3-2026-10-16-flows-i">[v0.9.8_3] — 2026-10-16 — Flows I</h2>
 <p>The relation release. Two new ways to draw what moves between things — a <strong>Sankey</strong> diagram and the Graph <strong>flow view</strong> for money trails and supply chains — on one shared link contract, plus a Graph that keeps every tie between a pair, explains a node or a tie in a details panel, and holds up under a real walk-through: grid layouts everywhere but the route view, a canvas that fits what it can show, full screen, footer tools. Sankey and the flow view are experimental, outside the 1.0 promise.</p>
-<h3>Added</h3>
+<h3 id="added">Added</h3>
 <ul>
 <li><strong>Graph details panel</strong> (<code>src/charts/Graph.js</code>, <code>rare-charts.css</code> → <code>.rc-graph-details</code>). Option <code>details</code>: <code>true</code> lets the library show the hovered or selected node or tie — name, group, connections with their labels and values, period, <code>sources</code> as links; in the ego view the focused node when nothing is hovered (custom content via <code>detailsFormat({ node, link, view })</code>). An element or selector gives the slot to your own panel, filled from <code>onSelect</code>. The panel sits beside the drawing when the card's content is at least <code>detailsBreakpoint</code> (1000 px) wide and the drawing keeps its own <code>minWidth</code> next to it — the layout narrows by <code>detailsWidth</code> (300 px) — and below the drawing otherwise, the card growing by <code>detailsHeight</code> (200 px) so the graph keeps its height.</li>
 <li><strong>Controls slot for every chart</strong> (<code>src/core/Chart.js</code>, <code>rare-charts.css</code> → <code>.rc-chart-controls</code>). Option <code>controls</code> (element or selector): your own checkboxes, sliders or selects are moved inside the card between the drawing and the footer, styled as a compact row; their listeners keep working.</li>
@@ -29,15 +446,15 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong><code>fitTextNode</code></strong> moved from <code>Donut</code> to <code>src/core/renderHelpers.js</code> for reuse (Sankey labels); <code>.rc-sr-only</code> utility in <code>rare-charts.css</code>.</li>
 <li><strong>Pinnable tooltip</strong> (<code>src/core/Tooltip.js</code>, <code>rare-charts.css</code> → <code>.rc-tooltip.is-pinned</code>). Opt-in <code>pin()</code>/<code>unpin()</code>: the tooltip stays put, takes pointer events and wraps; it closes on an outside click or Escape. Hover <code>show()</code>/<code>hide()</code> are unchanged for every chart.</li>
 </ul>
-<h3>Size</h3>
+<h3 id="size">Size</h3>
 <p>Minified bundle 544,951 → 600,678 bytes (+55,727, +10.2%); gzip 163,911 → 182,209 (+11.2%); Brotli 138,291 → 152,978 (+10.6%). Measured on the published files (jsDelivr, <code>@v0.9.8_2</code> vs <code>@v0.9.8_3</code>, banner included). The growth is the two new relation views (Sankey, Graph flow), the shared link layer, and the Graph details panel, full screen and footer tools.</p>
-<h3>Removed from the backlog</h3>
+<h3 id="removed-from-the-backlog">Removed from the backlog</h3>
 <p>Sankey; directed and multiple graph relations (several typed ties per pair). The Graph flow view's second stage — automatic layout, aggregation, collapsible groups — stays in the <a href="https://raredigits.art/charts/backlog/">backlog</a> for v0.9.8_4.</p>
-<h3>Changed</h3>
+<h3 id="changed">Changed</h3>
 <ul>
 <li><strong><code>Graph.setData()</code> no longer draws a throwaway default view</strong> (<code>src/charts/Graph.js</code>). <code>setData()</code> still focuses the best-connected node by default, but a <code>focus()</code>, <code>connect()</code> or <code>overview()</code> chained in the same tick now replaces that default instead of running after it: <code>graph.setData(data).focus(id)</code> fetches and renders <code>id</code> once. Previously the best-connected ego was built, rendered and immediately discarded. No <code>whenReady()</code> is needed between <code>setData()</code> and the first view call — and adding one now costs that extra default render. <code>whenReady()</code> after <code>setData()</code> alone still resolves after the default ego is drawn.</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed">Fixed</h3>
 <ul>
 <li><strong>Graph ego view piled a single-category neighbourhood into one corner</strong> (<code>src/graph/layouts/ego.js</code>). The grid anchors each category to a corner; when one category held almost every node it had nothing to share the canvas with. Now, when a category holds more than 80% of the nodes (and there are at least six), that category is anchored at the ego and fills the same grid from the centre out, first ring nearest — a centred rosette with no overlaps.</li>
 <li><strong>Cluster view overlapped large communities</strong> (<code>src/graph/layouts/cluster.js</code>). Meta-nodes stood on a circle, and big ones ran into each other. They now stand on a grid like the ego view — largest community in the centre, the rest spiralling out — and ties in both grid views bow slightly so they never run straight through the nodes between them. Only the path view keeps its own route layout.</li>
@@ -63,9 +480,9 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Graph arrow markers collided between instances</strong> (<code>src/charts/Graph.js</code>). Marker ids were <code>rc-arrow-&lt;type&gt;</code>, so a second graph on the page could resolve the first one's markers; ids now carry a per-instance suffix.</li>
 <li><strong>Investigated: “empty canvas after <code>setData()</code> → <code>focus()</code>”</strong> (field note 2026-07-31). Not reproducible as a queue race — both calls were already serialized, verified in jsdom, in a real browser and on the reporting site's own dataset. The observed blank canvas comes from a page that is not being painted (background tab, hidden pane): nodes enter at opacity 0 and the fade-in, like <code>ResizeObserver</code>, waits for the next paint; the graph completes as soon as the page is visible. The change above removes the double render that made it look intermittent. Regression tests: <code>test/graph-ready.test.js</code>.</li>
 </ul>
-<h2>[v0.9.8_2] — 2026-07-22 — Composition &amp; Hierarchy</h2>
+<h2 id="v0-9-8-2-2026-07-22-composition-and-hierarchy">[v0.9.8_2] — 2026-07-22 — Composition &amp; Hierarchy</h2>
 <p>The composition release: stacking arrives on <code>Bar</code>, and tree-shaped data gets a first-class contract with two views over one shape — a new <code>HierarchicalBar</code> outline and an interactive drill-down mode on <code>Donut</code>, both fed by a shared normalizer. Around them, the circular charts grew up: outer labels stopped overlapping and overflowing, the gauge learned the speedometer look (any sweep + a needle), and a real <code>Bar</code> animation race was found and fixed. Stacked area (<code>Line</code>) and <code>DivergingBar</code> from the original plan move to v0.9.8_3.</p>
-<h3>Added</h3>
+<h3 id="added-2">Added</h3>
 <ul>
 <li><strong>Stacked bars — a mode of <code>Bar</code></strong> (<code>src/charts/Bar.js</code>). Hand <code>Bar</code> series-major data <code>[{ name, values: [{ label, value }] }]</code> and it stacks segments per category (d3-stack underneath): both orientations, <code>stacked: 'percent'</code> normalizes every bar to 100%, a legend is auto-built from series names, and each segment gets a tooltip <code>{ name, cat, value, total }</code> with its share of the category total. Categories are the ordered union of series labels — a series that skips one contributes nothing there. Values are non-negative by contract (signed comparisons belong to the future diverging bar). Value-axis ticks divide the niced domain into exactly the requested <code>yTicks</code>/<code>xTicks</code> intervals — d3's &quot;approximately count&quot; could nearly double the density (domain [0, 120], count 4 → 7 ticks). Covered by <code>test/bar-stacked.test.js</code>; documented at <a href="https://raredigits.art/charts/bar/stacked-bar/"><code>/charts/bar/stacked-bar/</code></a>. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong><code>RareCharts.HierarchicalBar</code> — tree outline</strong> (<code>src/charts/HierarchicalBar.js</code>). New class: one row per node, indented by depth, each with its own bar on a shared value scale — the linear view of a hierarchy (a portfolio into asset classes into holdings). Takes one root or an array of roots; parent rows carry their subtotal; the root renders as a neutral total, each top-level branch takes the next palette color and descendants inherit the hue with a per-level fade; a surfaced remainder draws muted; a <code>value: null</code> node renders as a <code>?</code> placeholder. Options: <code>showRoot</code>, <code>maxDepth</code>, <code>rowHeight</code>/<code>indent</code>/<code>barHeight</code>, <code>showValues</code>/<code>valueFormat</code> (the tooltip respects it too), <code>missingGlyph</code>, <code>labelMaxLength</code>, and the normalizer pass-throughs. Covered by <code>test/hierarchical-charts.test.js</code>; documented at <a href="https://raredigits.art/charts/bar/hierarchical-bar/"><code>/charts/bar/hierarchical-bar/</code></a>. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
@@ -74,36 +491,36 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Gauge: speedometer needle and any-sweep geometry</strong> (<code>src/charts/Gauge.js</code>). <code>needle: true</code> draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill; the center readout moves below the hub, dial-style; <code>needleColor</code> overrides the theme text color. Works with any <code>startAngle</code>/<code>endAngle</code> sweep — the half-circle automotive look is <code>±Math.PI / 2</code>. Documented in the Speedometer section of <a href="https://raredigits.art/charts/circular/"><code>/charts/circular/</code></a>.</li>
 <li><strong>Donut/Pie outer labels: collision handling</strong> (<code>src/charts/Donut.js</code>). Leader-line labels now resolve overlaps: per side, rows are spread apart to a minimum gap (small adjacent slices no longer overprint), each label truncates with an ellipsis to the room between its anchor and the chart edge (the full text stays in the tooltip), and the center readout fits the hole — the value shrinks its font down to a floor instead of poking out, the secondary line truncates. Covered by <code>test/circular-fit.test.js</code>.</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed-2">Fixed</h3>
 <ul>
 <li><strong><code>Bar</code> entry animation raced the layout and froze bars short</strong> (<code>src/charts/Bar.js</code>). When the first render landed while the header was still settling (fonts loading, flex layout), bars animated toward a stale plot height and stuck at a fraction of it — re-renders were swallowed by the once-per-instance guard, which was only set on transition end (an event that never fires for an interrupted transition). The guard is now set synchronously and re-renders <code>interrupt()</code> the in-flight tween and finalize to the current scale. Applied to all three bar geometries (categorical vertical/horizontal and time-series).</li>
 <li><strong>Gauge center label clipped on shallow arcs</strong> (<code>src/charts/Gauge.js</code>). For sweeps ending near ±90° the circle center sits at the drawing's bottom edge, and the label below it fell outside the svg. The radius/centering math now reserves room for whatever hangs below the circle center — the arc's own bottom or the text block — so nothing clips; deep arcs (the ±135° default) keep their previous geometry to within a pixel.</li>
 </ul>
-<h3>Changed</h3>
+<h3 id="changed-2">Changed</h3>
 <ul>
 <li><strong>SVG text styling moved from inline attributes to the stylesheet</strong> (<code>rare-charts.css</code>, all chart classes). Chart code no longer sets <code>font-family</code>/<code>font-size</code> per element (~60 inline <code>.style()</code> calls removed); the svg inherits the small text size, <code>.rc-axis</code> / <code>.rc-axis-cat</code> classes give value and category axes their numeric/regular families (overriding d3-axis's own <code>font-size=&quot;10&quot;</code>/<code>font-family=&quot;sans-serif&quot;</code> group attributes), and numeric text (bar values, donut percents, center totals) is covered by per-class rules. Computed sizes (donut/gauge center) and behavioral styles (cursor, opacity, pointer-events) stay in JS. No visual change.</li>
 <li><strong>Docs: chart cards host the chart element itself.</strong> Example containers across the bar, stacked, hierarchical, and circular pages moved the card classes onto the chart div (the pattern the standalone examples already used), so axis and outer labels breathe into the card padding instead of clipping at the svg edge. The drill-down example lives in its own <code>examples/pie-and-donut/donut-drilldown.js</code>.</li>
 <li><strong>Build banner lists the new class</strong> (<code>scripts/build-charts.mjs</code>). <code>HierarchicalBar</code> added to the machine-readable Types list.</li>
 </ul>
-<h2>[v0.9.8_1] — 2026-07-12 — Graph Rework (experimental)</h2>
+<h2 id="v0-9-8-1-2026-07-12-graph-rework-experimental">[v0.9.8_1] — 2026-07-12 — Graph Rework (experimental)</h2>
 <p>The experimental <code>Graph</code> relaunched: from a single force simulation to a headless graph model with three deterministic views, relation-type filtering, and semantic navigation. Graph remains <strong>experimental</strong> — outside the 1.0 semver guarantee. Also ships a categorical <code>Bar</code> fix and the release automation that were waiting under Unreleased.</p>
-<h3>Added</h3>
+<h3 id="added-3">Added</h3>
 <ul>
 <li><strong>Graph rework — headless model, deterministic views</strong> (<code>src/charts/Graph.js</code>, <code>src/graph/</code>). <code>Graph</code> is now a viewport over a headless <code>GraphModel</code> (graphology) that accumulates everything the user walks, fed through a source-adapter contract (<code>neighbors</code> / <code>paths</code> / <code>aggregates</code>; <code>memorySource()</code> simulates a backend over a static payload — swap in a real adapter without touching the class). Three deterministic views replace the force simulation: <strong>ego</strong> (grid rings by degree of separation, category corners), <strong>path</strong> (layered &quot;how are A and B connected&quot; routes with endpoint context and the shortest route called out), and <strong>cluster</strong> (Louvain communities as meta-nodes) — with semantic zoom between ego and cluster, hand-draggable nodes, and identity-preserving recenter transitions. Covered by <code>test/graph.test.js</code> (37 tests: model, layouts, source adapter, and the viewport interaction contract). Documented at <a href="https://raredigits.art/charts/graph/"><code>/charts/graph/</code></a>.</li>
 <li><strong>Graph navigation and filtering</strong> (<code>src/charts/Graph.js</code>, <code>rare-charts.css</code>). Relation-type filtering over the ego view — a <code>relationTypes</code> option, <code>setRelationTypes()</code> / <code>clearRelationTypes()</code>, and an interactive legend (click isolates a type, Shift/Ctrl/Cmd-click multi-selects, &quot;Show all&quot; resets); the filter drives both the traversal and what is drawn, and untyped links act as a single <code>default</code> type. Breadcrumb history with <code>back()</code> restores prior ego/path/cluster states together with their filter. The <code>+N more</code> capacity note is now an actionable disclosure listing the capped-out nodes — click one to refocus on it. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong>Graph progressive data contract.</strong> Nodes need only an <code>id</code>, links only <code>{ source, target }</code>: labels fall back to ids everywhere (canvas, tooltip, breadcrumbs), endpoint nodes are auto-created, link type and weight default sensibly — every view renders from a links-only payload, pinned by contract tests. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed-3">Fixed</h3>
 <ul>
 <li><strong>Categorical <code>Bar</code> now renders negative values</strong> (<code>src/charts/Bar.js</code>). The vertical and horizontal category modes hard-coded a <code>[0, max]</code> scale domain, so a negative bar computed a negative height/width — an invalid rect that silently didn't render (the time-series mode already handled negatives). The domain now always includes 0 and extends to the data on both sides; bars grow from the zero baseline in both directions, entry animation starts at the baseline, and horizontal value labels flip to the correct side of a negative bar. Covered by <code>test/bar-negatives.test.js</code>.</li>
 </ul>
-<h3>Changed</h3>
+<h3 id="changed-3">Changed</h3>
 <ul>
 <li><strong>A GitHub Release is published automatically on release</strong> (<code>.github/workflows/sync-charts.yml</code>). The sync already pushed the <code>vX.Y.Z</code> tag (which drives jsDelivr); now it also creates the human-facing card on the <code>rare-charts</code> Releases page, lifting the title and notes from this changelog's entry — so the Releases page no longer lags the tags.</li>
 </ul>
-<h2>[v0.9.8] — 2026-07-03 — Axes &amp; Accessibility</h2>
+<h2 id="v0-9-8-2026-07-03-axes-and-accessibility">[v0.9.8] — 2026-07-03 — Axes &amp; Accessibility</h2>
 <p>The pre-freeze groundwork release. Two axes features close out the backlog's Axes section: hiding an axis now reclaims the margin it occupied — so a flush or sparkline look no longer needs a manual <code>margin</code> override — and <code>TimeSeries</code> gains the visibility toggles every other cartesian class already had. Around the code: the library's first automated test suite (122 tests, now gating every deploy and CDN sync), accessibility groundwork (<code>prefers-reduced-motion</code>, accessible names on every chart), a release pipeline where the CDN only ever receives tagged versions, a documentation catch-up for every working option, and an MIT license consistency fix — plus a real adapter bug the new tests caught.</p>
-<h3>Added</h3>
+<h3 id="added-4">Added</h3>
 <ul>
 <li><strong>Hiding an axis now reclaims its margin</strong> (<code>src/charts/Line.js</code>, <code>Bar.js</code>, <code>DualAxes.js</code>, <code>TimeSeries.js</code>). Turning an axis off (<code>showXAxis</code> / <code>showYAxis</code> / <code>showY1Axis</code> / <code>showY2Axis: false</code>) previously only dropped its ticks and labels — the default margin the axis occupied stayed behind, so a flush or sparkline look required a manual <code>margin</code> override. The default margins now track what actually occupies each gutter: a hidden axis collapses its side to <code>0</code>, and where a gutter is shared the space is kept while any occupant remains — <code>Line</code>/<code>DualAxes</code> keep the right margin while <code>endLabels</code> are on, <code>DualAxes</code> keeps an axis gutter while its <code>y1Title</code>/<code>y2Title</code> is set. An explicit <code>margin</code> always wins. Covered by <code>test/axes-margins.test.js</code>; removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong>Axis-visibility toggles on <code>RareCharts.TimeSeries</code></strong> (<code>src/charts/TimeSeries.js</code>). The <code>showGrid</code> / <code>showXAxis</code> / <code>showYAxis</code> options that <code>Line</code>, <code>Bar</code>, and <code>DualAxes</code> already expose now work on <code>TimeSeries</code> too — previously its grid and both axes rendered unconditionally. Hidden axes reclaim their margins, same as above. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
@@ -111,11 +528,11 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Reduced-motion support</strong> (<code>src/core/utils.js</code> → <code>prefersReducedMotion()</code> / <code>motionDuration()</code>, <code>rare-charts.css</code>). Honours the OS <code>prefers-reduced-motion: reduce</code> setting: a CSS media query neutralizes in-chart CSS transitions, and <code>motionDuration()</code> collapses D3 animation durations to 0 so transitions resolve instantly. Applied to every animating chart type — <code>Bar</code>, <code>Line</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code> (<code>TimeSeries</code>, <code>Map</code>, <code>MultiChart</code> have no entry animation; <code>Graph</code> is experimental and excluded from 1.0).</li>
 <li><strong>Accessible name on the chart SVG</strong> (<code>src/core/renderHelpers.js</code> → <code>applySvgA11y()</code>). The root <code>&lt;svg&gt;</code> now carries <code>role=&quot;img&quot;</code> and an <code>aria-label</code> derived from <code>title</code>/<code>subtitle</code> (or an explicit <code>ariaLabel</code> option), so screen readers announce the chart instead of skipping it. Applied to <code>Bar</code>, <code>Line</code>, <code>TimeSeries</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code>, <code>Map</code> (<code>MultiChart</code> delegates to its child charts; <code>Graph</code> is experimental and excluded from 1.0).</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed-4">Fixed</h3>
 <ul>
 <li><strong><code>fromArray</code> / data adapters kept rows with a non-finite <code>value</code></strong> (<code>src/adapters/index.js</code>). The filter <code>!row.value || isFinite(row.value)</code> let <code>NaN</code> through because <code>NaN</code> is falsy (<code>!NaN === true</code>), so a row whose value failed to parse (e.g. <code>+'x'</code>) was not dropped despite the documented intent. Now uses <code>row.value == null || Number.isFinite(+row.value)</code> — an absent value and a legitimate <code>0</code> are kept, a present-but-non-finite value is dropped. Surfaced by the new test suite.</li>
 </ul>
-<h3>Changed</h3>
+<h3 id="changed-4">Changed</h3>
 <ul>
 <li><strong>Single source of truth for the version</strong> (<code>assets/charts/src/version.json</code>, <code>scripts/build-charts.mjs</code>, <code>_data/versions.js</code>). The version was stamped by hand in four places — <code>index.js</code>, the triplicated build banner across three <code>package.json</code> esbuild scripts, and <code>_data/versions.json</code> — which could (and did, per the old release checklist) drift. Now <code>version.json</code> is the only place to edit: the runtime <code>RareCharts.VERSION</code>, the build banner, and the docs label all read from it. The build moved from inline <code>esbuild</code> CLI calls to a small Node script (<code>scripts/build-charts.mjs</code>) that composes the banner once and emits both bundles; <code>_data/versions.json</code> became <code>_data/versions.js</code>. No change to the public API or bundle output.</li>
 <li><strong>License field corrected to MIT</strong> (<code>package.json</code>). Was <code>ISC</code>, contradicting the <code>LICENSE</code> file and README which both state MIT.</li>
@@ -123,37 +540,82 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Built bundles removed from git</strong> (<code>.gitignore</code>). <code>rare-charts.js</code> / <code>rare-charts.min.js</code> are build artifacts: every consumer — the site deploy, the CDN sync, local dev — rebuilds them from <code>src/</code> via <code>npm run charts:build</code>, so the committed copies could only drift from the source (and had). The source of truth in git is <code>src/</code>; ready-made bundles are distributed from the <code>raredigits/rare-charts</code> repo as before. No change to the published files.</li>
 <li><strong>Tests gate CI</strong> (<code>.github/workflows/deploy.yml</code>, <code>sync-charts.yml</code>). <code>npm run test:run</code> now runs before the site build and before the CDN sync — a failing test blocks both.</li>
 </ul>
-<h2>[v0.9.7] — 2026-06-19 — Footnotes</h2>
+<h2 id="v0-9-7-2026-06-19-footnotes">[v0.9.7] — 2026-06-19 — Footnotes</h2>
 <p>Finishes the chart footer. Two new attribution slots — an editorial <code>note</code> and a linkable, multi-part <code>source</code> — so the interpretive line and the data credits live inside the component instead of as hand-built markup glued around it. Plus a set of edge-rendering fixes (axis titles, web-font timing, flush bar labels) that surfaced while wiring a real client chart.</p>
-<h3>Added</h3>
+<h3 id="added-5">Added</h3>
 <ul>
 <li><strong><code>source</code> accepts links and multi-part attribution</strong> (<code>src/core/Chart.js</code> → <code>_renderAttribution</code>, <code>rare-charts.css</code>). Beyond a plain string, <code>source</code> now takes <code>{ text, href }</code> (a single linked attribution) or an <strong>array of parts</strong> — strings render as plain text, <code>{ text, href }</code> objects as links — so a footer can mix several linked and unlinked sources on one line (e.g. <code>Source: NASDAQ, Bloomberg, Internal calculations</code> with the first two linked). Links inherit the source text color (set apart by an underline, so they adapt to light/dark theme), open in a new tab with <code>rel=&quot;noopener noreferrer&quot;</code>, and an array source wraps instead of truncating so every attribution stays visible. String and <code>HTMLElement</code> sources are unchanged. Flows through <code>MultiChart</code>'s shared footer. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong><code>note</code> text slot on every chart</strong> (<code>src/core/Chart.js</code>, <code>rare-charts.css</code>). A new footer option renders a <code>&lt;p class=&quot;rc-chart-note&quot;&gt;</code> below the source line in <code>theme.muted</code>, for disclaimers, data caveats, and editorial context. Accepts a string or an <code>HTMLElement</code>. This was the recurring anti-pattern the settings page warned about — interpretive captions hand-built as a stray <code>&lt;div&gt;</code> glued under the chart container — now an in-component slot the chart owns. Long notes wrap (including unbroken tokens like URLs, via <code>overflow-wrap</code>) and the plot shrinks to keep the note inside the card rather than overflowing it. Also flows through <code>MultiChart</code>'s shared footer. Documented at <a href="https://raredigits.art/charts/settings/"><code>/charts/settings/</code></a>; removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong>Machine-readable bundle header + <code>RareCharts.VERSION</code></strong> (<code>src/index.js</code>, build banner in <code>package.json</code>). The minified bundle is opaque to anyone — human or LLM — handed only the file. The header now states the global, the <code>new RareCharts.&lt;Type&gt;(selector, options).setData(data)</code> construction pattern, the full list of chart classes, the container requirement, that d3/CSS are bundled, and that external data loads via the <code>fromJson</code>/<code>fromCsv</code>/<code>fromApi</code>/<code>fromArray</code> adapters — so consumers stop guessing class names or hardcoding structure. <code>VERSION</code> is also exported as a runtime constant for build identification. Pairs with the text-slot conventions added to <a href="https://raredigits.art/charts/settings/"><code>/charts/settings/</code></a>.</li>
 </ul>
-<h3>Changed</h3>
+<h3 id="changed-5">Changed</h3>
 <ul>
 <li><strong>Axis titles clip to their margin instead of running off the chart</strong> (<code>src/core/renderHelpers.js</code> → <code>renderAxisTitles</code>, <code>src/charts/DualAxes.js</code>, <code>src/core/utils.js</code> → <code>warnAxisTitleClipped</code>). <code>y1Title</code> / <code>y2Title</code> are now measured by rendered pixel width against the available axis margin (its exact overflow-clip boundary) and trimmed with an ellipsis only when they would actually be cut off — narrow glyphs in a terse title like <code>N · K HLX</code>, and the uppercase transform applied via CSS, are accounted for as they render, so a label that fits (e.g. <code>Inflows</code>) is left intact. The full text is kept as a hover <code>&lt;title&gt;</code>, a one-time console hint fires, and <code>axisTitleMaxLength</code> caps the length explicitly.</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed-5">Fixed</h3>
 <ul>
 <li><strong>Horizontal bar value-axis end labels no longer clip at the chart edge</strong> (<code>src/charts/Bar.js</code>). When the value axis sits flush against the card (<code>margin.left</code> / <code>right</code> = 0), the centered first/last tick label (e.g. <code>0</code>) was half-cut by the card's overflow clip. The first label is now anchored <code>start</code> and the last <code>end</code>, so both sit fully inside the plot while the bars stay flush.</li>
 <li><strong>Text-dependent layout now settles after the web font loads</strong> (<code>src/core/Chart.js</code>). First paint can happen before the bundled font (Fira Sans) finishes loading, so measurements taken against the wider fallback font were wrong — axis titles that fit were trimmed, X-axis labels over-thinned, end-label boxes mis-sized. Each chart now re-renders once on <code>document.fonts.ready</code>, so these measurements are correct without waiting for a resize. The re-render does not replay entry animations.</li>
 </ul>
-<h2>[v0.9.6] — 2026-06-14 — Confidence Bands</h2>
+<h2 id="v0-9-6-2026-06-14-confidence-bands">[v0.9.6] — 2026-06-14 — Confidence Bands</h2>
 <p>Adds a band (confidence-ribbon) primitive to <code>Line</code> and the supporting legend and tooltip work to make it readable. Targeted at forecasts and any figure where a single line would overstate precision. Also corrects two <code>strokeDash</code> defects that were documented but didn't work.</p>
-<h3>Added</h3>
+<h3 id="added-6">Added</h3>
 <ul>
 <li><strong><code>band</code> series type on <code>RareCharts.Line</code></strong> (<code>src/charts/Line.js</code>, <code>src/core/seriesPath.js</code>). A series marked <code>type: 'band'</code> with <code>{ date, lower, upper }</code> points renders a filled ribbon between the two boundaries at each x — for confidence intervals (P10–P90 cones), min/max envelopes, and error bands. The band draws behind every line and area, both bounds participate in the Y scale, and it mixes freely with ordinary line series in the same <code>setData</code> call. Fill uses the series <code>color</code> at <code>fillOpacity</code> (default <code>0.16</code>). Detected by <code>type: 'band'</code> or by the presence of <code>lower</code>/<code>upper</code> on the first point. Documented at <a href="https://raredigits.art/charts/line/band/"><code>/charts/line/band/</code></a> with two examples (<code>examples/line/line-chart-band.js</code>, <code>examples/line/line-chart-forecast.js</code>).</li>
 <li><strong>Band readout on hover</strong> (<code>src/core/Crosshair.js</code>). A band reports its range in the crosshair tooltip as <code>lower – upper</code> (e.g. <code>P10–P90: $1.95M – $3.65M</code>). It draws no crosshair dot — a band has two edges and no single point, so a dot would be ambiguous; markers and end labels skip it for the same reason.</li>
 <li><strong>Legend swatch types</strong> (<code>src/core/Chart.js</code>, <code>rare-charts.css</code>). A legend entry's <code>type</code> now selects its swatch so the legend matches the on-screen encoding: <code>'band'</code> → filled square, <code>'dashed'</code> (or <code>dash: true</code>) → dashed rule, <code>'dot'</code> / <code>'bar'</code> → dot (unchanged), default → solid rule. Needed because a forecast draws actuals, P50, and the range in a single hue, where the legend has to carry the distinction.</li>
 </ul>
-<h3>Changed</h3>
+<h3 id="changed-6">Changed</h3>
 <ul>
 <li><strong>The crosshair only reports a series where its data covers the cursor date</strong> (<code>src/core/Crosshair.js</code>). A partial series — a forecast band or a projected line that starts part-way along the axis — no longer snaps its nearest endpoint across the whole width; it stays silent outside its own date range. When nothing is under the cursor, the crosshair line, dots, and tooltip clear. <strong>This affects every chart that uses the crosshair, not only bands</strong> — in practice it only changes charts whose series span different date ranges.</li>
 </ul>
-<h3>Fixed</h3>
+<h3 id="fixed-6">Fixed</h3>
 <ul>
 <li><strong>Per-series <code>strokeDash</code> was documented but never applied.</strong> The field was listed in the Line options table and read during render, but <code>_normalizeData</code> dropped it, so a per-series dash pattern had no effect. It is now carried through and works.</li>
 <li><strong><code>resolveStrokeDash</code> rejected raw dash-array strings</strong> (<code>src/core/utils.js</code>). The options table implied a value like <code>'4,3'</code> was accepted, but only the named presets (<code>'dashed'</code>, <code>'dotted'</code>, <code>'dashDot'</code>, <code>'longDash'</code>) resolved — any raw string fell through to <code>null</code>. A numeric dash-array string (e.g. <code>'5,4'</code>, <code>'4 3'</code>) is now passed through as-is.</li>
 </ul>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3 id="">🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>

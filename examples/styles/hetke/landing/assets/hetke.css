@@ -129,6 +129,16 @@ body.hetke {
 
 /* --- Header + navigation -------------------------------------------------- */
 
+/* This header sizes itself (64px desktop, 54px mobile) instead of using the
+   library's --header-height, so the anchor offset (CSS-129) is set here. */
+html {
+    scroll-padding-top: 72px;
+}
+
+@media (max-width: 768px) {
+    html { scroll-padding-top: 62px; }
+}
+
 .hetke header {
     position: fixed;
     top: 0;

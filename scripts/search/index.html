@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="current">
+            <a href="/scripts/" class="current">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="scripts">
           
             <a href="/scripts/">Scripts</a>
           
@@ -344,8 +338,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Search</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="search-2">Search</h1>
   </section>
 
     <article>
@@ -358,7 +352,7 @@ js/search.js<br>
 </div>
 <p>If you need search on a static website, the easiest and most reliable option is to use a ready-made library instead of building your own search from scratch. It works out of the box, is free to use, and has already been tested on many real websites. One such library — and the one used on this site — is Pagefind.</p>
 <p><a href="https://pagefind.app">Pagefind</a> is a fast and privacy-friendly search engine designed specifically for static sites. It scans the already-built HTML pages and creates a small client-side index, so search works instantly in the browser without any backend or third-party service. On Eleventy sites, Pagefind integrates right after the build step and indexes only what is actually deployed to production.</p>
-<h2>Installation</h2>
+<h2 id="installation">Installation</h2>
 <ol>
 <li>Run the installation command from the root directory of your project. This will add Pagefind to your development dependencies.</li>
 </ol>
@@ -382,7 +376,7 @@ js/search.js<br>
 }
 </code></pre>
 <p>If the installation was successful, they should appear there automatically.</p>
-<h2>Adding the Search UI to the Website</h2>
+<h2 id="adding-the-search-ui-to-the-website">Adding the Search UI to the Website</h2>
 <p>First, we need an element that will allow users to open the search interface. In this example, we place a button <span class="rd-icon-search"></span> in the website header next to the hamburger menu:</p>
 <pre><code class="language-html">&lt;div class=&quot;header-icons&quot;&gt;
   &lt;button class=&quot;icon-search no-decoration rd-js-search&quot; aria-label=&quot;Поиск&quot;&gt;&lt;/button&gt;
@@ -509,9 +503,9 @@ if (document.readyState === 'loading') {
 <p class="callout">
   ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
 </p>
-<h2>Indexing Controls</h2>
+<h2 id="indexing-controls">Indexing Controls</h2>
 <p>Pagefind gives you several simple HTML-based controls to fine-tune what gets indexed and how search results are ranked. These settings are added directly in your templates using attributes or meta tags. The full list of options is available in the official <a href="https://pagefind.app/docs/">documentation</a>, below are the ones you will most likely need in practice.</p>
-<h4>Excluding a page from the index</h4>
+<h4 id="excluding-a-page-from-the-index">Excluding a page from the index</h4>
 <p>If a page should never appear in search results (for example, the search page itself or some drafts), set a flag in the template:</p>
 <pre><code class="language-njk">{% set pagefind_exclude = true %}
 </code></pre>
@@ -521,7 +515,7 @@ if (document.readyState === 'loading') {
 {% endif %}
 </code></pre>
 <p>Any page with this flag will be completely removed from the index.</p>
-<h4>Limiting the indexed area on a page</h4>
+<h4 id="limiting-the-indexed-area-on-a-page">Limiting the indexed area on a page</h4>
 <p>By default, Pagefind indexes the entire visible HTML. To prevent navigation bars, footers, hidden UI elements or banners from being indexed, you can explicitly mark only the “content” area using data-pagefind-body:</p>
 <pre><code class="language-html">&lt;header&gt; … navigation, logo … &lt;/header&gt;
 
@@ -534,14 +528,14 @@ if (document.readyState === 'loading') {
 &lt;footer&gt; … contacts, copyright … &lt;/footer&gt;
 </code></pre>
 <p>Everything outside the data-pagefind-body container will be ignored during indexing.</p>
-<h4>Ignoring specific elements</h4>
+<h4 id="ignoring-specific-elements">Ignoring specific elements</h4>
 <p>When you do not want to restructure the layout or you only need to ignore a few blocks, you can mark them individually:</p>
 <pre><code class="language-html">&lt;nav data-pagefind-ignore&gt;…&lt;/nav&gt;
 &lt;div class=&quot;sidebar&quot; data-pagefind-ignore&gt;…&lt;/div&gt;
 &lt;div class=&quot;ads&quot; data-pagefind-ignore&gt;…&lt;/div&gt;
 </code></pre>
 <p>Ignored nodes and everything inside them will not be indexed.</p>
-<h4>Prioritizing certain pages in search results</h4>
+<h4 id="prioritizing-certain-pages-in-search-results">Prioritizing certain pages in search results</h4>
 <p>You can give some pages more “weight” so they will appear higher in search results. For example, to boost blog posts over static pages:</p>
 <pre><code class="language-html">&lt;html data-pagefind-weight=&quot;10&quot;&gt;
 </code></pre>
@@ -549,11 +543,11 @@ if (document.readyState === 'loading') {
 <pre><code class="language-html">&lt;html data-pagefind-weight=&quot;2&quot;&gt;
 </code></pre>
 <p>Higher values result in higher ranking when relevance is equal.</p>
-<h3>Additional configuration</h3>
+<h3 id="additional-configuration">Additional configuration</h3>
 <p>Pagefind also supports optional configuration for translations, filters, metadata-based filtering, and other advanced options (for example: restricting results by tags, grouping by content type, or customizing UI strings). These features are configured either through HTML attributes or through the <code>PagefindUI</code> initialization options. Refer to the official <a href="https://pagefind.app/docs/">documentation</a> for the full list of supported options.</p>
-<h2>Search Page</h2>
+<h2 id="search-page">Search Page</h2>
 <p>In addition to the “overlay” search opened from a button in the header, you may also want to have a stand-alone search page at /search/. This is useful when you want a full-page search experience (especially on mobile), or when users expect search to exist as a real page in navigation.</p>
-<h4>1. Create a new template for the search page.</h4>
+<h4 id="1-create-a-new-template-for-the-search-page">1. Create a new template for the search page.</h4>
 <p>Create a file such as search.njk with the following front matter and markup:</p>
 <pre><code class="language-njk">---
 layout: page
@@ -594,22 +588,22 @@ body_class: page-search # optional CSS hook
 <pre><code class="language-html">&lt;body class=&quot;page-search&quot;&gt;
 </code></pre>
 <p>This makes it possible to target this page in CSS or conditionally skip overlay initialization in JavaScript.</p>
-<h4>2. Hide the overlay-search button on this page (optional)</h4>
+<h4 id="2-hide-the-overlay-search-button-on-this-page-optional">2. Hide the overlay-search button on this page (optional)</h4>
 <p>In your header template, wrap the search button in a condition:</p>
 <pre><code class="language-njk">{% if not disable_header_search %}
   &lt;button class=&quot;rd-js-search&quot; ...&gt;…&lt;/button&gt;
 {% endif %}
 </code></pre>
 <p>Alternatively, you may simply hide it with CSS using <code>.page-search</code> as a body class.</p>
-<h4>3. Prevent the overlay script from running on the search page</h4>
+<h4 id="3-prevent-the-overlay-script-from-running-on-the-search-page">3. Prevent the overlay script from running on the search page</h4>
 <p>If your overlay is initialized by a global script such as <code>/assets/js/search.js</code>, add a guard at the top:</p>
 <pre><code class="language-js">// Do not initialize the overlay search on the dedicated /search/ page
 if (document.body.classList.contains('page-search')) return;
 </code></pre>
 <p>This ensures there will never be two search UIs active on the same page.</p>
 <p>At this point, the setup provides two independent search interfaces: an overlay search that is opened from the header on regular pages, and a dedicated /search/ page with a full-page search interface. They do not conflict with each other because they use separate containers and separate initialization logic. The search page itself is excluded from the index so it never appears in search results, which is the recommended practice for dedicated search pages.</p>
-<h3>Changelog</h3>
-<h4>v2.0.0</h4>
+<h3 id="changelog">Changelog</h3>
+<h4 id="v2-0-0">v2.0.0</h4>
 <ul>
 <li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — <code>rd-js-search</code> (button), <code>rd-js-search-bar</code> (container), <code>rd-js-search-ui</code> (Pagefind mount); the <code>search-button</code> / <code>searchbar</code> / <code>search</code> IDs are no longer read</li>
 <li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-open</code> state class instead of the <code>hidden</code> attribute</li>
@@ -637,7 +631,7 @@ if (document.body.classList.contains('page-search')) return;
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

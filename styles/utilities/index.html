@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -416,28 +419,166 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>CSS Utilities</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="css-utilities">CSS Utilities</h1>
   </section>
 
     <article>
-      <div class="construction-notice">
-    <p>
-        <span style="font-size: 2em">🚧</span>
-    </p>
-    <p><strong>SECTION ON RECONSTRUCTION</strong></p>
-    <p>
-        <span class="white-bg">
-        Work on this section is in progress. Everything will be available soon.
-        </span>
-    </p>
-    <p>
-        <a href="">Statement on Reconstruction</a>
-    </p>
-    <p>
-        <span class="rd-icon-construction" style="font-size: 2em"></span>
-    </p>
+      <p>Small single-purpose classes that adjust one thing on one element. They live in <code>modules/utilities/</code> and, like everything in the library, apply only inside <code>.rd</code>.</p>
+<h2 id="display-and-visibility">Display and visibility</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.block</code> / <code>.inline</code> / <code>.inline-block</code></td>
+<td><code>display: block</code> / <code>inline</code> / <code>inline-block</code></td>
+</tr>
+<tr>
+<td><code>.mobile-hidden</code></td>
+<td>Hidden below 769px (<code>display: none !important</code> on mobile)</td>
+</tr>
+<tr>
+<td><code>.rd-is-hidden</code></td>
+<td>State class set by the companion scripts: always <code>display: none !important</code>, whatever state the component is in</td>
+</tr>
+</tbody>
+</table>
 </div>
+<h2 id="wrapping">Wrapping</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.wrap</code> / <code>.no-wrap</code></td>
+<td><code>flex-wrap: wrap</code> / <code>nowrap</code> on a flex container</td>
+</tr>
+<tr>
+<td><code>.text-wrap</code> / <code>.text-nowrap</code></td>
+<td><code>white-space: normal</code> / <code>nowrap</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="overflow-and-scrolling">Overflow and scrolling</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.scroll-container</code></td>
+<td><code>overflow: auto</code>. It only scrolls when the box has a height (<code>max-height</code>, <code>.height-*</code>)</td>
+</tr>
+<tr>
+<td><code>.table-scroll</code></td>
+<td>Wrap a wide table in it: the table scrolls inside instead of widening the page</td>
+</tr>
+<tr>
+<td><code>.overflow-hidden</code></td>
+<td><code>overflow: hidden</code></td>
+</tr>
+<tr>
+<td><code>.no-scrollbar</code></td>
+<td>Keeps scrolling, hides the scrollbar</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="stacking">Stacking</h2>
+<p><code>.z-index-0</code> … <code>.z-index-5</code> set <code>z-index</code> from 0 to 5. Library chrome sits above them (header 100, skip link 1000).</p>
+<h2 id="resets">Resets</h2>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.no-decoration</code></td>
+<td>Removes underline, link fill, borders, shadow and <code>::before</code> glyphs, for links that are not text links</td>
+</tr>
+<tr>
+<td><code>.no-padding</code></td>
+<td><code>padding: 0</code></td>
+</tr>
+<tr>
+<td><code>.no-border</code></td>
+<td>Removes all borders</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="responsive-prefixes">Responsive prefixes</h2>
+<p>Spacing, sizing, position and grid utilities come in breakpoint variants: <code>mobile:</code>, <code>tablet:</code> and <code>desktop:</code>, as in <code>mobile:padding-sm</code> or <code>desktop:grid-cols-3</code>. The breakpoints have no gaps between them, so a fractional viewport such as 768.5px always lands in exactly one:</p>
+<div class="table-scroll">
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>Viewport</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>mobile:</code></td>
+<td><code>width &lt; 769px</code></td>
+</tr>
+<tr>
+<td><code>tablet:</code></td>
+<td><code>769px &lt;= width &lt; 1024px</code></td>
+</tr>
+<tr>
+<td><code>desktop:</code></td>
+<td><code>width &gt;= 1024px</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The full spacing scale is on <a href="/styles/layout/spacing/">Spacing</a>.</p>
+<h2 id="accessibility-helpers">Accessibility helpers</h2>
+<h3 id="focus-ring">Focus ring</h3>
+<p>Every focusable element inside <code>.rd</code> shows a ring on keyboard focus (<code>:focus-visible</code>), so mouse clicks stay ring-free. The ring is driven by three tokens. Override them on <code>:root</code>:</p>
+<pre><code class="language-css">:root {
+  --focus-ring-color: var(--blue);  /* ≥ 3:1 on every library surface */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+</code></pre>
+<p>Don't remove the ring with <code>outline: none</code> unless you replace it with an equally visible <code>:focus-visible</code> style.</p>
+<h3 id="visually-hidden"><code>.visually-hidden</code></h3>
+<p>Hides content from sight but keeps it for screen readers: an icon button's label, a table caption that only repeats the heading. If the element or anything inside it receives focus, it is shown in place, so a focused element is never invisible. There is no <code>.sr-only</code> alias.</p>
+<pre><code class="language-html">&lt;button class=&quot;icon-search&quot;&gt;
+  &lt;span class=&quot;visually-hidden&quot;&gt;Search the site&lt;/span&gt;
+&lt;/button&gt;
+</code></pre>
+<h3 id="skip-to-content"><code>.skip-to-content</code></h3>
+<p>The first link on the page. It stays hidden until it receives keyboard focus, then appears above the fixed header. Point it at the page title or the main content so keyboard users can skip the header and the sidebar:</p>
+<pre><code class="language-html">&lt;body&gt;
+  &lt;a class=&quot;skip-to-content&quot; href=&quot;#main-content&quot;&gt;Skip to content&lt;/a&gt;
+  …
+  &lt;section class=&quot;page-title&quot; id=&quot;main-content&quot;&gt;…&lt;/section&gt;
+</code></pre>
+<p>The target scrolls clear of the fixed header on its own: <code>html</code> carries <code>scroll-padding-top</code> from <code>--header-height</code>.</p>
+
     </article>
   </div>
 </main>
@@ -458,7 +599,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -416,8 +410,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Sankey</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="sankey">Sankey</h1>
   </section>
 
     <article>
@@ -429,7 +423,7 @@
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-budget"></div>
 </div>
-<h2>Data</h2>
+<h2 id="data">Data</h2>
 <p>A Sankey takes the same <code>{ nodes, links }</code> shape as the Graph. Each link is a flow from <code>source</code> to <code>target</code> with a positive <code>value</code>.</p>
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', { title: 'City budget' }).setData({
   nodes: [
@@ -449,9 +443,9 @@
 <li><strong>Cycles are an error.</strong> A Sankey is acyclic: a link chain that returns to its start (A → B → A) throws, naming the cycle.</li>
 <li><strong>In ≠ out.</strong> A node is as tall as the larger of its inflow and outflow.</li>
 </ul>
-<h3>Recommended size</h3>
+<h3 id="recommended-size">Recommended size</h3>
 <p>Up to <strong>4–5 columns and about 30 nodes</strong>. Past that, bands get too thin to read and labels collide — aggregate small flows into an &quot;Other&quot; node on the data side. There is no hard limit in code.</p>
-<h2>Money trail</h2>
+<h2 id="money-trail">Money trail</h2>
 <p>Color bands by <code>type</code> and the legend lists the types. Hover a band to highlight it with its two nodes; <strong>click it to pin the tooltip</strong>, so a long label or links inside it can be read. A click elsewhere or Escape releases it.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-trail"></div>
@@ -468,15 +462,16 @@
     { from: 'Pension fund', to: 'Holding A', value: 140, type: 'equity', label: 'Series B, 2021' },
   ],
 });</code></pre>
-<h2>Five columns</h2>
+<h2 id="five-columns">Five columns</h2>
 <p>The recommended upper bound: an energy balance from primary sources to useful and lost energy, bands shaded from source to target color with <code>linkColor: 'gradient'</code>.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-energy"></div>
 </div>
-<h2>Mobile</h2>
+<h2 id="mobile">Mobile</h2>
 <p>With the default <code>orientation: 'auto'</code> the diagram turns 90° when its container is at most <code>mobileBreakpoint</code> (480 px) wide: columns become rows, flows run top to bottom, and the chart grows by <code>rowHeight</code> per row instead of squeezing columns into a narrow width. Force either layout with <code>orientation: 'horizontal'</code> or <code>'vertical'</code>.</p>
-<h2>Options</h2>
-<table class="table-bordered card-caption">
+<h2 id="options">Options</h2>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -508,8 +503,9 @@
         <tr><td><code>animate</code> / <code>duration</code> / <code>ease</code></td><td></td><td><code>true</code> / <code>600</code> / <code>'cubicOut'</code></td><td>Entry fade of the bands; off under <code>prefers-reduced-motion</code></td></tr>
     </tbody>
 </table>
+</div>
 <p>Text slots <code>title</code>, <code>subtitle</code>, <code>source</code> and <code>note</code>, and the <code>controls</code> slot for your own inputs, work as on every chart — see <a href="/charts/settings/">Settings</a>.</p>
-<h2>Accessibility</h2>
+<h2 id="accessibility">Accessibility</h2>
 <p>The SVG is labelled from <code>title</code> / <code>subtitle</code>. Every node and band carries an accessible name (&quot;Income tax → Health: 9.4&quot;); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/sankey/sankey-demos.js"></script>
@@ -534,7 +530,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

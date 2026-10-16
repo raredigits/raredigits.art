@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -416,21 +419,25 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Usage</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="usage">Usage</h1>
   </section>
 
     <article>
-      <h2>General Principles</h2>
+      <h2 id="general-principles">General Principles</h2>
 <p>Rare Styles provides a solid foundation for creating clean, functional interfaces. This guide explains how to effectively implement the style system in your projects and customize it when needed.</p>
-<h2>Including the Stylesheet</h2>
+<h2 id="including-the-stylesheet">Including the Stylesheet</h2>
 <p>Add the Rare Styles stylesheet to your project by including it in the <code>&lt;head&gt;</code> section of your HTML:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.6.19/rare.min.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css&quot;&gt;
 </code></pre>
 <p>For development environments or when you need unminified code:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.6.19/rare.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.css&quot;&gt;
 </code></pre>
-<h2>Understanding Cascading Styles</h2>
+<p>Then opt the page in. From <code>v0.7.0</code> every library style applies only under the <code>.rd</code> class, so a page without it is left alone:</p>
+<pre><code class="language-html">&lt;html lang=&quot;en&quot; class=&quot;rd&quot;&gt;
+</code></pre>
+<p><code>class=&quot;rd&quot;</code> on a single element instead styles just that block (an island). An island gets the tag styles and the library classes, but not the page shell (fixed header, footer, page grid) or the base typography of <code>body</code>. <a href="/styles/getting-started/">Getting Started</a> explains page mode, islands and the caveats.</p>
+<h2 id="understanding-cascading-styles">Understanding Cascading Styles</h2>
 <p>The &quot;C&quot; in CSS stands for &quot;Cascading,&quot; a fundamental principle that determines which styles take precedence when multiple rules apply to the same element. The system works through three key mechanisms:</p>
 <ul>
 <li>Inheritance - Many properties naturally flow down from parent to child elements</li>
@@ -438,9 +445,9 @@
 <li>Source order - Later styles override earlier styles</li>
 </ul>
 <p>This cascade principle is what makes customizing Rare Styles straightforward: you can override the default styles simply by adding more specific rules or loading your custom styles after the main stylesheet.</p>
-<h2>Customization Approach</h2>
+<h2 id="customization-approach">Customization Approach</h2>
 <p>The simplest way to customize Rare Styles is to create your own stylesheet and include it after the main Rare Styles file:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.6.19/rare.min.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.0/rare.min.css&quot;&gt;
 &lt;link rel=&quot;stylesheet&quot; href=&quot;path/to/my-beautiful-styles.css&quot;&gt;
 </code></pre>
 <p>This approach preserves all the functional benefits of Rare Styles while allowing you to:</p>
@@ -450,36 +457,45 @@
 <li>Create custom component variants</li>
 <li>Add entirely new elements</li>
 </ul>
-<p>Here's a simple example of brand-specific customization in <code>my-beautiful-styles.css</code>:</p>
-<pre><code class="language-css">:root {
-  /* Override primary colors */
-  --color-primary: #0056b3;
-  --color-primary-dark: #004494;
-  --color-accent: #ff6b00;
-  
-  /* Adjust typography */
-  --font-heading: 'Montserrat', sans-serif;
+<p>Here's a simple example of brand-specific customization in <code>my-beautiful-styles.css</code>. It changes the library's own tokens. Inventing new token names would do nothing, because no library rule reads them:</p>
+<pre><code class="language-css">/* A font name alone loads nothing: bring the files (or a &lt;link&gt; to your font host) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
 }
 
-/* Custom card style */
+:root {
+  /* Library tokens: override these, the library reads them */
+  --primary-color: #1a1a2e;              /* body text and headings */
+  --brand-color: #ff6b00;                /* brand accents */
+  --brand-color-dark: #c25100;           /* link underline and hover fill */
+  --heading-font: 'Montserrat', sans-serif;
+
+  /* Your own tokens: any name, read only by your rules below */
+  --my-accent: #0056b3;
+}
+
+/* A variant of the library's .card */
 .card.premium {
-  border-left: 4px solid var(--color-accent);
+  border-left: 4px solid var(--my-accent);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom button variant */
-.btn.brand {
-  background-color: var(--color-accent);
+/* A variant of the library's .button */
+.button.brand {
+  background-color: var(--brand-color);
+  border-color: var(--brand-color);
   color: white;
-  border-radius: 2px;
 }
 </code></pre>
-<p>This lightweight customization adjusts the color scheme, changes the heading font, and adds two new component variants without modifying the original stylesheet.</p>
-<h2>Learning from Examples</h2>
+<p>Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline and the heading font, and adds two variants of existing library components without modifying the original stylesheet. <code>--primary-font</code> and <code>--code-font</code> work the same way as <code>--heading-font</code>.</p>
+<h2 id="learning-from-examples">Learning from Examples</h2>
 <p>Check out the <a href="/examples">examples section</a> to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.</p>
-<h2>Getting Help</h2>
+<h2 id="getting-help">Getting Help</h2>
 <p>Don't hesitate to create an issue in the <a href="https://github.com/raredigits/rare-styles">GitHub repository</a> if you encounter problems or have questions. The repository is home to mostly harmless and generally friendly developers who are happy to help. Whether you've found a bug, need clarification, or want to suggest an improvement, the community welcomes your input.</p>
-<h2>Working with Third-Party Libraries</h2>
+<h2 id="working-with-third-party-libraries">Working with Third-Party Libraries</h2>
 <p>When integrating Rare Styles with other UI libraries or frameworks:</p>
 <ul>
 <li>Load order matters - Place Rare Styles before or after other CSS libraries depending on which should take precedence</li>
@@ -487,7 +503,7 @@
 <li>CSS resets - Rare Styles includes its own minimal reset; additional reset libraries are usually unnecessary</li>
 <li>Framework integration - For component-based frameworks (React, Vue, etc.), consider using the Rare Styles variables in your component styles for consistency</li>
 </ul>
-<h2>Performance Considerations</h2>
+<h2 id="performance-considerations">Performance Considerations</h2>
 <p>When customizing Rare Styles:</p>
 <ul>
 <li>Use CSS variables whenever possible instead of overriding entire rule sets</li>
@@ -517,7 +533,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

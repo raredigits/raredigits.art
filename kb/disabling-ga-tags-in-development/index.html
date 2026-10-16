@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="current">
+            <a href="/kb/" class="current">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -271,7 +265,7 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="knowledge-base">
           <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -299,15 +293,15 @@
       </nav>
     </aside>
     
-  <section class="page-title">
-    <h1>Disabling GA Tags in Development</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="disabling-ga-tags-in-development">Disabling GA Tags in Development</h1>
   </section>
 
     <article>
-      <h2>The Analytics Noise Problem</h2>
+      <h2 id="the-analytics-noise-problem">The Analytics Noise Problem</h2>
 <p>We all use Google Analytics. It's the standard way to understand user behavior and measure site performance. But there's a common issue that plagues development teams: analytics noise from local testing.</p>
 <p>Every pageview, every click during local development gets faithfully reported to your analytics dashboard, creating a statistical fog that obscures actual user behavior. Your bounce rate suddenly includes that time you reloaded the homepage 47 times while tweaking the hero image.</p>
-<h2>The Conventional Solution</h2>
+<h2 id="the-conventional-solution">The Conventional Solution</h2>
 <p>The standard approach involves environment segregation using environment variables:</p>
 <pre><code class="language-html">{ % if environment == &quot;production&quot; % }
   &lt;!-- Google Analytics code --&gt;
@@ -315,7 +309,7 @@
 </code></pre>
 <p>This works well enough for larger projects with established build pipelines. Your CI/CD system dutifully sets environment variables, your templating engine conditionally renders the analytics snippet, and your development activity stays quarantined from production statistics.</p>
 <p>It's valid. It works. But it demands infrastructure.</p>
-<h2>A Simpler Approach</h2>
+<h2 id="a-simpler-approach">A Simpler Approach</h2>
 <p>For smaller projects or quick prototypes, here's a lightweight solution that requires no environment configuration, build steps, or template logic:</p>
 <pre><code class="language-js">&lt;script&gt;
   if (!['localhost', '127.0.0.1'].includes(location.hostname)) {
@@ -331,7 +325,7 @@
 &lt;/script&gt;
 </code></pre>
 <p>This elegant little snippet simply checks if you're on localhost before loading any analytics code. No environment variables, no build system configuration, no template conditions—just plain JavaScript doing what it does best.</p>
-<h2>One-Minute Optimization</h2>
+<h2 id="one-minute-optimization">One-Minute Optimization</h2>
 <p>With just a moment's thought, you can extend this approach:</p>
 <pre><code class="language-js">&lt;script&gt;
   // Add your development and staging domains as needed
@@ -351,7 +345,7 @@
 &lt;/script&gt;
 </code></pre>
 <p>This version accommodates not just localhost but any development or staging domains you might use. The <code>.some()</code> method even allows partial matching, so feature-branch.dev.yourdomain.com gets correctly identified as a development environment.</p>
-<h2>The End of Environment Dances</h2>
+<h2 id="the-end-of-environment-dances">The End of Environment Dances</h2>
 <p>With this approach, you can deploy the same code to any environment without worry. Your analytics will automatically activate in production while staying dormant during development. No more cluttering your bounce rate with development activity, no more filtering out internal traffic, and no more environment variable configuration just to prevent analytics noise.</p>
 <p>Sometimes the simplest solutions are hiding in plain sight, waiting for someone to notice them.</p>
 
@@ -375,7 +369,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

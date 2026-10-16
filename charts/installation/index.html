@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -416,25 +410,25 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Installation</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="installation">Installation</h1>
   </section>
 
     <article>
       <p>RareCharts ships as a single self-contained JavaScript file. No build step, no package manager, no fifteen dependencies with conflicting peer requirements. You add one script tag and it works.</p>
 <p>D3 is bundled in. You do not need to include it separately.</p>
-<h2>Getting the file</h2>
+<h2 id="getting-the-file">Getting the file</h2>
 <p><strong>From GitHub</strong> — clone the repo and use the prebuilt file:</p>
-<pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
+<pre class="code-block text-content-caption"><code data-copy="">git clone https://github.com/raredigits/rare-charts.git</code>
 <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <p>Copy <code>rare-charts.js</code> wherever your project keeps static assets.</p>
 <p><strong>From CDN</strong> — load it directly, no download required:</p>
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <p>For production, pin to a specific version. <code>@latest</code> is fine for prototyping, bad for anything that ships:</p>
-<pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_3/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_3/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
-<h2>Where to put the script tag</h2>
+<h2 id="where-to-put-the-script-tag">Where to put the script tag</h2>
 <p>Two standard options, both work fine.</p>
 <p><strong>Before <code>&lt;/body&gt;</code></strong> — the classic approach. The page renders first, then the script loads. Charts initialize against already-present DOM elements.</p>
 <pre><code>&lt;body&gt;
@@ -456,7 +450,7 @@
   &lt;/script&gt;
 &lt;/body&gt;</code></pre>
 <p>The only rule: your chart initialization code must run after both the library and the container element are in the DOM. Either approach guarantees that.</p>
-<h2>Creating a chart</h2>
+<h2 id="creating-a-chart">Creating a chart</h2>
 <p>Every chart follows the same three-step pattern.</p>
 <p><strong>1.</strong> Add a container element:</p>
 <pre><code>&lt;div id="my-chart"&gt;&lt;/div&gt;</code></pre>
@@ -470,12 +464,13 @@
 <p>Or chain steps 2 and 3:</p>
 <pre><code>new RareCharts.Bar('#my-chart', { height: 300 }).setData(data);</code></pre>
 <p><code>setData()</code> can be called multiple times. The chart updates in place — useful for filters, date range selectors, or live data.</p>
-<h2>Sizing</h2>
+<h2 id="sizing">Sizing</h2>
 <p><strong>Width</strong> is always 100% of the container. Make the container whatever width you need — the chart fills it and redraws automatically on resize. No <code>window.addEventListener('resize', ...)</code> required.</p>
 <p><strong>Height</strong> is set per instance via the <code>height</code> option. Each chart type has its own default (240–520px), but you almost always want to set it explicitly.</p>
 <pre><code>new RareCharts.Graph('#network', { height: 600 }).setData(data);</code></pre>
-<h2>Available chart types</h2>
-<table class="table-bordered card-caption">
+<h2 id="available-chart-types">Available chart types</h2>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Class</th>
@@ -525,11 +520,12 @@
     </tr>
   </tbody>
 </table>
+</div>
 <p>All types share the same base options (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>height</code>, <code>theme</code>) — documented on the <a href="/charts/settings/">Settings</a> page.</p>
-<h2>Using with Rare Styles</h2>
+<h2 id="using-with-rare-styles">Using with Rare Styles</h2>
 <p>If your project uses <a href="/styles/">Rare Styles</a>, RareCharts will sit comfortably next to the rest of the UI. But the charts do not depend on host-site font variables anymore: the library ships with its own typography defaults and its own chart-level CSS variables.</p>
 <p>If you are using RareCharts standalone, the built-in defaults take over. If you want to change the type system, override the chart theme or the <code>--rc-*</code> variables documented on the <a href="/charts/styles/">Styles</a> page.</p>
-<h2>Minimal working example</h2>
+<h2 id="minimal-working-example">Minimal working example</h2>
 <pre class="text-content-caption"><code>&lt;div id="chart"&gt;&lt;/div&gt;
 
 &lt;script src="/assets/rare-charts.js"&gt;&lt;/script&gt;
@@ -566,7 +562,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="current">
+            <a href="/scripts/" class="current">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="scripts">
           
             <a href="/scripts/">Scripts</a>
           
@@ -344,15 +338,15 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Simple Cookie Notice</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="simple-cookie-notice">Simple Cookie Notice</h1>
   </section>
 
     <article>
       <div class="meta-info">
     <p>js/cookie-consent.js</p>
     <p>v3.0.0 Stable (breaking: `rd-js-` hook) |
-    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy>CDN</a> (minified)
+    <a class="copy-source" href="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js" data-copy="">CDN</a> (minified)
     <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button> |
     <a href="/assets/js/cookie-consent.js">Download</a>
     <span class="rd-icon-download"></span>
@@ -364,7 +358,7 @@
 <div class="text-content-caption">
     <img src="/assets/img/illustrations/cookies-consent-example.jpg" alt="Cookies consent script example">
 </div>
-<h2>Important Legal Disclaimer ⚠️</h2>
+<h2 id="important-legal-disclaimer">Important Legal Disclaimer ⚠️</h2>
 <p>This project is <strong>NOT a full cookie consent management solution</strong>.</p>
 <p>It does <strong>not</strong>:</p>
 <ul>
@@ -375,7 +369,7 @@
 </ul>
 <p>Its sole purpose is to <strong>inform users that cookies are used</strong> and to remember that the notice has been dismissed. This project provides <strong>notification</strong>, not <strong>legal compliance</strong>. Use at your own risk.</p>
 <p>If your website is subject to specific legal requirements, consult a qualified legal professional and consider using a dedicated Consent Management Platform (CMP).</p>
-<h2>Features</h2>
+<h2 id="features">Features</h2>
 <ul>
 <li>No dependencies</li>
 <li>No build step</li>
@@ -384,7 +378,7 @@
 <li>Works on static websites</li>
 <li>Safe cookie defaults (<code>SameSite=Lax</code>, <code>Secure</code> on HTTPS)</li>
 </ul>
-<h2>How It Works</h2>
+<h2 id="how-it-works">How It Works</h2>
 <ol>
 <li>On page load, the script checks for a cookie named <code>cookie-notice-dismissed</code></li>
 <li>If the cookie is present, the notice is hidden by adding the <code>rd-is-hidden</code> state class</li>
@@ -392,7 +386,7 @@
 <li>The notice stays hidden for subsequent visits</li>
 </ol>
 <p>Default cookie lifetime: <strong>31 days</strong></p>
-<h2>Installation</h2>
+<h2 id="installation">Installation</h2>
 <p class="callout">
   ⚠️ <strong>Performance tip:</strong> For production, download the script and host it on your own server rather than loading it from a CDN.
 </p>
@@ -451,16 +445,16 @@
 </div>
 <p>Placement matters: the script initializes immediately when the notice markup is already parsed, so the dismissal check runs <strong>before the browser paints the content that follows</strong> — a returning visitor never sees the notice flash. If the markup is not there yet, the script falls back to <code>DOMContentLoaded</code>. No configuration is required.</p>
 <div class="air-md"></div>
-<p><strong>Optional anti-flash guard.</strong> If you load the script with <code>defer</code>/<code>async</code> or from a CDN late in the page, the paint-then-hide flash comes back for returning visitors. In that case add this one-liner right after the notice markup:<div class="code-block">
+<p><strong>Optional anti-flash guard.</strong> If you load the script with <code>defer</code>/<code>async</code> or from a CDN late in the page, the paint-then-hide flash comes back for returning visitors. In that case add this one-liner right after the notice markup:</p><div class="code-block">
 <pre><code id="snippet-4" class="language-html">&lt;script&gt;
 if (document.cookie.indexOf('cookie-notice-dismissed=true') !== -1) {
 document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
 }
 &lt;/script&gt;</code></pre>
-<button class="copy-data-icon rd-js-copy" title="Copy guard" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
+<button class="copy-data-icon rd-js-copy" title="Copy guard" data-icon="content_copy" data-copy-target="#snippet-4"></button><p></p>
 </div>
 </details>
-<h2>Assumptions Made by the Script</h2>
+<h2 id="assumptions-made-by-the-script">Assumptions Made by the Script</h2>
 <ul>
 <li>JavaScript is enabled</li>
 <li>Cookies are enabled</li>
@@ -468,7 +462,7 @@ document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
 <li>The notice markup exists on the page where the script runs</li>
 </ul>
 <p>If any of these assumptions are false, the script will fail silently.</p>
-<h2>Customization</h2>
+<h2 id="customization">Customization</h2>
 <p>You may safely change:</p>
 <ul>
 <li>Text content</li>
@@ -477,8 +471,8 @@ document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
 <li>Cookie name</li>
 </ul>
 <p>The <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> hook classes and the <code>rd-is-hidden</code> state class are the script’s contract — if you rename them, you must update the script accordingly.</p>
-<h2>Changelog</h2>
-<h3>v3.0.0</h3>
+<h2 id="changelog">Changelog</h2>
+<h3 id="v3-0-0">v3.0.0</h3>
 <ul>
 <li><strong>Breaking:</strong> hooks moved to the <code>rd-js</code> contract — the script finds elements via the <code>rd-js-cookie-consent</code> / <code>rd-js-cookie-accept</code> classes; the <code>cookie-notice</code> / <code>cookie-notice-accept</code> IDs are no longer read</li>
 <li><strong>Breaking:</strong> visibility is expressed by the <code>rd-is-hidden</code> state class instead of inline <code>style.display</code></li>
@@ -506,7 +500,7 @@ document.querySelector('.rd-js-cookie-consent').classList.add('rd-is-hidden');
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

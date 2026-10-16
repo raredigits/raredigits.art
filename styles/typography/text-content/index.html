@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -450,21 +453,21 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Text Elements</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="text-elements">Text Elements</h1>
   </section>
 
     <article>
       
 <section>
-    <h3>Heading</h3>
+    <h3 id="heading">Heading</h3>
 </section>
 
 <section>
-    <h3>Body Text</h3>
+    <h3 id="body-text">Body Text</h3>
     <p>Body text is the default. Paragraphs sit on the text-content column at a comfortable measure, the line-height is tuned for sustained reading, and nothing extra is needed — just write.</p>
 
-    <h4><code>.lead</code></h4>
+    <h4 id="lead"><code>.lead</code></h4>
     <p>A single oversized opening paragraph. Think of it as the page's TL;DR: one or two sentences that tell the reader what this page is about and whether to keep reading. Use it once, at the top of a long-read.</p>
 
     <div class="lead">
@@ -475,38 +478,38 @@
 </section>
 
 <section>
-    <h3>Meta Copy</h3>
+    <h3 id="meta-copy">Meta Copy</h3>
 </section>
 
 <section>
-    <h2>Special Text Elements</h2>
+    <h2 id="special-text-elements">Special Text Elements</h2>
 
     <p>A handful of blocks sit slightly past the text-content column on both sides — a small but deliberate signal that they are not the prose, they are <em>about</em> the prose. Captions, highlights, and content-captions all share this outdent: <code>var(--space-lg)</code> on desktop, tightening to <code>var(--space-sm)</code> on mobile. The shift is driven by a single internal SCSS mixin (<code>@mixin outdent</code> in <code>typography/_text-content.scss</code>) so the three blocks stay coherent. In <code>v0.6.15</code> the same pattern will be exposed as the public utility <code>.rd-outdent</code>.</p>
 
-    <h3><code>.text-content-caption</code></h3>
+    <h3 id="text-content-caption"><code>.text-content-caption</code></h3>
     <p>A wrapper that widens its content past the regular text column by one outdent on each side. Use it for figures, illustrative cards, or any block that needs slightly more horizontal room than a paragraph but should still belong to the article.</p>
 
-    <h3><code>.highlight</code></h3>
+    <h3 id="highlight"><code>.highlight</code></h3>
     <p>An emphatic, centered block with a thick brand-color border. The reading flow stops here and reads this carefully — so use it sparingly, for the single sentence on the page that has to land.</p>
 
     <div class="highlight">
         Make it beautiful by making it understandable. Not loud. Not clever. Just right.
     </div>
 
-    <h3><code>.caption</code></h3>
+    <h3 id="caption"><code>.caption</code></h3>
     <p>An aside-style block with a soft gray background and a brand-color left rule. Used for editor's notes, observations, or short asides that comment on the prose without being part of it.</p>
 
     <div class="caption">
         <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant.</p>
     </div>
 
-    <h3><code>&lt;mark&gt;</code></h3>
+    <h3 id="mark"><code>&lt;mark&gt;</code></h3>
     <p>Inline highlighting for words or phrases inside running text. <mark>Use it to flag the single phrase a skimming reader must not miss.</mark></p>
 
-    <h3><code>&lt;cite&gt;</code></h3>
+    <h3 id="cite"><code>&lt;cite&gt;</code></h3>
     <p>The semantic element for attributing a quotation. Renders right-aligned and muted — see the <code>&lt;blockquote&gt;</code> example below.</p>
 
-    <h3>Blockquote</h3>
+    <h3 id="blockquote">Blockquote</h3>
 
     <p>A good quote is like a well-timed assist in basketball—it brings someone else’s brilliance into play exactly when you need it. Blockquotes give voice and weight to borrowed wisdom, letting other people’s words do the heavy lifting while you focus on connecting the dots.</p>
 
@@ -519,7 +522,7 @@
     </blockquote>
     <p>In Rare Styles, <code>&lt;blockquote&gt;</code> are set apart with comfortable margins and a subtle background treatment—enough to signal “this is someone else talking” without turning your page into a ransom note made of clippings. Citations are handled through the <code>&lt;cite&gt;</code> element, because proper attribution is the difference between scholarship and plagiarism, and we prefer the former.</p>
     
-<h3>Epigraph</h3>
+<h3 id="epigraph">Epigraph</h3>
 
     <figure class="epigraph text-content-width">
         <p>The whole of science is nothing more than a refinement of everyday thinking.</p>
@@ -530,7 +533,7 @@
 
     <p>Keep epigraphs brief. Their job is to set a tone before the reader enters, not to carry an argument.</p>
 
-    <h3><code>.boilerplate</code></h3>
+    <h3 id="boilerplate"><code>.boilerplate</code></h3>
 
     <p>A muted block for text notes, fine print, or a short standing notice, set off from the prose by a top rule and a leading <code>info</code> marker. Each <code>&lt;p&gt;</code> inside carries the marker, so the block reads as a small notice <em>about</em> the page rather than part of the argument. The glyph is drawn from the library’s SVG icon set (an SVG mask on <code>::before</code>). Harvested into the library in <code>v0.6.15</code>.</p>
 
@@ -538,7 +541,7 @@
         <p>Rare Styles is a narrow, professional CSS library for clarity-first longreads and decision-first data views — not a general-purpose framework.</p>
     </div>
 
-    <h3>Definition Lists</h3>
+    <h3 id="definition-lists">Definition Lists</h3>
 
     <p>A plain <code>&lt;dl&gt;</code> is styled directly: readable spacing, bold enlarged terms, and extra separation before each new term. Use it for glossary-style or principle-style content where each term introduces a short block — the <a href="/manifesto/principles/">manifesto principles</a> are set exactly this way.</p>
 
@@ -553,7 +556,7 @@
         <dd>Rare Styles is for longreads and decision-first views, not for general-purpose UI theming.</dd>
     </dl>
 
-    <h3><code>.dl-grid</code></h3>
+    <h3 id="dl-grid"><code>.dl-grid</code></h3>
 
     <p>The grid variant turns a definition list into a compact key:value grid. Use it for metadata, settings summaries, technical facts, or small inspection panels.</p>
 
@@ -570,17 +573,17 @@
 
     <p><code>dt &gt; code</code> inside <code>.dl-grid</code> is intentionally rendered at normal weight, so code-like keys do not become too heavy.</p>
 
-    <h3>Tags</h3>
+    <h3 id="tags">Tags</h3>
     <p><code>.tag</code></p>
     
-    <h3>Raw Code</h3>
+    <h3 id="raw-code">Raw Code</h3>
     <p><code>&lt;code&gt;</code></p>
     
-    <p><pre><code>
+    <p></p><pre><code>
 &lt;pre&gt;
     &lt;code&gt;&lt;/code&gt;
 &lt;/pre&gt;
-        </code></pre></p>
+        </code></pre><p></p>
     
     
     <p><code>.legal</code></p>
@@ -589,15 +592,15 @@
 </section>
 
 <section>
-    <h3>Tips</h3>
+    <h3 id="tips">Tips</h3>
     <p><a href="https://medium.com/sketch-app-sources/design-cheatsheet-274384775da9">Cheatsheet</a></p>
 </section>
 
 <section>
-    <h3>Teasers</h3>
+    <h3 id="teasers">Teasers</h3>
     <div class="teaser-bottom">
         <p>Next:</p>
-        <h3><a href="/styles/colors/">Colors</a></h3>
+        <h3 id="colors"><a href="/styles/colors/">Colors</a></h3>
     </div>
 </section>
     </article>
@@ -620,7 +623,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="current">
+            <a href="/kb/" class="current">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -271,7 +265,7 @@
 <main>
   <div class="content grid-global">
     <aside class="sidebar">
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="knowledge-base">
           <a href="/kb/">Knowledge Base</a>
       </h5>
       <nav class="sidebar-nav no-scrollbar">
@@ -299,8 +293,8 @@
       </nav>
     </aside>
     
-  <section class="page-title">
-    <h1>Taming &lt;pre&gt;</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="taming-pre">Taming &lt;pre&gt;</h1>
   </section>
 
     <article>
@@ -322,7 +316,7 @@ you asked — and insists that this is, in fact, the standard.</p>
   </div>
 </div>
 <p>Here’s why.</p>
-<h3>Problem 1: HTML Inside &lt;pre&gt; Still Gets Parsed</h3>
+<h3 id="problem-1-html-inside-pre-still-gets-parsed">Problem 1: HTML Inside &lt;pre&gt; Still Gets Parsed</h3>
 <p>The first surprise comes from a very simple misunderstanding: <code>&lt;pre&gt;</code> was never
 really designed to “show code safely.” It was designed to <em>preserve whitespace</em>.
 That’s it. It keeps your spaces and newlines, and then politely lets the rest of
@@ -344,9 +338,9 @@ and restructure anything that looks like a tag.</p>
 <li>Wrap code inside <code>&lt;script type=&quot;text/plain&quot;&gt;</code> like you’re a magician smuggling contraband through security.</li>
 </ul>
 <p>Or just scream and give up.</p>
-<h3>Problem 2: Tabulation and Formatting Randomly Die</h3>
+<h3 id="problem-2-tabulation-and-formatting-randomly-die">Problem 2: Tabulation and Formatting Randomly Die</h3>
 <p>You’d think that <code>&lt;pre&gt;</code> “preserves formatting.” And it does… right up until your content passes through the beloved modern publishing gauntlet: Markdown, Liquid, Nunjucks, Eleventy, Astro, Hugo, Jekyll, Next.js MDX, or whatever clever static-site framework you swore would “simplify everything this time.”</p>
-<p>Well, suppose you are a relatively civilized person, and your documentation is written in Markdown. Markdown even gives you fenced code blocks:<div class="code-block text-content-width"></p>
+<p>Well, suppose you are a relatively civilized person, and your documentation is written in Markdown. Markdown even gives you fenced code blocks:</p><div class="code-block text-content-width"><p></p>
   <pre><code id="snippet-1" class="language-css">```css
 // your styles here ...
 ```</code></pre>
@@ -362,7 +356,7 @@ and restructure anything that looks like a tag.</p>
 </code></pre>
 <p>What happened? Something in the chain noticed that “blank line = new paragraph, ” proudly did what the spec told it to do, and inserted friendly <code>&lt;p&gt;</code> tags… inside your <code>&lt;code&gt;</code> block. Markdown, in particular, is incredibly enthusiastic about this. When it sees a blank line, it tilts its head like a golden retriever and proudly declares: “Ah yes, clearly this is a paragraph structure.” Afterwards, you don’t get a CSS block — you get an essay, because consistency is for weaker systems.</p>
 <p>And the worst part is: it isn’t wrong. It is simply doing its job. Its job just happens to be making you question every positive emotion you ever had toward web standards.</p>
-<h3>Problem 3: The Copy Button of Doom</h3>
+<h3 id="problem-3-the-copy-button-of-doom">Problem 3: The Copy Button of Doom</h3>
 <p>Maybe you’re kind. Maybe you think about users. Maybe you want a sweet « Copy » button so they don’t have to select text like cavemen.</p>
 <div class="text-content-width center-x padding-b-lg font-size-xxl">
   <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button>
@@ -370,13 +364,13 @@ and restructure anything that looks like a tag.</p>
 <p>And the obvious answer is: just do what GitHub does. Let JavaScript stroll across the page, find every <code>&lt;pre&gt;</code>, invisibly wire it with a clipboard button, and turn your documentation into a frictionless UX paradise where code leaps obediently into the user’s buffer and everyone applauds like we’ve solved civilization.</p>
 <p>But maybe you don’t want a global script quietly modifying your entire page. And maybe you only want copy buttons on <em>some</em> blocks, not on every stray <code>&lt;pre&gt;</code> fragment. And maybe — just to make things more interesting — you’re already juggling Eleventy and Liquid and Markdown and Nunjucks and HTML, plus whatever cosmic entity lives in your build pipeline pretending to be helpful.</p>
 <p>At that point the system stops being elegant, stops being predictable, and starts producing fire purely out of enthusiasm.</p>
-<h3>The “Build a Rocketship to Press One Button” Option</h3>
+<h3 id="the-build-a-rocketship-to-press-one-button-option">The “Build a Rocketship to Press One Button” Option</h3>
 <p>At this point, many teams just give up on dignity and say: “Fine. Let’s install three plugins, a build pipeline transformer, a shortcode framework, two Markdown extensions, and some custom JavaScript glue. Surely that will make the <em>copy button</em> behave.”</p>
 <p>And technically, it works. Eventually. After a few hours of massaging config files, aligning CSS, fighting mysterious whitespace behavior, learning which library wants fenced code, which one wants HTML, and which one wants a blood sacrifice at sunset. Every additional dependency brings its own personality, its own philosophy, and its own definition of “correct.”</p>
 <p>Then you close your eyes and hope the maintainers of any of these libraries don’t update something critical next week. You hope security advisories don’t appear. You hope you never have to remember why this particular chain of plugins exists in the first place. Because now you’re not just adding a copy button — you’re adopting a small ecosystem of complexity and quietly agreeing to be responsible for it for the foreseeable future.</p>
 <p>It’s “elegant” in the same way duct-taping a nuclear reactor is elegant: technically operational, emotionally exhausting, and one slightly wrong vibration away from an impressive light show.</p>
 <p><a id="solution"></a></p>
-<h2>The Solution</h2>
+<h2 id="the-solution">The Solution</h2>
 <p>No extra JS frameworks.
 No plugin farms.
 No coping mechanisms involving alcohol.</p>
@@ -384,7 +378,7 @@ No coping mechanisms involving alcohol.</p>
 <div class="air-md"></div>
 <p><strong>Step 1. Create snippet.</strong></p>
 <p>We start by taking the code we want to show and moving it <em>out of harm’s way</em>. That means we wrap it in a Liquid <code>{% capture %}</code> block so the build pipeline treats it as inert text instead of something it should “interpret, ” “optimize, ” or creatively reinterpret according to its spiritual beliefs. In Liquid, <code>{% capture %}</code> basically says: “This is a string. Please don’t be clever.”</p>
-<p>So we do this:<div class="code-block text-content-width"></p>
+<p>So we do this:</p><div class="code-block text-content-width"><p></p>
   <pre><code id="snippet-2" class="language-css">{%- capture codeSnippet -%}
 &lt;div id=&#34;codeSnippet&#34;&gt;
   ...
@@ -399,7 +393,7 @@ No templating system improvises.<br>
 Nobody “helps”.</p>
 <div class="air-md"></div>
 <p><strong>Step 2. Render the snippet on your terms.</strong></p>
-<p>Later, when we actually want to show this snippet, we explicitly place it inside <code>&lt;pre&gt;&lt;code&gt;</code> and tell the browser: “Display this. Literally. Calmly.”<div class="code-block"></p>
+<p>Later, when we actually want to show this snippet, we explicitly place it inside <code>&lt;pre&gt;&lt;code&gt;</code> and tell the browser: “Display this. Literally. Calmly.”</p><div class="code-block"><p></p>
   <pre><code id="snippet-3" class="language-css">&lt;div class=&#34;code-block&#34;&gt;
   &lt;pre&gt;&lt;code id=&#34;snippet&#34;&gt;{{ codeSnippet | escape }}&lt;/code&gt;&lt;/pre&gt;
   &lt;button class=&#34;copy-data-icon rd-js-copy&#34; title=&#34;Copy link&#34; data-icon=&#34;content_copy&#34; data-copy-target=&#34;#snippet&#34;&gt;&lt;/button&gt;
@@ -411,7 +405,7 @@ Nobody “helps”.</p>
 <p><strong>Step 2a. CSS Is Worse (Of Course).</strong></p>
 <p>HTML inside <code>&lt;pre&gt;</code> is one category of pain. CSS, however, politely introduces an entirely different one.</p>
 <p>Because this is where Markdown really leans in. It sees blank lines inside your CSS block and, with great confidence and zero hesitation, begins inserting <code>&lt;p&gt;</code> tags <em>inside your <code>&lt;code&gt;</code></em>, like a toddler enthusiastically decorating a cake with olives. The browser is technically not wrong, Markdown is technically not wrong, but the end result is emotionally devastating.</p>
-<p>So for CSS we add a very small but incredibly calming trick:<div class="code-block"></p>
+<p>So for CSS we add a very small but incredibly calming trick:</p><div class="code-block"><p></p>
   <pre><code id="snippet-4">{{ codeStyles | escape | replace: &#39;\n&#39;, &#39;&amp;#10;&#39; }}</code></pre>
 <p><button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy" data-copy-target="#snippet-4"></button></p>
 </div>
@@ -452,7 +446,7 @@ Nobody “helps”.</p>
   </div>
 </div>
 <p>Just make sure to include the script on the page — either from your local assets or via CDN — otherwise the button will sit there like a decorative confidence indicator instead of a feature.</p>
-<h2>Final Thoughts</h2>
+<h2 id="final-thoughts">Final Thoughts</h2>
 <p>Here’s the short version of what we learned, so you don’t have to collect the same bruises.</p>
 <p><code>{% raw %}</code> is not a magic shield — it only calms Liquid, while Markdown will happily continue rearranging your work with a confident smile.</p>
 <p><code>&lt;pre&gt;</code> behaves predictably only when the entire surrounding context is pure HTML territory; once you mix Markdown and templating engines, the rules start colliding in ways that feel less like a specification and more like jazz improvisation.</p>
@@ -480,7 +474,7 @@ Nobody “helps”.</p>
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

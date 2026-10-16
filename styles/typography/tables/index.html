@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="current">
+            <a href="/styles/" class="current">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="styles">
           
             <a href="/styles/">Styles</a>
           
@@ -286,6 +280,15 @@
             <li>
               
                 <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
               
               
               
@@ -450,14 +453,15 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Text Elements / Tables</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="text-elements-tables">Text Elements / Tables</h1>
   </section>
 
     <article>
-      <h2>Tables</h2>
+      <h2 id="tables">Tables</h2>
 <div class="meta-info">css/modules/typography/_tables.scss</div>
 <p>Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.</p>
+<div class="table-scroll">
 <table class="table-terminal table-striped">
     <tr>
         <th>Library</th>
@@ -488,6 +492,7 @@
         <td>3</td>
     </tr>
 </table>
+</div>
 <div class="sidenote-wrapper">
     <div>
         <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself.</p>
@@ -499,7 +504,7 @@
         <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile:width-75</code>, etc., or create custom classes.</p>
     </div>
 </div>
-<h3>Preset Tables</h3>
+<h3 id="preset-tables">Preset Tables</h3>
 <div class="sidenote-wrapper">
     <div>
         <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
@@ -575,8 +580,9 @@
         </table>
     </div>
 </div>
-<h3>Comparison tables</h3>
+<h3 id="comparison-tables">Comparison tables</h3>
 <p><code>.table-comparison</code> left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for <code>.table-terminal</code> instead when the values are numeric and benefit from a monospace, right-aligned readout.</p>
+<div class="table-scroll">
 <table class="table-comparison table-horizontal-borders">
     <tr>
         <th>Library</th>
@@ -603,9 +609,11 @@
         <td>Yes</td>
     </tr>
 </table>
+</div>
 <p>The example above also carries <code>.table-horizontal-borders</code>: a lighter alternative to <code>.table-bordered</code> that draws a quiet rule between rows without the outer frame or vertical lines. The two border presets are mutually exclusive — pick the frame weight the data needs.</p>
-<h3>Numeric tables</h3>
+<h3 id="numeric-tables">Numeric tables</h3>
 <p><code>.table-numeric</code> is the preset for decision-grade figures: it switches the table to <strong>tabular figures</strong> (every digit the same width, so numbers line up vertically) and right-aligns the value columns while the row label stays left. Use it for financial tables, KPI readouts, and any data where the reader compares numbers down a column. It keeps the normal text font — reach for <code>.table-terminal</code> when you want a monospace readout.</p>
+<div class="table-scroll">
 <table class="table-numeric table-horizontal-borders">
     <tr>
         <th>Channel</th>
@@ -632,12 +640,13 @@
         <td>$540,150</td>
     </tr>
 </table>
+</div>
 <div class="caption">
     <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>
 </div>
 <div class="teaser-bottom">
     <p>Next:</p>
-    <h3><a href="/styles/typography/interactive/">Interactive Elements</a></h3>
+    <h3 id="interactive-elements"><a href="/styles/typography/interactive/">Interactive Elements</a></h3>
 </div>
 
     </article>
@@ -660,7 +669,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

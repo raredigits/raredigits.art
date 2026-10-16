@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="current">
+            <a href="/charts/" class="current">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="">
+            <a href="/examples/" class="">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -275,7 +269,7 @@
   
     
     
-      <h5 class="sidebar-header">
+      <h5 class="sidebar-header" id="charts">
           
             <a href="/charts/">Charts</a>
           
@@ -444,8 +438,8 @@
 </aside>
     
     
-  <section class="page-title">
-    <h1>Annotations</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="annotations">Annotations</h1>
   </section>
 
     <article>
@@ -462,7 +456,7 @@
     <div id="btc-price-chart"></div>
 </div>
 <p>The chart above combines all three common cases: a point annotation on the 4th BTC halving (2024-04-19), a range annotation for the post-election rally window, and a horizontal line at the $100k psychological level. All three are out-of-the-box visuals — no custom SVG, no overlays. The chart automatically reserves vertical space above the plot for the date labels.</p>
-<h3>Configuration</h3>
+<h3 id="configuration">Configuration</h3>
 <p>Pass an <code>annotations</code> array on the chart options. Each entry is one of four kinds, inferred from its fields:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
     height: 360,
@@ -498,10 +492,10 @@
     ],
 }).setData(values);</code></pre>
 <p>Dates accept any format understood by the chart’s date parser: ISO strings, timestamps, or <code>Date</code> objects. Y values are plain numbers in the same units as the data series.</p>
-<h3>Horizontal annotations vs. constant series</h3>
+<h3 id="horizontal-annotations-vs-constant-series">Horizontal annotations vs. constant series</h3>
 <p>The classic way to draw a reference level is to add a series with a constant value. That works, but it has costs: the constant series stretches the Y domain (a far-out break-even pulls the axis), shows up in the crosshair tooltip on every point, and clutters the legend.</p>
 <p>Horizontal annotations sidestep all of that. They’re purely visual — they don’t participate in domain calculation, they don’t appear in the tooltip, and they don’t belong to the legend. Use them for break-even lines, KPI targets, support/resistance levels, tolerance bands.</p>
-<h3>DualAxes — choosing an axis</h3>
+<h3 id="dualaxes-choosing-an-axis">DualAxes — choosing an axis</h3>
 <p>For a <code>DualAxes</code> chart, horizontal annotations need to specify which Y axis they reference:</p>
 <pre class="text-content-caption"><code>new RareCharts.DualAxes('#chart', {
     annotations: [
@@ -510,18 +504,19 @@
     ],
 });</code></pre>
 <p><code>axis</code> defaults to <code>'y1'</code>. Vertical (date-based) annotations don’t need this — they span both axes by definition.</p>
-<h3>Layout</h3>
+<h3 id="layout">Layout</h3>
 <p>Labels are rendered <em>above</em> the plot area. The chart automatically pushes its top margin down by <code>annotationLabelHeight + 4</code> pixels when at least one annotation is configured, so labels never collide with the line. The default height is <code>22</code>. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
     annotations: [{ date: '2024-04-19', label: '4th Halving' }],
     annotationLabelHeight: 28,
 });</code></pre>
 <p>If you provide an explicit <code>margin.top</code> it will be respected — but you must reserve enough room yourself.</p>
-<h3>View clipping</h3>
+<h3 id="view-clipping">View clipping</h3>
 <p>Annotations whose date(s) fall outside the visible X extent are skipped automatically. This is the expected behavior when used together with <code>timeframes</code>, <code>navigator</code>, or <code>setView()</code>: as the user zooms or pans, in-range annotations appear and out-of-range ones disappear. For range annotations partially visible, the fill is clamped to the visible portion and only the boundary line(s) inside the extent are drawn.</p>
-<h3>Styling</h3>
+<h3 id="styling">Styling</h3>
 <p>Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:</p>
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -532,7 +527,7 @@
     </thead>
     <tbody>
         <tr class="table-section">
-            <td colspan="4"><h5>Point annotation</h5></td>
+            <td colspan="4"><h5 id="point-annotation">Point annotation</h5></td>
         </tr>
         <tr>
             <td><code>date</code></td>
@@ -565,7 +560,7 @@
             <td>Label text color, when you want it different from the line.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Range annotation</h5></td>
+            <td colspan="4"><h5 id="range-annotation">Range annotation</h5></td>
         </tr>
         <tr>
             <td><code>from</code></td>
@@ -616,7 +611,7 @@
             <td>Label text color override.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Horizontal line</h5></td>
+            <td colspan="4"><h5 id="horizontal-line">Horizontal line</h5></td>
         </tr>
         <tr>
             <td><code>value</code></td>
@@ -661,7 +656,7 @@
             <td>Label text color override.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Horizontal band</h5></td>
+            <td colspan="4"><h5 id="horizontal-band">Horizontal band</h5></td>
         </tr>
         <tr>
             <td><code>yFrom</code></td>
@@ -725,8 +720,10 @@
         </tr>
     </tbody>
 </table>
-<h3>Chart-level options</h3>
-<table class="table-bordered card-caption">
+</div>
+<h3 id="chart-level-options">Chart-level options</h3>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -750,7 +747,8 @@
         </tr>
     </tbody>
 </table>
-<h3>When to use them</h3>
+</div>
+<h3 id="when-to-use-them">When to use them</h3>
 <p>Annotations are content, not decoration. A good annotation answers a question the chart raises:</p>
 <ul>
 <li>“Why did hashrate drop in April 2024?” → halving annotation.</li>
@@ -781,7 +779,7 @@
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">

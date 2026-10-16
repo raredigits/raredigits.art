@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="rd">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,8 @@
     
 
     
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin>
-    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
 
     <link rel="stylesheet" href="/assets/css/rare.css">
     
@@ -19,7 +19,7 @@
     
 
     <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
-    <script src="/pagefind/pagefind-ui.js" defer></script>
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
 
     <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
@@ -39,6 +39,7 @@
     </script>
 </head>
 <body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
 
 <header class="padding-x-md">
   <div class="header-container grid-global">
@@ -51,50 +52,43 @@
       <ul>
         
         <li>
-            <a href="/manifesto/"
-               class="">
+            <a href="/manifesto/" class="">
               Manifesto
             </a>
         </li>
         
         <li>
-            <a href="/styles/"
-               class="">
+            <a href="/styles/" class="">
               Styles
             </a>
         </li>
         
         <li>
-            <a href="/charts/"
-               class="">
+            <a href="/charts/" class="">
               Charts
             </a>
         </li>
         
         <li>
-            <a href="/scripts/"
-               class="">
+            <a href="/scripts/" class="">
               Scripts
             </a>
         </li>
         
         <li>
-            <a href="/examples/"
-               class="current">
+            <a href="/examples/" class="current">
               Examples
             </a>
         </li>
         
         <li>
-            <a href="/kb/"
-               class="">
+            <a href="/kb/" class="">
               101
             </a>
         </li>
         
         <li>
-            <a href="/pricing/"
-               class="">
+            <a href="/pricing/" class="">
               Pricing
             </a>
         </li>
@@ -160,7 +154,7 @@
                     <p><a href="/manifesto/principles/">Principles</a></p>
                     <p><a href="/manifesto/tips/">Tips</a></p>
                 </div>
-                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-trans padding-b-lg">
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
                     <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
                     <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
                     <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
@@ -237,7 +231,7 @@
                                 <li>Import Styles</li>
                                 <li>Customization</li>
                                 <li>Basic Scripts</li>
-                                <li><a href="/101/">Mark-Up 101</a></li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
                             </ul>
                         </div>
                 </div>
@@ -272,8 +266,8 @@
   <div class="content grid-global">
     
     
-  <section class="page-title">
-    <h1>Analysing Bitcoin Mining Profit</h1>
+  <section class="page-title" id="main-content">
+    <h1 id="analysing-bitcoin-mining-profit">Analysing Bitcoin Mining Profit</h1>
   </section>
 
     <article>
@@ -290,14 +284,14 @@
 }</code></pre>
 <p>To a human, this is not particularly illuminating. A date, a hashrate, a handful of numbers. Repeat for three hundred days and you have a spreadsheet that tells you nothing at a glance.</p>
 <p>So let’s draw a chart instead.</p>
-<h2>Drawing the chart</h2>
+<h2 id="drawing-the-chart">Drawing the chart</h2>
 <p>The numbers we care about are revenue and price. One tells you what the miner earned; the other tells you why. To show both on the same timeline without one overwhelming the other, we use a <a href="/charts/combined/">combined</a> <code>DualAxes</code> chart — earnings on the left axis, BTC spot price on the right. Same dates, same source array, two scales.</p>
 <p>One <code>setData()</code> call and the mechanical feed becomes something you can actually read.</p>
 <div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
 <p>The first thing the chart tells you is that the miner is losing ground. Not dramatically, but <strong>steadily</strong>. The gray bars track daily BTC output, and they slope downward for the entire year. From roughly 0.00013 BTC per day in February to around 0.00009 by December. The machine is doing the same work. The network is just getting more competitive, and the miner’s share of the reward keeps shrinking. This is not a bad week. This is physics.</p>
 <p>Dollar revenue, meanwhile, <em>mostly</em> tracks the BTC price — which is exactly what you’d expect. Bitcoin goes up, earnings go up. Bitcoin goes down, earnings go down. So far, so intuitive.</p>
 <p>Except <em>it’s not quite that clean</em>. Once the BTC price climbs past roughly $105k, something starts to slip. Revenue rises, but not as fast as the price. The two lines that were moving together <em>begin to drift apart</em>. The asset is appreciating. The miner’s cut of it is not keeping up.</p>
-<h2>Calculating the divergence</h2>
+<h2 id="calculating-the-divergence">Calculating the divergence</h2>
 <p>Divergence, in this context, is simple: BTC price goes up by X%, miner revenue goes up by less than X%. The gap between those two numbers is what network difficulty quietly takes off the table.</p>
 <p>To make it visible, we index both series to 100 on day one and let them run. Whatever distance opens up between the two lines is the structural drag — difficulty compounding in real time.</p>
 <details>
@@ -320,7 +314,7 @@ const profitIndex = active.map((_, i) =&gt; (profitMA[i] / BASE_PROFIT) * 100);
 <p>Which is an <em>uncomfortable</em> thing to notice. But there’s a second problem we haven’t looked at yet.</p>
 <p>Everything above is revenue. <em>Revenue is not profit.</em> The machine runs on electricity, and electricity costs money regardless of what Bitcoin is doing. The real question isn’t how much the miner earns — it’s how much is left after
 the power bill arrives.</p>
-<h2>Adding a new dataset</h2>
+<h2 id="adding-a-new-dataset">Adding a new dataset</h2>
 <p>To find out, we pull in one more variable: estimated daily electricity cost.</p>
 <pre><code><span class="code-comment">// Daily electricity cost by month ($/day, actual billed consumption)</span>
 const ELEC = {
@@ -335,7 +329,7 @@ const ELEC = {
 <p>When it does, <strong>the margin is thin</strong>. On the best days the operation clears $1–2 on $13–14 in revenue — call it 10–15%. That is not a business; that is a savings account that requires a warehouse, a cooling system, and someone who knows what a terahash is. A <nobr>T-bill</nobr> would have been less work and paid about the same. A money market fund would have paid more. And nobody monitors a money market fund at 2am.</p>
 <p>From October onward, <em>even that stops</em>. The red bars widen, the green ones disappear, and the operation settles into a steady, metronomic loss. Not a blowup — just arithmetic. Fixed costs, declining revenue, no exit button.</p>
 <p>Which brings us back to the original premise.</p>
-<h2>What did one Bitcoin actually cost?</h2>
+<h2 id="what-did-one-bitcoin-actually-cost">What did one Bitcoin actually cost?</h2>
 <p>We started from the idea that mining could be perceived as buying Bitcoin at a discount. The idea being that you convert cheap electricity into coins rather than buying them at market price. It’s a reasonable theory. <em>Let’s check the receipts.</em></p>
 <p>For each day in the dataset we know two things: how much electricity the miner consumed, and how much Bitcoin it produced. Dividing one by the other gives the <em>implied acquisition cost</em> — the electricity price of one BTC.</p>
 <pre class="text-content-caption"><code>const costPerBTC = electricity / r.profit_btc;</code></pre>
@@ -346,7 +340,7 @@ const ELEC = {
 <p>By autumn, the blue line — the electricity cost of one coin — is running persistently above the market price. The miner is no longer buying Bitcoin at a discount. <strong>The miner is buying Bitcoin at a premium</strong>, through a process that involves significant capital expenditure, industrial electricity consumption, and considerable optimism.</p>
 <p>Mining is sometimes a clever way to acquire Bitcoin below market price. But “sometimes” is doing <em>a lot of work</em> in that sentence. The window is real. It is also not guaranteed to be open when you arrive, and it has a tendency to close
 faster than the hardware depreciates.</p>
-<h2>Bottom line</h2>
+<h2 id="bottom-line">Bottom line</h2>
 <p>None of this was meant to talk you out of Bitcoin mining. Maybe you have cheap electricity. Maybe you have better hardware. Maybe you have a very high tolerance for watching a gray line sit above an orange one for months at a time.</p>
 <p>The point was never the mining. The point was what happens when you stop reading a JSON feed and start looking at it.</p>
 <p>Four charts. One dataset. Each one asking a slightly different question — and each one returning an answer that the raw numbers wouldn’t give you in a decade of staring at them. That’s not analysis. That’s just visualization doing its job.</p>
@@ -378,7 +372,7 @@ faster than the hardware depreciates.</p>
 
 <div class="cookie-notice rd-js-cookie-consent">
   <div class="cookie-notice__content">
-    <h3>🍪</h3>
+    <h3 id="">🍪</h3>
     <p class="bold">Help yourself to&nbsp;some cookies!</p>
     <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
     <div class="right">
