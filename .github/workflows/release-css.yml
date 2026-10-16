@@ -29,6 +29,8 @@ on:
       - 'scripts/build-css.mjs'
       - 'scripts/rd-gate*.mjs'
       - 'scripts/release-css.mjs'
+      - 'test/**'
+      - '.github/workflows/release-css.yml'
   workflow_dispatch:
     inputs:
       resume:

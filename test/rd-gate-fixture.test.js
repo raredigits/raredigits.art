@@ -227,7 +227,7 @@ describe('CSS-338 (c): page mode renders as before the gate', () => {
     }
     expect(diffs).toEqual([]);
     expect(evaluated).toBeGreaterThan(PAIRS.length * 0.99);
-  });
+  }, 60000); // ~4,400 selectors × 2 on a full page: seconds locally, longer on CI runners
 
   it('the gate adds zero specificity', () => {
     const changed = PAIRS.filter((p) => specificity(p.orig).join() !== specificity(p.gated).join())

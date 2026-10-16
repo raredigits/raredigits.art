@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # test/size-baseline.test.js recomputes rows from older commits
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
