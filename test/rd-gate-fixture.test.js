@@ -12,7 +12,7 @@
 // media-independent: a rule inside any @media counts as if it applied.
 // getComputedStyle in jsdom resolves the cascade but not var() or most
 // inheritance, so it is a secondary check here, not rendering proof — the
-// browser-level checks are CSS-118 (v0.7.1).
+// browser-level checks are CSS-118 (same release, bug-closure slice).
 //
 // The docs-page fixtures are build snapshots (2026-10-16). Refresh after a
 // layout change: `npx @11ty/eleventy`, then copy _site/<path>/index.html to
