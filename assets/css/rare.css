@@ -16908,6 +16908,7 @@ h4:where(.rd, .rd *) {
 }
 
 h5:where(.rd, .rd *), h6:where(.rd, .rd *) {
+  margin: var(--space-sm) 0;
   font-size: 1em;
   text-transform: uppercase;
 }
@@ -17186,7 +17187,8 @@ ol:where(.rd, .rd *) {
 .sidenote-wrapper .sidenote a:where(.rd, .rd *) {
   color: var(--text-color-light);
 }
-.sidenote-wrapper .sidenote p:first-child:where(.rd, .rd *) {
+.sidenote-wrapper .sidenote p:first-child:where(.rd, .rd *),
+.sidenote-wrapper .sidenote > :is(h5, h6):first-child:where(.rd, .rd *) {
   margin-top: 0;
 }
 .sidenote-wrapper :not(:first-child, .sidenote):where(.rd, .rd *) {
@@ -17833,7 +17835,9 @@ th:first-child:where(.rd, .rd *) {
 .table-bordered .table-section > td:where(.rd, .rd *) {
   padding-bottom: var(--space-md);
 }
-.table-bordered .table-section p:where(.rd, .rd *) {
+.table-bordered .table-section p:where(.rd, .rd *),
+.table-bordered .table-section h5:where(.rd, .rd *),
+.table-bordered .table-section h6:where(.rd, .rd *) {
   margin: 0;
 }
 
@@ -19061,6 +19065,7 @@ nav a.tag:where(.rd, .rd *) {
 .sidebar-header:where(.rd, .rd *) {
   text-transform: uppercase;
   font-weight: 700;
+  margin-top: 0;
   margin-bottom: var(--space-sm);
   white-space: nowrap;
 }

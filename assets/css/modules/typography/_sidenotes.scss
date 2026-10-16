@@ -83,7 +83,8 @@
         color: var(--text-color-light);
     }
 
-    .sidenote p:first-child {
+    .sidenote p:first-child,
+    .sidenote > :is(h5, h6):first-child {
         margin-top: 0;
     }
 
