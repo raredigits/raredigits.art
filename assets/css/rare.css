@@ -482,7 +482,7 @@ body:where(.rd, html.rd > *) {
 :where(html.rd, body.rd) footer {
   width: 100%;
   background: var(--gray-lightest);
-  color: var(--gray-trans);
+  color: var(--text-color-light);
   font-size: var(--font-size-sm);
 }
 
@@ -16822,7 +16822,7 @@ body:where(.rd, html.rd > *) {
   --font-weight-bold: 700;
   --font-weight-black: 900;
   --primary-text-color: var(--primary-color);
-  --text-color-light: var(--gray-trans);
+  --text-color-light: var(--gray-mid-dark);
   --text-color-lightest: var(--gray);
   --text-color-dark: var(--gray-dark);
 }
@@ -17563,7 +17563,7 @@ pre code:where(.rd, .rd *) {
 }
 
 .code-comment:where(.rd, .rd *) {
-  color: var(--gray-trans);
+  color: var(--text-color-light);
 }
 
 .handwritten:where(.rd, .rd *),
@@ -18942,7 +18942,7 @@ h1 a:where(.rd, .rd *), h2 a:where(.rd, .rd *), h3 a:where(.rd, .rd *), h4 a:whe
 
 :where(html.rd, body.rd) nav a,
 .sidebar a:where(.rd, .rd *) {
-  color: var(--gray-trans);
+  color: var(--text-color-light);
   background-image: none;
   position: relative;
   display: inline;
@@ -18992,7 +18992,7 @@ nav a.tag:where(.rd, .rd *) {
 :where(html.rd, body.rd) footer a {
   background-image: none;
   text-decoration: none;
-  color: var(--gray-trans);
+  color: var(--text-color-light);
   border-bottom: 1px solid var(--gray-trans);
 }
 
@@ -19123,7 +19123,7 @@ h5.sidebar-header a:hover:where(.rd, .rd *) {
   margin-left: var(--space-sm);
 }
 .sidebar-nav .sidebar-submenu a:where(.rd, .rd *) {
-  color: var(--text-color-lightest);
+  color: var(--text-color-light);
 }
 .sidebar-nav .sidebar-submenu a:hover:where(.rd, .rd *) {
   color: var(--primary-color);

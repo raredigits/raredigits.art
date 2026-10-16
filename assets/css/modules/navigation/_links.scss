@@ -42,7 +42,7 @@ h1 a, h2 a, h3 a, h4 a {
 
 nav a,
 .sidebar a {
-    color: var(--gray-trans);
+    color: var(--text-color-light);
     background-image: none;
     position: relative;
     display: inline;
@@ -93,7 +93,7 @@ nav a.tag {
 footer a {
     background-image: none;
     text-decoration: none;
-    color: var(--gray-trans);
+    color: var(--text-color-light);
     border-bottom: 1px solid var(--gray-trans);
 }
 
