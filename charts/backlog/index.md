@@ -32,7 +32,7 @@ Features and chart types planned for future releases.
         <tr>
             <td>Callouts and image overlays</td>
             <td><code>callouts: [{ x, y, text, image, dx, dy }]</code></td>
-            <td>Text callouts and image overlays anchored to data coordinates or pixel positions inside the chart area. Distinct from <code>annotations</code>: callouts are free-form content at arbitrary <code>(x, y)</code> rather than axis-aligned markers.</td>
+            <td>Text callouts and image overlays anchored to data coordinates or pixel positions inside the chart area. Distinct from <code>annotations</code>: callouts are free-form content at arbitrary <code>(x, y)</code> rather than axis-aligned markers. The data project (Churchbook) asks to bring this, with annotations on Bar, before 1.0: its milestone stories (validator and project timelines — jails, renames, network halt) need labeled events on time series.</td>
         </tr>
 
         <tr class="table-section">
@@ -76,6 +76,11 @@ Features and chart types planned for future releases.
             <td>Waterfall</td>
             <td><code>RareCharts.Waterfall</code></td>
             <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_5.</strong></td>
+        </tr>
+        <tr>
+            <td>Sankey</td>
+            <td><code>RareCharts.Sankey</code></td>
+            <td>Flows between nodes with link width proportional to value: <code>[{ source, target, value }]</code>. Covers money-flow decomposition — where a treasury's funds came from and where they went, multi-hop paths across wallets and networks. Requested by the data project (Churchbook) as a sibling consumer, 2026-10-12.</td>
         </tr>
 
         <tr class="table-section">
@@ -182,6 +187,11 @@ Features and chart types planned for future releases.
             <td>Graph chrome styling</td>
             <td>icons, dark theme</td>
             <td>The footer tools (zoom, full screen, <code>+N more</code>, restore), one-line breadcrumbs and text-like controls shipped in v0.9.8_3. Left: proper icons instead of text glyphs for the tools, and a dark-theme pass over the tools, the hidden-node list and the details panel.</td>
+        </tr>
+        <tr>
+            <td>Graph for published investigations</td>
+            <td>network lanes, value-weighted edges, time filter</td>
+            <td>Requested by the data project (Churchbook), 2026-10-12: money-trail investigations need a graph stable enough to publish — nodes grouped in lanes by network, edges aggregated per pair and direction with width by USD value, expand-on-click, noise collapsed, and a time filter. Today Graph is experimental and outside the 1.0 guarantee.</td>
         </tr>
 
         <tr class="table-section">
