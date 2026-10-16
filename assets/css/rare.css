@@ -17240,7 +17240,7 @@ ol:where(.rd, .rd *) {
 .sidenote-wrapper > .text-content-caption:where(.rd, .rd *) {
   grid-column: 1/span 6;
 }
-@media (width <= 1024px) {
+@media (width < 1024px) {
   .sidenote-wrapper:where(.rd, .rd *) {
     display: flex;
     flex-direction: column;
@@ -17266,7 +17266,7 @@ ol:where(.rd, .rd *) {
   left: -16px;
   color: var(--text-color-light);
 }
-@media (width <= 1024px) {
+@media (width < 1024px) {
   .sidenote-bookmark:where(.rd, .rd *)::before,
   .remark:where(.rd, .rd *)::before,
   .sidenote-attach:where(.rd, .rd *)::before,
@@ -17728,7 +17728,7 @@ pre code:where(.rd, .rd *) {
 .teaser-bottom h3 a:where(.rd, .rd *) {
   background: none;
 }
-@media (width <= 1024px) {
+@media (width < 1024px) {
   .teaser-bottom:where(.rd, .rd *) {
     margin-left: calc(-1 * var(--space-sm));
   }
@@ -18436,6 +18436,21 @@ th:first-child:where(.rd, .rd *) {
   flex-direction: column;
   background: var(--gray-lightest);
   position: relative;
+}
+.card .lead:where(.rd, .rd *),
+.card .caption:where(.rd, .rd *),
+.card .highlight:where(.rd, .rd *),
+.card pre:where(.rd, .rd *),
+.card blockquote:where(.rd, .rd *),
+.card .text-content-caption:where(.rd, .rd *),
+.card .full-width-caption:where(.rd, .rd *),
+.card .card-caption:where(.rd, .rd *),
+.card .collapsible-container:where(.rd, .rd *),
+.card .teaser-bottom:where(.rd, .rd *) {
+  width: auto;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .card-hover:hover:where(.rd, .rd *) {

@@ -369,7 +369,7 @@ pre code {
         background: none;
     }
 
-    @media (width <= 1024px) {
+    @media (width < 1024px) {
         margin-left: calc(-1 * var(--space-sm));
     }
 }

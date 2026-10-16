@@ -5,6 +5,28 @@
     flex-direction: column;
     background: var(--gray-lightest);
     position: relative;
+
+    // Outdents (`pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the
+    // caption-width blocks, `.card-caption`) hang into the page margins beside
+    // the text column. A card has no such margins: with padding smaller than
+    // the outdent they poked out of the card and, on phones, widened the page.
+    // Reset the family to the card's content width, as `.collapsible-content`
+    // does (CSS-345 sweep, 2026-10-16).
+    .lead,
+    .caption,
+    .highlight,
+    pre,
+    blockquote,
+    .text-content-caption,
+    .full-width-caption,
+    .card-caption,
+    .collapsible-container,
+    .teaser-bottom {
+        width: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
 .card-hover:hover {
