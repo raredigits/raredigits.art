@@ -51,6 +51,16 @@ Before shipping a CSS-affecting release:
 5. `node scripts/size-report.mjs --check`, and add the release row to `SIZE-BASELINE.md` (`CSS-339`)
 6. If the site shell or examples changed, run `npm run build`
 
+## Releasing (CSS-348)
+
+`.github/workflows/release-css.yml` publishes to `raredigits/rare-styles`, and only when `_data/versions.js` names a version that has no tag there yet. Ordinary pushes publish nothing. To release:
+
+1. Bump `_data/versions.js` (`v0.7.0`, patches `v0.7.0_1`) and `package.json` (base `0.7.0`), and add `## [v0.7.0] — YYYY-MM-DD — Title` to `docs/Changelog.md`. `node scripts/release-css.mjs check` must pass.
+2. `npm run build:css`, add the release row to `SIZE-BASELINE.md`, and run the release checks above.
+3. Merge to `main`. The workflow verifies, stages one artifact (`node scripts/release-css.mjs stage dist/rare-styles` locally for a dry run), publishes and tags exactly that artifact, attaches it to the GitHub Release for self-hosting, and waits until the pinned jsDelivr URL serves the same bytes.
+
+The release set is listed in `RELEASE_FILES` in `scripts/release-css.mjs`. Maintainer docs, `examples/` and `rare-website.css` do not ship.
+
 ## Namespace policy (`rd-`)
 
 Adopted in `v0.6.17` (`CSS-067`, consuming the dissolved `v0.7.0` Namespace Foundations). `rd-` (Rare Digits) is the official library namespace. Three rules:
