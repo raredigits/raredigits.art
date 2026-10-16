@@ -13,6 +13,7 @@
       "url": "/styles/",
       "items": [
       { "title": "The Idea", "url": "/styles/idea/" },
+      { "title": "Getting Started", "url": "/styles/getting-started/" },
       { "title": "Usage", "url": "/styles/usage/" },
       { 
           "title": "Modules", 

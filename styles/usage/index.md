@@ -30,7 +30,7 @@ Then opt the page in. From `v0.7.0` every library style applies only under the `
 <html lang="en" class="rd">
 ```
 
-`class="rd"` on a single element instead styles just that block (an island). An island gets the tag styles and the library classes, but not the page shell (fixed header, footer, page grid) or the base typography of `body`.
+`class="rd"` on a single element instead styles just that block (an island). An island gets the tag styles and the library classes, but not the page shell (fixed header, footer, page grid) or the base typography of `body`. [Getting Started](/styles/getting-started/) explains page mode, islands and the caveats.
 
 ## Understanding Cascading Styles
 The "C" in CSS stands for "Cascading," a fundamental principle that determines which styles take precedence when multiple rules apply to the same element. The system works through three key mechanisms:
