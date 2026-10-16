@@ -206,6 +206,9 @@ describe('pathLayout', () => {
     // first row is the shortest route
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ hops: 3, shortest: true });
+    // captions sit on the route (over the first intermediate node), not at
+    // the left edge where the endpoint's context fan lives
+    expect(rows[0].x).toBe(pos.get('b').x);
     expect(rows[1]).toMatchObject({ hops: 2, shortest: false });
   });
 
@@ -912,5 +915,67 @@ describe('egoCapacity', () => {
   it('grows with the canvas and never drops below one', () => {
     expect(egoCapacity(1600, 900)).toBeGreaterThan(egoCapacity(800, 520));
     expect(egoCapacity(10, 10)).toBe(1);
+  });
+});
+
+describe('Graph viewport — details panel', () => {
+  const setWidth = (el, w) => Object.defineProperty(el, 'clientWidth', { configurable: true, get: () => w });
+  beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
+
+  it('details: true sits beside a wide card and shows the focused node by default', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1200);
+    const g = new Graph('#chart', { duration: 0, details: true, height: 500 }).setData(fixture).focus('a');
+    await g.whenReady();
+    const panel = host.querySelector('.rc-graph-details');
+    expect(host.classList.contains('rc-graph--details-side')).toBe(true);
+    expect(panel.style.width).toBe('300px');
+    expect(panel.querySelector('h4').textContent).toBe('A');
+    expect(panel.textContent).toContain('Connections');
+  });
+
+  it('a narrow card puts it below and grows by its height', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 600);
+    const g = new Graph('#chart', { duration: 0, details: true, height: 500 }).setData(fixture);
+    await g.whenReady();
+    expect(host.classList.contains('rc-graph--details-below')).toBe(true);
+    expect(host.style.height).toBe('700px');
+  });
+
+  it('hovering a node and clicking a tie update it; detailsFormat replaces the content', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1200);
+    const seen = [];
+    const g = new Graph('#chart', {
+      duration: 0, details: true,
+      detailsFormat: ({ node, link, view }) => { seen.push({ node: node?.id, link: link?.id, view }); return 'x'; },
+    }).setData(fixture).focus('a');
+    await g.whenReady();
+    const node = [...host.querySelectorAll('.rc-graph-node')].find(n => n.__data__.id === 'b');
+    node.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(seen[seen.length - 1]).toMatchObject({ node: 'b', view: 'ego' });
+    node.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+    expect(seen[seen.length - 1].node).toBe('a');            // back to the focused node
+    host.querySelector('.rc-graph-link-hit').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(seen[seen.length - 1].link).toBeTruthy();
+  });
+
+  it("flow: stays below when the drawing's minWidth plus the panel does not fit", async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1166);
+    const g = new Graph('#chart', { view: 'flow', duration: 0, details: true, minWidth: 980 })
+      .setData({ nodes: [{ id: 'a', lane: 'x' }, { id: 'b', lane: 'y' }], links: [{ source: 'a', target: 'b' }] });
+    await g.whenReady();
+    expect(host.classList.contains('rc-graph--details-below')).toBe(true);
+  });
+
+  it('a page-owned element is moved in and left for the page to fill', async () => {
+    document.body.innerHTML = '<div id="chart"></div><aside id="mine">page content</aside>';
+    const g = new Graph('#chart', { duration: 0, details: '#mine' }).setData(fixture);
+    await g.whenReady();
+    const mine = document.getElementById('mine');
+    expect(mine.parentElement.id).toBe('chart');
+    expect(mine.textContent).toBe('page content');
   });
 });

@@ -100,3 +100,18 @@ describe('MultiChart — composed children smoke', () => {
     expect(host.querySelectorAll('svg').length).toBeGreaterThanOrEqual(2);
   });
 });
+
+describe('Chart — controls slot', () => {
+  it('moves the given element inside the card, keeping its listeners', async () => {
+    const { Bar } = await import('../assets/charts/src/charts/Bar.js');
+    document.body.innerHTML = '<div id="c"></div><div id="ctl"><button id="b">x</button></div>';
+    let clicks = 0;
+    document.getElementById('b').addEventListener('click', () => { clicks++; });
+    new Bar('#c', { controls: '#ctl', source: 'Source: test' });
+    const ctl = document.getElementById('ctl');
+    expect(ctl.parentElement.id).toBe('c');
+    expect(ctl.classList.contains('rc-chart-controls')).toBe(true);
+    document.getElementById('b').click();
+    expect(clicks).toBe(1);
+  });
+});

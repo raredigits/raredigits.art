@@ -146,7 +146,9 @@ export class FlowView {
     this.data = { nodes: [], links: [] };
     this.filter = null;
     this.window = null;
-    this.hiddenTypes = new Set();
+    // Tie categories hidden from the start (option hiddenLinkTypes); the
+    // legend turns them on and off.
+    this.hiddenTypes = new Set((graph.options.hiddenLinkTypes ?? []).map(String));
     this.selected = null;          // { node: id } | { link: id }
     this.labels = graph.options.linkLabels !== false;
     this.layer = graph.gZoom.append('g').attr('class', 'rc-flow');
@@ -205,10 +207,21 @@ export class FlowView {
   // ── Visibility ──
   _visible() {
     const pass = item => !this.filter || this.filter(item);
-    const nodes = this.data.nodes.filter(pass);
-    const keep = new Set(nodes.map(n => n.id));
-    let links = this.data.links.filter(l =>
-      pass(l) && keep.has(l.source) && keep.has(l.target) && !this.hiddenTypes.has(this._linkKey(l)));
+    let nodes = this.data.nodes.filter(pass);
+    let keep = new Set(nodes.map(n => n.id));
+    const shown = this.data.links.filter(l => pass(l) && keep.has(l.source) && keep.has(l.target));
+    let links = shown.filter(l => !this.hiddenTypes.has(this._linkKey(l)));
+    // A node whose every tie belongs to a category hidden in the legend goes
+    // with them — a decoy address without its fake transfers would just
+    // float there. Nodes without any ties stay.
+    if (this.hiddenTypes.size) {
+      const hasTie = new Set(), hasVisible = new Set();
+      shown.forEach(l => { hasTie.add(l.source); hasTie.add(l.target); });
+      links.forEach(l => { hasVisible.add(l.source); hasVisible.add(l.target); });
+      nodes = nodes.filter(n => !hasTie.has(n.id) || hasVisible.has(n.id));
+      keep = new Set(nodes.map(n => n.id));
+      links = links.filter(l => keep.has(l.source) && keep.has(l.target));
+    }
     links = applyTimeWindow(links, this.window, this._opt('timeWindowMode', 'dim'));
     return { nodes, links };
   }
@@ -523,6 +536,9 @@ export class FlowView {
     const select = (s, event = null) => {
       this.selected = s;
       apply();
+      graph._showDetails(!s ? null
+        : s.node ? { node: byId.get(s.node) ?? null }
+        : { link: links.find(l => l.id === s.link) ?? null });
       const cb = o.onSelect;
       if (typeof cb === 'function') {
         if (!s) cb({ node: null, link: null, event });
@@ -585,11 +601,14 @@ export class FlowView {
 
     // Legend: categories present among the ties the filter lets through, plus
     // any the user toggled off (so they can be turned back on).
+    // Built from the page's filter only — not from what the legend itself
+    // hides — so a hidden category (and the nodes hidden with it) can always
+    // be turned back on.
     const pass = item => !this.filter || this.filter(item);
+    const passing = new Set(this.data.nodes.filter(pass).map(n => n.id));
     const shown = new Set(this.data.links
-      .filter(l => pass(l) && byId.has(l.source) && byId.has(l.target))
+      .filter(l => pass(l) && passing.has(l.source) && passing.has(l.target))
       .map(l => this._linkKey(l)));
-    this.hiddenTypes.forEach(k => shown.add(k));
     this._renderLegend(keys.filter(k => shown.has(k)), colorOf, dashOf, palette);
   }
 

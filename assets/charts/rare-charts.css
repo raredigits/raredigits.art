@@ -24,7 +24,9 @@
 .rc-graph-legend             { order: 2; }
 .rc-chart > svg              { order: 3; }
 .rc-chart > .rc-chart-navigator { order: 4; }
-.rc-chart > .rc-chart-footer { order: 5; }
+.rc-chart > .rc-graph-details   { order: 4; }
+.rc-chart > .rc-chart-controls  { order: 5; }
+.rc-chart > .rc-chart-footer { order: 6; }
 
 .rc-chart > svg {
   font-family: var(--rc-font-family);
@@ -151,7 +153,10 @@
   padding: var(--space-sm) 0;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
+  /* wrapped lines sit close; items keep their horizontal spacing */
+  column-gap: var(--space-md);
+  row-gap: 2px;
+  line-height: 1.3;
   font-size: var(--rc-font-size-sm);
   user-select: none;
 }
@@ -829,4 +834,69 @@
   background: var(--bg-color, #fff);
 }
 .rc-graph--fullscreen:fullscreen { position: static !important; }
+
+/* Controls slot (option `controls`): page controls inside the card, between
+   the drawing and the footer. Compact, wrapping, small type. */
+.rc-chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 0 2px;
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm, 12px);
+}
+.rc-chart-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  cursor: pointer;
+}
+.rc-chart-controls input { margin: 0; }
+.rc-chart-controls label.is-disabled,
+.rc-chart-controls label:has(input:disabled) { opacity: 0.45; cursor: default; }
+.rc-chart-controls output { font-variant-numeric: tabular-nums; min-width: 7ch; }
+
+/* ─── Graph details panel (option `details`) ─────────────────────────────── */
+.rc-graph-details {
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 10px 14px;
+  font-family: var(--rc-font-family);
+  font-size: 13px;
+  line-height: 1.4;
+}
+/* Wide card: beside the drawing, aligned with it (top/height set by Graph). */
+.rc-graph--details-side > .rc-graph-details {
+  position: absolute;
+  right: 0;
+  border-left: 1px solid rgba(127, 127, 127, 0.25);
+}
+/* Narrow card: below the drawing; the card grows by the panel's height. */
+.rc-graph--details-below > .rc-graph-details {
+  flex: 0 0 auto;
+  border-top: 1px solid rgba(127, 127, 127, 0.25);
+}
+.rc-graph-details h4 { margin: 2px 0 6px; font-size: 15px; line-height: 1.25; text-transform: none; }
+.rc-graph-details p { margin: 0 0 6px; }
+.rc-graph-details .rc-graph-details-kind {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.rc-graph-details .rc-graph-details-muted { opacity: 0.7; }
+.rc-graph-details dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 2px 10px;
+  margin: 0 0 6px;
+}
+.rc-graph-details dt { opacity: 0.7; font-size: inherit; font-weight: inherit; margin: 0; }
+.rc-graph-details dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.rc-graph-details ul { margin: 0; padding-left: 1.1em; }
+.rc-graph-details li { margin: 0 0 2px; }
+.rc-graph-details a { color: inherit; text-decoration: underline; }
 

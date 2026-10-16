@@ -1,11 +1,13 @@
 // RareCharts — Graph (experimental)
-// Network viewport over a headless graph model. Three deterministic views
-// instead of a force simulation:
+// Network viewport over a headless graph model. Deterministic views instead
+// of a force simulation:
 //
-//   ego     — rings by degree of separation around a focused node,
-//             angular sectors by relation type (graph/layouts/ego.js)
+//   ego     — a grid around a focused node: each category anchored to a
+//             corner, distance from the centre ≈ degrees of separation; a
+//             dominant category fills from the centre out (graph/layouts/ego.js)
 //   path    — layered "how are A and B connected" routes (layouts/path.js)
-//   cluster — communities collapsed into meta-nodes (layouts/cluster.js)
+//   cluster — communities collapsed into meta-nodes on a grid, largest in the
+//             centre (layouts/cluster.js)
 //   flow    — a trace in ordered lanes: directed, value-weighted ties between
 //             entities, laid out from data hints (graph/views/flow.js;
 //             set `view: 'flow'` and call setData — see "Flow view" below)
@@ -40,11 +42,13 @@
 //                   path view, faded (default: true)
 //   pathContextCount — max context ties per endpoint (default: 8)
 //   semanticZoom  — zooming out of ego switches to cluster view (default: true)
-//   height        — px (default: 520)
-//   maxNodes      — cap on rendered ego nodes: 'auto' (from canvas size,
-//                   default) or a number; hidden count is noted on-chart
+//   height        — card height px, title/legend/footer included (default: 520)
+//   maxNodes      — cap on rendered ego nodes: 'auto' (from canvas size —
+//                   one node per ~96 × 50 px cell, default) or a number; the
+//                   rest is listed behind a "+N more" button in the footer
 //   draggable     — nodes can be hand-dragged; positions persist until the
-//                   next view change (default: true)
+//                   next view change; under 6 px of movement is a click
+//                   (default: true)
 //   nodeRadius    — base radius px (default: 22)
 //   nodeIcons     — { group: svgPath } merged over built-ins (graph/icons.js);
 //                   false renders plain circles
@@ -54,6 +58,16 @@
 //                   page (default: true)
 //   fullscreen    — full-screen button in the footer tools; Esc or the
 //                   button exits (default: true). Also toggleFullscreen()
+//   details       — a details panel inside the card: true = rendered by the
+//                   library (the hovered/selected node or tie; the focused node
+//                   by default), or your own element/selector (fill it from
+//                   onSelect). Beside the drawing on wide cards, below it on
+//                   narrow ones (default: off)
+//   detailsFormat — ({ node, link, view }) => html for details: true
+//   detailsWidth  — side panel width px (default: 300)
+//   detailsBreakpoint — card width px from which the panel sits beside the
+//                   drawing (default: 1000)
+//   detailsHeight — panel height px when it sits below (default: 200)
 //   linkTypes     — { type: { color, dash, label } } map or preset
 //   relationTypes — initial link-type filter: only listed types are traversed
 //                   and drawn; untyped links match 'default' (default: all)
@@ -77,6 +91,9 @@
 //   linkDash      — tie => boolean: dashed (e.g. derived amounts)
 //   linkLabels    — draw tie labels (default: true)
 //   hulls         — [{ id, label, members: ids | node => bool, color? }]
+//   hiddenLinkTypes — tie categories hidden at start; the legend shows them
+//                   (dimmed) and turns them on. A node whose ties are all
+//                   hidden is hidden with them
 //   timeWindowMode — 'dim' (default) | 'hide' for setTimeWindow
 //   onSelect      — ({ node, link, event }) => void — drive a details panel
 //   minWidth      — px; narrower containers scroll sideways (default: 0)
@@ -174,6 +191,7 @@ export class Graph extends Chart {
 
     this._initSVG();
     this._initGraphChrome();
+    this._initDetails();
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -532,6 +550,144 @@ export class Graph extends Chart {
     this.container.appendChild(this._overflowEl);
   }
 
+  // ─── Details panel ────────────────────────────────────────────────────────
+
+  _initDetails() {
+    const d = this.options.details;
+    if (!d) return;
+    let el;
+    if (d === true) {
+      el = document.createElement('div');
+      this._detailsOwned = true;
+    } else {
+      el = typeof d === 'string' ? document.querySelector(d) : d;
+      if (!(el instanceof HTMLElement)) return;
+      this._detailsOwned = false;
+    }
+    el.classList.add('rc-graph-details');
+    if (!el.hasAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
+    this._detailsEl = el;
+    this._detailsSubject = null;
+    this.container.appendChild(el);
+  }
+
+  // Side or below, by card width. Returns the width the layout must leave
+  // free on the right (0 when the panel sits below).
+  _layoutDetails() {
+    const el = this._detailsEl;
+    if (!el) return 0;
+    const o = this.options;
+    // Content width: the card's own padding is not drawing space.
+    const cs = window.getComputedStyle(this.container);
+    const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+    const cw = this.container.clientWidth - padL - padR;
+    this._detailsInset = padR;
+    const width = o.detailsWidth ?? 300;
+    // Beside the drawing only if the drawing keeps its own minimum width
+    // next to the panel (the flow view's minWidth); otherwise below.
+    const minDrawing = this._view === 'flow' ? (o.minWidth ?? 0) : 0;
+    const side = cw >= (o.detailsBreakpoint ?? 1000) && cw >= minDrawing + width + 12;
+    this.container.classList.toggle('rc-graph--details-side', side);
+    this.container.classList.toggle('rc-graph--details-below', !side);
+    // Below: the card grows by the panel so the drawing keeps its height.
+    if (!this._expanded) {
+      this._baseCardHeight ??= this.container.style.height;
+      const base = parseFloat(this._baseCardHeight) || o.height || 520;
+      const want = side ? `${base}px` : `${base + (o.detailsHeight ?? 200)}px`;
+      if (this.container.style.height !== want) this.container.style.height = want;
+    }
+    el.style.width = side ? `${width}px` : '';
+    el.style.height = side ? '' : `${o.detailsHeight ?? 200}px`;
+    // The legend and breadcrumbs above the drawing stop where the panel
+    // begins, so they never run under it.
+    const clear = side ? `${width + 12}px` : '';
+    if (this._legendEl) this._legendEl.style.marginRight = clear;
+    if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
+    return side ? width + 12 : 0;
+  }
+
+  // Side panel: aligned with the drawing's top and height. Called after the
+  // drawing and its legend are done — the legend's height moves the svg.
+  _placeDetails(svgEl) {
+    const el = this._detailsEl;
+    if (!el || !this.container.classList.contains('rc-graph--details-side')) {
+      if (el) { el.style.top = ''; el.style.height = el.style.height || ''; }
+      return;
+    }
+    // An <svg> has no offsetTop: measure against the card's padding box.
+    const svgBox = svgEl.getBoundingClientRect();
+    const cardBox = this.container.getBoundingClientRect();
+    const top = svgBox.top - cardBox.top - this.container.clientTop + this.container.scrollTop;
+    el.style.top = `${top}px`;
+    el.style.right = `${this._detailsInset ?? 0}px`;
+    el.style.height = `${svgBox.height}px`;
+  }
+
+  // What the panel shows: a hovered/selected node or tie, else the default
+  // (the focused node in the ego view, nothing elsewhere).
+  _showDetails(subject) {
+    this._detailsSubject = subject;
+    this._refreshDetails();
+  }
+
+  _refreshDetails() {
+    const el = this._detailsEl;
+    if (!el || !this._detailsOwned) return;
+    let subject = this._detailsSubject;
+    if (subject?.node && !(this._shown ?? this._viewData)?.nodes?.some(n => n.id === subject.node.id)) subject = null;
+    if (!subject && this._view === 'ego' && this._root != null) {
+      const root = this._model.node(this._root);
+      if (root) subject = { node: root };
+    }
+    const fmt = this.options.detailsFormat;
+    el.innerHTML = fmt
+      ? fmt({ node: subject?.node ?? null, link: subject?.link ?? null, view: this._view })
+      : this._defaultDetails(subject);
+  }
+
+  _defaultDetails(subject) {
+    const t = this.theme;
+    const esc = escapeHtml;
+    const kind = txt => `<p class="rc-graph-details-kind">${esc(txt)}</p>`;
+    const row = (k, v) => `<dt>${esc(k)}</dt><dd>${v}</dd>`;
+    const nameOf = id => esc(this._model.node(id)?.label ?? id);
+    if (subject?.node) {
+      const n = subject.node;
+      const ties = this._model.toData().links.filter(l => l.source === n.id || l.target === n.id);
+      const group = this.options.nodeGroups?.[n.group]?.label ?? n.group;
+      const list = ties.slice(0, 12).map(l => {
+        const other = l.source === n.id ? l.target : l.source;
+        const dir = l.source === n.id ? '→' : '←';
+        const extra = l.label ?? (l.value != null ? Number(l.value).toLocaleString() : '');
+        const type = this._linkTypes[l.type ?? 'default']?.label ?? l.type ?? '';
+        return `<li>${dir} ${nameOf(other)}${type ? ` <span class="rc-graph-details-muted">· ${esc(type)}</span>` : ''}${extra ? ` <span class="rc-graph-details-muted">· ${esc(extra)}</span>` : ''}</li>`;
+      }).join('');
+      const more = ties.length > 12 ? `<p class="rc-graph-details-muted">+${ties.length - 12} more</p>` : '';
+      return `${group ? kind(group) : ''}<h4>${esc(n.label ?? n.id)}</h4>
+        ${n.sub ? `<p class="rc-graph-details-muted">${esc(n.sub)}</p>` : ''}
+        ${n.note ?? n.description ? `<p>${esc(n.note ?? n.description)}</p>` : ''}
+        <dl>${row('Connections', String(ties.length))}</dl>
+        ${list ? `<ul>${list}</ul>${more}` : ''}`;
+    }
+    if (subject?.link) {
+      const l = subject.link;
+      const type = this._linkTypes[l.type ?? 'default']?.label ?? l.type;
+      const period = [l.start, l.end].filter(v => v != null && v !== '').map(esc).join(' – ');
+      const sources = Array.isArray(l.sources) ? l.sources.map(src => {
+        const url = typeof src === 'string' ? src : src?.url;
+        const title = typeof src === 'string' ? src : (src?.title ?? src?.url);
+        return safeUrl(url) ? `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></li>` : `<li>${esc(title ?? '')}</li>`;
+      }).join('') : '';
+      return `${type ? kind(type) : ''}<h4>${nameOf(l.source)} → ${nameOf(l.target)}</h4>
+        <dl>${l.label ? row('Label', esc(l.label)) : ''}${l.value != null && l.value !== '' ? row('Value', esc(typeof l.value === 'number' ? l.value.toLocaleString() : l.value)) : ''}${period ? row('Period', period) : ''}</dl>
+        ${sources ? `<ul>${sources}</ul>` : ''}`;
+    }
+    const hint = this._view === 'flow'
+      ? 'Select a node or a tie to see its details.'
+      : 'Hover a node, or click a tie, to see its details.';
+    return `${kind('Details')}<p style="color:${t.muted}">${hint}</p>`;
+  }
+
   // Footer tools, right of the source line: the "+N more" and "N hidden"
   // notes, zoom buttons, full screen. Never over the canvas, where they
   // covered the bottom row. A chart without source/note gets a footer row
@@ -655,10 +811,13 @@ export class Graph extends Chart {
   render() {
     if (!this._viewData?.nodes?.length) return;
 
+    // Details panel beside the drawing takes its width from the layout.
+    const reserve = this._layoutDetails();
+
     if (this._view === 'flow') {
       // Narrow containers scroll sideways instead of crushing the lanes.
       const minW = this.options.minWidth ?? 0;
-      this.svg.style('min-width', minW ? `${minW}px` : null);
+      this.svg.style('min-width', minW ? `${minW + reserve}px` : null);
       this.container.style.overflowX = minW ? 'auto' : '';
     }
 
@@ -666,7 +825,8 @@ export class Graph extends Chart {
     // axis charts and can disagree with the real viewport by the header
     // height — a grid layout that uses the full area would get clipped.
     const svgEl = this.svg?.node();
-    const W = svgEl?.clientWidth  || this.width;
+    const svgW = svgEl?.clientWidth  || this.width;
+    const W = svgW - reserve;
     const H = svgEl?.clientHeight || this.height;
     if (W <= 0 || H <= 0) return;
 
@@ -680,7 +840,9 @@ export class Graph extends Chart {
       if (this._tooltip?.isPinned) this._tooltip.unpin();
       this._flow().render(W, H);
       this._hasRendered = true;
-      this._renderedSize = { W, H };
+      this._renderedSize = { W: svgW, H };
+      this._refreshDetails();
+      this._placeDetails(svgEl);
       this._refitIfResized();
       return;
     }
@@ -738,7 +900,9 @@ export class Graph extends Chart {
     this._draw(positions, W, H, sectors);
 
     this._hasRendered = true;
-    this._renderedSize = { W, H };
+    this._renderedSize = { W: svgW, H };
+    this._refreshDetails();
+    this._placeDetails(svgEl);
     this._refitIfResized();
   }
 
@@ -1031,8 +1195,9 @@ export class Graph extends Chart {
         event.stopPropagation();
         const [mx, my] = d3.pointer(event, this.container);
         this._highlightTie(d, nodeSel, linkSel);
+        this._showDetails({ link: d });
         this._tooltip.pin(mx, my, tieHtml(d), {
-          onClose: () => this._highlight(null, nodeSel, linkSel),
+          onClose: () => { this._highlight(null, nodeSel, linkSel); this._showDetails(null); },
         });
       });
 
@@ -1169,6 +1334,7 @@ export class Graph extends Chart {
           .attr('stroke', t.accent)
           .attr('opacity', 0.5);
         if (this._tooltip.isPinned) return;   // a pinned tie keeps the stage
+        this._showDetails({ node: d });
 
         const nodeLinks = allTies.filter(l => l.source === d.id || l.target === d.id);
         const html = o.tooltipFormat
@@ -1185,6 +1351,7 @@ export class Graph extends Chart {
         if (this._tooltip.isPinned) return;
         this._tooltip.hide();
         this._highlight(null, nodeSel, linkSel);
+        this._showDetails(null);
       });
 
     // ── Right-click: hide the node (ego view; the center is exempt) ──
@@ -1237,8 +1404,11 @@ export class Graph extends Chart {
       .data(rowLabels, (d, i) => i)
       .join('text')
       .attr('class',        'rc-graph-row-label')
-      .attr('x',            8)
-      .attr('y',            d => d.y + 3)
+      // On the route, above its first intermediate node (or the middle of a
+      // direct tie) — the left edge belongs to the endpoint's context fan.
+      .attr('x',            d => d.x ?? 8)
+      .attr('y',            d => d.direct ? d.y - 10 : d.y - (o.nodeRadius ?? 22) - 8)
+      .attr('text-anchor',  d => d.x != null ? 'middle' : 'start')
       .attr('fill',         t.muted)
       .text(d => `${d.hops} hop${d.hops !== 1 ? 's' : ''}${d.shortest ? ' · shortest' : ''}`);
 

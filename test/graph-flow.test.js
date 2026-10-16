@@ -266,3 +266,38 @@ describe('Graph view: flow', () => {
     expect(count('.rc-graph-node')).toBeGreaterThan(0);
   });
 });
+
+describe('Graph view: flow — hiddenLinkTypes', () => {
+  beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
+  const data = {
+    nodes: [{ id: 'a', lane: 'x' }, { id: 'b', lane: 'y' }, { id: 'decoy', lane: 'y', row: 1 }],
+    links: [
+      { source: 'a', target: 'b', type: 'eth' },
+      { source: 'a', target: 'decoy', type: 'noise' },
+    ],
+  };
+
+  it('starts the category hidden, hides its orphaned node, and keeps it in the legend', async () => {
+    const host = document.getElementById('chart');
+    const g = new Graph('#chart', { view: 'flow', duration: 0, hiddenLinkTypes: ['noise'],
+      linkTypes: { eth: { color: '#333', label: 'ETH' }, noise: { color: '#c00', label: 'poisoning' } } }).setData(data);
+    await g.whenReady();
+    const ids = () => [...host.querySelectorAll('.rc-flow-node')].map(n => n.__data__.id).sort();
+    expect(ids()).toEqual(['a', 'b']);
+    expect(host.querySelectorAll('.rc-flow-link')).toHaveLength(1);
+    const item = [...host.querySelectorAll('.rc-graph-legend button')].find(b => b.textContent === 'poisoning');
+    expect(item.getAttribute('aria-pressed')).toBe('false');
+    item.click();
+    expect(ids()).toEqual(['a', 'b', 'decoy']);
+    expect(host.querySelectorAll('.rc-flow-link')).toHaveLength(2);
+  });
+
+  it("a hidden category whose ties the page's filter removes is not offered in the legend", async () => {
+    const host = document.getElementById('chart');
+    const g = new Graph('#chart', { view: 'flow', duration: 0, hiddenLinkTypes: ['noise'],
+      linkTypes: { noise: { label: 'poisoning' } } }).setData(data);
+    await g.whenReady();
+    g.setFilter(item => item.id !== 'decoy');
+    expect(host.querySelector('.rc-graph-legend').textContent).not.toContain('poisoning');
+  });
+});

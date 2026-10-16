@@ -333,6 +333,24 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td>+/−/reset buttons and drag-to-pan. The mouse wheel is left to page scroll</td>
         </tr>
         <tr>
+            <td><code>details</code></td>
+            <td>boolean | element | selector</td>
+            <td>—</td>
+            <td>A details panel inside the card. <code>true</code>: the library shows the hovered or selected node or tie (the focused node when nothing is hovered) — name, group, connections, value, period, <code>sources</code>. An element or selector: your own panel, filled from <code>onSelect</code>. Beside the drawing when the card is at least <code>detailsBreakpoint</code> wide, below it otherwise</td>
+        </tr>
+        <tr>
+            <td><code>detailsFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ node, link, view }) =&gt; html</code> for <code>details: true</code></td>
+        </tr>
+        <tr>
+            <td><code>detailsWidth</code> / <code>detailsBreakpoint</code> / <code>detailsHeight</code></td>
+            <td>number</td>
+            <td><code>300</code> / <code>1000</code> / <code>200</code></td>
+            <td>Side panel width; card width from which the panel sits beside the drawing; panel height when it sits below (the card grows by it)</td>
+        </tr>
+        <tr>
             <td><code>fullscreen</code></td>
             <td>boolean</td>
             <td><code>true</code></td>

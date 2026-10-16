@@ -116,6 +116,7 @@ For line charts, use the default (line indicator). For bar and donut charts, use
 |--------|------|-------------|
 | `source` | string \| `{ text, href }` \| array \| HTMLElement | Rendered as a `<cite>` below the chart. Great for data attribution. Pass `{ text, href }` to make it a link, or an **array of parts** to mix several links and plain text on one line — see below. |
 | `note` | string \| HTMLElement | Rendered as a `<p class="rc-chart-note">` below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container. |
+| `controls` | HTMLElement \| selector | Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact `rc-chart-controls` row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it. |
 
 <pre class="text-content-caption"><code>source: 'Source: The Truth',
 note:   'Figures are unaudited and restated monthly.'</code></pre>

@@ -12,6 +12,8 @@ A Sankey diagram shows how a quantity flows between stages: nodes stand in colum
   <p><strong>⚠️ Experimental.</strong> <code>Sankey</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump.</p>
 </div>
 
+The simplest case first: a city budget in two columns — where the money comes from on the left, where it goes on the right. Hover a band or a node to follow its flows; the tooltip gives each flow's share of its source.
+
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-budget"></div>
 </div>
@@ -50,6 +52,8 @@ Color bands by `type` and the legend lists the types. Hover a band to highlight 
     <div id="sankey-trail"></div>
 </div>
 
+The setup: `linkColor: 'type'` and a `linkTypes` map; anything else on a link — here a `label` — shows up in its tooltip.
+
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', {
   linkColor: 'type',
   linkTypes: {
@@ -86,7 +90,7 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
         </tr>
     </thead>
     <tbody>
-        <tr><td><code>height</code></td><td>number</td><td><code>400</code></td><td>Chart height in px for the horizontal layout</td></tr>
+        <tr><td><code>height</code></td><td>number</td><td><code>400</code></td><td>Card height in px for the horizontal layout — title, legend and footer included</td></tr>
         <tr><td><code>orientation</code></td><td>string</td><td><code>'auto'</code></td><td><code>'horizontal'</code>, <code>'vertical'</code>, or <code>'auto'</code> — vertical on narrow containers</td></tr>
         <tr><td><code>mobileBreakpoint</code></td><td>number</td><td><code>480</code></td><td>Container width (px) at or below which <code>'auto'</code> turns vertical</td></tr>
         <tr><td><code>rowHeight</code></td><td>number</td><td><code>140</code></td><td>Height per column (row) in the vertical layout</td></tr>
@@ -98,7 +102,7 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
         <tr><td><code>linkColor</code></td><td>string</td><td><code>'source'</code></td><td><code>'source'</code>, <code>'target'</code>, <code>'type'</code>, <code>'gradient'</code>, or any CSS color</td></tr>
         <tr><td><code>linkOpacity</code></td><td>number</td><td><code>0.45</code></td><td>Band opacity at rest</td></tr>
         <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors and legend for <code>linkColor: 'type'</code></td></tr>
-        <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels; <code>false</code> leaves them to the tooltip</td></tr>
+        <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels, right of each node (the last column gets a gutter sized to its longest label); long ones are cut with an ellipsis to the room before the next column, the full name stays in the tooltip. <code>false</code> leaves them to the tooltip</td></tr>
         <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip</td></tr>
         <tr><td><code>showValues</code></td><td>boolean</td><td><code>true</code></td><td>Append the node value to its label</td></tr>
         <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for labels, tooltips and the table</td></tr>
@@ -109,7 +113,7 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
     </tbody>
 </table>
 
-Text slots `title`, `subtitle`, `source` and `note` work as on every chart — see [Settings](/charts/settings/).
+Text slots `title`, `subtitle`, `source` and `note`, and the `controls` slot for your own inputs, work as on every chart — see [Settings](/charts/settings/).
 
 ## Accessibility
 

@@ -490,7 +490,21 @@ node = {
 | `nodeRadius` | number | `18` во flow | ⚠️ 22 в остальных видах — один ключ, два дефолта |
 | `tooltipFormat` / `linkTooltipFormat` | | | как в остальных видах Graph |
 
-Методы: `setFilter(fn)`, `setTimeWindow(from, to)`, `select(id | { link })`, `clearSelection()`, `setLinkLabels(bool)`, `setHulls(list)`. Подсказки узла: `lane`, `row`, `col`, `x`/`y` (доли 0..1), `sub`, `terminal`; ребро: `bend`.
+Методы: `setFilter(fn)`, `setTimeWindow(from, to)`, `select(id | { link })`, `clearSelection()`, `setLinkLabels(bool)`, `setHulls(list)`.
+
+#### Graph — общие опции, добавленные в 0.9.8_3 (ручной прогон 2026-10-16)
+
+| Опция | Тип | Дефолт | Примечание |
+|-------|-----|--------|------------|
+| `details` | `true` \| element \| selector | — | панель деталей в карточке: сбоку при ширине содержимого ≥ `detailsBreakpoint` и сохранённом `minWidth` холста (flow), иначе снизу с ростом карточки |
+| `detailsFormat` | fn({ node, link, view }) => html | встроенный | для `details: true` |
+| `detailsWidth` / `detailsBreakpoint` / `detailsHeight` | number | `300` / `1000` / `200` | |
+| `fullscreen` | boolean | `true` | ⛶ в подвале; Fullscreen API, фоллбэк — фиксированный слой; метод `toggleFullscreen(on?)` |
+| `hiddenLinkTypes` (flow) | array | `[]` | категории, скрытые с начала; узел без видимых связей прячется |
+
+#### Базовый `Chart` — `controls` (0.9.8_3)
+
+`controls`: element | selector — элемент страницы переносится в карточку между холстом и подвалом (`.rc-chart-controls`), слушатели сохраняются. Общая опция всех классов; документирована в `/charts/settings/`. Подсказки узла: `lane`, `row`, `col`, `x`/`y` (доли 0..1), `sub`, `terminal`; ребро: `bend`.
 
 ## Открытые вопросы к заморозке
 

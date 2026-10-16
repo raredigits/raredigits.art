@@ -163,11 +163,6 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Graph details panel</td>
-            <td>node and relation details surface</td>
-            <td>Add a proper HTML details surface for a selected node or relation. It should show whatever metadata is available — relation type, share, dates, source, confidence and the full filterable connection list — without requiring any of those fields. The hover tooltip remains a compact summary and links to the details surface when more information exists.</td>
-        </tr>
-        <tr>
             <td>Graph flow view — automatic layout and groups</td>
             <td><code>view: 'flow'</code></td>
             <td>Second stage of the flow view (the first ships in v0.9.8_3): automatic in-lane layout for data without position hints — ranks along the flow, the main route on the centre line, fewer crossings, cycles broken — plus aggregation and collapsible groups: a group of nodes folds into one node with summed ties and a +/− control, parallel ties of a pair can be merged, and crowded lanes cap with +N. <strong>Targeted for v0.9.8_4.</strong></td>
@@ -184,8 +179,8 @@ Features and chart types planned for future releases.
         </tr>
         <tr>
             <td>Graph chrome styling</td>
-            <td>zoom controls, capacity note, navigation</td>
-            <td>Align the +/−/⟲ zoom buttons, actionable <code>+N more</code> disclosure, breadcrumbs and details controls with Rare Styles: proper icons, spacing, positioning, focus and hover states, responsive behavior, and dark-theme support.</td>
+            <td>icons, dark theme</td>
+            <td>The footer tools (zoom, full screen, <code>+N more</code>, restore), one-line breadcrumbs and text-like controls shipped in v0.9.8_3. Left: proper icons instead of text glyphs for the tools, and a dark-theme pass over the tools, the hidden-node list and the details panel.</td>
         </tr>
 
         <tr class="table-section">
