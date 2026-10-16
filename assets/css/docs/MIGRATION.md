@@ -22,7 +22,7 @@ Without it the page is **unstyled**: every library rule is gated by `.rd`.
 |---|---|---|---|---|---|---|
 | 1 | Scope gate | Library styled every page that loaded it | Library styles apply only on `.rd` and inside it. `<html class="rd">` = page mode, `class="rd"` on an element = island | Add `class="rd"` to `<html>` | **breaking** | `CSS-343` |
 | 2 | `<body class="rd">` | n/a | Everything except the `html`-level rules (`line-height`, `text-size-adjust`, `scroll-padding-top`) | Prefer `<html class="rd">` | note | `CSS-343` |
-| 3 | Islands | n/a | An island gets tag styles and library classes, but no page shell (fixed header, `main`/`footer`, `nav` chrome) and no `body` base typography | None | new | `CSS-343` |
+| 3 | Islands | n/a | An island gets tag styles and library classes, but no page shell (fixed header, `main`/`footer`, `nav` chrome) and no `body` base typography. The reset zeroes **user-agent** margins and padding on the island root and inside it at zero specificity, so the host's own rules still win (`CSS-078`) | None | new | `CSS-343` |
 | 4 | Layout modes | n/a | `rd-layout-*` (from `v0.7.4`) needs `rd` next to it: `<html class="rd rd-layout-longread">` | Later | note | `Q-14` |
 | 5 | Token overrides | On `:root` | Still on `:root`, ungated, loaded after `rare.css` | None | unchanged | `Q-14` |
 | 6 | `rd-icon-*` | Worked anywhere | Still works anywhere (ungated) | None | unchanged | `Q-14` |

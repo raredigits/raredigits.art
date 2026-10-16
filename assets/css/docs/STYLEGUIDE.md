@@ -25,6 +25,14 @@ This file documents the canonical CSS workflow for Rare Styles inside `raredigit
 
 `scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically; `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
 
+## Reset and normalize (decided 2026-10-16, `CSS-078`)
+
+Both apply only inside `.rd`: `vendor/normalize.css` (v8.0.1, kept **whole and unmodified**) and the `* { margin: 0; padding: 0; box-sizing: border-box }` reset at the end of `rare.scss`.
+
+**Islands.** The reset matches the island root and everything inside it, at zero specificity (`*:where(.rd, .rd *)`). It removes **user-agent** margins and padding only. Any host rule with a type or class selector (`figcaption { margin: … }`) still wins over it. Same-specificity collisions, such as a host `p {}` against the library's `p:where(…)`, resolve by load order. That is the documented caveat: the gate protects the host from the library, not the library from the host.
+
+**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font inheritance that the `v0.7.9` forms will build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
+
 ## Day-to-day editing flow
 
 1. Make SCSS changes in `assets/css/modules/**` or `assets/css/rare.scss`.
