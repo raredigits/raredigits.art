@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GraphModel } from '../assets/charts/src/graph/model.js';
 import { memorySource } from '../assets/charts/src/graph/source.js';
-import { egoLayout } from '../assets/charts/src/graph/layouts/ego.js';
+import { egoLayout, egoCapacity } from '../assets/charts/src/graph/layouts/ego.js';
 import { pathLayout } from '../assets/charts/src/graph/layouts/path.js';
 import { clusterLayout } from '../assets/charts/src/graph/layouts/cluster.js';
 import { Graph } from '../assets/charts/src/charts/Graph.js';
@@ -222,7 +222,7 @@ describe('pathLayout', () => {
 });
 
 describe('clusterLayout', () => {
-  it('places meta-nodes on a circle, single community centered', () => {
+  it('places meta-nodes on a grid from the centre out, single community centered', () => {
     const two = clusterLayout(
       { nodes: [{ id: 'c0' }, { id: 'c1' }] },
       { width: 800, height: 600 });
@@ -233,6 +233,19 @@ describe('clusterLayout', () => {
 
     const one = clusterLayout({ nodes: [{ id: 'c0' }] }, { width: 800, height: 600 });
     expect(one.get('c0')).toEqual({ x: 400, y: 300 });
+  });
+
+  it('never overlaps meta-nodes and puts the first (largest) nearest the centre', () => {
+    const nodes = Array.from({ length: 9 }, (_, i) => ({ id: `c${i}` }));
+    const pos = clusterLayout({ nodes }, { width: 800, height: 520 });
+    const pts = nodes.map(n => pos.get(n.id));
+    const seen = new Set(pts.map(p => `${Math.round(p.x)},${Math.round(p.y)}`));
+    expect(seen.size).toBe(9);
+    const d = p => Math.hypot(p.x - 400, p.y - 260);
+    expect(d(pts[0])).toBeLessThanOrEqual(Math.min(...pts.slice(1).map(d)) + 1e-9);
+    // grid: every x and y comes from a small set of column/row centres
+    expect(new Set(pts.map(p => Math.round(p.x))).size).toBeLessThanOrEqual(4);
+    expect(new Set(pts.map(p => Math.round(p.y))).size).toBeLessThanOrEqual(3);
   });
 });
 
@@ -492,7 +505,7 @@ describe('Graph viewport', () => {
     expect(note?.textContent).toContain('1 hidden');
     note.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(labels()).toContain('E');
-    expect(host.querySelector('.rc-graph-hidden-note')).toBeNull();
+    expect(host.querySelector('.rc-graph-hidden-note').hidden).toBe(true);
   });
 
   it('add() merges a news-sized payload and refreshes the ego view', async () => {
@@ -759,5 +772,145 @@ describe('Graph viewport — focus + context fade', () => {
     expect(faded).toEqual(['b', 'c']);           // e's only neighbor is a
     nodes[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
     expect(nodes.every(n => n.style.opacity === '1')).toBe(true);
+  });
+});
+
+describe('egoLayout — one dominant category (A4)', () => {
+  // 60 nodes of a single group: 12 first-ring, 48 second-ring.
+  const nodes = [{ id: 'ego', depth: 0, group: 'person' }];
+  const links = [];
+  for (let i = 0; i < 12; i++) {
+    nodes.push({ id: `r1-${i}`, depth: 1, group: 'person' });
+    links.push({ source: 'ego', target: `r1-${i}` });
+    for (let j = 0; j < 4; j++) {
+      nodes.push({ id: `r2-${i}-${j}`, depth: 2, group: 'person' });
+      links.push({ source: `r1-${i}`, target: `r2-${i}-${j}` });
+    }
+  }
+  const W = 900, H = 600;
+  const { positions: p, sectors } = egoLayout({ nodes, links }, { rootId: 'ego', width: W, height: H });
+
+  it('centres the ego and spreads every node around it — not into one corner', () => {
+    expect(Math.abs(p.get('ego').x - W / 2)).toBeLessThan(W / 6);
+    expect(Math.abs(p.get('ego').y - H / 2)).toBeLessThan(H / 6);
+    const pts = nodes.slice(1).map(n => p.get(n.id));
+    const quadrant = pt => `${pt.x < W / 2 ? 'L' : 'R'}${pt.y < H / 2 ? 'T' : 'B'}`;
+    const counts = {};
+    pts.forEach(pt => { counts[quadrant(pt)] = (counts[quadrant(pt)] ?? 0) + 1; });
+    expect(Object.keys(counts).sort()).toEqual(['LB', 'LT', 'RB', 'RT']);
+    Object.values(counts).forEach(c => expect(c).toBeGreaterThan(8));
+  });
+
+  it('keeps depth readable as distance, on the grid, inside the canvas', () => {
+    const e = p.get('ego');
+    const d = id => Math.hypot(p.get(id).x - e.x, p.get(id).y - e.y);
+    const first = Math.max(...nodes.filter(n => n.depth === 1).map(n => d(n.id)));
+    const second = Math.min(...nodes.filter(n => n.depth === 2).map(n => d(n.id)));
+    expect(second).toBeGreaterThanOrEqual(first - 1e-9);
+    // on the grid: shared column/row centres, not free angles
+    const xs = new Set(nodes.map(n => Math.round(p.get(n.id).x)));
+    expect(xs.size).toBeLessThan(nodes.length / 3);
+    nodes.forEach(n => {
+      const pt = p.get(n.id);
+      expect(pt.x).toBeGreaterThan(0); expect(pt.x).toBeLessThan(W);
+      expect(pt.y).toBeGreaterThan(0); expect(pt.y).toBeLessThan(H);
+    });
+    expect(sectors).toHaveLength(1);
+  });
+
+  it('no two nodes share a spot', () => {
+    const seen = new Set();
+    nodes.forEach(n => {
+      const key = `${Math.round(p.get(n.id).x)},${Math.round(p.get(n.id).y)}`;
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
+    });
+  });
+});
+
+describe('Graph viewport — chrome', () => {
+  beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
+
+  it('puts the tools (notes, zoom, full screen) in the footer row, after the source', () => {
+    new Graph('#chart', { duration: 0, source: 'Synthetic data' });
+    const footer = document.querySelector('#chart .rc-chart-footer');
+    expect(footer.classList.contains('rc-chart-footer--tools')).toBe(true);
+    const kids = [...footer.children].map(c => c.className);
+    expect(kids.indexOf('rc-graph-tools')).toBe(kids.indexOf('rc-chart-source') + 1);
+    const tools = footer.querySelector('.rc-graph-tools');
+    expect(tools.querySelector('.rc-graph-zoom-controls')).not.toBeNull();
+    expect(tools.querySelector('.rc-graph-fullscreen')).not.toBeNull();
+    expect(tools.querySelector('.rc-graph-note').hidden).toBe(true);
+    expect(document.querySelectorAll('#chart svg .rc-graph-note')).toHaveLength(0);
+  });
+
+  it('full screen: the button expands the card, Esc (overlay fallback) or the button restores it', () => {
+    const host = document.getElementById('chart');
+    host.requestFullscreen = undefined;                 // force the overlay fallback
+    const g = new Graph('#chart', { duration: 0, height: 420 });
+    const btn = host.querySelector('.rc-graph-fullscreen');
+    btn.click();
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(true);
+    expect(host.style.height).toBe('100vh');
+    expect(btn.title).toContain('Exit');
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(false);
+    expect(host.style.height).toBe('420px');
+    g.toggleFullscreen(true);
+    btn.click();
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(false);
+  });
+
+  it('fullscreen: false leaves the button out', () => {
+    new Graph('#chart', { duration: 0, fullscreen: false });
+    expect(document.querySelector('#chart .rc-graph-fullscreen')).toBeNull();
+  });
+
+  it('creates a footer row for the controls when there is no source or note', () => {
+    new Graph('#chart', { duration: 0 });
+    expect(document.querySelector('#chart .rc-chart-footer .rc-graph-zoom-controls')).not.toBeNull();
+  });
+});
+
+describe('layouts — vertical fit', () => {
+  it('ego: the used rows run from just under the top to just above the bottom', () => {
+    const m = new GraphModel(fixture);
+    const sub = m.neighborhood('c', 2);
+    const { positions } = egoLayout(sub, { rootId: 'c', width: 800, height: 520, nodeRadius: 22 });
+    const ys = [...positions.values()].map(p => p.y);
+    expect(Math.min(...ys)).toBeCloseTo(28, 0);            // radius + 6
+    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
+  });
+
+  it('cluster: the top row sits under the edge by its largest node radius', () => {
+    const nodes = Array.from({ length: 6 }, (_, i) => ({ id: `c${i}`, size: i === 0 ? 3 : 1 }));
+    const pos = clusterLayout({ nodes }, { width: 800, height: 520, nodeRadius: 22 });
+    const ys = [...pos.values()].map(p => p.y);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(22 + 6 - 1e-6);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
+  });
+});
+
+describe('egoLayout — wide canvas, one dominant category', () => {
+  it('spreads across the width on cells at least ~96 px wide', () => {
+    const nodes = [{ id: 'ego', depth: 0, group: 'fund' }];
+    for (let i = 0; i < 33; i++) nodes.push({ id: `f${i}`, depth: i < 8 ? 1 : 2, group: 'fund' });
+    const W = 740, H = 387;
+    const { positions, cellW } = egoLayout({ nodes, links: [] }, { rootId: 'ego', width: W, height: H });
+    expect(cellW).toBeGreaterThanOrEqual(96 - 1e-9);
+    const xs = [...positions.values()].map(p => p.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(W * 0.7);
+    const ys = [...positions.values()].map(p => p.y);
+    expect(Math.max(...ys)).toBeLessThan(H);
+  });
+});
+
+describe('egoCapacity', () => {
+  it('fits a 63-node neighbourhood on a 1150 × 410 drawing (the FF Portfolio case)', () => {
+    expect(egoCapacity(1150, 410)).toBeGreaterThanOrEqual(63);
+  });
+  it('grows with the canvas and never drops below one', () => {
+    expect(egoCapacity(1600, 900)).toBeGreaterThan(egoCapacity(800, 520));
+    expect(egoCapacity(10, 10)).toBe(1);
   });
 });

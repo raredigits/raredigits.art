@@ -147,7 +147,42 @@ describe('Graph view: flow', () => {
     expect(dim.sort()).toEqual(['binance', 'eth', 'poison']);
     const binance = [...host.querySelectorAll('.rc-flow-node')].find(n => n.__data__.id === 'binance');
     expect(binance.style.opacity).toBe('0.2');
-    expect(count('.rc-flow-link-label')).toBe(2);   // labels for active ties only
+    // labels only for ties inside the window
+    const labelled = [...host.querySelectorAll('.rc-flow-link-label')].map(t => t.__data__);
+    expect(labelled.every(l => !l._dim)).toBe(true);
+    expect(labelled.map(l => l.target).filter(id => ['eth', 'binance', 'poison'].includes(id))).toEqual([]);
+  });
+
+  it('tie labels never sit on a node shape or caption, and render above the nodes', async () => {
+    const g = new Graph('#chart', opts({ hulls: [] })).setData(trace);
+    await g.whenReady();
+    const labels = [...host.querySelectorAll('.rc-flow-link-label')];
+    expect(labels.length).toBeGreaterThan(0);
+    const nodes = [...host.querySelectorAll('.rc-flow-node')].map(n => {
+      const [, x, y] = /translate\(([-\d.]+),([-\d.]+)\)/.exec(n.getAttribute('transform'));
+      return { x: +x, y: +y };
+    });
+    labels.forEach(t => {
+      const x = +t.getAttribute('x'), y = +t.getAttribute('y');
+      nodes.forEach(p => {
+        const onShape = Math.abs(x - p.x) < 18 && y + 4 > p.y - 18 && y - 13 < p.y + 18;
+        expect(onShape).toBe(false);
+      });
+    });
+    const layers = [...host.querySelectorAll('.rc-flow > g')].map(g => g.getAttribute('class'));
+    expect(layers.indexOf('rc-flow-link-labels')).toBeGreaterThan(layers.indexOf('rc-flow-nodes'));
+  });
+
+  it('the legend lists only tie categories the filter lets through', async () => {
+    const g = new Graph('#chart', opts({
+      linkColorBy: l => (l.noise ? 'noise' : l.asset),
+      linkTypes: { ATOM: { color: '#6c58b5' }, ETH: { color: '#3d4a5c' }, noise: { color: '#c2410c', label: 'poisoning' } },
+    })).setData(trace);
+    await g.whenReady();
+    const legendText = () => host.querySelector('.rc-graph-legend').textContent;
+    expect(legendText()).toContain('poisoning');
+    g.setFilter(item => !item.noise);
+    expect(legendText()).not.toContain('poisoning');
   });
 
   it("timeWindowMode 'hide' removes out-of-window ties", async () => {

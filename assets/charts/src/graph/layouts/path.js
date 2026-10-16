@@ -24,7 +24,9 @@ export function pathLayout({ paths = [], context = null } = {}, {
   const pad = padX ?? (context ? 150 : 70);
   const usableW = Math.max(1, W - pad * 2);
   const count = paths.length;
-  const rowGap = count > 1 ? Math.min(110, (H - 120) / (count - 1)) : 0;
+  // Routes spread over the height, keeping room for a node and its label at
+  // the top and bottom rows.
+  const rowGap = count > 1 ? Math.min(150, (H - 76) / (count - 1)) : 0;
   const yForRow = row => H / 2 + (row - (count - 1) / 2) * rowGap;
 
   paths.forEach((p, row) => {

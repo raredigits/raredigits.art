@@ -76,11 +76,6 @@ Features and chart types planned for future releases.
             <td><code>RareCharts.Waterfall</code></td>
             <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_5.</strong></td>
         </tr>
-        <tr>
-            <td>Sankey</td>
-            <td><code>RareCharts.Sankey</code></td>
-            <td>Flow diagram over <code>{ nodes, links: [{ source, target, value, type? }] }</code>: node columns joined by bands whose width is the flow value — budgets, money trails, conversion funnels, energy balances. Link tooltips, path highlighting, and a vertical orientation for narrow screens. Ships as experimental. <strong>Targeted for v0.9.8_3.</strong></td>
-        </tr>
 
         <tr class="table-section">
             <td colspan="3">
@@ -168,19 +163,14 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Directed and multiple graph relations</td>
-            <td>optional edge direction, identity and labels</td>
-            <td>Support directed relations and multiple simultaneous relations between the same pair of nodes. Allow optional edge labels and values such as ownership percentages, while keeping the minimum link payload at <code>{ source, target }</code>. Direction, relation IDs, percentages and other domain fields must enrich the result when present, not become required input. <strong>Targeted for v0.9.8_3.</strong></td>
-        </tr>
-        <tr>
             <td>Graph details panel</td>
             <td>node and relation details surface</td>
             <td>Add a proper HTML details surface for a selected node or relation. It should show whatever metadata is available — relation type, share, dates, source, confidence and the full filterable connection list — without requiring any of those fields. The hover tooltip remains a compact summary and links to the details surface when more information exists.</td>
         </tr>
         <tr>
-            <td>Graph flow view</td>
+            <td>Graph flow view — automatic layout and groups</td>
             <td><code>view: 'flow'</code></td>
-            <td>A trace view for value moving between entities — money trails, supply chains, address investigations. Nodes sit in ordered lanes (networks, stages, jurisdictions) and flow left to right; edges are directed, may repeat between the same pair, and carry value (width), category (color), certainty (dash) and labels. Node shapes by kind, group outlines, filters, a time window, and node/edge selection that drives an external details panel. <strong>Targeted for v0.9.8_3</strong> with layout from data hints; automatic in-lane layout, aggregation and collapsible groups are <strong>targeted for v0.9.8_4</strong>.</td>
+            <td>Second stage of the flow view (the first ships in v0.9.8_3): automatic in-lane layout for data without position hints — ranks along the flow, the main route on the centre line, fewer crossings, cycles broken — plus aggregation and collapsible groups: a group of nodes folds into one node with summed ties and a +/− control, parallel ties of a pair can be merged, and crowded lanes cap with +N. <strong>Targeted for v0.9.8_4.</strong></td>
         </tr>
         <tr>
             <td>Graph ownership layout</td>

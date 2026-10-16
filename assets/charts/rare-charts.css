@@ -181,6 +181,35 @@
   cursor: default;
 }
 
+/* Text-like chart controls: no button chrome in any state.
+   A host stylesheet may style every <button> — Rare Styles' `button:hover`
+   adds a border and background, and its element+pseudo-class selector beats
+   a single class. Doubling the class (and listing the states) wins without
+   !important; only the cursor changes on hover. Keyboard focus keeps its
+   outline (rule below). */
+.rc-graph-legend-item.rc-graph-legend-item,
+.rc-graph-legend-reset.rc-graph-legend-reset,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button,
+.rc-graph-tools .rc-graph-note.rc-graph-note,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.rc-graph-legend-item.rc-graph-legend-item:hover,
+.rc-graph-legend-item.rc-graph-legend-item:active,
+.rc-graph-legend-reset.rc-graph-legend-reset:hover,
+.rc-graph-legend-reset.rc-graph-legend-reset:active,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:hover,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:active,
+.rc-graph-tools .rc-graph-note.rc-graph-note:hover,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
 /* Graph legend items are controls, not static labels. */
 .rc-graph-legend-item,
 .rc-graph-legend-reset {
@@ -227,6 +256,11 @@
 .rc-graph-overflow[hidden] { display: none; }
 
 .rc-graph-breadcrumbs button {
+  /* inline: a site stylesheet may make every <button> a block (Rare Styles
+     does, Q-04) — the trail must stay on one line */
+  display: inline;
+  width: auto;
+  margin: 0;
   appearance: none;
   border: 0;
   padding: 0;
@@ -245,8 +279,8 @@
 .rc-graph-overflow {
   position: absolute;
   z-index: 4;
-  left: 104px;
-  bottom: 34px;
+  right: 8px;
+  bottom: 40px;
   width: min(320px, calc(100% - 120px));
   max-height: min(300px, 55%);
   overflow: hidden;
@@ -288,6 +322,9 @@
 }
 
 .rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
+/* list rows keep their hover tint, but never a host button border */
+.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:hover,
+.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close:hover { border: 0; box-shadow: none; }
 
 .rc-graph-overflow-close {
   position: absolute;
@@ -745,3 +782,51 @@
 /* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
 .rc-flow-node:focus { outline: none; }
 .rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+/* Footer row with tools (Graph zoom): source on the left, controls pinned
+   right, a note (if any) on its own line below. */
+.rc-chart-footer--tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-sm, 8px);
+}
+.rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }
+.rc-graph-tools {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+.rc-graph-zoom-controls { display: flex; gap: 4px; }
+.rc-graph-tools button { display: inline-block; margin: 0; width: auto; }
+.rc-graph-tools button[hidden] { display: none; }
+.rc-graph-tools .rc-graph-note,
+.rc-graph-tools .rc-graph-hidden-note {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0 4px;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+  opacity: 0.75;
+  cursor: pointer;
+}
+/* Full screen: the card fills the screen (native API or overlay fallback). */
+.rc-graph--fullscreen {
+  position: fixed !important;
+  inset: 0;
+  z-index: 1000;
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  padding: 16px;
+  box-sizing: border-box;
+  background: var(--bg-color, #fff);
+}
+.rc-graph--fullscreen:fullscreen { position: static !important; }
+

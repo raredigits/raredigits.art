@@ -16,6 +16,7 @@ import * as d3 from 'd3';
 import {
   applyTimeWindow, linkWidthScale, parallelIndex,
 } from '../../core/links.js';
+import { fitTextNode } from '../../core/renderHelpers.js';
 
 // ─── Layout ─────────────────────────────────────────────────────────────────
 
@@ -34,6 +35,7 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
   minGap = 56,
   nodeRadius = 18,
   captionRoom = 36,   // below a node's edge: label + sub line
+  padBottom = pad,    // extra room under the drawing (e.g. zoom controls)
 } = {}) {
   const laneOf = n => (typeof laneBy === 'function' ? laneBy(n) : n[laneBy]);
 
@@ -57,7 +59,7 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
   const laneById = new Map(laneList.map(l => [l.id, l]));
 
   const top = header + pad;
-  const usableH = Math.max(1, height - top - pad);
+  const usableH = Math.max(1, height - top - padBottom);
 
   // Cells: lane × col. Count columns per lane.
   const colsPerLane = new Map();
@@ -129,7 +131,7 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
     }
   });
 
-  return { positions, lanes: laneList, top, height };
+  return { positions, lanes: laneList, top, height, colsPerLane };
 }
 
 // ─── View ───────────────────────────────────────────────────────────────────
@@ -152,8 +154,10 @@ export class FlowView {
     this.gHulls = this.layer.append('g').attr('class', 'rc-flow-hulls');
     this.gLinks = this.layer.append('g').attr('class', 'rc-flow-links');
     this.gHits  = this.layer.append('g').attr('class', 'rc-flow-link-hits');
-    this.gLinkLabels = this.layer.append('g').attr('class', 'rc-flow-link-labels');
     this.gNodes = this.layer.append('g').attr('class', 'rc-flow-nodes');
+    // Tie labels above the nodes: they are placed clear of node shapes and
+    // captions, so drawing them on top never hides a node.
+    this.gLinkLabels = this.layer.append('g').attr('class', 'rc-flow-link-labels');
   }
 
   setData({ nodes, links }) {
@@ -217,7 +221,7 @@ export class FlowView {
     const palette = t.colors ?? ['#888'];
     const R = o.nodeRadius ?? 18;
 
-    const { positions, lanes, top } = layoutFlow(
+    const { positions, lanes, top, colsPerLane } = layoutFlow(
       { nodes: this.data.nodes, lanes: o.lanes ?? [] },
       { width: W, height: H, laneBy: o.laneBy ?? 'lane', nodeRadius: R });
     const { nodes, links } = this._visible();
@@ -368,8 +372,25 @@ export class FlowView {
 
     // Tie labels: active ties only. Each tries the bow's middle, then steps
     // outward along the bow's normal; a label that still collides is left to
-    // the tooltip.
+    // the tooltip. Node shapes, node captions and hull labels are obstacles.
+    const roomOf = n => {
+      const p = positions.get(n.id);
+      const lane = lanes.find(l => l.id === p.lane);
+      const cols = colsPerLane.get(p.lane) ?? 1;
+      return lane ? (lane.x1 - lane.x0) / cols - 8 : 120;
+    };
     const boxes = [];
+    nodes.forEach(n => {
+      const p = positions.get(n.id);
+      const w = Math.min(roomOf(n), Math.max(2 * R, String(n.label ?? n.id).length * 6.6, String(n.sub ?? '').length * 6.4));
+      boxes.push({ x0: p.x - R, x1: p.x + R, y0: p.y - R, y1: p.y + R });
+      boxes.push({ x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + R + 2, y1: p.y + R + (n.sub ? 34 : 20) });
+    });
+    hulls.forEach(h => {
+      const x = h.pts[0].x - R, y = Math.max(...h.pts.map(p => p.y)) + R + 48;
+      const w = String(h.label ?? '').length * 6.2;
+      boxes.push({ x0: x, x1: x + w, y0: y - 12, y1: y + 3 });
+    });
     const labelAt = new Map();
     const labelled = this.labels ? links.filter(l => !l._dim && l.label != null && l.label !== '') : [];
     labelled.forEach(l => {
@@ -438,15 +459,18 @@ export class FlowView {
         add('circle', { r: R });
       } else if (!SHAPES.includes(shape) && /^[Mm]/.test(String(shape))) add('path', { d: shape });
       else add('circle', { r: R });
-      g.append('text').attr('class', 'rc-flow-node-label')
+      // Captions are cut to the node's column width — the full text stays in
+      // the tooltip and the accessible name.
+      const room = roomOf(n);
+      const label = g.append('text').attr('class', 'rc-flow-node-label')
         .attr('y', R + 16).attr('text-anchor', 'middle').attr('fill', t.text)
-        .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke')
-        .text(n.label ?? n.id);
+        .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke');
+      fitTextNode(label.node(), n.label ?? n.id, room);
       if (n.sub) {
-        g.append('text').attr('class', 'rc-flow-node-sub')
+        const sub = g.append('text').attr('class', 'rc-flow-node-sub')
           .attr('y', R + 30).attr('text-anchor', 'middle').attr('fill', t.muted)
-          .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke')
-          .text(n.sub);
+          .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke');
+        fitTextNode(sub.node(), n.sub, room);
       }
       if (n.terminal) {
         g.append('text').attr('class', 'rc-flow-node-sub')
@@ -559,7 +583,14 @@ export class FlowView {
 
     graph.svg.on('click.flow', () => { if (this.selected) select(null); });
 
-    this._renderLegend(keys, colorOf, dashOf, palette);
+    // Legend: categories present among the ties the filter lets through, plus
+    // any the user toggled off (so they can be turned back on).
+    const pass = item => !this.filter || this.filter(item);
+    const shown = new Set(this.data.links
+      .filter(l => pass(l) && byId.has(l.source) && byId.has(l.target))
+      .map(l => this._linkKey(l)));
+    this.hiddenTypes.forEach(k => shown.add(k));
+    this._renderLegend(keys.filter(k => shown.has(k)), colorOf, dashOf, palette);
   }
 
   // Arrow keys walk the trace: → first outgoing tie, ← first incoming tie,

@@ -129,8 +129,10 @@
     if (!panel) return;
     const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
     if (node) {
-      const ins = links.filter(l => l.to === node.id).map(l => `${esc(byId[l.from].label)} — ${esc(l.amount)}`);
-      const outs = links.filter(l => l.from === node.id).map(l => `${esc(byId[l.to].label)} — ${esc(l.amount)}`);
+      // only ties the current switches show
+      const shown = l => (state.crowd || !l.crowd) && (state.noise || !l.noise);
+      const ins = links.filter(l => l.to === node.id && shown(l)).map(l => `${esc(byId[l.from].label)} — ${esc(l.amount)}`);
+      const outs = links.filter(l => l.from === node.id && shown(l)).map(l => `${esc(byId[l.to].label)} — ${esc(l.amount)}`);
       panel.innerHTML = `<p class="caption">${esc(GROUPS[node.group]?.label ?? node.group)} · ${esc(node.net)}</p>
         <h4>${esc(node.label)}</h4>
         <dl>${node.addr ? row('Address', `<code>${esc(node.addr)}</code>`) : ''}${row('Incoming', ins.join('<br>') || '—')}${row('Outgoing', outs.join('<br>') || '—')}</dl>

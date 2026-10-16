@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/graph/'
 ---
 
-The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with three deterministic views: **ego** (who surrounds a node), **path** (how two nodes are connected), and **cluster** (the shape of the whole network). You never draw the full graph — you draw the answer to a query.
+The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with deterministic views: **ego** (who surrounds a node), **path** (how two nodes are connected), **cluster** (the shape of the whole network), and **[flow](/charts/graph/flow/)** (a trace of value moving through ordered lanes — money trails, supply chains). You never draw the full graph — you draw the answer to a query.
 
 <div class="card text-content-caption card-dashboard-bordered">
   <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
@@ -14,7 +14,7 @@ The Graph chart renders networks of relationships — entity connections, agent 
 
 ### Ego view
 
-Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node `group`) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).
+Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node `group`) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80%), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).
 
 <div id="graph-ego"></div>
 
@@ -26,7 +26,7 @@ Nodes snap to a regular grid sized for the neighborhood. The focused node is pin
 
 ### Cluster view
 
-The whole network collapsed into communities (Louvain). Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.
+The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.
 
 <div id="graph-cluster"></div>
 
@@ -216,13 +216,13 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td><code>view</code></td>
             <td>string</td>
             <td><code>'ego'</code></td>
-            <td>Initial view: <code>'ego'</code> | <code>'path'</code> | <code>'cluster'</code></td>
+            <td>Initial view: <code>'ego'</code> | <code>'path'</code> | <code>'cluster'</code> | <code>'flow'</code> (lanes and trace options: see <a href="/charts/graph/flow/">Flow view</a>)</td>
         </tr>
         <tr>
             <td><code>dataSource</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Source adapter (see <a href="#data-source">Data source</a>). Optional if you call <code>setData()</code></td>
+            <td>Source adapter (see Data source above). Optional if you call <code>setData()</code></td>
         </tr>
         <tr>
             <td><code>depth</code></td>
@@ -306,7 +306,7 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td><code>height</code></td>
             <td>number</td>
             <td><code>520</code></td>
-            <td>Container height in px</td>
+            <td>Card height in px — title, legend, breadcrumbs and footer included (see Sizing below)</td>
         </tr>
         <tr>
             <td><code>nodeRadius</code></td>
@@ -333,6 +333,12 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td>+/−/reset buttons and drag-to-pan. The mouse wheel is left to page scroll</td>
         </tr>
         <tr>
+            <td><code>fullscreen</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Full-screen button in the footer tools; Esc or the button exits. Programmatic: <code>toggleFullscreen(on?)</code></td>
+        </tr>
+        <tr>
             <td><code>maxNodes</code></td>
             <td>number | 'auto'</td>
             <td><code>'auto'</code></td>
@@ -342,7 +348,7 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
             <td><code>draggable</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Nodes can be hand-dragged to fine-tune the picture; positions persist until the next view change</td>
+            <td>Nodes can be hand-dragged to fine-tune the picture; positions persist until the next view change. Movement under 6 px counts as a click</td>
         </tr>
         <tr>
             <td><code>linkTypes</code></td>
@@ -371,6 +377,32 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
     </tbody>
 </table>
 
+### Sizing
+
+Graph lays nodes out on a grid: one node per cell of about **96 × 50 px** (the node and its label). The drawing area therefore decides how many nodes fit — roughly `floor(width / 96) × floor(height / 50) − 1` around the focused node. A larger neighbourhood is capped to the best-connected nodes; a `+N more` button in the footer lists the rest — pick one to recenter on it — and the **full-screen** button (⛶) gives the graph the whole screen, so more of it fits (see `maxNodes`, `fullscreen`).
+
+`height` is the whole card — title, legend, breadcrumbs and footer included; the drawing gets what is left, typically 80–120 px less.
+
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>View</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Holds</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Ego, cluster</td><td>720 px and up</td><td><code>520</code>–<code>640</code></td><td>~35 nodes at 720 × 520, ~80 at 960 × 640; full screen on a laptop, ~150</td></tr>
+        <tr><td>Path</td><td>640 px and up</td><td><code>360</code> for 3 routes, +110 per extra route</td><td>3–5 routes with endpoint context</td></tr>
+        <tr><td>Flow</td><td><code>minWidth</code> ≈ 120–170 px per lane</td><td>~110 px per row in use + 160</td><td>lanes scroll sideways below <code>minWidth</code></td></tr>
+    </tbody>
+</table>
+
+- **Neighbourhood bigger than the card?** Enlarge `height` first (width is usually fixed by the page column), then lower `depth` to 1, or set `maxNodes` to show a curated top slice.
+- **Narrow screens.** Below ~480 px an ego neighbourhood of more than ~15 nodes does not read; use `depth: 1`, a smaller `maxNodes`, or the flow view with `minWidth` and sideways scrolling.
+- **Long labels** are cut to the cell width with an ellipsis; the full name is in the tooltip.
+
 ### Methods
 
 All methods return the chart instance; fetching and rendering are async — `whenReady()` resolves when queued view changes are done.
@@ -393,7 +425,10 @@ graph.setRelationTypes(['investment']);  // update the current ego filter
 graph.clearRelationTypes();              // restore all relation types
 graph.back();                            // previous ego/path/cluster state
 graph.clearHistory();                    // keep only the current breadcrumb
+graph.toggleFullscreen();                // full screen on/off (also the ⛶ button, Esc)
 await graph.whenReady();</code></pre>
+
+The flow view adds `setFilter`, `setTimeWindow`, `select` / `clearSelection`, `setLinkLabels` and `setHulls` — see the Methods section of [Flow view](/charts/graph/flow/).
 
 `add()` is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id.
 
@@ -407,15 +442,15 @@ await graph.whenReady();</code></pre>
 
 **Filter relations from the legend** — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the `neighbors()` query and the client-side neighborhood. "Show all" clears the filter. Graphs whose links have no explicit `type` continue to work as a single `default` relation type.
 
-**Reveal omitted nodes** — when the viewport cap removes nodes from the drawing, the underlined `+N more` note opens an accessible list. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with `hide()`.
+**Reveal omitted nodes** — when the viewport cap removes nodes from the drawing, a `+N more` button appears in the footer tools; it opens an accessible list. Or open the graph full screen (⛶) — the bigger canvas fits more. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with `hide()`.
 
 **Breadcrumb navigation** — after more than one semantic view has been visited, Graph shows a clickable history of ego, path, and cluster states. Returning through a breadcrumb or `back()` restores the relation filter together with the view; literal pan and zoom are deliberately reset.
 
-**Zoom buttons** — +/− buttons zoom, ⟲ resets, dragging the background pans. The mouse wheel deliberately stays with page scrolling.
+**Footer tools** — +/− zoom, ⟲ resets, dragging the background pans (the mouse wheel deliberately stays with page scrolling). ⛶ opens the graph full screen; Esc or ✕ closes it. When nodes did not fit, `+N more` lists them; `N hidden · restore` brings back nodes hidden with a right-click.
 
-**Node dragging** — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change.
+**Node dragging** — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change. A click with a slight tremor (under 6 px) stays a click.
 
-**Hide on right-click** — right-click any node in the ego view to hide it (the focused center is exempt); a muted "N hidden · restore" control in the corner brings everything back. Same mechanism as the `hidden` field and `hide(id)`/`show(id)` — the node stays in the model and in path routes.
+**Hide on right-click** — right-click any node in the ego view to hide it (the focused center is exempt); an "N hidden · restore" button in the footer tools brings everything back. Same mechanism as the `hidden` field and `hide(id)`/`show(id)` — the node stays in the model and in path routes.
 
 **Semantic zoom** — zooming far out of an ego view switches to the cluster overview; zooming into the overview returns to the last ego view. Disable with `semanticZoom: false`.
 
@@ -428,7 +463,7 @@ await graph.whenReady();</code></pre>
 
 ### Notes
 
-The demos on this page run on a ~300-node synthetic network around Peter Thiel (generated deterministically — a stand-in for a graph database). The layouts are deterministic by design: rings, sectors, and route maps encode what is known about the data instead of asking a physics simulation to discover it. If a view still looks busy, reduce `depth`, filter link types, or let the cluster view do the summarizing.
+The demos on this page run on a ~300-node synthetic network around Peter Thiel (generated deterministically — a stand-in for a graph database). The layouts are deterministic by design: grid cells, category corners and route maps encode what is known about the data instead of asking a physics simulation to discover it. If a view still looks busy, reduce `depth`, filter link types, or let the cluster view do the summarizing.
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/graph/demo-data.js"></script>
