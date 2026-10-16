@@ -40,6 +40,10 @@ Without it the page is **unstyled**: every library rule is gated by `.rd`.
 | 18 | 1024 px boundary | Sidenotes and `.teaser-bottom` collapsed at `width <= 1024px` | Collapse at `width < 1024px`; 1024 px is desktop everywhere | None | fix | `CSS-358` |
 | 19 | Mobile overflow | Inline `code` never broke; `.card-row-bordered` and `.dl-grid` could widen the page | `code` uses `overflow-wrap: anywhere`; `.card-row-bordered` scrolls in its border; `.dl-grid` term column capped at 40% on mobile | Wrap wide tables in the existing `.table-scroll` | fix | `CSS-354` |
 | 20 | Build | `sass` CLI | `scripts/build-css.mjs` (Sass → `rd-gate`). A plain `sass` build is **ungated** | Only if you build from source | tooling | `CSS-343` |
+| 21 | Breakpoint media queries | `max-width: 768px` / `min-width: 769px` and `max-width: 1023px` / `min-width: 1024px` left sub-pixel gaps: at 768.18 px (110% scaling) or 1023.2–1023.6 px **no** layout layer applied | Gap-free range syntax: `width < 769px`, `769px <= width < 1024px`, `width >= 1024px` (same at integer widths) | None. Your own media queries should use the same boundaries | fix | `CSS-355` |
+| 22 | `.rd-is-hidden` | `display: none` (0,1,0); lost to component states such as `.searchbar.rd-is-open`, `.collapsible-content.rd-is-open`, `.carousel-slide.rd-is-active` | `display: none !important`: hidden always wins | Don't rely on overriding it | fix | `CSS-359` |
+
+**Effective browser floor (first written down 2026-10-16):** Chrome / Edge 111, Safari 16.4, Firefox 113. `color-mix()` (36 uses since `0.6`) already required Chrome 111 / Safari 16.2 / Firefox 113; the range media syntax (row 21, and already used by sidenotes in `0.6`) adds Safari 16.4. Older engines lose the affected rules. If a consumer needs older Safari, the fallback is `max-width: 768.98px`-style bounds (tiny theoretical gap) instead of range syntax.
 
 API diff, `v0.6.19` → working tree on 2026-10-16: −28 classes (row 7), +2 classes (rows 14–15), +3 custom properties (row 12), 1 changed value (row 8), no removed custom property, same artifact list.
 

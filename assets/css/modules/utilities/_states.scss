@@ -4,6 +4,11 @@
 // This file is forwarded LAST in modules/_index.scss so the state wins order-ties
 // against component display rules until cascade layers land (CSS-130).
 
+// `!important` on purpose (CSS-118, 2026-10-16): order-ties were not enough.
+// Component state rules such as `.searchbar.rd-is-open`,
+// `.collapsible-content.rd-is-open` and `.carousel-slide.rd-is-active` (0,2,0)
+// out-ranked `.rd-is-hidden` (0,1,0) and kept "hidden" elements visible
+// (reproduced in Chrome). A universal "hidden" must win over any display.
 .rd-is-hidden {
-    display: none;
+    display: none !important;
 }

@@ -1,0 +1,71 @@
+<!doctype html>
+<!-- CSS-118 browser fixture: computed behaviour that only a real rendering
+     engine can prove. Page mode (`<html class="rd">`) with the site shell. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rendering fixture</title>
+<link rel="stylesheet" href="/assets/css/rare.css">
+</head>
+<body>
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <nav class="nav-global flex"><ul><li><a href="#">Styles</a></li><li><a href="#">Charts</a></li></ul></nav>
+  </div>
+</header>
+<main>
+  <div class="content grid-global">
+    <section class="page-title" id="main-content"><h1>Fixture</h1></section>
+    <article>
+      <p>Paragraph with <a id="first-link" href="#target">a link to the target</a> and inline
+        <code>new RareCharts.DualAxes('#chart', { left: {}, right: {} }).setData(data)</code>.</p>
+
+      <h2 id="states">States</h2>
+      <div id="state-cases">
+        <div class="cookie-notice rd-is-hidden" data-state="cookie-notice">notice</div>
+        <div class="searchbar rd-is-open rd-is-hidden" data-state="searchbar.rd-is-open">search</div>
+        <div class="collapsible-content rd-is-open rd-is-hidden" data-state="collapsible-content.rd-is-open">content</div>
+        <div class="carousel-slide rd-is-active rd-is-hidden" data-state="carousel-slide.rd-is-active">slide</div>
+        <div class="card rd-is-hidden" data-state="card">card</div>
+        <div class="grid rd-is-hidden" data-state="grid">grid</div>
+      </div>
+
+      <h2>Content that must not widen the page</h2>
+      <div class="table-scroll card-caption">
+        <table class="table-bordered">
+          <tr><th>Option</th><th>Type</th><th>Default</th><th>Description of a fairly long option</th><th>Since</th></tr>
+          <tr><td><code>orientation</code></td><td><code>'auto'</code></td><td><code>'auto'</code></td><td>Turns the diagram when its container is narrow</td><td>0.9.8</td></tr>
+        </table>
+      </div>
+      <dl class="dl-grid">
+        <dt><code>.padding-x-{token}</code></dt><dd>padding-left and padding-right</dd>
+        <dt><code>.padding-{side}-{token}</code></dt><dd>one side</dd>
+      </dl>
+      <div class="card-row-bordered">
+        <div class="card-row-bordered-item">OPEN 41,203.55</div><div class="card-row-bordered-item">HIGH 42,118.20</div>
+        <div class="card-row-bordered-item">LOW 40,877.10</div><div class="card-row-bordered-item">VOLUME 1,203,448</div>
+        <div class="card-row-bordered-item">52W HIGH 73,750.07</div><div class="card-row-bordered-item">52W LOW 24,920.11</div>
+      </div>
+      <div class="card padding-sm" id="card-outdents">
+        <pre><code>const x = 1; // a long line of code inside a card that must scroll, not poke out</code></pre>
+        <blockquote><p>A quotation inside a card.</p></blockquote>
+        <p class="lead">A lead paragraph inside a card.</p>
+      </div>
+
+      <div class="sidenote-wrapper" id="sidenote-case">
+        <div><p>Main text next to a sidenote. It needs enough words to form a column of prose.</p></div>
+        <div class="sidenote"><p>The sidenote.</p></div>
+      </div>
+
+      <p style="height: 1600px">Spacer.</p>
+      <h2 id="target">Anchor target</h2>
+      <p>Tail.</p>
+      <p style="height: 900px">Spacer.</p>
+    </article>
+  </div>
+</main>
+<footer><p>Footer</p></footer>
+</body>
+</html>

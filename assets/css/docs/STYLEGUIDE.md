@@ -46,7 +46,10 @@ Before shipping a CSS-affecting release:
 
 1. `npm run lint:css`
 2. `npm run build:css`
-3. If the site shell or examples changed, run `npm run build`
+3. `npx vitest run`: includes the compiled-CSS checks (artifacts must equal a fresh build)
+4. `npm run test:browser`: real-browser checks in headless Google Chrome (`CSS-118`)
+5. `node scripts/size-report.mjs --check`, and add the release row to `SIZE-BASELINE.md` (`CSS-339`)
+6. If the site shell or examples changed, run `npm run build`
 
 ## Namespace policy (`rd-`)
 

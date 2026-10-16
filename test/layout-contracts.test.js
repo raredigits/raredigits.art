@@ -3,7 +3,7 @@
 //   CSS-357  every outdent (negative margin-left that hangs a block into the
 //            page margin) is reset inside `.card`, which has no margin to hang
 //            into — or is explicitly exempt with a reason.
-//   CSS-358  every media query uses the shared breakpoint boundaries, so no
+//   CSS-358  every media query uses the shared gap-free boundaries (CSS-355), so no
 //            module switches layout one pixel off the rest (sidenotes used
 //            `width <= 1024px` while desktop starts at 1024px).
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -23,12 +23,14 @@ const EXEMPT = {
   'p.highlight': 'covered by the `.highlight` reset (higher specificity there)',
 };
 
+// Gap-free range syntax (CSS-355): every boundary is `<` on one side and
+// `>=` on the other, so no fractional viewport falls between two layers.
 const ALLOWED_MEDIA = new Set([
-  'screen and (max-width: 768px)',
-  'screen and (min-width: 769px) and (max-width: 1023px)',
-  'screen and (min-width: 1024px)',
+  'screen and (width < 769px)',
+  'screen and (769px <= width < 1024px)',
+  'screen and (width >= 1024px)',
   '(width < 1024px)',
-  '(width <= 768px)',
+  '(width < 769px)',
   '(prefers-reduced-motion: no-preference)',
 ]);
 
