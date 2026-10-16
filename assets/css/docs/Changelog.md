@@ -3,13 +3,13 @@
 All notable changes to Rare Styles are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/). The library follows semantic versioning.
 
-Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
+Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BACKLOG.md).
 
 ---
 
 ## [v0.7.0] — 2026-10-17 — Scope Gate & Bug Closure
 
-**Breaking: Rare Styles now changes nothing on a page until you ask for it.** Every rule in the library applies only under the `.rd` class. Put `class="rd"` on `<html>` and the page renders exactly as before (page mode); put it on any element and only that block is styled (island); leave it out and `rare.css` has no effect even when loaded. The gate is `:where(.rd, .rd *)`, so it adds **zero specificity** and the library never outranks your own CSS. **To upgrade from `0.6`, add `class="rd"` to `<html>` in the same change that bumps the pin.** The release also closes every known defect (a dated bug ledger, an accessibility base, mobile overflow) and replaces the unchecked CSS sync with a validated release pipeline. The full list of changes with consumer actions is in [`MIGRATION.md`](./MIGRATION.md); the defect ledger is [`BUG-LEDGER.md`](./BUG-LEDGER.md).
+**Breaking: Rare Styles now changes nothing on a page until you ask for it.** Every rule in the library applies only under the `.rd` class. Put `class="rd"` on `<html>` and the page renders exactly as before (page mode); put it on any element and only that block is styled (island); leave it out and `rare.css` has no effect even when loaded. The gate is `:where(.rd, .rd *)`, so the gate adds **zero specificity**: every library rule weighs exactly what it did in `0.6`. **To upgrade from `0.6`, add `class="rd"` to `<html>` in the same change that bumps the pin.** The release also closes every known defect (a dated bug ledger, an accessibility base, mobile overflow) and replaces the unchecked CSS sync with a validated release pipeline. The full list of changes with consumer actions is in [`MIGRATION.md`](./MIGRATION.md); the defect ledger is [`BUG-LEDGER.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BUG-LEDGER.md).
 
 ### Added
 
@@ -49,7 +49,7 @@ Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
 
 ## [v0.6.19] — 2026-07-20 — Rare Scripts Polish & Copy Primitives
 
-**Finished, unversioned work gets a home.** The companion **Rare Scripts** get their polish pass — **carousel `v1.1.0`** and **`copy-to-clipboard` `v3.2.0`**, the latter gaining a genuinely new capability: **`data-copy-text`**, a literal-string payload that copies text living nowhere in the DOM (plus `.rd-is-copied`, a success state for carriers that are not the copy icon). Alongside the scripts: the icon set grows 137 → 143 and the **breaking** `.copy-data-icon--light` rename lands. A first end-to-end **worked example** — an auto-shop landing rebuilt on Rare Styles with a story page documenting the build — also ships, demonstrating the library's existing primitives on a real site. **Ships after `rare-scripts@v3.2.0` is tagged** — the `/scripts/copy-to-clipboard/` docs already advertise that CDN pin (`CSS-327`); scripts before styles. *This is **not** the `v0.6.20` auto-shop harvest — no reusable pattern was promoted into the library yet, so that milestone stays open (see [`BACKLOG.md`](./BACKLOG.md)).*
+**Finished, unversioned work gets a home.** The companion **Rare Scripts** get their polish pass — **carousel `v1.1.0`** and **`copy-to-clipboard` `v3.2.0`**, the latter gaining a genuinely new capability: **`data-copy-text`**, a literal-string payload that copies text living nowhere in the DOM (plus `.rd-is-copied`, a success state for carriers that are not the copy icon). Alongside the scripts: the icon set grows 137 → 143 and the **breaking** `.copy-data-icon--light` rename lands. A first end-to-end **worked example** — an auto-shop landing rebuilt on Rare Styles with a story page documenting the build — also ships, demonstrating the library's existing primitives on a real site. **Ships after `rare-scripts@v3.2.0` is tagged** — the `/scripts/copy-to-clipboard/` docs already advertise that CDN pin (`CSS-327`); scripts before styles. *This is **not** the `v0.6.20` auto-shop harvest — no reusable pattern was promoted into the library yet, so that milestone stays open (see [`BACKLOG.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BACKLOG.md)).*
 
 ### Added
 

@@ -2,10 +2,10 @@
 // byte check. The CDN is faked here; the real jsDelivr comparison runs in the
 // release workflow after publishing.
 import { describe, it, expect } from 'vitest';
-import { mkdtempSync, readFileSync, existsSync } from 'node:fs';
+import { mkdtempSync, readFileSync, existsSync, cpSync, writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { check, stage, verifyCdn, RELEASE_FILES } from '../scripts/release-css.mjs';
+import { check, stage, verifyCdn, verifyTree, RELEASE_FILES } from '../scripts/release-css.mjs';
 
 describe('CSS-348: release check', () => {
   it('versions.js, package.json and the changelog agree', () => {
@@ -23,8 +23,11 @@ describe('CSS-348: staging', () => {
     const top = new Set(Object.keys(manifest.files).map((f) => f.split('/')[0]));
     expect([...top].sort()).toEqual(['docs', 'fonts', 'images', 'modules', 'rare.css', 'rare.css.map',
       'rare.min.css', 'rare.min.css.map', 'rare.scss', 'vendor']);
-    expect(Object.keys(manifest.files).filter((f) => f.startsWith('docs/')).sort())
-      .toEqual(RELEASE_FILES.filter((f) => f.startsWith('docs/')).sort());
+    const docs = RELEASE_FILES.filter((f) => f.startsWith('docs/'));
+    const shippedDocs = Object.keys(manifest.files).filter((f) => f.startsWith('docs/'));
+    expect(shippedDocs.every((f) => docs.some((d) => f === d || f.startsWith(`${d}/`)))).toBe(true);
+    expect(docs.every((d) => shippedDocs.some((f) => f === d || f.startsWith(`${d}/`)))).toBe(true);
+    expect(shippedDocs).toContain('docs/api/v0.6.19.json');
     expect(existsSync(join(dir, 'rare-website.css'))).toBe(false);
     expect(existsSync(join(dir, 'examples'))).toBe(false);
   });
@@ -47,4 +50,19 @@ describe('CSS-348: staging', () => {
     const bad = await verifyCdn(dir, { attempts: 2, waitMs: 1, fetchImpl: serve(true) });
     expect(bad.mismatched).toEqual(['rare.min.css']);
   });
+
+  it('verifyTree accepts an exact published tree and rejects any drift', () => {
+    const tree = mkdtempSync(join(tmpdir(), 'rare-styles-tree-'));
+    cpSync(dir, tree, { recursive: true });
+    writeFileSync(join(tree, 'LICENSE'), 'MIT');          // repository-only files are ignored
+    mkdirSync(join(tree, '.git'));
+    writeFileSync(join(tree, '.git', 'HEAD'), 'ref');
+    expect(verifyTree(dir, tree).problems).toEqual([]);
+
+    writeFileSync(join(tree, 'rare.min.css'), 'changed');
+    writeFileSync(join(tree, 'stray.css'), 'x');
+    rmSync(join(tree, 'rare.css.map'));
+    expect(verifyTree(dir, tree).problems.sort()).toEqual(['differs rare.min.css', 'extra stray.css', 'missing rare.css.map']);
+  });
 });
+

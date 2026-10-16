@@ -12,7 +12,7 @@ permalink: '/styles/typography/interactive/'
 
 ## Keyboard focus
 
-Every focusable element inside `.rd` (links, buttons, form fields, `summary`, carousel controls) shows the same ring when it is reached from the keyboard. A mouse click shows no ring: the rule is `:focus-visible`. Press <kbd>Tab</kbd> on this page to see it.
+Every focusable element inside `.rd` (links, buttons, form fields, `summary`, carousel controls) shows the same ring when it is reached from the keyboard. The rule is `:focus-visible`, so the browser decides when to show it: clicking a link or a button shows no ring, while clicking into a text field does, because typing follows. Press <kbd>Tab</kbd> on this page to see it.
 
 The ring is 2px of `--focus-ring-color`, offset by 2px. The default `--blue` keeps at least 3:1 contrast on every library surface, light and dark. Restyle it with the tokens; don't remove it.
 

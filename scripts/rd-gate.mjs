@@ -11,7 +11,7 @@
 //   ungated      `:root`, `@font-face`, `@keyframes`, `rd-icon-*` compounds,
 //                and selectors that already name `.rd` themselves
 //
-// `:where()` adds zero specificity, so the library never outranks a consumer.
+// `:where()` adds zero specificity: every rule keeps the weight it had before.
 // The plugin throws on a bare-element selector missing from the config and
 // reports config entries the build no longer emits (stale inventory).
 

@@ -5,7 +5,7 @@
 // cookie notice or invisible, anchor targets clear of the fixed header.
 // Needs a built site: `npm run test:browser` runs Eleventy first.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
@@ -75,6 +75,37 @@ describe('no horizontal page overflow', () => {
       await page.close();
     }
     await b.close();
+    expect(bad).toEqual([]);
+  });
+});
+
+describe('every built page fits phone widths (not just the reference set)', () => {
+  // The 14 reference pages missed rendered READMEs and the RareCharts
+  // changelog (release audit 2026-10-17). 320px is excluded on purpose: single
+  // long h1 words are deferred to fluid type, CSS-164.
+  const allPages = () => {
+    const out = [];
+    const walk = (d) => {
+      for (const f of readdirSync(d, { withFileTypes: true })) {
+        const p = join(d, f.name);
+        if (f.isDirectory()) { if (f.name !== 'pagefind' && f.name !== 'old') walk(p); }
+        else if (f.name === 'index.html') out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
+      }
+    };
+    walk(SITE);
+    return out;
+  };
+
+  it.each([375, 414])('at %ipx', async (width) => {
+    const pages = allPages();
+    expect(pages.length).toBeGreaterThan(60);
+    const bad = [];
+    for (const p of pages) {
+      const page = await open(p, width);
+      const r = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
+      if (r.sw > r.cw) bad.push(`${p} ${r.sw}>${r.cw}`);
+      await page.close();
+    }
     expect(bad).toEqual([]);
   });
 });

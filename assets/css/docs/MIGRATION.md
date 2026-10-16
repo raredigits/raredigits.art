@@ -53,7 +53,7 @@ Without it the page is **unstyled**: every library rule is gated by `.rd`.
 
 **Browser floor (decided 2026-10-16):** Chrome / Edge 111, Safari 16.4, Firefox 113. The range syntax stays; no support below this floor is planned. `color-mix()` (36 uses since `0.6`) already required Chrome 111 / Safari 16.2 / Firefox 113; the range media syntax (row 21, and already used by sidenotes in `0.6`) adds Safari 16.4. Older engines lose the affected rules. The `max-width: 768.98px`-style alternative was considered and rejected.
 
-API diff, `v0.6.19` → working tree on 2026-10-16: −28 classes (row 7), +2 classes (rows 14–15), +3 custom properties (row 12), 1 changed value (row 8), no removed custom property, same artifact list.
+API diff, `v0.6.19` → `v0.7.0` (release, 2026-10-17): 4,017 → 3,991 classes: −28 (row 7), +2 (rows 14–15). 130 → 134 `:root` custom properties: +3 focus-ring tokens (row 12) and `--cookie-notice-reserve` (row 24). One changed value (row 8), no removed custom property, same artifact list. The table has 30 rows.
 
 ## Live consumers — verified 2026-10-16
 
@@ -63,6 +63,8 @@ Method: each site's built `_site` was served locally. On every page, each elemen
 |---|---|---|---|---|
 | schnellreich.ru | `v0.6.19` (`_includes/head.njk`) | 9 × 2 widths: `/`, `/journal/`, 2 journal posts, `/value/`, `/legacy/`, `/vault/`, `/author/`, `/search/` | Only rows 8/9 (`#888` → `#666`), row 10 (footer `h6` +16 px on journal pages) and row 11 (`scroll-padding-top`) | Gate OK |
 | raredigits.io | `v0.6.18` (`_includes/head.html`, two demo heads); `v0.6.15` hard-coded in 10 `demo/*/index.html` pages | 12 × 2 widths: `/`, services, tools, about, pricing, a pressroom post, 4 demos | Only rows 8/9, row 10 (footer `h5` +16 px on all non-demo pages) and row 11. The `v0.6.15` demo pages showed no other difference | Gate OK |
+
+Changes added to the library after this check, and expected on both sites: `.list-group-pack` group gaps on mobile/tablet (row 27); the closed-menu, cookie-notice and inverted-card fixes (rows 23–25) touch components the checked pages do not use in those states.
 
 Not caused by `v0.7.0` (the same overflow under `v0.6.19`): schnellreich.ru `/author/` (387 px at 375), raredigits.io `/about/pricing/` (433 px) and `/pressroom/Introducing-Rare-Styles/` (405 px). These are site-side and can be fixed with `.table-scroll` or the consumer's own CSS.
 

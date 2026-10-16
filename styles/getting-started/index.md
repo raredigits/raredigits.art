@@ -66,9 +66,9 @@ Tokens are custom properties on `:root`. They are not gated, so overriding them 
 
 See [Usage](/styles/usage/) for a complete example.
 
-## Specificity: the library never outranks you
+## Specificity: the gate adds nothing
 
-The gate is `:where(.rd, .rd *)`, which adds **zero specificity**. A library rule weighs exactly what it did before the gate, so your `.my-card p` still beats the library's `p`, and your `.button` overrides need no `!important`.
+The gate is `:where(.rd, .rd *)`, which adds **zero specificity**. Each library rule keeps exactly the specificity it had before the gate, no more and no less. So your `.my-card p` still beats the library's `p`, and a rule of yours with the same specificity as a library rule wins when it loads after `rare.css`. Two deliberate exceptions: the state class `.rd-is-hidden` is `display: none !important` (hidden must always win), and `:root` tokens, `@font-face` and the `rd-icon-*` glyphs are not gated at all.
 
 ## The caveat
 

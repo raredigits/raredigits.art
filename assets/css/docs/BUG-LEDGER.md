@@ -67,6 +67,12 @@ Found while the maintainer reviewed the session; **recorded, not fixed yet**.
 |---|---|---|---|
 | `CSS-367` | Page overflow at 769/1024px on `/styles/typography/`, `/styles/typography/tables/`, `/styles/typography/lists/` and the hetke landing (`outdent` right margin, `.iframe-video` aspect-ratio minimum, an under-sized docs example). All pre-existing in `v0.6.19` | `CSS-367` | fixed; `test/browser/reference-pages.test.js` |
 
+## Release audit (2026-10-17)
+
+| ID | Finding | Owner | Status |
+|---|---|---|---|
+| `CSS-368` | From the maintainer audit: the release workflow's checks depended on local build leftovers (P1); the site deploy did not wait for the CDN (P1); a partly published release could not be resumed (P2); the package docs linked to files outside the package (P2); the fonts README and the RareCharts changelog overflowed phones (P2) | `CSS-368` | fixed; the workflow sequence was verified in a clean checkout |
+
 ## Archive reconciliation
 
 The shipped archive's defect records (`CSS-020..026`, `CSS-034`, the `v0.6.15` and `v0.6.17_2` audit batches) are not reopened: no sweep check above reproduces any of them. Open bug and a11y rows outside `v0.7.0` are missing features, not defects: `CSS-167` (print) and `CSS-168` (`forced-colors`).

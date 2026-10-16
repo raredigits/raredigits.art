@@ -21,8 +21,10 @@
     "pagefind:build": "pagefind --site _site",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:browser": "eleventy --quiet && vitest run --config vitest.browser.config.js",
-    "check:links": "eleventy --quiet && node scripts/check-links.mjs"
+    "test:browser": "npm run build && npm run test:browser:run",
+    "check:links": "npm run build && npm run check:links:run",
+    "test:browser:run": "vitest run --config vitest.browser.config.js",
+    "check:links:run": "node scripts/check-links.mjs"
   },
   "repository": {
     "type": "git",

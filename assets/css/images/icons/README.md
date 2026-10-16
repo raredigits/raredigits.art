@@ -16,7 +16,7 @@ glyph name is the class, there is no `data-icon` authoring attribute.
 
 ## Updating or extending the set
 
-1. Edit the `ICONS` list in [`scripts/fetch-icons.py`](../../../../scripts/fetch-icons.py)
+1. Edit the `ICONS` list in [`scripts/fetch-icons.py`](https://github.com/raredigits/raredigits.art/blob/main/scripts/fetch-icons.py)
    (repo root). Glyph names are the Material Symbols names as shown on
    [fonts.google.com/icons](https://fonts.google.com/icons) (e.g. `star_half`).
    For an axis variant of an existing glyph (a FILL/GRAD cut the CDN serves

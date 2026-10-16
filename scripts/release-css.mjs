@@ -5,6 +5,7 @@
 //   node scripts/release-css.mjs check                 version + changelog consistency
 //   node scripts/release-css.mjs stage <dir>           clean staging + MANIFEST.json,
 //                                                      asset and source-map checks
+//   node scripts/release-css.mjs verify-tree <dir> <tree>  <tree> holds exactly the artifact
 //   node scripts/release-css.mjs verify-cdn <dir>      pinned jsDelivr bytes == staged
 //                                                      bytes (retries while the CDN warms)
 //
@@ -27,7 +28,7 @@ const CSS = resolve('assets/css');
 export const RELEASE_FILES = [
   'rare.css', 'rare.css.map', 'rare.min.css', 'rare.min.css.map',
   'rare.scss', 'modules', 'vendor', 'fonts', 'images',
-  'docs/Changelog.md', 'docs/MIGRATION.md', 'docs/SCRIPTS_CONTRACT.md',
+  'docs/Changelog.md', 'docs/MIGRATION.md', 'docs/SCRIPTS_CONTRACT.md', 'docs/api',
 ];
 // Files that live only in the rare-styles repository; publishing keeps them.
 export const PUBLISH_KEEP = ['.git', 'LICENSE', 'README.md', '.nojekyll'];
@@ -80,6 +81,16 @@ export function stage(out, { version = versions().styles } = {}) {
       }
     });
   }
+  // every relative link in the shipped Markdown resolves inside the artifact
+  // (rare-styles and the self-hosting archive have no maintainer docs)
+  for (const md of files(out).filter((f) => f.endsWith('.md'))) {
+    const text = readFileSync(join(out, md), 'utf8').replace(/```[\s\S]*?```/g, '');
+    for (const m of text.matchAll(/\]\(([^)\s]+)\)/g)) {
+      const ref = m[1].split('#')[0];
+      if (!ref || /^(https?:|mailto:|\/)/.test(ref)) continue;
+      if (!existsSync(join(out, dirname(md), ref))) problems.push(`${md}: link ${m[1]} not in artifact`);
+    }
+  }
   // every source a map points to ships too (devtools resolve them)
   for (const map of ['rare.css.map', 'rare.min.css.map']) {
     for (const s of JSON.parse(readFileSync(join(out, map), 'utf8')).sources) {
@@ -96,6 +107,25 @@ export function stage(out, { version = versions().styles } = {}) {
   };
   writeFileSync(join(out, 'MANIFEST.json'), JSON.stringify(manifest, null, 2) + '\n');
   return { manifest, problems };
+}
+
+// A published tree (e.g. the rare-styles checkout at an existing tag) holds
+// exactly the verified artifact: every manifest file present with the same
+// sha256, and no other file outside the repository-only ones.
+export function verifyTree(artifactDir, treeDir, { keep = PUBLISH_KEEP } = {}) {
+  const manifest = JSON.parse(readFileSync(join(artifactDir, 'MANIFEST.json'), 'utf8'));
+  const problems = [];
+  for (const [f, { sha256: want }] of Object.entries(manifest.files)) {
+    const p = join(treeDir, f);
+    if (!existsSync(p)) problems.push(`missing ${f}`);
+    else if (sha256(readFileSync(p)) !== want) problems.push(`differs ${f}`);
+  }
+  const listed = new Set([...Object.keys(manifest.files), 'MANIFEST.json']);
+  for (const f of files(treeDir).map((x) => x.split('\\').join('/'))) {
+    if (keep.some((k) => f === k || f.startsWith(`${k}/`))) continue;
+    if (!listed.has(f)) problems.push(`extra ${f}`);
+  }
+  return { version: manifest.version, problems };
 }
 
 export async function verifyCdn(dir, { attempts = 10, waitMs = 30000, fetchImpl = fetch } = {}) {
@@ -132,12 +162,17 @@ if (isMain) {
     for (const p of problems) console.error(`✖ ${p}`);
     if (problems.length) process.exit(1);
     console.log(`staged ${manifest.version}: ${Object.keys(manifest.files).length} files → ${arg}`);
+  } else if (cmd === 'verify-tree' && arg && process.argv[4]) {
+    const { version, problems } = verifyTree(resolve(arg), resolve(process.argv[4]));
+    for (const p of problems) console.error(`✖ ${p}`);
+    if (problems.length) process.exit(1);
+    console.log(`${process.argv[4]} holds exactly the verified ${version} artifact`);
   } else if (cmd === 'verify-cdn' && arg) {
     const r = await verifyCdn(resolve(arg));
     if (r.mismatched.length) { console.error(`✖ CDN bytes differ from the artifact: ${r.mismatched.join(', ')} (${r.base})`); process.exit(1); }
     console.log(`CDN matches the artifact: ${r.checked.join(', ')} at ${r.base}`);
   } else {
-    console.error('usage: node scripts/release-css.mjs check | stage <dir> | verify-cdn <dir>');
+    console.error('usage: node scripts/release-css.mjs check | stage <dir> | verify-tree <dir> <tree> | verify-cdn <dir>');
     process.exit(1);
   }
 }
