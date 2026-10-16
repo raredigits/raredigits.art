@@ -391,6 +391,21 @@ template:where(.rd, .rd *) {
 }
 
 :root {
+  --focus-ring-color: var(--blue);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+:focus-visible:where(.rd, .rd *),
+button:focus-visible:where(.rd, .rd *),
+[type=button]:focus-visible:where(.rd, .rd *),
+[type=reset]:focus-visible:where(.rd, .rd *),
+[type=submit]:focus-visible:where(.rd, .rd *) {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:root {
   --site-max-width: clamp(1116px, 95vw, 1600px);
   --field-width: max(0px, calc(50vw - (var(--site-max-width) / 2)));
   --header-height: var(--space-xl);
@@ -18884,8 +18899,8 @@ th:first-child:where(.rd, .rd *) {
 
 .searchbar .pagefind-ui input:focus-visible:where(.rd, .rd *),
 #search-page .pagefind-ui input:focus-visible:where(.rd, .rd *) {
-  outline: 2px solid var(--brand-color);
-  outline-offset: 2px;
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .searchbar .pagefind-ui__results-area:where(.rd, .rd *) {

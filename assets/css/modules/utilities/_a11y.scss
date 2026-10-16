@@ -1,0 +1,25 @@
+// Accessibility base (v0.7.0 bug closure, CSS-110..113).
+
+:root {
+    // Keyboard focus ring. --blue measures ≥ 3:1 (WCAG 1.4.11) on every
+    // library surface: 3.6 on --bg-color, 3.9 on --gray-lightest, 4.1 on
+    // white, 3.2 on --gray-mid-light, 3.1 on --gray-dark, 4.3 on
+    // --gray-darkest. Override it on :root; CSS-124 later repoints the
+    // default onto --signal without touching overrides.
+    --focus-ring-color: var(--blue);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+}
+
+// Visible keyboard focus everywhere inside `.rd` (CSS-110). `:focus-visible`
+// keeps mouse clicks ring-free. The button/[type] selectors exist only to
+// out-rank normalize's Firefox `:-moz-focusring` dotted outline, which has
+// the same specificity and comes earlier.
+:focus-visible,
+button:focus-visible,
+[type="button"]:focus-visible,
+[type="reset"]:focus-visible,
+[type="submit"]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}

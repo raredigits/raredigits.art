@@ -71,4 +71,6 @@ export const ISLAND = [
   'a', 'a:hover', 'a img', 'h1 a', 'h2 a', 'h3 a', 'h4 a',
   // interactive
   'button:hover', 'details summary',
+  // focus ring (CSS-110)
+  ':focus-visible', 'button:focus-visible',
 ];
