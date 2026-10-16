@@ -435,38 +435,32 @@
 <div class="card text-content-caption card-dashboard-bordered">
   <p><strong>⚠️ Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. This release lays nodes out from hints in the data; automatic in-lane layout, aggregation and collapsible groups come next.</p>
 </div>
-<div class="flex-row flex-wrap gap-sm text-content-caption" role="group" aria-label="Graph options">
-  <label><input type="checkbox" id="flow-opt-crowd"> Crowdsale #631</label>
-  <label><input type="checkbox" id="flow-opt-cluster" checked> Owner cluster</label>
-  <label><input type="checkbox" id="flow-opt-noise"> Noise (address poisoning)</label>
-  <label><input type="checkbox" id="flow-opt-labels" checked> Tie labels</label>
-  <label>Until <input type="range" id="flow-opt-time" min="0" max="31" step="1" value="31"> <output id="flow-opt-time-out">2026-04</output></label>
-</div>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="graph-flow-octra"></div>
-</div>
-<div class="card text-content-caption card-dashboard-bordered" id="graph-flow-octra-panel" aria-live="polite"></div>
-<p>Select a node or a tie: the chart reports it through <code>onSelect</code>, and the page renders the details panel above — the library draws, your page explains. The checkboxes and the slider call <code>setFilter</code>, <code>setHulls</code>, <code>setLinkLabels</code> and <code>setTimeWindow</code>; positions never move.</p>
+<p>The demo below follows funds as they move: income from a validator is swapped, bridged and moved through five networks, then spent on a token crowdfunding — and the trace goes on to show where the sale money went. Read it left to right: lanes are networks, line color is the asset, width its USD value, a dashed line an amount derived rather than read from transactions. Click the <strong>Crowdfunding</strong> node to fold the sale away and focus on the route that led to it (click again to bring it back); the legend's <strong>address poisoning</strong> item reveals a look-alike address that tried to pass as the team's.</p>
+<div class="full-width-caption bordered padding-lg mobile:padding-md" id="graph-flow-demo"></div>
+<div id="graph-flow-demo-panel" aria-live="polite"></div>
+<p>Select a node or a tie: the chart reports it through <code>onSelect</code>, and the page fills the details panel — placed inside the card with the <code>details</code> option: beside the drawing on a wide screen, below it on a narrow one. The library draws, your page explains. The Crowdfunding node's open/close is page code in the same <code>onSelect</code> handler, switching a <code>setFilter</code> (collapsible groups built into the library come in the next release); the decoy starts hidden with <code>hiddenLinkTypes: ['noise']</code>.</p>
 <h2>Data</h2>
 <p>The same <code>{ nodes, links }</code> contract as every Graph view. Hints on the nodes place them; any extra field passes through to <code>onSelect</code> and the tooltips untouched.</p>
 <pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
   view: 'flow',
   lanes: [{ id: 'osmosis', label: 'Osmosis' }, { id: 'ethereum', label: 'Ethereum', weight: 3 }],
   laneBy: 'net',                                  <span class="code-comment">// node field naming its lane</span>
-  nodeGroups: { church: { color: '#2c5d8f', label: 'Church' } },
+  nodeGroups: { tracked: { color: '#2c5d8f', label: 'tracked wallets' } },
   nodeShapes: { wallet: 'circle', contract: 'square', exchange: 'diamond', crowd: 'stack' },
   linkColorBy: 'asset',
   linkTypes: { ETH: { color: '#3d4a5c', label: 'ETH' } },
   linkWidth: { by: 'value', scale: 'sqrt', min: 1.6, max: 22 },
   linkDash: link => link.basis === 'derived',
   hulls: [{ id: 'owner', label: 'one key on five networks', members: n => n.cluster }],
+  hiddenLinkTypes: ['noise'],                     <span class="code-comment">// off until turned on in the legend</span>
+  details: '#details',                            <span class="code-comment">// your panel, placed beside or below the drawing</span>
   onSelect: ({ node, link }) => showDetails(node ?? link),
 }).setData({
   nodes: [
-    { id: 'osmo', label: 'Osmosis main', sub: 'osmo1uvkv…w7zs', group: 'church', kind: 'wallet', net: 'osmosis', row: 0 },
+    { id: 'osmo', label: 'Owner wallet', sub: 'osmo1uvkv…w7zs', group: 'tracked', kind: 'wallet', net: 'osmosis', row: 0 },
   ],
   links: [
-    { from: 'osmo', to: 'pools', asset: 'ATOM', value: 530, label: '61.38 ATOM', start: '2023-09' },
+    { from: 'osmo', to: 'swap-dex', asset: 'ATOM', value: 530, label: '61.38 ATOM', start: '2023-09' },
   ],
 });</code></pre>
 <h3>Placing nodes</h3>
@@ -483,6 +477,35 @@
 <li><strong>Color</strong> comes from <code>linkColorBy</code> (a field or a function) resolved against <code>linkTypes</code>; <strong>dash</strong> from the type or from <code>linkDash(link)</code>.</li>
 <li><strong>Time:</strong> <code>start</code> / <code>end</code> (years, <code>YYYY-MM</code> or ISO dates). <code>setTimeWindow(from, to)</code> dims ties outside the window — and fades nodes whose ties are all outside — or hides them with <code>timeWindowMode: 'hide'</code>.</li>
 </ul>
+<h2>Options</h2>
+<p>Flow-specific options; the common Graph options (<code>height</code>, <code>details</code>, <code>fullscreen</code>, <code>linkTypes</code>, tooltips…) are on the <a href="/charts/graph/">Graph page</a>.</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><code>view</code></td><td>string</td><td>—</td><td><code>'flow'</code> turns the flow view on</td></tr>
+        <tr><td><code>lanes</code></td><td>array</td><td><code>[]</code></td><td><code>[{ id, label, weight? }]</code> in left-to-right order; <code>weight</code> sets a lane's share of the width</td></tr>
+        <tr><td><code>laneBy</code></td><td>string | function</td><td><code>'lane'</code></td><td>Node field (or function) naming its lane</td></tr>
+        <tr><td><code>nodeGroups</code></td><td>object</td><td>—</td><td><code>{ group: { color, label } }</code> — node color and legend entry</td></tr>
+        <tr><td><code>nodeShapes</code> / <code>shapeBy</code></td><td>object / string | function</td><td><code>{}</code> / <code>'kind'</code></td><td>Shape per node kind: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>, <code>'stack'</code>, or an SVG path</td></tr>
+        <tr><td><code>linkColorBy</code></td><td>string | function</td><td><code>'type'</code></td><td>Tie field (or function) whose value is looked up in <code>linkTypes</code></td></tr>
+        <tr><td><code>linkWidth</code></td><td>object</td><td><code>{ by: 'value', scale: 'sqrt', min: 1.6, max: 22 }</code></td><td>Tie width from a value field; <code>scale: 'linear'</code> also available</td></tr>
+        <tr><td><code>linkDash</code></td><td>function</td><td>—</td><td><code>link =&gt; boolean</code> — dashed tie (e.g. a derived amount); a type's own <code>dash</code> wins</td></tr>
+        <tr><td><code>linkLabels</code></td><td>boolean</td><td><code>true</code></td><td>Tie labels; also <code>setLinkLabels()</code></td></tr>
+        <tr><td><code>hulls</code></td><td>array</td><td><code>[]</code></td><td><code>[{ id, label, members, color? }]</code> — a soft band through a group's nodes; <code>members</code> is a list of ids or <code>node =&gt; boolean</code></td></tr>
+        <tr><td><code>hiddenLinkTypes</code></td><td>array</td><td><code>[]</code></td><td>Tie categories hidden at start; the legend shows them dimmed and turns them on</td></tr>
+        <tr><td><code>timeWindowMode</code></td><td>string</td><td><code>'dim'</code></td><td>What <code>setTimeWindow</code> does to ties outside the window: <code>'dim'</code> or <code>'hide'</code></td></tr>
+        <tr><td><code>onSelect</code></td><td>function</td><td>—</td><td><code>({ node, link, event }) =&gt; void</code> on selection; without it, a clicked tie pins its tooltip</td></tr>
+        <tr><td><code>minWidth</code></td><td>number</td><td><code>0</code></td><td>Narrower drawings scroll sideways instead of crushing the lanes; a side details panel needs this much room next to it, or it moves below</td></tr>
+        <tr><td><code>nodeRadius</code></td><td>number</td><td><code>18</code></td><td>Node radius in the flow view</td></tr>
+    </tbody>
+</table>
 <h2>Methods</h2>
 <pre class="text-content-caption"><code>graph.setFilter(item => !item.noise);   <span class="code-comment">// nodes and ties; a tie hides with either end</span>
 graph.setTimeWindow(null, '2024-01');    <span class="code-comment">// open start, through January 2024</span>
@@ -492,10 +515,12 @@ graph.setHulls([]);</code></pre>
 <h2>Interaction</h2>
 <p><strong>Select</strong> — click a node or a tie: its neighbourhood stays, the rest fades, and <code>onSelect({ node, link, event })</code> fires; click the background or press Escape to clear. Without <code>onSelect</code>, clicking a tie pins its tooltip instead.</p>
 <p><strong>Keyboard</strong> — nodes are in the Tab order lane by lane; Enter or Space selects; → follows an outgoing tie, ← an incoming one, ↑ / ↓ move within a lane.</p>
-<p><strong>Legend</strong> — node groups and tie categories; click a category to hide or show its ties.</p>
-<p><strong>Narrow screens</strong> — set <code>minWidth</code> and the chart scrolls sideways instead of crushing the lanes.</p>
+<p><strong>Legend</strong> — node groups and tie categories; click a category to hide or show its ties. Categories in <code>hiddenLinkTypes</code> start hidden. A node whose ties are all hidden is hidden with them.</p>
+<p><strong>Details</strong> — with <code>details</code>, the selected node or tie is explained in a panel inside the card: beside the drawing on a wide card, below it on a narrow one (see the <a href="/charts/graph/">Graph options</a>).</p>
+<p><strong>Full screen</strong> — ⛶ in the footer opens the trace on the whole screen; Esc or ✕ closes it.</p>
+<p><strong>Narrow screens</strong> — set <code>minWidth</code> and the chart scrolls sideways instead of crushing the lanes; a details panel moves below the drawing.</p>
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/graph/graph-flow-octra.js"></script>
+<script src="/assets/charts/examples/graph/graph-flow-demo.js"></script>
 
     </article>
   </div>

@@ -431,18 +431,18 @@
   </section>
 
     <article>
-      <p>The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with three deterministic views: <strong>ego</strong> (who surrounds a node), <strong>path</strong> (how two nodes are connected), and <strong>cluster</strong> (the shape of the whole network). You never draw the full graph — you draw the answer to a query.</p>
+      <p>The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with deterministic views: <strong>ego</strong> (who surrounds a node), <strong>path</strong> (how two nodes are connected), <strong>cluster</strong> (the shape of the whole network), and <strong><a href="/charts/graph/flow/">flow</a></strong> (a trace of value moving through ordered lanes — money trails, supply chains). You never draw the full graph — you draw the answer to a query.</p>
 <div class="card text-content-caption card-dashboard-bordered">
   <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
 </div>
 <h3>Ego view</h3>
-<p>Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node <code>group</code>) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).</p>
+<p>Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node <code>group</code>) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80%), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).</p>
 <div id="graph-ego"></div>
 <h3>Path view</h3>
 <p>&quot;How are A and B connected?&quot; — up to <code>pathCount</code> edge-disjoint routes, laid out left to right: columns are hops, each route gets its own row with a hop-count caption, and the shortest route is visually emphasized while the alternatives recede. Each endpoint's other connections fan out behind it, faded — showing that both nodes are well connected beyond these routes (disable with <code>pathContext: false</code>). Pathfinding is the data source's job (server-side on a real backend), because the client only holds the neighborhoods it has walked.</p>
 <div id="graph-path"></div>
 <h3>Cluster view</h3>
-<p>The whole network collapsed into communities (Louvain). Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.</p>
+<p>The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.</p>
 <div id="graph-cluster"></div>
 <h3>Example: warm-intro routing</h3>
 <p>A CRM-style scenario: the ego view is centered on a sales rep, and target leads — deliberately not connected to the rep — are marked with a star glyph. Clicking a lead answers the question that matters: <em>who can introduce me?</em> The <code>onNodeClick</code> callback switches to the path view with the warm-intro routes; clicking the rep restores the ego view. Category glyphs (person, company, partner org, ★ lead) carry the node semantics, so all the color stays on the relationship types.</p>
@@ -630,13 +630,13 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>view</code></td>
             <td>string</td>
             <td><code>'ego'</code></td>
-            <td>Initial view: <code>'ego'</code> | <code>'path'</code> | <code>'cluster'</code></td>
+            <td>Initial view: <code>'ego'</code> | <code>'path'</code> | <code>'cluster'</code> | <code>'flow'</code> (lanes and trace options: see <a href="/charts/graph/flow/">Flow view</a>)</td>
         </tr>
         <tr>
             <td><code>dataSource</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Source adapter (see <a href="#data-source">Data source</a>). Optional if you call <code>setData()</code></td>
+            <td>Source adapter (see Data source above). Optional if you call <code>setData()</code></td>
         </tr>
         <tr>
             <td><code>depth</code></td>
@@ -720,7 +720,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>height</code></td>
             <td>number</td>
             <td><code>520</code></td>
-            <td>Container height in px</td>
+            <td>Card height in px — title, legend, breadcrumbs and footer included (see Sizing below)</td>
         </tr>
         <tr>
             <td><code>nodeRadius</code></td>
@@ -747,6 +747,30 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td>+/−/reset buttons and drag-to-pan. The mouse wheel is left to page scroll</td>
         </tr>
         <tr>
+            <td><code>details</code></td>
+            <td>boolean | element | selector</td>
+            <td>—</td>
+            <td>A details panel inside the card. <code>true</code>: the library shows the hovered or selected node or tie (the focused node when nothing is hovered) — name, group, connections, value, period, <code>sources</code>. An element or selector: your own panel, filled from <code>onSelect</code>. Beside the drawing when the card is at least <code>detailsBreakpoint</code> wide, below it otherwise</td>
+        </tr>
+        <tr>
+            <td><code>detailsFormat</code></td>
+            <td>function</td>
+            <td>built-in</td>
+            <td><code>({ node, link, view }) =&gt; html</code> for <code>details: true</code></td>
+        </tr>
+        <tr>
+            <td><code>detailsWidth</code> / <code>detailsBreakpoint</code> / <code>detailsHeight</code></td>
+            <td>number</td>
+            <td><code>300</code> / <code>1000</code> / <code>200</code></td>
+            <td>Side panel width; card width from which the panel sits beside the drawing; panel height when it sits below (the card grows by it)</td>
+        </tr>
+        <tr>
+            <td><code>fullscreen</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Full-screen button in the footer tools; Esc or the button exits. Programmatic: <code>toggleFullscreen(on?)</code></td>
+        </tr>
+        <tr>
             <td><code>maxNodes</code></td>
             <td>number | 'auto'</td>
             <td><code>'auto'</code></td>
@@ -756,7 +780,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>draggable</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Nodes can be hand-dragged to fine-tune the picture; positions persist until the next view change</td>
+            <td>Nodes can be hand-dragged to fine-tune the picture; positions persist until the next view change. Movement under 6 px counts as a click</td>
         </tr>
         <tr>
             <td><code>linkTypes</code></td>
@@ -784,6 +808,29 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
         </tr>
     </tbody>
 </table>
+<h3>Sizing</h3>
+<p>Graph lays nodes out on a grid: one node per cell of about <strong>96 × 50 px</strong> (the node and its label). The drawing area therefore decides how many nodes fit — roughly <code>floor(width / 96) × floor(height / 50) − 1</code> around the focused node. A larger neighbourhood is capped to the best-connected nodes; a <code>+N more</code> button in the footer lists the rest — pick one to recenter on it — and the <strong>full-screen</strong> button (⛶) gives the graph the whole screen, so more of it fits (see <code>maxNodes</code>, <code>fullscreen</code>).</p>
+<p><code>height</code> is the whole card — title, legend, breadcrumbs and footer included; the drawing gets what is left, typically 80–120 px less.</p>
+<table class="table-bordered card-caption">
+    <thead>
+        <tr>
+            <th>View</th>
+            <th>Width</th>
+            <th>Height</th>
+            <th>Holds</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>Ego, cluster</td><td>720 px and up</td><td><code>520</code>–<code>640</code></td><td>~35 nodes at 720 × 520, ~80 at 960 × 640; full screen on a laptop, ~150</td></tr>
+        <tr><td>Path</td><td>640 px and up</td><td><code>360</code> for 3 routes, +110 per extra route</td><td>3–5 routes with endpoint context</td></tr>
+        <tr><td>Flow</td><td><code>minWidth</code> ≈ 120–170 px per lane</td><td>~110 px per row in use + 160</td><td>lanes scroll sideways below <code>minWidth</code></td></tr>
+    </tbody>
+</table>
+<ul>
+<li><strong>Neighbourhood bigger than the card?</strong> Enlarge <code>height</code> first (width is usually fixed by the page column), then lower <code>depth</code> to 1, or set <code>maxNodes</code> to show a curated top slice.</li>
+<li><strong>Narrow screens.</strong> Below ~480 px an ego neighbourhood of more than ~15 nodes does not read; use <code>depth: 1</code>, a smaller <code>maxNodes</code>, or the flow view with <code>minWidth</code> and sideways scrolling.</li>
+<li><strong>Long labels</strong> are cut to the cell width with an ellipsis; the full name is in the tooltip.</li>
+</ul>
 <h3>Methods</h3>
 <p>All methods return the chart instance; fetching and rendering are async — <code>whenReady()</code> resolves when queued view changes are done.</p>
 <pre class="text-content-caption"><code>const graph = new RareCharts.Graph('#chart', { dataSource, depth: 2 });
@@ -804,18 +851,20 @@ graph.setRelationTypes(['investment']);  // update the current ego filter
 graph.clearRelationTypes();              // restore all relation types
 graph.back();                            // previous ego/path/cluster state
 graph.clearHistory();                    // keep only the current breadcrumb
+graph.toggleFullscreen();                // full screen on/off (also the ⛶ button, Esc)
 await graph.whenReady();</code></pre>
+<p>The flow view adds <code>setFilter</code>, <code>setTimeWindow</code>, <code>select</code> / <code>clearSelection</code>, <code>setLinkLabels</code> and <code>setHulls</code> — see the Methods section of <a href="/charts/graph/flow/">Flow view</a>.</p>
 <p><code>add()</code> is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id.</p>
 <h3>Interaction</h3>
 <p><strong>Recenter on click</strong> — clicking a node fetches its neighborhood and re-lays the view around it; shared nodes animate to their new positions so you keep your bearings while walking the graph. In the cluster view, clicking a community recenters on its most-connected member.</p>
 <p><strong>Focus + context on hover</strong> — hovering a node highlights its direct neighborhood and fades everything else, along with a tooltip listing connections by type.</p>
 <p><strong>Ties: hover and pin</strong> — hovering a tie highlights it and its two endpoints and shows its tooltip: endpoints, type, label, value, period and <code>sources</code>. Clicking a tie pins the tooltip, so links inside it can be followed; a click elsewhere or Escape releases it.</p>
 <p><strong>Filter relations from the legend</strong> — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the <code>neighbors()</code> query and the client-side neighborhood. &quot;Show all&quot; clears the filter. Graphs whose links have no explicit <code>type</code> continue to work as a single <code>default</code> relation type.</p>
-<p><strong>Reveal omitted nodes</strong> — when the viewport cap removes nodes from the drawing, the underlined <code>+N more</code> note opens an accessible list. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with <code>hide()</code>.</p>
+<p><strong>Reveal omitted nodes</strong> — when the viewport cap removes nodes from the drawing, a <code>+N more</code> button appears in the footer tools; it opens an accessible list. Or open the graph full screen (⛶) — the bigger canvas fits more. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with <code>hide()</code>.</p>
 <p><strong>Breadcrumb navigation</strong> — after more than one semantic view has been visited, Graph shows a clickable history of ego, path, and cluster states. Returning through a breadcrumb or <code>back()</code> restores the relation filter together with the view; literal pan and zoom are deliberately reset.</p>
-<p><strong>Zoom buttons</strong> — +/− buttons zoom, ⟲ resets, dragging the background pans. The mouse wheel deliberately stays with page scrolling.</p>
-<p><strong>Node dragging</strong> — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change.</p>
-<p><strong>Hide on right-click</strong> — right-click any node in the ego view to hide it (the focused center is exempt); a muted &quot;N hidden · restore&quot; control in the corner brings everything back. Same mechanism as the <code>hidden</code> field and <code>hide(id)</code>/<code>show(id)</code> — the node stays in the model and in path routes.</p>
+<p><strong>Footer tools</strong> — +/− zoom, ⟲ resets, dragging the background pans (the mouse wheel deliberately stays with page scrolling). ⛶ opens the graph full screen; Esc or ✕ closes it. When nodes did not fit, <code>+N more</code> lists them; <code>N hidden · restore</code> brings back nodes hidden with a right-click.</p>
+<p><strong>Node dragging</strong> — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change. A click with a slight tremor (under 6 px) stays a click.</p>
+<p><strong>Hide on right-click</strong> — right-click any node in the ego view to hide it (the focused center is exempt); an &quot;N hidden · restore&quot; button in the footer tools brings everything back. Same mechanism as the <code>hidden</code> field and <code>hide(id)</code>/<code>show(id)</code> — the node stays in the model and in path routes.</p>
 <p><strong>Semantic zoom</strong> — zooming far out of an ego view switches to the cluster overview; zooming into the overview returns to the last ego view. Disable with <code>semanticZoom: false</code>.</p>
 <h3>Minimal example</h3>
 <pre class="text-content-caption"><code>new RareCharts.Graph('#chart', {
@@ -823,7 +872,7 @@ await graph.whenReady();</code></pre>
   depth: 2,
 }).setData({ nodes, links });</code></pre>
 <h3>Notes</h3>
-<p>The demos on this page run on a ~300-node synthetic network around Peter Thiel (generated deterministically — a stand-in for a graph database). The layouts are deterministic by design: rings, sectors, and route maps encode what is known about the data instead of asking a physics simulation to discover it. If a view still looks busy, reduce <code>depth</code>, filter link types, or let the cluster view do the summarizing.</p>
+<p>The demos on this page run on a ~300-node synthetic network around Peter Thiel (generated deterministically — a stand-in for a graph database). The layouts are deterministic by design: grid cells, category corners and route maps encode what is known about the data instead of asking a physics simulation to discover it. If a view still looks busy, reduce <code>depth</code>, filter link types, or let the cluster view do the summarizing.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/graph/demo-data.js"></script>
 <script src="/assets/charts/examples/graph/graph-ego.js"></script>

@@ -547,6 +547,11 @@
 <td>string | HTMLElement</td>
 <td>Rendered as a <code>&lt;p class=&quot;rc-chart-note&quot;&gt;</code> below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container.</td>
 </tr>
+<tr>
+<td><code>controls</code></td>
+<td>HTMLElement | selector</td>
+<td>Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact <code>rc-chart-controls</code> row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it.</td>
+</tr>
 </tbody>
 </table>
 <pre class="text-content-caption"><code>source: 'Source: The Truth',

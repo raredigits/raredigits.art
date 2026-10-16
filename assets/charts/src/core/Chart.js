@@ -1,5 +1,6 @@
 // RareCharts — Base Chart
-// Handles container setup, header/footer rendering, dimensions, and resize.
+// Handles container setup, header/footer rendering, the `controls` slot
+// (page inputs placed inside the card), dimensions, and resize.
 // All chart types extend this class.
 
 import { createTheme } from './theme.js';
@@ -50,6 +51,7 @@ export class Chart {
 
     this._renderHeader();
     this._renderFooter();
+    this._renderControls();
     this._ensureNavigator();
 
     this._resizeObserver = new ResizeObserver(() => this._onResize());
@@ -256,6 +258,22 @@ export class Chart {
    *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
    * Links inherit the source text color and are distinguished by an underline.
    */
+  // ── Controls slot ────────────────────────────────────────────────────────
+  // Page-owned controls (filters, sliders, toggles) that drive the chart,
+  // shown inside the card between the drawing and the footer — so they read
+  // as part of the chart, not as stray markup above it. Pass an element or
+  // a selector; the element is moved in as is (its listeners keep working).
+
+  _renderControls() {
+    const c = this.options.controls;
+    if (!c) return;
+    const el = typeof c === 'string' ? document.querySelector(c) : c;
+    if (!(el instanceof HTMLElement)) return;
+    el.classList.add('rc-chart-controls');
+    this._controlsEl = el;
+    this.container.appendChild(el);
+  }
+
   _renderAttribution(el, value) {
     const appendPart = (part) => {
       if (part == null) return;

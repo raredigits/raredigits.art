@@ -12,7 +12,8 @@
 //   A cycle (A→B→A) throws — a sankey is acyclic.
 //
 // Options:
-//   height        — px for the horizontal layout (default: 400)
+//   height        — card height px for the horizontal layout, title/legend/
+//                   footer included (default: 400)
 //   orientation   — 'horizontal' | 'vertical' | 'auto' (default: 'auto':
 //                   vertical when the container is ≤ mobileBreakpoint wide)
 //   mobileBreakpoint — px (default: 480)
@@ -27,7 +28,9 @@
 //   linkOpacity   — band opacity at rest (default: 0.45)
 //   linkTypes     — { type: { color, label } } — colors bands when
 //                   linkColor: 'type' and fills the legend
-//   labels        — 'auto' | false (default: 'auto')
+//   labels        — 'auto' | false (default: 'auto'): right of each node, the
+//                   last column in a measured right gutter; cut with an
+//                   ellipsis to the room before the next column
 //   minLabelSize  — px; smaller nodes get no label, only a tooltip (default: 10)
 //   showValues    — append the node value to its label (default: true)
 //   valueFormat   — v => string (default: locale number)

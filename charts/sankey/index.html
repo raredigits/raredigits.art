@@ -425,6 +425,7 @@
 <div class="card text-content-caption card-dashboard-bordered">
   <p><strong>⚠️ Experimental.</strong> <code>Sankey</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump.</p>
 </div>
+<p>The simplest case first: a city budget in two columns — where the money comes from on the left, where it goes on the right. Hover a band or a node to follow its flows; the tooltip gives each flow's share of its source.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-budget"></div>
 </div>
@@ -455,6 +456,7 @@
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-trail"></div>
 </div>
+<p>The setup: <code>linkColor: 'type'</code> and a <code>linkTypes</code> map; anything else on a link — here a <code>label</code> — shows up in its tooltip.</p>
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', {
   linkColor: 'type',
   linkTypes: {
@@ -484,7 +486,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr><td><code>height</code></td><td>number</td><td><code>400</code></td><td>Chart height in px for the horizontal layout</td></tr>
+        <tr><td><code>height</code></td><td>number</td><td><code>400</code></td><td>Card height in px for the horizontal layout — title, legend and footer included</td></tr>
         <tr><td><code>orientation</code></td><td>string</td><td><code>'auto'</code></td><td><code>'horizontal'</code>, <code>'vertical'</code>, or <code>'auto'</code> — vertical on narrow containers</td></tr>
         <tr><td><code>mobileBreakpoint</code></td><td>number</td><td><code>480</code></td><td>Container width (px) at or below which <code>'auto'</code> turns vertical</td></tr>
         <tr><td><code>rowHeight</code></td><td>number</td><td><code>140</code></td><td>Height per column (row) in the vertical layout</td></tr>
@@ -496,7 +498,7 @@
         <tr><td><code>linkColor</code></td><td>string</td><td><code>'source'</code></td><td><code>'source'</code>, <code>'target'</code>, <code>'type'</code>, <code>'gradient'</code>, or any CSS color</td></tr>
         <tr><td><code>linkOpacity</code></td><td>number</td><td><code>0.45</code></td><td>Band opacity at rest</td></tr>
         <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors and legend for <code>linkColor: 'type'</code></td></tr>
-        <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels; <code>false</code> leaves them to the tooltip</td></tr>
+        <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels, right of each node (the last column gets a gutter sized to its longest label); long ones are cut with an ellipsis to the room before the next column, the full name stays in the tooltip. <code>false</code> leaves them to the tooltip</td></tr>
         <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip</td></tr>
         <tr><td><code>showValues</code></td><td>boolean</td><td><code>true</code></td><td>Append the node value to its label</td></tr>
         <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for labels, tooltips and the table</td></tr>
@@ -506,7 +508,7 @@
         <tr><td><code>animate</code> / <code>duration</code> / <code>ease</code></td><td></td><td><code>true</code> / <code>600</code> / <code>'cubicOut'</code></td><td>Entry fade of the bands; off under <code>prefers-reduced-motion</code></td></tr>
     </tbody>
 </table>
-<p>Text slots <code>title</code>, <code>subtitle</code>, <code>source</code> and <code>note</code> work as on every chart — see <a href="/charts/settings/">Settings</a>.</p>
+<p>Text slots <code>title</code>, <code>subtitle</code>, <code>source</code> and <code>note</code>, and the <code>controls</code> slot for your own inputs, work as on every chart — see <a href="/charts/settings/">Settings</a>.</p>
 <h2>Accessibility</h2>
 <p>The SVG is labelled from <code>title</code> / <code>subtitle</code>. Every node and band carries an accessible name (&quot;Income tax → Health: 9.4&quot;); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.</p>
 <script src="/assets/charts/rare-charts.js"></script>

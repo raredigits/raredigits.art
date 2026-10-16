@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.8_2 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph, MultiChart, Map. Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_3 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, Sankey. Relation charts (Graph, Sankey) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -3400,758 +3400,11 @@ var RareCharts = (() => {
   });
 
   // assets/charts/rare-charts.css
-  var rare_charts_default = `@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap');
-
-/* RareCharts \u2014 charts.css
-   Structure and positioning.
-   Colors \u2014 via theme (JS), not CSS. */
-
-/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart {
-  --rc-font-family: "Fira Sans", sans-serif;
-  --rc-font-family-numeric: "Cousine", monospace;
-  --rc-font-size: 16px;
-  --rc-font-size-sm: 14px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.
-     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */
-  overflow: hidden;
-}
-
-.rc-chart > .rc-chart-header { order: 0; }
-.rc-graph-breadcrumbs        { order: 1; }
-.rc-graph-legend             { order: 2; }
-.rc-chart > svg              { order: 3; }
-.rc-chart > .rc-chart-navigator { order: 4; }
-.rc-chart > .rc-chart-footer { order: 5; }
-
-.rc-chart > svg {
-  font-family: var(--rc-font-family);
-  /* Small size is the chart-text default (axis ticks, labels, values). Charts
-     no longer set font-size inline; the few larger texts (donut/gauge center)
-     set their own. */
-  font-size: var(--rc-font-size-sm);
-  overflow: visible; /* otherwise end labels and crosshair dots are clipped */
-  /* Let the plot shrink inside the fixed-height card so a tall footer (a long
-     source line or a multi-sentence note) never overflows and gets clipped \u2014
-     without min-height:0 a flex item refuses to shrink below its content. */
-  min-height: 0;
-}
-
-.rc-chart-header,
-.rc-chart-subtitle,
-.rc-legend,
-.rc-chart-source {
-  color: var(--primary-color);
-}
-
-/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart-header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "title range"
-    "subtitle range"
-    "legend legend";
-  column-gap: var(--space-md);
-  row-gap: var(--space-xs);
-  position: relative;
-  user-select: none;
-}
-
-.rc-chart-title {
-  grid-area: title;
-  min-width: 0;
-  margin: 0;
-  font-family: var(--rc-font-family);
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rc-chart-subtitle {
-  grid-area: subtitle;
-  min-width: 0;
-  font-size: var(--rc-font-size-sm);
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart-footer {
-  user-select: none;
-}
-
-.rc-chart-source {
-  font-style: italic;
-  font-size: var(--rc-font-size-sm);
-  font-weight: initial;
-  margin: var(--space-sm) 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: left;
-}
-
-/* Links inside the source line \u2014 inherit the source text color, set apart by
-   the underline (so they adapt to light/dark theme automatically). */
-.rc-chart-source a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Multi-part (array) source: let it wrap so several attributions/links all
-   stay visible instead of being cut off by the single-line ellipsis. */
-.rc-chart-source--rich {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: clip;
-}
-
-/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.
-   Wraps freely (unlike source) since it can be a sentence or two; color is
-   set from theme.muted in JS so it reads as secondary to the source. */
-.rc-chart-note {
-  font-size: var(--rc-font-size-sm);
-  font-weight: initial;
-  line-height: 1.4;
-  margin: var(--space-xs) 0 var(--space-sm);
-  text-align: left;
-  /* Long words / URLs break instead of pushing the note past the card edge. */
-  overflow-wrap: anywhere;
-}
-
-.rc-chart-source + .rc-chart-note {
-  margin-top: 0;
-}
-
-.rc-chart-navigator {
-  width: 100%;
-}
-
-.rc-chart-range-row {
-  grid-area: range;
-  justify-self: end;
-  align-self: start;
-  min-width: max-content;
-  padding-right: 60px;
-}
-
-/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-legend {
-  grid-area: legend;
-  padding: var(--space-sm) 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  font-size: var(--rc-font-size-sm);
-  user-select: none;
-}
-
-@media (max-width: 768px) {
-  .rc-chart-header {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "title"
-      "subtitle"
-      "range"
-      "legend";
-  }
-
-  .rc-chart-range-row {
-    justify-self: start;
-    min-width: 0;
-    padding-right: 0;
-  }
-}
-
-.rc-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-  cursor: default;
-}
-
-/* Graph legend items are controls, not static labels. */
-.rc-graph-legend-item,
-.rc-graph-legend-reset {
-  appearance: none;
-  border: 0;
-  padding: 2px 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-}
-
-.rc-graph-legend-item:not(:disabled),
-.rc-graph-legend-reset {
-  cursor: pointer;
-}
-
-.rc-graph-legend-item:disabled { cursor: default; }
-
-.rc-graph-legend-item:focus-visible,
-.rc-graph-legend-reset:focus-visible,
-.rc-graph-breadcrumbs button:focus-visible,
-.rc-graph-overflow button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-.rc-graph-legend-reset {
-  text-decoration: underline;
-  opacity: 0.7;
-}
-
-.rc-graph-breadcrumbs {
-  display: block;
-  padding: 4px 0;
-  font-family: var(--rc-font-family);
-  font-size: 11px;
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rc-graph-breadcrumbs[hidden],
-.rc-graph-overflow[hidden] { display: none; }
-
-.rc-graph-breadcrumbs button {
-  appearance: none;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-
-.rc-graph-breadcrumbs button:disabled {
-  cursor: default;
-  font-weight: 600;
-  opacity: 1;
-}
-
-.rc-graph-overflow {
-  position: absolute;
-  z-index: 4;
-  left: 104px;
-  bottom: 34px;
-  width: min(320px, calc(100% - 120px));
-  max-height: min(300px, 55%);
-  overflow: hidden;
-  padding: 12px;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 6px;
-  background: var(--background-color, #fff);
-  color: var(--primary-color, #111);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  font-family: var(--rc-font-family);
-  font-size: 12px;
-}
-
-.rc-graph-overflow-title {
-  padding-right: 28px;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.rc-graph-overflow-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: 240px;
-  overflow: auto;
-}
-
-.rc-graph-overflow-item {
-  appearance: none;
-  width: 100%;
-  border: 0;
-  border-radius: 3px;
-  padding: 6px 8px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
-
-.rc-graph-overflow-close {
-  position: absolute;
-  top: 6px;
-  right: 7px;
-  appearance: none;
-  border: 0;
-  padding: 2px 5px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-/* Line \u2014 for line series */
-.rc-legend-line {
-  width: 16px;
-  height: 2px;
-  display: inline-block;
-  border-radius: 1px;
-  flex-shrink: 0;
-}
-
-/* Dashed line \u2014 for forecast / projected series */
-.rc-legend-line--dashed {
-  background-color: transparent;
-}
-
-/* Dot \u2014 for bar / donut / scatter */
-.rc-legend-dot {
-  width: var(--space-sm);
-  height: var(--space-sm);
-  display: inline-block;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
-.rc-legend-band {
-  width: var(--space-sm);
-  height: var(--space-sm);
-  display: inline-block;
-  border-radius: 2px;
-  opacity: 0.85;
-  flex-shrink: 0;
-}
-
-/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/* Only positioning and transition. */
-/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */
-
-.rc-tooltip {
-  position: absolute;
-  pointer-events: none;
-  padding: var(--space-sm) var(--space-md);
-  opacity: 0;
-  transition: opacity 0.1s;
-  white-space: nowrap;
-  z-index: 100;
-}
-
-.rc-tooltip.is-visible {
-  opacity: 0.9;
-}
-
-/* Pinned (opt-in, relation charts): stays put, takes pointer events so links
-   inside it work, wraps long content. Closes on outside click or Escape. */
-.rc-tooltip.is-pinned {
-  pointer-events: auto;
-  white-space: normal;
-  max-width: 320px;
-  opacity: 1;
-}
-
-.rc-tooltip.is-pinned a {
-  color: inherit;
-  text-decoration: underline;
-}
-
-/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-/* Zero baseline \u2014 visible only when domain crosses zero */
-.rc-zero-line {
-  stroke-width: 1.5;
-  opacity: 0.9;
-}
-
-/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */
-.rc-band {
-  pointer-events: none;
-}
-
-/* Axis tick labels. Charts add .rc-axis (numeric/value axis) or .rc-axis-cat
-   (category axis, inherits the regular font) to the axis group. font-size is
-   set here to override d3-axis's default font-size="10" attribute on the group. */
-.rc-axis text,
-.rc-axis-cat text {
-  /* Override d3-axis's font-size="10" / font-family="sans-serif" group attrs. */
-  font-size: var(--rc-font-size-sm, 14px);
-}
-
-.rc-axis text {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
-  font-variant-numeric: tabular-nums;
-}
-
-.rc-axis-cat text {
-  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
-}
-
-/* Numeric SVG text set by charts (bar value labels, donut percents, center
-   totals). Regular-font text inherits the svg default, so only these need the
-   numeric family. Center texts keep their computed size (set in JS). */
-.rc-bar-value,
-.rc-donut-label-pct,
-.rc-donut-center-value,
-.rc-gauge-center-value {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
-  font-variant-numeric: tabular-nums;
-}
-
-.rc-donut-center-value,
-.rc-gauge-center-value {
-  font-weight: bold;
-}
-
-/* Graph (experimental) SVG labels. */
-.rc-graph-node-label { font-size: 11px; }
-
-.rc-graph-sector-label,
-.rc-graph-note,
-.rc-graph-row-label,
-.rc-graph-hidden-note {
-  font-size: 10px;
-}
-
-.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }
-.rc-graph-row-label    { letter-spacing: 0.05em; }
-.rc-graph-note,
-.rc-graph-hidden-note  { text-decoration: underline; }
-
-/* Axis titles (used in DualAxes) */
-.rc-axis-title {
-  text-transform: uppercase;
-  dominant-baseline: hanging;
-}
-
-.rc-axis-title-y1 { text-anchor: start; }
-.rc-axis-title-y2 { text-anchor: end; }
-
-/* End labels \u2014 last-value labels on the right edge */
-.rc-end-label {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
-  font-variant-numeric: tabular-nums;
-  background-color: var(--white);
-  padding: var(--space-xs);
-}
-
-/* Hierarchical bar \u2014 row label + value text.
-   Fonts come from the theme CSS variables declared on .rc-chart, so the chart
-   code sets only data-driven attributes (fill, position), not font styles. */
-.rc-hbar-label {
-  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
-  font-size: var(--rc-font-size-sm, 14px);
-}
-
-.rc-hbar-value {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
-  font-size: var(--rc-font-size-sm, 14px);
-  font-variant-numeric: tabular-nums;
-}
-
-/* Markers */
-.rc-marker-circle,
-.rc-marker-shape {
-  stroke-width: 1.5;
-}
-
-/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */
-.rc-annotation-line,
-.rc-annotation-range-edge,
-.rc-annotation-h-line,
-.rc-annotation-h-range-edge {
-  stroke-width: 1;
-}
-
-.rc-annotation-label,
-.rc-annotation-h-label {
-  font-size: var(--rc-font-size-sm);
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.rc-annotation-h-label {
-  dominant-baseline: text-after-edge;
-}
-
-/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/*
- * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
- * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended
- * before _initSVG runs). Explicit rows fix placement regardless of DOM order.
- */
-
-.rc-chart--legend-right {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */
-}
-
-/* Pin each element to its row \u2014 overrides DOM insertion order */
-.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
-.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
-.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }
-
-/* Aside spans the full chart block in column 2 */
-.rc-chart--legend-right > .rc-chart-legend-aside {
-  grid-column: 2;
-  grid-row: 1 / 5;
-  display: flex;
-  align-items: center;
-  padding-left: var(--space-lg);
-}
-
-/* Stack legend items vertically when in aside */
-.rc-chart-legend-aside .rc-legend {
-  flex-direction: column;
-  gap: var(--space-sm);
-  padding: 0;
-}
-
-/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-multichart-grid {
-  display: grid;
-  gap: var(--space-lg, 16px);
-  order: 1;   /* sits between header (0) and footer (3) in the flex column */
-}
-
-.rc-multichart-cell {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;    /* prevent grid blowout */
-  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */
-}
-
-/* The inner div that receives the child Chart instance.
-   Height is set inline by the child chart constructor \u2014 do not override with flex.
-   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */
-.rc-multichart-chart-wrapper {
-  min-width: 0;
-}
-
-.rc-multichart-chart-wrapper.rc-chart {
-  overflow: visible;
-}
-
-.rc-multichart-cell-title {
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm);
-  font-weight: bold;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: none;
-  margin-bottom: 4px;
-}
-
-/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-demo-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
-}
-
-.rc-demo-group {
-  width: 48%;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-sm);
-  padding: var(--space-sm);
-}
-
-.rc-demo-group-label {
-  padding-left: var(--space-sm);
-  font-size: var(--rc-font-size-sm);
-  text-transform: uppercase;
-  user-select: none;
-}
-
-.rc-demo-btn-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.rc-demo-btn {
-  background: none;
-  border: 1px solid var(--border-color, #ccc);
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm);
-  padding: 3px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  color: inherit;
-  transition: background 0.08s, border-color 0.08s, color 0.08s;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.rc-demo-btn:hover {
-  border-color: var(--text-color, #000);
-}
-
-.rc-demo-btn.is-active {
-  background: var(--text-color, #000);
-  border-color: var(--text-color, #000);
-  color: var(--bg-color, #fff);
-}
-
-@media  (max-width: 768px) {
-    .rc-demo-group {
-        width: 100%;
-    }
-}
-
-/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */
-
-.price-chart-header {
-  width: calc(100% - 60px);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
-.price-chart-ticker {
-  font-size: var(--font-size-xl);
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.price-chart-price {
-  font-size: var(--font-size-xl);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change {
-  font-size: var(--font-size-md);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change.up   { color: var(--positive-color, #389e0d); }
-.price-chart-change.down { color: var(--negative-color, #ff0000); }
-
-/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.price-chart-range-bar,
-.rc-chart-range-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-  align-items: center;
-}
-
-.range-btn,
-.rc-range-btn {
-  background: none;
-  font-size: var(--rc-font-size-sm);
-  font-family: var(--rc-font-family);
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
-  cursor: pointer;
-  transition: background-color 0.1s, border-color 0.1s;
-  color: var(--text-color-light);
-}
-
-.range-btn:hover,
-.rc-range-btn:hover {
-  color: var(--primary-text-color);
-  border-color: var(--primary-color);
-}
-
-.range-btn.active,
-.rc-range-btn.active {
-  color: var(--primary-text-color);
-  background-color: var(--white);
-  border-color: var(--primary-color);
-}
-
-/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.price-chart-stats {
-  width: calc(100% - 56px);
-  margin-left: -8px;
-}
-
-.price-chart-stat {
-  padding: var(--space-xs) var(--space-md);
-  font-size: var(--rc-font-size-sm);
-}
-
-.price-chart-stat-label {
-  color: var(--muted-color, #666);
-}
-
-.price-chart-stat-value {
-  font-variant-numeric: tabular-nums;
-}
-
-/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-   Honour \`prefers-reduced-motion: reduce\` for CSS transitions inside a chart.
-   Entry/update motion driven by D3 (JS) is gated separately via
-   motionDuration() in core/utils.js. */
-@media (prefers-reduced-motion: reduce) {
-  .rc-chart,
-  .rc-chart * {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-  }
-}
-
-/* \u2500\u2500\u2500 Screen-reader-only content (data-table fallbacks) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* \u2500\u2500\u2500 Sankey \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-sankey-label { font-size: 11px; }
-.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-
-/* \u2500\u2500\u2500 Graph flow view \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
-.rc-flow-node-label { font-size: 12px; }
-.rc-flow-node-sub,
-.rc-flow-link-label { font-size: 11px; font-family: var(--font-mono, ui-monospace, monospace); }
-.rc-flow-hull-label { font-size: 11px; }
-/* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
-.rc-flow-node:focus { outline: none; }
-.rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
-`;
+  var rare_charts_default = '@import url(\'https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap\');\n\n/* RareCharts \u2014 charts.css\n   Structure and positioning.\n   Colors \u2014 via theme (JS), not CSS. */\n\n/* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart {\n  --rc-font-family: "Fira Sans", sans-serif;\n  --rc-font-family-numeric: "Cousine", monospace;\n  --rc-font-size: 16px;\n  --rc-font-size-sm: 14px;\n  display: flex;\n  flex-direction: column;\n  position: relative;\n  /* Keep the chart card as the outer clipping boundary for tooltips/overlays.\n     In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */\n  overflow: hidden;\n}\n\n.rc-chart > .rc-chart-header { order: 0; }\n.rc-graph-breadcrumbs        { order: 1; }\n.rc-graph-legend             { order: 2; }\n.rc-chart > svg              { order: 3; }\n.rc-chart > .rc-chart-navigator { order: 4; }\n.rc-chart > .rc-graph-details   { order: 4; }\n.rc-chart > .rc-chart-controls  { order: 5; }\n.rc-chart > .rc-chart-footer { order: 6; }\n\n.rc-chart > svg {\n  font-family: var(--rc-font-family);\n  /* Small size is the chart-text default (axis ticks, labels, values). Charts\n     no longer set font-size inline; the few larger texts (donut/gauge center)\n     set their own. */\n  font-size: var(--rc-font-size-sm);\n  overflow: visible; /* otherwise end labels and crosshair dots are clipped */\n  /* Let the plot shrink inside the fixed-height card so a tall footer (a long\n     source line or a multi-sentence note) never overflows and gets clipped \u2014\n     without min-height:0 a flex item refuses to shrink below its content. */\n  min-height: 0;\n}\n\n.rc-chart-header,\n.rc-chart-subtitle,\n.rc-legend,\n.rc-chart-source {\n  color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-header {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  grid-template-areas:\n    "title range"\n    "subtitle range"\n    "legend legend";\n  column-gap: var(--space-md);\n  row-gap: var(--space-xs);\n  position: relative;\n  user-select: none;\n}\n\n.rc-chart-title {\n  grid-area: title;\n  min-width: 0;\n  margin: 0;\n  font-family: var(--rc-font-family);\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-chart-subtitle {\n  grid-area: subtitle;\n  min-width: 0;\n  font-size: var(--rc-font-size-sm);\n  margin: 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\n/* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-chart-footer {\n  user-select: none;\n}\n\n.rc-chart-source {\n  font-style: italic;\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  margin: var(--space-sm) 0;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n  text-align: left;\n}\n\n/* Links inside the source line \u2014 inherit the source text color, set apart by\n   the underline (so they adapt to light/dark theme automatically). */\n.rc-chart-source a {\n  color: inherit;\n  text-decoration: underline;\n  text-underline-offset: 2px;\n}\n\n/* Multi-part (array) source: let it wrap so several attributions/links all\n   stay visible instead of being cut off by the single-line ellipsis. */\n.rc-chart-source--rich {\n  white-space: normal;\n  overflow: visible;\n  text-overflow: clip;\n}\n\n/* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.\n   Wraps freely (unlike source) since it can be a sentence or two; color is\n   set from theme.muted in JS so it reads as secondary to the source. */\n.rc-chart-note {\n  font-size: var(--rc-font-size-sm);\n  font-weight: initial;\n  line-height: 1.4;\n  margin: var(--space-xs) 0 var(--space-sm);\n  text-align: left;\n  /* Long words / URLs break instead of pushing the note past the card edge. */\n  overflow-wrap: anywhere;\n}\n\n.rc-chart-source + .rc-chart-note {\n  margin-top: 0;\n}\n\n.rc-chart-navigator {\n  width: 100%;\n}\n\n.rc-chart-range-row {\n  grid-area: range;\n  justify-self: end;\n  align-self: start;\n  min-width: max-content;\n  padding-right: 60px;\n}\n\n/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-legend {\n  grid-area: legend;\n  padding: var(--space-sm) 0;\n  display: flex;\n  flex-wrap: wrap;\n  /* wrapped lines sit close; items keep their horizontal spacing */\n  column-gap: var(--space-md);\n  row-gap: 2px;\n  line-height: 1.3;\n  font-size: var(--rc-font-size-sm);\n  user-select: none;\n}\n\n@media (max-width: 768px) {\n  .rc-chart-header {\n    grid-template-columns: minmax(0, 1fr);\n    grid-template-areas:\n      "title"\n      "subtitle"\n      "range"\n      "legend";\n  }\n\n  .rc-chart-range-row {\n    justify-self: start;\n    min-width: 0;\n    padding-right: 0;\n  }\n}\n\n.rc-legend-item {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  white-space: nowrap;\n  cursor: default;\n}\n\n/* Text-like chart controls: no button chrome in any state.\n   A host stylesheet may style every <button> \u2014 Rare Styles\' `button:hover`\n   adds a border and background, and its element+pseudo-class selector beats\n   a single class. Doubling the class (and listing the states) wins without\n   !important; only the cursor changes on hover. Keyboard focus keeps its\n   outline (rule below). */\n.rc-graph-legend-item.rc-graph-legend-item,\n.rc-graph-legend-reset.rc-graph-legend-reset,\n.rc-graph-breadcrumbs.rc-graph-breadcrumbs button,\n.rc-graph-tools .rc-graph-note.rc-graph-note,\n.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note {\n  border: 0;\n  border-radius: 0;\n  background: transparent;\n  box-shadow: none;\n}\n.rc-graph-legend-item.rc-graph-legend-item:hover,\n.rc-graph-legend-item.rc-graph-legend-item:active,\n.rc-graph-legend-reset.rc-graph-legend-reset:hover,\n.rc-graph-legend-reset.rc-graph-legend-reset:active,\n.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:hover,\n.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:active,\n.rc-graph-tools .rc-graph-note.rc-graph-note:hover,\n.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note:hover {\n  border: 0;\n  background: transparent;\n  box-shadow: none;\n}\n\n/* Graph legend items are controls, not static labels. */\n.rc-graph-legend-item,\n.rc-graph-legend-reset {\n  appearance: none;\n  border: 0;\n  padding: 2px 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n}\n\n.rc-graph-legend-item:not(:disabled),\n.rc-graph-legend-reset {\n  cursor: pointer;\n}\n\n.rc-graph-legend-item:disabled { cursor: default; }\n\n.rc-graph-legend-item:focus-visible,\n.rc-graph-legend-reset:focus-visible,\n.rc-graph-breadcrumbs button:focus-visible,\n.rc-graph-overflow button:focus-visible {\n  outline: 2px solid currentColor;\n  outline-offset: 2px;\n}\n\n.rc-graph-legend-reset {\n  text-decoration: underline;\n  opacity: 0.7;\n}\n\n.rc-graph-breadcrumbs {\n  display: block;\n  padding: 4px 0;\n  font-family: var(--rc-font-family);\n  font-size: 11px;\n  line-height: 1.4;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n\n.rc-graph-breadcrumbs[hidden],\n.rc-graph-overflow[hidden] { display: none; }\n\n.rc-graph-breadcrumbs button {\n  /* inline: a site stylesheet may make every <button> a block (Rare Styles\n     does, Q-04) \u2014 the trail must stay on one line */\n  display: inline;\n  width: auto;\n  margin: 0;\n  appearance: none;\n  border: 0;\n  padding: 0;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  cursor: pointer;\n}\n\n.rc-graph-breadcrumbs button:disabled {\n  cursor: default;\n  font-weight: 600;\n  opacity: 1;\n}\n\n.rc-graph-overflow {\n  position: absolute;\n  z-index: 4;\n  right: 8px;\n  bottom: 40px;\n  width: min(320px, calc(100% - 120px));\n  max-height: min(300px, 55%);\n  overflow: hidden;\n  padding: 12px;\n  border: 1px solid rgba(127, 127, 127, 0.35);\n  border-radius: 6px;\n  background: var(--background-color, #fff);\n  color: var(--primary-color, #111);\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);\n  font-family: var(--rc-font-family);\n  font-size: 12px;\n}\n\n.rc-graph-overflow-title {\n  padding-right: 28px;\n  margin-bottom: 8px;\n  font-weight: 600;\n}\n\n.rc-graph-overflow-list {\n  display: flex;\n  flex-direction: column;\n  gap: 2px;\n  max-height: 240px;\n  overflow: auto;\n}\n\n.rc-graph-overflow-item {\n  appearance: none;\n  width: 100%;\n  border: 0;\n  border-radius: 3px;\n  padding: 6px 8px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  text-align: left;\n  cursor: pointer;\n}\n\n.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }\n/* list rows keep their hover tint, but never a host button border */\n.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:hover,\n.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close:hover { border: 0; box-shadow: none; }\n\n.rc-graph-overflow-close {\n  position: absolute;\n  top: 6px;\n  right: 7px;\n  appearance: none;\n  border: 0;\n  padding: 2px 5px;\n  background: transparent;\n  color: inherit;\n  font: inherit;\n  font-size: 18px;\n  cursor: pointer;\n}\n\n/* Line \u2014 for line series */\n.rc-legend-line {\n  width: 16px;\n  height: 2px;\n  display: inline-block;\n  border-radius: 1px;\n  flex-shrink: 0;\n}\n\n/* Dashed line \u2014 for forecast / projected series */\n.rc-legend-line--dashed {\n  background-color: transparent;\n}\n\n/* Dot \u2014 for bar / donut / scatter */\n.rc-legend-dot {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 50%;\n  flex-shrink: 0;\n}\n\n/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */\n.rc-legend-band {\n  width: var(--space-sm);\n  height: var(--space-sm);\n  display: inline-block;\n  border-radius: 2px;\n  opacity: 0.85;\n  flex-shrink: 0;\n}\n\n/* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/* Only positioning and transition. */\n/* bg, border, shadow \u2014 Tooltip.js sets inline from theme.tooltip */\n\n.rc-tooltip {\n  position: absolute;\n  pointer-events: none;\n  padding: var(--space-sm) var(--space-md);\n  opacity: 0;\n  transition: opacity 0.1s;\n  white-space: nowrap;\n  z-index: 100;\n}\n\n.rc-tooltip.is-visible {\n  opacity: 0.9;\n}\n\n/* Pinned (opt-in, relation charts): stays put, takes pointer events so links\n   inside it work, wraps long content. Closes on outside click or Escape. */\n.rc-tooltip.is-pinned {\n  pointer-events: auto;\n  white-space: normal;\n  max-width: 320px;\n  opacity: 1;\n}\n\n.rc-tooltip.is-pinned a {\n  color: inherit;\n  text-decoration: underline;\n}\n\n/* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n/* Zero baseline \u2014 visible only when domain crosses zero */\n.rc-zero-line {\n  stroke-width: 1.5;\n  opacity: 0.9;\n}\n\n/* Band (confidence ribbon) \u2014 non-interactive fill behind lines */\n.rc-band {\n  pointer-events: none;\n}\n\n/* Axis tick labels. Charts add .rc-axis (numeric/value axis) or .rc-axis-cat\n   (category axis, inherits the regular font) to the axis group. font-size is\n   set here to override d3-axis\'s default font-size="10" attribute on the group. */\n.rc-axis text,\n.rc-axis-cat text {\n  /* Override d3-axis\'s font-size="10" / font-family="sans-serif" group attrs. */\n  font-size: var(--rc-font-size-sm, 14px);\n}\n\n.rc-axis text {\n  font-family: var(--rc-font-family-numeric, "Cousine", monospace);\n  font-variant-numeric: tabular-nums;\n}\n\n.rc-axis-cat text {\n  font-family: var(--rc-font-family, "Fira Sans", sans-serif);\n}\n\n/* Numeric SVG text set by charts (bar value labels, donut percents, center\n   totals). Regular-font text inherits the svg default, so only these need the\n   numeric family. Center texts keep their computed size (set in JS). */\n.rc-bar-value,\n.rc-donut-label-pct,\n.rc-donut-center-value,\n.rc-gauge-center-value {\n  font-family: var(--rc-font-family-numeric, "Cousine", monospace);\n  font-variant-numeric: tabular-nums;\n}\n\n.rc-donut-center-value,\n.rc-gauge-center-value {\n  font-weight: bold;\n}\n\n/* Graph (experimental) SVG labels. */\n.rc-graph-node-label { font-size: 11px; }\n\n.rc-graph-sector-label,\n.rc-graph-note,\n.rc-graph-row-label,\n.rc-graph-hidden-note {\n  font-size: 10px;\n}\n\n.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }\n.rc-graph-row-label    { letter-spacing: 0.05em; }\n.rc-graph-note,\n.rc-graph-hidden-note  { text-decoration: underline; }\n\n/* Axis titles (used in DualAxes) */\n.rc-axis-title {\n  text-transform: uppercase;\n  dominant-baseline: hanging;\n}\n\n.rc-axis-title-y1 { text-anchor: start; }\n.rc-axis-title-y2 { text-anchor: end; }\n\n/* End labels \u2014 last-value labels on the right edge */\n.rc-end-label {\n  font-family: var(--rc-font-family-numeric, "Cousine", monospace);\n  font-variant-numeric: tabular-nums;\n  background-color: var(--white);\n  padding: var(--space-xs);\n}\n\n/* Hierarchical bar \u2014 row label + value text.\n   Fonts come from the theme CSS variables declared on .rc-chart, so the chart\n   code sets only data-driven attributes (fill, position), not font styles. */\n.rc-hbar-label {\n  font-family: var(--rc-font-family, "Fira Sans", sans-serif);\n  font-size: var(--rc-font-size-sm, 14px);\n}\n\n.rc-hbar-value {\n  font-family: var(--rc-font-family-numeric, "Cousine", monospace);\n  font-size: var(--rc-font-size-sm, 14px);\n  font-variant-numeric: tabular-nums;\n}\n\n/* Markers */\n.rc-marker-circle,\n.rc-marker-shape {\n  stroke-width: 1.5;\n}\n\n/* Annotations \u2014 vertical (event markers) and horizontal (reference levels) */\n.rc-annotation-line,\n.rc-annotation-range-edge,\n.rc-annotation-h-line,\n.rc-annotation-h-range-edge {\n  stroke-width: 1;\n}\n\n.rc-annotation-label,\n.rc-annotation-h-label {\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  pointer-events: none;\n}\n\n.rc-annotation-h-label {\n  dominant-baseline: text-after-edge;\n}\n\n/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n/*\n * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)\n * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended\n * before _initSVG runs). Explicit rows fix placement regardless of DOM order.\n */\n\n.rc-chart--legend-right {\n  display: grid;\n  grid-template-columns: 1fr auto;\n  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */\n}\n\n/* Pin each element to its row \u2014 overrides DOM insertion order */\n.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }\n.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }\n.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }\n.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }\n\n/* Aside spans the full chart block in column 2 */\n.rc-chart--legend-right > .rc-chart-legend-aside {\n  grid-column: 2;\n  grid-row: 1 / 5;\n  display: flex;\n  align-items: center;\n  padding-left: var(--space-lg);\n}\n\n/* Stack legend items vertically when in aside */\n.rc-chart-legend-aside .rc-legend {\n  flex-direction: column;\n  gap: var(--space-sm);\n  padding: 0;\n}\n\n/* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-multichart-grid {\n  display: grid;\n  gap: var(--space-lg, 16px);\n  order: 1;   /* sits between header (0) and footer (3) in the flex column */\n}\n\n.rc-multichart-cell {\n  display: flex;\n  flex-direction: column;\n  min-width: 0;    /* prevent grid blowout */\n  overflow: hidden; /* prevent SVG content from bleeding into adjacent cells */\n}\n\n/* The inner div that receives the child Chart instance.\n   Height is set inline by the child chart constructor \u2014 do not override with flex.\n   overflow: visible lets X-axis tick labels render beyond the SVG boundary. */\n.rc-multichart-chart-wrapper {\n  min-width: 0;\n}\n\n.rc-multichart-chart-wrapper.rc-chart {\n  overflow: visible;\n}\n\n.rc-multichart-cell-title {\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  font-weight: bold;\n  text-transform: uppercase;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  user-select: none;\n  margin-bottom: 4px;\n}\n\n/* \u2500\u2500\u2500 Demo page controls \u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.rc-demo-controls {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-md);\n  margin: var(--space-lg) 0;\n}\n\n.rc-demo-group {\n  width: 48%;\n  display: flex;\n  flex-direction: column;\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-sm);\n  padding: var(--space-sm);\n}\n\n.rc-demo-group-label {\n  padding-left: var(--space-sm);\n  font-size: var(--rc-font-size-sm);\n  text-transform: uppercase;\n  user-select: none;\n}\n\n.rc-demo-btn-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 4px;\n}\n\n.rc-demo-btn {\n  background: none;\n  border: 1px solid var(--border-color, #ccc);\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm);\n  padding: 3px 10px;\n  border-radius: 3px;\n  cursor: pointer;\n  color: inherit;\n  transition: background 0.08s, border-color 0.08s, color 0.08s;\n  white-space: nowrap;\n  user-select: none;\n}\n\n.rc-demo-btn:hover {\n  border-color: var(--text-color, #000);\n}\n\n.rc-demo-btn.is-active {\n  background: var(--text-color, #000);\n  border-color: var(--text-color, #000);\n  color: var(--bg-color, #fff);\n}\n\n@media  (max-width: 768px) {\n    .rc-demo-group {\n        width: 100%;\n    }\n}\n\n/* \u2500\u2500\u2500 Price Chart \u2500\u2500\u2500 */\n\n.price-chart-header {\n  width: calc(100% - 60px);\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n  gap: var(--space-md);\n  flex-wrap: wrap;\n}\n\n.price-chart-ticker {\n  font-size: var(--font-size-xl);\n  font-weight: bold;\n  text-transform: uppercase;\n}\n\n.price-chart-price {\n  font-size: var(--font-size-xl);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change {\n  font-size: var(--font-size-md);\n  font-variant-numeric: tabular-nums;\n}\n\n.price-chart-change.up   { color: var(--positive-color, #389e0d); }\n.price-chart-change.down { color: var(--negative-color, #ff0000); }\n\n/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-range-bar,\n.rc-chart-range-bar {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-xs);\n  align-items: center;\n}\n\n.range-btn,\n.rc-range-btn {\n  background: none;\n  font-size: var(--rc-font-size-sm);\n  font-family: var(--rc-font-family);\n  border: 1px solid var(--border-color);\n  border-radius: var(--space-xs);\n  padding: var(--space-sm) var(--space-md);\n  cursor: pointer;\n  transition: background-color 0.1s, border-color 0.1s;\n  color: var(--text-color-light);\n}\n\n.range-btn:hover,\n.rc-range-btn:hover {\n  color: var(--primary-text-color);\n  border-color: var(--primary-color);\n}\n\n.range-btn.active,\n.rc-range-btn.active {\n  color: var(--primary-text-color);\n  background-color: var(--white);\n  border-color: var(--primary-color);\n}\n\n/* \u2500\u2500\u2500 Stats row \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n\n.price-chart-stats {\n  width: calc(100% - 56px);\n  margin-left: -8px;\n}\n\n.price-chart-stat {\n  padding: var(--space-xs) var(--space-md);\n  font-size: var(--rc-font-size-sm);\n}\n\n.price-chart-stat-label {\n  color: var(--muted-color, #666);\n}\n\n.price-chart-stat-value {\n  font-variant-numeric: tabular-nums;\n}\n\n/* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n   Honour `prefers-reduced-motion: reduce` for CSS transitions inside a chart.\n   Entry/update motion driven by D3 (JS) is gated separately via\n   motionDuration() in core/utils.js. */\n@media (prefers-reduced-motion: reduce) {\n  .rc-chart,\n  .rc-chart * {\n    transition-duration: 0.01ms !important;\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n  }\n}\n\n/* \u2500\u2500\u2500 Screen-reader-only content (data-table fallbacks) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n.rc-sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0 0 0 0);\n  white-space: nowrap;\n  border: 0;\n}\n\n/* \u2500\u2500\u2500 Sankey \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n.rc-sankey-label { font-size: 11px; }\n.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }\n\n/* \u2500\u2500\u2500 Graph flow view \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }\n.rc-flow-node-label { font-size: 12px; }\n.rc-flow-node-sub,\n.rc-flow-link-label { font-size: 11px; font-family: var(--font-mono, ui-monospace, monospace); }\n.rc-flow-hull-label { font-size: 11px; }\n/* Mouse clicks select (the ring shows it); the outline is for keyboard focus */\n.rc-flow-node:focus { outline: none; }\n.rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }\n\n/* Footer row with tools (Graph zoom): source on the left, controls pinned\n   right, a note (if any) on its own line below. */\n.rc-chart-footer--tools {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr) auto;\n  align-items: center;\n  column-gap: var(--space-sm, 8px);\n}\n.rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }\n.rc-graph-tools {\n  grid-column: 2;\n  grid-row: 1;\n  display: flex;\n  align-items: center;\n  gap: 6px;\n  justify-self: end;\n}\n.rc-graph-zoom-controls { display: flex; gap: 4px; }\n.rc-graph-tools button { display: inline-block; margin: 0; width: auto; }\n.rc-graph-tools button[hidden] { display: none; }\n.rc-graph-tools .rc-graph-note,\n.rc-graph-tools .rc-graph-hidden-note {\n  appearance: none;\n  border: 0;\n  background: transparent;\n  padding: 0 4px;\n  color: inherit;\n  font: inherit;\n  font-size: 11px;\n  text-decoration: underline;\n  opacity: 0.75;\n  cursor: pointer;\n}\n/* Full screen: the card fills the screen (native API or overlay fallback). */\n.rc-graph--fullscreen {\n  position: fixed !important;\n  inset: 0;\n  z-index: 1000;\n  width: 100vw;\n  max-width: none;\n  margin: 0;\n  padding: 16px;\n  box-sizing: border-box;\n  background: var(--bg-color, #fff);\n}\n.rc-graph--fullscreen:fullscreen { position: static !important; }\n\n/* Controls slot (option `controls`): page controls inside the card, between\n   the drawing and the footer. Compact, wrapping, small type. */\n.rc-chart-controls {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  gap: 6px 16px;\n  padding: 8px 0 2px;\n  font-family: var(--rc-font-family);\n  font-size: var(--rc-font-size-sm, 12px);\n}\n.rc-chart-controls label {\n  display: inline-flex;\n  align-items: center;\n  gap: 6px;\n  margin: 0;\n  cursor: pointer;\n}\n.rc-chart-controls input { margin: 0; }\n.rc-chart-controls label.is-disabled,\n.rc-chart-controls label:has(input:disabled) { opacity: 0.45; cursor: default; }\n.rc-chart-controls output { font-variant-numeric: tabular-nums; min-width: 7ch; }\n\n/* \u2500\u2500\u2500 Graph details panel (option `details`) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */\n.rc-graph-details {\n  box-sizing: border-box;\n  overflow: auto;\n  padding: 10px 14px;\n  font-family: var(--rc-font-family);\n  font-size: 13px;\n  line-height: 1.4;\n}\n/* Wide card: beside the drawing, aligned with it (top/height set by Graph). */\n.rc-graph--details-side > .rc-graph-details {\n  position: absolute;\n  right: 0;\n  border-left: 1px solid rgba(127, 127, 127, 0.25);\n}\n/* Narrow card: below the drawing; the card grows by the panel\'s height. */\n.rc-graph--details-below > .rc-graph-details {\n  flex: 0 0 auto;\n  border-top: 1px solid rgba(127, 127, 127, 0.25);\n}\n.rc-graph-details h4 { margin: 2px 0 6px; font-size: 15px; line-height: 1.25; text-transform: none; }\n.rc-graph-details p { margin: 0 0 6px; }\n.rc-graph-details .rc-graph-details-kind {\n  margin: 0;\n  font-size: 10px;\n  letter-spacing: 0.06em;\n  text-transform: uppercase;\n  opacity: 0.7;\n}\n.rc-graph-details .rc-graph-details-muted { opacity: 0.7; }\n.rc-graph-details dl {\n  display: grid;\n  grid-template-columns: max-content minmax(0, 1fr);\n  gap: 2px 10px;\n  margin: 0 0 6px;\n}\n.rc-graph-details dt { opacity: 0.7; font-size: inherit; font-weight: inherit; margin: 0; }\n.rc-graph-details dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }\n.rc-graph-details ul { margin: 0; padding-left: 1.1em; }\n.rc-graph-details li { margin: 0 0 2px; }\n.rc-graph-details a { color: inherit; text-decoration: underline; }\n\n';
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.8_2"
+    version: "v0.9.8_3"
   };
 
   // node_modules/d3/src/index.js
@@ -21704,6 +20957,7 @@ var RareCharts = (() => {
       this._onViewChangeCb = null;
       this._renderHeader();
       this._renderFooter();
+      this._renderControls();
       this._ensureNavigator();
       this._resizeObserver = new ResizeObserver(() => this._onResize());
       this._resizeObserver.observe(this.container);
@@ -21855,6 +21109,20 @@ var RareCharts = (() => {
      *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
      * Links inherit the source text color and are distinguished by an underline.
      */
+    // ── Controls slot ────────────────────────────────────────────────────────
+    // Page-owned controls (filters, sliders, toggles) that drive the chart,
+    // shown inside the card between the drawing and the footer — so they read
+    // as part of the chart, not as stray markup above it. Pass an element or
+    // a selector; the element is moved in as is (its listeners keep working).
+    _renderControls() {
+      const c6 = this.options.controls;
+      if (!c6) return;
+      const el = typeof c6 === "string" ? document.querySelector(c6) : c6;
+      if (!(el instanceof HTMLElement)) return;
+      el.classList.add("rc-chart-controls");
+      this._controlsEl = el;
+      this.container.appendChild(el);
+    }
     _renderAttribution(el, value) {
       const appendPart = (part) => {
         if (part == null) return;
@@ -24444,8 +23712,10 @@ var RareCharts = (() => {
     pad: pad3 = 24,
     minGap = 56,
     nodeRadius = 18,
-    captionRoom = 36
+    captionRoom = 36,
     // below a node's edge: label + sub line
+    padBottom = pad3
+    // extra room under the drawing (e.g. zoom controls)
   } = {}) {
     const laneOf = (n) => typeof laneBy === "function" ? laneBy(n) : n[laneBy];
     const laneList = lanes.map((l) => ({ id: String(l.id), label: l.label ?? String(l.id), weight: l.weight ?? 1 }));
@@ -24466,7 +23736,7 @@ var RareCharts = (() => {
     });
     const laneById = new Map(laneList.map((l) => [l.id, l]));
     const top2 = header + pad3;
-    const usableH = Math.max(1, height - top2 - pad3);
+    const usableH = Math.max(1, height - top2 - padBottom);
     const colsPerLane = /* @__PURE__ */ new Map();
     nodes.forEach((n) => {
       const lane = String(laneOf(n) ?? "");
@@ -24534,7 +23804,7 @@ var RareCharts = (() => {
         }
       }
     });
-    return { positions, lanes: laneList, top: top2, height };
+    return { positions, lanes: laneList, top: top2, height, colsPerLane };
   }
   var SHAPES = ["circle", "square", "diamond", "stack"];
   var esc = (v2) => String(v2).replace(/[&<>"']/g, (c6) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c6]);
@@ -24544,7 +23814,7 @@ var RareCharts = (() => {
       this.data = { nodes: [], links: [] };
       this.filter = null;
       this.window = null;
-      this.hiddenTypes = /* @__PURE__ */ new Set();
+      this.hiddenTypes = new Set((graph.options.hiddenLinkTypes ?? []).map(String));
       this.selected = null;
       this.labels = graph.options.linkLabels !== false;
       this.layer = graph.gZoom.append("g").attr("class", "rc-flow");
@@ -24552,8 +23822,8 @@ var RareCharts = (() => {
       this.gHulls = this.layer.append("g").attr("class", "rc-flow-hulls");
       this.gLinks = this.layer.append("g").attr("class", "rc-flow-links");
       this.gHits = this.layer.append("g").attr("class", "rc-flow-link-hits");
-      this.gLinkLabels = this.layer.append("g").attr("class", "rc-flow-link-labels");
       this.gNodes = this.layer.append("g").attr("class", "rc-flow-nodes");
+      this.gLinkLabels = this.layer.append("g").attr("class", "rc-flow-link-labels");
     }
     setData({ nodes, links }) {
       this.data = { nodes, links };
@@ -24600,9 +23870,24 @@ var RareCharts = (() => {
     // ── Visibility ──
     _visible() {
       const pass = (item) => !this.filter || this.filter(item);
-      const nodes = this.data.nodes.filter(pass);
-      const keep = new Set(nodes.map((n) => n.id));
-      let links = this.data.links.filter((l) => pass(l) && keep.has(l.source) && keep.has(l.target) && !this.hiddenTypes.has(this._linkKey(l)));
+      let nodes = this.data.nodes.filter(pass);
+      let keep = new Set(nodes.map((n) => n.id));
+      const shown = this.data.links.filter((l) => pass(l) && keep.has(l.source) && keep.has(l.target));
+      let links = shown.filter((l) => !this.hiddenTypes.has(this._linkKey(l)));
+      if (this.hiddenTypes.size) {
+        const hasTie = /* @__PURE__ */ new Set(), hasVisible = /* @__PURE__ */ new Set();
+        shown.forEach((l) => {
+          hasTie.add(l.source);
+          hasTie.add(l.target);
+        });
+        links.forEach((l) => {
+          hasVisible.add(l.source);
+          hasVisible.add(l.target);
+        });
+        nodes = nodes.filter((n) => !hasTie.has(n.id) || hasVisible.has(n.id));
+        keep = new Set(nodes.map((n) => n.id));
+        links = links.filter((l) => keep.has(l.source) && keep.has(l.target));
+      }
       links = applyTimeWindow(links, this.window, this._opt("timeWindowMode", "dim"));
       return { nodes, links };
     }
@@ -24613,7 +23898,7 @@ var RareCharts = (() => {
       const o = graph.options;
       const palette = t.colors ?? ["#888"];
       const R = o.nodeRadius ?? 18;
-      const { positions, lanes, top: top2 } = layoutFlow(
+      const { positions, lanes, top: top2, colsPerLane } = layoutFlow(
         { nodes: this.data.nodes, lanes: o.lanes ?? [] },
         { width: W, height: H, laneBy: o.laneBy ?? "lane", nodeRadius: R }
       );
@@ -24693,7 +23978,24 @@ var RareCharts = (() => {
       };
       const linkSel = this.gLinks.selectAll(".rc-flow-link").data(links, (l) => l.id).join("path").attr("class", "rc-flow-link").attr("fill", "none").attr("d", (l) => geom(l)?.d ?? "").attr("stroke", colorOf).attr("stroke-width", widthOf).attr("stroke-dasharray", dashOf).attr("stroke-linecap", "round").attr("marker-end", (l) => `url(#${markerId(this._linkKey(l))})`);
       const hitSel = this.gHits.selectAll(".rc-flow-link-hit").data(links, (l) => l.id).join("path").attr("class", "rc-flow-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", (l) => Math.max(14, widthOf(l) + 8)).style("pointer-events", "stroke").style("cursor", "pointer").attr("d", (l) => geom(l)?.d ?? "");
+      const roomOf = (n) => {
+        const p = positions.get(n.id);
+        const lane = lanes.find((l) => l.id === p.lane);
+        const cols = colsPerLane.get(p.lane) ?? 1;
+        return lane ? (lane.x1 - lane.x0) / cols - 8 : 120;
+      };
       const boxes = [];
+      nodes.forEach((n) => {
+        const p = positions.get(n.id);
+        const w = Math.min(roomOf(n), Math.max(2 * R, String(n.label ?? n.id).length * 6.6, String(n.sub ?? "").length * 6.4));
+        boxes.push({ x0: p.x - R, x1: p.x + R, y0: p.y - R, y1: p.y + R });
+        boxes.push({ x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + R + 2, y1: p.y + R + (n.sub ? 34 : 20) });
+      });
+      hulls.forEach((h) => {
+        const x4 = h.pts[0].x - R, y4 = Math.max(...h.pts.map((p) => p.y)) + R + 48;
+        const w = String(h.label ?? "").length * 6.2;
+        boxes.push({ x0: x4, x1: x4 + w, y0: y4 - 12, y1: y4 + 3 });
+      });
       const labelAt = /* @__PURE__ */ new Map();
       const labelled = this.labels ? links.filter((l) => !l._dim && l.label != null && l.label !== "") : [];
       labelled.forEach((l) => {
@@ -24738,9 +24040,12 @@ var RareCharts = (() => {
           add2("circle", { r: R });
         } else if (!SHAPES.includes(shape) && /^[Mm]/.test(String(shape))) add2("path", { d: shape });
         else add2("circle", { r: R });
-        g.append("text").attr("class", "rc-flow-node-label").attr("y", R + 16).attr("text-anchor", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").text(n.label ?? n.id);
+        const room = roomOf(n);
+        const label = g.append("text").attr("class", "rc-flow-node-label").attr("y", R + 16).attr("text-anchor", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke");
+        fitTextNode(label.node(), n.label ?? n.id, room);
         if (n.sub) {
-          g.append("text").attr("class", "rc-flow-node-sub").attr("y", R + 30).attr("text-anchor", "middle").attr("fill", t.muted).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").text(n.sub);
+          const sub = g.append("text").attr("class", "rc-flow-node-sub").attr("y", R + 30).attr("text-anchor", "middle").attr("fill", t.muted).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke");
+          fitTextNode(sub.node(), n.sub, room);
         }
         if (n.terminal) {
           g.append("text").attr("class", "rc-flow-node-sub").attr("x", R + 6).attr("y", -R + 4).attr("fill", t.muted).text("end");
@@ -24788,6 +24093,7 @@ var RareCharts = (() => {
       const select = (s2, event = null) => {
         this.selected = s2;
         apply();
+        graph._showDetails(!s2 ? null : s2.node ? { node: byId.get(s2.node) ?? null } : { link: links.find((l) => l.id === s2.link) ?? null });
         const cb = o.onSelect;
         if (typeof cb === "function") {
           if (!s2) cb({ node: null, link: null, event });
@@ -24844,7 +24150,10 @@ var RareCharts = (() => {
       graph.svg.on("click.flow", () => {
         if (this.selected) select(null);
       });
-      this._renderLegend(keys, colorOf, dashOf, palette);
+      const pass = (item) => !this.filter || this.filter(item);
+      const passing = new Set(this.data.nodes.filter(pass).map((n) => n.id));
+      const shown = new Set(this.data.links.filter((l) => pass(l) && passing.has(l.source) && passing.has(l.target)).map((l) => this._linkKey(l)));
+      this._renderLegend(keys.filter((k2) => shown.has(k2)), colorOf, dashOf, palette);
     }
     // Arrow keys walk the trace: → first outgoing tie, ← first incoming tie,
     // ↑/↓ the previous/next node of the same lane.
@@ -29407,11 +28716,21 @@ var RareCharts = (() => {
 
   // assets/charts/src/graph/layouts/ego.js
   var linkW = (l) => l.weight ?? l.strength ?? 0.5;
+  var CELL_W = 96;
+  var CELL_H = 50;
+  var PAD = 28;
+  function egoCapacity(W, H, nodeRadius = 22) {
+    const gw = Math.max(1, W - PAD * 2);
+    const gh = Math.max(1, H - nodeRadius * 2 - 28);
+    return Math.max(1, Math.floor(gw / CELL_W) * Math.floor(gh / CELL_H) - 1);
+  }
   function egoLayout({ nodes = [], links = [] } = {}, {
     rootId,
     width: W = 800,
     height: H = 520,
-    groupBy = "group"
+    groupBy = "group",
+    nodeRadius = 22,
+    sectorLabels = false
   } = {}) {
     const positions = /* @__PURE__ */ new Map();
     const sectors = [];
@@ -29419,8 +28738,13 @@ var RareCharts = (() => {
     const pad3 = 28;
     const gw = Math.max(1, W - pad3 * 2);
     const gh = Math.max(1, H - pad3 * 2);
-    const target = Math.max(nodes.length + 8, Math.ceil(nodes.length * 1.35));
-    const cols = Math.max(4, Math.round(Math.sqrt(target * gw / gh)));
+    const maxCells = egoCapacity(W, H, nodeRadius) + 1;
+    const target = Math.max(
+      nodes.length + 1,
+      Math.min(Math.max(nodes.length + 8, Math.ceil(nodes.length * 1.35)), maxCells)
+    );
+    const maxCols = Math.max(4, Math.floor(gw / CELL_W));
+    const cols = Math.min(maxCols, Math.max(4, Math.round(Math.sqrt(target * gw / gh))));
     const rows = Math.max(3, Math.ceil(target / cols));
     const cellW = gw / cols;
     const cellH = gh / rows;
@@ -29432,6 +28756,7 @@ var RareCharts = (() => {
     const rootR = Math.floor(rows / 2);
     const rootC = Math.floor(cols / 2);
     take(rootR, rootC);
+    const rowOf = /* @__PURE__ */ new Map([[rootId, rootR]]);
     positions.set(rootId, { x: cxOf(rootC), y: cyOf(rootR), depth: 0 });
     const byId = new Map(nodes.map((n) => [n.id, n]));
     const adjacency = /* @__PURE__ */ new Map();
@@ -29466,6 +28791,8 @@ var RareCharts = (() => {
       members.get(k2).push(n);
     });
     const keys = [...members.keys()].sort((a4, b) => members.get(b).length - members.get(a4).length || a4.localeCompare(b));
+    const others = nodes.filter((n) => n.id !== rootId && (n.depth ?? 0) > 0).length;
+    const dominant = keys.length > 0 && others >= 6 && members.get(keys[0]).length / others > 0.8;
     const midR = Math.floor(rows / 2), midC = Math.floor(cols / 2);
     const anchorCells = [
       [0, cols - 1],
@@ -29486,16 +28813,19 @@ var RareCharts = (() => {
       // right-mid
     ];
     keys.forEach((key, ki) => {
-      const [ar, ac2] = anchorCells[ki % anchorCells.length];
-      const ax = cxOf(ac2), ay = cyOf(ar);
-      const list = members.get(key).slice().sort((x5, y5) => (y5.depth ?? 0) - (x5.depth ?? 0) || String(x5.label ?? x5.id).localeCompare(String(y5.label ?? y5.id)));
+      const centred = dominant && ki === 0;
+      const [ar, ac2] = centred ? [rootR, rootC] : anchorCells[(ki - (dominant ? 1 : 0)) % anchorCells.length];
+      const pull = dominant && !centred ? 0.5 : 1;
+      const ax = cxOf(rootC) + (cxOf(ac2) - cxOf(rootC)) * pull;
+      const ay = cyOf(rootR) + (cyOf(ar) - cyOf(rootR)) * pull;
+      const list = members.get(key).slice().sort((x5, y5) => (centred ? (x5.depth ?? 0) - (y5.depth ?? 0) : (y5.depth ?? 0) - (x5.depth ?? 0)) || String(x5.label ?? x5.id).localeCompare(String(y5.label ?? y5.id)));
       list.forEach((n) => {
         let best = null, bestD = Infinity;
         for (let r = 0; r < rows; r++) {
           for (let c6 = 0; c6 < cols; c6++) {
             if (!free(r, c6)) continue;
             const dx = cxOf(c6) - ax, dy = cyOf(r) - ay;
-            const d = dx * dx + dy * dy;
+            const d = centred ? (dx / gw) ** 2 + (dy / gh) ** 2 + (Math.atan2(dy, dx) + Math.PI * 2.5) % (Math.PI * 2) * 1e-9 : dx * dx + dy * dy;
             if (d < bestD - 1e-9) {
               bestD = d;
               best = [r, c6];
@@ -29504,15 +28834,32 @@ var RareCharts = (() => {
         }
         if (!best) return;
         take(best[0], best[1]);
+        rowOf.set(n.id, best[0]);
         positions.set(n.id, { x: cxOf(best[1]), y: cyOf(best[0]), depth: n.depth ?? 1 });
       });
+      if (centred) {
+        sectors.push({ key, angle: Math.PI / 2, x: W / 2, y: pad3 * 0.4 });
+        return;
+      }
       const onTop = ar === 0, onBottom = ar === rows - 1;
       const x4 = ac2 === 0 ? pad3 * 0.35 : ac2 === cols - 1 ? W - pad3 * 0.35 : ax;
       const y4 = onTop ? pad3 * 0.4 : onBottom ? H - pad3 * 0.35 : ay;
       const angle2 = Math.atan2(H / 2 - y4, W / 2 - x4);
       sectors.push({ key, angle: angle2, x: x4, y: y4 });
     });
-    return { positions, sectors };
+    const used = [...rowOf.values()];
+    const rMin = Math.min(...used), rMax = Math.max(...used);
+    const yTop = nodeRadius + 6 + (sectorLabels ? 14 : 0);
+    const yBot = H - nodeRadius - 22 - (sectorLabels ? 14 : 0);
+    if (rMax > rMin && yBot > yTop) {
+      const step = Math.min((yBot - yTop) / (rMax - rMin), cellH * 1.6);
+      const span = step * (rMax - rMin);
+      const y06 = yTop + (yBot - yTop - span) / 2;
+      positions.forEach((pos, id2) => {
+        pos.y = y06 + (rowOf.get(id2) - rMin) * step;
+      });
+    }
+    return { positions, sectors, cellW };
   }
 
   // assets/charts/src/graph/layouts/path.js
@@ -29527,7 +28874,7 @@ var RareCharts = (() => {
     const pad3 = padX ?? (context ? 150 : 70);
     const usableW = Math.max(1, W - pad3 * 2);
     const count3 = paths.length;
-    const rowGap = count3 > 1 ? Math.min(110, (H - 120) / (count3 - 1)) : 0;
+    const rowGap = count3 > 1 ? Math.min(150, (H - 76) / (count3 - 1)) : 0;
     const yForRow = (row) => H / 2 + (row - (count3 - 1) / 2) * rowGap;
     paths.forEach((p, row) => {
       const last = Math.max(1, p.length - 1);
@@ -29541,7 +28888,14 @@ var RareCharts = (() => {
           hop
         });
       });
-      rows.push({ y: yForRow(row), hops: p.length - 1, shortest: row === 0 });
+      const hops = p.length - 1;
+      rows.push({
+        y: yForRow(row),
+        hops,
+        shortest: row === 0,
+        x: hops > 1 ? pad3 + usableW / last : pad3 + usableW / 2,
+        direct: hops <= 1
+      });
     });
     if (context) {
       const fan = (ids, at, side) => {
@@ -29572,7 +28926,9 @@ var RareCharts = (() => {
   // assets/charts/src/graph/layouts/cluster.js
   function clusterLayout({ nodes = [] } = {}, {
     width: W = 800,
-    height: H = 520
+    height: H = 520,
+    pad: pad3 = 48,
+    nodeRadius = 22
   } = {}) {
     const positions = /* @__PURE__ */ new Map();
     if (!nodes.length) return positions;
@@ -29581,10 +28937,39 @@ var RareCharts = (() => {
       positions.set(nodes[0].id, { x: cx, y: cy });
       return positions;
     }
-    const R = Math.min(W, H) * 0.37;
-    nodes.forEach((n, i) => {
-      const angle2 = -Math.PI / 2 + i / nodes.length * Math.PI * 2;
-      positions.set(n.id, { x: cx + R * Math.cos(angle2), y: cy + R * Math.sin(angle2) });
+    const gw = Math.max(1, W - pad3 * 2);
+    const gh = Math.max(1, H - pad3 * 2);
+    const n = nodes.length;
+    const cols = Math.max(1, Math.min(n, Math.round(Math.sqrt(n * gw / gh))));
+    const rows = Math.ceil(n / cols);
+    const cellW = gw / cols, cellH = gh / rows;
+    const cells = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c6 = 0; c6 < cols; c6++) {
+        const x4 = pad3 + cellW * (c6 + 0.5), y4 = pad3 + cellH * (r + 0.5);
+        const d = Math.hypot(x4 - cx, y4 - cy);
+        const a4 = (Math.atan2(y4 - cy, x4 - cx) + Math.PI * 2.5) % (Math.PI * 2);
+        cells.push({ x: x4, y: y4, d, a: a4 });
+      }
+    }
+    cells.sort((p, q) => p.d - q.d || p.a - q.a);
+    nodes.forEach((node, i) => {
+      const cell = cells[i];
+      positions.set(node.id, { x: cell.x, y: cell.y, row: Math.round((cell.y - pad3) / cellH - 0.5) });
+    });
+    const radiusOf = (n2) => nodeRadius * (n2.size ?? 1);
+    const usedRows = [...new Set([...positions.values()].map((p) => p.row))].sort((a4, b) => a4 - b);
+    if (usedRows.length > 1) {
+      const rowR = (r) => Math.max(...nodes.filter((n2) => positions.get(n2.id).row === r).map(radiusOf));
+      const yTop = rowR(usedRows[0]) + 6;
+      const yBot = H - rowR(usedRows[usedRows.length - 1]) - 22;
+      const step = (yBot - yTop) / (usedRows.length - 1);
+      positions.forEach((p) => {
+        p.y = yTop + usedRows.indexOf(p.row) * step;
+      });
+    }
+    positions.forEach((p) => {
+      delete p.row;
     });
     return positions;
   }
@@ -29674,6 +29059,7 @@ var RareCharts = (() => {
       this._nodeIcons = options.nodeIcons === false ? null : { ...defaultNodeIcons, ...options.nodeIcons ?? {} };
       this._initSVG();
       this._initGraphChrome();
+      this._initDetails();
     }
     // ─── Public API ───────────────────────────────────────────────────────────
     // Ego view around `id`: fetch its neighborhood, merge into the model,
@@ -29961,10 +29347,11 @@ var RareCharts = (() => {
           this._maybeSemanticZoom(event.transform.k);
         });
         this.svg.call(this._zoom).on("dblclick.zoom", null);
-        this._initZoomControls();
       }
+      this._initTools();
     }
     _initGraphChrome() {
+      this.container.style.position = "relative";
       this._breadcrumbsEl = document.createElement("nav");
       this._breadcrumbsEl.className = "rc-graph-breadcrumbs";
       this._breadcrumbsEl.setAttribute("aria-label", "Graph navigation");
@@ -29979,28 +29366,229 @@ var RareCharts = (() => {
       });
       this.container.appendChild(this._overflowEl);
     }
-    _initZoomControls() {
+    // ─── Details panel ────────────────────────────────────────────────────────
+    _initDetails() {
+      const d = this.options.details;
+      if (!d) return;
+      let el;
+      if (d === true) {
+        el = document.createElement("div");
+        this._detailsOwned = true;
+      } else {
+        el = typeof d === "string" ? document.querySelector(d) : d;
+        if (!(el instanceof HTMLElement)) return;
+        this._detailsOwned = false;
+      }
+      el.classList.add("rc-graph-details");
+      if (!el.hasAttribute("aria-live")) el.setAttribute("aria-live", "polite");
+      this._detailsEl = el;
+      this._detailsSubject = null;
+      this.container.appendChild(el);
+    }
+    // Side or below, by card width. Returns the width the layout must leave
+    // free on the right (0 when the panel sits below).
+    _layoutDetails() {
+      const el = this._detailsEl;
+      if (!el) return 0;
+      const o = this.options;
+      const cs = window.getComputedStyle(this.container);
+      const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+      const cw = this.container.clientWidth - padL - padR;
+      this._detailsInset = padR;
+      const width = o.detailsWidth ?? 300;
+      const minDrawing = this._view === "flow" ? o.minWidth ?? 0 : 0;
+      const side = cw >= (o.detailsBreakpoint ?? 1e3) && cw >= minDrawing + width + 12;
+      this.container.classList.toggle("rc-graph--details-side", side);
+      this.container.classList.toggle("rc-graph--details-below", !side);
+      if (!this._expanded) {
+        this._baseCardHeight ??= this.container.style.height;
+        const base = parseFloat(this._baseCardHeight) || o.height || 520;
+        const want = side ? `${base}px` : `${base + (o.detailsHeight ?? 200)}px`;
+        if (this.container.style.height !== want) this.container.style.height = want;
+      }
+      el.style.width = side ? `${width}px` : "";
+      el.style.height = side ? "" : `${o.detailsHeight ?? 200}px`;
+      const clear = side ? `${width + 12}px` : "";
+      if (this._legendEl) this._legendEl.style.marginRight = clear;
+      if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
+      return side ? width + 12 : 0;
+    }
+    // Side panel: aligned with the drawing's top and height. Called after the
+    // drawing and its legend are done — the legend's height moves the svg.
+    _placeDetails(svgEl) {
+      const el = this._detailsEl;
+      if (!el || !this.container.classList.contains("rc-graph--details-side")) {
+        if (el) {
+          el.style.top = "";
+          el.style.height = el.style.height || "";
+        }
+        return;
+      }
+      const svgBox = svgEl.getBoundingClientRect();
+      const cardBox = this.container.getBoundingClientRect();
+      const top2 = svgBox.top - cardBox.top - this.container.clientTop + this.container.scrollTop;
+      el.style.top = `${top2}px`;
+      el.style.right = `${this._detailsInset ?? 0}px`;
+      el.style.height = `${svgBox.height}px`;
+    }
+    // What the panel shows: a hovered/selected node or tie, else the default
+    // (the focused node in the ego view, nothing elsewhere).
+    _showDetails(subject) {
+      this._detailsSubject = subject;
+      this._refreshDetails();
+    }
+    _refreshDetails() {
+      const el = this._detailsEl;
+      if (!el || !this._detailsOwned) return;
+      let subject = this._detailsSubject;
+      if (subject?.node && !(this._shown ?? this._viewData)?.nodes?.some((n) => n.id === subject.node.id)) subject = null;
+      if (!subject && this._view === "ego" && this._root != null) {
+        const root3 = this._model.node(this._root);
+        if (root3) subject = { node: root3 };
+      }
+      const fmt = this.options.detailsFormat;
+      el.innerHTML = fmt ? fmt({ node: subject?.node ?? null, link: subject?.link ?? null, view: this._view }) : this._defaultDetails(subject);
+    }
+    _defaultDetails(subject) {
       const t = this.theme;
-      this.container.style.position = "relative";
-      const wrap = document.createElement("div");
-      wrap.className = "rc-graph-zoom-controls";
-      wrap.style.cssText = "position:absolute;left:8px;bottom:8px;display:flex;flex-direction:row;gap:4px;z-index:2;";
-      this._zoomControlsEl = wrap;
-      const mk = (label, title, fn) => {
+      const esc3 = escapeHtml;
+      const kind = (txt) => `<p class="rc-graph-details-kind">${esc3(txt)}</p>`;
+      const row = (k2, v2) => `<dt>${esc3(k2)}</dt><dd>${v2}</dd>`;
+      const nameOf = (id2) => esc3(this._model.node(id2)?.label ?? id2);
+      if (subject?.node) {
+        const n = subject.node;
+        const ties = this._model.toData().links.filter((l) => l.source === n.id || l.target === n.id);
+        const group2 = this.options.nodeGroups?.[n.group]?.label ?? n.group;
+        const list = ties.slice(0, 12).map((l) => {
+          const other = l.source === n.id ? l.target : l.source;
+          const dir = l.source === n.id ? "\u2192" : "\u2190";
+          const extra = l.label ?? (l.value != null ? Number(l.value).toLocaleString() : "");
+          const type2 = this._linkTypes[l.type ?? "default"]?.label ?? l.type ?? "";
+          return `<li>${dir} ${nameOf(other)}${type2 ? ` <span class="rc-graph-details-muted">\xB7 ${esc3(type2)}</span>` : ""}${extra ? ` <span class="rc-graph-details-muted">\xB7 ${esc3(extra)}</span>` : ""}</li>`;
+        }).join("");
+        const more = ties.length > 12 ? `<p class="rc-graph-details-muted">+${ties.length - 12} more</p>` : "";
+        return `${group2 ? kind(group2) : ""}<h4>${esc3(n.label ?? n.id)}</h4>
+        ${n.sub ? `<p class="rc-graph-details-muted">${esc3(n.sub)}</p>` : ""}
+        ${n.note ?? n.description ? `<p>${esc3(n.note ?? n.description)}</p>` : ""}
+        <dl>${row("Connections", String(ties.length))}</dl>
+        ${list ? `<ul>${list}</ul>${more}` : ""}`;
+      }
+      if (subject?.link) {
+        const l = subject.link;
+        const type2 = this._linkTypes[l.type ?? "default"]?.label ?? l.type;
+        const period2 = [l.start, l.end].filter((v2) => v2 != null && v2 !== "").map(esc3).join(" \u2013 ");
+        const sources = Array.isArray(l.sources) ? l.sources.map((src) => {
+          const url = typeof src === "string" ? src : src?.url;
+          const title = typeof src === "string" ? src : src?.title ?? src?.url;
+          return safeUrl(url) ? `<li><a href="${esc3(url)}" target="_blank" rel="noopener noreferrer">${esc3(title)}</a></li>` : `<li>${esc3(title ?? "")}</li>`;
+        }).join("") : "";
+        return `${type2 ? kind(type2) : ""}<h4>${nameOf(l.source)} \u2192 ${nameOf(l.target)}</h4>
+        <dl>${l.label ? row("Label", esc3(l.label)) : ""}${l.value != null && l.value !== "" ? row("Value", esc3(typeof l.value === "number" ? l.value.toLocaleString() : l.value)) : ""}${period2 ? row("Period", period2) : ""}</dl>
+        ${sources ? `<ul>${sources}</ul>` : ""}`;
+      }
+      const hint = this._view === "flow" ? "Select a node or a tie to see its details." : "Hover a node, or click a tie, to see its details.";
+      return `${kind("Details")}<p style="color:${t.muted}">${hint}</p>`;
+    }
+    // Footer tools, right of the source line: the "+N more" and "N hidden"
+    // notes, zoom buttons, full screen. Never over the canvas, where they
+    // covered the bottom row. A chart without source/note gets a footer row
+    // just for them.
+    _initTools() {
+      const t = this.theme;
+      const tools = document.createElement("div");
+      tools.className = "rc-graph-tools";
+      this._toolsEl = tools;
+      const mkButton = (label, title, fn, cls = "") => {
         const b = document.createElement("button");
         b.type = "button";
         b.textContent = label;
         b.title = title;
-        b.style.cssText = `width:26px;height:26px;padding:0;border:1px solid ${t.border ?? t.muted};border-radius:4px;background:${t.bg ?? "#fff"};color:${t.text};font-size:14px;line-height:1;cursor:pointer;`;
+        b.setAttribute("aria-label", title);
+        if (cls) b.className = cls;
+        b.style.cssText = `height:26px;min-width:26px;padding:0 6px;border:1px solid ${t.border ?? t.muted};border-radius:4px;background:${t.bg ?? "#fff"};color:${t.text};font-size:14px;line-height:1;cursor:pointer;`;
         b.addEventListener("click", fn);
-        wrap.appendChild(b);
+        return b;
       };
-      mk("+", "Zoom in", () => this._zoomBy(1.4));
-      mk("\u2212", "Zoom out", () => this._zoomBy(1 / 1.4));
-      mk("\u27F2", "Reset view", () => {
-        if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, identity5);
+      const mkNote = (cls, fn) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = cls;
+        b.hidden = true;
+        b.addEventListener("click", fn);
+        tools.appendChild(b);
+        return b;
+      };
+      this._overflowNoteEl = mkNote("rc-graph-note", () => this._toggleOverflow());
+      this._hiddenNoteEl = mkNote("rc-graph-hidden-note", () => {
+        this._hidden.clear();
+        this.render();
       });
-      this.container.appendChild(wrap);
+      if (this.options.zoom !== false) {
+        const zoom = document.createElement("div");
+        zoom.className = "rc-graph-zoom-controls";
+        zoom.setAttribute("role", "group");
+        zoom.setAttribute("aria-label", "Zoom");
+        zoom.append(
+          mkButton("+", "Zoom in", () => this._zoomBy(1.4)),
+          mkButton("\u2212", "Zoom out", () => this._zoomBy(1 / 1.4)),
+          mkButton("\u27F2", "Reset view", () => {
+            if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, identity5);
+          })
+        );
+        tools.appendChild(zoom);
+        this._zoomControlsEl = zoom;
+      }
+      if (this.options.fullscreen !== false) {
+        this._fullscreenBtn = mkButton("\u26F6", "Full screen", () => this.toggleFullscreen(), "rc-graph-fullscreen");
+        tools.appendChild(this._fullscreenBtn);
+        this._onFullscreenChange = () => this._syncFullscreen(document.fullscreenElement === this.container);
+        document.addEventListener("fullscreenchange", this._onFullscreenChange);
+        this._onFullscreenKey = (event) => {
+          if (event.key === "Escape" && this._expanded && !document.fullscreenElement) this.toggleFullscreen(false);
+        };
+        document.addEventListener("keydown", this._onFullscreenKey);
+      }
+      if (!this._footerEl) {
+        this._footerEl = document.createElement("div");
+        this._footerEl.className = "rc-chart-footer";
+        this.container.appendChild(this._footerEl);
+      }
+      this._footerEl.classList.add("rc-chart-footer--tools");
+      this._footerEl.insertBefore(tools, this._sourceEl ? this._sourceEl.nextSibling : this._footerEl.firstChild);
+    }
+    // Full screen: the Fullscreen API where it exists (Esc exits natively),
+    // otherwise a fixed overlay with our own Esc. The card stretches to the
+    // screen; the resize re-lays the graph out, so more of it fits.
+    toggleFullscreen(on = !this._expanded) {
+      const el = this.container;
+      if (on === this._expanded) return this;
+      if (el.requestFullscreen && document.fullscreenEnabled !== false) {
+        if (on) el.requestFullscreen().catch(() => this._syncFullscreen(true));
+        else if (document.fullscreenElement === el) document.exitFullscreen();
+        else this._syncFullscreen(false);
+      } else {
+        this._syncFullscreen(on);
+      }
+      return this;
+    }
+    _syncFullscreen(on) {
+      if (on === this._expanded) return;
+      this._expanded = on;
+      const el = this.container;
+      if (on) {
+        this._savedHeight = el.style.height;
+        el.style.height = "100vh";
+        el.classList.add("rc-graph--fullscreen");
+      } else {
+        el.style.height = this._savedHeight ?? "";
+        el.classList.remove("rc-graph--fullscreen");
+      }
+      if (this._fullscreenBtn) {
+        this._fullscreenBtn.textContent = on ? "\u2715" : "\u26F6";
+        this._fullscreenBtn.title = on ? "Exit full screen (Esc)" : "Full screen";
+        this._fullscreenBtn.setAttribute("aria-label", this._fullscreenBtn.title);
+      }
+      requestAnimationFrame?.(() => this.render());
     }
     _zoomBy(factor) {
       if (!this._zoom) return;
@@ -30009,22 +29597,29 @@ var RareCharts = (() => {
     // ─── Render ───────────────────────────────────────────────────────────────
     render() {
       if (!this._viewData?.nodes?.length) return;
+      const reserve = this._layoutDetails();
       if (this._view === "flow") {
         const minW = this.options.minWidth ?? 0;
-        this.svg.style("min-width", minW ? `${minW}px` : null);
+        this.svg.style("min-width", minW ? `${minW + reserve}px` : null);
         this.container.style.overflowX = minW ? "auto" : "";
       }
       const svgEl = this.svg?.node();
-      const W = svgEl?.clientWidth || this.width;
+      const svgW = svgEl?.clientWidth || this.width;
+      const W = svgW - reserve;
       const H = svgEl?.clientHeight || this.height;
       if (W <= 0 || H <= 0) return;
       if (this._view === "flow") {
         [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes].forEach((g) => g?.selectAll("*").remove());
-        this.gRoot.selectAll(".rc-graph-note, .rc-graph-row-label, .rc-graph-hidden-note").remove();
+        this.gRoot.selectAll(".rc-graph-row-label").remove();
+        if (this._overflowNoteEl) this._overflowNoteEl.hidden = true;
+        if (this._hiddenNoteEl) this._hiddenNoteEl.hidden = true;
         if (this._tooltip?.isPinned) this._tooltip.unpin();
         this._flow().render(W, H);
-        this._pinZoomControls(svgEl, H);
         this._hasRendered = true;
+        this._renderedSize = { W: svgW, H };
+        this._refreshDetails();
+        this._placeDetails(svgEl);
+        this._refitIfResized();
         return;
       }
       this._flowView?.clear();
@@ -30048,10 +29643,13 @@ var RareCharts = (() => {
           rootId: this._root,
           width: W,
           height: H,
+          nodeRadius: this.options.nodeRadius ?? 22,
+          sectorLabels: this.options.sectorLabels === true,
           groupBy: this.options.groupBy ?? "group"
         });
         positions = res.positions;
         sectors = res.sectors;
+        this._egoCellW = res.cellW;
       } else if (this._view === "path") {
         const res = pathLayout(
           { paths: this._paths ?? [], context: this._ctxIds },
@@ -30060,30 +29658,47 @@ var RareCharts = (() => {
         positions = res.positions;
         this._rows = res.rows;
       } else {
-        positions = clusterLayout(this._shown, { width: W, height: H });
+        positions = clusterLayout(this._shown, {
+          width: W,
+          height: H,
+          nodeRadius: this.options.nodeRadius ?? 22
+        });
       }
       this._manual.forEach((p, id2) => {
         const cur = positions.get(id2);
         if (cur) positions.set(id2, { ...cur, x: p.x, y: p.y });
       });
+      this._labelRoom = this._view === "ego" ? this._egoCellW - 6 : null;
       this._draw(positions, W, H, sectors);
-      this._pinZoomControls(svgEl, H);
       this._hasRendered = true;
+      this._renderedSize = { W: svgW, H };
+      this._refreshDetails();
+      this._placeDetails(svgEl);
+      this._refitIfResized();
     }
-    // Pin the zoom controls to the bottom-left corner of the svg itself
-    // (the container also holds the header, legend, and footer).
-    _pinZoomControls(svgEl, H) {
-      if (!this._zoomControlsEl || !svgEl?.getBoundingClientRect) return;
-      const svgTop = svgEl.getBoundingClientRect().top - this.container.getBoundingClientRect().top;
-      this._zoomControlsEl.style.bottom = "";
-      this._zoomControlsEl.style.top = `${Math.max(0, svgTop + H - 34)}px`;
+    // Chrome drawn after the layout — the legend for the new view, the
+    // breadcrumb trail after a navigation — takes height from the svg (it is
+    // a flex child of a fixed-height card), and nothing resizes the container
+    // to tell us. Without this check the bottom row ended up below the edge.
+    _refitIfResized() {
+      if (this._refitting || !this._renderedSize) return;
+      const svgEl = this.svg?.node();
+      const w = svgEl?.clientWidth, h = svgEl?.clientHeight;
+      if (!w || !h) return;
+      if (Math.abs(w - this._renderedSize.W) <= 1 && Math.abs(h - this._renderedSize.H) <= 1) return;
+      this._refitting = true;
+      try {
+        this.render();
+      } finally {
+        this._refitting = false;
+      }
     }
     // How many nodes fit: one per comfortable grid cell (~96×74 px with the
     // label), minus the root's. Keeps first-ring and best-connected nodes;
     // the rest stay in the model and reappear on recenter or a larger canvas.
     _trimToCapacity(data, W, H) {
       const o = this.options;
-      const max5 = o.maxNodes == null || o.maxNodes === "auto" ? Math.max(12, Math.floor(W / 96) * Math.floor(H / 74) - 1) : o.maxNodes;
+      const max5 = o.maxNodes == null || o.maxNodes === "auto" ? Math.max(12, egoCapacity(W, H, o.nodeRadius ?? 22)) : o.maxNodes;
       if (data.nodes.length <= max5) {
         this._hiddenCount = 0;
         this._overflowNodes = [];
@@ -30152,7 +29767,7 @@ var RareCharts = (() => {
         const ex = e.x - dx / len * rT;
         const ey = e.y - dy / len * rT;
         const { index: index3 = 0, count: count3 = 1 } = par.get(d.id) ?? {};
-        const base = this._view === "ego" && len >= 40 ? Math.min(26, len * 0.08) : 0;
+        const base = this._view !== "path" && len >= 40 ? Math.min(26, len * 0.08) : 0;
         const flip = d.source > d.target ? -1 : 1;
         const fan = count3 > 1 ? (index3 - (count3 - 1) / 2) * 16 * flip : 0;
         const bow = base + fan;
@@ -30169,7 +29784,6 @@ var RareCharts = (() => {
         if (!g) return "";
         return g.curved ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}` : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
       };
-      const linkMid = (d) => linkGeom(d)?.mid ?? { x: 0, y: 0 };
       const linkKey = (d) => pairKey(d.source, d.target);
       const linkSel = this.gLinks.selectAll(".rc-graph-link").data(links, (d) => d.id).join(
         (enter) => enter.append("path").attr("class", "rc-graph-link").attr("fill", "none").attr("d", linkD).attr("stroke-opacity", 0),
@@ -30189,7 +29803,43 @@ var RareCharts = (() => {
       this._linkOpacity = linkOpacity;
       (dur ? linkSel.transition().duration(dur) : linkSel).attr("d", linkD).attr("stroke-opacity", linkOpacity);
       const badgeSel = this.gLinkBadges.selectAll(".rc-graph-link-more").data(links.filter((l) => l._siblings), (d) => d.id).join("text").attr("class", "rc-graph-link-more").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").style("pointer-events", "none").text((d) => `+${d._siblings.length - 1}`);
-      const placeBadges = (sel) => sel.attr("x", (d) => linkMid(d).x).attr("y", (d) => linkMid(d).y);
+      const nodeBoxes = () => nodes.map((n) => {
+        const p = positions.get(n.id);
+        if (!p) return null;
+        const r = nodeR(n);
+        const w = Math.max(2 * r, String(n.label ?? n.id).length * 6.2);
+        return [
+          { x0: p.x - r, x1: p.x + r, y0: p.y - r, y1: p.y + r },
+          { x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + r + 3, y1: p.y + r + 19 }
+        ];
+      }).filter(Boolean).flat();
+      const badgeAt = (d, obstacles) => {
+        const g = linkGeom(d);
+        if (!g) return { x: 0, y: 0 };
+        const q = (tt) => ({
+          x: (1 - tt) ** 2 * g.s.x + 2 * (1 - tt) * tt * g.c.x + tt ** 2 * g.e.x,
+          y: (1 - tt) ** 2 * g.s.y + 2 * (1 - tt) * tt * g.c.y + tt ** 2 * g.e.y
+        });
+        const dx = g.e.x - g.s.x, dy = g.e.y - g.s.y, len = Math.hypot(dx, dy) || 1;
+        const nx = -dy / len, ny = dx / len;
+        const half = 9;
+        for (const tt of [0.5, 0.4, 0.6, 0.3, 0.7]) {
+          for (const off of [0, 12, -12]) {
+            const p = q(tt);
+            const x4 = p.x + nx * off, y4 = p.y + ny * off;
+            const hit = obstacles.some((b) => x4 + half > b.x0 && x4 - half < b.x1 && y4 + 7 > b.y0 && y4 - 7 < b.y1);
+            if (!hit) return { x: x4, y: y4 };
+          }
+        }
+        return g.mid;
+      };
+      const placeBadges = (sel) => {
+        const obstacles = nodeBoxes();
+        sel.each(function(d) {
+          const p = badgeAt(d, obstacles);
+          select_default2(this).attr("x", p.x).attr("y", p.y);
+        });
+      };
       placeBadges(badgeSel);
       const hitSel = this.gLinkHits.selectAll(".rc-graph-link-hit").data(links, (d) => d.id).join("path").attr("class", "rc-graph-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 12).style("pointer-events", "stroke").style("cursor", "pointer").attr("d", linkD);
       const tieHtml = (d) => {
@@ -30210,8 +29860,12 @@ var RareCharts = (() => {
         event.stopPropagation();
         const [mx, my] = pointer_default(event, this.container);
         this._highlightTie(d, nodeSel, linkSel);
+        this._showDetails({ link: d });
         this._tooltip.pin(mx, my, tieHtml(d), {
-          onClose: () => this._highlight(null, nodeSel, linkSel)
+          onClose: () => {
+            this._highlight(null, nodeSel, linkSel);
+            this._showDetails(null);
+          }
         });
       });
       this._redrawTies = (id2) => {
@@ -30239,7 +29893,13 @@ var RareCharts = (() => {
       );
       nodeSel.select(".rc-graph-node-ring").attr("r", (d) => nodeR(d) + 4);
       nodeSel.select(".rc-graph-node-circle").attr("r", (d) => nodeR(d)).attr("fill", fillOf).attr("stroke", strokeOf);
-      nodeSel.select(".rc-graph-node-label").attr("y", (d) => nodeR(d) + 5).text((d) => d.label ?? d.id);
+      const room = this._labelRoom;
+      nodeSel.select(".rc-graph-node-ring").attr("opacity", 0);
+      nodeSel.select(".rc-graph-node-label").attr("y", (d) => nodeR(d) + 5).each(function(d) {
+        const full = d.label ?? d.id;
+        if (room) fitTextNode(this, full, room);
+        else this.textContent = full;
+      });
       nodeSel.select(".rc-graph-node-icon").attr("d", (d) => this._nodeIcons?.[d.group] ?? null).attr("fill", (d) => isDark(d) ? t.bg ?? "#ffffff" : t.text).attr("transform", (d) => {
         const s2 = nodeR(d) * 1.24 / 24;
         return `translate(${-12 * s2},${-12 * s2}) scale(${s2})`;
@@ -30262,6 +29922,7 @@ var RareCharts = (() => {
       nodeSel.on("mouseover", (event, d) => {
         select_default2(event.currentTarget).select(".rc-graph-node-ring").attr("stroke", t.accent).attr("opacity", 0.5);
         if (this._tooltip.isPinned) return;
+        this._showDetails({ node: d });
         const nodeLinks = allTies.filter((l) => l.source === d.id || l.target === d.id);
         const html2 = o.tooltipFormat ? o.tooltipFormat({ node: d, links: nodeLinks }) : this._defaultTooltip(d, nodeLinks);
         const [mx, my] = pointer_default(event, this.container);
@@ -30272,6 +29933,7 @@ var RareCharts = (() => {
         if (this._tooltip.isPinned) return;
         this._tooltip.hide();
         this._highlight(null, nodeSel, linkSel);
+        this._showDetails(null);
       });
       nodeSel.on("contextmenu", (event, d) => {
         if (this._view !== "ego" || d.id === this._root) return;
@@ -30291,32 +29953,38 @@ var RareCharts = (() => {
       });
       const showSectors = o.sectorLabels === true && (sectors?.length ?? 0) > 1;
       this.gSectors.selectAll(".rc-graph-sector-label").data(showSectors ? sectors : [], (d) => d.key).join("text").attr("class", "rc-graph-sector-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => Math.cos(d.angle) > 0.35 ? "start" : Math.cos(d.angle) < -0.35 ? "end" : "middle").attr("dominant-baseline", "middle").attr("fill", t.muted).style("pointer-events", "none").text((d) => d.key);
-      const note = this._view === "ego" && this._hiddenCount > 0 ? [`+${this._hiddenCount} more \u2014 enlarge the chart or recenter to reveal`] : [];
-      this.gRoot.selectAll(".rc-graph-note").data(note).join("text").attr("class", "rc-graph-note").attr("x", 104).attr("y", H - 14).attr("fill", t.muted).style("cursor", "pointer").attr("role", "button").attr("tabindex", 0).text((d) => d).on("click", () => this._toggleOverflow()).on("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          this._toggleOverflow();
-        }
-      });
+      if (this._overflowNoteEl) {
+        const n = this._view === "ego" ? this._hiddenCount : 0;
+        this._overflowNoteEl.hidden = !n;
+        this._overflowNoteEl.textContent = n ? `+${n} more` : "";
+        this._overflowNoteEl.title = n ? `${n} more node${n === 1 ? "" : "s"} did not fit \u2014 open full screen, or pick one to recenter on it` : "";
+      }
       this._renderOverflow();
       const rowLabels = this._view === "path" && this._rows?.length ? this._rows : [];
-      this.gRoot.selectAll(".rc-graph-row-label").data(rowLabels, (d, i) => i).join("text").attr("class", "rc-graph-row-label").attr("x", 8).attr("y", (d) => d.y + 3).attr("fill", t.muted).text((d) => `${d.hops} hop${d.hops !== 1 ? "s" : ""}${d.shortest ? " \xB7 shortest" : ""}`);
-      const hiddenNote = this._view === "ego" && this._hidden.size > 0 ? [`${this._hidden.size} hidden \xB7 restore`] : [];
-      this.gRoot.selectAll(".rc-graph-hidden-note").data(hiddenNote).join("text").attr("class", "rc-graph-hidden-note").attr("x", W - 10).attr("y", H - 8).attr("text-anchor", "end").attr("fill", t.muted).style("cursor", "pointer").text((d) => d).on("click", () => {
-        this._hidden.clear();
-        this.render();
-      });
+      this.gRoot.selectAll(".rc-graph-row-label").data(rowLabels, (d, i) => i).join("text").attr("class", "rc-graph-row-label").attr("x", (d) => d.x ?? 8).attr("y", (d) => d.direct ? d.y - 10 : d.y - (o.nodeRadius ?? 22) - 8).attr("text-anchor", (d) => d.x != null ? "middle" : "start").attr("fill", t.muted).text((d) => `${d.hops} hop${d.hops !== 1 ? "s" : ""}${d.shortest ? " \xB7 shortest" : ""}`);
+      if (this._hiddenNoteEl) {
+        const n = this._view === "ego" ? this._hidden.size : 0;
+        this._hiddenNoteEl.hidden = !n;
+        this._hiddenNoteEl.textContent = n ? `${n} hidden \xB7 restore` : "";
+      }
       if (this._view === "cluster") this._legendEl.innerHTML = "";
       else this._renderLegend(typesInUse, t);
     }
     // ─── Node dragging ────────────────────────────────────────────────────────
     _dragBehavior(positions) {
       const self = this;
-      return drag_default().clickDistance(5).on("start", function() {
+      const SLOP = 6;
+      return drag_default().clickDistance(5).subject((event, d) => {
+        const p = positions.get(d.id) ?? { x: 0, y: 0 };
+        return { x: p.x, y: p.y, x0: p.x, y0: p.y };
+      }).on("start", function() {
         select_default2(this).style("cursor", "grabbing");
       }).on("drag", function(event, d) {
         const p = positions.get(d.id);
         if (!p) return;
+        const s2 = event.subject;
+        if (!s2.moved && Math.hypot(event.x - s2.x0, event.y - s2.y0) < SLOP) return;
+        s2.moved = true;
         p.x = event.x;
         p.y = event.y;
         self._manual.set(d.id, { x: event.x, y: event.y });
@@ -30498,6 +30166,7 @@ var RareCharts = (() => {
       if (this.options.breadcrumbs === false || this._history.length < 2) {
         this._breadcrumbsEl.hidden = true;
         this._breadcrumbsEl.replaceChildren();
+        this._refitIfResized();
         return;
       }
       this._breadcrumbsEl.hidden = false;
@@ -30517,6 +30186,7 @@ var RareCharts = (() => {
         });
         this._breadcrumbsEl.appendChild(button);
       });
+      this._refitIfResized();
     }
     _historyLabel(state) {
       if (state.view === "cluster") return "Overview";
@@ -30629,6 +30299,8 @@ var RareCharts = (() => {
     }
     // ─── Cleanup ──────────────────────────────────────────────────────────────
     destroy() {
+      if (this._onFullscreenChange) document.removeEventListener("fullscreenchange", this._onFullscreenChange);
+      if (this._onFullscreenKey) document.removeEventListener("keydown", this._onFullscreenKey);
       this._tooltip?.destroy();
       this._tooltip = null;
       super.destroy();
