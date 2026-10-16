@@ -29,7 +29,7 @@ Without it the page is **unstyled**: every library rule is gated by `.rd`.
 | 7 | `.padding*-auto` | 28 classes (`padding`, `-t/-r/-b/-l/-x/-y`, base and `mobile:`/`tablet:`/`desktop:`); `padding: auto` is invalid, so they computed to `padding: 0` | Removed | Use the matching `.padding*-0` (same result). No known consumer uses them | **breaking** | `CSS-346` |
 | 8 | `--text-color-light` | `var(--gray-trans)` `#888` (3.1:1 on `--bg-color`) | `var(--gray-mid-dark)` `#666` (5.0:1) | None. To keep the old look: `:root { --text-color-light: var(--gray-trans) }` (fails WCAG AA) | visual | `CSS-114` |
 | 9 | Nav / sidebar / footer / submenu / `.code-comment` text | Raw `--gray-trans` / `--gray` | `--text-color-light` (row 8) | Override the token, not the rules | visual | `CSS-114` |
-| 10 | `h5`/`h6` margins | `0` (from the reset) | `var(--space-sm) 0`, same as `h4` | **Footers with `h5`/`h6` column headings grow by 16 px** (schnellreich.ru, raredigits.io). To keep zero: `footer :is(h5, h6) { margin: 0 }` | visual | `CSS-126` |
+| 10 | `h5`/`h6` margins | `0` (from the reset) | `var(--space-sm) 0`, same as `h4` | **Footers with `h5`/`h6` column headings grow by 16 px** (schnellreich.ru, raredigits.io). To keep zero: `footer :is(h5, h6) { margin: 0 }`. **Accepted as is (decided 2026-10-16):** the library keeps the rhythm, and both sites take the +16 px | visual | `CSS-126` |
 | 11 | Anchor offset | Targets landed under the fixed header | `html { scroll-padding-top: calc(var(--header-height) + var(--space-sm)) }` | If your header is not `--header-height` tall, set your own `scroll-padding-top` on `html` | behavior | `CSS-129` |
 | 12 | Keyboard focus | Browser default, partly suppressed | `:focus-visible` ring, `--focus-ring-color` (`--blue`), `--focus-ring-width` 2px, `--focus-ring-offset` 2px | Restyle via the tokens. Never remove without a replacement | new | `CSS-110` |
 | 13 | Search input focus | `--brand-color` outline (1.2:1) | Focus-ring tokens | None | visual | `CSS-110` |
@@ -60,11 +60,11 @@ raredigits.io moves from `v0.6.18` and `v0.6.15`, so its bump also takes in the 
 
 **schnellreich.ru**
 - [ ] `_includes/head.njk`: pin `v0.6.19` → `v0.7.0`, `<html lang="ru">` → `<html lang="ru" class="rd">`
-- [ ] Decide on row 10 (footer `h6`)
+- [x] Row 10 decided 2026-10-16: footer +16 px accepted, no action needed (`h6`)
 - [ ] `admin/index.html` does not load Rare Styles: no change
 
 **raredigits.io**
 - [ ] `_includes/head.html`, `_includes/special/demo/demo-app-head.html`, `_includes/special/demo/corsair/head.html`: pin → `v0.7.0`, add `class="rd"`
 - [ ] 10 hard-coded demo pages (`demo/forecast/*`, `demo/columbus/*`, `demo/atlas/*`): pin `v0.6.15` → `v0.7.0`, add `class="rd"`
 - [ ] `demo/watchtower/*` does not load Rare Styles: no change
-- [ ] Decide on row 10 (footer `h5`)
+- [x] Row 10 decided 2026-10-16: footer +16 px accepted, no action needed (`h5`)
