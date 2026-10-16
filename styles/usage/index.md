@@ -24,6 +24,14 @@ For development environments or when you need unminified code:
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.css">
 ```
 
+Then opt the page in. From `v0.7.0` every library style applies only under the `.rd` class, so a page without it is left alone:
+
+```html
+<html lang="en" class="rd">
+```
+
+`class="rd"` on a single element instead styles just that block (an island). An island gets the tag styles and the library classes, but not the page shell (fixed header, footer, page grid) or the base typography of `body`.
+
 ## Understanding Cascading Styles
 The "C" in CSS stands for "Cascading," a fundamental principle that determines which styles take precedence when multiple rules apply to the same element. The system works through three key mechanisms:
 
@@ -48,33 +56,43 @@ This approach preserves all the functional benefits of Rare Styles while allowin
 - Create custom component variants
 - Add entirely new elements
 
-Here's a simple example of brand-specific customization in `my-beautiful-styles.css`:
+Here's a simple example of brand-specific customization in `my-beautiful-styles.css`. It changes the library's own tokens. Inventing new token names would do nothing, because no library rule reads them:
+
 ```css
-:root {
-  /* Override primary colors */
-  --color-primary: #0056b3;
-  --color-primary-dark: #004494;
-  --color-accent: #ff6b00;
-  
-  /* Adjust typography */
-  --font-heading: 'Montserrat', sans-serif;
+/* A font name alone loads nothing: bring the files (or a <link> to your font host) */
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/montserrat-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
 }
 
-/* Custom card style */
+:root {
+  /* Library tokens: override these, the library reads them */
+  --primary-color: #1a1a2e;              /* body text and headings */
+  --brand-color: #ff6b00;                /* brand accents */
+  --brand-color-dark: #c25100;           /* link underline and hover fill */
+  --heading-font: 'Montserrat', sans-serif;
+
+  /* Your own tokens: any name, read only by your rules below */
+  --my-accent: #0056b3;
+}
+
+/* A variant of the library's .card */
 .card.premium {
-  border-left: 4px solid var(--color-accent);
+  border-left: 4px solid var(--my-accent);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Custom button variant */
-.btn.brand {
-  background-color: var(--color-accent);
+/* A variant of the library's .button */
+.button.brand {
+  background-color: var(--brand-color);
+  border-color: var(--brand-color);
   color: white;
-  border-radius: 2px;
 }
 ```
 
-This lightweight customization adjusts the color scheme, changes the heading font, and adds two new component variants without modifying the original stylesheet.
+Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline and the heading font, and adds two variants of existing library components without modifying the original stylesheet. `--primary-font` and `--code-font` work the same way as `--heading-font`.
 
 ## Learning from Examples
 Check out the [examples section](/examples) to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.
