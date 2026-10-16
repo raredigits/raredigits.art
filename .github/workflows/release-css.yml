@@ -89,6 +89,10 @@ jobs:
         if: steps.version.outputs.release != 'skip'
         run: node scripts/size-report.mjs --check
 
+      - name: Site builds and has no broken internal links
+        if: steps.version.outputs.release != 'skip'
+        run: npm run check:links
+
       - name: Stage the release artifact
         if: steps.version.outputs.release != 'skip'
         run: node scripts/release-css.mjs stage dist/rare-styles

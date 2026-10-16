@@ -89,9 +89,9 @@ Translate concepts into concrete designs using Rare Styles principles.
 
 **Outcome:** A complete design package ready for development implementation.
 
-→ [Implementing Rare Styles grid system](guides/project-launch/grid-implementation/) (Coming soon)  
-→ [Typography implementation guide](guides/project-launch/typography/) (Coming soon)  
-→ [Component system development](guides/project-launch/component-system/) (Coming soon)
+→ Implementing Rare Styles grid system (Coming soon)  
+→ Typography implementation guide (Coming soon)  
+→ Component system development (Coming soon)
 
 ## 4. Production Phase
 
@@ -111,9 +111,9 @@ Transform designs into functioning code and infrastructure.
 
 **Outcome:** A functioning product that meets the defined requirements.
 
-→ [Development environment setup](guides/project-launch/dev-setup/) (Coming soon)  
-→ [Rare Styles implementation guide](guides/project-launch/styles-implementation/) (Coming soon)  
-→ [Testing methodology](guides/project-launch/testing/) (Coming soon)
+→ Development environment setup (Coming soon)  
+→ Rare Styles implementation guide (Coming soon)  
+→ Testing methodology (Coming soon)
 
 ## 5. Project Completion
 
@@ -130,8 +130,8 @@ Ensure a smooth transition from development to ongoing operation.
 
 **Outcome:** A successfully delivered project with clear path for future development.
 
-→ [Project retrospective guide](guides/project-launch/retrospective/) (Coming soon)  
-→ [Documentation standards](guides/project-launch/documentation/) (Coming soon)
+→ Project retrospective guide (Coming soon)  
+→ Documentation standards (Coming soon)
 
 ## The Iterative Process
 
