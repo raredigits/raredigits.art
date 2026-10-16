@@ -46,6 +46,7 @@
 .sidebar-header {
     text-transform: uppercase;
     font-weight: 700;
+    margin-top: 0;
     margin-bottom: var(--space-sm);
     white-space: nowrap;
 
@@ -96,7 +97,7 @@ h5.sidebar-header a:hover {
     margin-left: var(--space-sm);
 
     & a {
-        color: var(--text-color-lightest);
+        color: var(--text-color-light);
     }
 
     & a:hover {

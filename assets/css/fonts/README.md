@@ -5,13 +5,13 @@ render-blocking Google Fonts `@import` waterfall (`CSS-030`). The `@font-face`
 declarations live in `../modules/typography/_font-faces.scss` and reference
 these files with a relative `url('fonts/…')` path, so they resolve identically
 on the local site (`/assets/css/fonts/…`) and on jsDelivr
-(`rare-styles@<ver>/fonts/…`) after `sync-css.yml` copies `assets/css/*` to the
-`rare-styles` repo root.
+(`rare-styles@<ver>/fonts/…`): the `fonts/` directory ships in the release
+artifact that `.github/workflows/release-css.yml` publishes to the `rare-styles`
+repo root.
 
 Regenerate with `scripts/fetch-fonts.py` (fetches the latin + cyrillic subsets
-from Google Fonts and rewrites the `@font-face` block). The Material Symbols
-icon font is **not** self-hosted — it stays a single scoped `@import` (see the
-partial).
+from Google Fonts and rewrites the `@font-face` block). Icons are not a font:
+since `v0.6.18` they ship as SVG files under `../images/icons/`.
 
 ## Families
 

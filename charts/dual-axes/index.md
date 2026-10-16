@@ -68,11 +68,12 @@ Dual-axis charts are often implemented as a hack: two scales, mismatched forma
 
 DualAxes supports the full annotation API — vertical date markers (point and range) and horizontal reference levels (line and band) on either Y axis. Horizontal entries take an explicit `axis: 'y1' | 'y2'` so the value is mapped to the correct scale. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.
 
-## Dual Axes chart options
+<h2 id="options-reference">Dual Axes chart options</h2>
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -462,6 +463,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/dual-axes/dual-axes-chart-ltcm-treasuries.js"></script>

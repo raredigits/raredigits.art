@@ -27,7 +27,11 @@
     --font-weight-bold: 700;
     --font-weight-black: 900;
     --primary-text-color: var(--primary-color);
-    --text-color-light: var(--gray-trans);
+
+    // Readable secondary text. Was --gray-trans (#888): 3.1:1 on --bg-color,
+    // 3.4:1 on the footer. #666 measures 5.0:1 / 5.6:1 / 4.5:1 on --bg-color /
+    // --gray-lightest / --gray-mid-light (WCAG AA, CSS-114).
+    --text-color-light: var(--gray-mid-dark);
     --text-color-lightest: var(--gray);
     --text-color-dark: var(--gray-dark);
 }

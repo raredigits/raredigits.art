@@ -111,7 +111,8 @@ Stacking several bands — for example P10–P90 around an inner P25–P75 — 
 
 A band is configured entirely through fields on its series object. It shares the common chart options (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) documented on the [Settings](/charts/settings/) page, and lives inside a standard [Line](/charts/line/) chart, so all of that chart’s axis and layout options apply too.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -162,6 +163,7 @@ A band is configured entirely through fields on its series object. It shares
         </tr>
     </tbody>
 </table>
+</div>
 
 <div class="teaser-bottom">
     <p>Related:</p>

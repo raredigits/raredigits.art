@@ -39,16 +39,17 @@ Get that division right and the loud design costs almost nothing structurally.
 
 ## Step 1 — Wire up the library, then a skin of our own
 
-Two stylesheets. The library first, a local `hetke.css` second — so when the two disagree, ours wins on load order.
+Two stylesheets. The library first, a local `hetke.css` second — so when the two disagree, ours wins on load order. Then `class="rd"` on `<html>` opts the whole page into the library (page mode); without it Rare Styles leaves the page untouched.
 
 ```html
+<html lang="en" class="rd">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@latest/rare.min.css">
 <link rel="stylesheet" href="/assets/css/hetke.css">
 ...
 <body class="hetke">
 ```
 
-The `class="hetke"` on `<body>` is the whole trick behind the skin. Rare Styles themes bare elements — `body`, `header`, `section`, `h1`, `a` — because on its home turf it owns the page. On someone else's page that is presumptuous, so every rule we write is scoped under `.hetke` and wins by specificity, without patching the library itself.
+The `class="hetke"` on `<body>` is the whole trick behind the skin. In page mode Rare Styles themes bare elements — `body`, `header`, `section`, `h1`, `a` — because `class="rd"` on `<html>` hands it the page. On someone else's page that is presumptuous, so every rule we write is scoped under `.hetke` and wins by specificity, without patching the library itself.
 
 ## Step 2 — Re-point the tokens
 

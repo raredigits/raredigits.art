@@ -8,6 +8,8 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['test/**/*.test.js'],
+    // Real-browser checks run separately: npm run test:browser (CSS-118).
+    exclude: ['test/browser/**', 'node_modules/**'],
     setupFiles: ['./test/setup.js'],
   },
 });

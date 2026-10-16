@@ -3,7 +3,11 @@
 
 @mixin outdent {
     margin-left: calc(-1 * var(--space-lg));
-    margin-right: calc(-1 * var(--space-lg));
+
+    // On the right the outdent may only use the room that is there: `main`'s
+    // padding plus the field beside the centred page. At 769–1279px that is
+    // 16px, and the full 32px pushed the page sideways (CSS-367).
+    margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 
     @include mobile {
         margin-left: calc(-1 * var(--space-sm));
@@ -144,7 +148,7 @@ cite {
     width: 100%;
     margin: var(--space-sm) 0;
     text-align: right;
-    color: var(--gray-dark);
+    color: var(--text-color-dark); // a role, so inverted surfaces re-map it (CSS-364)
 }
 
 blockquote {
@@ -218,6 +222,12 @@ dd + dt {
     grid-template-columns: max-content 1fr;
     gap: var(--space-xs) var(--space-md);
 
+    // On a phone a long term would starve the definition column and widen
+    // the page; cap the term column instead (code terms wrap) (CSS-354).
+    @include mobile {
+        grid-template-columns: fit-content(40%) 1fr;
+    }
+
     dt {
         margin: 0;
 
@@ -271,6 +281,10 @@ code {
     border-radius: var(--space-xs);
     font-family: var(--code-font);
     width: fit-content;
+
+    // Long inline tokens (paths, constructor calls) break instead of widening
+    // the page; no effect inside `pre`, which does not wrap (CSS-354).
+    overflow-wrap: anywhere;
     
     @include mobile {
         font-size: var(--font-size-xs);
@@ -285,7 +299,7 @@ pre code {
 }
 
 .code-comment {
-    color: var(--gray-trans);
+    color: var(--text-color-light);
 }
 
 .handwritten,
@@ -359,7 +373,7 @@ pre code {
         background: none;
     }
 
-    @media (width <= 1024px) {
+    @media (width < 1024px) {
         margin-left: calc(-1 * var(--space-sm));
     }
 }

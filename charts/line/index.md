@@ -175,7 +175,8 @@ Line charts support event markers and reference levels via the `annotations` opt
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -520,6 +521,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </tbody>
 </table>
+</div>
 
 <div class="teaser-bottom">
     <p>Next:</p>

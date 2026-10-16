@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 :root {
     --link-color: var(--primary-text-color);
     --link-color-secondary: var(--text-color-dark);
@@ -14,10 +16,18 @@ a {
       to top,
       color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%
     );
-    background-size: 100% 1px;
-    background-position: 0 1.2em;
+
+    // At rest the fill has zero height, pinned to the bottom of the box. It
+    // used to be a 1px line at 1.2em, just below the inline box: clipped in
+    // Chrome, but visible as a second, lighter underline wherever the engine
+    // or font makes the box a pixel taller, e.g. Safari (CSS-365).
+    background-size: 100% 0;
+    background-position: 0 100%;
     background-repeat: no-repeat;
-    transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
+
+    @include bp.motion-safe {
+        transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
+    }
 }
 
 a:hover {
@@ -31,7 +41,6 @@ a img {
 
 .link-thick {
     text-decoration-thickness: 2px;
-    background-size: 100% 2px;
 } 
 
 h1 a, h2 a, h3 a, h4 a {
@@ -42,7 +51,7 @@ h1 a, h2 a, h3 a, h4 a {
 
 nav a,
 .sidebar a {
-    color: var(--gray-trans);
+    color: var(--text-color-light);
     background-image: none;
     position: relative;
     display: inline;
@@ -93,7 +102,7 @@ nav a.tag {
 footer a {
     background-image: none;
     text-decoration: none;
-    color: var(--gray-trans);
+    color: var(--text-color-light);
     border-bottom: 1px solid var(--gray-trans);
 }
 

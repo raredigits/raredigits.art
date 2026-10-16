@@ -12,6 +12,7 @@ permalink: '/styles/typography/tables/'
 
 Tabular data forms a crucial part of business information presentation. Tables allow users to quickly comprehend and compare large data volumes.
 
+<div class="table-scroll">
 <table class="table-terminal table-striped">
     <tr>
         <th>Library</th>
@@ -42,6 +43,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
         <td>3</td>
     </tr>
 </table>
+</div>
 
 <div class="sidenote-wrapper">
     <div>
@@ -137,6 +139,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
 
 `.table-comparison` left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for `.table-terminal` instead when the values are numeric and benefit from a monospace, right-aligned readout.
 
+<div class="table-scroll">
 <table class="table-comparison table-horizontal-borders">
     <tr>
         <th>Library</th>
@@ -163,6 +166,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
         <td>Yes</td>
     </tr>
 </table>
+</div>
 
 The example above also carries `.table-horizontal-borders`: a lighter alternative to `.table-bordered` that draws a quiet rule between rows without the outer frame or vertical lines. The two border presets are mutually exclusive — pick the frame weight the data needs.
 
@@ -170,6 +174,7 @@ The example above also carries `.table-horizontal-borders`: a lighter alternativ
 
 `.table-numeric` is the preset for decision-grade figures: it switches the table to **tabular figures** (every digit the same width, so numbers line up vertically) and right-aligns the value columns while the row label stays left. Use it for financial tables, KPI readouts, and any data where the reader compares numbers down a column. It keeps the normal text font — reach for `.table-terminal` when you want a monospace readout.
 
+<div class="table-scroll">
 <table class="table-numeric table-horizontal-borders">
     <tr>
         <th>Channel</th>
@@ -196,6 +201,7 @@ The example above also carries `.table-horizontal-borders`: a lighter alternativ
         <td>$540,150</td>
     </tr>
 </table>
+</div>
 
 <div class="caption">
     <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>

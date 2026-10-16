@@ -58,7 +58,8 @@ Hovering a segment shows its category, series name, value, and share of that cat
 
 Stacked bars share the <a href="/charts/bar/">Bar</a> chart’s options — grid, axis visibility, tick formatters, animation, <code>labelMaxLength</code>, and margins all apply. The options specific to stacking:
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -112,6 +113,7 @@ Stacked bars share the <a href="/charts/bar/">Bar</a> chart’s options — grid
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/stacked-bar-revenue.js"></script>

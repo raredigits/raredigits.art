@@ -3,13 +3,53 @@
 All notable changes to Rare Styles are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/). The library follows semantic versioning.
 
-Roadmap and milestones: [`BACKLOG.md`](./BACKLOG.md).
+Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BACKLOG.md).
 
 ---
 
+## [v0.7.0] — 2026-10-17 — Scope Gate & Bug Closure
+
+**Breaking: Rare Styles now changes nothing on a page until you ask for it.** Every rule in the library applies only under the `.rd` class. Put `class="rd"` on `<html>` and the page renders exactly as before (page mode); put it on any element and only that block is styled (island); leave it out and `rare.css` has no effect even when loaded. The gate is `:where(.rd, .rd *)`, so the gate adds **zero specificity**: every library rule weighs exactly what it did in `0.6`. **To upgrade from `0.6`, add `class="rd"` to `<html>` in the same change that bumps the pin.** The release also closes every known defect (a dated bug ledger, an accessibility base, mobile overflow) and replaces the unchecked CSS sync with a validated release pipeline. The full list of changes with consumer actions is in [`MIGRATION.md`](./MIGRATION.md); the defect ledger is [`BUG-LEDGER.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BUG-LEDGER.md).
+
+### Added
+
+- **The `.rd` scope gate** (`CSS-337`, `CSS-343`). A PostCSS step after Sass (`scripts/rd-gate.mjs`, configured by the global-rule inventory `scripts/rd-gate.config.mjs`) appends `:where(.rd, .rd *)` to every selector. Page-shell rules (`html`/`body`, the fixed `header`, `main`, `article` placement, `section`, `footer`, `nav` chrome) apply only with `.rd` on `<html>`/`<body>`; tag styles and classes apply in islands too. `:root` tokens, `@font-face` and the `rd-icon-*` glyphs stay ungated. The build fails on any bare-element selector the inventory does not classify. Module sources are unchanged.
+- **Accessibility base.** A visible keyboard focus ring everywhere inside `.rd` (`:focus-visible`, `--focus-ring-color` / `-width` / `-offset`; `--blue` keeps ≥ 3:1 on every library surface, `CSS-110`). `.visually-hidden`, shown in place while it has focus inside (`CSS-111`); no `.sr-only` alias. A `.skip-to-content` link that appears above the header on the first Tab (`CSS-113`). The `bp.motion-safe` mixin: transitions run only without a reduced-motion preference (`CSS-112`).
+- **`--cookie-notice-reserve`** (16rem): while the cookie notice shows, focus and anchors stop above it and the page end can scroll clear of it (`CSS-361`).
+- **A CDN banner**: `rare.css` / `rare.min.css` open with a `/*!` comment stating the `.rd` rule and the migration link.
+- **Docs**: a new `/styles/getting-started/` page (page mode, islands, the caveats, the upgrade, `CSS-321`); a real `/styles/utilities/` page; `/styles/typography/interactive/` (focus, links, buttons, forms); heading ids site-wide and a working table of contents (`CSS-362`).
+- **Release and regression tooling**: `.github/workflows/release-css.yml` publishes to `rare-styles` only for a new version tag. It verifies on Node 24 (lint, unit, browser, size, links), stages one artifact with a sha256 manifest, publishes and tags exactly that artifact, attaches it to the GitHub Release for self-hosting, and checks the pinned jsDelivr bytes (`CSS-348`). The test suites now cover the gate on a hostile host (`CSS-338`), committed artifacts that must equal a fresh build (`CSS-118`), and a real-browser suite (`npm run test:browser`, headless Chrome) for focus, motion, states, anchors and a 14-page × 7-width reference matrix with fractional widths and 200% zoom. Also new: a reproducible size table (`SIZE-BASELINE.md`, `CSS-339`), `npm run check:links` (`CSS-363`) and an API snapshot of `v0.6.19` (`docs/api/v0.6.19.json`, `CSS-340`).
+
+### Changed
+
+- **Breaking: the gate** (see above). Without `class="rd"` the library styles nothing.
+- **Readable secondary text** (`CSS-114`): `--text-color-light` `#888` → `#666` (3.1:1 → 5.0:1 on `--bg-color`). Navigation, sidebar, footer, sidebar submenu and `.code-comment` now use the role token instead of raw grays. **Visual delta:** secondary text, nav and footer read one step darker. Palette tokens are unchanged.
+- **`h5`/`h6` share the `h4` rhythm** (`margin: var(--space-sm) 0`, `CSS-126`). **Visual delta:** footers that use `h5`/`h6` as column labels grow by 16px (accepted for schnellreich.ru and raredigits.io).
+- **Breakpoints use gap-free range syntax** (`width < 769px`, `769px <= width < 1024px`, `width >= 1024px`). Identical at integer widths; at fractional widths such as 768.18px (110% scaling) no layout layer used to apply (`CSS-355`). **Browser floor:** Chrome/Edge 111, Safari 16.4, Firefox 113.
+- **`.rd-is-hidden` is `display: none !important`**, so it wins over component states such as `.searchbar.rd-is-open` (`CSS-359`).
+- **`.card-inverted` re-maps the text-role tokens**, and `cite` uses a role token (`CSS-364`).
+- **Build**: `npm run build:css` / `watch:css` run `scripts/build-css.mjs` (Sass → gate). A bare `sass` build is ungated. Dependencies refreshed on Node 24: advisories 30 → 10, and the remaining `stylelint` → `braces` chain has no upstream fix (`CSS-356`).
+- **Bundle** (`SIZE-BASELINE.md`, Node zlib defaults, map trailer excluded): `rare.min.css` 363,483 → **418,005 B** raw (+15.0%), gzip 32,884 → **35,112 B** (+6.8%), Brotli 22,115 → **22,533 B** (+1.9%); `rare.css` 435,841 → 493,709 B raw, gzip 35,373 → 37,442, Brotli 23,293 → 23,856. The repeated gate compresses almost entirely; the shorter range-syntax media queries offset part of the raw growth.
+
+### Fixed
+
+- **Anchor targets** clear the fixed header (`scroll-padding-top`, `CSS-129`).
+- **The closed hamburger menu** is out of the tab order (`visibility: hidden`, `CSS-360`). It used to give 13 invisible focus stops on every page.
+- **Mobile overflow** (`CSS-354`): inline `code` wraps (`overflow-wrap: anywhere`), `.card-row-bordered` scrolls inside its border, `.dl-grid` caps its term column on mobile, and the docs' wide tables sit in `.table-scroll`. The header was never the cause. 320px heading overflow is left for fluid type (`CSS-164`).
+- **Outdents inside `.card`** no longer poke out of the card (`CSS-357`); the right outdent only uses the room that is there (769–1279px), and **`.iframe-video`** cannot widen a grid column through `aspect-ratio` (`CSS-367`).
+- **Sidenotes switch at 1024px** like everything else (`width < 1024px`, `CSS-358`).
+- **Links show one underline** in every engine (`CSS-365`). The resting hover fill was a 1px strip just below the text box, which Safari showed as a second, lighter line.
+- **`.list-group-pack`**: the second column no longer starts low in Safari (gaps are padding in the balanced layout, `CSS-366`).
+- **`/styles/usage/`** shows the real API (`--primary-color`, `--brand-color`, `--heading-font`, `.button`) instead of tokens and classes that never existed (`CSS-347`). Broken site links are fixed (the `/styles/` **Download** button, "Mark-Up 101", example scripts, guide links, `#options-reference`).
+
+### Removed
+
+- **Breaking: `.padding*-auto`**, 28 classes including `mobile:` / `tablet:` / `desktop:` (`CSS-346`). `padding: auto` is invalid, so they computed to `padding: 0`: use `.padding*-0`. No known consumer used them.
+- **`sync-css.yml`**: the release workflow replaces it. The `rare-styles` repository no longer receives maintainer docs, `examples/` or `rare-website.css`.
+
 ## [v0.6.19] — 2026-07-20 — Rare Scripts Polish & Copy Primitives
 
-**Finished, unversioned work gets a home.** The companion **Rare Scripts** get their polish pass — **carousel `v1.1.0`** and **`copy-to-clipboard` `v3.2.0`**, the latter gaining a genuinely new capability: **`data-copy-text`**, a literal-string payload that copies text living nowhere in the DOM (plus `.rd-is-copied`, a success state for carriers that are not the copy icon). Alongside the scripts: the icon set grows 137 → 143 and the **breaking** `.copy-data-icon--light` rename lands. A first end-to-end **worked example** — an auto-shop landing rebuilt on Rare Styles with a story page documenting the build — also ships, demonstrating the library's existing primitives on a real site. **Ships after `rare-scripts@v3.2.0` is tagged** — the `/scripts/copy-to-clipboard/` docs already advertise that CDN pin (`CSS-327`); scripts before styles. *This is **not** the `v0.6.20` auto-shop harvest — no reusable pattern was promoted into the library yet, so that milestone stays open (see [`BACKLOG.md`](./BACKLOG.md)).*
+**Finished, unversioned work gets a home.** The companion **Rare Scripts** get their polish pass — **carousel `v1.1.0`** and **`copy-to-clipboard` `v3.2.0`**, the latter gaining a genuinely new capability: **`data-copy-text`**, a literal-string payload that copies text living nowhere in the DOM (plus `.rd-is-copied`, a success state for carriers that are not the copy icon). Alongside the scripts: the icon set grows 137 → 143 and the **breaking** `.copy-data-icon--light` rename lands. A first end-to-end **worked example** — an auto-shop landing rebuilt on Rare Styles with a story page documenting the build — also ships, demonstrating the library's existing primitives on a real site. **Ships after `rare-scripts@v3.2.0` is tagged** — the `/scripts/copy-to-clipboard/` docs already advertise that CDN pin (`CSS-327`); scripts before styles. *This is **not** the `v0.6.20` auto-shop harvest — no reusable pattern was promoted into the library yet, so that milestone stays open (see [`BACKLOG.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BACKLOG.md)).*
 
 ### Added
 

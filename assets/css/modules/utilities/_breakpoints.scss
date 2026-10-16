@@ -1,22 +1,24 @@
+// Gap-free range syntax (CSS-355): with `max-width: 768px` / `min-width:
+// 769px` a fractional viewport (768.18px at 110% scaling) matched no layer.
 $mobile-max: 768px;
 $tablet-min: 769px;
 $tablet-max: 1023px;
 $desktop-min: 1024px;
 
 @mixin mobile {
-  @media screen and (max-width: $mobile-max) {
+  @media screen and (width < $tablet-min) {
     @content;
   }
 }
 
 @mixin tablet {
-  @media screen and (min-width: $tablet-min) and (max-width: $tablet-max) {
+  @media screen and ($tablet-min <= width < $desktop-min) {
     @content;
   }
 }
 
 @mixin desktop {
-  @media screen and (min-width: $desktop-min) {
+  @media screen and (width >= $desktop-min) {
     @content;
   }
 }
@@ -36,5 +38,14 @@ $desktop-min: 1024px;
         @content;
       }
     }
+  }
+}
+
+// Motion policy (CSS-112): transitions and animations run only when the
+// user has not asked for reduced motion. Wrap the motion, never the state —
+// the end state (rotation, width, position) still applies instantly.
+@mixin motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
   }
 }

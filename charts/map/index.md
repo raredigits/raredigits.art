@@ -130,7 +130,8 @@ The formatter receives both the raw `feature` and the matched `item`, so you can
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -295,10 +296,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         </tr>
     </tbody>
 </table>
+</div>
 
 **Data fields**
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -329,6 +332,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         </tr>
     </tbody>
 </table>
+</div>
 
 ### Minimal example
 

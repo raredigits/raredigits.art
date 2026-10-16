@@ -83,7 +83,8 @@
         color: var(--text-color-light);
     }
 
-    .sidenote p:first-child {
+    .sidenote p:first-child,
+    .sidenote > :is(h5, h6):first-child {
         margin-top: 0;
     }
 
@@ -99,7 +100,7 @@
         grid-column: 1 / span 6;
     }
 
-    @media (width <= 1024px) {
+    @media (width < 1024px) {
         display: flex;
         flex-direction: column;
 
@@ -129,7 +130,7 @@
     left: -16px;
     color: var(--text-color-light);
 
-    @media (width <= 1024px) {
+    @media (width < 1024px) {
         top: 8px;
         left: -8px;
     }

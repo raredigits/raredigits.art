@@ -5,6 +5,28 @@
     flex-direction: column;
     background: var(--gray-lightest);
     position: relative;
+
+    // Outdents (`pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the
+    // caption-width blocks, `.card-caption`) hang into the page margins beside
+    // the text column. A card has no such margins: with padding smaller than
+    // the outdent they poked out of the card and, on phones, widened the page.
+    // Reset the family to the card's content width, as `.collapsible-content`
+    // does (CSS-345 sweep, 2026-10-16).
+    .lead,
+    .caption,
+    .highlight,
+    pre,
+    blockquote,
+    .text-content-caption,
+    .full-width-caption,
+    .card-caption,
+    .collapsible-container,
+    .teaser-bottom {
+        width: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
 
 .card-hover:hover {
@@ -18,6 +40,17 @@
 }
 
 .card-inverted {
+    // Text roles re-mapped for the dark surface (CSS-364). Derived tokens are
+    // resolved on :root, so they are restated here too. --primary-color stays:
+    // light components inside (e.g. `.button`) still need dark text.
+    --primary-text-color: var(--gray-light);
+    --text-color-dark: var(--gray-light);
+    --text-color-light: var(--gray);
+    --text-color-lightest: var(--gray-mid-dark);
+    --link-color: var(--gray-light);
+    --link-color-secondary: var(--gray-light);
+    --link-color-light: var(--gray);
+
     display: flex;
     flex-direction: column;
     background: var(--gray-dark);
@@ -41,6 +74,13 @@
     flex-wrap: nowrap;
     border: 1px solid var(--border-color);
     border-radius: var(--space-xs);
+
+    // A long row (six stats) cannot shrink below its content on a phone;
+    // scroll it inside its own border instead of widening the page (CSS-354).
+    @include bp.mobile {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
 }
 
 .card-row-bordered-item {
@@ -139,7 +179,10 @@
     width: 100%;
     padding: var(--space-xs) var(--space-sm);
     background: color-mix(in srgb, var(--gray-darkest) 30%, transparent);
-    transition: background 0.2s ease;
+
+    @include bp.motion-safe {
+        transition: background 0.2s ease;
+    }
 }
 
 .card-grid--gallery .card-grid__title:hover {

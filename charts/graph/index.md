@@ -59,7 +59,8 @@ Everything the user walks through accumulates in a client-side model, so revisit
 
 Each node requires only `id`. `label` and every other field are optional; when no label is supplied, Graph displays the id:
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Field</th>
@@ -113,12 +114,14 @@ Each node requires only `id`. `label` and every other field are optional; when n
     </tr>
   </tbody>
 </table>
+</div>
 
 ### Links
 
 Each link requires `source` and `target` node ids:
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Field</th>
@@ -172,6 +175,7 @@ Each link requires `source` and `target` node ids:
     </tr>
   </tbody>
 </table>
+</div>
 
 **Several ties between one pair.** A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a `+N` badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once.
 
@@ -202,7 +206,8 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
 
 ### Options
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -394,6 +399,7 @@ If a link type is not found in `linkTypes`, it falls back to `t.muted` (theme gr
         </tr>
     </tbody>
 </table>
+</div>
 
 ### Sizing
 
@@ -401,7 +407,8 @@ Graph lays nodes out on a grid: one node per cell of about **96 × 50 px** (the 
 
 `height` is the whole card — title, legend, breadcrumbs and footer included; the drawing gets what is left, typically 80–120 px less.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>View</th>
@@ -416,6 +423,7 @@ Graph lays nodes out on a grid: one node per cell of about **96 × 50 px** (the 
         <tr><td>Flow</td><td><code>minWidth</code> ≈ 120–170 px per lane</td><td>~110 px per row in use + 160</td><td>lanes scroll sideways below <code>minWidth</code></td></tr>
     </tbody>
 </table>
+</div>
 
 - **Neighbourhood bigger than the card?** Enlarge `height` first (width is usually fixed by the page column), then lower `depth` to 1, or set `maxNodes` to show a curated top slice.
 - **Narrow screens.** Below ~480 px an ego neighbourhood of more than ~15 nodes does not read; use `depth: 1`, a smaller `maxNodes`, or the flow view with `minWidth` and sideways scrolling.

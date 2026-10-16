@@ -1,0 +1,64 @@
+// Accessibility base (v0.7.0 bug closure, CSS-110..113).
+
+:root {
+    // Keyboard focus ring. --blue measures ≥ 3:1 (WCAG 1.4.11) on every
+    // library surface: 3.6 on --bg-color, 3.9 on --gray-lightest, 4.1 on
+    // white, 3.2 on --gray-mid-light, 3.1 on --gray-dark, 4.3 on
+    // --gray-darkest. Override it on :root; CSS-124 later repoints the
+    // default onto --signal without touching overrides.
+    --focus-ring-color: var(--blue);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+}
+
+// Visible keyboard focus everywhere inside `.rd` (CSS-110). `:focus-visible`
+// keeps mouse clicks ring-free. The button/[type] selectors exist only to
+// out-rank normalize's Firefox `:-moz-focusring` dotted outline, which has
+// the same specificity and comes earlier.
+:focus-visible,
+button:focus-visible,
+[type="button"]:focus-visible,
+[type="reset"]:focus-visible,
+[type="submit"]:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}
+
+// Hidden from sight, kept for assistive tech (CSS-111). One utility: while
+// the element or anything inside it has focus it is shown in place, so
+// focusable content is never focused while invisible. `.sr-only` is not
+// shipped as an alias (plain names behind the gate, Q-14).
+%visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.visually-hidden:not(:focus, :focus-within) {
+    @extend %visually-hidden;
+}
+
+// Skip link (CSS-113): first focusable element on the page, hidden until
+// focused, then shown above the fixed header. Point it at the page title or
+// the article (`#main-content`) so it skips the header and the sidebar.
+.skip-to-content {
+    position: fixed;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    z-index: 1000;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--primary-color);
+    background-image: none;
+    color: var(--bg-color);
+    text-decoration: none;
+
+    &:not(:focus) {
+        @extend %visually-hidden;
+    }
+}

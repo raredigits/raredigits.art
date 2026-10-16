@@ -8,6 +8,7 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 75
 
     steps:
       - name: Checkout source
@@ -26,6 +27,27 @@ jobs:
 
       - name: Lint CSS
         run: npm run lint:css
+
+      # The docs pin `rare-styles@<versions.styles>` on jsDelivr. When a merge
+      # bumps the styles version, release-css.yml runs in parallel; publishing
+      # the docs before that tag is served would advertise a 404. Between
+      # releases the tag already exists and this passes at once; if the
+      # release fails, the site keeps its last deploy instead.
+      - name: Wait until the documented Rare Styles version is on jsDelivr
+        run: |
+          VERSION=$(node -p "require('./_data/versions.js').styles")
+          URL="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@$VERSION/rare.min.css"
+          for i in $(seq 1 120); do
+            if git ls-remote --exit-code --tags https://github.com/raredigits/rare-styles.git "refs/tags/$VERSION" > /dev/null \
+               && curl -sfI "$URL" > /dev/null; then
+              echo "rare-styles $VERSION is tagged and served: $URL"
+              exit 0
+            fi
+            echo "waiting for rare-styles $VERSION ($i/120)…"
+            sleep 30
+          done
+          echo "::error::rare-styles $VERSION is not tagged/served after 60 min — check the Release Rare Styles workflow. Not deploying docs that pin it."
+          exit 1
 
       - name: Build SCSS and 11ty site
         run: npm run build

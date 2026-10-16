@@ -1,0 +1,251 @@
+name: Release Rare Styles
+
+# Validated, version-triggered CSS release (CSS-348). Replaces sync-css.yml,
+# which copied assets/css/* into raredigits/rare-styles on every push to main
+# with no install, lint, test or build — an ungated or broken rare.css could
+# reach the repository that jsDelivr serves.
+#
+# A release happens only when _data/versions.js names a `styles` version that
+# is not tagged in rare-styles yet (same rule as sync-charts.yml). The artifact
+# is built and verified ONCE, uploaded, then that exact artifact is published,
+# tagged and compared byte for byte with the pinned jsDelivr URL. Ordinary
+# pushes between releases change nothing in rare-styles.
+#
+# To release: bump _data/versions.js + package.json, add the Changelog entry,
+# rebuild (npm run build:css), merge to main.
+# Manual run (workflow_dispatch) = dry run: every check and the staged
+# artifact, no publishing. With `resume`, a manual run finishes a release
+# whose tag exists but whose GitHub Release / archive is missing — only if the
+# tag holds byte for byte the artifact this run verified. "Re-run failed jobs"
+# on a failed publish works the same way.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '_data/versions.js'
+      - 'package.json'
+      - 'assets/css/**'
+      - 'scripts/build-css.mjs'
+      - 'scripts/rd-gate*.mjs'
+      - 'scripts/release-css.mjs'
+  workflow_dispatch:
+    inputs:
+      resume:
+        description: "Finish a partly published release whose tag already exists (the tag must hold exactly the verified artifact)"
+        type: boolean
+        default: false
+
+# One release at a time; never cancel a release half way.
+concurrency:
+  group: release-rare-styles
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.version.outputs.release }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # size-report --check recomputes rows from older commits
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install (lockfile)
+        run: npm ci
+
+      - name: Version, package and changelog agree
+        id: version
+        run: |
+          VERSION=$(node scripts/release-css.mjs check)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags https://github.com/raredigits/rare-styles.git "refs/tags/$VERSION" > /dev/null; then
+            if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.resume }}" = "true" ]; then
+              echo "release=true" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is tagged — resuming: publish will verify the tag and complete what is missing."
+            elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "release=false" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is already released — dry run of the checks only."
+            else
+              echo "release=skip" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is already tagged in rare-styles — nothing to release. Bump _data/versions.js to release."
+            fi
+          else
+            echo "release=${{ github.event_name == 'push' && 'true' || 'false' }}" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is not tagged in rare-styles yet."
+          fi
+
+      - name: Lint
+        if: steps.version.outputs.release != 'skip'
+        run: npm run lint:css
+
+      - name: Unit, gate and compiled-CSS tests (artifacts must equal a fresh build)
+        if: steps.version.outputs.release != 'skip'
+        run: npx vitest run
+
+      # A clean checkout has no _site, no Pagefind index and no RareCharts
+      # bundles (all untracked): build the whole site once, exactly as the site
+      # deploy does, before anything that serves pages.
+      - name: Build the site (CSS, RareCharts, Eleventy, Pagefind)
+        if: steps.version.outputs.release != 'skip'
+        run: npm run build
+
+      - name: The site build left the committed CSS artifacts untouched
+        if: steps.version.outputs.release != 'skip'
+        run: git diff --exit-code -- assets/css/rare.css assets/css/rare.css.map assets/css/rare.min.css assets/css/rare.min.css.map
+
+      - name: "Browser checks: fixture + reference-page matrix (headless Google Chrome)"
+        if: steps.version.outputs.release != 'skip'
+        run: npm run test:browser:run
+
+      - name: Size baseline reproduces
+        if: steps.version.outputs.release != 'skip'
+        run: node scripts/size-report.mjs --check
+
+      - name: No broken internal links on the built site
+        if: steps.version.outputs.release != 'skip'
+        run: npm run check:links:run
+
+      - name: Stage the release artifact
+        if: steps.version.outputs.release != 'skip'
+        run: node scripts/release-css.mjs stage dist/rare-styles
+
+      - name: Upload the artifact (also the self-hosting package)
+        if: steps.version.outputs.release != 'skip'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rare-styles-${{ steps.version.outputs.version }}
+          path: dist/rare-styles
+          if-no-files-found: error
+          include-hidden-files: false
+          retention-days: 90
+
+  publish:
+    needs: verify
+    if: needs.verify.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.verify.outputs.version }}
+      GH_TOKEN: ${{ secrets.RARE_STYLES_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download the verified artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: rare-styles-${{ needs.verify.outputs.version }}
+          path: dist/rare-styles
+
+      - name: Clone rare-styles
+        run: git clone https://x-access-token:${GH_TOKEN}@github.com/raredigits/rare-styles.git temp-rare-styles
+
+      # Idempotent: a tag that already exists is never moved or rewritten. If
+      # it holds exactly this artifact (an earlier run pushed it and then
+      # failed), skip straight to the Release; if it holds anything else, stop.
+      - name: Existing tag must hold exactly this artifact
+        id: tag
+        run: |
+          if git -C temp-rare-styles ls-remote --exit-code --tags origin "refs/tags/$VERSION" > /dev/null; then
+            git -C temp-rare-styles fetch --depth 1 origin "refs/tags/$VERSION:refs/tags/$VERSION"
+            git -C temp-rare-styles checkout --quiet "refs/tags/$VERSION"
+            if node scripts/release-css.mjs verify-tree dist/rare-styles temp-rare-styles; then
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::$VERSION is already tagged in rare-styles with different content — tags are immutable, bump the version."
+              exit 1
+            fi
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Replace the tree with the artifact
+        if: steps.tag.outputs.exists == 'false'
+        run: |
+          rsync -a --delete \
+            --exclude '.git' --exclude 'LICENSE' --exclude 'README.md' --exclude '.nojekyll' \
+            dist/rare-styles/ temp-rare-styles/
+
+      - name: Commit, tag and push atomically
+        if: steps.tag.outputs.exists == 'false'
+        working-directory: temp-rare-styles
+        run: |
+          git config user.name "Rare Release Bot"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "Rare Styles $VERSION" || echo "Tree unchanged — tagging the current state"
+          git tag -a "$VERSION" -m "Rare Styles $VERSION"
+          git push --atomic origin main "refs/tags/$VERSION"
+
+      # Also idempotent: create the Release only if it is missing, upload the
+      # archive only if it is not attached yet.
+      - name: GitHub Release with the self-hosting archive
+        run: |
+          API=https://api.github.com/repos/raredigits/rare-styles
+          AUTH=(-H "Authorization: Bearer ${GH_TOKEN}" -H "Accept: application/vnd.github+json")
+          ASSET="rare-styles-$VERSION.tar.gz"
+          CODE=$(curl -s -o /tmp/release.json -w '%{http_code}' "${AUTH[@]}" "$API/releases/tags/$VERSION")
+          if [ "$CODE" = "404" ]; then
+            TITLE=$(grep -m1 -F "## [$VERSION]" assets/css/docs/Changelog.md | sed -E 's/^## \[//; s/\] — [0-9]{4}-[0-9]{2}-[0-9]{2} — / — /')
+            [ -n "$TITLE" ] || TITLE="$VERSION"
+            awk -v ver="$VERSION" 'index($0, "## [" ver "]")==1{f=1; next} /^## \[/{f=0} f' \
+              assets/css/docs/Changelog.md > /tmp/relnotes.md
+            printf '\nMigration: https://github.com/raredigits/rare-styles/blob/%s/docs/MIGRATION.md\n' "$VERSION" >> /tmp/relnotes.md
+            jq -n --arg tag "$VERSION" --arg title "$TITLE" --rawfile body /tmp/relnotes.md \
+                '{tag_name: $tag, name: $title, body: $body, make_latest: "true"}' \
+              | curl -sf -X POST "${AUTH[@]}" -d @- "$API/releases" > /tmp/release.json
+            echo "Release created: $TITLE"
+          elif [ "$CODE" != "200" ]; then
+            echo "::error::GitHub API returned $CODE for the $VERSION release"; exit 1
+          else
+            echo "Release for $VERSION already exists."
+          fi
+          RELEASE_ID=$(jq -r .id /tmp/release.json)
+          if jq -e --arg n "$ASSET" '.assets[]? | select(.name == $n)' /tmp/release.json > /dev/null; then
+            echo "$ASSET is already attached."
+          else
+            tar -czf "/tmp/$ASSET" -C dist rare-styles
+            curl -sf -X POST -H "Authorization: Bearer ${GH_TOKEN}" -H "Content-Type: application/gzip" \
+              --data-binary "@/tmp/$ASSET" \
+              "https://uploads.github.com/repos/raredigits/rare-styles/releases/$RELEASE_ID/assets?name=$ASSET" > /dev/null
+            echo "Attached $ASSET."
+          fi
+
+  verify-cdn:
+    needs: [verify, publish]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Download the verified artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: rare-styles-${{ needs.verify.outputs.version }}
+          path: dist/rare-styles
+
+      # Do not recommend the pinned URL until jsDelivr serves exactly the
+      # bytes that were verified (retries while the CDN picks up the tag).
+      - name: Pinned jsDelivr bytes equal the artifact
+        run: node scripts/release-css.mjs verify-cdn dist/rare-styles

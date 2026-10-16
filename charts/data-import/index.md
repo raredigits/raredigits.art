@@ -169,5 +169,3 @@ Invalid rows are filtered out automatically:
 - Rows where `value` is present but is not a finite number (`NaN`, `Infinity`, `null`)
 
 <script src="/assets/charts/rare-charts.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-hashrate-profit.js"></script>
-<script src="/assets/charts/examples/dual-axes/btc-mining-index.js"></script>

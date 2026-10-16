@@ -8,7 +8,8 @@ permalink: '/charts/backlog/'
 
 Features and chart types planned for future releases.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Feature</th>
@@ -226,3 +227,4 @@ Features and chart types planned for future releases.
         </tr>
     </tbody>
 </table>
+</div>

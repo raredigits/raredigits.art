@@ -13,18 +13,25 @@ This file documents the canonical CSS workflow for Rare Styles inside `raredigit
   Runs Stylelint against `assets/css/**/*.scss`. This is the canonical CSS quality gate.
 
 - `npm run build:css`
-  Compiles `assets/css/rare.scss` into:
+  Runs `scripts/build-css.mjs`: Sass compiles `assets/css/rare.scss`, then the PostCSS `rd-gate` step (`scripts/rd-gate.mjs`, `CSS-343`) applies the `.rd` scope gate, producing:
   - `assets/css/rare.css`
   - `assets/css/rare.min.css`
+  (plus chained source maps). Never call the `sass` CLI directly for the artifacts — that would ship an ungated build.
 
-- `npm run watch:css`
-  Watches SCSS and rebuilds `assets/css/rare.css`.
+- `npm run watch:css` (alias `npm run sass-watch`)
+  Watches `assets/css/**/*.scss` and rebuilds both artifacts through the gate.
 
-- `npm run watch:css:min`
-  Watches SCSS and rebuilds `assets/css/rare.min.css`.
+## The `.rd` gate config
 
-- `npm run sass-watch`
-  Runs both watch tasks in parallel.
+`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically; `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
+
+## Reset and normalize (decided 2026-10-16, `CSS-078`)
+
+Both apply only inside `.rd`: `vendor/normalize.css` (v8.0.1, kept **whole and unmodified**) and the `* { margin: 0; padding: 0; box-sizing: border-box }` reset at the end of `rare.scss`.
+
+**Islands.** The reset matches the island root and everything inside it, at zero specificity (`*:where(.rd, .rd *)`). It removes **user-agent** margins and padding only. Any host rule with a type or class selector (`figcaption { margin: … }`) still wins over it. Same-specificity collisions, such as a host `p {}` against the library's `p:where(…)`, resolve by load order. That is the documented caveat: the gate protects the host from the library, not the library from the host.
+
+**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font inheritance that the `v0.7.9` forms will build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
 
 ## Day-to-day editing flow
 
@@ -39,7 +46,21 @@ Before shipping a CSS-affecting release:
 
 1. `npm run lint:css`
 2. `npm run build:css`
-3. If the site shell or examples changed, run `npm run build`
+3. `npx vitest run`: includes the compiled-CSS checks (artifacts must equal a fresh build)
+4. `npm run test:browser`: real-browser checks in headless Google Chrome (`CSS-118`)
+5. `node scripts/size-report.mjs --check`, and add the release row to `SIZE-BASELINE.md` (`CSS-339`)
+6. `npm run check:links`: builds the site and fails on any broken internal link or anchor (`CSS-363`)
+7. If the site shell or examples changed, run `npm run build`
+
+## Releasing (CSS-348)
+
+`.github/workflows/release-css.yml` publishes to `raredigits/rare-styles`, and only when `_data/versions.js` names a version that has no tag there yet. Ordinary pushes publish nothing. To release:
+
+1. Bump `_data/versions.js` (`v0.7.0`, patches `v0.7.0_1`) and `package.json` (base `0.7.0`), and add `## [v0.7.0] — YYYY-MM-DD — Title` to `docs/Changelog.md`. `node scripts/release-css.mjs check` must pass.
+2. `npm run build:css`, add the release row to `SIZE-BASELINE.md`, and run the release checks above.
+3. Merge to `main`. The workflow verifies, stages one artifact (`node scripts/release-css.mjs stage dist/rare-styles` locally for a dry run), publishes and tags exactly that artifact, attaches it to the GitHub Release for self-hosting, and waits until the pinned jsDelivr URL serves the same bytes.
+
+The release set is listed in `RELEASE_FILES` in `scripts/release-css.mjs`. Maintainer docs, `examples/` and `rare-website.css` do not ship.
 
 ## Namespace policy (`rd-`)
 

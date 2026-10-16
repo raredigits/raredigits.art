@@ -10,6 +10,11 @@ img {
     width: 100%;
     aspect-ratio: 16 / 9;
 
+    // When a grid row stretches it taller, aspect-ratio turns that height into
+    // a minimum width (384px tall → 683px wide) and the column overflows the
+    // page (hetke map at 769–1023px, CSS-367).
+    min-width: 0;
+
     & iframe {
         width: 100%;
         height: 100%;

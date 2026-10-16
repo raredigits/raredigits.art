@@ -84,7 +84,8 @@ Each bar prints its value at the end (`showValues`, on by default), flipping ins
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -207,6 +208,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/bar/hierarchical-bar-portfolio.js"></script>

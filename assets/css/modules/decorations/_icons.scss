@@ -244,7 +244,7 @@ $icons: (
         font-size: 1.2em;
     }
 
-    @media (width <= 768px) {
+    @media (width < 769px) {
         .section-icon {
             margin-left: 0;
         }

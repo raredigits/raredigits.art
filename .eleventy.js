@@ -1,4 +1,10 @@
+const { IdAttributePlugin } = require("@11ty/eleventy");
+
 module.exports = function(eleventyConfig) {
+  // Stable ids on every heading, so section links and the docs table of
+  // contents have targets (CSS-362). Headings that already carry an id keep it.
+  eleventyConfig.addPlugin(IdAttributePlugin);
+
   eleventyConfig.addCollection("kb", collection =>
     collection.getFilteredByGlob("_posts/*.{md,html}")
   );
@@ -24,6 +30,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets/img");
   eleventyConfig.addPassthroughCopy("assets/js");
   eleventyConfig.addPassthroughCopy("assets/css/rare.css");
+  eleventyConfig.addPassthroughCopy("assets/css/rare.min.css"); // /styles/ Download button (CSS-363)
   eleventyConfig.addPassthroughCopy("assets/css/fonts");
   eleventyConfig.addPassthroughCopy("assets/css/images");
   eleventyConfig.addPassthroughCopy("assets/css/examples/rare-styles-main.css");

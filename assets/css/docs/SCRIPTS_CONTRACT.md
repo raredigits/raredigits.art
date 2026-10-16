@@ -5,7 +5,7 @@
 
 This document has two halves: the **as-was audit** (what each script actually read and wrote before the rewrite — from the JS in `assets/js/`, not the `/scripts/` doc pages) and the **target contract** every script conforms to from `v0.6.17` on.
 
-The target contract is regression-tested: [`test/scripts-contract.test.js`](../../../test/scripts-contract.test.js) evals each real script inside an isolated JSDOM window and asserts hooks, state classes, ARIA, guards, and per-script behavior (run via `npx vitest run`).
+The target contract is regression-tested: [`test/scripts-contract.test.js`](https://github.com/raredigits/raredigits.art/blob/main/test/scripts-contract.test.js) evals each real script inside an isolated JSDOM window and asserts hooks, state classes, ARIA, guards, and per-script behavior (run via `npx vitest run`).
 
 ---
 
