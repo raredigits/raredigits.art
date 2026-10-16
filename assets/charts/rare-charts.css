@@ -24,7 +24,9 @@
 .rc-graph-legend             { order: 2; }
 .rc-chart > svg              { order: 3; }
 .rc-chart > .rc-chart-navigator { order: 4; }
-.rc-chart > .rc-chart-footer { order: 5; }
+.rc-chart > .rc-graph-details   { order: 4; }
+.rc-chart > .rc-chart-controls  { order: 5; }
+.rc-chart > .rc-chart-footer { order: 6; }
 
 .rc-chart > svg {
   font-family: var(--rc-font-family);
@@ -151,7 +153,10 @@
   padding: var(--space-sm) 0;
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-md);
+  /* wrapped lines sit close; items keep their horizontal spacing */
+  column-gap: var(--space-md);
+  row-gap: 2px;
+  line-height: 1.3;
   font-size: var(--rc-font-size-sm);
   user-select: none;
 }
@@ -179,6 +184,35 @@
   gap: 6px;
   white-space: nowrap;
   cursor: default;
+}
+
+/* Text-like chart controls: no button chrome in any state.
+   A host stylesheet may style every <button> — Rare Styles' `button:hover`
+   adds a border and background, and its element+pseudo-class selector beats
+   a single class. Doubling the class (and listing the states) wins without
+   !important; only the cursor changes on hover. Keyboard focus keeps its
+   outline (rule below). */
+.rc-graph-legend-item.rc-graph-legend-item,
+.rc-graph-legend-reset.rc-graph-legend-reset,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button,
+.rc-graph-tools .rc-graph-note.rc-graph-note,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.rc-graph-legend-item.rc-graph-legend-item:hover,
+.rc-graph-legend-item.rc-graph-legend-item:active,
+.rc-graph-legend-reset.rc-graph-legend-reset:hover,
+.rc-graph-legend-reset.rc-graph-legend-reset:active,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:hover,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:active,
+.rc-graph-tools .rc-graph-note.rc-graph-note:hover,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* Graph legend items are controls, not static labels. */
@@ -227,6 +261,11 @@
 .rc-graph-overflow[hidden] { display: none; }
 
 .rc-graph-breadcrumbs button {
+  /* inline: a site stylesheet may make every <button> a block (Rare Styles
+     does, Q-04) — the trail must stay on one line */
+  display: inline;
+  width: auto;
+  margin: 0;
   appearance: none;
   border: 0;
   padding: 0;
@@ -245,8 +284,8 @@
 .rc-graph-overflow {
   position: absolute;
   z-index: 4;
-  left: 104px;
-  bottom: 34px;
+  right: 8px;
+  bottom: 40px;
   width: min(320px, calc(100% - 120px));
   max-height: min(300px, 55%);
   overflow: hidden;
@@ -288,6 +327,9 @@
 }
 
 .rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
+/* list rows keep their hover tint, but never a host button border */
+.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:hover,
+.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close:hover { border: 0; box-shadow: none; }
 
 .rc-graph-overflow-close {
   position: absolute;
@@ -352,6 +394,20 @@
 
 .rc-tooltip.is-visible {
   opacity: 0.9;
+}
+
+/* Pinned (opt-in, relation charts): stays put, takes pointer events so links
+   inside it work, wraps long content. Closes on outside click or Escape. */
+.rc-tooltip.is-pinned {
+  pointer-events: auto;
+  white-space: normal;
+  max-width: 320px;
+  opacity: 1;
+}
+
+.rc-tooltip.is-pinned a {
+  color: inherit;
+  text-decoration: underline;
 }
 
 /* ─── SVG elements ───────────────────────────────────────────────────────── */
@@ -704,3 +760,143 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ─── Screen-reader-only content (data-table fallbacks) ──────────────────── */
+.rc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Sankey ─────────────────────────────────────────────────────────────── */
+.rc-sankey-label { font-size: 11px; }
+.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+
+/* ─── Graph flow view ────────────────────────────────────────────────────── */
+.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-flow-node-label { font-size: 12px; }
+.rc-flow-node-sub,
+.rc-flow-link-label { font-size: 11px; font-family: var(--font-mono, ui-monospace, monospace); }
+.rc-flow-hull-label { font-size: 11px; }
+/* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
+.rc-flow-node:focus { outline: none; }
+.rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+/* Footer row with tools (Graph zoom): source on the left, controls pinned
+   right, a note (if any) on its own line below. */
+.rc-chart-footer--tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-sm, 8px);
+}
+.rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }
+.rc-graph-tools {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+.rc-graph-zoom-controls { display: flex; gap: 4px; }
+.rc-graph-tools button { display: inline-block; margin: 0; width: auto; }
+.rc-graph-tools button[hidden] { display: none; }
+.rc-graph-tools .rc-graph-note,
+.rc-graph-tools .rc-graph-hidden-note {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0 4px;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+  opacity: 0.75;
+  cursor: pointer;
+}
+/* Full screen: the card fills the screen (native API or overlay fallback). */
+.rc-graph--fullscreen {
+  position: fixed !important;
+  inset: 0;
+  z-index: 1000;
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  padding: 16px;
+  box-sizing: border-box;
+  background: var(--bg-color, #fff);
+}
+.rc-graph--fullscreen:fullscreen { position: static !important; }
+
+/* Controls slot (option `controls`): page controls inside the card, between
+   the drawing and the footer. Compact, wrapping, small type. */
+.rc-chart-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 0 2px;
+  font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size-sm, 12px);
+}
+.rc-chart-controls label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  cursor: pointer;
+}
+.rc-chart-controls input { margin: 0; }
+.rc-chart-controls label.is-disabled,
+.rc-chart-controls label:has(input:disabled) { opacity: 0.45; cursor: default; }
+.rc-chart-controls output { font-variant-numeric: tabular-nums; min-width: 7ch; }
+
+/* ─── Graph details panel (option `details`) ─────────────────────────────── */
+.rc-graph-details {
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 10px 14px;
+  font-family: var(--rc-font-family);
+  font-size: 13px;
+  line-height: 1.4;
+}
+/* Wide card: beside the drawing, aligned with it (top/height set by Graph). */
+.rc-graph--details-side > .rc-graph-details {
+  position: absolute;
+  right: 0;
+  border-left: 1px solid rgba(127, 127, 127, 0.25);
+}
+/* Narrow card: below the drawing; the card grows by the panel's height. */
+.rc-graph--details-below > .rc-graph-details {
+  flex: 0 0 auto;
+  border-top: 1px solid rgba(127, 127, 127, 0.25);
+}
+.rc-graph-details h4 { margin: 2px 0 6px; font-size: 15px; line-height: 1.25; text-transform: none; }
+.rc-graph-details p { margin: 0 0 6px; }
+.rc-graph-details .rc-graph-details-kind {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+.rc-graph-details .rc-graph-details-muted { opacity: 0.7; }
+.rc-graph-details dl {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 2px 10px;
+  margin: 0 0 6px;
+}
+.rc-graph-details dt { opacity: 0.7; font-size: inherit; font-weight: inherit; margin: 0; }
+.rc-graph-details dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.rc-graph-details ul { margin: 0; padding-left: 1.1em; }
+.rc-graph-details li { margin: 0 0 2px; }
+.rc-graph-details a { color: inherit; text-decoration: underline; }
+

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { GraphModel } from '../assets/charts/src/graph/model.js';
 import { memorySource } from '../assets/charts/src/graph/source.js';
-import { egoLayout } from '../assets/charts/src/graph/layouts/ego.js';
+import { egoLayout, egoCapacity } from '../assets/charts/src/graph/layouts/ego.js';
 import { pathLayout } from '../assets/charts/src/graph/layouts/path.js';
 import { clusterLayout } from '../assets/charts/src/graph/layouts/cluster.js';
 import { Graph } from '../assets/charts/src/charts/Graph.js';
@@ -206,6 +206,9 @@ describe('pathLayout', () => {
     // first row is the shortest route
     expect(rows).toHaveLength(2);
     expect(rows[0]).toMatchObject({ hops: 3, shortest: true });
+    // captions sit on the route (over the first intermediate node), not at
+    // the left edge where the endpoint's context fan lives
+    expect(rows[0].x).toBe(pos.get('b').x);
     expect(rows[1]).toMatchObject({ hops: 2, shortest: false });
   });
 
@@ -222,7 +225,7 @@ describe('pathLayout', () => {
 });
 
 describe('clusterLayout', () => {
-  it('places meta-nodes on a circle, single community centered', () => {
+  it('places meta-nodes on a grid from the centre out, single community centered', () => {
     const two = clusterLayout(
       { nodes: [{ id: 'c0' }, { id: 'c1' }] },
       { width: 800, height: 600 });
@@ -233,6 +236,19 @@ describe('clusterLayout', () => {
 
     const one = clusterLayout({ nodes: [{ id: 'c0' }] }, { width: 800, height: 600 });
     expect(one.get('c0')).toEqual({ x: 400, y: 300 });
+  });
+
+  it('never overlaps meta-nodes and puts the first (largest) nearest the centre', () => {
+    const nodes = Array.from({ length: 9 }, (_, i) => ({ id: `c${i}` }));
+    const pos = clusterLayout({ nodes }, { width: 800, height: 520 });
+    const pts = nodes.map(n => pos.get(n.id));
+    const seen = new Set(pts.map(p => `${Math.round(p.x)},${Math.round(p.y)}`));
+    expect(seen.size).toBe(9);
+    const d = p => Math.hypot(p.x - 400, p.y - 260);
+    expect(d(pts[0])).toBeLessThanOrEqual(Math.min(...pts.slice(1).map(d)) + 1e-9);
+    // grid: every x and y comes from a small set of column/row centres
+    expect(new Set(pts.map(p => Math.round(p.x))).size).toBeLessThanOrEqual(4);
+    expect(new Set(pts.map(p => Math.round(p.y))).size).toBeLessThanOrEqual(3);
   });
 });
 
@@ -492,7 +508,7 @@ describe('Graph viewport', () => {
     expect(note?.textContent).toContain('1 hidden');
     note.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(labels()).toContain('E');
-    expect(host.querySelector('.rc-graph-hidden-note')).toBeNull();
+    expect(host.querySelector('.rc-graph-hidden-note').hidden).toBe(true);
   });
 
   it('add() merges a news-sized payload and refreshes the ego view', async () => {
@@ -581,5 +597,385 @@ describe('Graph viewport', () => {
     const g = new Graph('#chart', { duration: 0 }).setData(fixture);
     await g.whenReady();
     expect(() => g.destroy()).not.toThrow();
+  });
+});
+
+// ─── GraphModel — multigraph storage (A2, 0.9.8_3) ─────────────────────────────
+
+describe('GraphModel — multigraph storage', () => {
+  const multi = {
+    nodes: [{ id: 'trump' }, { id: 'kushner' }, { id: 'x' }],
+    links: [
+      { source: 'trump', target: 'kushner', type: 'family' },
+      { source: 'trump', target: 'kushner', type: 'investment' },
+      { source: 'kushner', target: 'trump', type: 'employment' },
+      { source: 'kushner', target: 'x', type: 'investment' },
+    ],
+  };
+
+  it('keeps every typed tie of a pair, in both directions', () => {
+    const m = new GraphModel(multi);
+    const ties = m.links('trump', 'kushner');
+    expect(ties.map(l => l.type).sort()).toEqual(['employment', 'family', 'investment']);
+    expect(ties.every(l => typeof l.id === 'string')).toBe(true);
+    expect(m.link('trump', 'kushner')).not.toBeNull();   // compat accessor
+  });
+
+  it('re-merging is idempotent; same pair + type updates in place', () => {
+    const m = new GraphModel(multi);
+    m.merge(multi);
+    expect(m.links('trump', 'kushner')).toHaveLength(3);
+    m.merge({ links: [{ source: 'trump', target: 'kushner', type: 'family', label: 'son-in-law' }] });
+    const fam = m.links('trump', 'kushner').find(l => l.type === 'family');
+    expect(fam.label).toBe('son-in-law');
+    expect(m.links('trump', 'kushner')).toHaveLength(3);
+  });
+
+  it('caller ids are the identity; from/to aliases are accepted', () => {
+    const m = new GraphModel({ links: [
+      { id: 'tx1', from: 'a', to: 'b', type: 'swap' },
+      { id: 'tx2', from: 'a', to: 'b', type: 'swap' },
+    ] });
+    expect(m.links('a', 'b').map(l => l.id).sort()).toEqual(['tx1', 'tx2']);
+    expect(m.links('a', 'b')[0]).not.toHaveProperty('from');
+  });
+
+  it('analytics see one tie per pair: degree is not inflated by parallel ties', () => {
+    const m = new GraphModel(multi);
+    expect(m.degree('trump')).toBe(1);
+    expect(m.degree('kushner')).toBe(2);
+  });
+
+  it('the type filter applies per tie: isolating a type keeps only that tie of the pair', () => {
+    const m = new GraphModel(multi);
+    const sub = m.neighborhood('trump', 1, { types: ['investment'] });
+    expect(sub.links.map(l => l.type)).toEqual(['investment']);
+    expect(sub.nodes.map(n => n.id).sort()).toEqual(['kushner', 'trump']);
+  });
+
+  it('memorySource paths ignore direction and return every tie along the route', async () => {
+    const src = memorySource({ links: [
+      { source: 'b', target: 'a', type: 'family' },
+      { source: 'a', target: 'b', type: 'deal' },
+      { source: 'c', target: 'b' },
+    ] });
+    const res = await src.paths('a', 'c', { k: 1 });
+    expect(res.paths[0]).toEqual(['a', 'b', 'c']);
+    expect(res.links.map(l => l.type ?? 'default').sort()).toEqual(['deal', 'default', 'family']);
+  });
+});
+
+// ─── Graph viewport — parallel ties and tie tooltips (A2/A3, 0.9.8_3) ──────────
+
+describe('Graph viewport — ties', () => {
+  let host;
+  const mount = id => {
+    const el = document.createElement('div');
+    el.id = id;
+    document.body.appendChild(el);
+    return el;
+  };
+  beforeEach(() => {
+    document.body.innerHTML = '';
+    host = mount('chart');
+  });
+
+  const pairData = types => ({
+    nodes: [{ id: 'trump', label: 'Trump' }, { id: 'kushner', label: 'Kushner' }],
+    links: types.map(type => ({ source: 'trump', target: 'kushner', type })),
+  });
+
+  it('draws parallel typed ties of one pair as separate arcs', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment']));
+    await g.whenReady();
+    const paths = [...host.querySelectorAll('.rc-graph-link')];
+    expect(paths).toHaveLength(3);
+    expect(new Set(paths.map(p => p.getAttribute('d'))).size).toBe(3);   // fanned, not stacked
+    expect(host.querySelectorAll('.rc-graph-link-hit')).toHaveLength(3);
+  });
+
+  it('collapses a pair with more than 3 ties into one line with a +N badge', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment', 'deal', 'conflict']));
+    await g.whenReady();
+    expect(host.querySelectorAll('.rc-graph-link')).toHaveLength(1);
+    expect(host.querySelector('.rc-graph-link-more').textContent).toBe('+4');
+  });
+
+  it('click on a tie pins a tooltip with working source links', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData({
+      nodes: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }],
+      links: [{
+        source: 'a', target: 'b', type: 'deal', label: '<b>merger</b>',
+        sources: [{ url: 'https://example.com/1', title: 'Post 1' },
+                  { url: 'javascript:alert(1)', title: 'Bad' }],
+      }],
+    });
+    await g.whenReady();
+    const hit = host.querySelector('.rc-graph-link-hit');
+    hit.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const tt = host.querySelector('.rc-tooltip');
+    expect(tt.classList.contains('is-pinned')).toBe(true);
+    const anchors = [...tt.querySelectorAll('a')];
+    expect(anchors.map(a => a.getAttribute('href'))).toEqual(['https://example.com/1']);
+    expect(tt.innerHTML).toContain('&lt;b&gt;merger&lt;/b&gt;');   // payload text is escaped
+  });
+
+  it('linkTooltipFormat receives the canonical link and both endpoint nodes', async () => {
+    const seen = [];
+    const g = new Graph('#chart', {
+      duration: 0,
+      linkTooltipFormat: ({ link, source, target }) => {
+        seen.push({ link, source, target });
+        return 'custom';
+      },
+    }).setData({ nodes: [{ id: 'a', label: 'A' }, { id: 'b' }], links: [{ from: 'a', to: 'b' }] });
+    await g.whenReady();
+    host.querySelector('.rc-graph-link-hit').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(seen[0].link.source).toBe('a');
+    expect(seen[0].link).not.toHaveProperty('from');
+    expect(seen[0].source.label).toBe('A');
+    expect(seen[0].target.id).toBe('b');
+  });
+
+  it('arrow marker ids are unique per instance', async () => {
+    const other = mount('chart2');
+    const g1 = new Graph('#chart', { duration: 0 }).setData(pairData(['family']));
+    const g2 = new Graph('#chart2', { duration: 0 }).setData(pairData(['family']));
+    await Promise.all([g1.whenReady(), g2.whenReady()]);
+    const m1 = host.querySelector('marker').id;
+    const m2 = other.querySelector('marker').id;
+    expect(m1).not.toBe(m2);
+    expect(host.querySelector('.rc-graph-link').getAttribute('marker-end')).toBe(`url(#${m1})`);
+  });
+
+  it('isolating a type in the legend keeps only that arc of the pair', async () => {
+    const g = new Graph('#chart', { duration: 0 })
+      .setData(pairData(['family', 'investment', 'employment']));
+    await g.whenReady();
+    await g.setRelationTypes(['investment']).whenReady();
+    const paths = [...host.querySelectorAll('.rc-graph-link')];
+    expect(paths).toHaveLength(1);
+  });
+});
+
+describe('Graph viewport — focus + context fade', () => {
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="chart"></div>';
+  });
+
+  it('hovering a node actually fades the others (style, not a shadowed attribute)', async () => {
+    const host = document.getElementById('chart');
+    const g = new Graph('#chart', { duration: 0 }).setData(fixture).focus('a');
+    await g.whenReady();
+    const nodes = [...host.querySelectorAll('.rc-graph-node')];
+    nodes.find(n => n.__data__.id === 'e').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    const faded = nodes.filter(n => n.style.opacity === '0.25').map(n => n.__data__.id).sort();
+    expect(faded).toEqual(['b', 'c']);           // e's only neighbor is a
+    nodes[0].dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+    expect(nodes.every(n => n.style.opacity === '1')).toBe(true);
+  });
+});
+
+describe('egoLayout — one dominant category (A4)', () => {
+  // 60 nodes of a single group: 12 first-ring, 48 second-ring.
+  const nodes = [{ id: 'ego', depth: 0, group: 'person' }];
+  const links = [];
+  for (let i = 0; i < 12; i++) {
+    nodes.push({ id: `r1-${i}`, depth: 1, group: 'person' });
+    links.push({ source: 'ego', target: `r1-${i}` });
+    for (let j = 0; j < 4; j++) {
+      nodes.push({ id: `r2-${i}-${j}`, depth: 2, group: 'person' });
+      links.push({ source: `r1-${i}`, target: `r2-${i}-${j}` });
+    }
+  }
+  const W = 900, H = 600;
+  const { positions: p, sectors } = egoLayout({ nodes, links }, { rootId: 'ego', width: W, height: H });
+
+  it('centres the ego and spreads every node around it — not into one corner', () => {
+    expect(Math.abs(p.get('ego').x - W / 2)).toBeLessThan(W / 6);
+    expect(Math.abs(p.get('ego').y - H / 2)).toBeLessThan(H / 6);
+    const pts = nodes.slice(1).map(n => p.get(n.id));
+    const quadrant = pt => `${pt.x < W / 2 ? 'L' : 'R'}${pt.y < H / 2 ? 'T' : 'B'}`;
+    const counts = {};
+    pts.forEach(pt => { counts[quadrant(pt)] = (counts[quadrant(pt)] ?? 0) + 1; });
+    expect(Object.keys(counts).sort()).toEqual(['LB', 'LT', 'RB', 'RT']);
+    Object.values(counts).forEach(c => expect(c).toBeGreaterThan(8));
+  });
+
+  it('keeps depth readable as distance, on the grid, inside the canvas', () => {
+    const e = p.get('ego');
+    const d = id => Math.hypot(p.get(id).x - e.x, p.get(id).y - e.y);
+    const first = Math.max(...nodes.filter(n => n.depth === 1).map(n => d(n.id)));
+    const second = Math.min(...nodes.filter(n => n.depth === 2).map(n => d(n.id)));
+    expect(second).toBeGreaterThanOrEqual(first - 1e-9);
+    // on the grid: shared column/row centres, not free angles
+    const xs = new Set(nodes.map(n => Math.round(p.get(n.id).x)));
+    expect(xs.size).toBeLessThan(nodes.length / 3);
+    nodes.forEach(n => {
+      const pt = p.get(n.id);
+      expect(pt.x).toBeGreaterThan(0); expect(pt.x).toBeLessThan(W);
+      expect(pt.y).toBeGreaterThan(0); expect(pt.y).toBeLessThan(H);
+    });
+    expect(sectors).toHaveLength(1);
+  });
+
+  it('no two nodes share a spot', () => {
+    const seen = new Set();
+    nodes.forEach(n => {
+      const key = `${Math.round(p.get(n.id).x)},${Math.round(p.get(n.id).y)}`;
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
+    });
+  });
+});
+
+describe('Graph viewport — chrome', () => {
+  beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
+
+  it('puts the tools (notes, zoom, full screen) in the footer row, after the source', () => {
+    new Graph('#chart', { duration: 0, source: 'Synthetic data' });
+    const footer = document.querySelector('#chart .rc-chart-footer');
+    expect(footer.classList.contains('rc-chart-footer--tools')).toBe(true);
+    const kids = [...footer.children].map(c => c.className);
+    expect(kids.indexOf('rc-graph-tools')).toBe(kids.indexOf('rc-chart-source') + 1);
+    const tools = footer.querySelector('.rc-graph-tools');
+    expect(tools.querySelector('.rc-graph-zoom-controls')).not.toBeNull();
+    expect(tools.querySelector('.rc-graph-fullscreen')).not.toBeNull();
+    expect(tools.querySelector('.rc-graph-note').hidden).toBe(true);
+    expect(document.querySelectorAll('#chart svg .rc-graph-note')).toHaveLength(0);
+  });
+
+  it('full screen: the button expands the card, Esc (overlay fallback) or the button restores it', () => {
+    const host = document.getElementById('chart');
+    host.requestFullscreen = undefined;                 // force the overlay fallback
+    const g = new Graph('#chart', { duration: 0, height: 420 });
+    const btn = host.querySelector('.rc-graph-fullscreen');
+    btn.click();
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(true);
+    expect(host.style.height).toBe('100vh');
+    expect(btn.title).toContain('Exit');
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(false);
+    expect(host.style.height).toBe('420px');
+    g.toggleFullscreen(true);
+    btn.click();
+    expect(host.classList.contains('rc-graph--fullscreen')).toBe(false);
+  });
+
+  it('fullscreen: false leaves the button out', () => {
+    new Graph('#chart', { duration: 0, fullscreen: false });
+    expect(document.querySelector('#chart .rc-graph-fullscreen')).toBeNull();
+  });
+
+  it('creates a footer row for the controls when there is no source or note', () => {
+    new Graph('#chart', { duration: 0 });
+    expect(document.querySelector('#chart .rc-chart-footer .rc-graph-zoom-controls')).not.toBeNull();
+  });
+});
+
+describe('layouts — vertical fit', () => {
+  it('ego: the used rows run from just under the top to just above the bottom', () => {
+    const m = new GraphModel(fixture);
+    const sub = m.neighborhood('c', 2);
+    const { positions } = egoLayout(sub, { rootId: 'c', width: 800, height: 520, nodeRadius: 22 });
+    const ys = [...positions.values()].map(p => p.y);
+    expect(Math.min(...ys)).toBeCloseTo(28, 0);            // radius + 6
+    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
+  });
+
+  it('cluster: the top row sits under the edge by its largest node radius', () => {
+    const nodes = Array.from({ length: 6 }, (_, i) => ({ id: `c${i}`, size: i === 0 ? 3 : 1 }));
+    const pos = clusterLayout({ nodes }, { width: 800, height: 520, nodeRadius: 22 });
+    const ys = [...pos.values()].map(p => p.y);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(22 + 6 - 1e-6);
+    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
+  });
+});
+
+describe('egoLayout — wide canvas, one dominant category', () => {
+  it('spreads across the width on cells at least ~96 px wide', () => {
+    const nodes = [{ id: 'ego', depth: 0, group: 'fund' }];
+    for (let i = 0; i < 33; i++) nodes.push({ id: `f${i}`, depth: i < 8 ? 1 : 2, group: 'fund' });
+    const W = 740, H = 387;
+    const { positions, cellW } = egoLayout({ nodes, links: [] }, { rootId: 'ego', width: W, height: H });
+    expect(cellW).toBeGreaterThanOrEqual(96 - 1e-9);
+    const xs = [...positions.values()].map(p => p.x);
+    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(W * 0.7);
+    const ys = [...positions.values()].map(p => p.y);
+    expect(Math.max(...ys)).toBeLessThan(H);
+  });
+});
+
+describe('egoCapacity', () => {
+  it('fits a 63-node neighbourhood on a 1150 × 410 drawing (the FF Portfolio case)', () => {
+    expect(egoCapacity(1150, 410)).toBeGreaterThanOrEqual(63);
+  });
+  it('grows with the canvas and never drops below one', () => {
+    expect(egoCapacity(1600, 900)).toBeGreaterThan(egoCapacity(800, 520));
+    expect(egoCapacity(10, 10)).toBe(1);
+  });
+});
+
+describe('Graph viewport — details panel', () => {
+  const setWidth = (el, w) => Object.defineProperty(el, 'clientWidth', { configurable: true, get: () => w });
+  beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
+
+  it('details: true sits beside a wide card and shows the focused node by default', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1200);
+    const g = new Graph('#chart', { duration: 0, details: true, height: 500 }).setData(fixture).focus('a');
+    await g.whenReady();
+    const panel = host.querySelector('.rc-graph-details');
+    expect(host.classList.contains('rc-graph--details-side')).toBe(true);
+    expect(panel.style.width).toBe('300px');
+    expect(panel.querySelector('h4').textContent).toBe('A');
+    expect(panel.textContent).toContain('Connections');
+  });
+
+  it('a narrow card puts it below and grows by its height', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 600);
+    const g = new Graph('#chart', { duration: 0, details: true, height: 500 }).setData(fixture);
+    await g.whenReady();
+    expect(host.classList.contains('rc-graph--details-below')).toBe(true);
+    expect(host.style.height).toBe('700px');
+  });
+
+  it('hovering a node and clicking a tie update it; detailsFormat replaces the content', async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1200);
+    const seen = [];
+    const g = new Graph('#chart', {
+      duration: 0, details: true,
+      detailsFormat: ({ node, link, view }) => { seen.push({ node: node?.id, link: link?.id, view }); return 'x'; },
+    }).setData(fixture).focus('a');
+    await g.whenReady();
+    const node = [...host.querySelectorAll('.rc-graph-node')].find(n => n.__data__.id === 'b');
+    node.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    expect(seen[seen.length - 1]).toMatchObject({ node: 'b', view: 'ego' });
+    node.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+    expect(seen[seen.length - 1].node).toBe('a');            // back to the focused node
+    host.querySelector('.rc-graph-link-hit').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(seen[seen.length - 1].link).toBeTruthy();
+  });
+
+  it("flow: stays below when the drawing's minWidth plus the panel does not fit", async () => {
+    const host = document.getElementById('chart');
+    setWidth(host, 1166);
+    const g = new Graph('#chart', { view: 'flow', duration: 0, details: true, minWidth: 980 })
+      .setData({ nodes: [{ id: 'a', lane: 'x' }, { id: 'b', lane: 'y' }], links: [{ source: 'a', target: 'b' }] });
+    await g.whenReady();
+    expect(host.classList.contains('rc-graph--details-below')).toBe(true);
+  });
+
+  it('a page-owned element is moved in and left for the page to fill', async () => {
+    document.body.innerHTML = '<div id="chart"></div><aside id="mine">page content</aside>';
+    const g = new Graph('#chart', { duration: 0, details: '#mine' }).setData(fixture);
+    await g.whenReady();
+    const mine = document.getElementById('mine');
+    expect(mine.parentElement.id).toBe('chart');
+    expect(mine.textContent).toBe('page content');
   });
 });

@@ -27,7 +27,9 @@ export function memorySource(data = {}) {
     async paths(a, b, { k = 3 } = {}) {
       if (!model.has(a) || !model.has(b)) return { paths: [], nodes: [], links: [] };
 
-      const work = model.g.copy();
+      // Routes ignore direction, as the ego view does: search the undirected
+      // projection, then return every stored tie along each hop.
+      const work = model.projection().copy();
       const paths = [];
       for (let i = 0; i < k; i++) {
         const p = bidirectional(work, a, b);
@@ -42,10 +44,11 @@ export function memorySource(data = {}) {
       const links = [];
       paths.forEach(p => {
         for (let j = 0; j < p.length - 1; j++) {
-          const key = p[j] < p[j + 1] ? `${p[j]}|${p[j + 1]}` : `${p[j + 1]}|${p[j]}`;
-          if (seen.has(key)) continue;
-          seen.add(key);
-          links.push(model.link(p[j], p[j + 1]));
+          model.links(p[j], p[j + 1]).forEach(l => {
+            if (seen.has(l.id)) return;
+            seen.add(l.id);
+            links.push(l);
+          });
         }
       });
       return { paths, nodes, links };

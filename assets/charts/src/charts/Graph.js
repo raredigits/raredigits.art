@@ -1,11 +1,16 @@
 // RareCharts — Graph (experimental)
-// Network viewport over a headless graph model. Three deterministic views
-// instead of a force simulation:
+// Network viewport over a headless graph model. Deterministic views instead
+// of a force simulation:
 //
-//   ego     — rings by degree of separation around a focused node,
-//             angular sectors by relation type (graph/layouts/ego.js)
+//   ego     — a grid around a focused node: each category anchored to a
+//             corner, distance from the centre ≈ degrees of separation; a
+//             dominant category fills from the centre out (graph/layouts/ego.js)
 //   path    — layered "how are A and B connected" routes (layouts/path.js)
-//   cluster — communities collapsed into meta-nodes (layouts/cluster.js)
+//   cluster — communities collapsed into meta-nodes on a grid, largest in the
+//             centre (layouts/cluster.js)
+//   flow    — a trace in ordered lanes: directed, value-weighted ties between
+//             entities, laid out from data hints (graph/views/flow.js;
+//             set `view: 'flow'` and call setData — see "Flow view" below)
 //
 // Data arrives through a source adapter (graph/source.js contract):
 //   { neighbors(id, {depth, types}), paths(a, b, {k}), aggregates() }
@@ -15,7 +20,10 @@
 //
 // Data format:
 //   nodes: [{ id, label, group?, size?, color?, image? }, ...]
-//   links: [{ source, target, type?, weight?, strength?, label? }, ...]
+//   links: [{ id?, source, target, type?, weight?, strength?, label?, ... }, ...]
+//          (`from`/`to` accepted as endpoint aliases). A pair may carry several
+//          ties of different types — drawn as parallel arcs (up to 3; more
+//          collapse into one line with a +N badge, all listed in its tooltip).
 //
 // Options:
 //   view          — initial view: 'ego' | 'path' | 'cluster' (default: 'ego')
@@ -34,11 +42,13 @@
 //                   path view, faded (default: true)
 //   pathContextCount — max context ties per endpoint (default: 8)
 //   semanticZoom  — zooming out of ego switches to cluster view (default: true)
-//   height        — px (default: 520)
-//   maxNodes      — cap on rendered ego nodes: 'auto' (from canvas size,
-//                   default) or a number; hidden count is noted on-chart
+//   height        — card height px, title/legend/footer included (default: 520)
+//   maxNodes      — cap on rendered ego nodes: 'auto' (from canvas size —
+//                   one node per ~96 × 50 px cell, default) or a number; the
+//                   rest is listed behind a "+N more" button in the footer
 //   draggable     — nodes can be hand-dragged; positions persist until the
-//                   next view change (default: true)
+//                   next view change; under 6 px of movement is a click
+//                   (default: true)
 //   nodeRadius    — base radius px (default: 22)
 //   nodeIcons     — { group: svgPath } merged over built-ins (graph/icons.js);
 //                   false renders plain circles
@@ -46,6 +56,18 @@
 //                   it from connectivity, 'field' reads the per-node `size`
 //   zoom          — +/−/reset buttons and drag pan; the wheel is left to the
 //                   page (default: true)
+//   fullscreen    — full-screen button in the footer tools; Esc or the
+//                   button exits (default: true). Also toggleFullscreen()
+//   details       — a details panel inside the card: true = rendered by the
+//                   library (the hovered/selected node or tie; the focused node
+//                   by default), or your own element/selector (fill it from
+//                   onSelect). Beside the drawing on wide cards, below it on
+//                   narrow ones (default: off)
+//   detailsFormat — ({ node, link, view }) => html for details: true
+//   detailsWidth  — side panel width px (default: 300)
+//   detailsBreakpoint — card width px from which the panel sits beside the
+//                   drawing (default: 1000)
+//   detailsHeight — panel height px when it sits below (default: 200)
 //   linkTypes     — { type: { color, dash, label } } map or preset
 //   relationTypes — initial link-type filter: only listed types are traversed
 //                   and drawn; untyped links match 'default' (default: all)
@@ -53,29 +75,65 @@
 //   breadcrumbs   — show clickable view history (default: true)
 //   historyLimit  — max states kept for breadcrumbs/back() (default: 12)
 //   tooltipFormat — function({ node, links }) => html
+//   linkTooltipFormat — function({ link, source, target }) => html for a tie's
+//                   hover/pinned tooltip; click a tie to pin it (links inside
+//                   a pinned tooltip are clickable; outside click/Esc closes)
 //   duration      — transition ms (default: 500; reduced-motion aware)
+//
+// Flow view options (view: 'flow'; spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md):
+//   lanes         — [{ id, label, weight? }] in left-to-right order
+//   laneBy        — node field (or fn) naming its lane (default: 'lane')
+//   nodeGroups    — { group: { color, label } } — node color + legend
+//   nodeShapes    — { kind: 'circle' | 'square' | 'diamond' | 'stack' | svgPath }
+//   shapeBy       — node field (or fn) keyed into nodeShapes (default: 'kind')
+//   linkColorBy   — tie field (or fn) keyed into linkTypes (default: 'type')
+//   linkWidth     — { by: 'value', scale: 'sqrt' | 'linear', min, max }
+//   linkDash      — tie => boolean: dashed (e.g. derived amounts)
+//   linkLabels    — draw tie labels (default: true)
+//   hulls         — [{ id, label, members: ids | node => bool, color? }]
+//   hiddenLinkTypes — tie categories hidden at start; the legend shows them
+//                   (dimmed) and turns them on. A node whose ties are all
+//                   hidden is hidden with them
+//   timeWindowMode — 'dim' (default) | 'hide' for setTimeWindow
+//   onSelect      — ({ node, link, event }) => void — drive a details panel
+//   minWidth      — px; narrower containers scroll sideways (default: 0)
+//   nodeRadius    — default 18 in the flow view
+// Node hints: lane, row (0 main line, ±1…), col (sub-column), x/y (0..1
+// fractions), sub (second line), terminal. Ties: source/target (from/to),
+// value, start/end, label, bend.
 //
 // Methods (each returns `this`; use whenReady() to await the fetch+render):
 //   focus(id, { types? }) — ego view around id (click-recenter uses this too)
 //   connect(a, b)  — path view between a and b
 //   overview()     — cluster view
-//   setData(data)  — wrap data in memorySource and focus the best-connected node
+//   setData(data)  — wrap data in memorySource and focus the best-connected node;
+//                    a focus/connect/overview chained in the same tick replaces
+//                    that default (no whenReady() needed in between)
 //   add(payload)   — merge an incremental { nodes?, links } payload and refresh
 //   hide(id) / show(id) — toggle a node out of / back into the ego view
 //   setRelationTypes(types) / clearRelationTypes() — filter ego relations
 //   back() / clearHistory() — navigate the graph view history
+//   flow view: setFilter(fn) · setTimeWindow(from, to) · select(id | { link })
+//              · clearSelection() · setLinkLabels(bool) · setHulls(list)
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
-import { applySvgA11y } from '../core/renderHelpers.js';
+import { applySvgA11y, fitTextNode } from '../core/renderHelpers.js';
 import { motionDuration } from '../core/utils.js';
+import { dedupeUndirected, parallelIndex, pairKey, normalizeLinkData } from '../core/links.js';
+import { FlowView } from '../graph/views/flow.js';
 import { GraphModel }    from '../graph/model.js';
 import { memorySource }  from '../graph/source.js';
 import { defaultNodeIcons } from '../graph/icons.js';
-import { egoLayout }     from '../graph/layouts/ego.js';
+import { egoLayout, egoCapacity } from '../graph/layouts/ego.js';
 import { pathLayout }    from '../graph/layouts/path.js';
 import { clusterLayout } from '../graph/layouts/cluster.js';
+
+// Tooltip HTML is assembled from payload strings: escape them.
+const escapeHtml = v => String(v).replace(/[&<>"']/g, c =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const safeUrl = url => typeof url === 'string' && /^(https?:|\/|#)/i.test(url.trim());
 
 export class Graph extends Chart {
   constructor(selector, options = {}) {
@@ -107,9 +165,13 @@ export class Graph extends Chart {
     this._manual   = new Map();          // node id → dragged position override
     this._hidden   = new Set(options.hiddenNodes ?? []);
     this._ready    = Promise.resolve();
+    this._autoFocusId = null;            // setData's default ego, unless a view is requested first
     this._switching = false;             // guards semantic-zoom feedback loops
     this._hasRendered = false;
     this._tooltip  = new Tooltip(this.container, this.theme);
+    // Per-instance suffix for <defs> ids: two graphs on a page must not
+    // resolve each other's arrow markers.
+    this._uid      = Math.random().toString(36).slice(2, 8);
     // linkTypes: pass a preset (e.g. linkPresets.personal) or your own map.
     this._linkTypes = options.linkTypes ?? {
       default: { color: '#888888', dash: null, label: 'Connection' },
@@ -129,6 +191,7 @@ export class Graph extends Chart {
 
     this._initSVG();
     this._initGraphChrome();
+    this._initDetails();
   }
 
   // ─── Public API ───────────────────────────────────────────────────────────
@@ -136,35 +199,39 @@ export class Graph extends Chart {
   // Ego view around `id`: fetch its neighborhood, merge into the model,
   // lay out from the accumulated graph.
   focus(id, { types } = {}) {
-    return this._enqueue(async () => {
-      // The filter is applied inside the queued task: two rapid focus() calls
-      // with different filters must each fetch with their own, not both with
-      // whichever was set last.
-      if (types !== undefined) this._setRelationTypesState(types);
-      const depth = this.options.depth ?? 2;
-      const activeTypes = this._activeRelationTypes();
-      const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
-      this._model.merge(sub);
-      (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
-      this._view = 'ego';
-      this._root = id;
-      this._paths = null;
-      this._ctxIds = null;
-      this._shortestKeys = null;
-      this._rows = null;
-      this._manual = new Map();
-      this._anchors = new Set([id]);
-      this._viewData = this._model.neighborhood(id, depth, { types: activeTypes });
-      this.render();
-      this._recordHistory({ view: 'ego', root: id, types: activeTypes });
-      this._resetZoomSilently();
-    });
+    this._autoFocusId = null;
+    return this._enqueue(() => this._focusTask(id, { types }));
+  }
+
+  async _focusTask(id, { types } = {}) {
+    // The filter is applied inside the queued task: two rapid focus() calls
+    // with different filters must each fetch with their own, not both with
+    // whichever was set last.
+    if (types !== undefined) this._setRelationTypesState(types);
+    const depth = this.options.depth ?? 2;
+    const activeTypes = this._activeRelationTypes();
+    const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
+    this._model.merge(sub);
+    (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
+    this._view = 'ego';
+    this._root = id;
+    this._paths = null;
+    this._ctxIds = null;
+    this._shortestKeys = null;
+    this._rows = null;
+    this._manual = new Map();
+    this._anchors = new Set([id]);
+    this._viewData = this._model.neighborhood(id, depth, { types: activeTypes });
+    this.render();
+    this._recordHistory({ view: 'ego', root: id, types: activeTypes });
+    this._resetZoomSilently();
   }
 
   // Path view: up to `pathCount` routes between a and b.
   // Pathfinding is the source's job (server-side on a real backend) — the
   // client only ever holds the neighborhoods it has walked.
   connect(a, b) {
+    this._autoFocusId = null;
     return this._enqueue(async () => {
       const o = this.options;
       const res = await this._requireSource().paths(a, b, { k: o.pathCount ?? 3 });
@@ -238,6 +305,7 @@ export class Graph extends Chart {
   // Cluster view: communities as meta-nodes. Clicking one recenters the ego
   // view on its most-connected member.
   overview() {
+    this._autoFocusId = null;
     return this._enqueue(async () => {
       const agg = await this._requireSource().aggregates();
       const maxSize = Math.max(1, ...agg.communities.map(c => c.size));
@@ -258,7 +326,9 @@ export class Graph extends Chart {
           _top: c.top,
           _size: c.size,
         })),
-        links: agg.links.map(l => ({ ...l, strength: Math.min(1, l.weight / 8) })),
+        links: agg.links.map(l => ({
+          ...l, id: pairKey(l.source, l.target), strength: Math.min(1, l.weight / 8),
+        })),
       };
       this.render();
       this._recordHistory({ view: 'cluster', root: this._root, types: this._activeRelationTypes() });
@@ -267,8 +337,11 @@ export class Graph extends Chart {
   }
 
   // Static payload convenience: simulate a backend over the given data and
-  // focus the best-connected node.
+  // focus the best-connected node — unless a view change (focus, connect,
+  // overview) is requested in the same tick: `setData(d).focus(id)` then
+  // renders `id` once, without first drawing and discarding the default ego.
   setData(data = {}) {
+    if (this._view === 'flow') return this._setFlowData(data);
     this._source = memorySource(data);
     this._model = new GraphModel();
     const score = new Map();
@@ -278,7 +351,80 @@ export class Graph extends Chart {
     });
     const best = [...score.entries()].sort((a, b) => b[1] - a[1])[0]?.[0]
       ?? (data.nodes ?? [])[0]?.id;
-    if (best != null) this.focus(best);
+    if (best == null) return this;
+    this._autoFocusId = best;
+    // Queued now (so whenReady() covers it), decided when it runs — after the
+    // caller's synchronous chain: a view method called meanwhile has cleared
+    // _autoFocusId and queued its own task behind this one.
+    return this._enqueue(async () => {
+      const id = this._autoFocusId;
+      this._autoFocusId = null;
+      if (id != null) await this._focusTask(id);
+    });
+  }
+
+  // ─── Flow view ────────────────────────────────────────────────────────────
+
+  // The flow view draws the given trace whole — it is the query result — so
+  // there is no source to walk and no default focus.
+  _setFlowData(data) {
+    const norm = normalizeLinkData(data);
+    const nodes = norm.nodes.map(n => ({ ...n, id: String(n.id) }));
+    const known = new Set(nodes.map(n => n.id));
+    // Endpoint-only nodes are created, as in the other views.
+    norm.links.forEach(l => [l.source, l.target].forEach(id => {
+      if (!known.has(id)) { known.add(id); nodes.push({ id }); }
+    }));
+    this._model = new GraphModel({ nodes, links: norm.links });
+    this._flow().setData({ nodes, links: norm.links });
+    this._viewData = { nodes, links: norm.links };
+    this.render();
+    return this;
+  }
+
+  _flow() {
+    if (!this._flowView) this._flowView = new FlowView(this);
+    return this._flowView;
+  }
+
+  // Show only nodes/ties passing fn(item); a tie hides with either end.
+  // Positions do not move. null clears.
+  setFilter(fn) {
+    this._flow().filter = typeof fn === 'function' ? fn : null;
+    this.render();
+    return this;
+  }
+
+  // Ties outside [from, to] dim (or hide, timeWindowMode: 'hide'); nodes
+  // whose ties are all outside fade. null bounds are open.
+  setTimeWindow(from = null, to = null) {
+    this._flow().window = from == null && to == null ? null : { from, to };
+    this.render();
+    return this;
+  }
+
+  // Select a node (id) or a tie ({ link: id }), as a click would.
+  select(target) {
+    const f = this._flow();
+    const sel = target == null ? null
+      : typeof target === 'object' ? (target.link != null ? { link: String(target.link) } : null)
+      : { node: String(target) };
+    if (f._select) f._select(sel); else f.selected = sel;
+    return this;
+  }
+
+  clearSelection() { return this.select(null); }
+
+  // Replace the group outlines ([] or null removes them).
+  setHulls(hulls) {
+    this.options.hulls = hulls ?? [];
+    this.render();
+    return this;
+  }
+
+  setLinkLabels(on = true) {
+    this._flow().labels = !!on;
+    this.render();
     return this;
   }
 
@@ -355,7 +501,13 @@ export class Graph extends Chart {
     this.gZoom    = this.gRoot.append('g').attr('class', 'rc-graph-zoom');
     this.gSectors = this.gZoom.append('g').attr('class', 'rc-graph-sectors');
     this.gLinks   = this.gZoom.append('g').attr('class', 'rc-graph-links');
+    // Invisible wide strokes over the links: hover/click targets for thin
+    // ties. Below the nodes, so a node always wins where they overlap.
+    this.gLinkHits = this.gZoom.append('g').attr('class', 'rc-graph-link-hits');
     this.gNodes   = this.gZoom.append('g').attr('class', 'rc-graph-nodes');
+    // +N badges of collapsed pairs sit above the nodes: on a tight grid the
+    // tie's visible stretch is often covered by an endpoint's label.
+    this.gLinkBadges = this.gZoom.append('g').attr('class', 'rc-graph-link-badges');
 
     // Legend — HTML element, rendered outside SVG so it never overlaps nodes
     this._legendEl = document.createElement('div');
@@ -375,12 +527,13 @@ export class Graph extends Chart {
       this.svg
         .call(this._zoom)
         .on('dblclick.zoom', null);
-
-      this._initZoomControls();
     }
+    this._initTools();
   }
 
   _initGraphChrome() {
+    // The hidden-nodes list is positioned against the chart card.
+    this.container.style.position = 'relative';
     this._breadcrumbsEl = document.createElement('nav');
     this._breadcrumbsEl.className = 'rc-graph-breadcrumbs';
     this._breadcrumbsEl.setAttribute('aria-label', 'Graph navigation');
@@ -397,37 +550,255 @@ export class Graph extends Chart {
     this.container.appendChild(this._overflowEl);
   }
 
-  _initZoomControls() {
+  // ─── Details panel ────────────────────────────────────────────────────────
+
+  _initDetails() {
+    const d = this.options.details;
+    if (!d) return;
+    let el;
+    if (d === true) {
+      el = document.createElement('div');
+      this._detailsOwned = true;
+    } else {
+      el = typeof d === 'string' ? document.querySelector(d) : d;
+      if (!(el instanceof HTMLElement)) return;
+      this._detailsOwned = false;
+    }
+    el.classList.add('rc-graph-details');
+    if (!el.hasAttribute('aria-live')) el.setAttribute('aria-live', 'polite');
+    this._detailsEl = el;
+    this._detailsSubject = null;
+    this.container.appendChild(el);
+  }
+
+  // Side or below, by card width. Returns the width the layout must leave
+  // free on the right (0 when the panel sits below).
+  _layoutDetails() {
+    const el = this._detailsEl;
+    if (!el) return 0;
+    const o = this.options;
+    // Content width: the card's own padding is not drawing space.
+    const cs = window.getComputedStyle(this.container);
+    const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+    const cw = this.container.clientWidth - padL - padR;
+    this._detailsInset = padR;
+    const width = o.detailsWidth ?? 300;
+    // Beside the drawing only if the drawing keeps its own minimum width
+    // next to the panel (the flow view's minWidth); otherwise below.
+    const minDrawing = this._view === 'flow' ? (o.minWidth ?? 0) : 0;
+    const side = cw >= (o.detailsBreakpoint ?? 1000) && cw >= minDrawing + width + 12;
+    this.container.classList.toggle('rc-graph--details-side', side);
+    this.container.classList.toggle('rc-graph--details-below', !side);
+    // Below: the card grows by the panel so the drawing keeps its height.
+    if (!this._expanded) {
+      this._baseCardHeight ??= this.container.style.height;
+      const base = parseFloat(this._baseCardHeight) || o.height || 520;
+      const want = side ? `${base}px` : `${base + (o.detailsHeight ?? 200)}px`;
+      if (this.container.style.height !== want) this.container.style.height = want;
+    }
+    el.style.width = side ? `${width}px` : '';
+    el.style.height = side ? '' : `${o.detailsHeight ?? 200}px`;
+    // The legend and breadcrumbs above the drawing stop where the panel
+    // begins, so they never run under it.
+    const clear = side ? `${width + 12}px` : '';
+    if (this._legendEl) this._legendEl.style.marginRight = clear;
+    if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
+    return side ? width + 12 : 0;
+  }
+
+  // Side panel: aligned with the drawing's top and height. Called after the
+  // drawing and its legend are done — the legend's height moves the svg.
+  _placeDetails(svgEl) {
+    const el = this._detailsEl;
+    if (!el || !this.container.classList.contains('rc-graph--details-side')) {
+      if (el) { el.style.top = ''; el.style.height = el.style.height || ''; }
+      return;
+    }
+    // An <svg> has no offsetTop: measure against the card's padding box.
+    const svgBox = svgEl.getBoundingClientRect();
+    const cardBox = this.container.getBoundingClientRect();
+    const top = svgBox.top - cardBox.top - this.container.clientTop + this.container.scrollTop;
+    el.style.top = `${top}px`;
+    el.style.right = `${this._detailsInset ?? 0}px`;
+    el.style.height = `${svgBox.height}px`;
+  }
+
+  // What the panel shows: a hovered/selected node or tie, else the default
+  // (the focused node in the ego view, nothing elsewhere).
+  _showDetails(subject) {
+    this._detailsSubject = subject;
+    this._refreshDetails();
+  }
+
+  _refreshDetails() {
+    const el = this._detailsEl;
+    if (!el || !this._detailsOwned) return;
+    let subject = this._detailsSubject;
+    if (subject?.node && !(this._shown ?? this._viewData)?.nodes?.some(n => n.id === subject.node.id)) subject = null;
+    if (!subject && this._view === 'ego' && this._root != null) {
+      const root = this._model.node(this._root);
+      if (root) subject = { node: root };
+    }
+    const fmt = this.options.detailsFormat;
+    el.innerHTML = fmt
+      ? fmt({ node: subject?.node ?? null, link: subject?.link ?? null, view: this._view })
+      : this._defaultDetails(subject);
+  }
+
+  _defaultDetails(subject) {
     const t = this.theme;
-    this.container.style.position = 'relative';
+    const esc = escapeHtml;
+    const kind = txt => `<p class="rc-graph-details-kind">${esc(txt)}</p>`;
+    const row = (k, v) => `<dt>${esc(k)}</dt><dd>${v}</dd>`;
+    const nameOf = id => esc(this._model.node(id)?.label ?? id);
+    if (subject?.node) {
+      const n = subject.node;
+      const ties = this._model.toData().links.filter(l => l.source === n.id || l.target === n.id);
+      const group = this.options.nodeGroups?.[n.group]?.label ?? n.group;
+      const list = ties.slice(0, 12).map(l => {
+        const other = l.source === n.id ? l.target : l.source;
+        const dir = l.source === n.id ? '→' : '←';
+        const extra = l.label ?? (l.value != null ? Number(l.value).toLocaleString() : '');
+        const type = this._linkTypes[l.type ?? 'default']?.label ?? l.type ?? '';
+        return `<li>${dir} ${nameOf(other)}${type ? ` <span class="rc-graph-details-muted">· ${esc(type)}</span>` : ''}${extra ? ` <span class="rc-graph-details-muted">· ${esc(extra)}</span>` : ''}</li>`;
+      }).join('');
+      const more = ties.length > 12 ? `<p class="rc-graph-details-muted">+${ties.length - 12} more</p>` : '';
+      return `${group ? kind(group) : ''}<h4>${esc(n.label ?? n.id)}</h4>
+        ${n.sub ? `<p class="rc-graph-details-muted">${esc(n.sub)}</p>` : ''}
+        ${n.note ?? n.description ? `<p>${esc(n.note ?? n.description)}</p>` : ''}
+        <dl>${row('Connections', String(ties.length))}</dl>
+        ${list ? `<ul>${list}</ul>${more}` : ''}`;
+    }
+    if (subject?.link) {
+      const l = subject.link;
+      const type = this._linkTypes[l.type ?? 'default']?.label ?? l.type;
+      const period = [l.start, l.end].filter(v => v != null && v !== '').map(esc).join(' – ');
+      const sources = Array.isArray(l.sources) ? l.sources.map(src => {
+        const url = typeof src === 'string' ? src : src?.url;
+        const title = typeof src === 'string' ? src : (src?.title ?? src?.url);
+        return safeUrl(url) ? `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></li>` : `<li>${esc(title ?? '')}</li>`;
+      }).join('') : '';
+      return `${type ? kind(type) : ''}<h4>${nameOf(l.source)} → ${nameOf(l.target)}</h4>
+        <dl>${l.label ? row('Label', esc(l.label)) : ''}${l.value != null && l.value !== '' ? row('Value', esc(typeof l.value === 'number' ? l.value.toLocaleString() : l.value)) : ''}${period ? row('Period', period) : ''}</dl>
+        ${sources ? `<ul>${sources}</ul>` : ''}`;
+    }
+    const hint = this._view === 'flow'
+      ? 'Select a node or a tie to see its details.'
+      : 'Hover a node, or click a tie, to see its details.';
+    return `${kind('Details')}<p style="color:${t.muted}">${hint}</p>`;
+  }
 
-    // Bottom-left row; the exact top is synced to the svg in render()
-    const wrap = document.createElement('div');
-    wrap.className = 'rc-graph-zoom-controls';
-    wrap.style.cssText =
-      'position:absolute;left:8px;bottom:8px;' +
-      'display:flex;flex-direction:row;gap:4px;z-index:2;';
-    this._zoomControlsEl = wrap;
+  // Footer tools, right of the source line: the "+N more" and "N hidden"
+  // notes, zoom buttons, full screen. Never over the canvas, where they
+  // covered the bottom row. A chart without source/note gets a footer row
+  // just for them.
+  _initTools() {
+    const t = this.theme;
+    const tools = document.createElement('div');
+    tools.className = 'rc-graph-tools';
+    this._toolsEl = tools;
 
-    const mk = (label, title, fn) => {
+    const mkButton = (label, title, fn, cls = '') => {
       const b = document.createElement('button');
       b.type = 'button';
       b.textContent = label;
       b.title = title;
+      b.setAttribute('aria-label', title);
+      if (cls) b.className = cls;
       b.style.cssText =
-        `width:26px;height:26px;padding:0;border:1px solid ${t.border ?? t.muted};` +
+        `height:26px;min-width:26px;padding:0 6px;border:1px solid ${t.border ?? t.muted};` +
         `border-radius:4px;background:${t.bg ?? '#fff'};color:${t.text};` +
         'font-size:14px;line-height:1;cursor:pointer;';
       b.addEventListener('click', fn);
-      wrap.appendChild(b);
+      return b;
     };
-    mk('+', 'Zoom in',    () => this._zoomBy(1.4));
-    mk('−', 'Zoom out',   () => this._zoomBy(1 / 1.4));
-    mk('⟲', 'Reset view', () => {
-      if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, d3.zoomIdentity);
+    const mkNote = (cls, fn) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = cls;
+      b.hidden = true;
+      b.addEventListener('click', fn);
+      tools.appendChild(b);
+      return b;
+    };
+
+    this._overflowNoteEl = mkNote('rc-graph-note', () => this._toggleOverflow());
+    this._hiddenNoteEl = mkNote('rc-graph-hidden-note', () => {
+      this._hidden.clear();
+      this.render();
     });
 
-    this.container.appendChild(wrap);
+    if (this.options.zoom !== false) {
+      const zoom = document.createElement('div');
+      zoom.className = 'rc-graph-zoom-controls';
+      zoom.setAttribute('role', 'group');
+      zoom.setAttribute('aria-label', 'Zoom');
+      zoom.append(
+        mkButton('+', 'Zoom in',    () => this._zoomBy(1.4)),
+        mkButton('−', 'Zoom out',   () => this._zoomBy(1 / 1.4)),
+        mkButton('⟲', 'Reset view', () => {
+          if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, d3.zoomIdentity);
+        }),
+      );
+      tools.appendChild(zoom);
+      this._zoomControlsEl = zoom;
+    }
+
+    if (this.options.fullscreen !== false) {
+      this._fullscreenBtn = mkButton('⛶', 'Full screen', () => this.toggleFullscreen(), 'rc-graph-fullscreen');
+      tools.appendChild(this._fullscreenBtn);
+      this._onFullscreenChange = () => this._syncFullscreen(document.fullscreenElement === this.container);
+      document.addEventListener('fullscreenchange', this._onFullscreenChange);
+      this._onFullscreenKey = event => {
+        if (event.key === 'Escape' && this._expanded && !document.fullscreenElement) this.toggleFullscreen(false);
+      };
+      document.addEventListener('keydown', this._onFullscreenKey);
+    }
+
+    if (!this._footerEl) {
+      this._footerEl = document.createElement('div');
+      this._footerEl.className = 'rc-chart-footer';
+      this.container.appendChild(this._footerEl);
+    }
+    this._footerEl.classList.add('rc-chart-footer--tools');
+    this._footerEl.insertBefore(tools, this._sourceEl ? this._sourceEl.nextSibling : this._footerEl.firstChild);
+  }
+
+  // Full screen: the Fullscreen API where it exists (Esc exits natively),
+  // otherwise a fixed overlay with our own Esc. The card stretches to the
+  // screen; the resize re-lays the graph out, so more of it fits.
+  toggleFullscreen(on = !this._expanded) {
+    const el = this.container;
+    if (on === this._expanded) return this;
+    if (el.requestFullscreen && document.fullscreenEnabled !== false) {
+      if (on) el.requestFullscreen().catch(() => this._syncFullscreen(true));
+      else if (document.fullscreenElement === el) document.exitFullscreen();
+      else this._syncFullscreen(false);
+    } else {
+      this._syncFullscreen(on);
+    }
+    return this;
+  }
+
+  _syncFullscreen(on) {
+    if (on === this._expanded) return;
+    this._expanded = on;
+    const el = this.container;
+    if (on) {
+      this._savedHeight = el.style.height;
+      el.style.height = '100vh';
+      el.classList.add('rc-graph--fullscreen');
+    } else {
+      el.style.height = this._savedHeight ?? '';
+      el.classList.remove('rc-graph--fullscreen');
+    }
+    if (this._fullscreenBtn) {
+      this._fullscreenBtn.textContent = on ? '✕' : '⛶';
+      this._fullscreenBtn.title = on ? 'Exit full screen (Esc)' : 'Full screen';
+      this._fullscreenBtn.setAttribute('aria-label', this._fullscreenBtn.title);
+    }
+    // The ResizeObserver catches the native case; the overlay needs a nudge.
+    requestAnimationFrame?.(() => this.render());
   }
 
   _zoomBy(factor) {
@@ -440,13 +811,42 @@ export class Graph extends Chart {
   render() {
     if (!this._viewData?.nodes?.length) return;
 
+    // Details panel beside the drawing takes its width from the layout.
+    const reserve = this._layoutDetails();
+
+    if (this._view === 'flow') {
+      // Narrow containers scroll sideways instead of crushing the lanes.
+      const minW = this.options.minWidth ?? 0;
+      this.svg.style('min-width', minW ? `${minW + reserve}px` : null);
+      this.container.style.overflowX = minW ? 'auto' : '';
+    }
+
     // Measure the svg itself: the base Chart's width/height getters model
     // axis charts and can disagree with the real viewport by the header
     // height — a grid layout that uses the full area would get clipped.
     const svgEl = this.svg?.node();
-    const W = svgEl?.clientWidth  || this.width;
+    const svgW = svgEl?.clientWidth  || this.width;
+    const W = svgW - reserve;
     const H = svgEl?.clientHeight || this.height;
     if (W <= 0 || H <= 0) return;
+
+    if (this._view === 'flow') {
+      // One view owns the canvas: clear what ego/path/cluster left behind.
+      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes]
+        .forEach(g => g?.selectAll('*').remove());
+      this.gRoot.selectAll('.rc-graph-row-label').remove();
+      if (this._overflowNoteEl) this._overflowNoteEl.hidden = true;
+      if (this._hiddenNoteEl) this._hiddenNoteEl.hidden = true;
+      if (this._tooltip?.isPinned) this._tooltip.unpin();
+      this._flow().render(W, H);
+      this._hasRendered = true;
+      this._renderedSize = { W: svgW, H };
+      this._refreshDetails();
+      this._placeDetails(svgEl);
+      this._refitIfResized();
+      return;
+    }
+    this._flowView?.clear();
 
     // Ego view: drop user-hidden nodes (they stay in the model), then cap to
     // what this canvas can hold legibly. Path and cluster views are small by
@@ -471,10 +871,13 @@ export class Graph extends Chart {
     if (this._view === 'ego') {
       const res = egoLayout(this._shown, {
         rootId: this._root, width: W, height: H,
+        nodeRadius: this.options.nodeRadius ?? 22,
+        sectorLabels: this.options.sectorLabels === true,
         groupBy: this.options.groupBy ?? 'group',
       });
       positions = res.positions;
       sectors = res.sectors;
+      this._egoCellW = res.cellW;
     } else if (this._view === 'path') {
       const res = pathLayout(
         { paths: this._paths ?? [], context: this._ctxIds },
@@ -482,7 +885,9 @@ export class Graph extends Chart {
       positions = res.positions;
       this._rows = res.rows;
     } else {
-      positions = clusterLayout(this._shown, { width: W, height: H });
+      positions = clusterLayout(this._shown, {
+        width: W, height: H, nodeRadius: this.options.nodeRadius ?? 22,
+      });
     }
 
     // Hand-dragged positions survive re-renders until the next view change
@@ -491,18 +896,28 @@ export class Graph extends Chart {
       if (cur) positions.set(id, { ...cur, x: p.x, y: p.y });
     });
 
+    this._labelRoom = this._view === 'ego' ? this._egoCellW - 6 : null;
     this._draw(positions, W, H, sectors);
 
-    // Pin the zoom controls to the bottom-left corner of the svg itself
-    // (the container also holds the header, legend, and footer).
-    if (this._zoomControlsEl && svgEl?.getBoundingClientRect) {
-      const svgTop = svgEl.getBoundingClientRect().top
-        - this.container.getBoundingClientRect().top;
-      this._zoomControlsEl.style.bottom = '';
-      this._zoomControlsEl.style.top = `${Math.max(0, svgTop + H - 34)}px`;
-    }
-
     this._hasRendered = true;
+    this._renderedSize = { W: svgW, H };
+    this._refreshDetails();
+    this._placeDetails(svgEl);
+    this._refitIfResized();
+  }
+
+  // Chrome drawn after the layout — the legend for the new view, the
+  // breadcrumb trail after a navigation — takes height from the svg (it is
+  // a flex child of a fixed-height card), and nothing resizes the container
+  // to tell us. Without this check the bottom row ended up below the edge.
+  _refitIfResized() {
+    if (this._refitting || !this._renderedSize) return;
+    const svgEl = this.svg?.node();
+    const w = svgEl?.clientWidth, h = svgEl?.clientHeight;
+    if (!w || !h) return;
+    if (Math.abs(w - this._renderedSize.W) <= 1 && Math.abs(h - this._renderedSize.H) <= 1) return;
+    this._refitting = true;
+    try { this.render(); } finally { this._refitting = false; }
   }
 
   // How many nodes fit: one per comfortable grid cell (~96×74 px with the
@@ -511,7 +926,7 @@ export class Graph extends Chart {
   _trimToCapacity(data, W, H) {
     const o = this.options;
     const max = (o.maxNodes == null || o.maxNodes === 'auto')
-      ? Math.max(12, Math.floor(W / 96) * Math.floor(H / 74) - 1)
+      ? Math.max(12, egoCapacity(W, H, o.nodeRadius ?? 22))
       : o.maxNodes;
     if (data.nodes.length <= max) {
       this._hiddenCount = 0;
@@ -535,7 +950,30 @@ export class Graph extends Chart {
   _draw(positions, W, H, sectors = null) {
     const t = this.theme;
     const o = this.options;
-    const { nodes, links } = this._shown ?? this._viewData;
+    const { nodes, links: viewLinks } = this._shown ?? this._viewData;
+    // A redraw invalidates a pinned tie's highlight and anchor point.
+    if (this._tooltip?.isPinned) this._tooltip.unpin();
+
+    // ── Ties (A2) ──
+    // These views ignore direction: the same tie listed both ways collapses.
+    // Different types between one pair are parallel ties and fan out as arcs;
+    // past MAX_PARALLEL one line stands for the pair with a +N badge, and its
+    // tooltip lists them all.
+    const MAX_PARALLEL = 3;
+    const allTies = dedupeUndirected(viewLinks.map(l =>
+      l.id != null ? l : { ...l, id: pairKey(l.source, l.target) }));
+    const byPair = new Map();
+    allTies.forEach(l => {
+      const k = pairKey(l.source, l.target);
+      if (!byPair.has(k)) byPair.set(k, []);
+      byPair.get(k).push(l);
+    });
+    const links = [];
+    byPair.forEach(group => {
+      if (group.length <= MAX_PARALLEL) links.push(...group);
+      else links.push({ ...group[0], _siblings: group });
+    });
+    const par = parallelIndex(links);
     const baseR = o.nodeRadius ?? 22;
     // Uniform node size by default — size is not an encoding channel unless
     // asked for: sizeBy 'degree' computes it from connectivity, 'field' reads
@@ -563,13 +1001,14 @@ export class Graph extends Chart {
     const strokeOf = d => anchors.has(d.id) ? t.text : (t.border ?? t.muted);
 
     // ── Arrow markers (one per link type present in the view) ──
-    const typesInUse = Array.from(new Set(links.map(l => l.type ?? 'default')));
+    const typesInUse = Array.from(new Set(allTies.map(l => l.type ?? 'default')));
+    const markerId = type => `rc-arrow-${this._uid}-${String(type).replace(/[^\w-]/g, '_')}`;
     this._defs.selectAll('.rc-arrow').remove();
     typesInUse.forEach(type => {
       const cfg = this._linkTypes[type] ?? { color: t.muted };
       // Open chevron, stroked not filled — quieter than a solid triangle
       this._defs.append('marker')
-        .attr('id',           `rc-arrow-${type}`)
+        .attr('id',           markerId(type))
         .attr('class',        'rc-arrow')
         .attr('viewBox',      '0 -3 7 6')
         .attr('refX',         6)
@@ -590,29 +1029,51 @@ export class Graph extends Chart {
     // centers are collinear, so a straight line would run exactly through
     // the nodes sitting between its endpoints. Path/cluster links connect
     // adjacent columns or a sparse circle — straight is fine there.
-    const linkD = d => {
+    //
+    // Parallel ties of a pair fan out symmetrically around that base. The
+    // offset is measured on the pair's canonical normal (lower id → higher),
+    // so A→B and B→A ties of one pair land on opposite sides, never on top
+    // of each other.
+    const linkGeom = d => {
       const s = positions.get(d.source);
       const e = positions.get(d.target);
-      if (!s || !e) return '';
+      if (!s || !e) return null;
       const rT = nodeR(byId.get(d.target)) + 6;
       const dx = e.x - s.x, dy = e.y - s.y;
       const len = Math.hypot(dx, dy) || 1;
       const ex = e.x - (dx / len) * rT;
       const ey = e.y - (dy / len) * rT;
-      if (this._view !== 'ego' || len < 40) return `M${s.x},${s.y}L${ex},${ey}`;
-      const bow = Math.min(26, len * 0.08);
+      const { index = 0, count = 1 } = par.get(d.id) ?? {};
+      // Grid views (ego, cluster): cell centres are collinear, so ties bow
+      // gently instead of running straight through the nodes between them.
+      const base = this._view !== 'path' && len >= 40 ? Math.min(26, len * 0.08) : 0;
+      const flip = d.source > d.target ? -1 : 1;
+      const fan = count > 1 ? (index - (count - 1) / 2) * 16 * flip : 0;
+      const bow = base + fan;
       const nx = -dy / len, ny = dx / len;   // fixed-handedness unit normal
-      const mx = (s.x + ex) / 2 + nx * bow;
-      const my = (s.y + ey) / 2 + ny * bow;
-      return `M${s.x},${s.y}Q${mx},${my} ${ex},${ey}`;
+      const cx = (s.x + ex) / 2 + nx * bow;
+      const cy = (s.y + ey) / 2 + ny * bow;
+      // The path starts at the source center (under the node); the visible
+      // stretch begins at the source rim. Its middle anchors the +N badge.
+      const rS = nodeR(byId.get(d.source));
+      const vx = s.x + (dx / len) * rS, vy = s.y + (dy / len) * rS;
+      const mid = { x: (vx + ex) / 2 + nx * bow * 0.5, y: (vy + ey) / 2 + ny * bow * 0.5 };
+      return { s, e: { x: ex, y: ey }, c: { x: cx, y: cy }, mid, curved: bow !== 0 };
+    };
+    const linkD = d => {
+      const g = linkGeom(d);
+      if (!g) return '';
+      return g.curved
+        ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}`
+        : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
     };
 
-    const linkKey = d =>
-      d.source < d.target ? `${d.source}|${d.target}` : `${d.target}|${d.source}`;
+    // Route emphasis in the path view is per pair, whatever ties it carries.
+    const linkKey = d => pairKey(d.source, d.target);
 
     // ── Links ──
     const linkSel = this.gLinks.selectAll('.rc-graph-link')
-      .data(links, linkKey)
+      .data(links, d => d.id)
       .join(
         enter => enter.append('path')
           .attr('class', 'rc-graph-link')
@@ -628,7 +1089,7 @@ export class Graph extends Chart {
         return this._shortestKeys?.has(linkKey(d)) ? Math.max(2, w * 1.6) : w;
       })
       .attr('stroke-dasharray', d => (this._linkTypes[d.type ?? 'default'] ?? {}).dash ?? null)
-      .attr('marker-end',       d => `url(#rc-arrow-${d.type ?? 'default'})`);
+      .attr('marker-end',       d => `url(#${markerId(d.type ?? 'default')})`);
 
     // Path view is layered: context ties whisper, alternative routes speak,
     // the shortest route carries the message.
@@ -644,6 +1105,108 @@ export class Graph extends Chart {
     (dur ? linkSel.transition().duration(dur) : linkSel)
       .attr('d', linkD)
       .attr('stroke-opacity', linkOpacity);
+
+    // +N badge on a pair that carries more ties than MAX_PARALLEL
+    const badgeSel = this.gLinkBadges.selectAll('.rc-graph-link-more')
+      .data(links.filter(l => l._siblings), d => d.id)
+      .join('text')
+      .attr('class',             'rc-graph-link-more')
+      .attr('text-anchor',       'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill',              t.text)
+      .attr('stroke',            t.bg)          // halo keeps it legible over lines/labels
+      .attr('stroke-width',      3)
+      .attr('paint-order',       'stroke')
+      .style('pointer-events',   'none')
+      .text(d => `+${d._siblings.length - 1}`);
+    // A badge takes the first spot along its tie (or just beside it) that
+    // covers no node and no node label; the visible middle is the fallback.
+    const nodeBoxes = () => nodes.map(n => {
+      const p = positions.get(n.id);
+      if (!p) return null;
+      const r = nodeR(n);
+      const w = Math.max(2 * r, String(n.label ?? n.id).length * 6.2);
+      return [
+        { x0: p.x - r, x1: p.x + r, y0: p.y - r, y1: p.y + r },
+        { x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + r + 3, y1: p.y + r + 19 },
+      ];
+    }).filter(Boolean).flat();
+    const badgeAt = (d, obstacles) => {
+      const g = linkGeom(d);
+      if (!g) return { x: 0, y: 0 };
+      const q = tt => ({
+        x: (1 - tt) ** 2 * g.s.x + 2 * (1 - tt) * tt * g.c.x + tt ** 2 * g.e.x,
+        y: (1 - tt) ** 2 * g.s.y + 2 * (1 - tt) * tt * g.c.y + tt ** 2 * g.e.y,
+      });
+      const dx = g.e.x - g.s.x, dy = g.e.y - g.s.y, len = Math.hypot(dx, dy) || 1;
+      const nx = -dy / len, ny = dx / len;
+      const half = 9;
+      for (const tt of [0.5, 0.4, 0.6, 0.3, 0.7]) {
+        for (const off of [0, 12, -12]) {
+          const p = q(tt);
+          const x = p.x + nx * off, y = p.y + ny * off;
+          const hit = obstacles.some(b => x + half > b.x0 && x - half < b.x1 && y + 7 > b.y0 && y - 7 < b.y1);
+          if (!hit) return { x, y };
+        }
+      }
+      return g.mid;
+    };
+    const placeBadges = sel => {
+      const obstacles = nodeBoxes();
+      sel.each(function (d) {
+        const p = badgeAt(d, obstacles);
+        d3.select(this).attr('x', p.x).attr('y', p.y);
+      });
+    };
+    placeBadges(badgeSel);
+
+    // ── Tie hit targets (A3): hover = tooltip, click = pin it ──
+    const hitSel = this.gLinkHits.selectAll('.rc-graph-link-hit')
+      .data(links, d => d.id)
+      .join('path')
+      .attr('class',          'rc-graph-link-hit')
+      .attr('fill',           'none')
+      .attr('stroke',         'transparent')
+      .attr('stroke-width',   12)
+      .style('pointer-events', 'stroke')
+      .style('cursor',        'pointer')
+      .attr('d', linkD);
+
+    const tieHtml = d => {
+      const source = this._model.node(d.source) ?? { id: d.source };
+      const target = this._model.node(d.target) ?? { id: d.target };
+      return o.linkTooltipFormat
+        ? o.linkTooltipFormat({ link: d, source, target })
+        : this._defaultLinkTooltip(d, source, target);
+    };
+    hitSel
+      .on('mouseover', (event, d) => {
+        if (this._tooltip.isPinned) return;
+        const [mx, my] = d3.pointer(event, this.container);
+        this._tooltip.show(mx, my, tieHtml(d));
+        this._highlightTie(d, nodeSel, linkSel);
+      })
+      .on('mouseout', () => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        this._highlight(null, nodeSel, linkSel);
+      })
+      .on('click', (event, d) => {
+        event.stopPropagation();
+        const [mx, my] = d3.pointer(event, this.container);
+        this._highlightTie(d, nodeSel, linkSel);
+        this._showDetails({ link: d });
+        this._tooltip.pin(mx, my, tieHtml(d), {
+          onClose: () => { this._highlight(null, nodeSel, linkSel); this._showDetails(null); },
+        });
+      });
+
+    this._redrawTies = id => {
+      const touches = l => l.source === id || l.target === id;
+      linkSel.filter(touches).attr('d', linkD);
+      hitSel.filter(touches).attr('d', linkD);
+      placeBadges(badgeSel.filter(touches));
+    };
 
     // ── Node groups (circle + label) ──
     const nodeSel = this.gNodes.selectAll('.rc-graph-node')
@@ -712,9 +1275,19 @@ export class Graph extends Chart {
       .attr('r',      d => nodeR(d))
       .attr('fill',   fillOf)
       .attr('stroke', strokeOf);
+    // Ego grid: a label may not run into the next cell — cut it to the cell
+    // width; the full name stays in the tooltip and the accessible name.
+    const room = this._labelRoom;
+    // A recenter moves nodes out from under the pointer, so their mouseout
+    // never fires: clear hover rings on every draw.
+    nodeSel.select('.rc-graph-node-ring').attr('opacity', 0);
     nodeSel.select('.rc-graph-node-label')
       .attr('y', d => nodeR(d) + 5)
-      .text(d => d.label ?? d.id);
+      .each(function (d) {
+        const full = d.label ?? d.id;
+        if (room) fitTextNode(this, full, room);
+        else this.textContent = full;
+      });
     // Icon glyph: 24×24 path scaled to ~62% of the node diameter, centered.
     // Monochrome: dark on light circles, inverted on anchor/colored nodes.
     nodeSel.select('.rc-graph-node-icon')
@@ -751,7 +1324,7 @@ export class Graph extends Chart {
     // ── Node dragging: no simulation to wake — move the node, redraw its
     // links, remember the spot until the next view change ──
     if (o.draggable !== false) {
-      nodeSel.call(this._dragBehavior(positions, linkSel, linkD));
+      nodeSel.call(this._dragBehavior(positions));
     }
 
     // ── Hover: tooltip + focus-and-context highlight ──
@@ -760,8 +1333,10 @@ export class Graph extends Chart {
         d3.select(event.currentTarget).select('.rc-graph-node-ring')
           .attr('stroke', t.accent)
           .attr('opacity', 0.5);
+        if (this._tooltip.isPinned) return;   // a pinned tie keeps the stage
+        this._showDetails({ node: d });
 
-        const nodeLinks = links.filter(l => l.source === d.id || l.target === d.id);
+        const nodeLinks = allTies.filter(l => l.source === d.id || l.target === d.id);
         const html = o.tooltipFormat
           ? o.tooltipFormat({ node: d, links: nodeLinks })
           : this._defaultTooltip(d, nodeLinks);
@@ -773,8 +1348,10 @@ export class Graph extends Chart {
       .on('mouseout', (event) => {
         d3.select(event.currentTarget).select('.rc-graph-node-ring')
           .attr('opacity', 0);
+        if (this._tooltip.isPinned) return;
         this._tooltip.hide();
         this._highlight(null, nodeSel, linkSel);
+        this._showDetails(null);
       });
 
     // ── Right-click: hide the node (ego view; the center is exempt) ──
@@ -810,27 +1387,15 @@ export class Graph extends Chart {
       .text(d => d.key);
 
     // ── Capacity note: how much of the neighborhood is not shown ──
-    const note = this._view === 'ego' && this._hiddenCount > 0
-      ? [`+${this._hiddenCount} more — enlarge the chart or recenter to reveal`]
-      : [];
-    this.gRoot.selectAll('.rc-graph-note')
-      .data(note)
-      .join('text')
-      .attr('class',        'rc-graph-note')
-      .attr('x',            104)   // clears the zoom-controls row bottom-left
-      .attr('y',            H - 14)
-      .attr('fill',         t.muted)
-      .style('cursor',      'pointer')
-      .attr('role',         'button')
-      .attr('tabindex',     0)
-      .text(d => d)
-      .on('click', () => this._toggleOverflow())
-      .on('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
-          this._toggleOverflow();
-        }
-      });
+    // (a footer button; it opens the list of hidden nodes)
+    if (this._overflowNoteEl) {
+      const n = this._view === 'ego' ? this._hiddenCount : 0;
+      this._overflowNoteEl.hidden = !n;
+      this._overflowNoteEl.textContent = n ? `+${n} more` : '';
+      this._overflowNoteEl.title = n
+        ? `${n} more node${n === 1 ? '' : 's'} did not fit — open full screen, or pick one to recenter on it`
+        : '';
+    }
     this._renderOverflow();
 
     // ── Path-view row captions: hop counts, shortest called out ──
@@ -839,29 +1404,20 @@ export class Graph extends Chart {
       .data(rowLabels, (d, i) => i)
       .join('text')
       .attr('class',        'rc-graph-row-label')
-      .attr('x',            8)
-      .attr('y',            d => d.y + 3)
+      // On the route, above its first intermediate node (or the middle of a
+      // direct tie) — the left edge belongs to the endpoint's context fan.
+      .attr('x',            d => d.x ?? 8)
+      .attr('y',            d => d.direct ? d.y - 10 : d.y - (o.nodeRadius ?? 22) - 8)
+      .attr('text-anchor',  d => d.x != null ? 'middle' : 'start')
       .attr('fill',         t.muted)
       .text(d => `${d.hops} hop${d.hops !== 1 ? 's' : ''}${d.shortest ? ' · shortest' : ''}`);
 
     // ── Hidden-nodes control: the way back from right-click hiding ──
-    const hiddenNote = this._view === 'ego' && this._hidden.size > 0
-      ? [`${this._hidden.size} hidden · restore`]
-      : [];
-    this.gRoot.selectAll('.rc-graph-hidden-note')
-      .data(hiddenNote)
-      .join('text')
-      .attr('class',            'rc-graph-hidden-note')
-      .attr('x',                W - 10)
-      .attr('y',                H - 8)
-      .attr('text-anchor',      'end')
-      .attr('fill',             t.muted)
-      .style('cursor',          'pointer')
-      .text(d => d)
-      .on('click', () => {
-        this._hidden.clear();
-        this.render();
-      });
+    if (this._hiddenNoteEl) {
+      const n = this._view === 'ego' ? this._hidden.size : 0;
+      this._hiddenNoteEl.hidden = !n;
+      this._hiddenNoteEl.textContent = n ? `${n} hidden · restore` : '';
+    }
 
     // ── Legend (link types; meta-links in cluster view carry no types) ──
     if (this._view === 'cluster') this._legendEl.innerHTML = '';
@@ -870,26 +1426,36 @@ export class Graph extends Chart {
 
   // ─── Node dragging ────────────────────────────────────────────────────────
 
-  _dragBehavior(positions, linkSel, linkD) {
+  _dragBehavior(positions) {
     const self = this;
     // `this` inside d3 listeners = the dragged <g> element. Never derive the
     // element from sourceEvent.target: on mousemove that is whatever sits
     // under the cursor, not the node being dragged.
+    // The drag subject is the node's current position: event.x/y are that
+    // position plus the pointer's movement. Without it d3 used the bare
+    // datum (no x/y) and a click with a tremor threw the node across the
+    // canvas — even off it. Movement under 6 px is a click, not a drag.
+    const SLOP = 6;
     return d3.drag()
       .clickDistance(5)   // small jitter still counts as a click
+      .subject((event, d) => {
+        const p = positions.get(d.id) ?? { x: 0, y: 0 };
+        return { x: p.x, y: p.y, x0: p.x, y0: p.y };
+      })
       .on('start', function () {
         d3.select(this).style('cursor', 'grabbing');
       })
       .on('drag', function (event, d) {
         const p = positions.get(d.id);
         if (!p) return;
+        const s = event.subject;
+        if (!s.moved && Math.hypot(event.x - s.x0, event.y - s.y0) < SLOP) return;
+        s.moved = true;
         p.x = event.x;
         p.y = event.y;
         self._manual.set(d.id, { x: event.x, y: event.y });
         d3.select(this).attr('transform', `translate(${event.x},${event.y})`);
-        linkSel
-          .filter(l => l.source === d.id || l.target === d.id)
-          .attr('d', linkD);
+        self._redrawTies?.(d.id);
       })
       .on('end', function () {
         d3.select(this).style('cursor', 'pointer');
@@ -898,9 +1464,12 @@ export class Graph extends Chart {
 
   // ─── Focus + context: highlight the hovered neighborhood, fade the rest ────
 
+  // Node fades go through the `opacity` *style*: the enter/update transition
+  // sets that style, and a style beats the presentation attribute — fading
+  // via attr('opacity') silently did nothing.
   _highlight(node, nodeSel, linkSel) {
     if (!node) {
-      nodeSel.attr('opacity', 1);
+      nodeSel.style('opacity', d => d._ctx ? 0.55 : 1);
       linkSel.attr('stroke-opacity', l => this._linkOpacity?.(l) ?? 0.7);
       return;
     }
@@ -909,9 +1478,15 @@ export class Graph extends Chart {
       if (l.source === node.id) near.add(l.target);
       if (l.target === node.id) near.add(l.source);
     });
-    nodeSel.attr('opacity', d => near.has(d.id) ? 1 : 0.25);
+    nodeSel.style('opacity', d => near.has(d.id) ? 1 : 0.25);
     linkSel.attr('stroke-opacity', l =>
       (l.source === node.id || l.target === node.id) ? 1 : 0.08);
+  }
+
+  // A single tie: it and its two endpoints stay, everything else fades.
+  _highlightTie(tie, nodeSel, linkSel) {
+    nodeSel.style('opacity', d => (d.id === tie.source || d.id === tie.target) ? 1 : 0.25);
+    linkSel.attr('stroke-opacity', l => l.id === tie.id ? 1 : 0.08);
   }
 
   // ─── Semantic zoom: zooming out of ego = cluster overview, and back ────────
@@ -1076,6 +1651,7 @@ export class Graph extends Chart {
     if (this.options.breadcrumbs === false || this._history.length < 2) {
       this._breadcrumbsEl.hidden = true;
       this._breadcrumbsEl.replaceChildren();
+      this._refitIfResized();
       return;
     }
     this._breadcrumbsEl.hidden = false;
@@ -1095,6 +1671,7 @@ export class Graph extends Chart {
       });
       this._breadcrumbsEl.appendChild(button);
     });
+    this._refitIfResized();
   }
 
   _historyLabel(state) {
@@ -1172,6 +1749,49 @@ export class Graph extends Chart {
     </div>`;
   }
 
+  // Tie tooltip: endpoints, type, then whatever the payload carries — label,
+  // value, period, and `sources` (posts proving the tie) as links, which is
+  // why a clicked tie pins its tooltip. A pair collapsed under a +N badge
+  // lists every tie it stands for.
+  _defaultLinkTooltip(link, source, target) {
+    const t = this.theme;
+    const esc = escapeHtml;
+    const name = n => esc(n.label ?? n.id);
+    const ties = link._siblings ?? [link];
+    const typeRow = l => {
+      const cfg = this._linkTypes[l.type ?? 'default'] ?? { color: t.muted };
+      return `<span style="color:${cfg.color};font-size:10px;text-transform:uppercase;
+        letter-spacing:0.06em">${esc(cfg.label ?? l.type ?? 'connection')}</span>`;
+    };
+    const detail = l => {
+      const rows = [];
+      if (l.label) rows.push(`<div>${esc(l.label)}</div>`);
+      if (l.value != null && l.value !== '') {
+        const v = typeof l.value === 'number' ? l.value.toLocaleString() : l.value;
+        rows.push(`<div style="color:${t.muted};font-size:11px">${esc(v)}</div>`);
+      }
+      if (l.start != null || l.end != null) {
+        const period = [l.start, l.end].filter(v => v != null && v !== '').map(esc).join(' – ');
+        rows.push(`<div style="color:${t.muted};font-size:11px">${period}</div>`);
+      }
+      const sources = Array.isArray(l.sources) ? l.sources : [];
+      if (sources.length) {
+        rows.push(`<div style="margin-top:4px;font-size:11px">${sources.map(src => {
+          const url = typeof src === 'string' ? src : src?.url;
+          const title = typeof src === 'string' ? src : (src?.title ?? src?.url);
+          return safeUrl(url)
+            ? `<div><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></div>`
+            : `<div>${esc(title ?? '')}</div>`;
+        }).join('')}</div>`);
+      }
+      return rows.join('');
+    };
+    return `<div style="max-width:300px">
+      <div style="font-weight:bold;margin-bottom:2px">${name(source)} → ${name(target)}</div>
+      ${ties.map(l => `<div style="margin-top:4px">${typeRow(l)}${detail(l)}</div>`).join('')}
+    </div>`;
+  }
+
   // ─── Internals ────────────────────────────────────────────────────────────
 
   _requireSource() {
@@ -1197,6 +1817,8 @@ export class Graph extends Chart {
   // ─── Cleanup ──────────────────────────────────────────────────────────────
 
   destroy() {
+    if (this._onFullscreenChange) document.removeEventListener('fullscreenchange', this._onFullscreenChange);
+    if (this._onFullscreenKey) document.removeEventListener('keydown', this._onFullscreenKey);
     this._tooltip?.destroy();
     this._tooltip = null;
     super.destroy();

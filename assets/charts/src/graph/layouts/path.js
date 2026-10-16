@@ -10,7 +10,8 @@
 //
 // Input: { paths: [[idA, ..., idB], ...], context?: { [endpointId]: [ids] } }.
 // Returns { positions: Map<id, {x, y, row?, hop?, context?}>,
-//           rows: [{ y, hops, shortest }] }.
+//           rows: [{ y, x, hops, shortest, direct }] } — x/y anchor the row's
+//           caption on the route.
 
 export function pathLayout({ paths = [], context = null } = {}, {
   width: W = 800,
@@ -24,7 +25,9 @@ export function pathLayout({ paths = [], context = null } = {}, {
   const pad = padX ?? (context ? 150 : 70);
   const usableW = Math.max(1, W - pad * 2);
   const count = paths.length;
-  const rowGap = count > 1 ? Math.min(110, (H - 120) / (count - 1)) : 0;
+  // Routes spread over the height, keeping room for a node and its label at
+  // the top and bottom rows.
+  const rowGap = count > 1 ? Math.min(150, (H - 76) / (count - 1)) : 0;
   const yForRow = row => H / 2 + (row - (count - 1) / 2) * rowGap;
 
   paths.forEach((p, row) => {
@@ -39,7 +42,15 @@ export function pathLayout({ paths = [], context = null } = {}, {
         hop,
       });
     });
-    rows.push({ y: yForRow(row), hops: p.length - 1, shortest: row === 0 });
+    // Caption anchor: over the row's first intermediate node — on the route
+    // itself, clear of the endpoint's context fan at the canvas edge. A direct
+    // tie (no intermediate node) is captioned over its middle.
+    const hops = p.length - 1;
+    rows.push({
+      y: yForRow(row), hops, shortest: row === 0,
+      x: hops > 1 ? pad + usableW / last : pad + usableW / 2,
+      direct: hops <= 1,
+    });
   });
 
   // ── Context fans: the endpoints' other connections, behind each endpoint

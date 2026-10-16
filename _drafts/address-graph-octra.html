@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--
+  Mock-up of the «Connections» view of an address investigation (BACKLOG, «Расследование адреса»).
+  A sample for the front end: layout, tokens, node/edge model and interactions. Not wired to the API:
+  nodes are hand-placed and the data is inline (the Octra trail and crowdsale #631, 2026-10-07; facts in
+  db/seed/church_octra_investment.md and db/seed/church_octra_crowdsale.md). Open the file in a browser.
+-->
+<title>Connections graph: the road to Octra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Titillium+Web:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: header with controls, then the graph (lanes = networks, left to right in the order money moved) beside a details panel; the panel drops below on phones. */
+:root {
+  --bg: #f4f5f6;
+  --surface: #ffffff;
+  --fg: #1d2126;
+  --muted: #5d656e;
+  --line: #d5d9de;
+  --lane: #eceef1;
+  --church: #2c5d8f;
+  --external: #9a6a1c;
+  --unknown: #7c838b;
+  --exchange: #a33d36;
+  --protocol: #3f7a55;
+  --fee: #a9afb6;
+  --noise: #c2410c;
+  --a-atom: #6c58b5;
+  --a-eth: #3d4a5c;
+  --a-octra: #138a8a;
+  --a-boot: #8a5a2b;
+  --hl: #f0b429;
+  --font-display: "Josefin Sans", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Titillium Web", "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181c; --surface: #1d2126; --fg: #e6e9ec; --muted: #9aa3ad; --line: #353b43; --lane: #1a1e23;
+    --church: #6fa3d8; --external: #d6a24c; --unknown: #9aa1a9; --exchange: #e07a70; --protocol: #74b88a; --fee: #6a7179; --noise: #fb8b4c;
+    --a-atom: #a493ea; --a-eth: #a9b6c8; --a-octra: #4cc7c7; --a-boot: #c99560; --hl: #f5c451;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15181c; --surface: #1d2126; --fg: #e6e9ec; --muted: #9aa3ad; --line: #353b43; --lane: #1a1e23;
+  --church: #6fa3d8; --external: #d6a24c; --unknown: #9aa1a9; --exchange: #e07a70; --protocol: #74b88a; --fee: #6a7179; --noise: #fb8b4c;
+  --a-atom: #a493ea; --a-eth: #a9b6c8; --a-octra: #4cc7c7; --a-boot: #c99560; --hl: #f5c451;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.45; margin: 0; }
+.wrap { max-width: 1480px; margin: 0 auto; padding-inline: 20px; padding-block: 20px 32px; display: grid; gap: 16px; }
+header { display: grid; gap: 6px; }
+.eyebrow { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--muted); }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(22px, 3vw, 30px); margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 75ch; margin: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; padding: 10px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+.controls label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; font-size: 14px; }
+.controls input[type=checkbox] { accent-color: var(--church); width: 16px; height: 16px; }
+.time { display: inline-flex; gap: 8px; align-items: center; flex: 1 1 280px; min-width: 0; }
+.time input { flex: 1; min-width: 120px; accent-color: var(--church); }
+.time output { font-family: var(--font-mono); font-size: 13px; min-width: 7ch; font-variant-numeric: tabular-nums; }
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+@media (max-width: 980px) { .main { grid-template-columns: minmax(0, 1fr); } }
+.canvas { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; overflow-x: auto; }
+svg { display: block; width: 100%; min-width: 860px; height: auto; font-family: var(--font-body); }
+.lane-bg { fill: var(--lane); }
+.lane-label { fill: var(--muted); font-family: var(--font-display); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.edge { fill: none; stroke-linecap: round; opacity: .78; cursor: pointer; transition: opacity .15s; }
+.edge.derived { stroke-dasharray: 6 5; }
+.edge-hit { fill: none; stroke: transparent; stroke-width: 16; cursor: pointer; }
+.edge-label { fill: var(--muted); font-size: 11px; font-family: var(--font-mono); pointer-events: none; }
+.node { cursor: pointer; }
+.node .shape { stroke: var(--surface); stroke-width: 2.5; }
+.node text { fill: var(--fg); font-size: 12.5px; pointer-events: none; }
+.node .sub { fill: var(--muted); font-size: 11px; font-family: var(--font-mono); }
+.node:focus { outline: none; }
+.node:focus-visible .shape, .node.sel .shape { stroke: var(--hl); stroke-width: 4; }
+.dim { opacity: .14 !important; }
+.edge.sel { opacity: 1; }
+.badge { fill: var(--surface); stroke: var(--line); }
+.badge-t { fill: var(--fg); font-size: 11px; font-weight: 700; }
+.cluster { fill: none; stroke: var(--church); stroke-opacity: .12; stroke-linejoin: round; stroke-linecap: round; pointer-events: none; }
+.cluster-label { fill: var(--church); font-size: 11.5px; font-family: var(--font-mono); }
+aside { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+aside h2 { font-family: var(--font-display); font-weight: 600; font-size: 18px; margin: 0; text-wrap: balance; }
+aside .kind { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-family: var(--font-display); }
+dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; margin: 0; font-size: 14px; }
+dt { color: var(--muted); }
+dd { margin: 0; min-width: 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; }
+aside p { margin: 0; font-size: 14px; }
+aside a { color: var(--church); }
+.legend { display: grid; gap: 6px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.legend .row { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.sw { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.bar { width: 18px; height: 3px; display: inline-block; border-radius: 2px; }
+.note { font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .edge { transition: none; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Mock-up of the «Connections» view · data as of 2026-10-07</div>
+    <h1>The Church's money on its way to Octra, and where the crowdsale money went</h1>
+    <p class="lede">Nodes are addresses and protocols; edges are flows summed per pair of nodes. Edge width is the USD value at the day's close. Select a node or an edge to see the details. The «+» on Juicebox #631 opens the crowdsale.</p>
+  </header>
+
+  <div class="controls" role="group" aria-label="Graph options">
+    <label><input type="checkbox" id="opt-crowd"> Crowdsale #631</label>
+    <label><input type="checkbox" id="opt-cluster" checked> Owner cluster <span class="mono">uvkv59…</span></label>
+    <label><input type="checkbox" id="opt-noise"> Noise (address poisoning)</label>
+    <label><input type="checkbox" id="opt-labels" checked> Edge labels</label>
+    <div class="time">
+      <label for="opt-time">Until</label>
+      <input type="range" id="opt-time" min="0" max="31" step="1" value="31">
+      <output id="time-out" for="opt-time">2026-04</output>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="canvas"><svg id="g" viewBox="0 0 1420 700" role="img" aria-label="Flow graph"></svg></div>
+    <aside id="panel" aria-live="polite"></aside>
+  </div>
+</div>
+
+<script>
+const LANES = [
+  { id: "bostrom", label: "Bostrom", x0: 20, x1: 200 },
+  { id: "cosmoshub", label: "Cosmos Hub", x0: 200, x1: 340 },
+  { id: "osmosis", label: "Osmosis", x0: 340, x1: 520 },
+  { id: "neutron", label: "Neutron", x0: 520, x1: 630 },
+  { id: "kujira", label: "Kujira", x0: 630, x1: 760 },
+  { id: "axelar", label: "Axelar", x0: 760, x1: 880 },
+  { id: "ethereum", label: "Ethereum", x0: 880, x1: 1400 },
+];
+
+// group: church | external | unknown | exchange | protocol | fee | noise
+// shape: wallet (circle) | contract (square) | deposit (diamond) | cluster (double circle)
+const NODES = [
+  { id: "validator", label: "TheChurch", sub: "validator", x: 110, y: 120, group: "church", shape: "contract", net: "bostrom",
+    addr: "bostromvaloper1uvkv59…h8wz6x", note: "The Church validator on Bostrom since 2022-08-06. Commission not withdrawn on 2026-10-07: 57.8 bn BOOT." },
+  { id: "bostrom", label: "Bostrom main", sub: "bostrom1uvkv…afa29", x: 110, y: 330, group: "church", shape: "wallet", net: "bostrom", cluster: true,
+    addr: "bostrom1uvkv59tsqqugezwq2gn2pytz8uzk2uy40afa29", note: "The validator operator. Every week it withdrew the commission and rewards, swapped BOOT and HYDROGEN to ATOM and sent the ATOM over IBC." },
+  { id: "gravity", label: "Gravity DEX", sub: "Bostrom pools", x: 110, y: 540, group: "protocol", shape: "contract", net: "bostrom",
+    note: "The Bostrom liquidity module (MsgSwapWithinBatch). A batch swap pays out in a block, not in a transaction, so the ATOM arrivals are derived from the outgoing IBC sends." },
+  { id: "hub", label: "Cosmos Hub main", sub: "cosmos1uvkv…w5z", x: 270, y: 330, group: "church", shape: "wallet", net: "cosmoshub", cluster: true,
+    addr: "cosmos1uvkv59tsqqugezwq2gn2pytz8uzk2uy4vwaw5z", note: "ATOM in transit: arrives from Bostrom and leaves for Osmosis 1–3 minutes later." },
+  { id: "osmo", label: "Osmosis main", sub: "osmo1uvkv…w7zs", x: 430, y: 330, group: "church", shape: "wallet", net: "osmosis", cluster: true,
+    addr: "osmo1uvkv59tsqqugezwq2gn2pytz8uzk2uy4y4w7zs", note: "Swaps ATOM to axlWETH, provides liquidity on Levana, sends to Kujira." },
+  { id: "pools", label: "Osmosis pools", sub: "poolmanager", x: 430, y: 540, group: "protocol", shape: "contract", net: "osmosis",
+    note: "15 swaps ATOM → axlWETH, 2023-09-26 … 2023-12-27." },
+  { id: "levana", label: "Levana Perps", sub: "axlETH/USD", x: 430, y: 120, group: "protocol", shape: "contract", net: "osmosis",
+    addr: "osmo19c7hdlfvu7cddr0smfz9luaj8375qhfr3s0gtsk087laqfzxlu3qsnk47e", note: "A perpetuals market. The wallet was a liquidity provider (LP); yield over the whole period: +0.000236 ETH." },
+  { id: "neutron", label: "Neutron", sub: "neutron1uvkv…5vw9", x: 575, y: 210, group: "church", shape: "wallet", net: "neutron", cluster: true,
+    addr: "neutron1uvkv59tsqqugezwq2gn2pytz8uzk2uy4g35vw9", note: "A round trip 2023-10-10 → 2023-10-31; 0.00117 ETH more came back. Not a treasury account." },
+  { id: "kujira", label: "Kujira main", sub: "kujira1uvkv…lkeg", x: 695, y: 330, group: "church", shape: "wallet", net: "kujira", cluster: true,
+    addr: "kujira1uvkv59tsqqugezwq2gn2pytz8uzk2uy4axlkeg", note: "Sent the axlWETH over Axelar to Ethereum. Kujira history is unavailable: Mintscan does not serve it and the nodes do not answer." },
+  { id: "axelar", label: "Axelar", sub: "bridge", x: 820, y: 330, group: "protocol", shape: "contract", net: "axelar",
+    note: "Transfer 597666: Kujira → Ethereum; AxelarDepositService unwraps WETH to ETH." },
+  { id: "axfee", label: "Axelar fee", sub: "fee", x: 820, y: 540, group: "fee", shape: "contract", net: "axelar" },
+  { id: "eth", label: "Church ETH wallet", sub: "0x2b48…3248", x: 950, y: 330, group: "church", shape: "wallet", net: "ethereum",
+    addr: "0x2b48aF8Cd710BE6B019D105CA442471b55E23248", note: "Paid 0.245 ETH into Juicebox #631; received 11 448.9 OCTRA on 2026-04-22." },
+  { id: "jb", label: "Juicebox #631", sub: "Octra crowdsale", x: 1080, y: 330, group: "protocol", shape: "contract", net: "ethereum", expandable: true,
+    addr: "0x1d9619e10086fdc1065b114298384aae3f680cc0", note: "Juicebox v3 terminal. 228 payments, 107.17 ETH, 2024-01-30 12:19 … 2024-02-01 21:33 UTC. Confirmed on chain as the Octra sale." },
+  // crowdsale side
+  { id: "crowd", label: "Participants", sub: "206 addresses", x: 1080, y: 110, group: "unknown", shape: "cluster", net: "ethereum", crowd: true,
+    note: "The other crowdsale participants (without the Church and the largest participant). The list: church_octra_crowdsale_participants.csv." },
+  { id: "c6de", label: "0xc6de…69d4", sub: "10 ETH, refunded", x: 1225, y: 110, group: "unknown", shape: "wallet", net: "ethereum", crowd: true,
+    addr: "0xc6de698d90598b8fe60e0d8c7c674f2d839769d4", note: "The largest payment (10 ETH). Two days later the owner sent the 10 ETH back directly; no wOCT." },
+  { id: "owner", label: "Project owner", sub: "0xd2b4…83bc", x: 1225, y: 330, group: "unknown", shape: "wallet", net: "ethereum", crowd: true,
+    addr: "0xd2b4869ec4d4ba75cd59dac85a4bd882205b83bc", note: "ownerOf(631). Gas came from Binance 18 a minute before the project launch. Received 100 % of the payouts." },
+  { id: "jbfee", label: "Juicebox fee", sub: "2.5 %", x: 1080, y: 540, group: "fee", shape: "contract", net: "ethereum", crowd: true },
+  { id: "team", label: "Octra team", sub: "0x33f6…7a51", x: 1345, y: 230, group: "external", shape: "wallet", net: "ethereum", crowd: true,
+    addr: "0x33f61fd783a92f04352eed64c43219ef1e327a51", note: "Got 47.42 ETH from the owner and sent it on to Binance. In 2026 funded the wOCT distributor." },
+  { id: "binance", label: "Binance", sub: "hot wallet 14", x: 1345, y: 470, group: "exchange", shape: "deposit", net: "ethereum", crowd: true, terminal: true,
+    addr: "0x28c6c06298d514db089934071355e5743bf21d60", note: "End node: an exchange is not expanded. 96.48 ETH arrived here through two deposit addresses within 8 days." },
+  { id: "dist", label: "wOCT distributor", sub: "0xe42b…ff06", x: 1225, y: 600, group: "external", shape: "contract", net: "ethereum", crowd: true,
+    addr: "0xe42b8c6b05a7be0bb1dbf47c402eefe06256ff06", note: "batchClaim contract, 2026-04-22 01:27: 4 516 635 wOCT to 207 addresses." },
+  // noise
+  { id: "poison", label: "0x33f2…7a51", sub: "address poisoning", x: 1345, y: 640, group: "noise", shape: "wallet", net: "ethereum", crowd: true, noise: true,
+    addr: "0x33f236f5c34e1f04d7903939209fc55655327a51", note: "Looks like the team wallet. A fake «ЕTН» token (Cyrillic Е) was logged «from the owner»; no real money went here." },
+];
+
+// kind: income | swap | transfer | bridge | deposit | withdraw | fee | payment | payout | refund | distribution | noise
+// t0/t1: month indexes from 2023-09 (0) to 2026-04 (31)
+const EDGES = [
+  { from: "validator", to: "bostrom", asset: "BOOT", kind: "income", amount: "≈ 1.1 bn BOOT a week", usd: null, count: "weekly", period: "2023-09 … 2024-08", t0: 0, basis: "exact", label: "commission" },
+  { from: "bostrom", to: "gravity", asset: "BOOT", kind: "swap", amount: "BOOT, HYDROGEN", usd: null, count: "187 swaps", period: "2023-09 … 2024-08", t0: 0, basis: "exact", label: "BOOT, H" },
+  { from: "gravity", to: "bostrom", asset: "ATOM", kind: "swap", amount: "≥ 71.88 ATOM", usd: 627, count: "—", period: "2023-09 … 2024-08", t0: 0, basis: "derived", label: "ATOM", bend: -1 },
+  { from: "bostrom", to: "hub", asset: "ATOM", kind: "transfer", amount: "71.881632 ATOM", usd: 627, count: 22, period: "2023-09-26 … 2024-08-27", t0: 0, basis: "exact", label: "71.88 ATOM" },
+  { from: "hub", to: "osmo", asset: "ATOM", kind: "transfer", amount: "69.50 ATOM", usd: 608, count: 21, period: "2023-09-26 … 2024-04-10", t0: 0, basis: "exact", label: "69.50 ATOM" },
+  { from: "osmo", to: "pools", asset: "ATOM", kind: "swap", amount: "61.38 ATOM", usd: 530, count: 15, period: "2023-09-26 … 2023-12-27", t0: 0, basis: "exact", label: "61.38 ATOM", bend: 1 },
+  { from: "pools", to: "osmo", asset: "ETH", kind: "swap", amount: "0.27411194 axlWETH", usd: 517, count: 15, period: "2023-09-26 … 2023-12-27", t0: 0, basis: "exact", label: "0.274 ETH", bend: 1 },
+  { from: "osmo", to: "levana", asset: "ETH", kind: "deposit", amount: "0.692319 axlWETH", usd: 1381, count: 10, period: "2023-09-26 … 2023-12-05", t0: 0, basis: "exact", label: "0.692 in", bend: 1 },
+  { from: "levana", to: "osmo", asset: "ETH", kind: "withdraw", amount: "0.69231905 + yield 0.00023598 axlWETH", usd: 1438, count: 8, period: "2023-09-30 … 2023-12-12", t0: 0, basis: "exact", label: "0.693 out", bend: 1 },
+  { from: "osmo", to: "neutron", asset: "ETH", kind: "transfer", amount: "0.11566675 axlWETH", usd: 181, count: 1, period: "2023-10-10", t0: 1, basis: "exact", label: "0.1157", bend: 1 },
+  { from: "neutron", to: "osmo", asset: "ETH", kind: "transfer", amount: "0.11683505 axlWETH", usd: 212, count: 1, period: "2023-10-31", t0: 1, basis: "exact", label: "0.1168", bend: 1 },
+  { from: "osmo", to: "kujira", asset: "ETH", kind: "transfer", amount: "0.27551622 axlWETH", usd: 686, count: 1, period: "2024-01-19", t0: 4, basis: "exact", label: "0.2755 ETH", tx: "C3EAE826063DAC9B46C9DB6CC398A3016BA09122AA94C59DFA190682E5AFA55F" },
+  { from: "kujira", to: "axelar", asset: "ETH", kind: "bridge", amount: "0.27669243 axlWETH", usd: 632, count: 1, period: "2024-01-31", t0: 4, basis: "exact", label: "0.2767 ETH", tx: "0C1639C938780EA3B8199BD978411A4C3CBF97ED318F0E87004AA407CED2B9A2" },
+  { from: "axelar", to: "axfee", asset: "ETH", kind: "fee", amount: "0.025062 ETH", usd: 57, count: 1, period: "2024-01-31", t0: 4, basis: "exact", label: "0.0251" },
+  { from: "axelar", to: "eth", asset: "ETH", kind: "bridge", amount: "0.25163043 ETH", usd: 575, count: 1, period: "2024-01-31", t0: 4, basis: "exact", label: "0.2516 ETH", tx: "0x85c97d87e69ba73102bca85bfb9caa792cb3caca6b051fa729bb8f9d7f44a8ec" },
+  { from: "eth", to: "jb", asset: "ETH", kind: "payment", amount: "0.245 ETH → 245 000 project tokens", usd: 560, count: 1, period: "2024-01-31", t0: 4, basis: "exact", label: "0.245 ETH", tx: "0x2761c29703749f1a082bf103079a8939948c1737dcd47924f0127132a2c9c73e" },
+  // crowdsale
+  { from: "crowd", to: "jb", asset: "ETH", kind: "payment", amount: "96.92122755 ETH", usd: 224847, count: 226, period: "2024-01-30 … 2024-02-01", t0: 4, basis: "exact", label: "96.92 ETH", crowd: true },
+  { from: "c6de", to: "jb", asset: "ETH", kind: "payment", amount: "10 ETH", usd: 23462, count: 1, period: "2024-01-30", t0: 4, basis: "exact", label: "10 ETH", crowd: true },
+  { from: "jb", to: "jbfee", asset: "ETH", kind: "fee", amount: "2.62844457 ETH", usd: 6108, count: 6, period: "2024-01-30 … 2024-02-01", t0: 4, basis: "exact", label: "2.63 ETH", crowd: true },
+  { from: "jb", to: "owner", asset: "ETH", kind: "payout", amount: "105.13778298 ETH (after 2.5 %)", usd: 244325, count: 6, period: "2024-01-30 … 2024-02-01", t0: 4, basis: "exact", label: "105.14 ETH", crowd: true },
+  { from: "owner", to: "c6de", asset: "ETH", kind: "refund", amount: "10 ETH", usd: 23034, count: 1, period: "2024-02-01", t0: 5, basis: "exact", label: "10 ETH back", crowd: true, tx: "0x2e43488ab2…" },
+  { from: "owner", to: "team", asset: "ETH", kind: "transfer", amount: "47.41685 ETH", usd: 110289, count: 2, period: "2024-01-30 … 2024-02-01", t0: 4, basis: "exact", label: "47.42 ETH", crowd: true },
+  { from: "owner", to: "binance", asset: "ETH", kind: "transfer", amount: "49.142107 ETH via 0xe5ca…ab96", usd: 114447, count: 4, period: "2024-01-30 … 2024-02-07", t0: 4, basis: "exact", label: "49.14 ETH", crowd: true },
+  { from: "team", to: "binance", asset: "ETH", kind: "transfer", amount: "47.37678 ETH via 0x054c…1459", usd: 110286, count: 2, period: "2024-01-30 … 2024-02-02", t0: 4, basis: "exact", label: "47.38 ETH", crowd: true },
+  { from: "team", to: "dist", asset: "OCTRA", kind: "distribution", amount: "4 516 635.21 wOCT", usd: 103135, count: 1, period: "2026-04-22", t0: 31, basis: "exact", label: "4.52 M OCT", crowd: true },
+  { from: "dist", to: "crowd", asset: "OCTRA", kind: "distribution", amount: "4 505 186.30 wOCT, 206 addresses", usd: 102874, count: 206, period: "2026-04-22", t0: 31, basis: "exact", label: "4.51 M OCT", crowd: true },
+  { from: "dist", to: "eth", asset: "OCTRA", kind: "distribution", amount: "11 448.90771 OCTRA", usd: 261, count: 1, period: "2026-04-22", t0: 31, basis: "exact", label: "11 449 OCT", tx: "0x0abb986fd9190ba40cb29797f6370132e0eb0e26414f62c7e6ba5ecc4c66e3c0" },
+  // noise
+  { from: "owner", to: "poison", asset: "ETH", kind: "noise", amount: "fake «ЕTН» 25 and 22.4", usd: null, count: 2, period: "2024-01-30 … 2024-02-01", t0: 4, basis: "exact", label: "fake ЕTН", crowd: true, noise: true },
+];
+
+const KIND_LABEL = { income: "income", swap: "swap", transfer: "transfer", bridge: "bridge", deposit: "deposit into a protocol", withdraw: "withdrawal from a protocol",
+  fee: "fee", payment: "payment", payout: "payout", refund: "refund", distribution: "token distribution", noise: "address poisoning" };
+const GROUP_LABEL = { church: "Church", external: "known external", unknown: "unknown", exchange: "exchange", protocol: "protocol / pool / bridge", fee: "fee", noise: "noise" };
+const NET_LABEL = Object.fromEntries(LANES.map(l => [l.id, l.label]));
+const MONTHS = Array.from({ length: 32 }, (_, i) => { const d = new Date(Date.UTC(2023, 8 + i, 1)); return d.toISOString().slice(0, 7); });
+const EXPLORER = { ethereum: a => `https://etherscan.io/address/${a}`, osmosis: a => `https://www.mintscan.io/osmosis/address/${a}`,
+  cosmoshub: a => `https://www.mintscan.io/cosmos/address/${a}`, neutron: a => `https://www.mintscan.io/neutron/address/${a}` };
+
+const svg = document.getElementById("g");
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs = {}, parent = svg) => { const e = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v); parent.appendChild(e); return e; };
+const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+const opts = { crowd: false, cluster: true, noise: false, labels: true, t: 31 };
+let selected = null;
+
+const width = usd => usd == null ? 1.6 : Math.min(22, 1.6 + Math.sqrt(usd) / 24);
+const assetVar = a => ({ ATOM: "--a-atom", ETH: "--a-eth", OCTRA: "--a-octra", BOOT: "--a-boot" }[a] || "--muted");
+const fmtUsd = v => v == null ? "not valued" : "≈ " + v.toLocaleString("en-US") + " USD";
+
+function visibleNode(n) {
+  if (n.crowd && !opts.crowd) return false;
+  if (n.noise && !opts.noise) return false;
+  return true;
+}
+function visibleEdge(e) {
+  if (e.crowd && !opts.crowd) return false;
+  if (e.noise && !opts.noise) return false;
+  return visibleNode(byId[e.from]) && visibleNode(byId[e.to]);
+}
+
+function edgePath(e) {
+  const a = byId[e.from], b = byId[e.to];
+  const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+  const r = 22;
+  const sx = a.x + dx / len * r, sy = a.y + dy / len * r, tx = b.x - dx / len * (r + 6), ty = b.y - dy / len * (r + 6);
+  const bend = (e.bend ?? 0.35) * Math.min(60, len * 0.18);
+  const mx = (sx + tx) / 2 - dy / len * bend, my = (sy + ty) / 2 + dx / len * bend;
+  return { d: `M${sx},${sy} Q${mx},${my} ${tx},${ty}`, lx: (sx + 2 * mx + tx) / 4, ly: (sy + 2 * my + ty) / 4 };
+}
+
+function draw() {
+  svg.textContent = "";
+  const defs = el("defs");
+  for (const a of ["ATOM", "ETH", "OCTRA", "BOOT", "X"]) {
+    const m = el("marker", { id: "arr-" + a, viewBox: "0 0 10 10", refX: 6, refY: 5, markerWidth: 5, markerHeight: 5, orient: "auto-start-reverse", markerUnits: "userSpaceOnUse" }, defs);
+    m.setAttribute("markerWidth", 9); m.setAttribute("markerHeight", 9);
+    el("path", { d: "M0,0 L10,5 L0,10 z", style: `fill: var(${a === "X" ? "--noise" : assetVar(a)})` }, m);
+  }
+  for (const l of LANES) {
+    el("rect", { x: l.x0 + 4, y: 34, width: l.x1 - l.x0 - 8, height: 646, rx: 6, class: "lane-bg" });
+    const t = el("text", { x: (l.x0 + l.x1) / 2, y: 24, "text-anchor": "middle", class: "lane-label" }); t.textContent = l.label;
+  }
+  if (opts.cluster) {
+    const pts = NODES.filter(n => n.cluster).sort((a, b) => a.x - b.x).map(n => `${n.x},${n.y}`).join(" ");
+    el("polyline", { points: pts, class: "cluster", "stroke-width": 64 });
+    const t = el("text", { x: 190, y: 388, class: "cluster-label" }); t.textContent = "one key uvkv59… on five networks";
+  }
+  const visEdges = EDGES.filter(visibleEdge);
+  const live = new Set();
+  for (const e of visEdges) {
+    const active = e.t0 <= opts.t;
+    const { d, lx, ly } = edgePath(e);
+    const color = e.kind === "noise" ? "--noise" : assetVar(e.asset);
+    const g = el("g", { "data-edge": EDGES.indexOf(e) });
+    const p = el("path", { d, class: "edge" + (e.basis === "derived" || e.kind === "noise" ? " derived" : "") + (active ? "" : " dim"),
+      style: `stroke: var(${color}); stroke-width: ${width(e.usd)}`, "marker-end": `url(#arr-${e.kind === "noise" ? "X" : e.asset})` }, g);
+    el("path", { d, class: "edge-hit" }, g);
+    if (opts.labels && active) { const t = el("text", { x: lx, y: ly - 4, "text-anchor": "middle", class: "edge-label" }, g); t.textContent = e.label; }
+    g.addEventListener("click", ev => { ev.stopPropagation(); select({ edge: e }); });
+    if (active) { live.add(e.from); live.add(e.to); }
+    e._el = p;
+  }
+  for (const n of NODES.filter(visibleNode)) {
+    const g = el("g", { class: "node", tabindex: 0, role: "button", "aria-label": `${n.label} — ${GROUP_LABEL[n.group]}`, "data-node": n.id });
+    const fill = `fill: var(--${n.group})`;
+    if (n.shape === "contract") el("rect", { x: n.x - 17, y: n.y - 17, width: 34, height: 34, rx: 6, class: "shape", style: fill }, g);
+    else if (n.shape === "deposit") el("path", { d: `M${n.x},${n.y - 21} L${n.x + 21},${n.y} L${n.x},${n.y + 21} L${n.x - 21},${n.y} z`, class: "shape", style: fill }, g);
+    else if (n.shape === "cluster") { el("circle", { cx: n.x + 6, cy: n.y - 5, r: 16, class: "shape", style: fill + "; opacity:.55" }, g); el("circle", { cx: n.x, cy: n.y, r: 18, class: "shape", style: fill }, g); }
+    else el("circle", { cx: n.x, cy: n.y, r: 18, class: "shape", style: fill }, g);
+    const t1 = el("text", { x: n.x, y: n.y + 36, "text-anchor": "middle" }, g); t1.textContent = n.label;
+    const t2 = el("text", { x: n.x, y: n.y + 50, "text-anchor": "middle", class: "sub" }, g); t2.textContent = n.sub;
+    if (n.expandable) {
+      const bx = n.x + 20, by = n.y - 22;
+      const b = el("g", { class: "node", tabindex: 0, role: "button", "aria-label": opts.crowd ? "Collapse the crowdsale" : "Open the crowdsale" });
+      el("circle", { cx: bx, cy: by, r: 10, class: "badge" }, b);
+      const bt = el("text", { x: bx, y: by + 4, "text-anchor": "middle", class: "badge-t" }, b); bt.textContent = opts.crowd ? "−" : "+";
+      const toggle = ev => { ev.stopPropagation(); setCrowd(!opts.crowd); };
+      b.addEventListener("click", toggle);
+      b.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggle(ev); } });
+    }
+    if (!live.has(n.id)) g.classList.add("dim");
+    if (n.terminal) { const lock = el("text", { x: n.x + 26, y: n.y - 14, class: "sub" }, g); lock.textContent = "end"; }
+    g.addEventListener("click", ev => { ev.stopPropagation(); select({ node: n }); });
+    g.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); select({ node: n }); } });
+    n._el = g;
+  }
+  applySelection();
+}
+
+function applySelection() {
+  NODES.forEach(n => n._el && n._el.classList.remove("sel"));
+  EDGES.forEach(e => e._el && e._el.classList.remove("sel"));
+  if (!selected) return;
+  if (selected.node) {
+    selected.node._el && selected.node._el.classList.add("sel");
+    const near = new Set([selected.node.id]);
+    EDGES.filter(visibleEdge).forEach(e => {
+      const touch = e.from === selected.node.id || e.to === selected.node.id;
+      if (touch) { near.add(e.from); near.add(e.to); e._el.classList.add("sel"); }
+      else e._el.classList.add("dim");
+    });
+    NODES.filter(visibleNode).forEach(n => { if (!near.has(n.id)) n._el.classList.add("dim"); });
+  } else if (selected.edge) {
+    EDGES.filter(visibleEdge).forEach(e => { if (e !== selected.edge) e._el.classList.add("dim"); else e._el.classList.add("sel"); });
+    NODES.filter(visibleNode).forEach(n => { if (n.id !== selected.edge.from && n.id !== selected.edge.to) n._el.classList.add("dim"); });
+  }
+}
+
+function select(s) { selected = s; draw(); renderPanel(); }
+
+function row(k, v, mono) { return `<dt>${k}</dt><dd${mono ? ' class="mono"' : ""}>${v}</dd>`; }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderPanel() {
+  const p = document.getElementById("panel");
+  let html = "";
+  if (selected && selected.node) {
+    const n = selected.node;
+    const ins = EDGES.filter(e => e.to === n.id && visibleEdge(e)), outs = EDGES.filter(e => e.from === n.id && visibleEdge(e));
+    const link = n.addr && EXPLORER[n.net] && !n.addr.includes("…") ? `<a href="${EXPLORER[n.net](n.addr)}" target="_blank" rel="noopener">Open in the explorer</a>` : "";
+    html = `<div class="kind">${GROUP_LABEL[n.group]} · ${NET_LABEL[n.net]}</div><h2>${esc(n.label)}</h2>
+      <dl>${n.addr ? row("Address", esc(n.addr), true) : ""}${row("Incoming", ins.length ? ins.map(e => esc(byId[e.from].label) + " — " + esc(e.amount)).join("<br>") : "—")}
+      ${row("Outgoing", outs.length ? outs.map(e => esc(byId[e.to].label) + " — " + esc(e.amount)).join("<br>") : "—")}</dl>
+      ${n.note ? `<p>${esc(n.note)}</p>` : ""}${link ? `<p>${link}</p>` : ""}`;
+  } else if (selected && selected.edge) {
+    const e = selected.edge;
+    html = `<div class="kind">${KIND_LABEL[e.kind]} · ${e.asset}</div><h2>${esc(byId[e.from].label)} → ${esc(byId[e.to].label)}</h2>
+      <dl>${row("Amount", esc(e.amount))}${row("In USD", fmtUsd(e.usd))}${row("Transfers", esc(e.count))}${row("Period", esc(e.period))}
+      ${row("Basis", e.basis === "derived" ? "derived (block events)" : "chain transactions")}${e.tx ? row("Transaction", esc(e.tx), true) : ""}</dl>`;
+  } else {
+    html = `<div class="kind">Hint</div><h2>Nothing selected</h2>
+      <p>Select a node to see its address and its incoming and outgoing flows. Select an edge to see the amount, USD, number of transfers and period.</p>
+      <p class="note">The road in one line: validator income on Bostrom → 71.88 ATOM → 0.274 ETH on Osmosis → 0.245 ETH into Octra → 11 448.9 OCTRA.</p>`;
+  }
+  html += `<div class="legend">
+    <div class="row"><span class="sw"><span class="dot" style="background:var(--church)"></span>Church</span><span class="sw"><span class="dot" style="background:var(--protocol)"></span>protocol / pool / bridge</span>
+    <span class="sw"><span class="dot" style="background:var(--external)"></span>known external</span><span class="sw"><span class="dot" style="background:var(--unknown)"></span>unknown</span>
+    <span class="sw"><span class="dot" style="background:var(--exchange)"></span>exchange</span><span class="sw"><span class="dot" style="background:var(--fee)"></span>fee</span></div>
+    <div class="row"><span class="sw"><span class="bar" style="background:var(--a-atom)"></span>ATOM</span><span class="sw"><span class="bar" style="background:var(--a-eth)"></span>ETH</span>
+    <span class="sw"><span class="bar" style="background:var(--a-octra)"></span>OCTRA</span><span class="sw"><span class="bar" style="background:var(--a-boot)"></span>BOOT</span></div>
+    <div class="note">Circle: wallet; square: contract or protocol; diamond: exchange. Dashed: the amount is derived, not read from transactions. Width: USD at the day's close (square root of the value).</div></div>`;
+  p.innerHTML = html;
+}
+
+function setCrowd(v) {
+  opts.crowd = v; document.getElementById("opt-crowd").checked = v;
+  if (!v && selected && ((selected.node && selected.node.crowd) || (selected.edge && selected.edge.crowd))) selected = null;
+  draw(); renderPanel();
+}
+document.getElementById("opt-crowd").addEventListener("change", e => setCrowd(e.target.checked));
+document.getElementById("opt-cluster").addEventListener("change", e => { opts.cluster = e.target.checked; draw(); });
+document.getElementById("opt-noise").addEventListener("change", e => { opts.noise = e.target.checked; if (opts.noise && !opts.crowd) setCrowd(true); else draw(); });
+document.getElementById("opt-labels").addEventListener("change", e => { opts.labels = e.target.checked; draw(); });
+const range = document.getElementById("opt-time"), out = document.getElementById("time-out");
+range.addEventListener("input", () => { opts.t = +range.value; out.textContent = MONTHS[opts.t]; draw(); });
+svg.addEventListener("click", () => { selected = null; draw(); renderPanel(); });
+draw(); renderPanel();
+</script>
+
+</body>
+</html>

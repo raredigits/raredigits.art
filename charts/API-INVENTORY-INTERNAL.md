@@ -23,7 +23,8 @@
 | DualAxes | `charts/DualAxes.js` | серии `{ name, axis, type, values }` | ✅ |
 | Donut / Pie | `charts/Donut.js` | `[{ label, value, color? }]` | ✅ · ❓ Pie-alias сломан |
 | Gauge | `charts/Gauge.js` | `number` или `{ value, max?, min? }` | ✅ |
-| Graph | `charts/Graph.js` | `{ nodes, links }` | **experimental — вне 1.0 (B3)** |
+| Graph | `charts/Graph.js` | `{ nodes, links }` (+ `view: 'flow'` с 0.9.8_3) | **experimental — вне 1.0 (B3)** |
+| Sankey | `charts/Sankey.js` | `{ nodes?, links: [{ source, target, value }] }` | **experimental — вне 1.0** · 0.9.8_3 |
 | MultiChart | `charts/MultiChart.js` | контейнер дочерних графиков | ✅ |
 | Map | `charts/Map.js` | `[{ id, value?, color?, label? }]` + geo через опции | ✅ |
 | Адаптеры | `adapters/index.js` | `fromJson/fromCsv/fromApi/fromArray(data, mapping)` | ✅ |
@@ -392,7 +393,7 @@ node = {
 | `animate` / `duration` / `ease` | `true` / `500` / `cubicOut` | ✅ моторный блок как у Bar (нет `stagger`) |
 | `tooltipFormat` | — | `(node) => html` |
 
-Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_4); текущий вид статический (весь outline сразу).
+Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_6); текущий вид статический (весь outline сразу).
 
 ### Donut drill-down (расширение стабильного класса — ✅ реализовано)
 
@@ -422,6 +423,89 @@ node = {
 
 ---
 
+## Flows — общий слой связей (решения шага 0 релиза 0.9.8_3, 2026-10-07)
+
+Общий контракт связей для `Graph` (включая `view: 'flow'`), `Sankey` и `MapFlow`. Классы experimental, но словарь общий — менять его потом пришлось бы в трёх местах сразу. ТЗ: [SPEC-SANKEY](./SPEC-SANKEY-INTERNAL.md), [SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md), [SPEC-GRAPH-MAPFLOW](./SPEC-GRAPH-MAPFLOW-INTERNAL.md).
+
+| Вопрос | Решение | Почему |
+|---|---|---|
+| Имя коллекции и концов | `links` + `source`/`target`. Алиасы на входе: `from`/`to` (концы), `flows` (коллекция, MapFlow). Наружу (события, тултипы) — всегда каноническая форма | Так уже в Graph и d3; макет data project и черновик MapFlow писали `from`/`to` — принимаем без переписывания данных |
+| Время на связи | `start` / `end` (открытый конец = `null`/нет поля). Значения: `Date`, ISO-строка, `YYYY`, `YYYY-MM`, число. **Число < 10000 = год** | `from`/`to` заняты дважды: алиас концов и вертикальные аннотации `{ from, to }` в `utils.normalizeAnnotations`. `parseDate(1773)` сейчас даёт миллисекунды от 1970 — для годов нужен свой `parseTime` в `core/links.js` |
+| Окно времени | `setTimeWindow(from, to)` — пересечение `[start, end]` с окном, `null` = открытая граница. Опция `timeWindowMode: 'hide' \| 'dim'`; дефолт MapFlow — `hide`, flow — `dim` | В макете flow вне окна приглушается (контекст виден), на карте лишние дуги только шумят |
+| Модель Graph (A2) | Хранение — `graphology` `{ type: 'directed', multi: true }`: каждая связь — ребро в заданном направлении. Аналитика (BFS ego, пути, Louvain, betweenness, `degree`) — по **неориентированной простой проекции**, которая строится лениво и сбрасывается на `merge`. Новые зависимости не нужны (проекция ≈15 строк вместо `graphology-operators`) | Louvain не работает на настоящем `mixed`-графе (README пакета); `bidirectional` и betweenness на направленном графе меняют результат — path view перестал бы находить маршруты «против стрелок». Проекция сохраняет текущее поведение ego/path/cluster бит в бит |
+| Дедупликация при `merge` | Одинаковый `id` → обновление атрибутов. Без `id`: одна и та же пара + тот же `type` → обновление; другой `type` → параллельное ребро. Для ego/path/cluster пара считается неупорядоченной (A→B и B→A одного типа — одна связь, как сейчас); во flow — упорядоченной | Сегодня второе ребро пары молча теряется (FIELD-NOTES 2026-07-31). Правило оставляет повторную подгрузку окрестности идемпотентной |
+| `model.link(a, b)` | Заменяется на `links(a, b)` → массив всех рёбер пары в обе стороны; path view рисует их параллельными дугами | В мультиграфе `graphology.edge(a, b)` неоднозначен (бросает исключение) |
+| Толщина связи | Опция `linkWidth: { by: 'value', scale: 'sqrt' \| 'linear', min, max }`; `value: null` → `min`. Без опции Graph рисует как сейчас (`strength`/`weight`) | Общая для flow, Sankey (там толщина = геометрия ленты) и MapFlow |
+| Тултип связи | `linkTooltipFormat({ link })` во всех трёх классах (`flowTooltipFormat` из черновика MapFlow — не вводим) | Один словарь |
+| Закрепление тултипа (A3) | Opt-in API `Tooltip.pin(x, y, html)` / `unpin()` / `isPinned`: класс `.rc-tooltip.is-pinned` включает `pointer-events`, перенос строк и `max-width`; закрытие по клику мимо и Esc; `show()` игнорируется, пока тултип закреплён | Ссылки в тултипе (пруфы связи у schnellreich) должны быть кликабельны. Существующие классы зовут только `show`/`hide` — их поведение не меняется |
+
+### Фактические опции (реализация 0.9.8_3, 2026-10-07)
+
+**Общий слой (`core/links.js`)** — `normalizeLinks`/`normalizeLinkData` (алиасы `from`/`to`, `flows`; `id` = `source→target#n` для одного payload), `parseTime` (`< 10000` = год; `YYYY`/`YYYY-MM` как периоды, `{ end: true }` → последний мс периода), `linkInWindow`/`applyTimeWindow` (`'hide'` | `'dim'` → `_dim: true`), `linkWidthScale({ by, scale, min, max })`, `pairKey`, `dedupeUndirected`, `parallelIndex`. Модель Graph хранит ключ без `id` как `source→target|type` — два формата id связи (payload vs модель) сознательно: модель идемпотентна между подгрузками, нормализатор — в пределах одного payload. ⚠️ Свести к одному до 1.x, если появится нужда сравнивать id между классами.
+
+**`Tooltip.pin(x, y, html, { onClose })` / `unpin()` / `isPinned`** — opt-in; используют Graph (ego/path/cluster и flow) и Sankey.
+
+#### Sankey (`charts/Sankey.js`, раскладка `core/sankey.js`)
+
+| Опция | Тип | Дефолт | Примечание |
+|-------|-----|--------|------------|
+| `height` | number | `400` | горизонтальная раскладка; вертикальная растёт по `rowHeight` |
+| `orientation` | `'auto'` \| `'horizontal'` \| `'vertical'` | `'auto'` | auto: вертикаль при ширине ≤ `mobileBreakpoint` |
+| `mobileBreakpoint` | number | `480` | совпадает по смыслу с `MultiChart.mobileBreakpoint` |
+| `rowHeight` | number | `140` | на колонку (ряд) в вертикали |
+| `nodeWidth` / `nodePadding` | number | `12` / `12` | |
+| `nodeAlign` | `'justify'` \| `'left'` \| `'right'` \| `'center'` | `'justify'` | |
+| `nodeSort` | `null` \| `'value'` \| `'auto'` \| fn | `null` (порядок входа) | `'auto'` — порядок d3 |
+| `iterations` | number | `6` | |
+| `linkColor` | `'source'` \| `'target'` \| `'type'` \| `'gradient'` \| css | `'source'` | |
+| `linkOpacity` | number | `0.45` | |
+| `linkTypes` | `{ type: { color, label } }` | — | общий контракт с Graph |
+| `labels` | `'auto'` \| `false` | `'auto'` | всегда справа от узла; у последней колонки — поле справа |
+| `minLabelSize` | number | `10` | |
+| `showValues` | boolean | `true` | |
+| `valueFormat` | fn(v) => string | locale | ✅ как у Donut `(v)` |
+| `tooltipFormat` | fn({ node, incoming, outgoing }) => html | встроенный | ⚠️ у Graph `({ node, links })` — см. унификацию |
+| `linkTooltipFormat` | fn({ link, source, target }) => html | встроенный | ✅ общий с Graph |
+| `tableFallback` | boolean | `true` | скрытая таблица потоков |
+| `animate` / `duration` / `ease` | | `true` / `600` / `'cubicOut'` | ⚠️ ещё одно значение `duration` (600) |
+
+Валидация: цикл → `throw` с перечислением; `value` ≤ 0 / не число / висячий узел → `warn` + drop; повтор пары+типа → сумма + `warn`.
+
+#### Graph `view: 'flow'` (`graph/views/flow.js`) — этап 1
+
+| Опция | Тип | Дефолт | Примечание |
+|-------|-----|--------|------------|
+| `lanes` | `[{ id, label, weight? }]` | `[]` | дорожки только из данных добавляются в конец |
+| `laneBy` | string \| fn | `'lane'` | |
+| `nodeGroups` | `{ group: { color, label } }` | — | цвет + легенда |
+| `nodeShapes` / `shapeBy` | map / string \| fn | `{}` / `'kind'` | `circle` \| `square` \| `diamond` \| `stack` \| SVG-путь |
+| `linkColorBy` | string \| fn | `'type'` | ключ в `linkTypes` |
+| `linkWidth` | `{ by, scale, min, max }` | `{ by: 'value', scale: 'sqrt', min: 1.6, max: 22 }` | |
+| `linkDash` | fn(link) => boolean | — | пунктир `6 5`; `linkTypes[...].dash` главнее |
+| `linkLabels` | boolean | `true` | |
+| `hulls` | `[{ id, label, members, color? }]` | `[]` | полоса через участников |
+| `timeWindowMode` | `'dim'` \| `'hide'` | `'dim'` | |
+| `onSelect` | fn({ node, link, event }) | — | без него клик по ребру пиннит тултип |
+| `minWidth` | number | `0` | горизонтальная прокрутка |
+| `nodeRadius` | number | `18` во flow | ⚠️ 22 в остальных видах — один ключ, два дефолта |
+| `tooltipFormat` / `linkTooltipFormat` | | | как в остальных видах Graph |
+
+Методы: `setFilter(fn)`, `setTimeWindow(from, to)`, `select(id | { link })`, `clearSelection()`, `setLinkLabels(bool)`, `setHulls(list)`.
+
+#### Graph — общие опции, добавленные в 0.9.8_3 (ручной прогон 2026-10-16)
+
+| Опция | Тип | Дефолт | Примечание |
+|-------|-----|--------|------------|
+| `details` | `true` \| element \| selector | — | панель деталей в карточке: сбоку при ширине содержимого ≥ `detailsBreakpoint` и сохранённом `minWidth` холста (flow), иначе снизу с ростом карточки |
+| `detailsFormat` | fn({ node, link, view }) => html | встроенный | для `details: true` |
+| `detailsWidth` / `detailsBreakpoint` / `detailsHeight` | number | `300` / `1000` / `200` | |
+| `fullscreen` | boolean | `true` | ⛶ в подвале; Fullscreen API, фоллбэк — фиксированный слой; метод `toggleFullscreen(on?)` |
+| `hiddenLinkTypes` (flow) | array | `[]` | категории, скрытые с начала; узел без видимых связей прячется |
+
+#### Базовый `Chart` — `controls` (0.9.8_3)
+
+`controls`: element | selector — элемент страницы переносится в карточку между холстом и подвалом (`.rc-chart-controls`), слушатели сохраняются. Общая опция всех классов; документирована в `/charts/settings/`. Подсказки узла: `lane`, `row`, `col`, `x`/`y` (доли 0..1), `sub`, `terminal`; ребро: `bend`.
+
 ## Открытые вопросы к заморозке
 
 Решения — проход в 0.9.9, после боевого тестирования. Сгруппировано по весу.
@@ -445,6 +529,7 @@ node = {
 - **`valueFormat` — payload расходится:** `d={label,value}` (Bar) vs `(v)` число (Donut) vs `(node)` (HierarchicalBar) vs `(seg)` (Bar stacked). Выбрать один принцип (аргумент — всегда объект-датум?) до 1.0.
 - **Три семантики `area`:** Line — boolean + `areaOpacity`/`areaBaseline`; TimeSeries — `false|true|number`; Overview — `false` задокументирован, но не реализован.
 - **Дефолты форматтеров/тиков:** `yTicks` 4 vs 5; `xTickFormat` `'%m/%d'` vs `'%b'`; `yTickFormat` TimeSeries хардкодит `$`; `curve` `'monotone'` (Line/TS) vs `'linear'` (DualAxes); `strokeWidth` per-series 2 (Line) vs `theme.strokeWidth ?? 1.5` (TS); `barWidthRatio` 0.72 (Bar) vs 0.65 (DualAxes).
+- **Relation-классы (0.9.8_3):** `tooltipFormat` узла — `({ node, links })` в Graph vs `({ node, incoming, outgoing })` в Sankey; `duration` по умолчанию добавил значение 600 (Sankey); `nodeRadius` 22 (ego/path/cluster) vs 18 (flow). `linkTooltipFormat({ link, source, target })` уже общий.
 - **`centerText`/`centerLabel`:** сигнатуры и дефолты Donut vs Gauge расходятся; у Gauge нет `valueFormat`/`percentFormat`.
 - **`annotationLabelHeight` + `margin.top`:** формулы Line и TimeSeries различаются при явном `margin.top`.
 - **`showY1Axis`/`showY2Axis`** vs `showYAxis`; Y1 = правая, Y2 = левая — контринтуитивно, зафиксировать в доках явно.
