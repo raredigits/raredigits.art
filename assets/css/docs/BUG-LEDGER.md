@@ -46,6 +46,21 @@ Owner task: `CSS-345` (`v0.7.0` Scope Gate & Bug Closure). One row per claimed d
 | — | Hamburger icon contrast | **Corrected claim.** The rendered icon is black on `#f0f0f0` (≈ 18:1). The `#ccc` rule belongs to `.hamburger-img`, which no repository uses | `v0.7.6` Prune | — | not a defect (dead CSS) |
 | — | Dead declarations | Same selector and context, later value wins: `article { display: flex }` (shipped behavior `block`), `th { vertical-align: bottom }` (dead since `a0d3633`, shipped `top`), `.remark { line-height: 1.2em }`. Shipped rendering is kept; the dead lines are cut-list candidates | `v0.7.6` Prune | — | not a defect (dead CSS) |
 
+## Backlog scan and second sweep (2026-10-16, later)
+
+Found while the maintainer reviewed the session; **recorded, not fixed yet**.
+
+| ID | Area | Finding | Owner | Status |
+|---|---|---|---|---|
+| `CSS-360` | Keyboard: closed hamburger menu | Headless-Chrome Tab sweep (7 pages × 1280/375): on **every page** the 13 links of the closed `.nav-hamburger` take focus while invisible (off-screen at `top: -100%`, y ≈ −845). `hamburger.js` toggles only `.rd-is-active`/`aria-expanded`, and nothing removes the closed menu from the tab order (no `visibility: hidden`, no `inert`). WCAG 2.4.3 / 2.4.7 | `CSS-360` | **open** |
+| `CSS-361` | Focus hidden by the cookie banner | While consent is pending, the fixed `.cookie-notice` covers focused elements near the bottom of the viewport (collapsible summary, carousel arrow, copy button, footer links), seen on 5 of 7 pages. WCAG 2.4.11 Focus Not Obscured. Candidate fix: `scroll-padding-bottom` while the notice is visible | `CSS-361` | **open** |
+| `CSS-364` | Text roles on `.card-inverted` | `.card-inverted` (`--gray-dark` background) re-colours only itself and `a`. Elements with their own role colour stay dark: `cite` 1.00:1 (the `.card-inverted` label on `/styles/bricks/` is invisible), `.meta-info`/`.note`/`.callout`/`.remark`/`.footnote` 2.20:1, heading links 1.66:1. Fix: re-map the text-role tokens inside inverted surfaces, and make `cite` use a role token instead of `--gray-dark` | `CSS-364` | **open** |
+| `CSS-362` | Docs: table of contents | `/styles/modules/table-of-contents/` (`_data/tableOfContents.json`): **all 27 section anchors are dead**. They are written with a trailing slash (`#grid/`), and the target pages give their headings no `id` at all (only `#typeface-101` exists). The `CSS-039` dead-nav class of bug, ahead of its `v0.7.8` exit criterion | `CSS-362` | **open** (site docs) |
+| `CSS-363` | Docs: broken internal links | Link check over 80 built pages: the **Download** button on `/styles/` → `/assets/css/rare.min.css` (404: Eleventy passes through `rare.css` only); "Mark-Up 101" in the hamburger menu → `/101/` (no such page, on every page); `/charts/data-import/` → two `examples/dual-axes/*.js` files (404); `/kb/new-project-workflow/` → 8 relative `guides/project-launch/*` links (404); icons README → `LICENSE` and `fetch-icons.py` paths; `/charts/combined/` → `/charts/dual-axes/#options-reference` (no such id). `/old/` is legacy and ignored | `CSS-363` | **open** (site docs) |
+| — | Token typos behind fallbacks (`CSS-272` class) | Only two undeclared `var()`s have fallbacks, `--grid-min-col` and `--list-group-pack-min`, and both are intentional consumer hooks with defaults | — | not a defect |
+| — | Short-name collisions (`CSS-141`) | `.left/.right/.top/.bottom/.bold/.note/.warning` are not defined as bare single-class rules. `.lead/.highlight/.caption` repeat across layout and typography modules, but as one component split across modules, not conflicting meanings | — | not a defect |
+| — | Raw colours bypassing tokens | Only `.cookie-notice` (`#f0f0f0`, `#000`) and the WhatsApp brand green. Cookie tokenization is already planned (`CSS-147`) | `CSS-147` | not new |
+
 ## Archive reconciliation
 
 The shipped archive's defect records (`CSS-020..026`, `CSS-034`, the `v0.6.15` and `v0.6.17_2` audit batches) are not reopened: no sweep check above reproduces any of them. Open bug and a11y rows outside `v0.7.0` are missing features, not defects: `CSS-167` (print) and `CSS-168` (`forced-colors`).
