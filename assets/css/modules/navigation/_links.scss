@@ -16,8 +16,13 @@ a {
       to top,
       color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%
     );
-    background-size: 100% 1px;
-    background-position: 0 1.2em;
+
+    // At rest the fill has zero height, pinned to the bottom of the box. It
+    // used to be a 1px line at 1.2em, just below the inline box: clipped in
+    // Chrome, but visible as a second, lighter underline wherever the engine
+    // or font makes the box a pixel taller, e.g. Safari (CSS-365).
+    background-size: 100% 0;
+    background-position: 0 100%;
     background-repeat: no-repeat;
 
     @include bp.motion-safe {
@@ -36,7 +41,6 @@ a img {
 
 .link-thick {
     text-decoration-thickness: 2px;
-    background-size: 100% 2px;
 } 
 
 h1 a, h2 a, h3 a, h4 a {

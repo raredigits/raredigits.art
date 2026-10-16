@@ -34,16 +34,19 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
 ## What an island gets
 
 <div class="table-scroll">
-
-| | Page mode `<html class="rd">` | Island `class="rd"` |
-|---|---|---|
-| Tag styles (`h1`–`h6`, `p`, lists, tables, `code`, links, forms…) | yes | yes |
-| Library classes (`.card`, `.button`, `.grid`, utilities…) | yes | yes |
-| Icons `rd-icon-*` | yes | yes, and also outside `.rd` |
-| Page shell: fixed `header`, `main` padding, `article` placement, `section`, `footer`, `nav` chrome | yes | **no** |
-| Base typography of `body` (font, size, colour, line height) | yes | **no**: the island inherits the host's text settings |
-| Reset (`margin: 0; padding: 0; box-sizing: border-box`) | yes | yes, on the island root and inside it |
-
+<table class="table-comparison table-bordered">
+    <thead>
+        <tr><th></th><th>Page mode <code>&lt;html class="rd"&gt;</code></th><th>Island <code>class="rd"</code></th></tr>
+    </thead>
+    <tbody>
+        <tr><td>Tag styles (<code>h1</code>–<code>h6</code>, <code>p</code>, lists, tables, <code>code</code>, links, forms…)</td><td>yes</td><td>yes</td></tr>
+        <tr><td>Library classes (<code>.card</code>, <code>.button</code>, <code>.grid</code>, utilities…)</td><td>yes</td><td>yes</td></tr>
+        <tr><td>Icons <code>rd-icon-*</code></td><td>yes</td><td>yes, and also outside <code>.rd</code></td></tr>
+        <tr><td>Page shell: fixed <code>header</code>, <code>main</code> padding, <code>article</code> placement, <code>section</code>, <code>footer</code>, <code>nav</code> chrome</td><td>yes</td><td><strong>no</strong></td></tr>
+        <tr><td>Base typography of <code>body</code> (font, size, colour, line height)</td><td>yes</td><td><strong>no</strong>: the island inherits the host's text settings</td></tr>
+        <tr><td>Reset (<code>margin: 0; padding: 0; box-sizing: border-box</code>)</td><td>yes</td><td>yes, on the island root and inside it</td></tr>
+    </tbody>
+</table>
 </div>
 
 The reset has zero specificity. It removes the browser's default margins and padding, but any rule of your own with a tag or class selector still wins over it.

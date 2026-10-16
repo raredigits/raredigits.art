@@ -22,7 +22,13 @@
             { "title": "Table of Contents", "url": "/styles/modules/table-of-contents/" }
           ]
       },
-      { "title": "Layout", "url": "/styles/layout/" },
+      { 
+          "title": "Layout", 
+          "url": "/styles/layout/",
+          "subitems": [
+            { "title": "Spacing", "url": "/styles/layout/spacing/" }
+          ]
+      },
       { 
           "title": "Typography", 
           "url": "/styles/typography/",
