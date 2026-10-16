@@ -72,7 +72,8 @@ DualAxes supports the full annotation API — vertical date markers (point and r
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -462,6 +463,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/dual-axes/dual-axes-chart-ltcm-treasuries.js"></script>

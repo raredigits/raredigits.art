@@ -65,7 +65,8 @@ The same `{ nodes, links }` contract as every Graph view. Hints on the nodes pla
 
 Flow-specific options; the common Graph options (`height`, `details`, `fullscreen`, `linkTypes`, tooltips…) are on the [Graph page](/charts/graph/).
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -92,6 +93,7 @@ Flow-specific options; the common Graph options (`height`, `details`, `fullscree
         <tr><td><code>nodeRadius</code></td><td>number</td><td><code>18</code></td><td>Node radius in the flow view</td></tr>
     </tbody>
 </table>
+</div>
 
 ## Methods
 

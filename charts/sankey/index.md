@@ -80,7 +80,8 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
 
 ## Options
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -112,6 +113,7 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
         <tr><td><code>animate</code> / <code>duration</code> / <code>ease</code></td><td></td><td><code>true</code> / <code>600</code> / <code>'cubicOut'</code></td><td>Entry fade of the bands; off under <code>prefers-reduced-motion</code></td></tr>
     </tbody>
 </table>
+</div>
 
 Text slots `title`, `subtitle`, `source` and `note`, and the `controls` slot for your own inputs, work as on every chart — see [Settings](/charts/settings/).
 

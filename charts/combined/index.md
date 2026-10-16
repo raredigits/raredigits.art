@@ -53,7 +53,8 @@ Combined charts are <code>DualAxes</code> — all chart-level options are identi
 
 The only thing that makes a chart “combined” is the <code>type</code> field on each series object:
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -142,6 +143,7 @@ The only thing that makes a chart “combined” is the <code>type</code> fiel
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/combined/line-chart-ltcm-treasuries-combined.js"></script>

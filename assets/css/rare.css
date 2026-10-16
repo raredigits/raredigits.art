@@ -17625,6 +17625,11 @@ dd + dt:where(.rd, .rd *) {
   grid-template-columns: max-content 1fr;
   gap: var(--space-xs) var(--space-md);
 }
+@media screen and (max-width: 768px) {
+  .dl-grid:where(.rd, .rd *) {
+    grid-template-columns: fit-content(40%) 1fr;
+  }
+}
 .dl-grid dt:where(.rd, .rd *) {
   margin: 0;
 }
@@ -17677,6 +17682,7 @@ code:where(.rd, .rd *) {
   border-radius: var(--space-xs);
   font-family: var(--code-font);
   width: fit-content;
+  overflow-wrap: anywhere;
 }
 @media screen and (max-width: 768px) {
   code:where(.rd, .rd *) {
@@ -18561,6 +18567,12 @@ th:first-child:where(.rd, .rd *) {
   flex-wrap: nowrap;
   border: 1px solid var(--border-color);
   border-radius: var(--space-xs);
+}
+@media screen and (max-width: 768px) {
+  .card-row-bordered:where(.rd, .rd *) {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
 }
 
 .card-row-bordered-item:where(.rd, .rd *) {

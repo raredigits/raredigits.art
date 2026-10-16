@@ -62,11 +62,15 @@ Use it when each list needs a named category above it. If the items themselves n
 
 All three utilities below solve the same problem in different ways: a list is too tall to read comfortably as one vertical stack. The right choice depends on what you want to control.
 
+<div class="table-scroll">
+
 | Utility | Mechanism | You control | Best for |
 |---|---|---|---|
 | `.list-columns` | CSS columns | column count | One long flat list |
 | `.list-group-pack` | CSS columns + `column-fill: auto` | min column width + container height | Several grouped sublists that must stay intact |
 | `.list-fixed-rows` | CSS grid | row count | Exact number of rows, usually TOCs |
+
+</div>
 
 ### How to choose quickly
 

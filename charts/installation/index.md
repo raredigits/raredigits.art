@@ -89,7 +89,8 @@ Or chain steps 2 and 3:
 
 ## Available chart types
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
   <thead>
         <tr>
             <th>Class</th>
@@ -139,6 +140,7 @@ Or chain steps 2 and 3:
     </tr>
   </tbody>
 </table>
+</div>
 
 All types share the same base options (`title`, `subtitle`, `source`, `height`, `theme`) — documented on the [Settings](/charts/settings/) page.
 

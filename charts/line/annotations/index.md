@@ -101,7 +101,8 @@ Annotations whose date(s) fall outside the visible X extent are skipped automati
 
 Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Field</th>
@@ -305,10 +306,12 @@ Annotations inherit the muted theme color by default so they don’t compete wit
         </tr>
     </tbody>
 </table>
+</div>
 
 ### Chart-level options
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -332,6 +335,7 @@ Annotations inherit the muted theme color by default so they don’t compete wit
         </tr>
     </tbody>
 </table>
+</div>
 
 ### When to use them
 

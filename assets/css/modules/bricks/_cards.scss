@@ -41,6 +41,13 @@
     flex-wrap: nowrap;
     border: 1px solid var(--border-color);
     border-radius: var(--space-xs);
+
+    // A long row (six stats) cannot shrink below its content on a phone;
+    // scroll it inside its own border instead of widening the page (CSS-354).
+    @include bp.mobile {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
 }
 
 .card-row-bordered-item {

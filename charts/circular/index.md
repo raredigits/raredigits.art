@@ -193,7 +193,8 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
 
 ## Circular charts options
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -400,6 +401,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/pie-and-donut/pie-and-donut.js"></script>

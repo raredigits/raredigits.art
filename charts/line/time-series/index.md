@@ -173,7 +173,8 @@ Time Series supports event markers and reference levels via the `annotations` op
 
 Common options shared by all chart types (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) are documented on the [Settings](/charts/settings/) page.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -323,10 +324,12 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
         </tr>
     </tbody>
 </table>
+</div>
 
 ## Time Series instance methods
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Method</th>
@@ -362,6 +365,7 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
         </tr>
     </tbody>
 </table>
+</div>
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-time-series.js"></script>

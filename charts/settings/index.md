@@ -18,7 +18,8 @@ This matters because hardcoded structure drifts. A title written as a full sente
 
 Each slot has a job. Use the right one and the chart composes correctly on its own.
 
-<table class="table-bordered card-caption">
+<div class="table-scroll card-caption">
+<table class="table-bordered">
     <thead>
         <tr>
             <th>Slot</th>
@@ -54,6 +55,7 @@ Each slot has a job. Use the right one and the chart composes correctly on its o
         </tr>
     </tbody>
 </table>
+</div>
 
 A correctly composed header and footer, then, is just options:
 
