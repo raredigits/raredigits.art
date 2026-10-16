@@ -43,8 +43,13 @@
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
 
+    // Closed = off-screen AND out of the tab order / accessibility tree
+    // (CSS-360): without `visibility` its 13 links took keyboard focus while
+    // invisible on every page. Closing hides it only after the slide-out.
+    visibility: hidden;
+
     @include bp.motion-safe {
-        transition: top 0.3s ease-in-out;
+        transition: top 0.3s ease-in-out, visibility 0s linear 0.3s;
     }
 
     overflow-y: scroll;
@@ -57,7 +62,12 @@
 
 .nav-hamburger.rd-is-active {
     top: 0;
+    visibility: visible;
     box-shadow: var(--shadow-md);
+
+    @include bp.motion-safe {
+        transition: top 0.3s ease-in-out, visibility 0s;
+    }
 }
 
 .nav-hamburger-wrapper {

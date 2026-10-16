@@ -81,7 +81,7 @@ jobs:
         if: steps.version.outputs.release != 'skip'
         run: npx vitest run
 
-      - name: Browser checks (headless Google Chrome)
+      - name: "Browser checks: fixture + reference-page matrix (builds the site, headless Google Chrome)"
         if: steps.version.outputs.release != 'skip'
         run: npm run test:browser
 

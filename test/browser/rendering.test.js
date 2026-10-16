@@ -106,6 +106,72 @@ describe('anchors and focus', () => {
   });
 });
 
+describe('keyboard and contrast regressions (2026-10-16 sweep)', () => {
+  const tabThrough = async (page, n = 80) => {
+    const stops = [];
+    for (let i = 0; i < n; i++) {
+      await page.keyboard.press('Tab');
+      const s = await page.evaluate(() => {
+        const el = document.activeElement;
+        if (!el || el === document.body) return null;
+        const r = el.getBoundingClientRect();
+        const notice = document.getElementById('cookie'); // the visible notice (the states block has a hidden one)
+        const nr = notice.getBoundingClientRect();
+        const noticeShown = getComputedStyle(notice).display !== 'none';
+        const covered = noticeShown && !notice.contains(el)
+          && r.bottom > nr.top && r.top < nr.bottom && r.right > nr.left && r.left < nr.right;
+        const invisible = r.bottom < 0 || r.top > innerHeight || getComputedStyle(el).visibility === 'hidden';
+        return { key: (el.className || el.tagName) + ':' + el.textContent.trim().slice(0, 20), covered, invisible, inMenu: !!el.closest('.nav-hamburger') };
+      });
+      if (!s || stops.some((x) => x.key === s.key)) break;
+      stops.push(s);
+    }
+    return stops;
+  };
+
+  it.each([1280, 375])('the closed hamburger menu is not in the tab order at %ipx (CSS-360)', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const stops = await tabThrough(page);
+    expect(stops.filter((s) => s.inMenu)).toEqual([]);
+    expect(stops.filter((s) => s.invisible)).toEqual([]);
+    await page.evaluate(() => document.getElementById('nav-hamburger').classList.add('rd-is-active'));
+    await page.waitForTimeout(400);
+    const focusedWhenOpen = await page.evaluate(() => { const a = document.querySelector('.menu-link'); a.focus(); return document.activeElement === a; });
+    expect(focusedWhenOpen).toBe(true);
+    await page.close();
+  });
+
+  it.each([1440, 768, 375])('focus is never hidden under the cookie notice at %ipx (CSS-361)', async (width) => {
+    const page = await open(FIXTURE, { width, height: 700 });
+    const stops = await tabThrough(page);
+    expect(stops.length).toBeGreaterThan(5);
+    expect(stops.filter((s) => s.covered).map((s) => s.key)).toEqual([]);
+    // dismissed notice: nothing reserved any more
+    const after = await page.evaluate(() => {
+      document.getElementById('cookie').classList.add('rd-is-hidden');
+      return { spb: getComputedStyle(document.documentElement).scrollPaddingBottom, after: getComputedStyle(document.body, '::after').content };
+    });
+    expect(after.spb).toBe('auto');
+    expect(after.after).toBe('none');
+    await page.close();
+  });
+
+  it('every text role is readable on .card-inverted (CSS-364)', async () => {
+    const page = await open(FIXTURE);
+    const low = await page.evaluate(() => {
+      const parse = (c) => c.match(/[\d.]+/g).map(Number);
+      const lum = ([r, g, b]) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; })
+        .reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const bg = parse(getComputedStyle(document.getElementById('inverted')).backgroundColor);
+      return [...document.querySelectorAll('#inverted *')].filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()))
+        .map((el) => { const a = lum(parse(getComputedStyle(el).color)); const b = lum(bg); const ratio = (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); return [el.tagName + '.' + el.className, +ratio.toFixed(2)]; })
+        .filter(([, r]) => r < 4.5);
+    });
+    expect(low).toEqual([]);
+    await page.close();
+  });
+});
+
 describe('motion', () => {
   it('transitions run only without a reduced-motion preference (CSS-112)', async () => {
     const moving = await open(FIXTURE);

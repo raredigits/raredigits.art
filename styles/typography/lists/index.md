@@ -116,11 +116,11 @@ In short: `.list-columns` controls columns, `.list-group-pack` protects groups, 
 
 For grouped sublists with subheadings. This utility packs the groups into columns sequentially and keeps each child block intact with `break-inside: avoid`, so a label and its items travel together. The canonical child is an `.index-list` — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.
 
-Important: `column-fill: auto` only does useful work when the container has a height. Add a height utility such as `.height-xxxl` or set a custom height inline. You can also tune the minimum column width with `--list-group-pack-min`.
+Important: `column-fill: auto` only does useful work when the container has a height. Add a height utility such as `.height-xxxxl`, or set a custom height inline, tall enough for the groups at the narrowest desktop width; otherwise the extra columns spill out to the right. You can also tune the minimum column width with `--list-group-pack-min`.
 
 On narrow viewports the utility ignores the height-driven packing and falls back to a balanced fixed-count layout: 2 columns on mobile, 3 on tablet.
 
-<div class="list-group-pack height-xxxl" style="--list-group-pack-min: 11rem;">
+<div class="list-group-pack height-xxxxl" style="--list-group-pack-min: 11rem;">
     <div class="index-list">
         <span class="list-title">Foundations</span>
         <ul>

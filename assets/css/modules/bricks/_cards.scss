@@ -40,6 +40,17 @@
 }
 
 .card-inverted {
+    // Text roles re-mapped for the dark surface (CSS-364). Derived tokens are
+    // resolved on :root, so they are restated here too. --primary-color stays:
+    // light components inside (e.g. `.button`) still need dark text.
+    --primary-text-color: var(--gray-light);
+    --text-color-dark: var(--gray-light);
+    --text-color-light: var(--gray);
+    --text-color-lightest: var(--gray-mid-dark);
+    --link-color: var(--gray-light);
+    --link-color-secondary: var(--gray-light);
+    --link-color-light: var(--gray);
+
     display: flex;
     flex-direction: column;
     background: var(--gray-dark);

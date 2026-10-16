@@ -3,7 +3,11 @@
 
 @mixin outdent {
     margin-left: calc(-1 * var(--space-lg));
-    margin-right: calc(-1 * var(--space-lg));
+
+    // On the right the outdent may only use the room that is there: `main`'s
+    // padding plus the field beside the centred page. At 769–1279px that is
+    // 16px, and the full 32px pushed the page sideways (CSS-367).
+    margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 
     @include mobile {
         margin-left: calc(-1 * var(--space-sm));
@@ -144,7 +148,7 @@ cite {
     width: 100%;
     margin: var(--space-sm) 0;
     text-align: right;
-    color: var(--gray-dark);
+    color: var(--text-color-dark); // a role, so inverted surfaces re-map it (CSS-364)
 }
 
 blockquote {
