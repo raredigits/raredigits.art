@@ -33,7 +33,7 @@
       </nav>
     </aside>
     {% include "title.njk" %}
-    <article>
+    <article{% if not title %} id="main-content"{% endif %}>
       {{ content | safe }}
     </article>
   </div>
