@@ -37,7 +37,7 @@ The relation release. Two new ways to draw what moves between things — a **San
 
 ### Size
 
-Minified bundle 544,320 → 583,595 bytes (+39,275, +7.2%); gzip 163,502 → 176,570 (+8.0%); Brotli 138,081 → 148,243 (+7.4%). Measured from source with the release build settings (esbuild, IIFE, minified), v0.9.8_2 (`ca26d3c`) vs this release. The growth is the two new relation views (Sankey, Graph flow) and the shared link layer.
+Minified bundle 544,951 → 600,678 bytes (+55,727, +10.2%); gzip 163,911 → 182,209 (+11.2%); Brotli 138,291 → 152,978 (+10.6%). Measured on the published files (jsDelivr, `@v0.9.8_2` vs `@v0.9.8_3`, banner included). The growth is the two new relation views (Sankey, Graph flow), the shared link layer, and the Graph details panel, full screen and footer tools.
 
 ### Removed from the backlog
 

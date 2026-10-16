@@ -30,7 +30,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Pinnable tooltip</strong> (<code>src/core/Tooltip.js</code>, <code>rare-charts.css</code> → <code>.rc-tooltip.is-pinned</code>). Opt-in <code>pin()</code>/<code>unpin()</code>: the tooltip stays put, takes pointer events and wraps; it closes on an outside click or Escape. Hover <code>show()</code>/<code>hide()</code> are unchanged for every chart.</li>
 </ul>
 <h3>Size</h3>
-<p>Minified bundle 544,320 → 583,595 bytes (+39,275, +7.2%); gzip 163,502 → 176,570 (+8.0%); Brotli 138,081 → 148,243 (+7.4%). Measured from source with the release build settings (esbuild, IIFE, minified), v0.9.8_2 (<code>ca26d3c</code>) vs this release. The growth is the two new relation views (Sankey, Graph flow) and the shared link layer.</p>
+<p>Minified bundle 544,951 → 600,678 bytes (+55,727, +10.2%); gzip 163,911 → 182,209 (+11.2%); Brotli 138,291 → 152,978 (+10.6%). Measured on the published files (jsDelivr, <code>@v0.9.8_2</code> vs <code>@v0.9.8_3</code>, banner included). The growth is the two new relation views (Sankey, Graph flow), the shared link layer, and the Graph details panel, full screen and footer tools.</p>
 <h3>Removed from the backlog</h3>
 <p>Sankey; directed and multiple graph relations (several typed ties per pair). The Graph flow view's second stage — automatic layout, aggregation, collapsible groups — stays in the <a href="https://raredigits.art/charts/backlog/">backlog</a> for v0.9.8_4.</p>
 <h3>Changed</h3>
