@@ -96,18 +96,21 @@ describe('every built page fits phone widths (not just the reference set)', () =
     return out;
   };
 
+  // ~77 pages per width: one context, one tab, own timeout.
   it.each([375, 414])('at %ipx', async (width) => {
     const pages = allPages();
     expect(pages.length).toBeGreaterThan(60);
+    const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+    const page = await ctx.newPage();
     const bad = [];
     for (const p of pages) {
-      const page = await open(p, width);
+      await page.goto(origin + p, { waitUntil: 'load' });
       const r = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
       if (r.sw > r.cw) bad.push(`${p} ${r.sw}>${r.cw}`);
-      await page.close();
     }
+    await ctx.close();
     expect(bad).toEqual([]);
-  });
+  }, 300000);
 });
 
 describe('keyboard focus is visible and not covered (cookie notice shown)', () => {
