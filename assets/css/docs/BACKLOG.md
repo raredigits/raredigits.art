@@ -62,6 +62,8 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 
 # Milestone `v0.7.0` — Scope Gate & Bug Closure
 
+**Status:** ✅ **Release-ready 2026-10-17** on `scope-gate-v0.7.0`: version bumped (`package.json` `0.7.0`, `_data/versions.js` `v0.7.0`), Changelog entry written, every task below done and every ledger row closed. It **ships when the branch merges to `main`**: `release-css.yml` verifies, publishes and tags `v0.7.0` in `rare-styles`, then checks jsDelivr. Move this milestone to the archive once that run is green. Consumers migrate afterwards with the per-site checklists in `MIGRATION.md`.
+
 **Goal:** open the `0.7` series with the one change that redefines it: **every library style applies only under `.rd`** (`Q-14`, decided 2026-10-02). `<html class="rd">` renders a page exactly as `rare.css` does today; `class="rd"` on any element renders a local island; a page without `.rd` is untouched by the library. One artifact — `rare.css` itself becomes gated; there is no transitional or embed file. Serves waypoint 2 (embed cleanly) — this is its **core release** — and closes `Q-12`/`Q-13`. **Since 2026-10-16** it also carries the known-bug closure and safe delivery (formerly `v0.7.1`, see the section below), serving waypoints 4 and 5.
 
 **Breaking.** Every consumer migrates by adding `class="rd"` to `<html>` (plus `rd` next to any `rd-layout-*`). Consumers are version-pinned and migrate post-merge; the migration line opens the `CSS-340` table.
@@ -130,13 +132,13 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 - [x] The hostile-host fixture is green in `npm test`: no effect without `.rd`, correct islands, unchanged page mode, no selector escapes the gate (`CSS-338`)
 - [x] raredigits.art and the in-repo examples render identically on `.rd` (`CSS-344`); the getting-started docs explain the gate and the migration (`CSS-321`)
 - [x] `Q-12` and `Q-13` closed via `Q-14`; `CSS-318` / `CSS-319` / `CSS-320` closed as superseded
-- [ ] `npm run lint:css` clean; bundle rebuilt; raw **and** gzip/brotli deltas recorded in `Changelog.md`
+- [x] `npm run lint:css` clean; bundle rebuilt; raw **and** gzip/brotli deltas recorded in `Changelog.md`
 - [x] No horizontal page overflow at 375 / 414 px on raredigits.art pages (`CSS-354`; the header was never the cause). 320 px is deferred to `CSS-164`: a single `h1` word at 3.5rem is wider than the viewport on 5 pages (decided 2026-10-16)
 - [x] `CSS-345` ledger has no unresolved confirmed defects; no archived issue is silently counted as new work — all ledger rows fixed or explained as of 2026-10-17 (last: `CSS-362`)
 - [x] Lint, JS tests, CSS compilation, the `CSS-338` gate fixture and targeted browser checks pass; every fixed behavior has evidence
 - [x] Reference pages checked in page mode at 375 / 768 / 769 / 1024 / 1440 px, boundary/fractional widths and 200% zoom; no unintended page overflow, covered focus or hidden anchor target — `test/browser/reference-pages.test.js`: 14 pages at 375/640/720/768/769/1024/1440 (640/720 = 200% zoom of 1280/1440), fractional 768.18/1023.64, Tab sweep with the cookie notice shown, anchors (2026-10-17). 320px h1 overflow stays deferred to `CSS-164`
-- [ ] Exact CSS release artifact is built once, verified and version-pinned; asset paths work externally and when self-hosted; old consumer pins remain valid
-- [ ] Changelog lists actual fixes, visual deltas, migration-table rows and regenerated sizes; version changes only when implementation ships
+- [ ] Exact CSS release artifact is built once, verified and version-pinned; asset paths work externally and when self-hosted; old consumer pins remain valid — closes on the first green `release-css.yml` run after merge (verified locally: staging, manifest, `v0.6.19` CDN byte match)
+- [x] Changelog lists actual fixes, visual deltas, migration-table rows and regenerated sizes; version changes only when implementation ships
 
 ---
 
