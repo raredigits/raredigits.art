@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 .wa-button-wrapper {
     position: sticky;
     bottom: var(--space-md);
@@ -21,7 +23,10 @@
     background-position: 0 33.3333%;
     background-size: auto 400%;
     background-image: url('images/vendors/whatsapp/wa-stripe.svg');
-    transition: box-shadow 0.2s ease;
+
+    @include bp.motion-safe {
+        transition: box-shadow 0.2s ease;
+    }
 
     &:hover,
     &:focus {

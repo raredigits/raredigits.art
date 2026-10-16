@@ -42,7 +42,11 @@
     background-color: var(--gray-lightest);
     font-size: var(--font-size-sm);
     line-height: var(--line-height-sm);
-    transition: top 0.3s ease-in-out;
+
+    @include bp.motion-safe {
+        transition: top 0.3s ease-in-out;
+    }
+
     overflow-y: scroll;
     z-index: 99;
 

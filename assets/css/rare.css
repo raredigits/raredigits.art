@@ -18569,7 +18569,11 @@ th:first-child:where(.rd, .rd *) {
   width: 100%;
   padding: var(--space-xs) var(--space-sm);
   background: color-mix(in srgb, var(--gray-darkest) 30%, transparent);
-  transition: background 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .card-grid--gallery .card-grid__title:where(.rd, .rd *) {
+    transition: background 0.2s ease;
+  }
 }
 
 .card-grid--gallery .card-grid__title:hover:where(.rd, .rd *) {
@@ -18833,7 +18837,13 @@ th:first-child:where(.rd, .rd *) {
   background-color: var(--gray-lightest);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-sm);
-  transition: top 0.3s ease-in-out;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .nav-hamburger:where(.rd, .rd *) {
+    transition: top 0.3s ease-in-out;
+  }
+}
+.nav-hamburger:where(.rd, .rd *) {
   overflow-y: scroll;
   z-index: 99;
 }
@@ -18955,7 +18965,11 @@ a:where(.rd, .rd *) {
   background-size: 100% 1px;
   background-position: 0 1.2em;
   background-repeat: no-repeat;
-  transition: background-size 0.23s cubic-bezier(0.7, 0.2, 0.2, 1), background-position 0.23s cubic-bezier(0.7, 0.2, 0.2, 1);
+}
+@media (prefers-reduced-motion: no-preference) {
+  a:where(.rd, .rd *) {
+    transition: background-size 0.23s cubic-bezier(0.7, 0.2, 0.2, 1), background-position 0.23s cubic-bezier(0.7, 0.2, 0.2, 1);
+  }
 }
 
 a:hover:where(.rd, .rd *) {
@@ -21144,7 +21158,11 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
 }
 .collapsible-icon:where(.rd, .rd *) {
   text-decoration: none;
-  transition: transform 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .collapsible-icon:where(.rd, .rd *) {
+    transition: transform 0.2s ease;
+  }
 }
 
 .collapsible-trigger[aria-expanded=true] .collapsible-icon:where(.rd, .rd *) {
@@ -21303,7 +21321,11 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   border-radius: 999px;
   background: var(--carousel-dot-color);
   cursor: pointer;
-  transition: width 0.3s ease, background-color 0.3s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .carousel-dot:where(.rd, .rd *) {
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
 }
 .carousel-dot.rd-is-active:where(.rd, .rd *) {
   width: var(--space-lg);
@@ -21373,7 +21395,11 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   background-position: 0 33.3333%;
   background-size: auto 400%;
   background-image: url("images/vendors/whatsapp/wa-stripe.svg");
-  transition: box-shadow 0.2s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wa-button:where(.rd, .rd *) {
+    transition: box-shadow 0.2s ease;
+  }
 }
 .wa-button:hover:where(.rd, .rd *), .wa-button:focus:where(.rd, .rd *) {
   background-position: 0 33.3333%;

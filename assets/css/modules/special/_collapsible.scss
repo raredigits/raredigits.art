@@ -54,7 +54,10 @@ button.collapsible-trigger {
     @include ico.icon("keyboard_arrow_down");
 
     text-decoration: none;
-    transition: transform 0.2s ease;
+
+    @include bp.motion-safe {
+        transition: transform 0.2s ease;
+    }
 }
 
 // State is ARIA-driven (contract: SCRIPTS_CONTRACT.md, v0.6.17) — the script

@@ -146,7 +146,10 @@
     width: 100%;
     padding: var(--space-xs) var(--space-sm);
     background: color-mix(in srgb, var(--gray-darkest) 30%, transparent);
-    transition: background 0.2s ease;
+
+    @include bp.motion-safe {
+        transition: background 0.2s ease;
+    }
 }
 
 .card-grid--gallery .card-grid__title:hover {

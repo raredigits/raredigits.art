@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 // Image carousel (harvested from schnellreich.ru, v0.6.17). Driven by
 // carousel.js — contract: SCRIPTS_CONTRACT.md.
 // A slide is a <figure> holding an <img> plus an optional <figcaption>, so the
@@ -162,7 +164,10 @@
     border-radius: 999px;
     background: var(--carousel-dot-color);
     cursor: pointer;
-    transition: width 0.3s ease, background-color 0.3s ease;
+
+    @include bp.motion-safe {
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
 
     &.rd-is-active {
         width: var(--space-lg);
