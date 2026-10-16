@@ -13,18 +13,17 @@ This file documents the canonical CSS workflow for Rare Styles inside `raredigit
   Runs Stylelint against `assets/css/**/*.scss`. This is the canonical CSS quality gate.
 
 - `npm run build:css`
-  Compiles `assets/css/rare.scss` into:
+  Runs `scripts/build-css.mjs`: Sass compiles `assets/css/rare.scss`, then the PostCSS `rd-gate` step (`scripts/rd-gate.mjs`, `CSS-343`) applies the `.rd` scope gate, producing:
   - `assets/css/rare.css`
   - `assets/css/rare.min.css`
+  (plus chained source maps). Never call the `sass` CLI directly for the artifacts — that would ship an ungated build.
 
-- `npm run watch:css`
-  Watches SCSS and rebuilds `assets/css/rare.css`.
+- `npm run watch:css` (alias `npm run sass-watch`)
+  Watches `assets/css/**/*.scss` and rebuilds both artifacts through the gate.
 
-- `npm run watch:css:min`
-  Watches SCSS and rebuilds `assets/css/rare.min.css`.
+## The `.rd` gate config
 
-- `npm run sass-watch`
-  Runs both watch tasks in parallel.
+`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically; `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
 
 ## Day-to-day editing flow
 
