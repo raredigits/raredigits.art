@@ -1,6 +1,6 @@
 ---
 layout: page.njk
-title: "Text Elements / Sidenotes"
+title: "Text Elements / References and Notes"
 section: "Styles"
 displaySidebar: true
 permalink: '/styles/typography/notes/'
@@ -10,28 +10,26 @@ permalink: '/styles/typography/notes/'
     css/modules/typography/_notes.scss
 </div>
 
-<section id="references">
-    <h2>References and Notes</h2>
 
-    <p>A reference mark is a <code>&lt;sup&gt;</code> holding a link to its note; the note links back. Plain ids and links do the work — no script, and the browser's own back button returns the reader to the text.<sup><a href="#note-1" id="ref-1" aria-label="Note 1">1</a></sup> The mark drops the link underline, and the note the reader jumped to is marked while it is the target.<sup><a href="#note-2" id="ref-2" aria-label="Note 2">2</a></sup></p>
+<p>A reference mark is a <code>&lt;sup&gt;</code> holding a link to its note; the note links back. Plain ids and links do the work — no script, and the browser's own back button returns the reader to the text.<sup><a href="#note-1" id="ref-1" aria-label="Note 1">1</a></sup> The mark drops the link underline, and the note the reader jumped to is marked while it is the target.<sup><a href="#note-2" id="ref-2" aria-label="Note 2">2</a></sup></p>
 
-    <div class="footnote">
-        <ol>
-            <li id="note-1">Each note's id matches the mark's link, and its back link points at the mark's id. <a href="#ref-1" aria-label="Back to reference 1">↩</a></li>
-            <li id="note-2">The fixed header is accounted for: the page scrolls the target clear of it. <a href="#ref-2" aria-label="Back to reference 2">↩</a></li>
-        </ol>
-    </div>
+<div class="footnote">
+    <ol>
+        <li id="note-1">Each note's id matches the mark's link, and its back link points at the mark's id. <a href="#ref-1" aria-label="Back to reference 1">↩</a></li>
+        <li id="note-2">The fixed header is accounted for: the page scrolls the target clear of it. <a href="#ref-2" aria-label="Back to reference 2">↩</a></li>
+    </ol>
+</div>
 
 <pre><code>&lt;p&gt;… the text.&lt;sup&gt;&lt;a href="#note-1" id="ref-1" aria-label="Note 1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 
 &lt;div class="footnote"&gt;
-    &lt;ol&gt;
-        &lt;li id="note-1"&gt;The note. &lt;a href="#ref-1" aria-label="Back to reference 1"&gt;↩&lt;/a&gt;&lt;/li&gt;
-    &lt;/ol&gt;
+&lt;ol&gt;
+    &lt;li id="note-1"&gt;The note. &lt;a href="#ref-1" aria-label="Back to reference 1"&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
 &lt;/div&gt;</code></pre>
 
-    <p>The <code>.footnote</code> block and its top rule keep to the width of the prose. Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
-</section>
+<p>The <code>.footnote</code> block and its top rule keep to the width of the prose. Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
+
 
 ## Sidenotes
 
@@ -97,9 +95,9 @@ mask: url("images/icons/cognition-200.svg") no-repeat center / contain;
 .sidenote-link::before,
 .sidenote-bulb::before,
 .sidenote-memory::before {
-font-size: var(--font-size-lg);
-position: absolute;
-top: -8px;
-left: -16px;
-color: var(--text-color-light);
+    font-size: var(--font-size-lg);
+    position: absolute;
+    top: -8px;
+    left: -16px;
+    color: var(--text-color-light);
 }</code></pre>

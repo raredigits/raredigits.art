@@ -138,28 +138,28 @@ permalink: '/styles/typography/text-content/'
     </figure>
 
     <h3>Widths</h3>
-    <p>Three modifiers give a figure more room. In every one the caption stays on the reading measure. Inside a card or a collapsible they all simply fill the content width.</p>
+    <p>A figure takes the library's generic width classes, the same ones any block uses. With each of them the caption stays on the reading measure. Inside a card or a collapsible they all simply fill the content width.</p>
 
-    <h4><code>.figure-wide</code></h4>
+    <h4><code>.full-width</code></h4>
     <p>The full width of the content column — the article, not just the prose.</p>
 
-    <figure class="figure-wide">
+    <figure class="full-width">
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
-        <figcaption>The wide figure spans the column. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
+        <figcaption>The full-width figure spans the column. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
     </figure>
 
-    <h4><code>.figure-caption</code></h4>
+    <h4><code>.text-content-caption</code></h4>
     <p>The caption width that the lead and the highlight use: the measure plus an outdent on both sides.</p>
 
-    <figure class="figure-caption">
+    <figure class="text-content-caption">
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
         <figcaption>The caption-width figure steps just past the prose on both sides. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
     </figure>
 
-    <h4><code>.figure-wide-caption</code></h4>
+    <h4><code>.full-width-caption</code></h4>
     <p>Outdented on the left like <code>.caption</code>, and out to the edge of the content column on the right, like <code>pre</code>.</p>
 
-    <figure class="figure-wide-caption">
+    <figure class="full-width-caption">
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
         <figcaption>The widest figure: the outdent on the left, the column edge on the right. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
     </figure>
@@ -167,7 +167,7 @@ permalink: '/styles/typography/text-content/'
     <h3><code>.figure-source</code></h3>
     <p>The source or credit line, set on its own line in a smaller size at the end of the caption. A long URL in it breaks rather than widening the page.</p>
 
-<pre><code>&lt;figure class="figure-wide"&gt;
+<pre><code>&lt;figure class="full-width"&gt;
     &lt;img src="chart.png" alt="What the image shows" width="1648" height="720" loading="lazy"&gt;
     &lt;figcaption&gt;
         The caption says what to take from it.

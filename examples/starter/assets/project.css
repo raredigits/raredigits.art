@@ -32,7 +32,7 @@
 
 /* 3. Article layout. The library places <article> on columns 4–12 and sets
       prose on the reading measure; figures, tables and charts may step out
-      with .figure-wide. The library breaks long words and URLs; a wide table
+      with the library's width classes (.full-width and others). The library breaks long words and URLs; a wide table
       scrolls inside its own box (.table-scroll). */
 article h1 {
     margin-bottom: var(--space-sm);

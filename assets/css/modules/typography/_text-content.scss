@@ -15,6 +15,25 @@
     }
 }
 
+// The caption width: the reading measure plus the outdent on both sides —
+// `.text-content-caption`, `.lead`, `.highlight`, `.teaser-bottom`. Never wider
+// than the room the outdent has, so a narrow container is not overflowed; on a
+// phone the block is the column plus the outdent on each side. Explicit
+// widths, not `auto`, so it holds on tables, images and flex items too.
+@mixin caption-width {
+    width: min(
+        var(--text-content-caption),
+        100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
+    );
+    max-width: none;
+
+    @include outdent;
+
+    @include mobile {
+        width: calc(100% + 2 * var(--space-sm));
+    }
+}
+
 :root {
     --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
     --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
@@ -57,27 +76,17 @@ article .meta-info {
     margin-top: var(--space-sm);
 }
 
-.nobr,
-.nobreak {
+.nobr {
     white-space: nowrap;
 }
 
-.text-content-caption,
-.highlight,
-p.highlight,
-.lead {
-    width: var(--text-content-caption);
-    max-width: unset;
-
-    @include outdent;
-}
-
-.highlight,
-p.highlight {
-    margin-bottom: var(--space-md);
+.text-content-width {
+    width: var(--text-content-width);
 }
 
 .text-content-caption {
+    @include caption-width;
+
     position: relative;
 }
 
@@ -85,24 +94,26 @@ article .text-content-caption:first-child {
     padding: 0 0 var(--space-sm);
 }
 
-.text-content-width {
-    width: var(--text-content-width);
-}
-
-.meta-info {
-    margin-bottom: var(--space-md);
-}
-
 .lead {
-    font-size: var(--font-size-xl);
-    font-weight: var(--font-weight-light);
+    @include caption-width;
+
     margin-top: var(--space-sm);
     margin-bottom: var(--space-md);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-light);
     line-height: var(--line-height-sm);
+}
 
-    @include mobile {
-        width: 80%;
-    }
+.highlight {
+    @include caption-width;
+
+    margin-bottom: var(--space-md);
+    padding: var(--space-lg);
+    text-align: center;
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height);
+    font-weight: 700;
+    border: var(--space-sm) solid var(--brand-color);
 }
 
 .caption {
@@ -116,25 +127,22 @@ article .text-content-caption:first-child {
     border-left: var(--space-sm) solid var(--primary-color);
 }
 
-.highlight {
-    text-align: center;
-    font-size: var(--font-size-xl);
-    line-height: var(--line-height);
-    font-weight: 700;
-    border: var(--space-sm) solid var(--brand-color);
-    padding: var(--space-lg);
-}
-
 mark {
     background-color: var(--yellow);
     color: var(--primary-color);
 }
 
-.note,
-.meta-info,
-.callout,
-.remark,
-cite {
+// Muted secondary text. `.note` and `.meta-info` share the look; `cite` and
+// `.callout` build on it.
+.note {
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    line-height: 1.3em;
+}
+
+.meta-info {
+    margin-bottom: var(--space-md);
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
@@ -144,6 +152,10 @@ cite {
 .callout {
     padding: var(--space-sm) var(--space-md);
     text-align: center;
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    line-height: 1.3em;
     border: 1px solid var(--border-color);
     border-radius: var(--space-xs);
 }
@@ -154,6 +166,9 @@ cite {
     margin: var(--space-sm) 0;
     text-align: right;
     color: var(--text-color-dark); // a role, so inverted surfaces re-map it (CSS-364)
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    line-height: 1.3em;
 }
 
 blockquote {
@@ -280,9 +295,7 @@ pre code {
     color: var(--text-color-light);
 }
 
-.handwritten,
-.sidenote.handwritten,
-.sidenote.handwritten p {
+.handwritten {
     font-family: var(--script-font);
     font-size: var(--font-size-lg);
     line-height: 1em;
@@ -337,11 +350,9 @@ pre code {
 // TEASERS
 
 .teaser-bottom {
-    width: var(--text-content-caption);
-    max-width: unset;
+    @include caption-width;
+
     margin-top: var(--space-lg);
-    margin-left: calc(-1 * var(--space-lg));
-    margin-right: calc(-1 * var(--space-lg));
     border-top: var(--space-sm) solid var(--border-color);
     border-left: var(--space-sm) solid var(--border-color);
     border-right: var(--space-sm) solid var(--border-color);
@@ -349,10 +360,6 @@ pre code {
 
     & h3 a {
         background: none;
-    }
-
-    @media (width < 1024px) {
-        margin-left: calc(-1 * var(--space-sm));
     }
 }
 

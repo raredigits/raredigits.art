@@ -1,5 +1,4 @@
 @use "../utilities/breakpoints" as *;
-@use "text-content" as tc;
 
 // ARTICLE FIGURES (CSS-127, v0.7.1)
 // An image (or table, or chart) with its caption and source, set in the prose
@@ -7,7 +6,7 @@
 // `.figure` — for a card, a section or an island.
 // Contract:
 //   <figure>                       — on the reading measure
-//   <figure class="figure-wide">   — or a wider modifier, see Widths below
+//   <figure class="full-width">    — or another generic width, see Widths below
 //     <img src alt width height>  — width/height reserve the box (no shift)
 //     <figcaption>Caption <span class="figure-source">Source: …</span></figcaption>
 // Carousel slides and epigraphs are figures with their own layout, so they are
@@ -30,50 +29,13 @@ article figure:not(:where(.carousel-slide, .epigraph)),
     }
 }
 
-// Widths. The default figure keeps to the reading measure; three modifiers
-// give it more room:
-//   .figure-wide          — the full content column (the article, not the prose)
-//   .figure-caption       — the caption width of the lead and the highlight,
-//                           outdented on both sides
-//   .figure-wide-caption  — outdented on the left like `.caption`, out to the
-//                           column edge on the right like `pre`
-// Inside a card or a collapsible all three fill the content width (the outdent
-// resets in bricks/_cards.scss and special/_collapsible.scss).
-
-.figure-wide {
-    width: 100%;
+// Widths. A figure takes the library's generic width classes like any other
+// block: `.full-width` (the content column), `.text-content-caption` (the
+// measure plus the outdent on both sides), `.full-width-caption` (the outdent
+// on the left, the column edge on the right). `.full-width` sets no max-width,
+// so it lifts the figure's reading-measure cap here.
+figure.full-width {
     max-width: none;
-}
-
-// Out to the caption width, never past the room the outdent has (the right
-// side may only take what is there — see the `outdent` mixin, CSS-367).
-.figure-caption {
-    width: min(
-        var(--text-content-caption),
-        100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
-    );
-    max-width: unset;
-
-    @include tc.outdent;
-
-    // On a phone the caption width is the viewport; a block with negative
-    // margins and `width: auto` fills exactly the room the outdent gives.
-    @include mobile {
-        width: auto;
-        max-width: none;
-    }
-}
-
-// Left outdent only, as `pre` does: `width: auto` with a negative left margin
-// runs from the outdent to the column's right edge.
-.figure-wide-caption {
-    width: auto;
-    max-width: none;
-    margin-left: calc(-1 * var(--space-lg));
-
-    @include mobile {
-        margin-left: calc(-1 * var(--space-sm));
-    }
 }
 
 article figcaption:where(:not(.carousel-caption)),
@@ -90,9 +52,7 @@ article figcaption:where(:not(.carousel-caption)),
 
 // A wider figure's caption stays on the reading measure; it starts at the
 // image edge, so it reads the same inside a card, where nothing outdents.
-.figure-wide figcaption,
-.figure-caption figcaption,
-.figure-wide-caption figcaption {
+figure:is(.full-width, .text-content-caption, .full-width-caption) figcaption {
     max-width: var(--text-content-width);
 }
 

@@ -60,12 +60,15 @@ $non-auto-spaces: ();
 }
 
 .full-width-caption {
+  // The outdent on the left, the container's edge on the right, like `pre`.
+  // The width is the container plus exactly the left outdent: on a phone it
+  // used to add 16px for an 8px outdent and overflowed the page by 8px.
   width: calc(100% + var(--space-lg));
+  max-width: none;
   margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * var(--space-lg));
 
   @include bp.mobile {
-    width: calc(100% + var(--space-md));
+    width: calc(100% + var(--space-sm));
     margin-left: calc(-1 * var(--space-sm));
   }
 }

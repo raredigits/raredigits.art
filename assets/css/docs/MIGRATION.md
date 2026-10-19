@@ -55,6 +55,22 @@ Without it the page is **unstyled**: every library rule is gated by `.rd`.
 
 API diff, `v0.6.19` → `v0.7.0` (release, 2026-10-17): 4,017 → 3,991 classes: −28 (row 7), +2 (rows 14–15). 130 → 134 `:root` custom properties: +3 focus-ring tokens (row 12) and `--cookie-notice-reserve` (row 24). One changed value (row 8), no removed custom property, same artifact list. The table has 30 rows.
 
+## `v0.7.1` — Content Starter
+
+Mostly additive. Five classes and one selector are removed after an audit of `_text-content.scss`. **None of them is used** by raredigits.art, schnellreich.ru or raredigits.io (class attributes searched 2026-10-19), so no known consumer has to change markup.
+
+| # | Change | Was (`v0.7.0`) | Now (`v0.7.1`) | Consumer action | Kind | Task |
+|---|---|---|---|---|---|---|
+| 1 | `.nobreak` | Alias of `.nobr` | Removed | Use `.nobr` | breaking (unused) | review 2026-10-19 |
+| 2 | `.text-nowrap` | `white-space: nowrap` utility, a duplicate of `.nobr` | Removed | Use `.nobr` | breaking (unused) | review 2026-10-19 |
+| 3 | `.font-weight-bold` | Utility, a duplicate of `.bold` | Removed | Use `.bold` | breaking (unused) | review 2026-10-19 |
+| 4 | `.remark`, `.remarked` | Margin-remark component | Removed | None known; a sidenote (`.sidenote-wrapper`) covers the case | breaking (unused) | review 2026-10-19 |
+| 5 | `p.highlight` | Separate selector, same rules as `.highlight` | Merged into `.highlight` | None | internal | review 2026-10-19 |
+| 6 | Caption width (`.text-content-caption`, `.lead`, `.highlight`, `.teaser-bottom`) | `width: var(--text-content-caption)` whatever the container; `.teaser-bottom` used its own outdent with the full 32px on the right | Never wider than the room the outdent has (the `CSS-367` rule); on a phone the column plus 8px on each side. `.lead` no longer shrinks to 80% on a phone | None. **Visual delta:** the teaser no longer pushes the page sideways at 769–1279px; the lead is full width on a phone | fix | review 2026-10-19 |
+| 7 | `.full-width-caption` | On a phone 16px wider than the column for an 8px outdent (8px page overflow) | Exactly the column plus the left outdent; `max-width: none` | None | fix | review 2026-10-19 |
+| 8 | `<figure>` in `<article>` | No library styling | Reading measure, muted `figcaption`; takes `.full-width`, `.text-content-caption`, `.full-width-caption` | **Visual delta:** an existing article figure narrows to the prose measure; add one of the width classes to keep it wide | visual | `CSS-127` |
+| 9 | `typography/_sidenotes.scss` | SCSS partial | Merged into `typography/_notes.scss` | Only if you `@use` the SCSS modules | tooling | review 2026-10-19 |
+
 ## Live consumers — verified 2026-10-16
 
 Method: each site's built `_site` was served locally. On every page, each element's computed styles (including `::before`/`::after`) were compared between `v0.6.19` without the gate and the `v0.7.0` working build with `<html class="rd">`. Transitions were disabled for the comparison, at 1280 and 375 px.
