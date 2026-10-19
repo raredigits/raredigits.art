@@ -14,6 +14,7 @@ on:
       - 'assets/charts/rare-charts.css'
       - 'assets/charts/examples/**'
       - 'assets/charts/data/**'
+      - '.github/workflows/sync-charts.yml'
 
 jobs:
   sync:
@@ -22,6 +23,8 @@ jobs:
     steps:
       - name: Checkout raredigits.art
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # test/size-baseline.test.js recomputes rows from older commits
 
       - name: Check whether this version is already released
         id: release
