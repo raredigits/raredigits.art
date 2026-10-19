@@ -32,6 +32,7 @@ const ALLOWED_MEDIA = new Set([
   '(width < 1024px)',
   '(width < 769px)',
   '(prefers-reduced-motion: no-preference)',
+  'print', // article print hygiene (CSS-167), not a layout boundary
 ]);
 
 let root;
