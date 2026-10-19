@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.8_4 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, Sankey. Relation charts (Graph, Sankey) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_4_1 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, Sankey. Relation charts (Graph, Sankey) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -3404,7 +3404,7 @@ var RareCharts = (() => {
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.8_4"
+    version: "v0.9.8_4_1"
   };
 
   // node_modules/d3/src/index.js
@@ -22318,7 +22318,6 @@ var RareCharts = (() => {
       const maxVal = max(this._data, (d) => d.value);
       const minVal = min(this._data, (d) => d.value);
       const x4 = linear3().domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)]).range([0, W]);
-      const zeroX = x4(0);
       const xTickFormat = this.options.xTickFormat ?? ((d) => format(".2s")(d));
       const showValues = this.options.showValues ?? false;
       const valueOffset = this.options.valueOffset ?? 6;
@@ -22327,6 +22326,37 @@ var RareCharts = (() => {
       const showGrid = this.options.showGrid ?? true;
       const showXAxis = this.options.showXAxis ?? true;
       const showYAxis = this.options.showYAxis ?? true;
+      const labelW = /* @__PURE__ */ new Map();
+      if (showValues) {
+        const probe = this.gBars.append("text").attr("class", "rc-bar-value");
+        this._data.forEach((d) => {
+          const text = valueFormat(d);
+          probe.text(text);
+          labelW.set(d.label, probe.node().getComputedTextLength?.() || text.length * 7);
+        });
+        probe.remove();
+        let padL = 0, padR = 0;
+        for (let pass = 0; pass < 3; pass++) {
+          const xs = x4.copy().range([padL, W - padR]);
+          let needL = 0, needR = 0;
+          this._data.forEach((d) => {
+            const end = xs(d.value), lw = labelW.get(d.label);
+            if (Math.abs(end - xs(0)) >= lw + valueOffset * 2) return;
+            const short = lw + valueOffset + 2 - (d.value < 0 ? end : W - end);
+            if (short <= 0) return;
+            if (d.value < 0) needL = Math.max(needL, short);
+            else needR = Math.max(needR, short);
+          });
+          if (!needL && !needR) break;
+          padL = Math.min(padL + needL, W * 0.3);
+          padR = Math.min(padR + needR, W * 0.3);
+        }
+        if (padL || padR) {
+          const xs = x4.copy().range([padL, W - padR]);
+          x4.domain([xs.invert(0), xs.invert(W)]);
+        }
+      }
+      const zeroX = x4(0);
       if (showGrid) {
         this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x4).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat("")).call((g) => {
           g.selectAll("line").attr("stroke", t.grid);
@@ -22353,8 +22383,12 @@ var RareCharts = (() => {
           sel.each((d, i, nodes) => {
             const end = x4(d.value);
             const neg = d.value < 0;
-            const inside = (neg ? end : W - end) < valueInsideGap;
-            const xPos = neg ? inside ? Math.min(W - 2, end + valueOffset) : Math.max(2, end - valueOffset) : inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset);
+            const lw = labelW.get(d.label);
+            const room = neg ? end : W - end;
+            const fitsInside = Math.abs(end - zeroX) >= lw + valueOffset * 2;
+            const fitsOutside = room >= lw + valueOffset + 2;
+            const inside = fitsInside && (room < valueInsideGap || !fitsOutside);
+            const xPos = neg !== inside ? end - valueOffset : end + valueOffset;
             const anchor = (neg ? !inside : inside) ? "end" : "start";
             select_default2(nodes[i]).attr("x", xPos).attr("text-anchor", anchor).attr("fill", inside ? t.bg : t.text);
           });

@@ -488,7 +488,7 @@ chart.setData(data);</code></pre>
     navigator: true,
 });</code></pre>
 <h3 id="showing-values-on-bars-horizontal">Showing values on bars (horizontal)</h3>
-<p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
+<p>Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (<code>showValues: true</code>), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the edge of the chart — as long as the label fits inside. A label that fits neither way (a short bar near the edge, often a small negative value) stays outside, and the value axis widens to make room for it. This behavior is controlled by <code>valueInsideGap</code>, with spacing controlled by <code>valueOffset</code>, and the text itself by <code>valueFormat</code>.</p>
 <p>This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.</p>
 <h3 id="animation-if-you-must">Animation (if you must)</h3>
 <p>Bar can animate on first render (<code>animate: true</code> by default). The timing is controlled by duration, per-bar delay by stagger, and easing via <code>ease</code> (<code>cubicOut</code>, <code>cubicInOut</code>, or <code>linear</code>). The chart only animates once per instance by design, so it does not turn normal updates into a circus.</p>
@@ -648,7 +648,7 @@ showYAxis: false   <span class="code-comment">// no side axis</span></code></pre
             <td>number</td>
             <td><code>42</code></td>
             <td>
-                When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
+                When space past the bar end is below this px threshold, the label flips inside the bar — if it fits there; otherwise it stays outside and the axis widens to fit it.
             </td>
         </tr>
         <tr class="table-section">
