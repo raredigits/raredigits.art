@@ -32,7 +32,9 @@
 //   valueFormat    — function(d) => string for bar-end labels and the default
 //                    stacked-segment tooltip value
 //   valueOffset    — px offset from bar end (default: 6)
-//   valueInsideGap — threshold px: label flips inside bar when space is tight (default: 42)
+//   valueInsideGap — threshold px: label flips inside bar when space is tight
+//                    and it fits there (default: 42); a label that fits
+//                    neither way gets room outside — the value axis widens
 //
 //   showGrid       — show grid lines (default: true)
 //   showXAxis      — show X axis (default: true; hiding it also reclaims its margin)
@@ -218,7 +220,6 @@ export class Bar extends Chart {
     const x = d3.scaleLinear()
       .domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)])
       .range([0, W]);
-    const zeroX = x(0);
 
     const xTickFormat    = this.options.xTickFormat    ?? (d => d3.format('.2s')(d));
     const showValues     = this.options.showValues     ?? false;
@@ -228,6 +229,45 @@ export class Bar extends Chart {
     const showGrid       = this.options.showGrid       ?? true;
     const showXAxis      = this.options.showXAxis      ?? true;
     const showYAxis      = this.options.showYAxis      ?? true;
+
+    // A value label goes inside its bar only when it fits there; otherwise it
+    // sits past the bar end. A short bar near the plot edge (a small negative
+    // value next to the left edge) has room for neither, so the domain is
+    // widened on that side until the outside label fits.
+    const labelW = new Map();
+    if (showValues) {
+      const probe = this.gBars.append('text').attr('class', 'rc-bar-value');
+      this._data.forEach(d => {
+        const text = valueFormat(d);
+        probe.text(text);
+        // 0 before layout (or no SVG layout at all): estimate from the
+        // monospace numeric font.
+        labelW.set(d.label, probe.node().getComputedTextLength?.() || text.length * 7);
+      });
+      probe.remove();
+
+      let padL = 0, padR = 0;
+      for (let pass = 0; pass < 3; pass++) {
+        const xs = x.copy().range([padL, W - padR]);
+        let needL = 0, needR = 0;
+        this._data.forEach(d => {
+          const end = xs(d.value), lw = labelW.get(d.label);
+          if (Math.abs(end - xs(0)) >= lw + valueOffset * 2) return;  // fits inside
+          const short = lw + valueOffset + 2 - (d.value < 0 ? end : W - end);
+          if (short <= 0) return;                                      // fits outside
+          if (d.value < 0) needL = Math.max(needL, short);
+          else             needR = Math.max(needR, short);
+        });
+        if (!needL && !needR) break;
+        padL = Math.min(padL + needL, W * 0.3);
+        padR = Math.min(padR + needR, W * 0.3);
+      }
+      if (padL || padR) {
+        const xs = x.copy().range([padL, W - padR]);
+        x.domain([xs.invert(0), xs.invert(W)]);
+      }
+    }
+    const zeroX = x(0);
 
     // Grid — vertical lines
     if (showGrid) {
@@ -281,13 +321,17 @@ export class Bar extends Chart {
         sel.each((d, i, nodes) => {
           // The label sits just past the bar's value end — to the right of a
           // positive bar, to the left of a negative one — and flips inside
-          // the bar when the space between the end and the chart edge is tight.
+          // the bar when the space between the end and the chart edge is
+          // tight, but only if it fits inside (the domain was widened above
+          // so the outside position always has room).
           const end = x(d.value);
           const neg = d.value < 0;
-          const inside = (neg ? end : W - end) < valueInsideGap;
-          const xPos = neg
-            ? (inside ? Math.min(W - 2, end + valueOffset) : Math.max(2, end - valueOffset))
-            : (inside ? Math.max(2, end - valueOffset) : Math.min(W - 2, end + valueOffset));
+          const lw = labelW.get(d.label);
+          const room = neg ? end : W - end;
+          const fitsInside  = Math.abs(end - zeroX) >= lw + valueOffset * 2;
+          const fitsOutside = room >= lw + valueOffset + 2;
+          const inside = fitsInside && (room < valueInsideGap || !fitsOutside);
+          const xPos = (neg !== inside) ? end - valueOffset : end + valueOffset;
           const anchor = (neg ? !inside : inside) ? 'end' : 'start';
           d3.select(nodes[i])
             .attr('x',            xPos)

@@ -18,6 +18,10 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+### Fixed
+
+- **A short bar's value label was clipped** (`src/charts/Bar.js`, horizontal, `showValues: true`). A label flipped inside its bar whenever the space past the bar end was under `valueInsideGap`, whether or not it fit inside. A small negative bar next to the left edge of a phone-width plot got its label squeezed into a bar a few pixels wide, so `-0.2` read as `-0`. A label now goes inside only when it fits there; otherwise it sits past the bar end — left of a negative bar, right of a positive one — and the value axis widens on that side until the label fits (at most 30% of the plot width per side). Charts whose labels already fit are unchanged.
+
 ## [v0.9.8_4] — 2026-10-19 — Log Scale
 
 A small release out of turn, for a consumer that plots a long-horizon index and switches periods by swapping data: a **logarithmic Y scale on `Line`** that can be turned on and off between `setData()` calls, and **linear ticks that stay inside the data**. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_5 / _6 / _7) with their content unchanged.

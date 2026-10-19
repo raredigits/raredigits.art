@@ -91,7 +91,7 @@ Example:
 
 ### Showing values on bars (horizontal)
 
-Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (`showValues: true`), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the right edge. This behavior is controlled by `valueInsideGap`, with spacing controlled by `valueOffset`, and the text itself by `valueFormat`.
+Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (`showValues: true`), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the edge of the chart — as long as the label fits inside. A label that fits neither way (a short bar near the edge, often a small negative value) stays outside, and the value axis widens to make room for it. This behavior is controlled by `valueInsideGap`, with spacing controlled by `valueOffset`, and the text itself by `valueFormat`.
 
 This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.
 
@@ -263,7 +263,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>number</td>
             <td><code>42</code></td>
             <td>
-                When space to the right of the bar is below this px threshold, the label flips inside the bar automatically.
+                When space past the bar end is below this px threshold, the label flips inside the bar — if it fits there; otherwise it stays outside and the axis widens to fit it.
             </td>
         </tr>
         <tr class="table-section">
