@@ -18,9 +18,17 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_4_1] — 2026-10-19 — Bar Value Labels
+
+A patch on top of `v0.9.8_4` with one `Bar` fix, found while building the Rare Styles content starter. Nothing else changes; charts whose value labels already fit render exactly as before. Flows II stays `v0.9.8_5`.
+
 ### Fixed
 
 - **A short bar's value label was clipped** (`src/charts/Bar.js`, horizontal, `showValues: true`). A label flipped inside its bar whenever the space past the bar end was under `valueInsideGap`, whether or not it fit inside. A small negative bar next to the left edge of a phone-width plot got its label squeezed into a bar a few pixels wide, so `-0.2` read as `-0`. A label now goes inside only when it fits there; otherwise it sits past the bar end — left of a negative bar, right of a positive one — and the value axis widens on that side until the label fits (at most 30% of the plot width per side). Charts whose labels already fit are unchanged.
+
+### Size
+
+Minified bundle 600,836 → 601,418 bytes (+582, +0.10%); gzip 180,263 → 180,615 (+352). Measured on local builds of `v0.9.8_4` and this release, banner excluded.
 
 ## [v0.9.8_4] — 2026-10-19 — Log Scale
 
