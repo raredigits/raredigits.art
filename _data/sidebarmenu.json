@@ -37,7 +37,7 @@
             { "title": "Lists & Columns", "url": "/styles/typography/lists/" },
             { "title": "Tables", "url": "/styles/typography/tables/" },
             { "title": "Interactive Elements", "url": "/styles/typography/interactive/" },
-            { "title": "Sidenotes", "url": "/styles/typography/sidenotes/" }
+            { "title": "Notes", "url": "/styles/typography/notes/" }
           ]
       },
       { "title": "Colors", "url": "/styles/colors/" },

@@ -134,8 +134,7 @@ mark {
 .meta-info,
 .callout,
 .remark,
-cite,
-.footnote {
+cite {
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
@@ -169,13 +168,6 @@ blockquote {
 
 blockquote p:first-of-type {
     text-indent: 1.5em;
-}
-
-.footnote {
-    max-width: var(--text-content-width); // the rule stays on the prose width
-    margin-top: var(--space-lg);
-    padding-top: var(--space-md);
-    border-top: 1px solid var(--border-color-light);
 }
 
 // DEFINITION LISTS — a special text element, not a list pattern (hence this

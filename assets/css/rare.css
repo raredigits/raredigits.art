@@ -17163,6 +17163,26 @@ ol:where(.rd, .rd *) {
   }
 }
 
+.footnote:where(.rd, .rd *) {
+  max-width: var(--text-content-width);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-color-light);
+  color: var(--text-color-light);
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.3em;
+}
+
+sup > a:where(.rd, .rd *) {
+  padding: 0 0.1em;
+  text-decoration: none;
+}
+
+.footnote :target:where(.rd, .rd *) {
+  background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
+}
+
 .remarked:where(.rd, .rd *) {
   display: flex;
   flex-flow: row wrap;
@@ -17472,8 +17492,7 @@ mark:where(.rd, .rd *) {
 .meta-info:where(.rd, .rd *),
 .callout:where(.rd, .rd *),
 .remark:where(.rd, .rd *),
-cite:where(.rd, .rd *),
-.footnote:where(.rd, .rd *) {
+cite:where(.rd, .rd *) {
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
@@ -17507,13 +17526,6 @@ blockquote:where(.rd, .rd *) {
 
 blockquote p:first-of-type:where(.rd, .rd *) {
   text-indent: 1.5em;
-}
-
-.footnote:where(.rd, .rd *) {
-  max-width: var(--text-content-width);
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-color-light);
 }
 
 dl:where(.rd, .rd *) {
@@ -17849,15 +17861,6 @@ figure.epigraph p:where(.rd, .rd *) {
   width: 60%;
   margin: 0;
   text-align: right;
-}
-
-sup > a:where(.rd, .rd *) {
-  padding: 0 0.1em;
-  text-decoration: none;
-}
-
-.footnote :target:where(.rd, .rd *) {
-  background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
 
 table:where(.rd, .rd *) {

@@ -21,6 +21,7 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ### Changed
 
+- **Notes in one module.** Sidenotes, remarks, `.footnote` and the note reference marks now live in `typography/_notes.scss` (was `_sidenotes.scss`), and their docs on `/styles/typography/notes/` (was `/styles/typography/sidenotes/`). The compiled CSS is unaffected; a project that `@use`s the SCSS modules directly updates the partial name.
 - **`<article>` breaks long words and URLs** (`overflow-wrap: break-word`) and can shrink below its widest child as a grid item (`min-width: 0`), so a long URL in the prose no longer widens the page on a phone (`CSS-350`). **Visual delta:** none for ordinary text. A figure inside an article now keeps to the reading measure instead of the full article column (on this site, the hetke mockup), and its caption is muted and smaller.
 - **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 418,005 → **421,792 B** raw (+0.9%), gzip 35,112 → **35,749 B** (+1.8%), Brotli 22,533 → **23,057 B** (+2.3%); `rare.css` 493,709 → 498,181 B raw, gzip 37,442 → 38,181, Brotli 23,856 → 24,535.
 

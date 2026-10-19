@@ -16,7 +16,7 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 
 const PAGES = [
   '/', '/styles/', '/styles/getting-started/', '/styles/typography/', '/styles/typography/lists/',
-  '/styles/typography/tables/', '/styles/typography/sidenotes/', '/styles/layout/spacing/', '/styles/utilities/',
+  '/styles/typography/tables/', '/styles/typography/notes/', '/styles/layout/spacing/', '/styles/utilities/',
   '/charts/line/', '/charts/sankey/', '/scripts/carousel/', '/kb/taming-lesspregreater/', '/examples/styles/hetke/landing/',
 ];
 const WIDTHS = [375, 640, 720, 768, 769, 1024, 1440];

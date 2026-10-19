@@ -1,6 +1,35 @@
 @use "../utilities/breakpoints" as *;
 @use "../decorations/icons" as ico;
 
+.footnote {
+    max-width: var(--text-content-width); // the rule stays on the prose width
+    margin-top: var(--space-lg);
+    padding: var(--space-md);
+    border-top: 1px solid var(--border-color-light);
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    line-height: 1.3em;
+}
+
+// REFERENCES AND NOTES (CSS-128, v0.7.1)
+// Note references built from native ids and links, no script:
+//   <p>… <sup><a href="#note-1" id="ref-1">1</a></sup></p>
+//   <div class="footnote"><ol><li id="note-1">… <a href="#ref-1">↩</a></li></ol></div>
+
+// A reference mark is a link too small to underline; it reads by its position
+// and colour alone.
+sup > a {
+    padding: 0 0.1em;
+    text-decoration: none;
+}
+
+// The note the reader jumped to is marked while it is the target, so the eye
+// finds it among the others.
+.footnote :target {
+    background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
+}
+
 .remarked {
     display: flex;
     flex-flow: row wrap;
