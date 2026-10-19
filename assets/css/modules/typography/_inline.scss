@@ -1,7 +1,7 @@
 // INLINE TEXT ELEMENTS (CSS-128, v0.7.1)
 // The small semantic elements of running prose. normalize.css already sets
-// `sub`/`sup` on the baseline and dots the underline of `abbr[title]`; this
-// gives them the library's type and colour.
+// `sub`/`sup` on the baseline (nothing to add here) and dots the underline of
+// `abbr[title]`; this gives the rest the library's type and colour.
 
 // A key or a key combination: <kbd>Ctrl</kbd> + <kbd>K</kbd>. Drawn as a
 // keycap, so it is told apart from `code` (which is something to type).
@@ -28,13 +28,13 @@ kbd kbd {
 }
 
 // An abbreviation with its expansion: <abbr title="…">. The dotted line says
-// "there is more here"; touch devices have no hover, so expand it in the text
-// the first time it appears.
+// an expansion exists; the browser shows it as a tooltip on hover. No help
+// cursor: it promised a click that does nothing. Touch devices have no hover,
+// so the docs say to spell the term out at its first use.
 abbr[title] {
     text-decoration-color: var(--text-color-light);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
-    cursor: help;
 }
 
 // A reference mark — <sup><a href="#note-1" id="ref-1">1</a></sup> — is a

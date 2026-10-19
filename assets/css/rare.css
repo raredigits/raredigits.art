@@ -17509,22 +17509,8 @@ blockquote p:first-of-type:where(.rd, .rd *) {
   text-indent: 1.5em;
 }
 
-figure.epigraph:where(.rd, .rd *) {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin: 0 0 var(--space-xl);
-  font-style: italic;
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-sm);
-}
-figure.epigraph p:where(.rd, .rd *) {
-  width: 60%;
-  margin: 0;
-  text-align: right;
-}
-
 .footnote:where(.rd, .rd *) {
+  max-width: var(--text-content-width);
   margin-top: var(--space-lg);
   padding-top: var(--space-md);
   border-top: 1px solid var(--border-color-light);
@@ -17794,21 +17780,37 @@ article figure:not(:where(.carousel-slide, .epigraph)) > img:where(.rd, .rd *), 
 }
 
 .figure-wide:where(.rd, .rd *) {
+  width: 100%;
+  max-width: none;
+}
+
+.figure-caption:where(.rd, .rd *) {
   width: min(var(--text-content-caption), 100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md)));
   max-width: unset;
   margin-left: calc(-1 * var(--space-lg));
   margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 }
 @media screen and (width < 769px) {
-  .figure-wide:where(.rd, .rd *) {
+  .figure-caption:where(.rd, .rd *) {
     margin-left: calc(-1 * var(--space-sm));
     margin-right: calc(-1 * var(--space-sm));
   }
 }
 @media screen and (width < 769px) {
-  .figure-wide:where(.rd, .rd *) {
+  .figure-caption:where(.rd, .rd *) {
     width: auto;
     max-width: none;
+  }
+}
+
+.figure-wide-caption:where(.rd, .rd *) {
+  width: auto;
+  max-width: none;
+  margin-left: calc(-1 * var(--space-lg));
+}
+@media screen and (width < 769px) {
+  .figure-wide-caption:where(.rd, .rd *) {
+    margin-left: calc(-1 * var(--space-sm));
   }
 }
 
@@ -17822,7 +17824,9 @@ article figcaption:where(:not(.carousel-caption)):where(.rd, .rd *),
   overflow-wrap: anywhere;
 }
 
-.figure-wide figcaption:where(.rd, .rd *) {
+.figure-wide figcaption:where(.rd, .rd *),
+.figure-caption figcaption:where(.rd, .rd *),
+.figure-wide-caption figcaption:where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 
@@ -17830,6 +17834,21 @@ article figcaption:where(:not(.carousel-caption)):where(.rd, .rd *),
   display: block;
   margin-top: var(--space-xs);
   font-size: var(--font-size-xs);
+}
+
+figure.epigraph:where(.rd, .rd *) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0 0 var(--space-xl);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+}
+figure.epigraph p:where(.rd, .rd *) {
+  width: 60%;
+  margin: 0;
+  text-align: right;
 }
 
 kbd:where(.rd, .rd *) {
@@ -17857,7 +17876,6 @@ abbr[title]:where(.rd, .rd *) {
   text-decoration-color: var(--text-color-light);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  cursor: help;
 }
 
 sup > a:where(.rd, .rd *) {
@@ -18555,6 +18573,8 @@ th:first-child:where(.rd, .rd *) {
 .card .text-content-caption:where(.rd, .rd *),
 .card .full-width-caption:where(.rd, .rd *),
 .card .figure-wide:where(.rd, .rd *),
+.card .figure-caption:where(.rd, .rd *),
+.card .figure-wide-caption:where(.rd, .rd *),
 .card .card-caption:where(.rd, .rd *),
 .card .collapsible-container:where(.rd, .rd *),
 .card .teaser-bottom:where(.rd, .rd *) {
@@ -21336,6 +21356,8 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
 .collapsible-container pre:where(.rd, .rd *),
 .collapsible-container .text-content-caption:where(.rd, .rd *),
 .collapsible-container .figure-wide:where(.rd, .rd *),
+.collapsible-container .figure-caption:where(.rd, .rd *),
+.collapsible-container .figure-wide-caption:where(.rd, .rd *),
 .collapsible-container .card-caption:where(.rd, .rd *),
 .collapsible-content .lead:where(.rd, .rd *),
 .collapsible-content .caption:where(.rd, .rd *),
@@ -21343,6 +21365,8 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
 .collapsible-content pre:where(.rd, .rd *),
 .collapsible-content .text-content-caption:where(.rd, .rd *),
 .collapsible-content .figure-wide:where(.rd, .rd *),
+.collapsible-content .figure-caption:where(.rd, .rd *),
+.collapsible-content .figure-wide-caption:where(.rd, .rd *),
 .collapsible-content .card-caption:where(.rd, .rd *) {
   width: auto;
   max-width: 100%;
@@ -21595,6 +21619,8 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
     width: auto;
   }
   .figure-wide:where(.rd, .rd *),
+  .figure-caption:where(.rd, .rd *),
+  .figure-wide-caption:where(.rd, .rd *),
   .text-content-caption:where(.rd, .rd *),
   .lead:where(.rd, .rd *),
   .caption:where(.rd, .rd *),

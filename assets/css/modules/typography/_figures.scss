@@ -7,12 +7,13 @@
 // `.figure` — for a card, a section or an island.
 // Contract:
 //   <figure>                       — on the reading measure
-//   <figure class="figure-wide">   — out to the caption width, outdented
+//   <figure class="figure-wide">   — or a wider modifier, see Widths below
 //     <img src alt width height>  — width/height reserve the box (no shift)
 //     <figcaption>Caption <span class="figure-source">Source: …</span></figcaption>
 // Carousel slides and epigraphs are figures with their own layout, so they are
-// excluded. The exclusion sits in `:where()` and adds no specificity: a
-// utility (`.margin-y-md`, `.full-width`) still wins over this rule.
+// excluded; the epigraph is defined at the end of this file. The exclusion
+// sits in `:where()` and adds no specificity: a utility (`.margin-y-md`,
+// `.full-width`) still wins over this rule.
 
 article figure:not(:where(.carousel-slide, .epigraph)),
 .figure {
@@ -29,10 +30,24 @@ article figure:not(:where(.carousel-slide, .epigraph)),
     }
 }
 
-// Wide: out to the caption width the lead and the highlight use, never past
-// the room the outdent has (the right side may only take what is there —
-// see the `outdent` mixin, CSS-367).
+// Widths. The default figure keeps to the reading measure; three modifiers
+// give it more room:
+//   .figure-wide          — the full content column (the article, not the prose)
+//   .figure-caption       — the caption width of the lead and the highlight,
+//                           outdented on both sides
+//   .figure-wide-caption  — outdented on the left like `.caption`, out to the
+//                           column edge on the right like `pre`
+// Inside a card or a collapsible all three fill the content width (the outdent
+// resets in bricks/_cards.scss and special/_collapsible.scss).
+
 .figure-wide {
+    width: 100%;
+    max-width: none;
+}
+
+// Out to the caption width, never past the room the outdent has (the right
+// side may only take what is there — see the `outdent` mixin, CSS-367).
+.figure-caption {
     width: min(
         var(--text-content-caption),
         100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
@@ -49,6 +64,18 @@ article figure:not(:where(.carousel-slide, .epigraph)),
     }
 }
 
+// Left outdent only, as `pre` does: `width: auto` with a negative left margin
+// runs from the outdent to the column's right edge.
+.figure-wide-caption {
+    width: auto;
+    max-width: none;
+    margin-left: calc(-1 * var(--space-lg));
+
+    @include mobile {
+        margin-left: calc(-1 * var(--space-sm));
+    }
+}
+
 article figcaption:where(:not(.carousel-caption)),
 .figure figcaption {
     margin-top: var(--space-sm);
@@ -61,9 +88,11 @@ article figcaption:where(:not(.carousel-caption)),
     overflow-wrap: anywhere;
 }
 
-// A wide figure's caption stays on the reading measure; it starts at the
+// A wider figure's caption stays on the reading measure; it starts at the
 // image edge, so it reads the same inside a card, where nothing outdents.
-.figure-wide figcaption {
+.figure-wide figcaption,
+.figure-caption figcaption,
+.figure-wide-caption figcaption {
     max-width: var(--text-content-width);
 }
 
@@ -71,4 +100,25 @@ article figcaption:where(:not(.carousel-caption)),
     display: block;
     margin-top: var(--space-xs);
     font-size: var(--font-size-xs);
+}
+
+// Epigraph — a short attributed quote at the head of a section or page,
+// right-aligned and italic so it reads as a voice from outside the prose.
+// (Harvested from sibling projects; the source had a duplicated `margin`
+// declaration and a magic `3em` gap — both normalized here.)
+
+figure.epigraph {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0 0 var(--space-xl);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+
+    p {
+        width: 60%;
+        margin: 0;
+        text-align: right;
+    }
 }

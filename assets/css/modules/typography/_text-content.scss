@@ -171,28 +171,8 @@ blockquote p:first-of-type {
     text-indent: 1.5em;
 }
 
-// Epigraph — a short attributed quote at the head of a section or page,
-// right-aligned and italic so it reads as a voice from outside the prose.
-// (Harvested from sibling projects; the source had a duplicated `margin`
-// declaration and a magic `3em` gap — both normalized here.)
-
-figure.epigraph {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    margin: 0 0 var(--space-xl);
-    font-style: italic;
-    font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
-
-    p {
-        width: 60%;
-        margin: 0;
-        text-align: right;
-    }
-}
-
 .footnote {
+    max-width: var(--text-content-width); // the rule stays on the prose width
     margin-top: var(--space-lg);
     padding-top: var(--space-md);
     border-top: 1px solid var(--border-color-light);

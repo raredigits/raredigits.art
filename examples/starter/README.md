@@ -46,7 +46,7 @@ To use the library inside a page that is styled by something else, put `class="r
 ## Articles
 
 - **Reading measure.** Paragraphs, lists and headings keep a comfortable line length. Long words and URLs break instead of widening the page.
-- **Figures.** A `<figure>` inside `<article>` sits on the measure. Add `class="figure-wide"` for an image or chart that needs more room. Put the takeaway in `<figcaption>` and the credit in `<span class="figure-source">`. Give every `<img>` its real `width` and `height`, an `alt` that says what it shows, and `loading="lazy"` below the fold. To serve smaller files to phones, add `srcset` and `sizes="(width < 769px) 100vw, 640px"`. Producing the image files is your build's job.
+- **Figures.** A `<figure>` inside `<article>` sits on the measure. For more room add `class="figure-wide"` (the full content column), `figure-caption` (the measure plus an outdent on both sides) or `figure-wide-caption` (outdented on the left, out to the column edge on the right). Put the takeaway in `<figcaption>` and the credit in `<span class="figure-source">`. Give every `<img>` its real `width` and `height`, an `alt` that says what it shows, and `loading="lazy"` below the fold. To serve smaller files to phones, add `srcset` and `sizes="(width < 769px) 100vw, 640px"`. Producing the image files is your build's job.
 - **Tables.** Wrap a table in `<div class="table-scroll">`, so a wide table scrolls sideways on a phone instead of the page.
 - **Notes.** A reference is `<sup><a href="#note-1" id="ref-1">1</a></sup>`, and the note links back to `#ref-1`. Notes go in a `<div class="footnote">`. No script is needed.
 - **Print.** Articles print without the header, and charts print as their data tables.
