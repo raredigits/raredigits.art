@@ -1,0 +1,74 @@
+@use "../utilities/breakpoints" as *;
+@use "text-content" as tc;
+
+// ARTICLE FIGURES (CSS-127, v0.7.1)
+// An image (or table, or chart) with its caption and source, set in the prose
+// flow of an <article>. Outside an article the same treatment is opt-in with
+// `.figure` — for a card, a section or an island.
+// Contract:
+//   <figure>                       — on the reading measure
+//   <figure class="figure-wide">   — out to the caption width, outdented
+//     <img src alt width height>  — width/height reserve the box (no shift)
+//     <figcaption>Caption <span class="figure-source">Source: …</span></figcaption>
+// Carousel slides and epigraphs are figures with their own layout, so they are
+// excluded. The exclusion sits in `:where()` and adds no specificity: a
+// utility (`.margin-y-md`, `.full-width`) still wins over this rule.
+
+article figure:not(:where(.carousel-slide, .epigraph)),
+.figure {
+    max-width: var(--text-content-width);
+    margin: var(--space-lg) 0;
+
+    @include mobile {
+        max-width: 100%;
+    }
+
+    > img,
+    > picture img {
+        width: 100%;
+    }
+}
+
+// Wide: out to the caption width the lead and the highlight use, never past
+// the room the outdent has (the right side may only take what is there —
+// see the `outdent` mixin, CSS-367).
+.figure-wide {
+    width: min(
+        var(--text-content-caption),
+        100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
+    );
+    max-width: unset;
+
+    @include tc.outdent;
+
+    // On a phone the caption width is the viewport; a block with negative
+    // margins and `width: auto` fills exactly the room the outdent gives.
+    @include mobile {
+        width: auto;
+        max-width: none;
+    }
+}
+
+article figcaption:where(:not(.carousel-caption)),
+.figure figcaption {
+    margin-top: var(--space-sm);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+
+    // Long URLs in a source line break instead of widening the page.
+    overflow-wrap: anywhere;
+}
+
+// A wide figure's caption stays on the reading measure; it starts at the
+// image edge, so it reads the same inside a card, where nothing outdents.
+.figure-wide figcaption {
+    max-width: var(--text-content-width);
+}
+
+.figure-source {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-xs);
+}

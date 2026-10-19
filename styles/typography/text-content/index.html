@@ -138,6 +138,44 @@ permalink: '/styles/typography/text-content/'
     <p><code>.rd-icon-&lt;name&gt;</code></p>
 </section>
 
+<section id="figures">
+    <h2>Figures</h2>
+
+    <p>A <code>&lt;figure&gt;</code> inside an <code>&lt;article&gt;</code> is styled directly: it sits on the reading measure, its image fills that measure, and its <code>&lt;figcaption&gt;</code> reads as a quiet note under it. Outside an article, add <code>.figure</code> for the same treatment — in a card, a section or an island. Carousel slides and epigraphs are figures too, but keep their own layout.</p>
+
+    <figure>
+        <img src="/assets/img/illustrations/poker.jpg" alt="An illustrated poker table seen from above, cards and chips mid-game" width="1024" height="1024" loading="lazy">
+        <figcaption>An ordinary figure keeps to the measure of the prose around it. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
+    </figure>
+
+    <h3><code>.figure-wide</code></h3>
+    <p>A wide figure steps out to the caption width the lead and the highlight use. Its caption stays on the reading measure. Inside a card or a collapsible it simply fills the content width.</p>
+
+    <figure class="figure-wide">
+        <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
+        <figcaption>Use the wide figure for an image or chart whose detail needs the room. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
+    </figure>
+
+    <h3><code>.figure-source</code></h3>
+    <p>The source or credit line, set on its own line in a smaller size at the end of the caption. A long URL in it breaks rather than widening the page.</p>
+
+<pre><code>&lt;figure class="figure-wide"&gt;
+    &lt;img src="chart.png" alt="What the image shows" width="1648" height="720" loading="lazy"&gt;
+    &lt;figcaption&gt;
+        The caption says what to take from it.
+        &lt;span class="figure-source"&gt;Source: …&lt;/span&gt;
+    &lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+
+    <h3>Images that load well</h3>
+    <ul>
+        <li><strong>Always set <code>width</code> and <code>height</code></strong> to the image's real pixel size. The browser reserves the box from them, so the text does not jump when the image arrives; CSS still scales the image to the column.</li>
+        <li><strong>Write <code>alt</code> for what the image says</strong> in this article, not what it looks like in general. A purely decorative image gets <code>alt=""</code>. The caption is not a substitute: it is read after the image, and only when there is one.</li>
+        <li><strong>Add <code>loading="lazy"</code> below the fold</strong>, never on the first image a reader sees.</li>
+        <li><strong>Offer sizes with <code>srcset</code> and <code>sizes</code></strong>. The ordinary figure is at most the reading measure (about 640&nbsp;px on desktop, the full screen on a phone): <code>sizes="(width &lt; 769px) 100vw, 640px"</code>. Producing the image files is your build's job — the library only lays them out.</li>
+    </ul>
+</section>
+
 <section>
     <h3>Tips</h3>
     <p><a href="https://medium.com/sketch-app-sources/design-cheatsheet-274384775da9">Cheatsheet</a></p>
