@@ -8,6 +8,32 @@ permalink: '/styles/typography/text-content/'
 
 <section>
     <h3>Heading</h3>
+
+    <p>Headings divide the text into blocks a reader can see and jump between. They are signposts, not decoration: a reader scanning the page should be able to follow the argument from the headings alone.</p>
+
+    <ul>
+        <li><strong><code>h2</code>, <code>h3</code>, <code>h4</code></strong> structure the prose: sections, subsections and the minor breaks inside them. They use the heading typeface.</li>
+        <li><strong><code>h5</code>, <code>h6</code></strong> are technical labels, not part of the argument: the name of a table, a dashboard panel, a note or a column in the footer. They use the text face and are set in capitals to read as labels; <code>h6</code> is set light.</li>
+    </ul>
+
+    <div class="card padding-md">
+        <h5>Category detail, 2026</h5>
+        <h6>Contribution to the annual change</h6>
+    </div>
+
+    <table class="table-bordered">
+        <thead>
+            <tr><th>Level</th><th>Size</th><th>Margin (top / bottom)</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>h2</code></td><td>1.8em</td><td><code>--space-lg</code> / <code>--space-md</code></td></tr>
+            <tr><td><code>h3</code></td><td>1.4em</td><td><code>--space-lg</code> / <code>--space-md</code></td></tr>
+            <tr><td><code>h4</code></td><td>1.2em</td><td><code>--space-sm</code> / <code>--space-sm</code></td></tr>
+            <tr><td><code>h5</code>, <code>h6</code></td><td>1em, capitals</td><td><code>--space-sm</code> / <code>--space-sm</code></td></tr>
+        </tbody>
+    </table>
+
+    <p>The margins are tuned for the library's own typefaces. If you set your own fonts through <code>--heading-font</code> and <code>--primary-font</code>, choose your own heading margins as well: a face with a different x-height or line height needs a different rhythm.</p>
 </section>
 
 <section>
