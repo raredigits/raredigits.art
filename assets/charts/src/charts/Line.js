@@ -21,7 +21,12 @@
 //
 //   yTickFormat    — function(value) => string
 //   xTickFormat    — function(date) => string
-//   yTicks         — number of ticks (default: 4)
+//   yScale         — 'linear' (default) | 'log'. Log: powers-of-ten ticks, the
+//                    margin above/below is a factor of the data's span, values
+//                    ≤ 0 are skipped (warned once per setData). Switch between
+//                    data swaps with setYScale(): chart.setYScale('log').setData(all)
+//   yTicks         — approximate number of ticks (default: 4); linear ticks stay
+//                    inside the padded data range, so the count follows the step
 //   yTickValues    — explicit Y tick positions (overrides yTicks)
 //   xTicks         — number of X ticks (default: 6)
 //   yFormat        — 'auto' (default) | 'percent' | 'number'
@@ -70,7 +75,7 @@ import * as d3 from 'd3';
 import { Chart }             from '../core/Chart.js';
 import { Tooltip }           from '../core/Tooltip.js';
 import { Crosshair }         from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash, niceTickValues, normalizeAnnotations, motionDuration } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, linearTickValues, logTickValues, logPaddedDomain, normalizeAnnotations, motionDuration } from '../core/utils.js';
 import { linePath, areaPath, bandPath } from '../core/seriesPath.js';
 import {
   applySvgA11y,
@@ -124,7 +129,16 @@ export class Line extends Chart {
 
   setData(data) {
     this._series = this._normalizeData(data);
+    this._warnedNonPositive = false;
     this._syncTimeframeButtons(this._getDataExtent());
+    this.render();
+    return this;
+  }
+
+  // Switch the Y scale between 'linear' and 'log' and redraw. Chained before
+  // setData(), both run in the same tick — one paint with the new scale and data.
+  setYScale(type) {
+    this.options.yScale = type === 'log' ? 'log' : 'linear';
     this.render();
     return this;
   }
@@ -237,11 +251,26 @@ export class Line extends Chart {
 
     const o = this.options;
     const t = this.theme;
+    const isLog = o.yScale === 'log';
     const fullExtent = this._getDataExtent();
     const viewExtent = this._resolveViewExtent(fullExtent);
+
+    // A log scale has no place for zero or negatives: such points are skipped
+    // (the line joins its neighbours) instead of drawing NaN.
+    let skipped = 0;
+    const positive = d => {
+      const ok = 'lower' in d ? d.lower > 0 && d.upper > 0 : d.value > 0;
+      if (!ok) skipped++;
+      return ok;
+    };
     const visibleSeries = this._series
-      .map(s => ({ ...s, values: s.values.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]) }))
+      .map(s => ({ ...s, values: s.values.filter(d =>
+        d.date >= viewExtent[0] && d.date <= viewExtent[1] && (!isLog || positive(d))) }))
       .filter(s => s.values.length);
+    if (skipped && !this._warnedNonPositive) {
+      this._warnedNonPositive = true;
+      console.warn(`RareCharts.Line: ${skipped} value${skipped === 1 ? '' : 's'} ≤ 0 skipped on the log scale`);
+    }
     if (!visibleSeries.length) return;
 
     this._syncTimeframeButtons(fullExtent, viewExtent);
@@ -274,13 +303,25 @@ export class Line extends Chart {
     const allY = visibleSeries.flatMap(yValuesOf);
     const maxY = d3.max(allY);
     const minY = d3.min(allY);
-    const pad  = (maxY - minY) * 0.08 || 1;
 
-    // Compute ticks from the raw padded range — no .nice() to avoid double-expansion.
-    // Domain top = max(rawHi, last tick) so ticks never overshoot the chart area.
-    const resolvedYTickValues = o.yTickValues ?? niceTickValues(minY - pad, maxY + pad, yTicks);
-    const y    = d3.scaleLinear()
-      .domain([minY - pad, Math.max(maxY + pad, resolvedYTickValues[resolvedYTickValues.length - 1])])
+    // Padded data range: 8% of the span on a linear scale, the same share of
+    // the log span (a factor) on a log scale. Ticks are picked inside it — no
+    // .nice() — and only explicit yTickValues may widen the domain.
+    let [lo, hi] = isLog
+      ? logPaddedDomain(minY, maxY)
+      : [minY - ((maxY - minY) * 0.08 || 1), maxY + ((maxY - minY) * 0.08 || 1)];
+    let resolvedYTickValues;
+    if (o.yTickValues) {
+      resolvedYTickValues = isLog ? o.yTickValues.filter(v => v > 0) : o.yTickValues;
+      if (resolvedYTickValues.length) {
+        lo = Math.min(lo, d3.min(resolvedYTickValues));
+        hi = Math.max(hi, d3.max(resolvedYTickValues));
+      }
+    } else {
+      resolvedYTickValues = isLog ? logTickValues(lo, hi, yTicks) : linearTickValues(lo, hi, yTicks);
+    }
+    const y = (isLog ? d3.scaleLog() : d3.scaleLinear())
+      .domain([lo, hi])
       .range([H, 0]);
     const absMax   = d3.max(allY, v => Math.abs(v)) ?? 0;
     const usePercent = (o.yFormat ?? 'auto') === 'percent' ||
@@ -289,7 +330,8 @@ export class Line extends Chart {
     const prefix  = o.yPrefix ?? '';
     const suffix  = o.ySuffix ?? '';
     const zeroEps = o.zeroEpsilon ?? 1e-6;
-    const baseY   = usePercent ? d3.format('+.2%') : d3.format('.2s');
+    // Log ticks are round powers — trim the zeros '.2s' would keep (1k, not 1.0k).
+    const baseY   = usePercent ? d3.format('+.2%') : d3.format(isLog ? '.3~s' : '.2s');
 
     const yTickFormat = o.yTickFormat ?? (v => {
       if (Math.abs(v) < zeroEps) return `${prefix}${usePercent && !suffix ? '0%' : '0'}${suffix}`;
@@ -395,7 +437,13 @@ export class Line extends Chart {
     renderMarkers(this.gMarkers, lineSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
 
     // Annotations
-    renderAnnotations(this.gAnnotations, this._annotations, x, () => y, H, this._annLabelHeight, t);
+    // Horizontal markers at or below zero have no position on a log scale.
+    const annotations = isLog ? this._annotations.flatMap(a => {
+      if (a.kind === 'hPoint') return a.value > 0 ? [a] : [];
+      if (a.kind === 'hRange') return a.yTo > 0 ? [{ ...a, yFrom: Math.max(a.yFrom, lo) }] : [];
+      return [a];
+    }) : this._annotations;
+    renderAnnotations(this.gAnnotations, annotations, x, () => y, H, this._annLabelHeight, t);
 
     // Crosshair
     this._crosshair.bind({

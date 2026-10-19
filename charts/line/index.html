@@ -523,14 +523,24 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <p><code>yFormat</code> supports <code>auto</code> (default), <code>percent</code>, and <code>number</code>. In <code>auto</code> mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes 12%). If you already store values as real numbers and still happen to be below 1, you probably want to force <code>number</code> to avoid accidental percent formatting.</p>
 <p>Zero is treated carefully: values with <code>|v| &lt; zeroEpsilon</code> are printed as <code>0</code> (default <code>1e-6</code>). This prevents the classic “-0.00%” or “+0.00%” artifacts that make charts look broken even when the data is correct.</p>
 <p>You can also add <code>yPrefix</code> and <code>ySuffix</code> for units. If you need full control, provide <code>yTickFormat: (value) =&gt; string</code> and ignore the automatic formatting entirely.</p>
-<p>Tick density is controlled by <code>yTicks</code> (default 4). For minimalist displays, <code>yLabelsOnly</code> can be enabled (default true), keeping the axis visually restrained.</p>
+<p>Tick density is controlled by <code>yTicks</code> (default 4). The number is a target, not a quota: ticks fall on round 1-2-5 steps inside the data range, so the axis never stretches past the data just to fit four steps. For minimalist displays, <code>yLabelsOnly</code> can be enabled (default true), keeping the axis visually restrained.</p>
 <p>By default, the Y axis is rendered on the right side of the chart. If your layout or design system requires a left-aligned axis, you can override this behavior by setting:</p>
 <pre class="text-content-caption"><code>yAxisPosition: 'left'</code></pre>
 <p>This moves the Y axis to the left while preserving all formatting and scaling logic.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-left-axis-demo"></div>
 </div>
-<h3 id="x-axis-formatting">X axis formatting</h3>
+<h3 id="logarithmic-scale">Logarithmic scale</h3>
+<p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Log and Linear to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
+<p>Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.</p>
+<p>The scale can change between data swaps — for example log on the full history, linear on the last year. <code>setYScale()</code> redraws and returns the chart, so chaining it before <code>setData()</code> changes both in one paint:</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="line-chart-log-demo"></div>
+</div>
+<br>
+<pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
+chart.setYScale('linear').setData(lastYear);</code></pre>
+<h3 id="x-axis-formatting">X axis formatting</h3>
 <p><code>xTickFormat</code> is a function <code>(date) =&gt; string</code>. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:</p>
 <pre class="text-content-caption"><code>xTickFormat: d3.timeFormat('%b %d')   <span class="code-comment">// Jan 05</span>
 // or
@@ -629,7 +639,13 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td><code>yTicks</code></td>
             <td>number</td>
             <td><code>4</code></td>
-            <td>Number of Y tick marks.</td>
+            <td>Approximate number of Y ticks. Linear ticks stay inside the data range, so the actual count follows the step.</td>
+        </tr>
+        <tr>
+            <td><code>yScale</code></td>
+            <td><code>'linear'</code> | <code>'log'</code></td>
+            <td><code>'linear'</code></td>
+            <td>Y scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 skipped. Change it between data swaps with <code>setYScale()</code>.</td>
         </tr>
         <tr>
             <td><code>xTicks</code></td>
@@ -911,6 +927,7 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance-left-axis.js"></script>
+<script src="/assets/charts/examples/line/line-chart-log-scale.js"></script>
 
     </article>
   </div>

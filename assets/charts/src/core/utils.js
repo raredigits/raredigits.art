@@ -231,6 +231,55 @@ export function niceTickValues(lo, hi, count) {
   return Array.from({ length: count }, (_, i) => +((best.start + best.step * i).toPrecision(10)));
 }
 
+/**
+ * Linear Y ticks for a fixed domain: d3's 1-2-5 steps, every tick inside
+ * [lo, hi]. The tick count follows the step (≈ `count`, not exactly it), so the
+ * axis never stretches past the data to fit a fixed number of steps — what
+ * niceTickValues() does when the range sits awkwardly (193 → an axis to 400).
+ */
+export function linearTickValues(lo, hi, count = 4) {
+  if (!(hi > lo)) return [lo];
+  let ticks = d3.ticks(lo, hi, count);
+  if (ticks.length < 2) ticks = d3.ticks(lo, hi, count * 2);
+  return ticks.length >= 2 ? ticks : [lo, hi];
+}
+
+/**
+ * Padded Y domain for a log scale. The margin is a factor, not a share of the
+ * range: `pad` of the data's log span below the minimum and above the maximum,
+ * so both ends get the same visual room. Flat data gets ×/÷ 10^0.05.
+ */
+export function logPaddedDomain(min, max, pad = 0.08) {
+  const f = max > min ? Math.pow(max / min, pad) : Math.pow(10, 0.05);
+  return [min / f, max * f];
+}
+
+/**
+ * Log-scale ticks inside [lo, hi] (lo > 0): powers of ten (10, 100, 1k…) when
+ * the domain spans two or more of them — thinned to every 2nd/3rd power past
+ * 2 × `count` — else the 1-2-5 steps (20, 50, 100…), else linear steps for a
+ * domain too narrow for either.
+ */
+export function logTickValues(lo, hi, count = 4) {
+  if (!(lo > 0) || !(hi > lo)) return lo > 0 ? [lo] : [];
+  const inside = v => v >= lo * (1 - 1e-9) && v <= hi * (1 + 1e-9);
+  const k0 = Math.floor(Math.log10(lo));
+  const k1 = Math.ceil(Math.log10(hi));
+
+  const powers = d3.range(k0, k1 + 1).map(k => +Math.pow(10, k).toPrecision(12)).filter(inside);
+  if (powers.length >= 2) {
+    const every = Math.ceil(powers.length / Math.max(2, count * 2));
+    return powers.filter((_, i) => i % every === 0);
+  }
+
+  const steps = d3.range(k0, k1 + 1)
+    .flatMap(k => [1, 2, 5].map(m => +(m * Math.pow(10, k)).toPrecision(12)))
+    .filter(inside);
+  if (steps.length >= 2) return steps;
+
+  return linearTickValues(lo, hi, count);
+}
+
 // ─── Annotations ─────────────────────────────────────────────────────────────
 
 /**
