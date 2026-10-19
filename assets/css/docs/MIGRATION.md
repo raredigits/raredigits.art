@@ -70,6 +70,7 @@ Mostly additive. Five classes and one selector are removed after an audit of `_t
 | 7 | `.full-width-caption` | On a phone 16px wider than the column for an 8px outdent (8px page overflow) | Exactly the column plus the left outdent; `max-width: none` | None | fix | review 2026-10-19 |
 | 8 | `<figure>` in `<article>` | No library styling | Reading measure, muted `figcaption`; takes `.full-width`, `.text-content-caption`, `.full-width-caption` | **Visual delta:** an existing article figure narrows to the prose measure; add one of the width classes to keep it wide | visual | `CSS-127` |
 | 9 | `typography/_sidenotes.scss` | SCSS partial | Merged into `typography/_notes.scss` | Only if you `@use` the SCSS modules | tooling | review 2026-10-19 |
+| 10 | Cookie notice reserve | While the notice showed: `scroll-padding-bottom` **and** a `body::after` spacer of `--cookie-notice-reserve` after the footer (`v0.7.0` row 24) | `scroll-padding-bottom` only; the spacer is gone | None. **Visual delta:** no empty band under the footer while the notice shows; the last footer links can sit under the notice until it is dismissed | visual | `CSS-361` follow-up |
 
 ## Live consumers — verified 2026-10-16
 

@@ -21124,11 +21124,6 @@ html:has(.cookie-notice:not(.rd-is-hidden)):where(.rd, .rd *) {
   scroll-padding-bottom: var(--cookie-notice-reserve);
 }
 
-html:has(.cookie-notice:not(.rd-is-hidden)) body:where(.rd, .rd *)::after {
-  content: "";
-  flex: 0 0 var(--cookie-notice-reserve);
-}
-
 .cookie-notice:where(.rd, .rd *) {
   max-width: var(--site-max-width);
   display: block;

@@ -134,7 +134,11 @@ describe('keyboard focus is visible and not covered (cookie notice shown)', () =
           const fitsAbove = notice ? r.height <= nr.top - (document.querySelector('header')?.getBoundingClientRect().bottom || 0) : true;
           const visibleTop = Math.max(r.top, 0), visibleBottom = Math.min(r.bottom, innerHeight);
           const entirelyUnder = notice && visibleTop >= nr.top && visibleBottom <= nr.bottom;
-          const covered = overlap && (fitsAbove || entirelyUnder);
+          // At the end of the page there is no room to scroll an element above
+          // the notice: no space is reserved after the footer (v0.7.1, maintainer
+          // decision), so the last links may sit under it until it is dismissed.
+          const atPageEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+          const covered = overlap && (fitsAbove || entirelyUnder) && !atPageEnd;
           let hidden = r.width < 1 || r.height < 1;
           for (let x = el; x; x = x.parentElement) if (getComputedStyle(x).visibility === 'hidden') hidden = true;
           const offscreen = r.bottom < 0 || r.top > innerHeight;

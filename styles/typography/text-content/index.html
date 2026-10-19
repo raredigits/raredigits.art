@@ -16,11 +16,7 @@ permalink: '/styles/typography/text-content/'
         <li><strong><code>h5</code>, <code>h6</code></strong> are technical labels, not part of the argument: the name of a table, a dashboard panel, a note or a column in the footer. They use the text face and are set in capitals to read as labels; <code>h6</code> is set light.</li>
     </ul>
 
-    <div class="card padding-md">
-        <h5>Category detail, 2026</h5>
-        <h6>Contribution to the annual change</h6>
-    </div>
-
+    <h5>Comparison Table (h5)</h5>
     <table class="table-bordered">
         <thead>
             <tr><th>Level</th><th>Size</th><th>Margin (top / bottom)</th></tr>
@@ -173,6 +169,28 @@ permalink: '/styles/typography/text-content/'
         <figcaption>An ordinary figure keeps to the measure of the prose around it. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
     </figure>
 
+    <h3><code>.figure-source</code></h3>
+    <p>The source or credit line, set on its own line in a smaller size at the end of the caption. A long URL in it breaks rather than widening the page.</p>
+
+<pre><code>&lt;figure class="full-width"&gt;
+    &lt;img src="chart.png" alt="What the image shows" width="1648" height="720" loading="lazy"&gt;
+    &lt;figcaption&gt;
+        The caption says what to take from it.
+        &lt;span class="figure-source"&gt;Source: …&lt;/span&gt;
+    &lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
+
+    <h3>Epigraph</h3>
+
+    <figure class="epigraph text-content-width">
+        <p>The whole of science is nothing more than a refinement of everyday thinking.</p>
+        <p>— Albert Einstein</p>
+    </figure>
+
+    <p>A <code>&lt;figure class="epigraph"&gt;</code> sets a short, attributed quotation at the head of a section or page. Unlike a blockquote, it is small, italic, and right-aligned — a voice from outside the text, placed at the threshold rather than woven into the argument. It is a figure with its own layout: the article figure rules above do not apply to it.</p>
+
+    <p>Keep epigraphs brief. Their job is to set a tone before the reader enters, not to carry an argument.</p>
+
     <h3>Widths</h3>
     <p>A figure takes the library's generic width classes, the same ones any block uses. With each of them the caption stays on the reading measure. Inside a card or a collapsible they all simply fill the content width.</p>
 
@@ -199,28 +217,6 @@ permalink: '/styles/typography/text-content/'
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
         <figcaption>The widest figure: the outdent on the left, the column edge on the right. <span class="figure-source">Illustration: Rare Digits</span></figcaption>
     </figure>
-
-    <h3><code>.figure-source</code></h3>
-    <p>The source or credit line, set on its own line in a smaller size at the end of the caption. A long URL in it breaks rather than widening the page.</p>
-
-<pre><code>&lt;figure class="full-width"&gt;
-    &lt;img src="chart.png" alt="What the image shows" width="1648" height="720" loading="lazy"&gt;
-    &lt;figcaption&gt;
-        The caption says what to take from it.
-        &lt;span class="figure-source"&gt;Source: …&lt;/span&gt;
-    &lt;/figcaption&gt;
-&lt;/figure&gt;</code></pre>
-
-    <h3>Epigraph</h3>
-
-    <figure class="epigraph text-content-width">
-        <p>The whole of science is nothing more than a refinement of everyday thinking.</p>
-        <p>— Albert Einstein</p>
-    </figure>
-
-    <p>A <code>&lt;figure class="epigraph"&gt;</code> sets a short, attributed quotation at the head of a section or page. Unlike a blockquote, it is small, italic, and right-aligned — a voice from outside the text, placed at the threshold rather than woven into the argument. It is a figure with its own layout: the article figure rules above do not apply to it.</p>
-
-    <p>Keep epigraphs brief. Their job is to set a tone before the reader enters, not to carry an argument.</p>
 
     <h3>Images that load well</h3>
     <ul>

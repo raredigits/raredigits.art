@@ -21,6 +21,7 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ### Changed
 
+- **No space under the footer while the cookie notice shows.** The `body::after` spacer added in `v0.7.0` (`CSS-361`) read as an empty band under the page; it is gone. `scroll-padding-bottom` stays, so focus and anchor jumps still stop above the notice everywhere except the very end of the page, where the last footer links can sit under the notice until it is dismissed.
 - **One caption-width geometry** for `.text-content-caption`, `.lead`, `.highlight` and `.teaser-bottom`: never wider than the room the outdent has (the `CSS-367` rule), and on a phone the column plus 8px on each side. **Fixes** `.teaser-bottom`, whose hand-written outdent took the full 32px on the right and pushed the page sideways at 769–1279px. **Visual delta:** `.lead` no longer shrinks to 80% on a phone.
 - **`.full-width-caption`** is exactly the column plus the left outdent; on a phone it used to be 8px wider than the page. It also lifts `max-width`.
 - **`_text-content.scss` tidied**: one block per class (`.highlight`, `.lead`, `.meta-info`, `.callout`, `cite`), `p.highlight` merged into `.highlight`, the handwritten sidenote moved to `_notes.scss`. No visual change.
