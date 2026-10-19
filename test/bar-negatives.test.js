@@ -99,3 +99,30 @@ describe('Bar — positive-only data is unchanged', () => {
     expect(b.h).toBeGreaterThan(a.h);
   });
 });
+
+// Horizontal category axis has no axis line (after v0.9.8_4_1). With negative
+// values the bars start at zero, not at the plot's left edge, so the line drew
+// a stray rule beside the category labels. Vertical keeps its baseline.
+describe('Bar — category axis line', () => {
+  const stacked = [
+    { name: 'A', values: [{ label: 'X', value: 3 }, { label: 'Y', value: 5 }] },
+    { name: 'B', values: [{ label: 'X', value: 2 }, { label: 'Y', value: 1 }] },
+  ];
+
+  it('horizontal: no .domain on the category axis', () => {
+    new Bar('#chart', { height: 300, orientation: 'horizontal', animate: false }).setData(mixed);
+    expect(host.querySelectorAll('.rc-axis-cat .tick')).toHaveLength(3);
+    expect(host.querySelector('.rc-axis-cat .domain')).toBeNull();
+  });
+
+  it('horizontal stacked: no .domain on the category axis', () => {
+    new Bar('#chart', { height: 300, orientation: 'horizontal', animate: false }).setData(stacked);
+    expect(host.querySelectorAll('.rc-axis-cat .tick')).toHaveLength(2);
+    expect(host.querySelector('.rc-axis-cat .domain')).toBeNull();
+  });
+
+  it('vertical: the category axis keeps its baseline', () => {
+    new Bar('#chart', { height: 300, animate: false }).setData(mixed);
+    expect(host.querySelector('.rc-axis-cat .domain')).not.toBeNull();
+  });
+});
