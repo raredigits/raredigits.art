@@ -133,12 +133,12 @@ Zero and negative values have no place on a log scale: they are skipped (the lin
 
 The scale can change between data swaps — for example log on the full history, linear on the last year. `setYScale()` redraws and returns the chart, so chaining it before `setData()` changes both in one paint:
 
-<pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
-chart.setYScale('linear').setData(lastYear);</code></pre>
-
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-log-demo"></div>
 </div>
+<br>
+<pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
+chart.setYScale('linear').setData(lastYear);</code></pre>
 
 ### X axis formatting
 
