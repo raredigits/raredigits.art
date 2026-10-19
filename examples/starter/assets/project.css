@@ -98,8 +98,8 @@ article h3 {
     min-height: 320px;
 }
 
-html:not(.js) .chart,
-.chart-failed .chart {
+html:not(.js) figure[data-chart] .chart,
+figure.chart-failed .chart {
     display: none;
 }
 
@@ -116,4 +116,20 @@ html:not(.js) .chart,
 /* 6. Footer. */
 .site-footer {
     padding: var(--space-lg) var(--space-md);
+}
+
+/* 7. Print. The library hides the page chrome and keeps blocks whole; here a
+      chart prints as its data table (charts.js opens it before printing),
+      which reads on paper at any size. */
+@media print {
+    figure[data-chart] .chart,
+    .chart-data summary {
+        display: none;
+    }
+
+    /* On paper a chart figure is a caption and a table, and a long table may
+       continue on the next page rather than leave this one half empty. */
+    figure[data-chart] {
+        break-inside: auto;
+    }
 }

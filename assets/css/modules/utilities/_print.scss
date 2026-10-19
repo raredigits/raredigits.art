@@ -1,0 +1,98 @@
+// ARTICLE PRINT (CSS-167, v0.7.1)
+// Basic hygiene for printing an article or saving it as PDF: the page chrome
+// and the controls go, the prose, figures, captions, sources and tables stay,
+// and no block is cut across a page. Not a print layout mode — that is the
+// later `layout-print` (CSS-308). Forwarded last, so it wins over the screen
+// rules it undoes.
+
+@media print {
+    // Chrome and controls: nothing on paper can be clicked.
+    header,
+    footer,
+    .sidebar,
+    .search-wrapper,
+    .nav-hamburger-wrapper,
+    .cookie-notice,
+    .carousel-arrow,
+    .carousel-dots,
+    .copy-button,
+    .hamburger,
+    .icon-search {
+        display: none;
+    }
+
+    // Ink on paper: no grey page, no fixed-header gap, the text at full width.
+    body {
+        background: none;
+        color: #000;
+    }
+
+    main {
+        padding: 0;
+    }
+
+    .content {
+        display: block;
+        max-width: none;
+    }
+
+    article {
+        width: auto;
+    }
+
+    // Outdents hang into page margins the paper does not have.
+    .figure-wide,
+    .text-content-caption,
+    .lead,
+    .caption,
+    .highlight,
+    pre,
+    blockquote {
+        width: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    // A heading stays with what follows it; a figure, a quote or a table row
+    // is not split across pages.
+    h1, h2, h3, h4 {
+        break-after: avoid;
+    }
+
+    figure,
+    blockquote,
+    pre,
+    tr,
+    img,
+    svg {
+        break-inside: avoid;
+    }
+
+    p {
+        orphans: 3;
+        widows: 3;
+    }
+
+    // A scrolling table prints whole, wrapped instead of cut at the edge.
+    .table-scroll {
+        overflow: visible;
+    }
+
+    th {
+        white-space: normal;
+    }
+
+    // A link's address is lost on paper: print it after external links in
+    // the prose. Anchors inside the page and note marks stay as they are.
+    article :is(p, li) a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: var(--font-size-xs);
+        color: var(--text-color-light);
+        overflow-wrap: anywhere;
+    }
+
+    a {
+        background: none;
+    }
+}

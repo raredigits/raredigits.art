@@ -21566,6 +21566,77 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   display: none !important;
 }
 
+@media print {
+  :where(html.rd, body.rd) header,
+  :where(html.rd, body.rd) footer,
+  .sidebar:where(.rd, .rd *),
+  .search-wrapper:where(.rd, .rd *),
+  .nav-hamburger-wrapper:where(.rd, .rd *),
+  .cookie-notice:where(.rd, .rd *),
+  .carousel-arrow:where(.rd, .rd *),
+  .carousel-dots:where(.rd, .rd *),
+  .copy-button:where(.rd, .rd *),
+  .hamburger:where(.rd, .rd *),
+  .icon-search:where(.rd, .rd *) {
+    display: none;
+  }
+  body:where(.rd, html.rd > *) {
+    background: none;
+    color: #000;
+  }
+  :where(html.rd, body.rd) main {
+    padding: 0;
+  }
+  .content:where(.rd, .rd *) {
+    display: block;
+    max-width: none;
+  }
+  :where(html.rd, body.rd) article {
+    width: auto;
+  }
+  .figure-wide:where(.rd, .rd *),
+  .text-content-caption:where(.rd, .rd *),
+  .lead:where(.rd, .rd *),
+  .caption:where(.rd, .rd *),
+  .highlight:where(.rd, .rd *),
+  pre:where(.rd, .rd *),
+  blockquote:where(.rd, .rd *) {
+    width: auto;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  h1:where(.rd, .rd *), h2:where(.rd, .rd *), h3:where(.rd, .rd *), h4:where(.rd, .rd *) {
+    break-after: avoid;
+  }
+  figure:where(.rd, .rd *),
+  blockquote:where(.rd, .rd *),
+  pre:where(.rd, .rd *),
+  tr:where(.rd, .rd *),
+  img:where(.rd, .rd *),
+  svg:where(.rd, .rd *) {
+    break-inside: avoid;
+  }
+  p:where(.rd, .rd *) {
+    orphans: 3;
+    widows: 3;
+  }
+  .table-scroll:where(.rd, .rd *) {
+    overflow: visible;
+  }
+  th:where(.rd, .rd *) {
+    white-space: normal;
+  }
+  article :is(p, li) a[href^=http]:where(.rd, .rd *)::after {
+    content: " (" attr(href) ")";
+    font-size: var(--font-size-xs);
+    color: var(--text-color-light);
+    overflow-wrap: anywhere;
+  }
+  a:where(.rd, .rd *) {
+    background: none;
+  }
+}
 *:where(.rd, .rd *) {
   padding: 0;
   margin: 0;

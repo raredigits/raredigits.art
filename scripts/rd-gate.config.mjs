@@ -74,4 +74,6 @@ export const ISLAND = [
   'button:hover', 'details summary',
   // focus ring (CSS-110)
   ':focus-visible', 'button:focus-visible',
+  // print hygiene (CSS-167) — inside @media print only
+  'figure', 'tr', 'svg',
 ];
