@@ -42,6 +42,11 @@ module.exports = function(eleventyConfig) {
   // verbatim so /examples/styles/<name>/assets/... resolves at that path.
   eleventyConfig.addPassthroughCopy("examples/styles/hetke/landing/assets");
 
+  // The content starter (v0.7.1, CSS-349) is plain HTML meant to be copied
+  // into an unrelated site, so it is published byte for byte: ignored as
+  // templates (.eleventyignore), copied as files.
+  eleventyConfig.addPassthroughCopy("examples/starter");
+
   eleventyConfig.addWatchTarget("./assets/css/rare.css");
   eleventyConfig.addWatchTarget("./assets/css/examples/rare-styles-main.css");
   eleventyConfig.addWatchTarget("./assets/css/");

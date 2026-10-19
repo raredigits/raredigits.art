@@ -17356,6 +17356,8 @@ ol:where(.rd, .rd *) {
 }
 :where(html.rd, body.rd) article {
   display: block;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 article p:where(.rd, .rd *),

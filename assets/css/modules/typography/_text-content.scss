@@ -35,6 +35,12 @@
 
 article {
     display: block;
+
+    // A word or URL longer than the column breaks instead of widening the
+    // page; `min-width: 0` lets the article shrink below its widest child when
+    // it is a grid item (the page shell places it on `.grid-global`) (CSS-350).
+    overflow-wrap: break-word;
+    min-width: 0;
 }
 
 article p,

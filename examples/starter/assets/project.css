@@ -1,0 +1,119 @@
+/* Project layer — everything that belongs to this site, not to Rare Styles.
+   Loaded after rare.css. Change the tokens to make the starter yours; the
+   rules below them are the article layout recipe (CSS-350). Nothing here is
+   needed by the library — delete what you do not use. */
+
+/* 1. Brand and type. Every library colour and font is a token on :root, so the
+      site is re-skinned here, without touching rare.css. */
+:root {
+    --brand-color: #00ff4e;        /* accents, link fills, highlight borders */
+    --brand-color-dark: #00b300;   /* link underline */
+    --primary-font: 'Fira Sans', sans-serif;
+    --heading-font: 'Playfair Display', serif;
+}
+
+/* 2. Header. The library lays the header out on its 12-column grid; the brand
+      is a plain text link here instead of the Rare Digits logo. */
+.site-brand {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-family: var(--heading-font);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-text-color);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.site-brand:hover {
+    background: none;
+}
+
+/* 3. Article layout. The library places <article> on columns 4–12 and sets
+      prose on the reading measure; figures, tables and charts may step out
+      with .figure-wide. The library breaks long words and URLs; a wide table
+      scrolls inside its own box (.table-scroll). */
+article h1 {
+    margin-bottom: var(--space-sm);
+    hyphens: auto;
+}
+
+article h2,
+article h3 {
+    max-width: var(--text-content-width);
+}
+
+/* Contents links at the top of a long article. */
+.article-contents {
+    max-width: var(--text-content-width);
+    margin: var(--space-md) 0 var(--space-lg);
+    font-size: var(--font-size-sm);
+}
+
+.article-contents ol {
+    margin: var(--space-xs) 0 0;
+}
+
+/* 4. Article index. Each preview is a title, a date line, one paragraph and
+      its tags. */
+.article-list {
+    max-width: var(--text-content-width);
+    padding: 0;
+    list-style: none;
+}
+
+.article-preview {
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.article-preview h2 {
+    margin: 0 0 var(--space-xs);
+    font-size: var(--font-size-xl);
+}
+
+.article-preview h2 a {
+    text-decoration: none;
+}
+
+.article-preview p {
+    margin: var(--space-xs) 0;
+}
+
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    padding: 0;
+    margin: var(--space-sm) 0 0;
+    list-style: none;
+}
+
+/* 5. Charts. The data table is the chart's source and its fallback: it is
+      always in the page, collapsed under the chart once the chart has drawn,
+      open when JavaScript or the chart library is unavailable. The chart box
+      is reserved before the library arrives, so the text does not jump. */
+.chart {
+    min-height: 320px;
+}
+
+html:not(.js) .chart,
+.chart-failed .chart {
+    display: none;
+}
+
+.chart-data {
+    margin-top: var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+.chart-data summary {
+    cursor: pointer;
+    color: var(--text-color-light);
+}
+
+/* 6. Footer. */
+.site-footer {
+    padding: var(--space-lg) var(--space-md);
+}
