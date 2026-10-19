@@ -138,6 +138,41 @@ permalink: '/styles/typography/text-content/'
     <p><code>.rd-icon-&lt;name&gt;</code></p>
 </section>
 
+<section id="inline-elements">
+    <h2>Inline Elements</h2>
+
+    <p>The small semantic elements of running prose. Each is styled on its own tag, so the right element is all the markup there is.</p>
+
+    <h3><code>&lt;kbd&gt;</code></h3>
+    <p>A key to press, drawn as a keycap so it is not mistaken for <code>code</code>, which is something to type. Press <kbd>Ctrl</kbd> + <kbd>K</kbd> to search. A whole combination can be one element with the keys nested inside: <kbd><kbd>Shift</kbd>+<kbd>Tab</kbd></kbd>.</p>
+
+    <h3><code>&lt;abbr&gt;</code></h3>
+    <p>An abbreviation with its expansion in <code>title</code>: the <abbr title="Consumer Price Index">CPI</abbr> rose for the third month. The dotted line hints that there is more on hover — but touch screens have no hover, so spell the term out in the text the first time it appears and use the bare abbreviation after that.</p>
+
+    <h3><code>&lt;sub&gt;</code> and <code>&lt;sup&gt;</code></h3>
+    <p>Set on the baseline without opening up the line: CO<sub>2</sub> emissions, 10<sup>6</sup> tonnes, the 1<sup>st</sup> quarter.</p>
+
+    <h3>References and notes</h3>
+    <p>A reference mark is a <code>&lt;sup&gt;</code> holding a link to its note; the note links back. Plain ids and links do the work — no script, and the browser's own back button returns the reader to the text.<sup><a href="#note-1" id="ref-1" aria-label="Note 1">1</a></sup> The note the reader jumped to is marked while it is the target.<sup><a href="#note-2" id="ref-2" aria-label="Note 2">2</a></sup></p>
+
+    <div class="footnote">
+        <ol>
+            <li id="note-1">Each note's id matches the mark's link, and its back link points at the mark's id. <a href="#ref-1" aria-label="Back to reference 1">↩</a></li>
+            <li id="note-2">The fixed header is accounted for: the page scrolls the target clear of it. <a href="#ref-2" aria-label="Back to reference 2">↩</a></li>
+        </ol>
+    </div>
+
+<pre><code>&lt;p&gt;… the text.&lt;sup&gt;&lt;a href="#note-1" id="ref-1" aria-label="Note 1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;div class="footnote"&gt;
+    &lt;ol&gt;
+        &lt;li id="note-1"&gt;The note. &lt;a href="#ref-1" aria-label="Back to reference 1"&gt;↩&lt;/a&gt;&lt;/li&gt;
+    &lt;/ol&gt;
+&lt;/div&gt;</code></pre>
+
+    <p>Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
+</section>
+
 <section id="figures">
     <h2>Figures</h2>
 

@@ -17830,6 +17830,43 @@ article figcaption:where(:not(.carousel-caption)):where(.rd, .rd *),
   font-size: var(--font-size-xs);
 }
 
+kbd:where(.rd, .rd *) {
+  display: inline-block;
+  padding: 0 var(--space-xs);
+  font-family: var(--code-font);
+  font-size: var(--font-size-sm);
+  line-height: 1.4;
+  color: var(--text-color-dark);
+  background-color: var(--gray-lightest);
+  border: 1px solid var(--border-color);
+  border-bottom-width: 2px;
+  border-radius: var(--space-xs);
+  white-space: nowrap;
+}
+
+kbd kbd:where(.rd, .rd *) {
+  padding: 0;
+  font-size: 1em;
+  background: none;
+  border: 0;
+}
+
+abbr[title]:where(.rd, .rd *) {
+  text-decoration-color: var(--text-color-light);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+sup > a:where(.rd, .rd *) {
+  padding: 0 0.1em;
+  text-decoration: none;
+}
+
+.footnote :target:where(.rd, .rd *) {
+  background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
+}
+
 table:where(.rd, .rd *) {
   min-width: 100%;
   font-size: var(--font-size-sm);

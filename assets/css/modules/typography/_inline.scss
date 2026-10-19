@@ -1,0 +1,51 @@
+// INLINE TEXT ELEMENTS (CSS-128, v0.7.1)
+// The small semantic elements of running prose. normalize.css already sets
+// `sub`/`sup` on the baseline and dots the underline of `abbr[title]`; this
+// gives them the library's type and colour.
+
+// A key or a key combination: <kbd>Ctrl</kbd> + <kbd>K</kbd>. Drawn as a
+// keycap, so it is told apart from `code` (which is something to type).
+kbd {
+    display: inline-block;
+    padding: 0 var(--space-xs);
+    font-family: var(--code-font);
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    color: var(--text-color-dark);
+    background-color: var(--gray-lightest);
+    border: 1px solid var(--border-color);
+    border-bottom-width: 2px;
+    border-radius: var(--space-xs);
+    white-space: nowrap;
+}
+
+// A nested <kbd> is one key of a combination already drawn by its parent.
+kbd kbd {
+    padding: 0;
+    font-size: 1em;
+    background: none;
+    border: 0;
+}
+
+// An abbreviation with its expansion: <abbr title="…">. The dotted line says
+// "there is more here"; touch devices have no hover, so expand it in the text
+// the first time it appears.
+abbr[title] {
+    text-decoration-color: var(--text-color-light);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: help;
+}
+
+// A reference mark — <sup><a href="#note-1" id="ref-1">1</a></sup> — is a
+// link too small to underline; it reads by its position and colour alone.
+sup > a {
+    padding: 0 0.1em;
+    text-decoration: none;
+}
+
+// The note the reader jumped to is marked while it is the target, so the eye
+// finds it among the others. Native ids and links, no script.
+.footnote :target {
+    background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
+}
