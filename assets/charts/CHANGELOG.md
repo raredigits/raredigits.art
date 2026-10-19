@@ -18,9 +18,17 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_4_2] — 2026-10-20 — Bar Category Axis
+
+A second patch on top of `v0.9.8_4`, again for the Rare Styles content starter: one visual fix on horizontal `Bar`. Flows II stays `v0.9.8_5`.
+
 ### Fixed
 
 - **A stray vertical line beside the category labels on horizontal `Bar`** (`src/charts/Bar.js`, categorical and stacked). The category axis drew its axis line at the plot's left edge; with a negative value the bars start at zero further right, so the line stood apart from the bars. The horizontal category axis now has no axis line, like the value axes. Vertical bars keep their baseline.
+
+### Size
+
+Minified bundle 601,420 → 601,390 bytes (−30); gzip 180,617 → 180,613 (−4). Measured on local builds of `v0.9.8_4_1` and this release, banner excluded.
 
 ## [v0.9.8_4_1] — 2026-10-19 — Bar Value Labels
 
