@@ -55,7 +55,9 @@ export function linePath(series, x, y, defaultCurve = 'linear', tension = 0) {
  */
 export function areaPath(series, x, y, defaultCurve = 'linear', globalBaseline = 'zero', tension = 0) {
   const curve  = resolveCurve(series.curve ?? defaultCurve, tension);
-  const base   = baselineValue(series.areaBaseline ?? globalBaseline, y.domain());
+  let base     = baselineValue(series.areaBaseline ?? globalBaseline, y.domain());
+  // A log scale (it has .base()) cannot place zero: fill down to the domain floor.
+  if (typeof y.base === 'function' && !(base > 0)) base = y.domain()[0];
 
   return d3.area()
     .x(d  => x(d.date))

@@ -308,10 +308,11 @@ export class Chart {
     const headerH = this._headerEl ? this._headerEl.offsetHeight + 8 : 0;
     const navigatorH = this._navigatorEl ? this._navigatorEl.offsetHeight + 8 : 0;
     const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
+    const controlsH = this._controlsEl ? this._controlsEl.offsetHeight : 0;
     const cs  = window.getComputedStyle(this.container);
     const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
     const h = this.options.height ?? this.container.clientHeight;
-    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH);
+    return Math.max(0, h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH - controlsH);
   }
 
   _onResize() {

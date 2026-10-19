@@ -1,6 +1,6 @@
 # RareCharts — ТЗ: Sankey (internal)
 
-> **Непубличный файл** (см. `.eleventyignore`). Запрос от потребителя библиотеки (2026-10-07). Релиз — **0.9.8_3 Flows I** вместе с Graph A1–A3 и видом Graph `flow` ([SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md)); `MapFlow` — в 0.9.8_4 ([SPEC-GRAPH-MAPFLOW](./SPEC-GRAPH-MAPFLOW-INTERNAL.md)); решение — в [ROADMAP-INTERNAL](./ROADMAP-INTERNAL.md).
+> **Непубличный файл** (см. `.eleventyignore`). Запрос от потребителя библиотеки (2026-10-07). Релиз — **0.9.8_3 Flows I** вместе с Graph A1–A3 и видом Graph `flow` ([SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md)); `MapFlow` — в 0.9.8_5 ([SPEC-GRAPH-MAPFLOW](./SPEC-GRAPH-MAPFLOW-INTERNAL.md)); решение — в [ROADMAP-INTERNAL](./ROADMAP-INTERNAL.md).
 >
 > Experimental-класс (как Graph и MapFlow): вне semver-гарантии 1.0, заморозку не задевает. В [API-INVENTORY](./API-INVENTORY-INTERNAL.md) заводится **до** выпуска.
 
@@ -102,7 +102,7 @@ chart.setData({
 
 ## 6. Не в v1 (осознанно)
 
-Циклы · ручное перетаскивание узлов · многоуровневый drill-down · анимированные «частицы» по лентам · явная отрисовка остатка узла (вход ≠ выход) · встраивание в `MultiChart` (идёт с `MultiChart → все типы` в 0.9.8_6).
+Циклы · ручное перетаскивание узлов · многоуровневый drill-down · анимированные «частицы» по лентам · явная отрисовка остатка узла (вход ≠ выход) · встраивание в `MultiChart` (идёт с `MultiChart → все типы` в 0.9.8_7).
 
 ## 7. Демо, тесты, acceptance
 
@@ -143,7 +143,7 @@ chart.setData({
 4. Graph `view: 'flow'`, этап 1 ([SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md)).
 5. Инвентарь, доки, релиз.
 
-`MapFlow` уехал в 0.9.8_4 (Flows II) вместе с этапом 2 вида flow (решение 2026-10-07).
+`MapFlow` уехал в 0.9.8_5 (Flows II) вместе с этапом 2 вида flow (решение 2026-10-07).
 
 ## Реализация (2026-10-07) — отклонения от ТЗ
 

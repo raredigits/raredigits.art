@@ -18,6 +18,29 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_4] — 2026-10-19 — Log Scale
+
+A small release out of turn, for a consumer that plots a long-horizon index and switches periods by swapping data: a **logarithmic Y scale on `Line`** that can be turned on and off between `setData()` calls, and **linear ticks that stay inside the data**. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_5 / _6 / _7) with their content unchanged.
+
+### Added
+
+- **`yScale: 'log'` on `Line`** (`src/charts/Line.js`, `src/core/utils.js`, docs `/charts/line/` → Logarithmic scale). Ticks fall on powers of ten — 10, 100, 1k, 10k, 100k (thinned to every 2nd/3rd power past twice `yTicks`); a range narrower than two powers gets 1-2-5 steps (20, 50, 100), a narrower one still gets linear steps. Labels drop trailing zeros (`1k`, not `1.0k`). The margin above and below the data is a factor — 8% of the data's log span on each side — so both ends get the same room instead of the axis bending at the bottom. Values ≤ 0 are skipped (lines, bands, markers, crosshair; the line joins its neighbours) with one console warning per `setData()`, never drawn as `NaN`; horizontal annotations at or below zero are dropped and an `area` fills down to the bottom of the plot. Explicit `yTickValues` keep working (non-positive ones are ignored).
+- **`Line.setYScale('log' | 'linear')`** — switches the scale and redraws; returns the chart, so `chart.setYScale('log').setData(all)` changes scale and data in one paint. Log on the full history, linear on the last year.
+- Helpers `linearTickValues`, `logTickValues`, `logPaddedDomain` in `src/core/utils.js`.
+
+### Fixed
+
+- **`Line` Y axis ran past the data** (`src/charts/Line.js`). Ticks were built as exactly `yTicks` steps up from the minimum, and the domain was stretched to the last one: a year of data topping out at 193 got an axis to 400 and a line squeezed into the lower half. Ticks now fall on d3's 1-2-5 steps inside the padded data range, and the domain is that range — `yTicks` is a target count, not a quota (the step decides: 3–6 ticks for the default 4). Charts with explicit `yTickValues` are unchanged. `Bar` keeps its own tick logic.
+- **The `controls` row overlapped the X axis** (`src/core/Chart.js`). The drawing's height did not count the controls slot added in v0.9.8_3, so the row sat on top of the axis labels; it is now subtracted like the header and footer.
+
+### Size
+
+Minified bundle 599,769 → 600,672 bytes (+903, +0.15%); gzip 179,916 → 180,248 (+332). Measured on local builds of `v0.9.8_3` and this release, banner excluded.
+
+### Removed from the backlog
+
+Logarithmic Y scale on `Line`. The same option on `TimeSeries` and `DualAxes` stays in the [backlog](https://raredigits.art/charts/backlog/) for v0.9.8_7.
+
 ## [v0.9.8_3] — 2026-10-16 — Flows I
 
 The relation release. Two new ways to draw what moves between things — a **Sankey** diagram and the Graph **flow view** for money trails and supply chains — on one shared link contract, plus a Graph that keeps every tie between a pair, explains a node or a tie in a details panel, and holds up under a real walk-through: grid layouts everywhere but the route view, a canvas that fits what it can show, full screen, footer tools. Sankey and the flow view are experimental, outside the 1.0 promise.

@@ -64,8 +64,9 @@
 | `animate` | boolean | `true` | только первый рендер. ⚠️ В TimeSeries моторного блока нет вообще |
 | `duration` | number (ms) | `650` | через `motionDuration()` |
 | `ease` | `'cubicOut'\|'cubicInOut'\|'linear'` | `'cubicOut'` | |
-| `yTicks` | number | `4` | ⚠️ в TimeSeries дефолт 5 |
-| `yTickValues` | number[] | авто (`niceTickValues`) | ❓ недокументирована в шапке |
+| `yScale` | `'linear'\|'log'` | `'linear'` | 0.9.8_4. Log: тики по степеням 10 (→ 1-2-5 → линейные), отступ множителем (`logPaddedDomain`), значения ≤ 0 пропускаются с одним warn на `setData`. Метод `setYScale(type)` — перерисовка, chainable. ⚠️ пока только Line (TimeSeries/DualAxes — 0.9.8_7) |
+| `yTicks` | number | `4` | ориентир, не квота: с 0.9.8_4 линейные тики `linearTickValues` (d3 1-2-5) внутри отбитого диапазона, ось не уходит за данные. ⚠️ в TimeSeries дефолт 5 |
+| `yTickValues` | number[] | авто (`linearTickValues` / `logTickValues`) | явные тики могут расширить домен |
 | `yTickFormat` | `fn(value) => string` | авто (SI `.2s` / `+.2%`) | |
 | `xTickFormat` | `fn(date) => string` | `'%m/%d'` | ⚠️ в TimeSeries дефолт `'%b'` |
 | `xTicks` | number | `6` | ❓ недокументирована в шапке |
@@ -393,7 +394,7 @@ node = {
 | `animate` / `duration` / `ease` | `true` / `500` / `cubicOut` | ✅ моторный блок как у Bar (нет `stagger`) |
 | `tooltipFormat` | — | `(node) => html` |
 
-Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_6); текущий вид статический (весь outline сразу).
+Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_7); текущий вид статический (весь outline сразу).
 
 ### Donut drill-down (расширение стабильного класса — ✅ реализовано)
 

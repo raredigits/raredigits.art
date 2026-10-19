@@ -113,7 +113,7 @@ Zero is treated carefully: values with `|v| < zeroEpsilon` are printed as `0` 
 
 You can also add `yPrefix` and `ySuffix` for units. If you need full control, provide `yTickFormat: (value) => string` and ignore the automatic formatting entirely.
 
-Tick density is controlled by `yTicks` (default 4). For minimalist displays, `yLabelsOnly` can be enabled (default true), keeping the axis visually restrained.
+Tick density is controlled by `yTicks` (default 4). The number is a target, not a quota: ticks fall on round 1-2-5 steps inside the data range, so the axis never stretches past the data just to fit four steps. For minimalist displays, `yLabelsOnly` can be enabled (default true), keeping the axis visually restrained.
 
 By default, the Y axis is rendered on the right side of the chart. If your layout or design system requires a left-aligned axis, you can override this behavior by setting:
 
@@ -125,7 +125,22 @@ This moves the Y axis to the left while preserving all formatting and scaling 
     <div id="line-chart-left-axis-demo"></div>
 </div>
 
-### X axis formatting
+### Logarithmic scale
+
+For long-horizon prices and indices, set `yScale: 'log'`. Equal percentage moves get equal height, so a crash in the early years is as visible as one last month. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.
+
+Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.
+
+The scale can change between data swaps — for example log on the full history, linear on the last year. `setYScale()` redraws and returns the chart, so chaining it before `setData()` changes both in one paint:
+
+<pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
+chart.setYScale('linear').setData(lastYear);</code></pre>
+
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="line-chart-log-demo"></div>
+</div>
+
+### X axis formatting
 
 `xTickFormat` is a function `(date) => string`. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:
 
@@ -247,7 +262,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>yTicks</code></td>
             <td>number</td>
             <td><code>4</code></td>
-            <td>Number of Y tick marks.</td>
+            <td>Approximate number of Y ticks. Linear ticks stay inside the data range, so the actual count follows the step.</td>
+        </tr>
+        <tr>
+            <td><code>yScale</code></td>
+            <td><code>'linear'</code> | <code>'log'</code></td>
+            <td><code>'linear'</code></td>
+            <td>Y scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 skipped. Change it between data swaps with <code>setYScale()</code>.</td>
         </tr>
         <tr>
             <td><code>xTicks</code></td>
@@ -531,3 +552,4 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance.js"></script>
 <script src="/assets/charts/examples/line/line-chart-performance-left-axis.js"></script>
+<script src="/assets/charts/examples/line/line-chart-log-scale.js"></script>
