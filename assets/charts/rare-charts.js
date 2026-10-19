@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.8_4_1 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, Sankey. Relation charts (Graph, Sankey) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_4_2 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link). Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, Sankey. Relation charts (Graph, Sankey) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -3404,7 +3404,7 @@ var RareCharts = (() => {
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.8_4_1"
+    version: "v0.9.8_4_2"
   };
 
   // node_modules/d3/src/index.js
@@ -22406,7 +22406,7 @@ var RareCharts = (() => {
       if (showYAxis) {
         this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y4).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
           g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").attr("stroke", t.border);
+          g.select(".domain").remove();
           this._bindLabelTooltips(g, "left");
         });
       } else {
@@ -22653,7 +22653,7 @@ var RareCharts = (() => {
         if (showYAxis) {
           this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(cat3).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
             g.selectAll("text").attr("fill", t.muted);
-            g.select(".domain").attr("stroke", t.border);
+            g.select(".domain").remove();
             this._bindLabelTooltips(g, "left");
           });
         } else {

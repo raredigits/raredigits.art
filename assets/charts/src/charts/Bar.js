@@ -370,7 +370,9 @@ export class Bar extends Chart {
         .call(g => {
           g.selectAll('text')
             .attr('fill', t.muted);
-          g.select('.domain').attr('stroke', t.border);
+          // No axis line: with negative values the bars start at zero, not
+          // at the plot's left edge, and the line read as a stray rule.
+          g.select('.domain').remove();
           this._bindLabelTooltips(g, 'left');
         });
     } else {
@@ -752,7 +754,7 @@ export class Bar extends Chart {
           .call(d3.axisLeft(cat).tickSize(0).tickFormat(d => this._formatLabel(d)))
           .call(g => {
             g.selectAll('text').attr('fill', t.muted);
-            g.select('.domain').attr('stroke', t.border);
+            g.select('.domain').remove();
             this._bindLabelTooltips(g, 'left');
           });
       } else { this.gAxisX.selectAll('*').remove(); }
