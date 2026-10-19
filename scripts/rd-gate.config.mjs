@@ -63,7 +63,7 @@ export const ISLAND = [
   'p', 'ul', 'ol',
   'article p', 'article ul', 'article ol',
   'mark', 'cite', 'blockquote', 'blockquote p:first-of-type',
-  'kbd kbd', 'sup > a', // inline text elements (CSS-128)
+  'sup > a', // note reference marks (CSS-128)
   'dl', 'dt', 'dd + dt',
   'pre', 'code', 'pre code',
   // tables
