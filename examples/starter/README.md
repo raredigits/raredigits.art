@@ -80,4 +80,4 @@ Both libraries are pinned to exact versions, so a release never changes your sit
 | Rare Styles | the `rare-styles@…` stylesheet URL in `index.html` and `article.html` | `v0.7.1` |
 | RareCharts | `RARECHARTS_SRC` at the top of `assets/charts.js` | `v0.9.8_4` |
 
-To upgrade, read the changelog (<https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/Changelog.md>), change the version, and check both pages. **Self-hosting** instead of the CDN: download `rare.min.css` together with its `fonts/` and `images/` folders from <https://github.com/raredigits/rare-styles> at the same tag, keep them side by side, and point the `<link>` at your copy.
+To upgrade, read the changelog (<https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md>), change the version, and check both pages. **Self-hosting** instead of the CDN: download `rare.min.css` together with its `fonts/` and `images/` folders from <https://github.com/raredigits/rare-styles> at the same tag, keep them side by side, and point the `<link>` at your copy.

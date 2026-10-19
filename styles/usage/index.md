@@ -6,6 +6,31 @@ displaySidebar: true
 permalink: '/styles/usage/'
 ---
 
+## Quick start
+
+The fastest way to a working site is the **[content starter](/examples/starter/)**: an article index and an article with images, a table and charts, in plain HTML. Copy it, change the content, publish. Its [README](https://github.com/raredigits/raredigits.art/tree/main/examples/starter) walks through every step below.
+
+1. **Copy and serve.** Copy the starter folder anywhere and serve it with any static server (`python3 -m http.server`). It needs no build and no framework, and its links are relative, so it also works under a sub-path.
+2. **Publish.** Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.
+3. **Make it yours.** Set the brand and the fonts through the library's tokens in your own stylesheet (see [Customization](#customization-approach) below). The reading measure is `--text-content-width`.
+4. **Upgrade on purpose.** Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the [changelog](https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md) first.
+
+### What a page needs
+
+```html
+<html lang="en" class="rd">                         <!-- the one integration step -->
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@{{ versions.styles }}/rare.min.css">
+  <link rel="stylesheet" href="project.css">       <!-- your layer, loaded after -->
+</head>
+```
+
+- **Page mode or islands.** `class="rd"` on `<html>` styles the whole page: header, page grid, typography and components. On one element instead, it styles only that block, which is how you embed the library in a page styled by something else. [Getting Started](/styles/getting-started/) compares the two.
+- **Library files and your files stay apart.** `rare.css` is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.
+- **Self-hosting.** To serve the library yourself instead of from the CDN, download `rare.min.css` with its `fonts/` and `images/` folders from the [rare-styles repository](https://github.com/raredigits/rare-styles) at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.
+- **Companion scripts are optional.** The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the [Scripts](/scripts/) pages. Copy only the ones you use.
+- **Charts are separate.** [RareCharts](/charts/) is its own pinned script. Load it only on pages that have charts. The starter's `charts.js` shows how: it draws each chart from a data table that stays readable without JavaScript.
+
 ## General Principles
 
 Rare Styles provides a solid foundation for creating clean, functional interfaces. This guide explains how to effectively implement the style system in your projects and customize it when needed.
