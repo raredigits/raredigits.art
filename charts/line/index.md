@@ -127,7 +127,7 @@ This moves the Y axis to the left while preserving all formatting and scaling 
 
 ### Logarithmic scale
 
-For long-horizon prices and indices, set `yScale: 'log'`. Equal percentage moves get equal height, so a crash in the early years is as visible as one last month. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.
+For long-horizon prices and indices, set `yScale: 'log'`. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Log and Linear to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.
 
 Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.
 

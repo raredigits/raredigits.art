@@ -626,6 +626,14 @@
   user-select: none;
 }
 
+.rc-demo-select {
+  border: 1px solid var(--text-color, #000);
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-family: var(--rc-font-family);
+  color: inherit;
+}
+
 .rc-demo-btn-bar {
   display: flex;
   flex-wrap: wrap;

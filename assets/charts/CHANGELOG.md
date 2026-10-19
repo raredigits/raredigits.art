@@ -32,6 +32,7 @@ A small release out of turn, for a consumer that plots a long-horizon index and 
 
 - **`Line` Y axis ran past the data** (`src/charts/Line.js`). Ticks were built as exactly `yTicks` steps up from the minimum, and the domain was stretched to the last one: a year of data topping out at 193 got an axis to 400 and a line squeezed into the lower half. Ticks now fall on d3's 1-2-5 steps inside the padded data range, and the domain is that range — `yTicks` is a target count, not a quota (the step decides: 3–6 ticks for the default 4). Charts with explicit `yTickValues` are unchanged. `Bar` keeps its own tick logic.
 - **The `controls` row overlapped the X axis** (`src/core/Chart.js`). The drawing's height did not count the controls slot added in v0.9.8_3, so the row sat on top of the axis labels; it is now subtracted like the header and footer.
+- **Demo selects had the browser's light border** (`rare-charts.css` → `.rc-demo-select`, `/charts/line/visual-options/`). They now get a black border matching the control cards.
 
 ### Size
 
