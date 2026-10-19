@@ -62,6 +62,8 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 
 # Milestone `v0.7.1` — Content Starter
 
+**Status:** release-ready 2026-10-19 on branch `content-starter-v0.7.1` (version bump `39a63e9`); not merged. Every task below is done. The starter rehearsal (`CSS-353`) ran from a clean root outside the repository under the sub-path `/notes/`, with the local build served in place of the not-yet-published `v0.7.1` CDN files: no console errors or failed requests, no overflow at 375px or 200% zoom, open tables and no empty chart boxes without JavaScript, RareCharts absent from the index page, ordered headings, a focus ring at every Tab stop, secondary text 5.0:1. Payloads, uncompressed: index 3 KB HTML + 416 KB CSS + 72 KB fonts; article 10 KB HTML + 431 KB CSS + 593 KB RareCharts + 178 KB fonts, with images lazy. One RareCharts defect found: a short negative bar has no room for its value label (`-0.2` renders as `-0`); the starter turns value labels off until it is fixed in RareCharts.
+
 **Goal:** the data project can start from two working pages — articles, images and charts — without copying the documentation site's layout or depending on later library releases. Second of the two content-launch releases; drafted 2026-09-07 as `v0.6.21`, re-cut onto the `.rd` gate 2026-10-07.
 **Depends on:** `v0.7.0`. Uses the gated `rare.css` in page mode (`<html class="rd">`) and existing public classes. No dependency on `rd-layout-longread`, npm or the future chart-token bridge.
 **Planning estimate:** 6–9 working days after `v0.7.0`, excluding the site's content production. The project framework/CMS is not selected: ship portable HTML/CSS/JS first, then adapt to the chosen host without imposing Eleventy.
@@ -80,12 +82,12 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 
 ## Launch gate — the data project can start here
 
-- [ ] A clean consumer can copy the starter, change brand/title/content and publish both pages following only its README
-- [ ] Article measure, mixed-width media, captions, table scrolling, anchor navigation and long content pass the `v0.7.0` browser matrix
-- [ ] Charts render/rescale; article meaning/data remain accessible without chart JS; styles and charts have separately verified version pins
-- [ ] Keyboard, contrast, reduced motion, print and asset-path checks pass; any discovered defect is fixed before launch
-- [ ] Full site build, lint and relevant automated checks pass; bundle and page payload changes recorded
-- [ ] No library redesign, forced framework or unreleased layout dependency is required — `<html class="rd">` is the only integration step
+- [x] A clean consumer can copy the starter, change brand/title/content and publish both pages following only its README (copied to an unrelated root and served under a sub-path; the CDN pin resolves once `v0.7.1` is published)
+- [ ] Article measure, mixed-width media, captions, table scrolling, anchor navigation and long content pass the `v0.7.0` browser matrix — **Chrome only so far** (desktop, 375px, 200% zoom, live resize); Safari and Firefox are not checked. The long-URL overflow found here is fixed in the library (`article` breaks long words)
+- [x] Charts render/rescale; article meaning/data remain accessible without chart JS; styles and charts have separately verified version pins (`rare-styles@v0.7.1` in the pages, `rare-charts@v0.9.8_4` in `charts.js`)
+- [ ] Keyboard, contrast, reduced motion, print and asset-path checks pass; any discovered defect is fixed before launch — keyboard, contrast, print (PDF from headless Chrome) and asset paths pass; **reduced motion not checked** on the starter
+- [x] Full site build, lint and relevant automated checks pass; bundle and page payload changes recorded (416 unit, 38 browser, 0 broken links; `SIZE-BASELINE.md` row `v0.7.1`)
+- [x] No library redesign, forced framework or unreleased layout dependency is required — `<html class="rd">` is the only integration step
 
 ---
 

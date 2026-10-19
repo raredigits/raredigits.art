@@ -7,6 +7,23 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ---
 
+## [v0.7.1] — 2026-10-19 — Content Starter
+
+**A content site can start from two working pages.** A portable starter, an article index and an article with an image, a table and two charts, lives in [`examples/starter/`](https://github.com/raredigits/raredigits.art/tree/main/examples/starter). It is plain HTML, CSS and JavaScript, needs no build, and works from any static root or sub-path. The library gains what such an article needs: figures with captions and sources, the small inline elements of prose, and print rules. Additive: nothing is renamed or removed, and `<html class="rd">` is still the only integration step.
+
+### Added
+
+- **Article figures** (`CSS-127`). A `<figure>` inside `<article>` sits on the reading measure, its image fills it, and its `<figcaption>` reads as a muted note. **`.figure-wide`** steps out to the caption width (and simply fills a card or a collapsible); **`.figure-source`** sets the credit line; **`.figure`** gives the same treatment outside an article. Carousel slides and epigraphs keep their own layout, and the exclusion adds no specificity, so utilities still win. Docs: alt text, `width`/`height`, `loading="lazy"`, `srcset`/`sizes` on `/styles/typography/text-content/#figures`.
+- **Inline text elements** (`CSS-128`): `kbd` drawn as a keycap (nested `kbd` for combinations), `abbr[title]` with a quiet dotted underline, `sup > a` reference marks, and the target note highlighted inside `.footnote`. A native-anchor reference/backlink example is documented. The full footnote engine stays later (`CSS-165`).
+- **Article print rules** (`CSS-167`, under the gate). On paper the header, footer, sidebar and controls go, outdents fold in, headings stay with what follows, figures, quotes and table rows are not split, a `.table-scroll` table prints whole, and external prose links print their address.
+- **The content starter** (`CSS-349`, `CSS-350`, `CSS-351`): `index.html`, `article.html`, a `project.css` that holds the brand tokens and the article layout recipe, and a `charts.js` that loads RareCharts (pinned `v0.9.8_4`) only on pages with a `data-chart` figure. Each chart is drawn from the HTML data table inside its figure. Without JavaScript, or when the chart library cannot load, the reader gets the caption and the open table, and on paper the chart prints as that table. The starter is published as-is at `/examples/starter/` and is not part of the `rare-styles` artifact.
+- **Quick start** on `/styles/usage/` (`CSS-352`): copy, serve, publish, pins and self-hosting, page mode vs islands, and where your own rules go.
+
+### Changed
+
+- **`<article>` breaks long words and URLs** (`overflow-wrap: break-word`) and can shrink below its widest child as a grid item (`min-width: 0`), so a long URL in the prose no longer widens the page on a phone (`CSS-350`). **Visual delta:** none for ordinary text. A figure inside an article now keeps to the reading measure instead of the full article column (on this site, the hetke mockup), and its caption is muted and smaller.
+- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 418,005 → **421,792 B** raw (+0.9%), gzip 35,112 → **35,749 B** (+1.8%), Brotli 22,533 → **23,057 B** (+2.3%); `rare.css` 493,709 → 498,181 B raw, gzip 37,442 → 38,181, Brotli 23,856 → 24,535.
+
 ## [v0.7.0] — 2026-10-17 — Scope Gate & Bug Closure
 
 **Breaking: Rare Styles now changes nothing on a page until you ask for it.** Every rule in the library applies only under the `.rd` class. Put `class="rd"` on `<html>` and the page renders exactly as before (page mode); put it on any element and only that block is styled (island); leave it out and `rare.css` has no effect even when loaded. The gate is `:where(.rd, .rd *)`, so the gate adds **zero specificity**: every library rule weighs exactly what it did in `0.6`. **To upgrade from `0.6`, add `class="rd"` to `<html>` in the same change that bumps the pin.** The release also closes every known defect (a dated bug ledger, an accessibility base, mobile overflow) and replaces the unchecked CSS sync with a validated release pipeline. The full list of changes with consumer actions is in [`MIGRATION.md`](./MIGRATION.md); the defect ledger is [`BUG-LEDGER.md`](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/BUG-LEDGER.md).
