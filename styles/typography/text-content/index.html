@@ -26,6 +26,16 @@ permalink: '/styles/typography/text-content/'
 
 <section>
     <h3>Meta Copy</h3>
+
+    <h4><code>.meta-info</code></h4>
+    <p>Technical information set apart from the prose: the line under a heading, an article's imprint (author, date, reading time), a file path or a version. Muted, small and light, so the eye skips it until it is needed.</p>
+
+    <p class="meta-info">By Jane Doe · 12 October 2026 · 6 min read</p>
+
+    <p>Its look is the same as <code>.note</code>; the difference is the vertical margin. <code>.meta-info</code> keeps <code>var(--space-md)</code> below it (and <code>var(--space-sm)</code> above inside an <code>&lt;article&gt;</code>), so it stands as its own line between a heading and the text. <code>.note</code> has no margin of its own and sits inside the flow it comments on.</p>
+
+<pre><code>&lt;h1&gt;Where the price rise came from&lt;/h1&gt;
+&lt;p class="meta-info"&gt;By Jane Doe · 12 October 2026 · 6 min read&lt;/p&gt;</code></pre>
 </section>
 
 <section>
