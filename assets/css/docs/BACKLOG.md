@@ -181,6 +181,7 @@ For prose-heavy pages: scaled-up serif typography, adjusted heading treatment, g
 | `CSS-170` | feat | `modules/layouts/_index.scss` forwarding both layouts. Wire from `modules/_index.scss`. | S |
 | `CSS-171` | feat | Allow combining a layout with token overrides at `:root` (brand-context customization without forking the layout). | S |
 | `CSS-172` | docs | `STYLEGUIDE.md` section: layouts set page-level context, not components. Document which existing modules are layout-aware (typography, layout shell) and which are layout-agnostic (everything else). Make explicit: defaults are not a layout — pages without a `rd-layout-*` class get the canonical visual rendering. | S |
+| `CSS-370` | chore | **Review `@mixin outdent` and `@mixin caption-width`** (`typography/_text-content.scss`, raised in the `v0.7.1` release review, 2026-10-20). `caption-width` repeats the same `min()` geometry and its phone media query in four classes (`.text-content-caption`, `.lead`, `.highlight`, `.teaser-bottom`): about 3 KB raw of the `v0.7.1` growth. Weigh one shared selector group for the geometry against the one-block-per-class rule; check `outdent`'s right-side cap against the layout modes; move both into the layout infrastructure if the longread mode owns the column geometry. Do it together with the width-class names (`Q-15`) — measure the bundle before and after in `SIZE-BASELINE.md`. | S |
 
 ### Documentation & examples (P0)
 

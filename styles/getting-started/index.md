@@ -89,4 +89,4 @@ The upcoming page layouts sit next to `rd` on `<html>`: `<html class="rd rd-layo
 
 ## Upgrading from 0.6
 
-Add `class="rd"` to `<html>` in the same change that bumps the pin to `v0.7.0`. That is the only required step. Every other change, with what to do about it, is in the [migration table](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/MIGRATION.md).
+Add `class="rd"` to `<html>` in the same change that bumps the pin to `v0.7.0` or later. That is the only required step. Every other change, with what to do about it, is in the [migration table](https://github.com/raredigits/raredigits.art/blob/main/assets/css/docs/MIGRATION.md).
