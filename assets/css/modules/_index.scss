@@ -12,3 +12,6 @@
 
 // rd-is-* states are forwarded last on purpose — see utilities/_states.scss
 @forward "utilities/states";
+
+// Print hygiene comes after everything it undoes — see utilities/_print.scss
+@forward "utilities/print";

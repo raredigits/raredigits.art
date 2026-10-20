@@ -1,6 +1,6 @@
 {
   "name": "raredigits.art",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "private": true,
   "engines": {
     "node": ">=24 <25"
@@ -8,7 +8,8 @@
   "scripts": {
     "start": "npm-run-all charts:build --parallel sass-watch charts:watch eleventy-serve",
     "build": "npm run sass-build && npm run charts:build && eleventy",
-    "postbuild": "npm run pagefind:build",
+    "postbuild": "npm run pagefind:build && npm run zip:starter",
+    "zip:starter": "cd examples/styles/content-starter/demo && rm -f ../../../../_site/examples/styles/content-starter/content-starter.zip && zip -r -X -q ../../../../_site/examples/styles/content-starter/content-starter.zip . -x '*.DS_Store'",
     "build:css": "node scripts/build-css.mjs",
     "lint:css": "stylelint \"assets/css/**/*.scss\"",
     "watch:css": "node scripts/build-css.mjs --watch",

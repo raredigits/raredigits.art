@@ -8,20 +8,15 @@
 // covers the tallest measured notice (226px + 10px offset, 320–1440px wide);
 // override the token if your notice is taller. Without :has() support
 // (Firefox < 121) nothing is reserved, as before.
+// No space is added after the footer (v0.7.1): the empty spacer read as a hole
+// under the page. Links at the very end of the page can sit under the notice
+// until it is dismissed.
 :root {
     --cookie-notice-reserve: 16rem;
 }
 
 html:has(.cookie-notice:not(.rd-is-hidden)) {
     scroll-padding-bottom: var(--cookie-notice-reserve);
-}
-
-// …and the end of the page (footer links) can scroll above the notice too:
-// an empty flex item after the footer. `body` is `height: 100%` with its
-// content overflowing, so a plain padding-bottom would not extend the scroll.
-html:has(.cookie-notice:not(.rd-is-hidden)) body::after {
-    content: "";
-    flex: 0 0 var(--cookie-notice-reserve);
 }
 
 .cookie-notice {

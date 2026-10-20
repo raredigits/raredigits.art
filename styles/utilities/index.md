@@ -27,7 +27,7 @@ Small single-purpose classes that adjust one thing on one element. They live in 
 | Class | Effect |
 |---|---|
 | `.wrap` / `.no-wrap` | `flex-wrap: wrap` / `nowrap` on a flex container |
-| `.text-wrap` / `.text-nowrap` | `white-space: normal` / `nowrap` |
+| `.text-wrap` | `white-space: normal` (for no wrapping, see `.nobr` on [Text Elements](/styles/typography/text-content/)) |
 
 </div>
 

@@ -42,6 +42,14 @@ module.exports = function(eleventyConfig) {
   // verbatim so /examples/styles/<name>/assets/... resolves at that path.
   eleventyConfig.addPassthroughCopy("examples/styles/hetke/landing/assets");
 
+  // The content starter demo (v0.7.1, CSS-349) is plain HTML meant to be
+  // copied into an unrelated site, so it is published byte for byte: ignored
+  // as templates (.eleventyignore), copied as files, and in `--serve` served
+  // straight from source so edits show without a restart. Its download,
+  // content-starter.zip, is made by `npm run zip:starter` after the build.
+  eleventyConfig.addPassthroughCopy("examples/styles/content-starter/demo");
+  eleventyConfig.setServerPassthroughCopyBehavior("passthrough");
+
   eleventyConfig.addWatchTarget("./assets/css/rare.css");
   eleventyConfig.addWatchTarget("./assets/css/examples/rare-styles-main.css");
   eleventyConfig.addWatchTarget("./assets/css/");

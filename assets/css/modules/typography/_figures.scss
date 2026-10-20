@@ -1,0 +1,84 @@
+@use "../utilities/breakpoints" as *;
+
+// ARTICLE FIGURES (CSS-127, v0.7.1)
+// An image (or table, or chart) with its caption and source, set in the prose
+// flow of an <article>. Outside an article the same treatment is opt-in with
+// `.figure` — for a card, a section or an island.
+// Contract:
+//   <figure>                       — on the reading measure
+//   <figure class="full-width">    — or another generic width, see Widths below
+//     <img src alt width height>  — width/height reserve the box (no shift)
+//     <figcaption>Caption <span class="figure-source">Source: …</span></figcaption>
+// Carousel slides and epigraphs are figures with their own layout, so they are
+// excluded; the epigraph is defined at the end of this file. The exclusion
+// sits in `:where()` and adds no specificity: a utility (`.margin-y-md`,
+// `.full-width`) still wins over this rule.
+
+article figure:not(:where(.carousel-slide, .epigraph)),
+.figure {
+    max-width: var(--text-content-width);
+    margin: var(--space-lg) 0;
+
+    @include mobile {
+        max-width: 100%;
+    }
+
+    > img,
+    > picture img {
+        width: 100%;
+    }
+}
+
+// Widths. A figure takes the library's generic width classes like any other
+// block: `.full-width` (the content column), `.text-content-caption` (the
+// measure plus the outdent on both sides), `.full-width-caption` (the outdent
+// on the left, the column edge on the right). `.full-width` sets no max-width,
+// so it lifts the figure's reading-measure cap here.
+figure.full-width {
+    max-width: none;
+}
+
+article figcaption:where(:not(.carousel-caption)),
+.figure figcaption {
+    margin-top: var(--space-sm);
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+    color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+
+    // Long URLs in a source line break instead of widening the page.
+    overflow-wrap: anywhere;
+}
+
+// A wider figure's caption stays on the reading measure; it starts at the
+// image edge, so it reads the same inside a card, where nothing outdents.
+figure:is(.full-width, .text-content-caption, .full-width-caption) figcaption {
+    max-width: var(--text-content-width);
+}
+
+.figure-source {
+    display: block;
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-xs);
+}
+
+// Epigraph — a short attributed quote at the head of a section or page,
+// right-aligned and italic so it reads as a voice from outside the prose.
+// (Harvested from sibling projects; the source had a duplicated `margin`
+// declaration and a magic `3em` gap — both normalized here.)
+
+figure.epigraph {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0 0 var(--space-xl);
+    font-style: italic;
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-sm);
+
+    p {
+        width: 60%;
+        margin: 0;
+        text-align: right;
+    }
+}

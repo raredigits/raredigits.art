@@ -1,0 +1,26 @@
+/* Your styles. This file loads after Rare Styles, so whatever you set here wins.
+   Never edit rare.css itself: put your changes here, and a library upgrade
+   cannot overwrite them. */
+
+/* Brand colours and fonts. Every colour and font in the library is a variable
+   like these; the full list is at https://raredigits.art/styles/ */
+:root {
+    --brand-color: #fa8c16;
+    --brand-color-dark: #86241a;
+    --primary-font: 'Fira Sans', sans-serif;
+    --heading-font: 'Playfair Display', serif;
+}
+
+/* The site name in the header, set as text instead of a logo. */
+.site-brand {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    font-family: var(--heading-font);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    background: none;
+}
+
+/* Add your own rules below. */

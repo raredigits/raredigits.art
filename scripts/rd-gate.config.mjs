@@ -57,12 +57,13 @@ export const ISLAND = [
   'button::-moz-focus-inner', 'button:-moz-focusring',
   'fieldset', 'legend', 'progress', '::-webkit-file-upload-button',
   'details', 'summary', 'template',
-  // typography
+  // typography — figures (CSS-127) use classes or `:where()` and need no entry
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
   'article > :is(h2, h3):first-child',
   'p', 'ul', 'ol',
   'article p', 'article ul', 'article ol',
   'mark', 'cite', 'blockquote', 'blockquote p:first-of-type',
+  'sup > a', // note reference marks (CSS-128)
   'dl', 'dt', 'dd + dt',
   'pre', 'code', 'pre code',
   // tables
@@ -73,4 +74,6 @@ export const ISLAND = [
   'button:hover', 'details summary',
   // focus ring (CSS-110)
   ':focus-visible', 'button:focus-visible',
+  // print hygiene (CSS-167) — inside @media print only
+  'figure', 'tr', 'svg',
 ];

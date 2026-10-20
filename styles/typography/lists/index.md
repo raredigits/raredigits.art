@@ -227,6 +227,10 @@ A feed is a chronological vertical stream — and a navigation surface, not body
 
 Use a feed when each item is mostly "date + title + optional tags". If readers need to compare entries as options rather than follow them as a timeline, `.catalog-list` is usually the better fit.
 
+### `.feed-list__clean`
+
+Add `feed-list__clean` next to `feed-list` to drop the rule between items, for a short list where whitespace alone separates the entries: `<div class="feed-list feed-list__clean">`.
+
 ## Catalog lists
 
 ### `.catalog-list`, `.catalog-list__item`

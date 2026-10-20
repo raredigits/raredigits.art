@@ -118,7 +118,10 @@ describe('keyboard and contrast regressions (2026-10-16 sweep)', () => {
         const notice = document.getElementById('cookie'); // the visible notice (the states block has a hidden one)
         const nr = notice.getBoundingClientRect();
         const noticeShown = getComputedStyle(notice).display !== 'none';
-        const covered = noticeShown && !notice.contains(el)
+        // Allowed only at the end of the page, where nothing is left to scroll:
+        // no space is reserved after the footer (v0.7.1, maintainer decision).
+        const atPageEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
+        const covered = noticeShown && !notice.contains(el) && !atPageEnd
           && r.bottom > nr.top && r.top < nr.bottom && r.right > nr.left && r.left < nr.right;
         const invisible = r.bottom < 0 || r.top > innerHeight || getComputedStyle(el).visibility === 'hidden';
         return { key: (el.className || el.tagName) + ':' + el.textContent.trim().slice(0, 20), covered, invisible, inMenu: !!el.closest('.nav-hamburger') };
@@ -143,16 +146,17 @@ describe('keyboard and contrast regressions (2026-10-16 sweep)', () => {
 
   it.each([1440, 768, 375])('focus is never hidden under the cookie notice at %ipx (CSS-361)', async (width) => {
     const page = await open(FIXTURE, { width, height: 700 });
+    // No spacer after the footer while the notice shows (v0.7.1): it read as a hole.
+    expect(await page.evaluate(() => getComputedStyle(document.body, '::after').content)).toBe('none');
     const stops = await tabThrough(page);
     expect(stops.length).toBeGreaterThan(5);
     expect(stops.filter((s) => s.covered).map((s) => s.key)).toEqual([]);
     // dismissed notice: nothing reserved any more
     const after = await page.evaluate(() => {
       document.getElementById('cookie').classList.add('rd-is-hidden');
-      return { spb: getComputedStyle(document.documentElement).scrollPaddingBottom, after: getComputedStyle(document.body, '::after').content };
+      return { spb: getComputedStyle(document.documentElement).scrollPaddingBottom };
     });
     expect(after.spb).toBe('auto');
-    expect(after.after).toBe('none');
     await page.close();
   });
 

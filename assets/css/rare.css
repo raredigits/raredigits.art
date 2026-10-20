@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/*! Rare Styles v0.7.0 | Since v0.7.0 every rule applies only under the .rd class: <html class="rd"> styles the whole page, class="rd" on an element styles just that block, a page without .rd is untouched. Upgrading from 0.6: add class="rd" to <html>. Migration: https://github.com/raredigits/rare-styles/blob/main/docs/MIGRATION.md | Docs: https://raredigits.art/styles/getting-started/ */
+/*! Rare Styles v0.7.1 | Since v0.7.0 every rule applies only under the .rd class: <html class="rd"> styles the whole page, class="rd" on an element styles just that block, a page without .rd is untouched. Upgrading from 0.6: add class="rd" to <html>. Migration: https://github.com/raredigits/rare-styles/blob/main/docs/MIGRATION.md | Docs: https://raredigits.art/styles/getting-started/ */
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -314,10 +314,6 @@ template:where(.rd, .rd *) {
 
 .text-wrap:where(.rd, .rd *) {
   white-space: normal;
-}
-
-.text-nowrap:where(.rd, .rd *) {
-  white-space: nowrap;
 }
 
 .scroll-container:where(.rd, .rd *) {
@@ -1724,12 +1720,12 @@ body:where(.rd, html.rd > *) {
 
 .full-width-caption:where(.rd, .rd *) {
   width: calc(100% + var(--space-lg));
+  max-width: none;
   margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * var(--space-lg));
 }
 @media screen and (width < 769px) {
   .full-width-caption:where(.rd, .rd *) {
-    width: calc(100% + var(--space-md));
+    width: calc(100% + var(--space-sm));
     margin-left: calc(-1 * var(--space-sm));
   }
 }
@@ -16918,10 +16914,6 @@ body:where(.rd, html.rd > *) {
   font-weight: var(--font-weight-normal);
 }
 
-.font-weight-bold:where(.rd, .rd *) {
-  font-weight: var(--font-weight-bold);
-}
-
 .font-weight-black:where(.rd, .rd *) {
   font-weight: var(--font-weight-black);
 }
@@ -16941,7 +16933,7 @@ h2:where(.rd, .rd *) {
 }
 
 h3:where(.rd, .rd *) {
-  margin: var(--space-sm) 0 var(--space-md);
+  margin: var(--space-lg) 0 var(--space-md);
   font-size: 1.4em;
 }
 
@@ -17015,6 +17007,10 @@ ol:where(.rd, .rd *) {
 .feed-list:where(.rd, .rd *) {
   display: flex;
   flex-direction: column;
+}
+
+.feed-list__clean .feed-list__item:where(.rd, .rd *) {
+  border-top: none;
 }
 
 .feed-list__item:where(.rd, .rd *) {
@@ -17163,49 +17159,24 @@ ol:where(.rd, .rd *) {
   }
 }
 
-.remarked:where(.rd, .rd *) {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.remarked > :first-child:where(.rd, .rd *) {
-  min-width: var(--text-content-width);
-}
-
-.remark:where(.rd, .rd *) {
-  height: fit-content;
-  width: calc(var(--global-fr) * 2);
-  min-width: calc(var(--global-fr) * 2);
-  max-width: calc(var(--global-fr) * 4);
-  margin: var(--space-sm) 0 0;
-  padding: var(--space-sm) 0 var(--space-md) var(--space-md);
-  border-top: 1px solid var(--border-color);
-  line-height: 1.2em;
-  position: relative;
-}
-@media screen and (769px <= width < 1024px) {
-  .remark:where(.rd, .rd *) {
-    width: 100%;
-    max-width: var(--text-content-width);
-    min-width: 0;
-    text-align: right;
-    margin-top: var(--space-md);
-  }
-}
-@media screen and (width < 769px) {
-  .remark:where(.rd, .rd *) {
-    width: 100%;
-    max-width: var(--text-content-width);
-    min-width: 0;
-    text-align: right;
-    margin-top: var(--space-md);
-  }
-}
-
-.remark a:where(.rd, .rd *) {
+.footnote:where(.rd, .rd *) {
+  max-width: var(--text-content-width);
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-color-light);
   color: var(--text-color-light);
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.3em;
+}
+
+sup > a:where(.rd, .rd *) {
+  padding: 0 0.1em;
+  text-decoration: none;
+}
+
+.footnote :target:where(.rd, .rd *) {
+  background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
 
 .aside-footer:where(.rd, .rd *),
@@ -17273,8 +17244,14 @@ ol:where(.rd, .rd *) {
   }
 }
 
+.sidenote.handwritten:where(.rd, .rd *),
+.sidenote.handwritten p:where(.rd, .rd *) {
+  font-family: var(--script-font);
+  font-size: var(--font-size-lg);
+  line-height: 1em;
+}
+
 .sidenote-bookmark:where(.rd, .rd *)::before,
-.remark:where(.rd, .rd *)::before,
 .sidenote-attach:where(.rd, .rd *)::before,
 .sidenote-link:where(.rd, .rd *)::before,
 .sidenote-bulb:where(.rd, .rd *)::before,
@@ -17287,7 +17264,6 @@ ol:where(.rd, .rd *) {
 }
 @media (width < 1024px) {
   .sidenote-bookmark:where(.rd, .rd *)::before,
-  .remark:where(.rd, .rd *)::before,
   .sidenote-attach:where(.rd, .rd *)::before,
   .sidenote-link:where(.rd, .rd *)::before,
   .sidenote-bulb:where(.rd, .rd *)::before,
@@ -17305,8 +17281,7 @@ ol:where(.rd, .rd *) {
   mask: url("images/icons/bookmark-200.svg") no-repeat center/contain;
 }
 
-.sidenote-attach:where(.rd, .rd *)::before,
-.remark:where(.rd, .rd *)::before {
+.sidenote-attach:where(.rd, .rd *)::before {
   content: "";
   width: 1em;
   height: 1em;
@@ -17356,6 +17331,8 @@ ol:where(.rd, .rd *) {
 }
 :where(html.rd, body.rd) article {
   display: block;
+  overflow-wrap: break-word;
+  min-width: 0;
 }
 
 article p:where(.rd, .rd *),
@@ -17375,35 +17352,31 @@ article .meta-info:where(.rd, .rd *) {
   margin-top: var(--space-sm);
 }
 
-.nobr:where(.rd, .rd *),
-.nobreak:where(.rd, .rd *) {
+.nobr:where(.rd, .rd *) {
   white-space: nowrap;
 }
 
-.text-content-caption:where(.rd, .rd *),
-.highlight:where(.rd, .rd *),
-p.highlight:where(.rd, .rd *),
-.lead:where(.rd, .rd *) {
-  width: var(--text-content-caption);
-  max-width: unset;
+.text-content-width:where(.rd, .rd *) {
+  width: var(--text-content-width);
+}
+
+.text-content-caption:where(.rd, .rd *) {
+  width: min(var(--text-content-caption), 100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md)));
+  max-width: none;
   margin-left: calc(-1 * var(--space-lg));
   margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 }
 @media screen and (width < 769px) {
-  .text-content-caption:where(.rd, .rd *),
-  .highlight:where(.rd, .rd *),
-  p.highlight:where(.rd, .rd *),
-  .lead:where(.rd, .rd *) {
+  .text-content-caption:where(.rd, .rd *) {
     margin-left: calc(-1 * var(--space-sm));
     margin-right: calc(-1 * var(--space-sm));
   }
 }
-
-.highlight:where(.rd, .rd *),
-p.highlight:where(.rd, .rd *) {
-  margin-bottom: var(--space-md);
+@media screen and (width < 769px) {
+  .text-content-caption:where(.rd, .rd *) {
+    width: calc(100% + 2 * var(--space-sm));
+  }
 }
-
 .text-content-caption:where(.rd, .rd *) {
   position: relative;
 }
@@ -17412,25 +17385,56 @@ article .text-content-caption:first-child:where(.rd, .rd *) {
   padding: 0 0 var(--space-sm);
 }
 
-.text-content-width:where(.rd, .rd *) {
-  width: var(--text-content-width);
-}
-
-.meta-info:where(.rd, .rd *) {
-  margin-bottom: var(--space-md);
-}
-
 .lead:where(.rd, .rd *) {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-light);
-  margin-top: var(--space-sm);
-  margin-bottom: var(--space-md);
-  line-height: var(--line-height-sm);
+  width: min(var(--text-content-caption), 100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md)));
+  max-width: none;
+  margin-left: calc(-1 * var(--space-lg));
+  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 }
 @media screen and (width < 769px) {
   .lead:where(.rd, .rd *) {
-    width: 80%;
+    margin-left: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--space-sm));
   }
+}
+@media screen and (width < 769px) {
+  .lead:where(.rd, .rd *) {
+    width: calc(100% + 2 * var(--space-sm));
+  }
+}
+.lead:where(.rd, .rd *) {
+  margin-top: var(--space-sm);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-sm);
+}
+
+.highlight:where(.rd, .rd *) {
+  width: min(var(--text-content-caption), 100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md)));
+  max-width: none;
+  margin-left: calc(-1 * var(--space-lg));
+  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
+}
+@media screen and (width < 769px) {
+  .highlight:where(.rd, .rd *) {
+    margin-left: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--space-sm));
+  }
+}
+@media screen and (width < 769px) {
+  .highlight:where(.rd, .rd *) {
+    width: calc(100% + 2 * var(--space-sm));
+  }
+}
+.highlight:where(.rd, .rd *) {
+  margin-bottom: var(--space-md);
+  padding: var(--space-lg);
+  text-align: center;
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height);
+  font-weight: 700;
+  border: var(--space-sm) solid var(--brand-color);
 }
 
 .caption:where(.rd, .rd *) {
@@ -17452,26 +17456,20 @@ article .text-content-caption:first-child:where(.rd, .rd *) {
   border-left: var(--space-sm) solid var(--primary-color);
 }
 
-.highlight:where(.rd, .rd *) {
-  text-align: center;
-  font-size: var(--font-size-xl);
-  line-height: var(--line-height);
-  font-weight: 700;
-  border: var(--space-sm) solid var(--brand-color);
-  padding: var(--space-lg);
-}
-
 mark:where(.rd, .rd *) {
   background-color: var(--yellow);
   color: var(--primary-color);
 }
 
-.note:where(.rd, .rd *),
-.meta-info:where(.rd, .rd *),
-.callout:where(.rd, .rd *),
-.remark:where(.rd, .rd *),
-cite:where(.rd, .rd *),
-.footnote:where(.rd, .rd *) {
+.note:where(.rd, .rd *) {
+  color: var(--text-color-light);
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.3em;
+}
+
+.meta-info:where(.rd, .rd *) {
+  margin-bottom: var(--space-md);
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
@@ -17481,6 +17479,10 @@ cite:where(.rd, .rd *),
 .callout:where(.rd, .rd *) {
   padding: var(--space-sm) var(--space-md);
   text-align: center;
+  color: var(--text-color-light);
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.3em;
   border: 1px solid var(--border-color);
   border-radius: var(--space-xs);
 }
@@ -17491,6 +17493,9 @@ cite:where(.rd, .rd *) {
   margin: var(--space-sm) 0;
   text-align: right;
   color: var(--text-color-dark);
+  font-weight: var(--font-weight-light);
+  font-size: var(--font-size-sm);
+  line-height: 1.3em;
 }
 
 blockquote:where(.rd, .rd *) {
@@ -17505,27 +17510,6 @@ blockquote:where(.rd, .rd *) {
 
 blockquote p:first-of-type:where(.rd, .rd *) {
   text-indent: 1.5em;
-}
-
-figure.epigraph:where(.rd, .rd *) {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin: 0 0 var(--space-xl);
-  font-style: italic;
-  font-size: var(--font-size-sm);
-  line-height: var(--line-height-sm);
-}
-figure.epigraph p:where(.rd, .rd *) {
-  width: 60%;
-  margin: 0;
-  text-align: right;
-}
-
-.footnote:where(.rd, .rd *) {
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--border-color-light);
 }
 
 dl:where(.rd, .rd *) {
@@ -17623,9 +17607,7 @@ pre code:where(.rd, .rd *) {
   color: var(--text-color-light);
 }
 
-.handwritten:where(.rd, .rd *),
-.sidenote.handwritten:where(.rd, .rd *),
-.sidenote.handwritten p:where(.rd, .rd *) {
+.handwritten:where(.rd, .rd *) {
   font-family: var(--script-font);
   font-size: var(--font-size-lg);
   line-height: 1em;
@@ -17734,11 +17716,24 @@ pre code:where(.rd, .rd *) {
 }
 
 .teaser-bottom:where(.rd, .rd *) {
-  width: var(--text-content-caption);
-  max-width: unset;
-  margin-top: var(--space-lg);
+  width: min(var(--text-content-caption), 100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md)));
+  max-width: none;
   margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * var(--space-lg));
+  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
+}
+@media screen and (width < 769px) {
+  .teaser-bottom:where(.rd, .rd *) {
+    margin-left: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--space-sm));
+  }
+}
+@media screen and (width < 769px) {
+  .teaser-bottom:where(.rd, .rd *) {
+    width: calc(100% + 2 * var(--space-sm));
+  }
+}
+.teaser-bottom:where(.rd, .rd *) {
+  margin-top: var(--space-lg);
   border-top: var(--space-sm) solid var(--border-color);
   border-left: var(--space-sm) solid var(--border-color);
   border-right: var(--space-sm) solid var(--border-color);
@@ -17746,11 +17741,6 @@ pre code:where(.rd, .rd *) {
 }
 .teaser-bottom h3 a:where(.rd, .rd *) {
   background: none;
-}
-@media (width < 1024px) {
-  .teaser-bottom:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-  }
 }
 
 .boilerplate:where(.rd, .rd *) {
@@ -17776,6 +17766,58 @@ pre code:where(.rd, .rd *) {
   left: -1.2em;
   font-size: var(--font-size-lg);
   vertical-align: middle;
+}
+
+article figure:not(:where(.carousel-slide, .epigraph)):where(.rd, .rd *), .figure:where(.rd, .rd *) {
+  max-width: var(--text-content-width);
+  margin: var(--space-lg) 0;
+}
+@media screen and (width < 769px) {
+  article figure:not(:where(.carousel-slide, .epigraph)):where(.rd, .rd *), .figure:where(.rd, .rd *) {
+    max-width: 100%;
+  }
+}
+article figure:not(:where(.carousel-slide, .epigraph)) > img:where(.rd, .rd *), article figure:not(:where(.carousel-slide, .epigraph)) > picture img:where(.rd, .rd *), .figure > img:where(.rd, .rd *), .figure > picture img:where(.rd, .rd *) {
+  width: 100%;
+}
+
+figure.full-width:where(.rd, .rd *) {
+  max-width: none;
+}
+
+article figcaption:where(:not(.carousel-caption)):where(.rd, .rd *),
+.figure figcaption:where(.rd, .rd *) {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+  color: var(--text-color-light);
+  font-weight: var(--font-weight-light);
+  overflow-wrap: anywhere;
+}
+
+figure:is(.full-width, .text-content-caption, .full-width-caption) figcaption:where(.rd, .rd *) {
+  max-width: var(--text-content-width);
+}
+
+.figure-source:where(.rd, .rd *) {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-xs);
+}
+
+figure.epigraph:where(.rd, .rd *) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0 0 var(--space-xl);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+}
+figure.epigraph p:where(.rd, .rd *) {
+  width: 60%;
+  margin: 0;
+  text-align: right;
 }
 
 table:where(.rd, .rd *) {
@@ -19582,10 +19624,6 @@ img:where(.rd, .rd *) {
   top: 0;
 }
 
-.remark [class*=rd-icon-]:where(.rd, .rd *) {
-  font-size: 1.2em;
-}
-
 @media (width < 769px) {
   .section-icon:where(.rd, .rd *) {
     margin-left: 0;
@@ -21090,11 +21128,6 @@ html:has(.cookie-notice:not(.rd-is-hidden)):where(.rd, .rd *) {
   scroll-padding-bottom: var(--cookie-notice-reserve);
 }
 
-html:has(.cookie-notice:not(.rd-is-hidden)) body:where(.rd, .rd *)::after {
-  content: "";
-  flex: 0 0 var(--cookie-notice-reserve);
-}
-
 .cookie-notice:where(.rd, .rd *) {
   max-width: var(--site-max-width);
   display: block;
@@ -21472,6 +21505,76 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   display: none !important;
 }
 
+@media print {
+  :where(html.rd, body.rd) header,
+  :where(html.rd, body.rd) footer,
+  .sidebar:where(.rd, .rd *),
+  .search-wrapper:where(.rd, .rd *),
+  .nav-hamburger-wrapper:where(.rd, .rd *),
+  .cookie-notice:where(.rd, .rd *),
+  .carousel-arrow:where(.rd, .rd *),
+  .carousel-dots:where(.rd, .rd *),
+  .copy-button:where(.rd, .rd *),
+  .hamburger:where(.rd, .rd *),
+  .icon-search:where(.rd, .rd *) {
+    display: none;
+  }
+  body:where(.rd, html.rd > *) {
+    background: none;
+    color: #000;
+  }
+  :where(html.rd, body.rd) main {
+    padding: 0;
+  }
+  .content:where(.rd, .rd *) {
+    display: block;
+    max-width: none;
+  }
+  :where(html.rd, body.rd) article {
+    width: auto;
+  }
+  .text-content-caption:where(.rd, .rd *),
+  .lead:where(.rd, .rd *),
+  .caption:where(.rd, .rd *),
+  .highlight:where(.rd, .rd *),
+  pre:where(.rd, .rd *),
+  blockquote:where(.rd, .rd *) {
+    width: auto;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  h1:where(.rd, .rd *), h2:where(.rd, .rd *), h3:where(.rd, .rd *), h4:where(.rd, .rd *) {
+    break-after: avoid;
+  }
+  figure:where(.rd, .rd *),
+  blockquote:where(.rd, .rd *),
+  pre:where(.rd, .rd *),
+  tr:where(.rd, .rd *),
+  img:where(.rd, .rd *),
+  svg:where(.rd, .rd *) {
+    break-inside: avoid;
+  }
+  p:where(.rd, .rd *) {
+    orphans: 3;
+    widows: 3;
+  }
+  .table-scroll:where(.rd, .rd *) {
+    overflow: visible;
+  }
+  th:where(.rd, .rd *) {
+    white-space: normal;
+  }
+  article :is(p, li) a[href^=http]:where(.rd, .rd *)::after {
+    content: " (" attr(href) ")";
+    font-size: var(--font-size-xs);
+    color: var(--text-color-light);
+    overflow-wrap: anywhere;
+  }
+  a:where(.rd, .rd *) {
+    background: none;
+  }
+}
 *:where(.rd, .rd *) {
   padding: 0;
   margin: 0;

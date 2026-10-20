@@ -1,43 +1,33 @@
 @use "../utilities/breakpoints" as *;
 @use "../decorations/icons" as ico;
 
-.remarked {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.remarked > :first-child {
-    min-width: var(--text-content-width);
-}
-
-.remark {
-    height: fit-content;
-    width: calc(var(--global-fr) * 2);
-    min-width: calc(var(--global-fr) * 2);
-    max-width: calc(var(--global-fr) * 4);
-    margin: var(--space-sm) 0 0;
-    padding: var(--space-sm) 0 var(--space-md) var(--space-md);
-    border-top: 1px solid var(--border-color);
-    line-height: 1.2em;
-    position: relative;
-
-    @include multi-breakpoint(tablet, mobile) {
-        width: 100%;
-        max-width: var(--text-content-width);
-
-        // cancel the desktop min-width so the remark can shrink to the
-        // viewport; `none` is not a valid min-width and was silently
-        // dropped by the browser (CSS-099)
-        min-width: 0;
-        text-align: right;
-        margin-top: var(--space-md);
-    }
-}
-
-.remark a {
+.footnote {
+    max-width: var(--text-content-width); // the rule stays on the prose width
+    margin-top: var(--space-lg);
+    padding: var(--space-md);
+    border-top: 1px solid var(--border-color-light);
     color: var(--text-color-light);
+    font-weight: var(--font-weight-light);
+    font-size: var(--font-size-sm);
+    line-height: 1.3em;
+}
+
+// REFERENCES AND NOTES (CSS-128, v0.7.1)
+// Note references built from native ids and links, no script:
+//   <p>… <sup><a href="#note-1" id="ref-1">1</a></sup></p>
+//   <div class="footnote"><ol><li id="note-1">… <a href="#ref-1">↩</a></li></ol></div>
+
+// A reference mark is a link too small to underline; it reads by its position
+// and colour alone.
+sup > a {
+    padding: 0 0.1em;
+    text-decoration: none;
+}
+
+// The note the reader jumped to is marked while it is the target, so the eye
+// finds it among the others.
+.footnote :target {
+    background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
 
 .aside-footer,
@@ -115,8 +105,16 @@
     }
 }
 
+// A handwritten sidenote: the script face from `.handwritten`, on the sidenote
+// and its paragraphs.
+.sidenote.handwritten,
+.sidenote.handwritten p {
+    font-family: var(--script-font);
+    font-size: var(--font-size-lg);
+    line-height: 1em;
+}
+
 .sidenote-bookmark::before,
-.remark::before,
 .sidenote-attach::before,
 .sidenote-link::before,
 .sidenote-bulb::before,
@@ -140,8 +138,7 @@
   @include ico.icon-mask("bookmark", 200);
 }
 
-.sidenote-attach::before,
-.remark::before {
+.sidenote-attach::before {
   @include ico.icon-mask("attach_file", 200);
 }
 
