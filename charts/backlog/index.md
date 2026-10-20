@@ -77,11 +77,6 @@ Features and chart types planned for future releases.
             <td><code>RareCharts.Waterfall</code></td>
             <td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_7.</strong></td>
         </tr>
-        <tr>
-            <td>Sankey</td>
-            <td><code>RareCharts.Sankey</code></td>
-            <td>Flows between nodes with link width proportional to value: <code>[{ source, target, value }]</code>. Covers money-flow decomposition — where a treasury's funds came from and where they went, multi-hop paths across wallets and networks. Requested by the data project (Churchbook) as a sibling consumer, 2026-10-12.</td>
-        </tr>
 
         <tr class="table-section">
             <td colspan="3">
@@ -122,9 +117,9 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Bar value labels</td>
-            <td><code>barLabels: true</code></td>
-            <td>Renders formatted value labels above positive bars and below negative bars. Uses <code>yTickFormat</code> for formatting. Available on Bar and DualAxes.</td>
+            <td>Bar value labels on vertical bars and Dual Axes</td>
+            <td><code>showValues: true</code> on vertical <code>RareCharts.Bar</code> / <code>RareCharts.DualAxes</code> bars</td>
+            <td>Horizontal Bar already prints values at bar ends (<code>showValues</code>, <code>valueFormat</code>; short and negative bars keep their labels since v0.9.8_4_1). Extend it to vertical bars — above positive bars, below negative ones — and to the bar series of Dual Axes.</td>
         </tr>
         <tr>
             <td>Bar width control</td>
@@ -148,6 +143,11 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
+            <td>Flows on a map</td>
+            <td><code>RareCharts.MapFlow</code></td>
+            <td>Ties between places drawn over a map — great-circle arcs with width by value and direction, on the same <code>{ nodes, links }</code> contract and link tooltip as Sankey and the Graph flow view, with <code>setTimeWindow</code> to show flows by period. For capital, trade or influence moving between cities and countries. <strong>Targeted for v0.9.8_6.</strong></td>
+        </tr>
+        <tr>
             <td>Map overlays and labels</td>
             <td><code>layers: [{ type, data, ... }]</code></td>
             <td>Add overlay layers to maps for extra information such as points, routes, bubbles, labels, markers, or other contextual geographic annotations.</td>
@@ -164,9 +164,9 @@ Features and chart types planned for future releases.
             </td>
         </tr>
         <tr>
-            <td>Graph flow view — automatic layout and groups</td>
+            <td>Graph flow view — automatic layout, groups and time</td>
             <td><code>view: 'flow'</code></td>
-            <td>Second stage of the flow view (the first ships in v0.9.8_3): automatic in-lane layout for data without position hints — ranks along the flow, the main route on the centre line, fewer crossings, cycles broken — plus aggregation and collapsible groups: a group of nodes folds into one node with summed ties and a +/− control, parallel ties of a pair can be merged, and crowded lanes cap with +N. <strong>Targeted for v0.9.8_6.</strong></td>
+            <td>Second stage of the flow view. The first shipped in v0.9.8_3 with lanes, value-weighted ties and <code>setTimeWindow</code>; the money-trail investigations requested by the data project (Churchbook, 2026-10-12) need the rest: automatic in-lane layout for data without position hints — ranks along the flow, the main route on the centre line, fewer crossings, cycles broken — plus aggregation and collapsible groups: a group of nodes folds into one node with summed ties and a +/− control, parallel ties of a pair can be merged, and crowded lanes cap with +N. Time gets the <code>TimeSeries</code> treatment: timeframe buttons and a navigator over the ties’ dates instead of a page-made slider. <strong>Targeted for v0.9.8_6.</strong></td>
         </tr>
         <tr>
             <td>Graph ownership layout</td>
@@ -182,11 +182,6 @@ Features and chart types planned for future releases.
             <td>Graph chrome styling</td>
             <td>icons, dark theme</td>
             <td>The footer tools (zoom, full screen, <code>+N more</code>, restore), one-line breadcrumbs and text-like controls shipped in v0.9.8_3. Left: proper icons instead of text glyphs for the tools, and a dark-theme pass over the tools, the hidden-node list and the details panel.</td>
-        </tr>
-        <tr>
-            <td>Graph for published investigations</td>
-            <td>network lanes, value-weighted edges, time filter</td>
-            <td>Requested by the data project (Churchbook), 2026-10-12: money-trail investigations need a graph stable enough to publish — nodes grouped in lanes by network, edges aggregated per pair and direction with width by USD value, expand-on-click, noise collapsed, and a time filter. Today Graph is experimental and outside the 1.0 guarantee.</td>
         </tr>
 
         <tr class="table-section">
