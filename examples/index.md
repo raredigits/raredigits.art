@@ -8,9 +8,9 @@ permalink: '/examples/'
 
 ## Styles
 
-<div class="feed-list">
+<div class="feed-list__clean">
     <div class="feed-list__item">
-        <a href="/examples/styles/content-starter/">Content starter</a>
+        <a href="/examples/styles/content-starter/">Plain HTML Content Starter</a>
     </div>
     <div class="feed-list__item">
         <a href="/examples/styles/hetke/">Building an Auto Workshop Landing</a>

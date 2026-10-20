@@ -8,9 +8,9 @@ permalink: '/styles/usage/'
 
 ## Quick start
 
-The fastest way to a working site is the **[content starter](/examples/starter/)**: an article index and an article with images, a table and charts, in plain HTML. Copy it, change the content, publish. Its [README](https://github.com/raredigits/raredigits.art/tree/main/examples/starter) walks through every step below.
+The fastest way to a working site is the **[content starter](/examples/styles/content-starter/)**: an article index and an article with images, a table and charts, in plain HTML. Copy it, change the content, publish. Its [README](https://github.com/raredigits/raredigits.art/tree/main/examples/styles/content-starter/demo) walks through every step below.
 
-1. **Copy and serve.** Copy the starter folder anywhere and serve it with any static server (`python3 -m http.server`). It needs no build and no framework, and its links are relative, so it also works under a sub-path.
+1. **Download and open.** [Download the starter](/examples/styles/content-starter/content-starter.zip), unpack it and open `index.html` in a browser. No build, no framework, no server: the libraries come from the CDN, and the links are relative, so it also works on any static host and under a sub-path.
 2. **Publish.** Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.
 3. **Make it yours.** Set the brand and the fonts through the library's tokens in your own stylesheet (see [Customization](#customization-approach) below). The reading measure is `--text-content-width`.
 4. **Upgrade on purpose.** Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the [changelog](https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md) first.
@@ -29,7 +29,7 @@ The fastest way to a working site is the **[content starter](/examples/starter/)
 - **Library files and your files stay apart.** `rare.css` is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.
 - **Self-hosting.** To serve the library yourself instead of from the CDN, download `rare.min.css` with its `fonts/` and `images/` folders from the [rare-styles repository](https://github.com/raredigits/rare-styles) at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.
 - **Companion scripts are optional.** The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the [Scripts](/scripts/) pages. Copy only the ones you use.
-- **Charts are separate.** [RareCharts](/charts/) is its own pinned script. Load it only on pages that have charts. The starter's `charts.js` shows how: it draws each chart from a data table that stays readable without JavaScript.
+- **Charts are separate.** [RareCharts](/charts/) is its own pinned script. Load it in `<head>` only on pages that have charts, and create each chart after its container, as the starter's article does.
 
 ## General Principles
 

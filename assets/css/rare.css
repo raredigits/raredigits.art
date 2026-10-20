@@ -17009,6 +17009,10 @@ ol:where(.rd, .rd *) {
   flex-direction: column;
 }
 
+.feed-list__clean .feed-list__item:where(.rd, .rd *) {
+  border-top: none;
+}
+
 .feed-list__item:where(.rd, .rd *) {
   padding: var(--space-sm) 0;
   border-top: 1px solid var(--border-color);
