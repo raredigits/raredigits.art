@@ -18,6 +18,58 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_5] — 2026-10-20 — Log Scales II
+
+Out of turn, for a consumer whose chart is a `DualAxes`: in v0.9.8_4 only `Line` had a log scale. This release brings it to **both axes of `DualAxes`, each on its own**, and to **`TimeSeries`**, and adds one **Lin/Log button** to the chart header — the same on all three — with an event when it flips. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_6 / _7 / _8) with their content unchanged.
+
+### Added
+
+- **`y1Scale` / `y2Scale` on `DualAxes`** (`'linear'` default | `'log'`, `src/charts/DualAxes.js`, docs `/charts/line/dual-axes/` → Logarithmic scale, worked example on `/charts/combined/`). Each axis is set on its own: a long-horizon index on a log Y1 next to a signed change on a linear Y2. A log axis follows the `Line` rules — ticks on powers of ten (1-2-5 steps for a narrower range), a margin that is a factor of the data's span, a `.3~s` default tick format (`1k`, not `1,000.00`); values ≤ 0 on that axis are skipped with one console warning per `setData()`, horizontal annotations at or below zero on it are dropped, and **bars on a log axis grow from the bottom of the axis** instead of from zero. An explicit `y1Domain`/`y2Domain` is kept on a log axis when both ends are positive. Linear axes render exactly as before.
+- **`DualAxes.setYScale(type, { axis, silent })`** — switches `'y1'`, `'y2'` or `'both'` (default) and redraws; returns the chart.
+- **`yScale: 'log'` and `setYScale(type, { silent })` on `TimeSeries`** (`src/charts/TimeSeries.js`, docs `/charts/line/time-series/`). The same ticks, margin and ≤ 0 handling as `Line`; explicit `yTickValues` keep working (non-positive ones are ignored).
+- **`scaleToggle` — a Lin/Log button** (`src/core/Chart.js`, `rare-charts.css`) for `Line`, `TimeSeries` and `DualAxes`. One button pinned to the top right of the chart header, above the Y-axis labels and level with the timeframe buttons, which keep their place (`.rc-range-btn.rc-scale-btn` in `.rc-chart-range-row--scale`; on a phone it stays right and the timeframes wrap before it). Styled like them but filled on the diagonal — the upper-left half on the linear scale, the lower-right half on the log scale — so it reads as a switch, not one more period. It names the current scale and flips it on click. `true` drives the Y scale — Y1 on `DualAxes`, whose Y2 often carries a signed series; `'y2'` or `'both'` pick the others there (with `'both'` the button reads Log while either axis is log), `{ axis, labels: { linear, log } }` renames it. `setYScale()` from code renames it too.
+- **`onScaleChange(fn)`** on the same three classes — called with `{ scale: 'log' | 'linear', axis }` (`'y'` on `Line`/`TimeSeries`; `'y1'`, `'y2'` or `'both'` on `DualAxes`) whenever the switch or `setYScale()` changes the scale; `setYScale(type, { silent: true })` skips it.
+
+### Changed
+
+- **`Line.setYScale()`** takes an optional `{ silent }` and now fires `onScaleChange`; calls without it behave as before.
+- **The `/charts/line/` log demo** — now titled *Performance Visualization* — uses the built-in button instead of page-made radio buttons.
+- **The header range row** (`.rc-chart-range-row`) is the positioning context for the Lin/Log button; a chart with timeframes only looks the same.
+- **Demo control groups have a light border** (`rare-charts.css` → `.rc-demo-group`, `/charts/line/visual-options/`): `--border-color` instead of black.
+- **Docs: the Dual Axes page moved under Line** — `/charts/line/dual-axes/`, after Visual Options; the old `/charts/dual-axes/` address redirects there, anchors included. Its log-scale example (*Index and yearly change*) lives on `/charts/combined/`.
+
+### Size
+
+Minified bundle 601,388 → 605,955 bytes (+4,567, +0.76%); gzip 180,611 → 182,040 (+1,429). Measured on local builds of `v0.9.8_4_2` and this release, banner excluded.
+
+### Removed from the backlog
+
+Logarithmic Y scale on `TimeSeries` and `DualAxes`.
+
+## [v0.9.8_4_2] — 2026-10-20 — Bar Category Axis
+
+A second patch on top of `v0.9.8_4`, again for the Rare Styles content starter: one visual fix on horizontal `Bar`. Flows II stays `v0.9.8_5`.
+
+### Fixed
+
+- **A stray vertical line beside the category labels on horizontal `Bar`** (`src/charts/Bar.js`, categorical and stacked). The category axis drew its axis line at the plot's left edge; with a negative value the bars start at zero further right, so the line stood apart from the bars. The horizontal category axis now has no axis line, like the value axes. Vertical bars keep their baseline.
+
+### Size
+
+Minified bundle 601,420 → 601,390 bytes (−30); gzip 180,617 → 180,613 (−4). Measured on local builds of `v0.9.8_4_1` and this release, banner excluded.
+
+## [v0.9.8_4_1] — 2026-10-19 — Bar Value Labels
+
+A patch on top of `v0.9.8_4` with one `Bar` fix, found while building the Rare Styles content starter. Nothing else changes; charts whose value labels already fit render exactly as before. Flows II stays `v0.9.8_5`.
+
+### Fixed
+
+- **A short bar's value label was clipped** (`src/charts/Bar.js`, horizontal, `showValues: true`). A label flipped inside its bar whenever the space past the bar end was under `valueInsideGap`, whether or not it fit inside. A small negative bar next to the left edge of a phone-width plot got its label squeezed into a bar a few pixels wide, so `-0.2` read as `-0`. A label now goes inside only when it fits there; otherwise it sits past the bar end — left of a negative bar, right of a positive one — and the value axis widens on that side until the label fits (at most 30% of the plot width per side). Charts whose labels already fit are unchanged.
+
+### Size
+
+Minified bundle 600,836 → 601,418 bytes (+582, +0.10%); gzip 180,263 → 180,615 (+352). Measured on local builds of `v0.9.8_4` and this release, banner excluded.
+
 ## [v0.9.8_4] — 2026-10-19 — Log Scale
 
 A small release out of turn, for a consumer that plots a long-horizon index and switches periods by swapping data: a **logarithmic Y scale on `Line`** that can be turned on and off between `setData()` calls, and **linear ticks that stay inside the data**. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_5 / _6 / _7) with their content unchanged.

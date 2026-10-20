@@ -12,6 +12,12 @@
 //   area          — false | true (gradient) | number (solid fill at that opacity) (default: true)
 //   areaColor     — area fill color (default: theme.accent)
 //   yLabelsOnly   — hide Y axis line/ticks (default: true)
+//   yScale        — 'linear' (default) | 'log'. Log: powers-of-ten ticks, the
+//                   margin above/below is a factor of the data's span, values
+//                   ≤ 0 are skipped (warned once per setData). setYScale() switches
+//   scaleToggle   — a Lin/Log button, top right of the header above the Y labels
+//                   (true | { labels: { linear, log } }); onScaleChange(fn)
+//                   gets { scale, axis: 'y' } on every switch
 //   yTicks        — Y tick count (default: 5)
 //   yTickValues   — explicit Y tick positions (overrides yTicks)
 //   yTickFormat   — fn(value) => string (default: '$' + ',.0f')
@@ -30,7 +36,7 @@ import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
 import { renderGrid, renderAxisX, renderAxisYRight, renderAnnotations, applySvgA11y } from '../core/renderHelpers.js';
-import { normalizeAnnotations } from '../core/utils.js';
+import { normalizeAnnotations, logTickValues, logPaddedDomain } from '../core/utils.js';
 
 export class TimeSeries extends Chart {
   constructor(selector, options = {}) {
@@ -69,9 +75,24 @@ export class TimeSeries extends Chart {
   setData(data) {
     this._data       = data;
     this._viewExtent = null;
+    this._warnedNonPositive = false;
     this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
+  }
+
+  // Switch the Y scale between 'linear' and 'log' and redraw. Fires
+  // onScaleChange unless { silent: true }.
+  setYScale(type, { silent = false } = {}) {
+    const scale = type === 'log' ? 'log' : 'linear';
+    this.options.yScale = scale;
+    this.render();
+    this._scaleChanged(scale, 'y', silent);
+    return this;
+  }
+
+  _isLogScale() {
+    return this.options.yScale === 'log';
   }
 
   appendPoint(point) {
@@ -138,17 +159,41 @@ export class TimeSeries extends Chart {
     this._syncTimeframeButtons(fullExtent, viewExtent);
     this._syncNavigator();
 
-    const visible = this._data.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
+    // A log scale has no place for zero or negatives: such points are skipped
+    // (the line joins its neighbours) instead of drawing NaN.
+    const isLog = this.options.yScale === 'log';
+    const inView = this._data.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
+    const visible = isLog ? inView.filter(d => d.value > 0) : inView;
+    if (isLog && visible.length < inView.length && !this._warnedNonPositive) {
+      this._warnedNonPositive = true;
+      const n = inView.length - visible.length;
+      console.warn(`RareCharts.TimeSeries: ${n} value${n === 1 ? '' : 's'} ≤ 0 skipped on the log scale`);
+    }
     this._visible = visible;
+    if (!visible.length) return;
 
+    const yTicks = this.options.yTicks ?? 5;
     this.xScale = d3.scaleTime().domain(viewExtent).range([0, W]);
-    const yMin  = d3.min(visible, d => d.value) * 0.99;
-    const yMax  = d3.max(visible, d => d.value) * 1.01;
-    this.yScale = d3.scaleLinear().domain([yMin, yMax]).range([H, 0]);
+    let yTickValues = this.options.yTickValues ?? null;
+    if (isLog) {
+      let [lo, hi] = logPaddedDomain(d3.min(visible, d => d.value), d3.max(visible, d => d.value));
+      yTickValues = yTickValues ? yTickValues.filter(v => v > 0) : null;
+      if (yTickValues?.length) {
+        lo = Math.min(lo, d3.min(yTickValues));
+        hi = Math.max(hi, d3.max(yTickValues));
+      } else {
+        yTickValues = logTickValues(lo, hi, yTicks);
+      }
+      this.yScale = d3.scaleLog().domain([lo, hi]).range([H, 0]);
+    } else {
+      const yMin  = d3.min(visible, d => d.value) * 0.99;
+      const yMax  = d3.max(visible, d => d.value) * 1.01;
+      this.yScale = d3.scaleLinear().domain([yMin, yMax]).range([H, 0]);
+    }
 
     // Grid
     if (this.options.showGrid ?? true) {
-      renderGrid(this.gGrid, this.yScale, W, (this.options.yTicks ?? 5), t);
+      renderGrid(this.gGrid, this.yScale, W, yTicks, t, yTickValues);
     } else {
       this.gGrid.selectAll('*').remove();
     }
@@ -226,7 +271,6 @@ export class TimeSeries extends Chart {
 
     // Y axis
     if (this.options.showYAxis ?? true) {
-      const yTicks = this.options.yTicks ?? 5;
       const yTickFormat = this.options.yTickFormat ?? (v => '$' + d3.format(',.0f')(v));
       renderAxisYRight(
         this.gAxisY,
@@ -236,15 +280,21 @@ export class TimeSeries extends Chart {
         yTickFormat,
         (this.options.yLabelsOnly ?? true),
         t,
-        this.options.yTickValues ?? null
+        yTickValues
       );
     } else {
       this.gAxisY.selectAll('*').remove();
     }
 
-    // Annotations
+    // Annotations — horizontal markers at or below zero have no position on a log scale.
+    const lo = this.yScale.domain()[0];
+    const annotations = isLog ? this._annotations.flatMap(a => {
+      if (a.kind === 'hPoint') return a.value > 0 ? [a] : [];
+      if (a.kind === 'hRange') return a.yTo > 0 ? [{ ...a, yFrom: Math.max(a.yFrom, lo) }] : [];
+      return [a];
+    }) : this._annotations;
     renderAnnotations(
-      this.gAnnotations, this._annotations, this.xScale,
+      this.gAnnotations, annotations, this.xScale,
       () => this.yScale,
       H, this._annLabelHeight, t
     );

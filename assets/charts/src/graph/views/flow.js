@@ -7,7 +7,7 @@
 //
 // Stage 1 (0.9.8_3): layout from data hints — `lane` (required), `row`,
 // `col`, exact `x`/`y`. Automatic in-lane layout, aggregation and collapsible
-// groups are stage 2 (0.9.8_5). Spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md.
+// groups are stage 2 (0.9.8_6). Spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md.
 //
 // Two parts: layoutFlow() is pure (no DOM) and unit-tested; FlowView draws
 // inside the Graph's zoom group and owns the view's interaction.

@@ -59,6 +59,7 @@
           "url": "/charts/line/",
           "subitems": [
             { "title": "Visual Options", "url": "/charts/line/visual-options/" },
+            { "title": "Dual Axes", "url": "/charts/line/dual-axes/" },
             { "title": "Time Series", "url": "/charts/line/time-series/" },
             { "title": "Bands", "url": "/charts/line/band/" },
             { "title": "Annotations", "url": "/charts/line/annotations/" }
@@ -72,7 +73,6 @@
             { "title": "Hierarchical Bar", "url": "/charts/bar/hierarchical-bar/" }
           ]
       },
-      { "title": "Dual Axes", "url": "/charts/dual-axes/" },
       { "title": "Combined", "url": "/charts/combined/" },
       { "title": "Circular", "url": "/charts/circular/" },
       {

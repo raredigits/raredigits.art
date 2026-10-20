@@ -45,9 +45,27 @@ All standard DualAxes capabilities remain available in combined mode. This incl
 
 If you only need bars and do not require a second scale, simply assign all series to `y1` and omit `y2TickFormat`. `DualAxes` will automatically calculate the appropriate domain for the active axis.
 
+<h3 id="logarithmic-scale">Logarithmic scale</h3>
+
+Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) or `'log'`. A long-horizon index on Y1 reads honestly on a log axis — equal percentage moves get equal height — while a signed change on Y2 stays linear, because a log axis has no zero. A log axis follows the same rules as on <a href="/charts/line/#logarithmic-scale">Line</a>: ticks on powers of ten (1-2-5 steps for a narrower range), a margin that is a factor of the data's span, zero and negative values on that axis skipped with one console warning, horizontal annotations at or below zero dropped. Bars on a log axis grow from the bottom of the axis instead of from zero.
+
+`scaleToggle` adds a Lin/Log button pinned to the top right of the chart header, above the Y-axis labels — level with the timeframe buttons, which keep their place; it names the current scale and flips it on click. `true` drives Y1 — the right axis, usually the level or index — `'y2'` the left one, `'both'` both together (the button then reads Log while either axis is log). From code, `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'` (the default), and `onScaleChange(fn)` reports every switch as `{ scale, axis }`. In the demo the button drives Y1 only; the yearly change on Y2 stays linear.
+
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="combined-chart-log-scale"></div>
+</div>
+<br>
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    y1Scale: 'log',
+    scaleToggle: true,  <span class="code-comment">// Y1; or 'y2', 'both'</span>
+});
+
+chart.setYScale('linear', { axis: 'y1' });
+chart.onScaleChange(e => console.log(e.axis, e.scale));</code></pre>
+
 ## Combined chart options
 
-Combined charts are <code>DualAxes</code> — all chart-level options are identical. See the full list on the <a href="/charts/dual-axes/#options-reference">Dual Axes</a> page.
+Combined charts are <code>DualAxes</code> — all chart-level options are identical. See the full list on the <a href="/charts/line/dual-axes/#options-reference">Dual Axes</a> page.
 
 ### Per-series fields
 
@@ -147,3 +165,4 @@ The only thing that makes a chart “combined” is the <code>type</code> fiel
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/combined/line-chart-ltcm-treasuries-combined.js"></script>
+<script src="/assets/charts/examples/combined/combined-chart-log-scale.js"></script>

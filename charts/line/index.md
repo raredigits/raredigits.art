@@ -73,6 +73,7 @@ Available pieces:
 - `setView([start, end])` sets any custom visible date window.
 - `getView()` returns the currently visible `[start, end]`.
 - `onViewChange(fn)` lets external UI stay synchronized with the chart’s active date window.
+- `scaleToggle: true` adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels; `onScaleChange(fn)` reports each switch (see Logarithmic scale below).
 
 If you want the built-in mini navigator as well, enable it explicitly:
 
@@ -125,18 +126,27 @@ This moves the Y axis to the left while preserving all formatting and scaling 
     <div id="line-chart-left-axis-demo"></div>
 </div>
 
-### Logarithmic scale
+<h3 id="logarithmic-scale">Logarithmic scale</h3>
 
-For long-horizon prices and indices, set `yScale: 'log'`. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Log and Linear to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.
+For long-horizon prices and indices, set `yScale: 'log'`. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Lin and Log to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.
 
 Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.
 
-The scale can change between data swaps — for example log on the full history, linear on the last year. `setYScale()` redraws and returns the chart, so chaining it before `setData()` changes both in one paint:
+The demo's Lin/Log button is built in: `scaleToggle: true` pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. The button is split on the diagonal so it does not read as one more period. It names the current scale, flips it on click, and `onScaleChange(fn)` tells the page when the reader switches. The same switch works on `TimeSeries` and `DualAxes`.
 
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-log-demo"></div>
 </div>
 <br>
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
+    yScale: 'log',
+    scaleToggle: true,  <span class="code-comment">// or { labels: { … } }</span>
+});
+
+chart.onScaleChange(({ scale }) => console.log(scale));</code></pre>
+
+The scale can also change from code, between data swaps — for example log on the full history, linear on the last year. `setYScale()` redraws, renames the button and returns the chart, so chaining it before `setData()` changes both in one paint. Pass `{ silent: true }` to skip the event:
+
 <pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
 chart.setYScale('linear').setData(lastYear);</code></pre>
 
@@ -269,6 +279,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'linear'</code> | <code>'log'</code></td>
             <td><code>'linear'</code></td>
             <td>Y scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 skipped. Change it between data swaps with <code>setYScale()</code>.</td>
+        </tr>
+        <tr>
+            <td><code>scaleToggle</code></td>
+            <td>boolean | object</td>
+            <td><code>false</code></td>
+            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> or <code>{ labels: { linear, log } }</code>. Each switch fires <code>onScaleChange</code>.</td>
         </tr>
         <tr>
             <td><code>xTicks</code></td>

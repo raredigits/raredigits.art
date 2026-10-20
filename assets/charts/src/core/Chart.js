@@ -48,6 +48,8 @@ export class Chart {
     this._activeTimeframe = null;
     this._selectedTimeframe = null;
     this._onViewChangeCb = null;
+    this._onScaleChangeCb = null;
+    this._scaleButton = null;
 
     this._renderHeader();
     this._renderFooter();
@@ -74,7 +76,9 @@ export class Chart {
     const hasTitle    = !!this.options.title;
     const hasSubtitle = !!this.options.subtitle;
     const hasLegend   = this.options.legend != null;
-    const hasRangeBar = this._getTimeframeOptions().length > 0;
+    const hasTimeframes = this._getTimeframeOptions().length > 0;
+    const scaleToggle   = this._getScaleToggle();
+    const hasRangeBar   = hasTimeframes || !!scaleToggle;
     const legendRight = this.options.legendPosition === 'right';
 
     if (!hasTitle && !hasSubtitle && !hasLegend && !hasRangeBar) return;
@@ -179,24 +183,86 @@ export class Chart {
       this._rangeRowEl = document.createElement('div');
       this._rangeRowEl.className = 'rc-chart-range-row';
 
-      this._rangeBarEl = document.createElement('div');
-      this._rangeBarEl.className = 'rc-chart-range-bar';
+      if (hasTimeframes) {
+        this._rangeBarEl = document.createElement('div');
+        this._rangeBarEl.className = 'rc-chart-range-bar';
 
-      this._timeframeButtons = this._getTimeframeOptions().map(step => {
+        this._timeframeButtons = this._getTimeframeOptions().map(step => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'rc-range-btn';
+          btn.textContent = step.label ?? step.key ?? '';
+          btn.dataset.timeframe = step.key ?? step.label ?? '';
+          btn.addEventListener('click', () => this.setTimeframe(step.key ?? step.label ?? ''));
+          this._rangeBarEl.appendChild(btn);
+          return btn;
+        });
+
+        this._rangeRowEl.appendChild(this._rangeBarEl);
+      }
+
+      // Lin/Log — one button pinned right, above the Y-axis labels (CSS);
+      // it names the current scale and flips it on click.
+      if (scaleToggle) {
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = 'rc-range-btn';
-        btn.textContent = step.label ?? step.key ?? '';
-        btn.dataset.timeframe = step.key ?? step.label ?? '';
-        btn.addEventListener('click', () => this.setTimeframe(step.key ?? step.label ?? ''));
-        this._rangeBarEl.appendChild(btn);
-        return btn;
-      });
-
-      this._rangeRowEl.appendChild(this._rangeBarEl);
+        btn.className = 'rc-range-btn rc-scale-btn';
+        btn.addEventListener('click', () =>
+          this.setYScale(this._isLogScale(scaleToggle.axis) ? 'linear' : 'log', { axis: scaleToggle.axis }));
+        this._rangeRowEl.classList.add(hasTimeframes ? 'rc-chart-range-row--scale' : 'rc-chart-range-row--scale-only');
+        this._rangeRowEl.appendChild(btn);
+        this._scaleButton = btn;
+        this._syncScaleButton();
+      }
 
       this._headerEl.appendChild(this._rangeRowEl);
     }
+  }
+
+  // ── Y scale switch ───────────────────────────────────────────────────────
+  // `scaleToggle` adds one Lin/Log button to the header — pinned right, above
+  // the Y-axis labels — for charts that have setYScale(). Accepts true, an axis name
+  // ('y1' | 'y2' | 'both', DualAxes), or { axis?, labels?: { linear?, log? } }.
+
+  _getScaleToggle() {
+    const opt = this.options.scaleToggle;
+    if (!opt || typeof this.setYScale !== 'function') return null;
+    const cfg = typeof opt === 'object' ? opt : (typeof opt === 'string' ? { axis: opt } : {});
+    return {
+      axis:   cfg.axis ?? this._defaultScaleAxis(),
+      labels: { linear: cfg.labels?.linear ?? 'Lin', log: cfg.labels?.log ?? 'Log' },
+    };
+  }
+
+  // The axis the switch drives and how to read its state; charts with a log
+  // scale override both.
+  _defaultScaleAxis() {
+    return 'y';
+  }
+
+  _isLogScale(_axis) {
+    return false;
+  }
+
+  _syncScaleButton() {
+    const btn = this._scaleButton;
+    if (!btn) return;
+    const cfg = this._getScaleToggle();
+    const log = this._isLogScale(cfg.axis);
+    btn.textContent = cfg.labels[log ? 'log' : 'linear'];
+    btn.dataset.scale = log ? 'log' : 'linear';
+    btn.title = `Switch to ${log ? 'linear' : 'logarithmic'} scale`;
+  }
+
+  // Called by setYScale(): keeps the button in step and tells the page.
+  _scaleChanged(scale, axis, silent) {
+    this._syncScaleButton();
+    if (!silent && this._onScaleChangeCb) this._onScaleChangeCb({ scale, axis });
+  }
+
+  onScaleChange(fn) {
+    this._onScaleChangeCb = fn;
+    return this;
   }
 
   // ── Footer (Source) ───────────────────────────────────────────────────────
@@ -475,6 +541,7 @@ export class Chart {
     this._rangeRowEl   = null;
     this._rangeBarEl   = null;
     this._timeframeButtons = [];
+    this._scaleButton = null;
     if (this._navigator) this._navigator.destroy();
     this._navigator = null;
     this._navigatorEl = null;

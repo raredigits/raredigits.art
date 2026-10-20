@@ -21,7 +21,7 @@ const PAGES = [
 ];
 const WIDTHS = [375, 640, 720, 768, 769, 1024, 1440];
 const TAB_WIDTHS = [375, 768, 1440];
-const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#main-content', '/charts/dual-axes/#options-reference'];
+const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#main-content', '/charts/line/dual-axes/#options-reference'];
 
 let server;
 let origin;
