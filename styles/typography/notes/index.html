@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Elements / Sidenotes | Rare Digits Art</title>
+    <title>Text Elements / References and Notes | Rare Digits Art</title>
 
     
 
@@ -356,7 +356,7 @@
                   
                     <li>
                       
-                        <span class="bold">Sidenotes</span>
+                        <span class="bold">Notes</span>
                       
                     </li>
                   
@@ -454,13 +454,28 @@
     
     
   <section class="page-title" id="main-content">
-    <h1 id="text-elements-sidenotes">Text Elements / Sidenotes</h1>
+    <h1 id="text-elements-references-and-notes">Text Elements / References and Notes</h1>
   </section>
 
     <article>
       <div class="meta-info">
-    css/modules/typography/_sidenotes.scss
+    css/modules/typography/_notes.scss
 </div>
+<p>A reference mark is a <code>&lt;sup&gt;</code> holding a link to its note; the note links back. Plain ids and links do the work — no script, and the browser's own back button returns the reader to the text.<sup><a href="#note-1" id="ref-1" aria-label="Note 1">1</a></sup> The mark drops the link underline, and the note the reader jumped to is marked while it is the target.<sup><a href="#note-2" id="ref-2" aria-label="Note 2">2</a></sup></p>
+<div class="footnote">
+    <ol>
+        <li id="note-1">Each note's id matches the mark's link, and its back link points at the mark's id. <a href="#ref-1" aria-label="Back to reference 1">↩</a></li>
+        <li id="note-2">The fixed header is accounted for: the page scrolls the target clear of it. <a href="#ref-2" aria-label="Back to reference 2">↩</a></li>
+    </ol>
+</div>
+<pre><code>&lt;p&gt;… the text.&lt;sup&gt;&lt;a href="#note-1" id="ref-1" aria-label="Note 1"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;div class="footnote"&gt;
+&lt;ol&gt;
+    &lt;li id="note-1"&gt;The note. &lt;a href="#ref-1" aria-label="Back to reference 1"&gt;↩&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</code></pre>
+<p>The <code>.footnote</code> block and its top rule keep to the width of the prose. Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
 <h2 id="sidenotes">Sidenotes</h2>
 <div class="sidenote-wrapper">
     <p>Sidenotes are the typographic equivalent of having a knowledgeable friend lean over and whisper context while you’re reading. They provide supplementary information, references, or commentary without disrupting the main narrative flow—because nothing kills momentum quite like footnotes at the bottom of the page that make you scroll like it’s 1995<sup>1</sup>.</p>
@@ -514,16 +529,16 @@ mask: url("images/icons/cognition-200.svg") no-repeat center / contain;
 </div>
 
 <pre class="text-content-width">
-<code><span class="code-comment">// assets/css/modules/typography/_sidenotes.scss</span>
+<code><span class="code-comment">// assets/css/modules/typography/_notes.scss</span>
 .sidenote-attach::before,
 .sidenote-link::before,
 .sidenote-bulb::before,
 .sidenote-memory::before {
-font-size: var(--font-size-lg);
-position: absolute;
-top: -8px;
-left: -16px;
-color: var(--text-color-light);
+    font-size: var(--font-size-lg);
+    position: absolute;
+    top: -8px;
+    left: -16px;
+    color: var(--text-color-light);
 }</code></pre>
 
     </article>

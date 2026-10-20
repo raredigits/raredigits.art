@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en" class="rd">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Where the price rise came from — Data Notes</title>
+    <meta name="description" content="A worked example article: prose, an image, a table and two charts.">
+
+    <!-- Rare Styles and RareCharts from the CDN, each pinned to a version.
+         Upgrade by changing the version in the URL. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.min.css">
+    <script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_5/rare-charts.min.js"></script>
+
+    <!-- Your own styles, loaded last. -->
+    <link rel="stylesheet" href="assets/project.css">
+</head>
+<body>
+
+<header class="padding-x-md">
+    <div class="header-container grid-global">
+        <div class="header-logo-wrapper">
+            <a class="site-brand" href="index.html">Data Notes</a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="content grid-global">
+        <section class="page-title" id="main-content">
+            <h1>Where the price rise came from</h1>
+        </section>
+
+        <aside class="sidebar">
+            <h5 class="sidebar-header">Contents</h5>
+            <nav class="sidebar-nav" aria-label="Contents">
+                <ul>
+                    <li><a href="#the-year-in-one-line">The year in one line</a></li>
+                    <li><a href="#what-drove-it">What drove it</a></li>
+                    <li><a href="#how-we-measured">How we measured</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <article>
+            <p class="meta-info">By Jane Doe · <time datetime="2026-10-12">12 October 2026</time> · 6 min read</p>
+
+            <p>This is a worked example. The numbers are <strong>illustrative, not real statistics</strong> — they show how an article on this <a href="/examples/styles/content-starter/">starter</a> is put together: prose on a comfortable measure, an image with its caption and source, a table that scrolls on a phone, and two interactive charts.</p>
+
+            <h2 id="the-year-in-one-line">The year in one line</h2>
+
+            <p class="lead">Prices rose for twelve months in a row, but not evenly: two categories carried most of it.</p>
+
+            <p>Month to month the index moved by fractions of a percent, which is why the rise was easy to miss while it happened. Laid end to end, and set against the two years before, the year looks different. Hover the chart to read any month, or switch the range in its header.</p>
+
+            <div id="chart-index" class="text-content-caption margin-y-lg"></div>
+
+            <p>Two things stand out. The rise <em>accelerated</em> after June, and it never paused: there is no month in 2026 in which the index fell. Energy swung the hardest in both directions; food climbed steadily.</p>
+
+            <h2 id="what-drove-it">What drove it</h2>
+
+            <p>A headline index is an average, and an average hides who pays. Split by category, the picture is lopsided:</p>
+
+            <ul>
+                <li><strong>Energy and housing</strong> account for more than half of the rise between them.</li>
+                <li><strong>Food</strong> added a steady, smaller share every month.</li>
+                <li><strong>Clothing</strong> pulled the index down slightly — the only category that did.</li>
+            </ul>
+
+            <div id="chart-contributions" class="text-content-width margin-y-lg"></div>
+
+            <blockquote>
+                <p>An average is a summary of people who are not average.</p>
+                <cite>A statistician, probably</cite>
+            </blockquote>
+
+            <p>The table below carries the detail behind both charts: weight in the basket, the change within each category, and the contribution that results.<sup><a href="#note-1" id="ref-1" aria-label="Note 1">1</a></sup> On a phone it scrolls sideways inside its own box; the page itself does not move.</p>
+
+            <div class="table-scroll">
+                <table>
+                    <caption>Category detail, 2026 (illustrative)</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Category</th>
+                            <th scope="col">Weight, %</th>
+                            <th scope="col">Price change, %</th>
+                            <th scope="col">Contribution, pp</th>
+                            <th scope="col">Share of the rise, %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><th scope="row">Energy</th><td>12</td><td>15.8</td><td>1.9</td><td>31</td></tr>
+                        <tr><th scope="row">Housing</th><td>20</td><td>7.5</td><td>1.5</td><td>25</td></tr>
+                        <tr><th scope="row">Food</th><td>18</td><td>6.7</td><td>1.2</td><td>20</td></tr>
+                        <tr><th scope="row">Transport</th><td>14</td><td>6.4</td><td>0.9</td><td>15</td></tr>
+                        <tr><th scope="row">Services</th><td>28</td><td>2.9</td><td>0.8</td><td>13</td></tr>
+                        <tr><th scope="row">Clothing</th><td>8</td><td>−2.5</td><td>−0.2</td><td>−3</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 id="how-we-measured">How we measured</h2>
+
+            <p>Each category's contribution is its weight in the basket times its own price change. The contributions add up to the headline figure, which is what makes them comparable.</p>
+
+            <figure>
+                <img src="assets/img/poker.jpg" alt="An illustrated card table seen from above, with chips and cards mid-game" width="1024" height="1024" loading="lazy">
+                <figcaption>
+                    An ordinary figure keeps to the measure of the text. Replace it with your own image and credit.
+                    <span class="figure-source">Illustration: Rare Digits</span>
+                </figcaption>
+            </figure>
+
+            <h3>Limits</h3>
+
+            <p>A basket is a model of spending, not anyone's actual receipt. A household that rents and drives felt the year differently from one that owns and walks — see the Consumer Price Index methodology of your statistics office for how its weights are set.</p>
+
+            <div class="footnote">
+                <ol>
+                    <li id="note-1">Contributions are rounded to one decimal. <a href="#ref-1" aria-label="Back to reference 1">↩</a></li>
+                </ol>
+            </div>
+
+            <div class="teaser-bottom"><h3><a href="index.html">← All articles</a></h3></div>
+        </article>
+    </div>
+</main>
+
+<footer class="padding-x-md">
+    <div class="site-max-width padding-y-lg">
+        <p>© 2026 Data Notes. Built on <a href="https://raredigits.art/styles/">Rare Styles</a> and <a href="https://raredigits.art/charts/">RareCharts</a>.</p>
+    </div>
+</footer>
+
+<!-- The charts. Each one: new RareCharts.<Type>('#container', options).setData(data).
+     Title, subtitle and source are options; the chart sets them in place.
+     All types and options: https://raredigits.art/charts/ -->
+<script>
+    const oneDecimal = (value) => value.toLocaleString('en-US', { maximumFractionDigits: 1 });
+
+    new RareCharts.Line('#chart-index', {
+        title: 'Prices by Category',
+        subtitle: 'Monthly price index, January 2026 = 100, 2024–2026',
+        source: 'Source: Illustrative Data',
+        legend: [
+            { label: 'All items', color: '#111111' },
+            { label: 'Energy', color: '#ff6200' },
+            { label: 'Food', color: '#00a3ff' },
+        ],
+        endLabels: false,
+        height: 360,
+        timeframes: ['1Y', 'ALL'],
+        defaultTimeframe: 'ALL',
+        yTickFormat: oneDecimal,
+        xTickFormat: (date) => date.toLocaleString('en-US', { month: 'short', year: '2-digit' }),
+    }).setData([
+        {
+            name: 'All items',
+            color: '#111111',
+            values: [
+                { date: '2024-01-01', value: 95.5 },
+                { date: '2024-02-01', value: 95.5 },
+                { date: '2024-03-01', value: 95.6 },
+                { date: '2024-04-01', value: 95.4 },
+                { date: '2024-05-01', value: 96.1 },
+                { date: '2024-06-01', value: 96.3 },
+                { date: '2024-07-01', value: 96.6 },
+                { date: '2024-08-01', value: 96.4 },
+                { date: '2024-09-01', value: 96.5 },
+                { date: '2024-10-01', value: 97.0 },
+                { date: '2024-11-01', value: 97.4 },
+                { date: '2024-12-01', value: 97.5 },
+                { date: '2025-01-01', value: 97.3 },
+                { date: '2025-02-01', value: 97.7 },
+                { date: '2025-03-01', value: 97.9 },
+                { date: '2025-04-01', value: 98.5 },
+                { date: '2025-05-01', value: 98.3 },
+                { date: '2025-06-01', value: 98.4 },
+                { date: '2025-07-01', value: 98.5 },
+                { date: '2025-08-01', value: 99.1 },
+                { date: '2025-09-01', value: 99.3 },
+                { date: '2025-10-01', value: 99.3 },
+                { date: '2025-11-01', value: 99.3 },
+                { date: '2025-12-01', value: 99.5 },
+                { date: '2026-01-01', value: 100.0 },
+                { date: '2026-02-01', value: 100.3 },
+                { date: '2026-03-01', value: 100.7 },
+                { date: '2026-04-01', value: 101.0 },
+                { date: '2026-05-01', value: 101.4 },
+                { date: '2026-06-01', value: 101.9 },
+                { date: '2026-07-01', value: 102.6 },
+                { date: '2026-08-01', value: 103.3 },
+                { date: '2026-09-01', value: 104.0 },
+                { date: '2026-10-01', value: 104.8 },
+                { date: '2026-11-01', value: 105.5 },
+                { date: '2026-12-01', value: 106.1 }
+            ],
+        },
+        {
+            name: 'Energy',
+            color: '#ff6200',
+            values: [
+                { date: '2024-01-01', value: 97.5 },
+                { date: '2024-02-01', value: 96.7 },
+                { date: '2024-03-01', value: 96.1 },
+                { date: '2024-04-01', value: 97.0 },
+                { date: '2024-05-01', value: 99.2 },
+                { date: '2024-06-01', value: 97.6 },
+                { date: '2024-07-01', value: 99.7 },
+                { date: '2024-08-01', value: 101.7 },
+                { date: '2024-09-01', value: 101.6 },
+                { date: '2024-10-01', value: 101.7 },
+                { date: '2024-11-01', value: 101.2 },
+                { date: '2024-12-01', value: 102.4 },
+                { date: '2025-01-01', value: 104.2 },
+                { date: '2025-02-01', value: 105.5 },
+                { date: '2025-03-01', value: 102.1 },
+                { date: '2025-04-01', value: 100.1 },
+                { date: '2025-05-01', value: 99.9 },
+                { date: '2025-06-01', value: 100.9 },
+                { date: '2025-07-01', value: 101.4 },
+                { date: '2025-08-01', value: 100.3 },
+                { date: '2025-09-01', value: 98.3 },
+                { date: '2025-10-01', value: 98.7 },
+                { date: '2025-11-01', value: 97.3 },
+                { date: '2025-12-01', value: 99.1 },
+                { date: '2026-01-01', value: 100.0 },
+                { date: '2026-02-01', value: 99.1 },
+                { date: '2026-03-01', value: 101.8 },
+                { date: '2026-04-01', value: 104.6 },
+                { date: '2026-05-01', value: 103.2 },
+                { date: '2026-06-01', value: 106.9 },
+                { date: '2026-07-01', value: 109.8 },
+                { date: '2026-08-01', value: 108.4 },
+                { date: '2026-09-01', value: 111.7 },
+                { date: '2026-10-01', value: 113.9 },
+                { date: '2026-11-01', value: 112.6 },
+                { date: '2026-12-01', value: 115.8 }
+            ],
+        },
+        {
+            name: 'Food',
+            color: '#00a3ff',
+            values: [
+                { date: '2024-01-01', value: 93.8 },
+                { date: '2024-02-01', value: 93.8 },
+                { date: '2024-03-01', value: 94.0 },
+                { date: '2024-04-01', value: 94.9 },
+                { date: '2024-05-01', value: 95.0 },
+                { date: '2024-06-01', value: 95.2 },
+                { date: '2024-07-01', value: 94.8 },
+                { date: '2024-08-01', value: 95.5 },
+                { date: '2024-09-01', value: 95.9 },
+                { date: '2024-10-01', value: 96.4 },
+                { date: '2024-11-01', value: 96.1 },
+                { date: '2024-12-01', value: 96.2 },
+                { date: '2025-01-01', value: 96.7 },
+                { date: '2025-02-01', value: 97.3 },
+                { date: '2025-03-01', value: 97.6 },
+                { date: '2025-04-01', value: 97.2 },
+                { date: '2025-05-01', value: 97.6 },
+                { date: '2025-06-01', value: 97.8 },
+                { date: '2025-07-01', value: 98.8 },
+                { date: '2025-08-01', value: 98.5 },
+                { date: '2025-09-01', value: 98.7 },
+                { date: '2025-10-01', value: 98.6 },
+                { date: '2025-11-01', value: 99.4 },
+                { date: '2025-12-01', value: 99.8 },
+                { date: '2026-01-01', value: 100.0 },
+                { date: '2026-02-01', value: 100.6 },
+                { date: '2026-03-01', value: 101.1 },
+                { date: '2026-04-01', value: 101.5 },
+                { date: '2026-05-01', value: 102.2 },
+                { date: '2026-06-01', value: 102.9 },
+                { date: '2026-07-01', value: 103.4 },
+                { date: '2026-08-01', value: 104.0 },
+                { date: '2026-09-01', value: 104.7 },
+                { date: '2026-10-01', value: 105.4 },
+                { date: '2026-11-01', value: 106.0 },
+                { date: '2026-12-01', value: 106.7 }
+            ],
+        },
+    ]);
+
+    new RareCharts.Bar('#chart-contributions', {
+        title: 'Contribution by Category',
+        subtitle: 'Share of the 6.1-point rise in 2026, percentage points',
+        source: 'Source: Illustrative Data',
+        orientation: 'horizontal',
+        height: 300,
+        showValues: true,
+        valueFormat: (d) => oneDecimal(d.value),
+        xTickFormat: oneDecimal,
+    }).setData([
+        { label: 'Energy', value: 1.9 },
+        { label: 'Housing', value: 1.5 },
+        { label: 'Food', value: 1.2 },
+        { label: 'Transport', value: 0.9 },
+        { label: 'Services', value: 0.8 },
+        { label: 'Clothing', value: -0.2 },
+    ]);
+</script>
+
+</body>
+</html>
