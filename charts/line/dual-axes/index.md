@@ -3,7 +3,7 @@ layout: page.njk
 title: "Dual Axes Charts"
 section: "Charts"
 displaySidebar: true
-permalink: '/charts/dual-axes/'
+permalink: '/charts/line/dual-axes/'
 ---
 
 Sometimes you need to plot two things on the same timeline that simply do not belong to the same scale. Revenue and headcount. Inflation and GDP. Price and spread. If you force them onto one axis, one series becomes unreadable, and the chart turns into a polite lie.
@@ -30,6 +30,10 @@ Axis titles are meant to be terse units (`PRICE`, `N · K HLX`). A title that wo
 
 In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine.
 
+### Logarithmic scale
+
+Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) or `'log'`, and `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'`. `scaleToggle` adds a Lin/Log button pinned to the top right of the header, above the Y-axis labels; `onScaleChange(fn)` reports every switch. A worked example — a long-horizon index on a log Y1 next to a signed yearly change on Y2 — is on the <a href="/charts/combined/#logarithmic-scale">Combined</a> page.
+
 ### Interaction
 
 Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through `tooltipFormat ({ date, points })`, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.
@@ -53,6 +57,7 @@ Available pieces:
 - `setView([start, end])` sets any custom visible date window.
 - `getView()` returns the currently visible `[start, end]`.
 - `onViewChange(fn)` lets external UI or a linked navigator stay synchronized.
+- `scaleToggle` adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).
 
 Example:
 
@@ -147,6 +152,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             </td>
         </tr>
         <tr>
+            <td><code>y1Scale</code></td>
+            <td><code>'linear'</code> | <code>'log'</code></td>
+            <td><code>'linear'</code></td>
+            <td>Y1 scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 on Y1 skipped, bars from the bottom of the axis. Switch with <code>setYScale(type, { axis: 'y1' })</code>.</td>
+        </tr>
+        <tr>
             <td><code>y1Ticks</code></td>
             <td>number</td>
             <td><code>4</code></td>
@@ -181,6 +192,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>[min, max]</code></td>
             <td>auto</td>
             <td>Override the Y2 scale domain.</td>
+        </tr>
+        <tr>
+            <td><code>y2Scale</code></td>
+            <td><code>'linear'</code> | <code>'log'</code></td>
+            <td><code>'linear'</code></td>
+            <td>Y2 scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 on Y2 skipped, bars from the bottom of the axis. Switch with <code>setYScale(type, { axis: 'y2' })</code>.</td>
         </tr>
         <tr>
             <td><code>y2Ticks</code></td>
@@ -337,6 +354,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
+        </tr>
+        <tr>
+            <td><code>scaleToggle</code></td>
+            <td>boolean | <code>'y1'</code> | <code>'y2'</code> | object</td>
+            <td><code>false</code></td>
+            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both; or <code>{ axis, labels: { linear, log } }</code>. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>

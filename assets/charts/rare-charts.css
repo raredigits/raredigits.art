@@ -144,6 +144,20 @@
   align-self: start;
   min-width: max-content;
   padding-right: 60px;
+  position: relative;
+}
+
+/* Lin/Log switch: pinned right, in the 60px the row keeps free above the
+   Y-axis labels, level with the first line of timeframes — which stay where
+   they are. Without timeframes the row holds just the button, at the right. */
+.rc-chart-range-row--scale .rc-scale-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.rc-chart-range-row--scale-only {
+  padding-right: 0;
 }
 
 /* ─── Legend ─────────────────────────────────────────────────────────────── */
@@ -175,6 +189,17 @@
     justify-self: start;
     min-width: 0;
     padding-right: 0;
+  }
+
+  /* Phone: the timeframes keep their place on the left and wrap before the
+     Lin/Log button, which stays pinned right. */
+  .rc-chart-range-row--scale {
+    justify-self: stretch;
+    padding-right: 60px;
+  }
+
+  .rc-chart-range-row--scale-only {
+    justify-self: end;
   }
 }
 
@@ -614,7 +639,7 @@
   width: 48%;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--primary-color, #000);
+  border: 1px solid var(--border-color, #ccc);
   border-radius: var(--space-sm);
   padding: var(--space-sm);
 }
@@ -734,6 +759,20 @@
   color: var(--primary-text-color);
   background-color: var(--white);
   border-color: var(--primary-color);
+}
+
+/* Lin/Log switch — a range button split on the diagonal: the upper-left half
+   filled in the border colour, so it reads as a switch rather than one more
+   timeframe. The fill flips to the lower-right half on the log scale. */
+.rc-scale-btn {
+  background: linear-gradient(135deg, var(--border-color, #ccc) 50%, transparent 50%);
+  /* narrower than a timeframe button, so it fits the 60px above the Y labels */
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
+}
+
+.rc-scale-btn[data-scale="log"] {
+  background: linear-gradient(135deg, transparent 50%, var(--border-color, #ccc) 50%);
 }
 
 /* ─── Stats row ──────────────────────────────────────────────────────────── */

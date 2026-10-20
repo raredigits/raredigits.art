@@ -134,6 +134,18 @@ chart.onViewChange(extent => {
 
 This matters when the date range is driven by router state, saved user settings, query params, or another piece of UI that insists on being in charge.
 
+### Logarithmic scale
+
+For prices that span decades, set `yScale: 'log'`: ticks fall on powers of ten, the margin above and below is a factor of the data's span, and zero or negative points are skipped with one console warning. `scaleToggle: true` adds a Lin/Log button to the top right of the header, above the Y-axis labels — the range buttons keep their place; `setYScale('log' | 'linear')` switches from code, and `onScaleChange(fn)` reports every switch. The scale is the same as on <a href="/charts/line/">Line</a>.
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
+    timeframes: true,
+    yScale: 'log',
+    scaleToggle: true,
+});
+
+chart.onScaleChange(({ scale }) => console.log(scale));</code></pre>
+
 ### Custom ranges
 
 If the built-in shortcuts are not enough, you can define your own buttons.
@@ -237,6 +249,18 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td>function</td>
             <td><code>$,.0f</code></td>
             <td><code>(value) =&gt; string</code> — formats Y axis labels.</td>
+        </tr>
+        <tr>
+            <td><code>yScale</code></td>
+            <td><code>'linear'</code> | <code>'log'</code></td>
+            <td><code>'linear'</code></td>
+            <td>Y scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 skipped. Switch with <code>setYScale()</code>.</td>
+        </tr>
+        <tr>
+            <td><code>scaleToggle</code></td>
+            <td>boolean | object</td>
+            <td><code>false</code></td>
+            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> or <code>{ labels: { linear, log } }</code>. Each switch fires <code>onScaleChange</code>.</td>
         </tr>
         <tr>
             <td><code>yTicks</code></td>
@@ -362,6 +386,16 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>onViewChange</code></td>
             <td><code>(fn)</code></td>
             <td>Registers a callback that runs whenever the visible date window changes.</td>
+        </tr>
+        <tr>
+            <td><code>setYScale</code></td>
+            <td><code>(type, { silent? })</code></td>
+            <td>Switches the Y scale to <code>'log'</code> or <code>'linear'</code>, redraws and renames the Lin/Log button. Returns the chart.</td>
+        </tr>
+        <tr>
+            <td><code>onScaleChange</code></td>
+            <td><code>(fn)</code></td>
+            <td>Registers a callback that gets <code>{ scale, axis: 'y' }</code> whenever the scale switches (the Lin/Log button or <code>setYScale</code> without <code>silent</code>).</td>
         </tr>
     </tbody>
 </table>

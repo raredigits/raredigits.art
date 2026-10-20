@@ -25,6 +25,9 @@
 //                    margin above/below is a factor of the data's span, values
 //                    ≤ 0 are skipped (warned once per setData). Switch between
 //                    data swaps with setYScale(): chart.setYScale('log').setData(all)
+//   scaleToggle    — a Lin/Log button, top right of the header above the Y labels
+//                    (true | { labels: { linear, log } }); onScaleChange(fn)
+//                    gets { scale, axis: 'y' } on every switch
 //   yTicks         — approximate number of ticks (default: 4); linear ticks stay
 //                    inside the padded data range, so the count follows the step
 //   yTickValues    — explicit Y tick positions (overrides yTicks)
@@ -137,10 +140,17 @@ export class Line extends Chart {
 
   // Switch the Y scale between 'linear' and 'log' and redraw. Chained before
   // setData(), both run in the same tick — one paint with the new scale and data.
-  setYScale(type) {
-    this.options.yScale = type === 'log' ? 'log' : 'linear';
+  // Fires onScaleChange unless { silent: true }.
+  setYScale(type, { silent = false } = {}) {
+    const scale = type === 'log' ? 'log' : 'linear';
+    this.options.yScale = scale;
     this.render();
+    this._scaleChanged(scale, 'y', silent);
     return this;
+  }
+
+  _isLogScale() {
+    return this.options.yScale === 'log';
   }
 
   _getDataExtent() {

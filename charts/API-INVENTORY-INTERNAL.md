@@ -64,7 +64,8 @@
 | `animate` | boolean | `true` | только первый рендер. ⚠️ В TimeSeries моторного блока нет вообще |
 | `duration` | number (ms) | `650` | через `motionDuration()` |
 | `ease` | `'cubicOut'\|'cubicInOut'\|'linear'` | `'cubicOut'` | |
-| `yScale` | `'linear'\|'log'` | `'linear'` | 0.9.8_4. Log: тики по степеням 10 (→ 1-2-5 → линейные), отступ множителем (`logPaddedDomain`), значения ≤ 0 пропускаются с одним warn на `setData`. Метод `setYScale(type)` — перерисовка, chainable. ⚠️ пока только Line (TimeSeries/DualAxes — 0.9.8_7) |
+| `yScale` | `'linear'\|'log'` | `'linear'` | 0.9.8_4. Log: тики по степеням 10 (→ 1-2-5 → линейные), отступ множителем (`logPaddedDomain`), значения ≤ 0 пропускаются с одним warn на `setData`. Метод `setYScale(type, { silent })` — перерисовка, chainable, событие `onScaleChange`. С 0.9.8_5 то же на TimeSeries (`yScale`) и DualAxes (`y1Scale`/`y2Scale`) |
+| `scaleToggle` | `boolean\|object` | `false` | 0.9.8_5, общий для Line/TimeSeries/DualAxes (`Chart.js`): одна кнопка Lin/Log в шапке справа над подписями оси Y, на уровне таймфреймов, которые остаются на месте (абсолютно в 60px отступа `.rc-chart-range-row--scale`; без таймфреймов — `--scale-only`; закраска по диагонали); подпись — текущая шкала, клик переключает; `{ labels: { linear, log } }`. `onScaleChange(fn)` → `{ scale, axis: 'y' }` |
 | `yTicks` | number | `4` | ориентир, не квота: с 0.9.8_4 линейные тики `linearTickValues` (d3 1-2-5) внутри отбитого диапазона, ось не уходит за данные. ⚠️ в TimeSeries дефолт 5 |
 | `yTickValues` | number[] | авто (`linearTickValues` / `logTickValues`) | явные тики могут расширить домен |
 | `yTickFormat` | `fn(value) => string` | авто (SI `.2s` / `+.2%`) | |
@@ -108,6 +109,7 @@
 | `area` | `false\|true\|number` | `true` (градиент) | ⚠️ number = opacity сплошной заливки; у Line отдельная `areaOpacity` |
 | `areaColor` | string | `theme.accent` | ❓ недокументирована в шапке |
 | `yLabelsOnly` | boolean | `true` | |
+| `yScale` / `scaleToggle` | `'linear'\|'log'` / `boolean\|object` | `'linear'` / `false` | 0.9.8_5. Как у Line: `setYScale(type, { silent })`, `onScaleChange`; явные `yTickValues` на логе — только > 0 |
 | `yTicks` | number | `5` | ⚠️ у Line дефолт 4 |
 | `yTickFormat` | `fn(v) => string` | `'$' + ',.0f'` | ⚠️ доллар захардкожен; нет `yPrefix`/`ySuffix`/`yFormat`, как у Line |
 | `xTickFormat` | `fn(date) => string` | `'%b'` | ❓ недокументирована в шапке; ⚠️ у Line `'%m/%d'` |
@@ -183,6 +185,8 @@
 | `y2TickFormat` | fn | `v≈0 ? '0' : '+.2f'` | ❓ знаковый формат — очень опинионированный дефолт |
 | `xTickFormat` | fn | `'%m/%d'` | |
 | `y1Domain` / `y2Domain` | [min,max] | auto | |
+| `y1Scale` / `y2Scale` | `'linear'\|'log'` | `'linear'` | 0.9.8_5, по осям. `setYScale(type, { axis: 'y1'\|'y2'\|'both', silent })` (по умолчанию обе). Лог-ось: бары от низа оси, ≤ 0 пропускаются, явный `yNDomain` на логе принимается только при 0 < min < max |
+| `scaleToggle` | `boolean\|'y1'\|'y2'\|'both'\|object` | `false` | 0.9.8_5. `true` = `'y1'` (на Y2 часто знаковая серия), `'y2'`, `'both'` (кнопка «Log», если лог хоть одна ось). `onScaleChange(fn)` → `{ scale, axis }` |
 | `y1LabelsOnly` / `y2LabelsOnly` | boolean | `true` | |
 | `showGrid` | boolean | `true` | ⚠️ сетка по шкале **y2** и `y2Ticks` |
 | `showXAxis` | boolean | `true` | 0.9.8: скрытие схлопывает нижнее поле |
@@ -394,7 +398,7 @@ node = {
 | `animate` / `duration` / `ease` | `true` / `500` / `cubicOut` | ✅ моторный блок как у Bar (нет `stagger`) |
 | `tooltipFormat` | — | `(node) => html` |
 
-Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_7); текущий вид статический (весь outline сразу).
+Интерактивный collapse/expand — follow-up (интерактив в 0.9.8_8); текущий вид статический (весь outline сразу).
 
 ### Donut drill-down (расширение стабильного класса — ✅ реализовано)
 
