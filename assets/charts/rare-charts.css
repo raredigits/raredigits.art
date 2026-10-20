@@ -11,6 +11,9 @@
   --rc-font-family-numeric: "Cousine", monospace;
   --rc-font-size: 16px;
   --rc-font-size-sm: 14px;
+  /* Lin/Log switch fill — an explicit colour, not the page's --border-color,
+     which some hosts set to black (the label then disappears). */
+  --rc-scale-btn-fill: #ccc;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -762,17 +765,17 @@
 }
 
 /* Lin/Log switch — a range button split on the diagonal: the upper-left half
-   filled in the border colour, so it reads as a switch rather than one more
+   filled in --rc-scale-btn-fill, so it reads as a switch rather than one more
    timeframe. The fill flips to the lower-right half on the log scale. */
 .rc-scale-btn {
-  background: linear-gradient(135deg, var(--border-color, #ccc) 50%, transparent 50%);
+  background: linear-gradient(135deg, var(--rc-scale-btn-fill) 50%, transparent 50%);
   /* narrower than a timeframe button, so it fits the 60px above the Y labels */
   padding-left: var(--space-sm);
   padding-right: var(--space-sm);
 }
 
 .rc-scale-btn[data-scale="log"] {
-  background: linear-gradient(135deg, transparent 50%, var(--border-color, #ccc) 50%);
+  background: linear-gradient(135deg, transparent 50%, var(--rc-scale-btn-fill) 50%);
 }
 
 /* ─── Stats row ──────────────────────────────────────────────────────────── */

@@ -18,6 +18,18 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_5_1] — 2026-10-20 — Scale Button Colour
+
+A patch on top of `v0.9.8_5` with one fix to the Lin/Log button. Nothing else changes; on pages that leave `--border-color` light the button looks exactly as before. Flows II stays `v0.9.8_6`.
+
+### Fixed
+
+- **The Lin/Log button could turn unreadable** (`rare-charts.css` → `.rc-scale-btn`). Its half fill took the page's `--border-color`; a host that sets that variable to black got a black half with the label lost in it. The fill now has its own colour, `--rc-scale-btn-fill` (`#ccc`, set on `.rc-chart`), so the page's variables no longer reach it; override the token to restyle the switch on purpose.
+
+### Size
+
+Minified bundle 605,955 → 606,134 bytes (+179); gzip 182,047 → 182,124 (+77). Measured on local builds of `v0.9.8_5` and this release, banner excluded.
+
 ## [v0.9.8_5] — 2026-10-20 — Log Scales II
 
 Out of turn, for a consumer whose chart is a `DualAxes`: in v0.9.8_4 only `Line` had a log scale. This release brings it to **both axes of `DualAxes`, each on its own**, and to **`TimeSeries`**, and adds one **Lin/Log button** to the chart header — the same on all three — with an event when it flips. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_6 / _7 / _8) with their content unchanged.

@@ -422,6 +422,14 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 </blockquote>
 <hr>
 <h2 id="unreleased">[Unreleased]</h2>
+<h2 id="v0-9-8-5-1-2026-10-20-scale-button-colour">[v0.9.8_5_1] — 2026-10-20 — Scale Button Colour</h2>
+<p>A patch on top of <code>v0.9.8_5</code> with one fix to the Lin/Log button. Nothing else changes; on pages that leave <code>--border-color</code> light the button looks exactly as before. Flows II stays <code>v0.9.8_6</code>.</p>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li><strong>The Lin/Log button could turn unreadable</strong> (<code>rare-charts.css</code> → <code>.rc-scale-btn</code>). Its half fill took the page's <code>--border-color</code>; a host that sets that variable to black got a black half with the label lost in it. The fill now has its own colour, <code>--rc-scale-btn-fill</code> (<code>#ccc</code>, set on <code>.rc-chart</code>), so the page's variables no longer reach it; override the token to restyle the switch on purpose.</li>
+</ul>
+<h3 id="size">Size</h3>
+<p>Minified bundle 605,955 → 606,134 bytes (+179); gzip 182,047 → 182,124 (+77). Measured on local builds of <code>v0.9.8_5</code> and this release, banner excluded.</p>
 <h2 id="v0-9-8-5-2026-10-20-log-scales-ii">[v0.9.8_5] — 2026-10-20 — Log Scales II</h2>
 <p>Out of turn, for a consumer whose chart is a <code>DualAxes</code>: in v0.9.8_4 only <code>Line</code> had a log scale. This release brings it to <strong>both axes of <code>DualAxes</code>, each on its own</strong>, and to <strong><code>TimeSeries</code></strong>, and adds one <strong>Lin/Log button</strong> to the chart header — the same on all three — with an event when it flips. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_6 / _7 / _8) with their content unchanged.</p>
 <h3 id="added">Added</h3>
@@ -440,25 +448,25 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Demo control groups have a light border</strong> (<code>rare-charts.css</code> → <code>.rc-demo-group</code>, <code>/charts/line/visual-options/</code>): <code>--border-color</code> instead of black.</li>
 <li><strong>Docs: the Dual Axes page moved under Line</strong> — <code>/charts/line/dual-axes/</code>, after Visual Options; the old <code>/charts/dual-axes/</code> address redirects there, anchors included. Its log-scale example (<em>Index and yearly change</em>) lives on <code>/charts/combined/</code>.</li>
 </ul>
-<h3 id="size">Size</h3>
+<h3 id="size-2">Size</h3>
 <p>Minified bundle 601,388 → 605,955 bytes (+4,567, +0.76%); gzip 180,611 → 182,040 (+1,429). Measured on local builds of <code>v0.9.8_4_2</code> and this release, banner excluded.</p>
 <h3 id="removed-from-the-backlog">Removed from the backlog</h3>
 <p>Logarithmic Y scale on <code>TimeSeries</code> and <code>DualAxes</code>.</p>
 <h2 id="v0-9-8-4-2-2026-10-20-bar-category-axis">[v0.9.8_4_2] — 2026-10-20 — Bar Category Axis</h2>
 <p>A second patch on top of <code>v0.9.8_4</code>, again for the Rare Styles content starter: one visual fix on horizontal <code>Bar</code>. Flows II stays <code>v0.9.8_5</code>.</p>
-<h3 id="fixed">Fixed</h3>
+<h3 id="fixed-2">Fixed</h3>
 <ul>
 <li><strong>A stray vertical line beside the category labels on horizontal <code>Bar</code></strong> (<code>src/charts/Bar.js</code>, categorical and stacked). The category axis drew its axis line at the plot's left edge; with a negative value the bars start at zero further right, so the line stood apart from the bars. The horizontal category axis now has no axis line, like the value axes. Vertical bars keep their baseline.</li>
 </ul>
-<h3 id="size-2">Size</h3>
+<h3 id="size-3">Size</h3>
 <p>Minified bundle 601,420 → 601,390 bytes (−30); gzip 180,617 → 180,613 (−4). Measured on local builds of <code>v0.9.8_4_1</code> and this release, banner excluded.</p>
 <h2 id="v0-9-8-4-1-2026-10-19-bar-value-labels">[v0.9.8_4_1] — 2026-10-19 — Bar Value Labels</h2>
 <p>A patch on top of <code>v0.9.8_4</code> with one <code>Bar</code> fix, found while building the Rare Styles content starter. Nothing else changes; charts whose value labels already fit render exactly as before. Flows II stays <code>v0.9.8_5</code>.</p>
-<h3 id="fixed-2">Fixed</h3>
+<h3 id="fixed-3">Fixed</h3>
 <ul>
 <li><strong>A short bar's value label was clipped</strong> (<code>src/charts/Bar.js</code>, horizontal, <code>showValues: true</code>). A label flipped inside its bar whenever the space past the bar end was under <code>valueInsideGap</code>, whether or not it fit inside. A small negative bar next to the left edge of a phone-width plot got its label squeezed into a bar a few pixels wide, so <code>-0.2</code> read as <code>-0</code>. A label now goes inside only when it fits there; otherwise it sits past the bar end — left of a negative bar, right of a positive one — and the value axis widens on that side until the label fits (at most 30% of the plot width per side). Charts whose labels already fit are unchanged.</li>
 </ul>
-<h3 id="size-3">Size</h3>
+<h3 id="size-4">Size</h3>
 <p>Minified bundle 600,836 → 601,418 bytes (+582, +0.10%); gzip 180,263 → 180,615 (+352). Measured on local builds of <code>v0.9.8_4</code> and this release, banner excluded.</p>
 <h2 id="v0-9-8-4-2026-10-19-log-scale">[v0.9.8_4] — 2026-10-19 — Log Scale</h2>
 <p>A small release out of turn, for a consumer that plots a long-horizon index and switches periods by swapping data: a <strong>logarithmic Y scale on <code>Line</code></strong> that can be turned on and off between <code>setData()</code> calls, and <strong>linear ticks that stay inside the data</strong>. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_5 / _6 / _7) with their content unchanged.</p>
@@ -468,13 +476,13 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong><code>Line.setYScale('log' | 'linear')</code></strong> — switches the scale and redraws; returns the chart, so <code>chart.setYScale('log').setData(all)</code> changes scale and data in one paint. Log on the full history, linear on the last year.</li>
 <li>Helpers <code>linearTickValues</code>, <code>logTickValues</code>, <code>logPaddedDomain</code> in <code>src/core/utils.js</code>.</li>
 </ul>
-<h3 id="fixed-3">Fixed</h3>
+<h3 id="fixed-4">Fixed</h3>
 <ul>
 <li><strong><code>Line</code> Y axis ran past the data</strong> (<code>src/charts/Line.js</code>). Ticks were built as exactly <code>yTicks</code> steps up from the minimum, and the domain was stretched to the last one: a year of data topping out at 193 got an axis to 400 and a line squeezed into the lower half. Ticks now fall on d3's 1-2-5 steps inside the padded data range, and the domain is that range — <code>yTicks</code> is a target count, not a quota (the step decides: 3–6 ticks for the default 4). Charts with explicit <code>yTickValues</code> are unchanged. <code>Bar</code> keeps its own tick logic.</li>
 <li><strong>The <code>controls</code> row overlapped the X axis</strong> (<code>src/core/Chart.js</code>). The drawing's height did not count the controls slot added in v0.9.8_3, so the row sat on top of the axis labels; it is now subtracted like the header and footer.</li>
 <li><strong>Demo selects had the browser's light border</strong> (<code>rare-charts.css</code> → <code>.rc-demo-select</code>, <code>/charts/line/visual-options/</code>). They now get a black border matching the control cards.</li>
 </ul>
-<h3 id="size-4">Size</h3>
+<h3 id="size-5">Size</h3>
 <p>Minified bundle 599,769 → 600,672 bytes (+903, +0.15%); gzip 179,916 → 180,248 (+332). Measured on local builds of <code>v0.9.8_3</code> and this release, banner excluded.</p>
 <h3 id="removed-from-the-backlog-2">Removed from the backlog</h3>
 <p>Logarithmic Y scale on <code>Line</code>. The same option on <code>TimeSeries</code> and <code>DualAxes</code> stays in the <a href="https://raredigits.art/charts/backlog/">backlog</a> for v0.9.8_7.</p>
@@ -493,7 +501,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong><code>fitTextNode</code></strong> moved from <code>Donut</code> to <code>src/core/renderHelpers.js</code> for reuse (Sankey labels); <code>.rc-sr-only</code> utility in <code>rare-charts.css</code>.</li>
 <li><strong>Pinnable tooltip</strong> (<code>src/core/Tooltip.js</code>, <code>rare-charts.css</code> → <code>.rc-tooltip.is-pinned</code>). Opt-in <code>pin()</code>/<code>unpin()</code>: the tooltip stays put, takes pointer events and wraps; it closes on an outside click or Escape. Hover <code>show()</code>/<code>hide()</code> are unchanged for every chart.</li>
 </ul>
-<h3 id="size-5">Size</h3>
+<h3 id="size-6">Size</h3>
 <p>Minified bundle 544,951 → 600,678 bytes (+55,727, +10.2%); gzip 163,911 → 182,209 (+11.2%); Brotli 138,291 → 152,978 (+10.6%). Measured on the published files (jsDelivr, <code>@v0.9.8_2</code> vs <code>@v0.9.8_3</code>, banner included). The growth is the two new relation views (Sankey, Graph flow), the shared link layer, and the Graph details panel, full screen and footer tools.</p>
 <h3 id="removed-from-the-backlog-3">Removed from the backlog</h3>
 <p>Sankey; directed and multiple graph relations (several typed ties per pair). The Graph flow view's second stage — automatic layout, aggregation, collapsible groups — stays in the <a href="https://raredigits.art/charts/backlog/">backlog</a> for v0.9.8_4.</p>
@@ -501,7 +509,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <ul>
 <li><strong><code>Graph.setData()</code> no longer draws a throwaway default view</strong> (<code>src/charts/Graph.js</code>). <code>setData()</code> still focuses the best-connected node by default, but a <code>focus()</code>, <code>connect()</code> or <code>overview()</code> chained in the same tick now replaces that default instead of running after it: <code>graph.setData(data).focus(id)</code> fetches and renders <code>id</code> once. Previously the best-connected ego was built, rendered and immediately discarded. No <code>whenReady()</code> is needed between <code>setData()</code> and the first view call — and adding one now costs that extra default render. <code>whenReady()</code> after <code>setData()</code> alone still resolves after the default ego is drawn.</li>
 </ul>
-<h3 id="fixed-4">Fixed</h3>
+<h3 id="fixed-5">Fixed</h3>
 <ul>
 <li><strong>Graph ego view piled a single-category neighbourhood into one corner</strong> (<code>src/graph/layouts/ego.js</code>). The grid anchors each category to a corner; when one category held almost every node it had nothing to share the canvas with. Now, when a category holds more than 80% of the nodes (and there are at least six), that category is anchored at the ego and fills the same grid from the centre out, first ring nearest — a centred rosette with no overlaps.</li>
 <li><strong>Cluster view overlapped large communities</strong> (<code>src/graph/layouts/cluster.js</code>). Meta-nodes stood on a circle, and big ones ran into each other. They now stand on a grid like the ego view — largest community in the centre, the rest spiralling out — and ties in both grid views bow slightly so they never run straight through the nodes between them. Only the path view keeps its own route layout.</li>
@@ -538,7 +546,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Gauge: speedometer needle and any-sweep geometry</strong> (<code>src/charts/Gauge.js</code>). <code>needle: true</code> draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill; the center readout moves below the hub, dial-style; <code>needleColor</code> overrides the theme text color. Works with any <code>startAngle</code>/<code>endAngle</code> sweep — the half-circle automotive look is <code>±Math.PI / 2</code>. Documented in the Speedometer section of <a href="https://raredigits.art/charts/circular/"><code>/charts/circular/</code></a>.</li>
 <li><strong>Donut/Pie outer labels: collision handling</strong> (<code>src/charts/Donut.js</code>). Leader-line labels now resolve overlaps: per side, rows are spread apart to a minimum gap (small adjacent slices no longer overprint), each label truncates with an ellipsis to the room between its anchor and the chart edge (the full text stays in the tooltip), and the center readout fits the hole — the value shrinks its font down to a floor instead of poking out, the secondary line truncates. Covered by <code>test/circular-fit.test.js</code>.</li>
 </ul>
-<h3 id="fixed-5">Fixed</h3>
+<h3 id="fixed-6">Fixed</h3>
 <ul>
 <li><strong><code>Bar</code> entry animation raced the layout and froze bars short</strong> (<code>src/charts/Bar.js</code>). When the first render landed while the header was still settling (fonts loading, flex layout), bars animated toward a stale plot height and stuck at a fraction of it — re-renders were swallowed by the once-per-instance guard, which was only set on transition end (an event that never fires for an interrupted transition). The guard is now set synchronously and re-renders <code>interrupt()</code> the in-flight tween and finalize to the current scale. Applied to all three bar geometries (categorical vertical/horizontal and time-series).</li>
 <li><strong>Gauge center label clipped on shallow arcs</strong> (<code>src/charts/Gauge.js</code>). For sweeps ending near ±90° the circle center sits at the drawing's bottom edge, and the label below it fell outside the svg. The radius/centering math now reserves room for whatever hangs below the circle center — the arc's own bottom or the text block — so nothing clips; deep arcs (the ±135° default) keep their previous geometry to within a pixel.</li>
@@ -557,7 +565,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Graph navigation and filtering</strong> (<code>src/charts/Graph.js</code>, <code>rare-charts.css</code>). Relation-type filtering over the ego view — a <code>relationTypes</code> option, <code>setRelationTypes()</code> / <code>clearRelationTypes()</code>, and an interactive legend (click isolates a type, Shift/Ctrl/Cmd-click multi-selects, &quot;Show all&quot; resets); the filter drives both the traversal and what is drawn, and untyped links act as a single <code>default</code> type. Breadcrumb history with <code>back()</code> restores prior ego/path/cluster states together with their filter. The <code>+N more</code> capacity note is now an actionable disclosure listing the capped-out nodes — click one to refocus on it. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 <li><strong>Graph progressive data contract.</strong> Nodes need only an <code>id</code>, links only <code>{ source, target }</code>: labels fall back to ids everywhere (canvas, tooltip, breadcrumbs), endpoint nodes are auto-created, link type and weight default sensibly — every view renders from a links-only payload, pinned by contract tests. Removed from the <a href="https://raredigits.art/charts/backlog/">backlog</a>.</li>
 </ul>
-<h3 id="fixed-6">Fixed</h3>
+<h3 id="fixed-7">Fixed</h3>
 <ul>
 <li><strong>Categorical <code>Bar</code> now renders negative values</strong> (<code>src/charts/Bar.js</code>). The vertical and horizontal category modes hard-coded a <code>[0, max]</code> scale domain, so a negative bar computed a negative height/width — an invalid rect that silently didn't render (the time-series mode already handled negatives). The domain now always includes 0 and extends to the data on both sides; bars grow from the zero baseline in both directions, entry animation starts at the baseline, and horizontal value labels flip to the correct side of a negative bar. Covered by <code>test/bar-negatives.test.js</code>.</li>
 </ul>
@@ -575,7 +583,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <li><strong>Reduced-motion support</strong> (<code>src/core/utils.js</code> → <code>prefersReducedMotion()</code> / <code>motionDuration()</code>, <code>rare-charts.css</code>). Honours the OS <code>prefers-reduced-motion: reduce</code> setting: a CSS media query neutralizes in-chart CSS transitions, and <code>motionDuration()</code> collapses D3 animation durations to 0 so transitions resolve instantly. Applied to every animating chart type — <code>Bar</code>, <code>Line</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code> (<code>TimeSeries</code>, <code>Map</code>, <code>MultiChart</code> have no entry animation; <code>Graph</code> is experimental and excluded from 1.0).</li>
 <li><strong>Accessible name on the chart SVG</strong> (<code>src/core/renderHelpers.js</code> → <code>applySvgA11y()</code>). The root <code>&lt;svg&gt;</code> now carries <code>role=&quot;img&quot;</code> and an <code>aria-label</code> derived from <code>title</code>/<code>subtitle</code> (or an explicit <code>ariaLabel</code> option), so screen readers announce the chart instead of skipping it. Applied to <code>Bar</code>, <code>Line</code>, <code>TimeSeries</code>, <code>DualAxes</code>, <code>Donut</code>, <code>Gauge</code>, <code>Map</code> (<code>MultiChart</code> delegates to its child charts; <code>Graph</code> is experimental and excluded from 1.0).</li>
 </ul>
-<h3 id="fixed-7">Fixed</h3>
+<h3 id="fixed-8">Fixed</h3>
 <ul>
 <li><strong><code>fromArray</code> / data adapters kept rows with a non-finite <code>value</code></strong> (<code>src/adapters/index.js</code>). The filter <code>!row.value || isFinite(row.value)</code> let <code>NaN</code> through because <code>NaN</code> is falsy (<code>!NaN === true</code>), so a row whose value failed to parse (e.g. <code>+'x'</code>) was not dropped despite the documented intent. Now uses <code>row.value == null || Number.isFinite(+row.value)</code> — an absent value and a legitimate <code>0</code> are kept, a present-but-non-finite value is dropped. Surfaced by the new test suite.</li>
 </ul>
@@ -599,7 +607,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <ul>
 <li><strong>Axis titles clip to their margin instead of running off the chart</strong> (<code>src/core/renderHelpers.js</code> → <code>renderAxisTitles</code>, <code>src/charts/DualAxes.js</code>, <code>src/core/utils.js</code> → <code>warnAxisTitleClipped</code>). <code>y1Title</code> / <code>y2Title</code> are now measured by rendered pixel width against the available axis margin (its exact overflow-clip boundary) and trimmed with an ellipsis only when they would actually be cut off — narrow glyphs in a terse title like <code>N · K HLX</code>, and the uppercase transform applied via CSS, are accounted for as they render, so a label that fits (e.g. <code>Inflows</code>) is left intact. The full text is kept as a hover <code>&lt;title&gt;</code>, a one-time console hint fires, and <code>axisTitleMaxLength</code> caps the length explicitly.</li>
 </ul>
-<h3 id="fixed-8">Fixed</h3>
+<h3 id="fixed-9">Fixed</h3>
 <ul>
 <li><strong>Horizontal bar value-axis end labels no longer clip at the chart edge</strong> (<code>src/charts/Bar.js</code>). When the value axis sits flush against the card (<code>margin.left</code> / <code>right</code> = 0), the centered first/last tick label (e.g. <code>0</code>) was half-cut by the card's overflow clip. The first label is now anchored <code>start</code> and the last <code>end</code>, so both sit fully inside the plot while the bars stay flush.</li>
 <li><strong>Text-dependent layout now settles after the web font loads</strong> (<code>src/core/Chart.js</code>). First paint can happen before the bundled font (Fira Sans) finishes loading, so measurements taken against the wider fallback font were wrong — axis titles that fit were trimmed, X-axis labels over-thinned, end-label boxes mis-sized. Each chart now re-renders once on <code>document.fonts.ready</code>, so these measurements are correct without waiting for a resize. The re-render does not replay entry animations.</li>
@@ -616,7 +624,7 @@ Format follows <a href="https://keepachangelog.com/">Keep a Changelog</a>. The l
 <ul>
 <li><strong>The crosshair only reports a series where its data covers the cursor date</strong> (<code>src/core/Crosshair.js</code>). A partial series — a forecast band or a projected line that starts part-way along the axis — no longer snaps its nearest endpoint across the whole width; it stays silent outside its own date range. When nothing is under the cursor, the crosshair line, dots, and tooltip clear. <strong>This affects every chart that uses the crosshair, not only bands</strong> — in practice it only changes charts whose series span different date ranges.</li>
 </ul>
-<h3 id="fixed-9">Fixed</h3>
+<h3 id="fixed-10">Fixed</h3>
 <ul>
 <li><strong>Per-series <code>strokeDash</code> was documented but never applied.</strong> The field was listed in the Line options table and read during render, but <code>_normalizeData</code> dropped it, so a per-series dash pattern had no effect. It is now carried through and works.</li>
 <li><strong><code>resolveStrokeDash</code> rejected raw dash-array strings</strong> (<code>src/core/utils.js</code>). The options table implied a value like <code>'4,3'</code> was accepted, but only the named presets (<code>'dashed'</code>, <code>'dotted'</code>, <code>'dashDot'</code>, <code>'longDash'</code>) resolved — any raw string fell through to <code>null</code>. A numeric dash-array string (e.g. <code>'5,4'</code>, <code>'4 3'</code>) is now passed through as-is.</li>
