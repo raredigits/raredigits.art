@@ -35,6 +35,14 @@
 //   y2TickFormat    — function(value) => string
 //   xTickFormat     — function(date) => string
 //   y1Domain / y2Domain — override auto domains
+//   y1Scale / y2Scale — 'linear' (default) | 'log', per axis. Log: powers-of-ten
+//                     ticks, the margin above/below is a factor of the axis's
+//                     data span, values ≤ 0 on that axis are skipped (warned once
+//                     per setData), bars grow from the bottom of the axis.
+//                     setYScale(type, { axis: 'y1' | 'y2' | 'both' }) switches
+//   scaleToggle     — a Lin/Log button, top right of the header above the Y labels:
+//                     true (= 'y1') | 'y2' | 'both' | { axis?, labels?: { linear, log } };
+//                     onScaleChange(fn) gets { scale, axis } on every switch
 //
 //   y1LabelsOnly/y2LabelsOnly — labels only, no axis line (default: true)
 //   showGrid        — show grid lines (default: true)
@@ -73,7 +81,7 @@ import * as d3 from 'd3';
 import { Chart }                  from '../core/Chart.js';
 import { Tooltip }                from '../core/Tooltip.js';
 import { Crosshair }              from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations, motionDuration } from '../core/utils.js';
+import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations, motionDuration, logTickValues, logPaddedDomain } from '../core/utils.js';
 import { linePath, areaPath }     from '../core/seriesPath.js';
 import {
   renderGrid,
@@ -130,9 +138,34 @@ export class DualAxes extends Chart {
 
   setData(series) {
     this._series = this._normalizeData(series);
+    this._warnedNonPositive = false;
     this._syncTimeframeButtons(this._getDataExtent());
     this.render();
     return this;
+  }
+
+  // Switch an axis between 'linear' and 'log' and redraw. `axis`: 'y1', 'y2'
+  // or 'both' (default). Fires onScaleChange unless { silent: true }.
+  setYScale(type, { axis = 'both', silent = false } = {}) {
+    const scale = type === 'log' ? 'log' : 'linear';
+    const axes  = axis === 'y1' || axis === 'y2' ? [axis] : ['y1', 'y2'];
+    axes.forEach(a => { this.options[`${a}Scale`] = scale; });
+    this.render();
+    this._scaleChanged(scale, axes.length === 2 ? 'both' : axis, silent);
+    return this;
+  }
+
+  // The switch drives Y1 by default: Y2 often carries a signed series (a
+  // spread, a change) that a log axis cannot show.
+  _defaultScaleAxis() {
+    return 'y1';
+  }
+
+  // For 'both', any log axis counts — the button then reads Log, and a click
+  // takes both axes to linear rather than forcing a signed axis onto log.
+  _isLogScale(axis = 'both') {
+    const log = a => this.options[`${a}Scale`] === 'log';
+    return axis === 'y1' || axis === 'y2' ? log(axis) : log('y1') || log('y2');
   }
 
   _getDataExtent() {
@@ -241,6 +274,9 @@ export class DualAxes extends Chart {
     };
 
     const scaleFor = (d) => (d.axis === 'y2' ? y2 : y1);
+    // Bars grow from zero; a log axis (it has .base()) has no zero, so they
+    // grow from the bottom of the axis.
+    const baseFor  = (d) => (typeof scaleFor(d).base === 'function' ? scaleFor(d).domain()[0] : 0);
 
     const barsSel = this.gBars.selectAll('.rc-dual-bar')
       .data(barItems, d => d.key)
@@ -251,8 +287,8 @@ export class DualAxes extends Chart {
           .attr('width',   barW)
           .attr('fill',    d => d.color)
           .attr('opacity', barOpacity)
-          .attr('y',       d => animate ? scaleFor(d)(0) : scaleFor(d)(Math.max(0, d.value)))
-          .attr('height',  d => animate ? 0 : Math.abs(scaleFor(d)(d.value) - scaleFor(d)(0))),
+          .attr('y',       d => animate ? scaleFor(d)(baseFor(d)) : scaleFor(d)(Math.max(baseFor(d), d.value)))
+          .attr('height',  d => animate ? 0 : Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d)))),
         update => update,
         exit   => exit.remove()
       );
@@ -262,8 +298,8 @@ export class DualAxes extends Chart {
         const apply = (sel) => sel
           .attr('x',      d => x(d.date) - barW / 2 + xOffset(d.series))
           .attr('width',  barW)
-          .attr('y',      d => scaleFor(d)(Math.max(0, d.value)))
-          .attr('height', d => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(0)));
+          .attr('y',      d => scaleFor(d)(Math.max(baseFor(d), d.value)))
+          .attr('height', d => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d))));
 
         if (animate && barItems.length) {
           apply(sel.transition().duration(duration).ease(ease));
@@ -332,9 +368,21 @@ export class DualAxes extends Chart {
     const t = this.theme;
     const fullExtent = this._getDataExtent();
     const viewExtent = this._resolveViewExtent(fullExtent);
+    // A log axis has no place for zero or negatives: such points on it are
+    // skipped (lines join their neighbours) instead of drawing NaN.
+    const logOn = { y1: o.y1Scale === 'log', y2: o.y2Scale === 'log' };
+    let skipped = 0;
     const visibleSeries = this._series
-      .map(s => ({ ...s, values: s.values.filter(d => d.date >= viewExtent[0] && d.date <= viewExtent[1]) }))
+      .map(s => ({ ...s, values: s.values.filter(d => {
+        if (d.date < viewExtent[0] || d.date > viewExtent[1]) return false;
+        if (logOn[s.axis] && !(d.value > 0)) { skipped++; return false; }
+        return true;
+      }) }))
       .filter(s => s.values.length);
+    if (skipped && !this._warnedNonPositive) {
+      this._warnedNonPositive = true;
+      console.warn(`RareCharts.DualAxes: ${skipped} value${skipped === 1 ? '' : 's'} ≤ 0 skipped on the log axis`);
+    }
     if (!visibleSeries.length) return;
 
     this._syncTimeframeButtons(fullExtent, viewExtent);
@@ -365,25 +413,40 @@ export class DualAxes extends Chart {
       .domain(viewExtent)
       .range([xPad, W - xPad]);
 
-    const y1Auto = allY1.length ? d3.extent(allY1, d => d.value) : d3.extent(allY2, d => d.value);
-    const y2Auto = allY2.length ? d3.extent(allY2, d => d.value) : d3.extent(allY1, d => d.value);
+    // Each axis is linear (a niced auto domain, as before) or log: a padded
+    // domain whose margin is a factor of the data's span, with ticks on powers
+    // of ten → 1-2-5 → linear steps (the same rules as Line). An axis without
+    // series of its own follows the other axis's data.
+    const axisScale = (axis, own, other) => {
+      const values = (own.length ? own : other).map(d => d.value);
+      const domain = o[`${axis}Domain`];
+      if (!logOn[axis]) {
+        const scale = Array.isArray(domain)
+          ? d3.scaleLinear().domain(domain)
+          : d3.scaleLinear().domain(d3.extent(values)).nice(4);
+        return { scale: scale.range([H, 0]), tickValues: null };
+      }
+      const positive = values.filter(v => v > 0);
+      const [lo, hi] = Array.isArray(domain) && domain[0] > 0 && domain[1] > domain[0]
+        ? domain
+        : positive.length ? logPaddedDomain(d3.min(positive), d3.max(positive)) : [1, 10];
+      return {
+        scale: d3.scaleLog().domain([lo, hi]).range([H, 0]),
+        tickValues: logTickValues(lo, hi, o[`${axis}Ticks`] ?? 4),
+      };
+    };
+    const { scale: y1, tickValues: y1TickValues } = axisScale('y1', allY1, allY2);
+    const { scale: y2, tickValues: y2TickValues } = axisScale('y2', allY2, allY1);
 
-    const y1 = Array.isArray(o.y1Domain)
-      ? d3.scaleLinear().domain(o.y1Domain).range([H, 0])
-      : d3.scaleLinear().domain(y1Auto).nice(4).range([H, 0]);
-
-    const y2 = Array.isArray(o.y2Domain)
-      ? d3.scaleLinear().domain(o.y2Domain).range([H, 0])
-      : d3.scaleLinear().domain(y2Auto).nice(4).range([H, 0]);
-
-    // Formatters
+    // Formatters — log ticks are round powers: trim the zeros (1k, not 1,000.00).
+    const logFormat    = d3.format('.3~s');
     const xTickFormat  = o.xTickFormat  ?? (d => d3.timeFormat('%m/%d')(d));
-    const y1TickFormat = o.y1TickFormat ?? (v => d3.format(',.2f')(v));
-    const y2TickFormat = o.y2TickFormat ?? (v => Math.abs(v) < 1e-6 ? '0' : d3.format('+.2f')(v));
+    const y1TickFormat = o.y1TickFormat ?? (logOn.y1 ? logFormat : v => d3.format(',.2f')(v));
+    const y2TickFormat = o.y2TickFormat ?? (logOn.y2 ? logFormat : v => Math.abs(v) < 1e-6 ? '0' : d3.format('+.2f')(v));
 
     // Axes + grid
     if (o.showGrid ?? true) {
-      renderGrid(this.gGrid, y2, W, o.y2Ticks ?? 4, t);
+      renderGrid(this.gGrid, y2, W, o.y2Ticks ?? 4, t, y2TickValues);
     } else {
       this.gGrid.selectAll('*').remove();
     }
@@ -397,13 +460,13 @@ export class DualAxes extends Chart {
     }
 
     if (o.showY1Axis ?? true) {
-      renderAxisYRight(this.gAxisY1, y1, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t);
+      renderAxisYRight(this.gAxisY1, y1, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t, y1TickValues);
     } else {
       this.gAxisY1.selectAll('*').remove();
     }
 
     if (o.showY2Axis ?? true) {
-      renderAxisYLeft(this.gAxisY2, y2, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t);
+      renderAxisYLeft(this.gAxisY2, y2, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t, y2TickValues);
     } else {
       this.gAxisY2.selectAll('*').remove();
     }
@@ -462,9 +525,18 @@ export class DualAxes extends Chart {
       t
     );
 
-    // Annotations
+    // Annotations — horizontal markers at or below zero have no position on a
+    // log axis; a band is cut at the bottom of the axis.
+    const annotations = this._annotations.flatMap(a => {
+      const axis = a.axis === 'y2' ? 'y2' : 'y1';
+      if (!logOn[axis]) return [a];
+      const lo = (axis === 'y2' ? y2 : y1).domain()[0];
+      if (a.kind === 'hPoint') return a.value > 0 ? [a] : [];
+      if (a.kind === 'hRange') return a.yTo > 0 ? [{ ...a, yFrom: Math.max(a.yFrom, lo) }] : [];
+      return [a];
+    });
     renderAnnotations(
-      this.gAnnotations, this._annotations, x,
+      this.gAnnotations, annotations, x,
       axis => axis === 'y2' ? y2 : y1,
       H, this._annLabelHeight, t
     );

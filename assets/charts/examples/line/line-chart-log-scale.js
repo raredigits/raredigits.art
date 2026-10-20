@@ -24,14 +24,13 @@
     }
   }
 
-  const controls = document.createElement('div');
-  controls.innerHTML =
-    '<label><input type="radio" name="log-demo-scale" value="log" checked> Log</label>' +
-    '<label><input type="radio" name="log-demo-scale" value="linear"> Linear</label>';
-
-  const chart = new RareCharts.Line('#line-chart-log-demo', {
-    height: 320,
+  new RareCharts.Line('#line-chart-log-demo', {
+    height: 340,
+    title: 'Performance Visualization',
+    subtitle: 'Linear and logarithmic scales',
+    note: 'Try the Lin/Log button to see the effect.',
     yScale: 'log',
+    scaleToggle: true,
     yFormat: 'number',
     seriesName: 'Index',
     xTickFormat: d => d.getUTCFullYear(),
@@ -39,8 +38,5 @@
       { from: '2000-01-01', to: '2002-07-01', label: '−50%' },
       { from: '2021-12-01', to: '2023-06-01', label: '−50%' },
     ],
-    controls,
   }).setData(data);
-
-  controls.addEventListener('change', (e) => chart.setYScale(e.target.value));
 })();

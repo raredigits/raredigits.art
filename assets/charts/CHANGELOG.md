@@ -18,6 +18,34 @@ This file begins tracking at `v0.9.6`. Earlier versions were released without an
 
 ## [Unreleased]
 
+## [v0.9.8_5] — 2026-10-20 — Log Scales II
+
+Out of turn, for a consumer whose chart is a `DualAxes`: in v0.9.8_4 only `Line` had a log scale. This release brings it to **both axes of `DualAxes`, each on its own**, and to **`TimeSeries`**, and adds one **Lin/Log button** to the chart header — the same on all three — with an event when it flips. Flows II, the composition tail and the rest of the scales release move one slot down (v0.9.8_6 / _7 / _8) with their content unchanged.
+
+### Added
+
+- **`y1Scale` / `y2Scale` on `DualAxes`** (`'linear'` default | `'log'`, `src/charts/DualAxes.js`, docs `/charts/line/dual-axes/` → Logarithmic scale, worked example on `/charts/combined/`). Each axis is set on its own: a long-horizon index on a log Y1 next to a signed change on a linear Y2. A log axis follows the `Line` rules — ticks on powers of ten (1-2-5 steps for a narrower range), a margin that is a factor of the data's span, a `.3~s` default tick format (`1k`, not `1,000.00`); values ≤ 0 on that axis are skipped with one console warning per `setData()`, horizontal annotations at or below zero on it are dropped, and **bars on a log axis grow from the bottom of the axis** instead of from zero. An explicit `y1Domain`/`y2Domain` is kept on a log axis when both ends are positive. Linear axes render exactly as before.
+- **`DualAxes.setYScale(type, { axis, silent })`** — switches `'y1'`, `'y2'` or `'both'` (default) and redraws; returns the chart.
+- **`yScale: 'log'` and `setYScale(type, { silent })` on `TimeSeries`** (`src/charts/TimeSeries.js`, docs `/charts/line/time-series/`). The same ticks, margin and ≤ 0 handling as `Line`; explicit `yTickValues` keep working (non-positive ones are ignored).
+- **`scaleToggle` — a Lin/Log button** (`src/core/Chart.js`, `rare-charts.css`) for `Line`, `TimeSeries` and `DualAxes`. One button pinned to the top right of the chart header, above the Y-axis labels and level with the timeframe buttons, which keep their place (`.rc-range-btn.rc-scale-btn` in `.rc-chart-range-row--scale`; on a phone it stays right and the timeframes wrap before it). Styled like them but filled on the diagonal — the upper-left half on the linear scale, the lower-right half on the log scale — so it reads as a switch, not one more period. It names the current scale and flips it on click. `true` drives the Y scale — Y1 on `DualAxes`, whose Y2 often carries a signed series; `'y2'` or `'both'` pick the others there (with `'both'` the button reads Log while either axis is log), `{ axis, labels: { linear, log } }` renames it. `setYScale()` from code renames it too.
+- **`onScaleChange(fn)`** on the same three classes — called with `{ scale: 'log' | 'linear', axis }` (`'y'` on `Line`/`TimeSeries`; `'y1'`, `'y2'` or `'both'` on `DualAxes`) whenever the switch or `setYScale()` changes the scale; `setYScale(type, { silent: true })` skips it.
+
+### Changed
+
+- **`Line.setYScale()`** takes an optional `{ silent }` and now fires `onScaleChange`; calls without it behave as before.
+- **The `/charts/line/` log demo** — now titled *Performance Visualization* — uses the built-in button instead of page-made radio buttons.
+- **The header range row** (`.rc-chart-range-row`) is the positioning context for the Lin/Log button; a chart with timeframes only looks the same.
+- **Demo control groups have a light border** (`rare-charts.css` → `.rc-demo-group`, `/charts/line/visual-options/`): `--border-color` instead of black.
+- **Docs: the Dual Axes page moved under Line** — `/charts/line/dual-axes/`, after Visual Options; the old `/charts/dual-axes/` address redirects there, anchors included. Its log-scale example (*Index and yearly change*) lives on `/charts/combined/`.
+
+### Size
+
+Minified bundle 601,388 → 605,955 bytes (+4,567, +0.76%); gzip 180,611 → 182,040 (+1,429). Measured on local builds of `v0.9.8_4_2` and this release, banner excluded.
+
+### Removed from the backlog
+
+Logarithmic Y scale on `TimeSeries` and `DualAxes`.
+
 ## [v0.9.8_4_2] — 2026-10-20 — Bar Category Axis
 
 A second patch on top of `v0.9.8_4`, again for the Rare Styles content starter: one visual fix on horizontal `Bar`. Flows II stays `v0.9.8_5`.

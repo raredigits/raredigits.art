@@ -293,6 +293,12 @@
                   
                     <li>
                       
+                        <a href="/charts/line/dual-axes/">Dual Axes</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
                         <a href="/charts/line/time-series/">Time Series</a>
                       
                     </li>
@@ -317,15 +323,6 @@
             <li>
               
                 <a href="/charts/bar/">Bar</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
-                <a href="/charts/dual-axes/">Dual Axes</a>
               
               
               
@@ -497,6 +494,7 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <li><code>setView([start, end])</code> sets any custom visible date window.</li>
 <li><code>getView()</code> returns the currently visible <code>[start, end]</code>.</li>
 <li><code>onViewChange(fn)</code> lets external UI stay synchronized with the chart’s active date window.</li>
+<li><code>scaleToggle: true</code> adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels; <code>onScaleChange(fn)</code> reports each switch (see Logarithmic scale below).</li>
 </ul>
 <p>If you want the built-in mini navigator as well, enable it explicitly:</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
@@ -531,13 +529,19 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
     <div id="line-chart-left-axis-demo"></div>
 </div>
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
-<p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Log and Linear to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
+<p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Lin and Log to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
 <p>Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.</p>
-<p>The scale can change between data swaps — for example log on the full history, linear on the last year. <code>setYScale()</code> redraws and returns the chart, so chaining it before <code>setData()</code> changes both in one paint:</p>
+<p>The demo's Lin/Log button is built in: <code>scaleToggle: true</code> pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. The button is split on the diagonal so it does not read as one more period. It names the current scale, flips it on click, and <code>onScaleChange(fn)</code> tells the page when the reader switches. The same switch works on <code>TimeSeries</code> and <code>DualAxes</code>.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="line-chart-log-demo"></div>
 </div>
 <br>
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
+    yScale: 'log',
+    scaleToggle: true,  <span class="code-comment">// or { labels: { … } }</span>
+});
+<p>chart.onScaleChange(({ scale }) =&gt; console.log(scale));</p></code></pre><p></p>
+<p>The scale can also change from code, between data swaps — for example log on the full history, linear on the last year. <code>setYScale()</code> redraws, renames the button and returns the chart, so chaining it before <code>setData()</code> changes both in one paint. Pass <code>{ silent: true }</code> to skip the event:</p>
 <pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
 chart.setYScale('linear').setData(lastYear);</code></pre>
 <h3 id="x-axis-formatting">X axis formatting</h3>
@@ -646,6 +650,12 @@ xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</spa
             <td><code>'linear'</code> | <code>'log'</code></td>
             <td><code>'linear'</code></td>
             <td>Y scale type. <code>'log'</code>: power-of-ten ticks, multiplicative margin, values ≤ 0 skipped. Change it between data swaps with <code>setYScale()</code>.</td>
+        </tr>
+        <tr>
+            <td><code>scaleToggle</code></td>
+            <td>boolean | object</td>
+            <td><code>false</code></td>
+            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> or <code>{ labels: { linear, log } }</code>. Each switch fires <code>onScaleChange</code>.</td>
         </tr>
         <tr>
             <td><code>xTicks</code></td>

@@ -297,15 +297,6 @@
           
             <li>
               
-                <a href="/charts/dual-axes/">Dual Axes</a>
-              
-              
-              
-              
-            </li>
-          
-            <li>
-              
                 <span class="bold">Combined</span>
               
               
@@ -444,8 +435,21 @@
 }</code></pre>
 <p>All standard DualAxes capabilities remain available in combined mode. This includes independent axis formatting (<code>y1TickFormat</code>, <code>y2TickFormat</code>), custom domains (<code>y1Domain</code>, <code>y2Domain</code>), axis titles, crosshair interaction, tooltips, end labels, bar grouping (<code>overlap</code> or <code>cluster</code>), and curve interpolation for line series.</p>
 <p>If you only need bars and do not require a second scale, simply assign all series to <code>y1</code> and omit <code>y2TickFormat</code>. <code>DualAxes</code> will automatically calculate the appropriate domain for the active axis.</p>
+<h3 id="logarithmic-scale">Logarithmic scale</h3>
+<p>Each axis has its own scale: <code>y1Scale</code> and <code>y2Scale</code> take <code>'linear'</code> (default) or <code>'log'</code>. A long-horizon index on Y1 reads honestly on a log axis — equal percentage moves get equal height — while a signed change on Y2 stays linear, because a log axis has no zero. A log axis follows the same rules as on <a href="/charts/line/#logarithmic-scale">Line</a>: ticks on powers of ten (1-2-5 steps for a narrower range), a margin that is a factor of the data's span, zero and negative values on that axis skipped with one console warning, horizontal annotations at or below zero dropped. Bars on a log axis grow from the bottom of the axis instead of from zero.</p>
+<p><code>scaleToggle</code> adds a Lin/Log button pinned to the top right of the chart header, above the Y-axis labels — level with the timeframe buttons, which keep their place; it names the current scale and flips it on click. <code>true</code> drives Y1 — the right axis, usually the level or index — <code>'y2'</code> the left one, <code>'both'</code> both together (the button then reads Log while either axis is log). From code, <code>setYScale(type, { axis })</code> switches <code>'y1'</code>, <code>'y2'</code> or <code>'both'</code> (the default), and <code>onScaleChange(fn)</code> reports every switch as <code>{ scale, axis }</code>. In the demo the button drives Y1 only; the yearly change on Y2 stays linear.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="combined-chart-log-scale"></div>
+</div>
+<br>
+<pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
+    y1Scale: 'log',
+    scaleToggle: true,  <span class="code-comment">// Y1; or 'y2', 'both'</span>
+});
+<p>chart.setYScale('linear', { axis: 'y1' });
+chart.onScaleChange(e =&gt; console.log(e.axis, e.scale));</p></code></pre><p></p>
 <h2 id="combined-chart-options">Combined chart options</h2>
-<p>Combined charts are <code>DualAxes</code> — all chart-level options are identical. See the full list on the <a href="/charts/dual-axes/#options-reference">Dual Axes</a> page.</p>
+<p>Combined charts are <code>DualAxes</code> — all chart-level options are identical. See the full list on the <a href="/charts/line/dual-axes/#options-reference">Dual Axes</a> page.</p>
 <h3 id="per-series-fields">Per-series fields</h3>
 <p>The only thing that makes a chart “combined” is the <code>type</code> field on each series object:</p>
 <div class="table-scroll card-caption">
@@ -541,6 +545,7 @@
 </div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/combined/line-chart-ltcm-treasuries-combined.js"></script>
+<script src="/assets/charts/examples/combined/combined-chart-log-scale.js"></script>
     </article>
   </div>
 </main>
