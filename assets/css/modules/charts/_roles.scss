@@ -1,0 +1,21 @@
+// The chart tokens that name a role of the surface under the chart — its
+// background, its text and its lines. No CSS of its own: the mixin is
+// included on `:root` (charts/_index.scss) and again on every surface that
+// re-maps those roles (`.card-inverted`, bricks/_cards.scss).
+// A custom property is resolved where it is declared and inherited as the
+// result: `--chart-axis-color: var(--border-color)` on `:root` hands every
+// descendant the page's border colour, even inside a surface that re-maps
+// `--border-color`. Re-including the mixin on the surface resolves the chart
+// tokens against its roles. Keep the list in step with the docs page,
+// /styles/colors/chart-tokens/ ("Surfaces").
+@mixin role-tokens {
+    --chart-bg: var(--surface-current);
+    --chart-text-color: var(--primary-text-color);
+    --chart-label-color: var(--text-color-light);
+    --chart-axis-color: var(--border-color);
+    --chart-grid-color: var(--border-color-light);
+    --chart-control-text: var(--text-color-light);
+    --chart-control-border: var(--border-color);
+    --chart-control-hover-border: var(--primary-text-color);
+    --chart-control-active-text: var(--primary-text-color);
+}

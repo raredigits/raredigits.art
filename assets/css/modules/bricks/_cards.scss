@@ -1,10 +1,19 @@
 @use "../utilities/breakpoints" as bp;
+@use "../charts/roles" as chart;
 @use "contain-outdents" as co;
 
+// A card is a surface: it paints its background from `--surface-current`
+// and says so to what sits on it (CSS-380). `--chart-bg` is restated because
+// a custom property resolves where it is declared: from `:root` it would hand
+// a chart in the card the page's background. Set `--surface-current` on a
+// card to repaint it; a chart in it follows.
 .card {
+    --surface-current: var(--gray-lightest);
+    --chart-bg: var(--surface-current);
+
     display: flex;
     flex-direction: column;
-    background: var(--gray-lightest);
+    background: var(--surface-current);
     position: relative;
 
     // A card has no page margins for outdents to hang into (CSS-345 sweep).
@@ -33,15 +42,66 @@
     --link-color-secondary: var(--gray-light);
     --link-color-light: var(--gray);
 
+    // Border roles (CSS-380): lines as quiet on the dark surface as on the
+    // light one — a frame (`.panel--bordered`), a divider (a panel's header
+    // and footer, `.card-header`), a chart's axes and gridlines. The light
+    // values glared on it, and `--border-color-dark` (#333) vanished into it.
+    --border-color: var(--gray-mid-dark);
+    --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
+    --border-color-dark: var(--gray-light);
+
+    // The surface, and the chart tokens resolved again against the roles
+    // above (charts/_roles.scss). The active control mirrors the light one:
+    // the far end of the scale with a strong border, as white is on a light
+    // card; the Lin/Log fill is the quiet grey under the light label.
+    // The tooltip keeps its light popover.
+    --surface-current: var(--gray-dark);
+
+    @include chart.role-tokens;
+
+    --chart-control-active-bg: var(--gray-darkest);
+    --chart-control-fill: var(--gray-mid-dark);
+
     display: flex;
     flex-direction: column;
-    background: var(--gray-dark);
+    background: var(--surface-current);
     color: var(--gray-light);
     position: relative;
 }
 
-.card-inverted a {
+// A link in a light card nested in the dark one takes `--link-color` from
+// the nearest surface instead (below).
+.card-inverted a:not(:where(.card-inverted .card *)) {
     color: var(--gray-light);
+}
+
+// A light card inside a dark one (the deck on /styles/bricks/) is a light
+// surface again. Custom properties inherit, so it would keep every role the
+// dark card re-maps: light text, dark lines and chart tokens made for #333,
+// on #fafafa. It restores them to their `:root` values and resolves the
+// chart tokens again against them (CSS-380). Zero specificity: it only has
+// to beat inheritance, so a project's own `.card` rule and a colour utility
+// still win. The values repeat the `:root` ones (typography/_fonts.scss,
+// navigation/_links.scss, colors/_base.scss, charts/_index.scss);
+// test/tokens-contracts.test.js keeps them equal.
+:where(.card-inverted .card) {
+    --primary-text-color: var(--primary-color);
+    --text-color-dark: var(--gray-dark);
+    --text-color-light: var(--gray-mid-dark);
+    --text-color-lightest: var(--gray);
+    --link-color: var(--primary-text-color);
+    --link-color-secondary: var(--text-color-dark);
+    --link-color-light: var(--text-color-light);
+    --border-color: var(--gray);
+    --border-color-light: var(--gray-mid-light);
+    --border-color-dark: var(--gray-dark);
+
+    @include chart.role-tokens;
+
+    --chart-control-active-bg: var(--white);
+    --chart-control-fill: var(--gray);
+
+    color: var(--primary-text-color);
 }
 
 // The bordered data surface and the bordered row moved to the panel family

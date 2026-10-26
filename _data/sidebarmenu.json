@@ -40,13 +40,20 @@
             { "title": "Notes", "url": "/styles/typography/notes/" }
           ]
       },
-      { "title": "Colors", "url": "/styles/colors/" },
+      {
+          "title": "Colors",
+          "url": "/styles/colors/",
+          "subitems": [
+            { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" }
+          ]
+      },
       {
           "title": "Bricks",
           "url": "/styles/bricks/",
           "subitems": [
             { "title": "Panels", "url": "/styles/bricks/panels/" },
-            { "title": "Legend", "url": "/styles/bricks/legend/" }
+            { "title": "Legend", "url": "/styles/bricks/legend/" },
+            { "title": "Stats", "url": "/styles/bricks/stats/" }
           ]
       },
       { "title": "Alignment", "url": "/styles/alignment/" },

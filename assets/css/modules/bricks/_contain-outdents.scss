@@ -5,17 +5,12 @@
 // widened the page. Reset the family to the surface's content width, as
 // `.collapsible-content` does (CSS-345 sweep, 2026-10-16; shared with the
 // panel in v0.7.2). Guarded by test/layout-contracts.test.js.
+// Paper has no page margins either: the print module folds the same family
+// back to the column (utilities/_print.scss, CSS-385).
+$outdents: ".lead, .caption, .highlight, pre, blockquote, .text-content-caption, .full-width-caption, .card-caption, .collapsible-container, .teaser-bottom";
+
 @mixin contain-outdents {
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    blockquote,
-    .text-content-caption,
-    .full-width-caption,
-    .card-caption,
-    .collapsible-container,
-    .teaser-bottom {
+    #{$outdents} {
         width: auto;
         max-width: 100%;
         margin-left: 0;

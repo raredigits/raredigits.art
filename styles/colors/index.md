@@ -228,6 +228,16 @@ One more role, `--signal`, is the accent for attention and action: a primary but
 
 An own `--focus-ring-color` on `:root` still wins over the signal.
 
+#### Surface
+
+`--surface-current` is the background of the surface an element sits on: the page's `--bg-color`, unless a `.card` or a `.card-inverted` sets its own (each paints its background with it). A `.panel` paints no background and sets none, so the surface behind it passes through. On paper it is white; in an island, which sits on the host's background, set it yourself. Charts paint their label plates with it; see [Surfaces](/styles/colors/chart-tokens/#surfaces).
+
+### Chart Tokens
+
+<div class="meta-info">css/modules/charts/_index.scss</div>
+
+The colours a chart takes from the page (its series, text, axes and gridlines, range controls and tooltip) have names of their own, `--chart-*`, each pointing at a token on this page. RareCharts reads them first, from its 0.9.8_7. The full list is on [Chart Tokens](/styles/colors/chart-tokens/).
+
 ### Supporting Colors
 
 <div class="meta-info">css/modules/colors/_supporting.scss</div>

@@ -73,8 +73,12 @@ article {
 // specificity; a component not listed opts out with its own `max-width`.
 // Binding the measure to direct children only (`.prose`, CSS-151) would drop
 // it from prose in authored wrappers (`details`, `.caption`, a card), so the
-// list stays until then.
-article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *) {
+// list stays until then. The blocks that cap themselves anywhere — `dl`,
+// `blockquote` (below) and the article `figure` (_figures.scss) — stop at
+// the same edge (CSS-384): a chart's details `<dl>` spans its panel.
+$measure-free: ".table-scroll, .table-bordered, .panel, .stat, .rc-chart";
+
+article :is(p, ul, ol):not(:where(#{$measure-free}) *) {
     max-width: var(--text-content-width);
 
     @include mobile {
@@ -237,8 +241,13 @@ mark {
     line-height: 1.3;
 }
 
-blockquote {
+// On the measure, except inside a data component (CSS-384). The exclusion
+// adds no weight: the rule stays (0,0,1), as the bare `blockquote` was.
+blockquote:not(:where(#{$measure-free}) *) {
     max-width: var(--text-content-width);
+}
+
+blockquote {
     margin-left: calc(var(--space-md) * -1);
     padding: var(--space-md) 0 var(--space-md) var(--space-lg);
     background-image: url('images/common/mark-quote.svg');
@@ -259,8 +268,13 @@ blockquote p:first-of-type {
 // key:value metadata, opt in to `.dl-grid`.
 
 dl {
-    max-width: var(--text-content-width);
     margin: var(--space-md) 0;
+}
+
+// On the measure, except inside a data component (CSS-384): the RareCharts
+// Graph details `<dl>` spans its panel. Still (0,0,1), the bare `dl` weight.
+dl:not(:where(#{$measure-free}) *) {
+    max-width: var(--text-content-width);
 }
 
 dt {

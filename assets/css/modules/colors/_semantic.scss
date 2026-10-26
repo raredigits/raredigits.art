@@ -22,4 +22,11 @@
     // brand marks). Blue (maintainer, 2026-10-26): the focus ring was already
     // blue, so pointing it here changes nothing on screen.
     --signal: var(--blue);
+
+    // SURFACE (CSS-380, v0.7.2): the background of the surface an element
+    // sits on, for what paints with it — a chart's label plates and
+    // knockouts (`--chart-bg`). The page by default; `.card` and
+    // `.card-inverted` set their own (bricks/_cards.scss). A `.panel` paints
+    // no background and sets none: the surface behind it passes through.
+    --surface-current: var(--bg-color);
 }

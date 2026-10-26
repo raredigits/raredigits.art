@@ -57,6 +57,7 @@
       { "title": "Grayscale Palette", "url": "/styles/colors/#grayscale-palette" },
       { "title": "Brand Color", "url": "/styles/colors/#brand-color" },
       { "title": "Technical Colors", "url": "/styles/colors/#technical-colors" },
+      { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" },
       { "title": "Supporting Colors", "url": "/styles/colors/#supporting-colors" }
     ]
   }

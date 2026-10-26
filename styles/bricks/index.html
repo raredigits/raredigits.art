@@ -20,7 +20,7 @@ permalink: '/styles/bricks/'
         <dd>A narrative surface — authorial, human, story-like content that wants to stand slightly apart from the page.</dd>
 
         <dt><code>.panel</code></dt>
-        <dd>The data surface — the stricter sibling for system-facing, structured, metric-heavy content. See <a href="/styles/bricks/panels/">Panels</a>; its companion, the <a href="/styles/bricks/legend/">Legend</a>, keys colour-coded data.</dd>
+        <dd>The data surface — the stricter sibling for system-facing, structured, metric-heavy content. See <a href="/styles/bricks/panels/">Panels</a>; its companion, the <a href="/styles/bricks/legend/">Legend</a>, keys colour-coded data, and <a href="/styles/bricks/stats/">Stats</a> set its KPI figures.</dd>
     </dl>
     <p>The important idea is what is <em>not</em> here. There is no grid component, no deck component, no positioning component. Those jobs belong to the utility layers — <a href="/styles/layout/">layout &amp; grid</a>, <a href="/styles/alignment/">alignment</a>, spacing, and positioning. A handful of surfaces plus the utilities compose any screen, so reaching for a brand-new class should be rare and deliberate.</p>
 </section>
@@ -123,7 +123,7 @@ permalink: '/styles/bricks/'
             <div class="skeleton-row width-100"></div>
         </div>
     </div>
-    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>.</p>
+    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>. Each is a surface: it paints its background from <code>--surface-current</code>, and a chart on it paints its label plates with the same colour. <code>.card-inverted</code> also re-maps the text, border and chart roles for its dark ground, so a panel divider or a chart on it reads (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). A <code>.card</code> nested in a <code>.card-inverted</code> is a light surface again: it restores those roles.</p>
 </section>
 
 <section>

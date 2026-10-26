@@ -12,7 +12,7 @@ permalink: '/styles/bricks/panels/'
 
 <section>
     <p>The panel is the data surface: a KPI, a chart, a status, settings — content a system produced and a reader scans. A card is for narrative content; the rule for choosing between them is on the <a href="/styles/bricks/#card-vs-panel">Building Blocks</a> page.</p>
-    <p>A panel is a block with inner padding — <code>16px 32px</code>, <code>16px</code> on a phone. It paints no background and sets no text colour, so it works on any surface: the page, a card, a dark band. Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside it. Directly inside a <a href="/scripts/collapsible/">collapsible</a>'s content, a panel takes an even <code>16px</code>.</p>
+    <p>A panel is a block with inner padding — <code>16px 32px</code>, <code>16px</code> on a phone. It paints no background and sets no text colour, so it works on any surface: the page, a card, a dark band. For the same reason it sets no <code>--surface-current</code>: the surface behind it passes through, and a chart in it paints its label plates with that surface (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside it. Directly inside a <a href="/scripts/collapsible/">collapsible</a>'s content, a panel takes an even <code>16px</code>.</p>
     <div class="panel panel--bordered text-content-caption">
         <code>.panel.panel--bordered</code>
     </div>
@@ -78,7 +78,7 @@ permalink: '/styles/bricks/panels/'
 
 <section>
     <h2 id="panel-row">Panel row</h2>
-    <p><code>.panel__row</code> is a bordered strip of cells side by side, divided by lines: KPI figures under a chart, a row of gauges. Each <code>.panel__row-item</code> takes an equal share and centres its text. It works inside a panel or on its own. On a phone a long row scrolls sideways inside its own border instead of widening the page.</p>
+    <p><code>.panel__row</code> is a bordered strip of cells side by side, divided by lines: KPI figures under a chart, a row of gauges. Each <code>.panel__row-item</code> takes an equal share and centres its text. It works inside a panel or on its own. On a phone a long row scrolls sideways inside its own border instead of widening the page. For KPI figures, make the cells <a href="/styles/bricks/stats/">stats</a>.</p>
     <div class="panel__row text-content-caption">
         <div class="panel__row-item"><span class="note">OPEN</span>184.62</div>
         <div class="panel__row-item"><span class="note">HIGH</span>188.13</div>

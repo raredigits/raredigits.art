@@ -95,6 +95,16 @@ When unsure, ask where the block would feel at home: in an article (card) or on 
 
 For maintainers: a panel is a block, so content moves over from `.card-dashboard-bordered` as it was; it becomes a flex column only with parts (`__header` / `__body` / `__footer`). Its layout sits at zero specificity (`:where()`), so a chart's own layout wins on the same element whatever the load order; its padding has class specificity, because the reset at the end of `rare.scss` would erase it. A panel never sets `gap`, `overflow`, `position` or `container` (`test/panels.test.js`, `test/browser/panels.test.js`).
 
+## Surfaces and derived tokens (`CSS-380`, v0.7.2)
+
+A custom property is resolved where it is declared and inherited as the result. A token made from another on `:root` (`--chart-axis-color: var(--border-color)`, `--chart-bg: var(--surface-current)`) keeps its `:root` value inside an element that re-maps the source. So:
+
+- a rule that sets `--surface-current` also restates `--chart-bg` and paints its background from `--surface-current` (`.card`, `.card-inverted`); a `.panel` sets neither;
+- a surface that re-maps text or border roles includes `role-tokens` from `modules/charts/_roles.scss` after the re-mapping (`.card-inverted`), which resolves the chart tokens again against it;
+- a light surface nested in a dark one restores every role the dark one re-maps to its `:root` value and includes `role-tokens` again (`:where(.card-inverted .card)`), at zero specificity: it only has to beat inheritance.
+
+`test/tokens-contracts.test.js` fails when a surface re-maps a role and does not restate a chart token made from it, and when the nested light card misses a role or a value the dark card re-maps.
+
 ## Icon policy
 
 - Icons are **not a font**. Since `v0.6.18` (`CSS-095`/`CSS-096`) the library ships its own SVG icon set — static cuts of Material Symbols Outlined (Apache-2.0) under `assets/css/images/icons/` — drawn via `mask-image` + `background-color: currentColor`, so icons recolor through the normal `color`/token cascade. Never re-introduce an icon-font `@import` or the vendor `.material-symbols-outlined` class (removed in `v0.6.18`).

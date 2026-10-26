@@ -1,0 +1,64 @@
+@use "roles";
+
+// CHART TOKENS (CSS-380 + CSS-240 + CSS-176, v0.7.2) — the colours and fonts
+// a chart takes from the page, under one `--chart-*` name each. RareCharts
+// reads these names first from its 0.9.8_7 (RC-014) and keeps its own values
+// as fallbacks, so a chart on a page without Rare Styles looks as before, and
+// on a Rare Styles page it follows the page: its surface, its roles, a
+// project's overrides. A page's own chart-like chrome (a legend, a KPI row)
+// can read them too. Docs: /styles/colors/chart-tokens/.
+// Global tokens, like every `:root` token: the `.rd` gate leaves `:root`
+// ungated (scripts/rd-gate.config.mjs), so a chart in an island and a chart
+// on a page without `.rd` resolve the same names.
+
+:root {
+    // Series, in the order a multi-series chart uses them. Six, the size of
+    // RareCharts' palette (maintainer, 2026-10-26); a 7th and an 8th can be
+    // added later without breaking anything. The hues are RareCharts' own
+    // (`defaultTheme.colors`, assets/charts/src/core/theme.js), so a chart
+    // that reads them looks the same; where the palette has the hue it is the
+    // palette token, the other four have none.
+    --chart-series-1: var(--orange); // #fa8c16
+    --chart-series-2: #0af;
+    --chart-series-3: #00c97a;
+    --chart-series-4: #fc0;
+    --chart-series-5: #c4f;
+    --chart-series-6: var(--red); // #f00
+
+    // Surface, text, axes, grid and range controls: the roles of the surface
+    // the chart sits on (charts/_roles.scss). `--chart-bg` is the surface
+    // (`--surface-current`): RareCharts paints label plates and knockouts with
+    // it. Text is `--chart-text-color` (titles, data labels) and
+    // `--chart-label-color` (axis ticks, secondary text); `--chart-axis-color`
+    // draws axis lines and the zero baseline, `--chart-grid-color` gridlines.
+    // The range controls (timeframe buttons, the Lin/Log switch) read
+    // `--chart-control-*`; a hovered control takes the active text colour.
+    @include roles.role-tokens;
+
+    // The control colours that name no role: the active control's own
+    // background, and the fill of the Lin/Log switch. Not `--border-color`,
+    // which some hosts set to black (the label then disappears).
+    --chart-control-active-bg: var(--white);
+    --chart-control-fill: var(--gray);
+
+    // Tooltip: a popover with its own surface, so it stays light on a dark
+    // card (not re-mapped by `.card-inverted`). The shadow matches RareCharts'
+    // (0 2px 8px, black at 10%). The size is RareCharts' own, in px like the
+    // rest of a chart's type (rare-charts.css): a chart's text keeps one scale
+    // on any host, whatever the root font size (RareCharts C-13). Not
+    // `--font-size-xs` (0.8rem): 12.8px here, 16px on a host with a 20px root.
+    --chart-tooltip-bg: var(--white);
+    --chart-tooltip-border: var(--border-color-light);
+    --chart-tooltip-text: var(--primary-text-color);
+    --chart-tooltip-muted: var(--text-color-light);
+    --chart-tooltip-shadow: 0 2px 8px color-mix(in srgb, var(--black) 10%, transparent);
+    --chart-tooltip-font-size: 13px;
+
+    // Fonts: chart text in the body font, figures (the tooltip) in the code
+    // font, whose digits are all one width.
+    --chart-font-family: var(--primary-font);
+    --chart-font-family-numeric: var(--code-font);
+
+    // Keyboard focus on a chart's controls and nodes: the library's ring.
+    --chart-focus-ring: var(--focus-ring-color);
+}

@@ -5,6 +5,8 @@
 // later `layout-print` (CSS-308). Forwarded last, so it wins over the screen
 // rules it undoes.
 
+@use "../bricks/contain-outdents" as co; // the outdent list only, no CSS
+
 @media print {
     // Chrome and controls: nothing on paper can be clicked.
     header,
@@ -27,6 +29,15 @@
         color: #000;
     }
 
+    // The page surface is the paper (CSS-380): what paints with it, a chart's
+    // label plates and knockouts (`--chart-bg`), is white, not grey boxes. An
+    // SVG fill prints even with background graphics off. `--chart-bg` on
+    // `:root` follows, being declared on the same element. A card keeps its
+    // own: #fafafa on white paper does not show.
+    :root {
+        --surface-current: var(--white);
+    }
+
     main {
         padding: 0;
     }
@@ -40,13 +51,13 @@
         width: auto;
     }
 
-    // Outdents hang into page margins the paper does not have.
-    .text-content-caption,
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    blockquote {
+    // Outdents hang into page margins the paper does not have: the family a
+    // card or a panel contains folds back to the column. One list with
+    // bricks/_contain-outdents.scss, so a new outdent cannot miss paper again:
+    // `.card-caption` did, and the /charts/map/ option tables hung 32px left
+    // of the column (CSS-385); `.full-width-caption`, `.teaser-bottom` and
+    // `.collapsible-container` with it.
+    #{co.$outdents} {
         width: auto;
         max-width: 100%;
         margin-left: 0;

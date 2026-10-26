@@ -51,6 +51,8 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
 
 The reset has zero specificity. It removes the browser's default margins and padding, but any rule of your own with a tag or class selector still wins over it.
 
+An island has no page background either: it sits on the host's. A chart in it paints its label plates with `--surface-current`, which still names the library's page colour, so set it on the island to the host's background ([Chart tokens: on a host's background](/styles/colors/chart-tokens/#host-surface)).
+
 `<body class="rd">` works like page mode, except for the few rules that sit on `<html>` itself (root line height, text-size adjust, the anchor offset). Prefer `<html class="rd">`.
 
 ## Customise with tokens
