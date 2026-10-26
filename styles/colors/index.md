@@ -174,6 +174,50 @@ Technical colors are used to highlight important info: statuses, warnings, and 
 
 Technical colors should be used strictly for their intended purpose — a designer must avoid inflating the importance of content that isn’t truly critical.
 
+### Semantic Colors
+
+<div class="meta-info">css/modules/colors/_semantic.scss</div>
+
+Components that signal a state read a role, not a hue. Four tokens name the roles and point at the technical colors above:
+
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Token</th>
+        <th>Default</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td><code>--color-success</code></td>
+        <td><code>var(--green)</code></td>
+        <td>Done, passed, a change for the better</td>
+    </tr>
+    <tr>
+        <td><code>--color-danger</code></td>
+        <td><code>var(--red)</code></td>
+        <td>Error, failure, a destructive action</td>
+    </tr>
+    <tr>
+        <td><code>--color-warning</code></td>
+        <td><code>var(--yellow)</code></td>
+        <td>Caution: read before you go on</td>
+    </tr>
+    <tr>
+        <td><code>--color-info</code></td>
+        <td><code>var(--blue)</code></td>
+        <td>A neutral notice</td>
+    </tr>
+</table>
+</div>
+
+The <a href="/styles/typography/text-content/#callouts">callout variants</a> are built on them. To change what a meaning looks like, re-map the role once, not every component:
+
+<pre class="text-content-caption"><code>:root {
+    --color-warning: var(--orange);
+}</code></pre>
+
+They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.
+
 ### Supporting Colors
 
 <div class="meta-info">css/modules/colors/_supporting.scss</div>

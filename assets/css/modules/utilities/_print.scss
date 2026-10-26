@@ -74,8 +74,14 @@
     }
 
     // A scrolling table prints whole, wrapped instead of cut at the edge.
+    // Its code may break again (on screen it keeps its shape and the box
+    // scrolls, CSS-373): paper does not scroll.
     .table-scroll {
         overflow: visible;
+    }
+
+    .table-scroll :is(th, td) code {
+        overflow-wrap: anywhere;
     }
 
     th {
@@ -83,8 +89,10 @@
     }
 
     // A link's address is lost on paper: print it after external links in
-    // the prose. Anchors inside the page and note marks stay as they are.
-    article :is(p, li) a[href^="http"]::after {
+    // the prose. Anchors inside the page and note marks stay as they are,
+    // and so do links inside an embedded chart (its note, source line or
+    // details panel, `.rc-chart`), which is not prose (CSS-383).
+    article :is(p, li) a[href^="http"]:not(:where(.rc-chart *))::after {
         content: " (" attr(href) ")";
         font-size: var(--font-size-xs);
         color: var(--text-color-light);

@@ -318,6 +318,10 @@ permalink: '/styles/typography/'
         <h6>Wholesale</h6>
         <p>Flat, with longer payment terms.</p>
     </div>
+    <p>The page title (<code>.page-title h1</code>, 56px) shrinks with the screen on a narrow phone — 14vw, so 52.5px at 375px and 44.8px at 320px, and the full 56px from 400px up — so a long word fits the title's column. A word still wider than the column breaks instead of widening the page.</p>
+    <h3>Line height</h3>
+    <p>The leading tokens are ratios, not lengths: <code>--line-height</code> (1.5) for running text, <code>--line-height-sm</code> (1.2) for headings and other display text, <code>--line-height-xs</code> (1), <code>--line-height-md</code> (1.7) and <code>--line-height-lg</code> (2). A ratio is inherited as a ratio, so each element computes its line height from its own font size: a 13px label inside a 16px paragraph gets 19.5px lines, not the paragraph's 24px. Override a token the same way, without a unit. <code>.line-height</code>, <code>.line-height-sm</code>, <code>.line-height-xs</code> and <code>.line-height-lg</code> set one on an element.</p>
+    <p><code>h1</code>–<code>h4</code> set <code>--line-height-sm</code> themselves, so a heading that wraps keeps tight display leading. A heading inside your own block with a fixed line-height takes this one, not the block's; give the heading its own <code>line-height</code> (or <code>inherit</code>) to keep yours.</p>
 </section>
 
 <div class="teaser-bottom">

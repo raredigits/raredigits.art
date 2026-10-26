@@ -61,8 +61,10 @@ export const ISLAND = [
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
   'article > :is(h2, h3):first-child',
   'p', 'ul', 'ol',
-  'article p', 'article ul', 'article ol',
-  'mark', 'cite', 'blockquote', 'blockquote p:first-of-type',
+  // the prose measure (`article :is(p, ul, ol):not(…)`, CSS-374) names classes:
+  // island-gated by default, no entry
+  'mark', 'blockquote', 'blockquote p:first-of-type',
+  ':where(blockquote) > cite', // the attribution look (CSS-379)
   'sup > a', // note reference marks (CSS-128)
   'dl', 'dt', 'dd + dt',
   'pre', 'code', 'pre code',

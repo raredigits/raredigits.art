@@ -47,7 +47,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
 
 <div class="sidenote-wrapper">
     <div>
-        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself.</p>
+        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself. Inside the box, <code>code</code> in a cell keeps its shape: an option name never breaks mid-word on a phone — the table grows and the box scrolls. On paper, which does not scroll, the code breaks again so the table fits the page.</p>
         <p>For small tables and table-style data presentation, the <code>.table-small</code> selector is available with left-aligned content.</p>
         <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don't overload tables with unnecessary information or use them for content better presented as text or graphics.
         </p>
@@ -95,6 +95,10 @@ Tabular data forms a crucial part of business information presentation. Tables a
             <tr>
                 <td><code>.table-bordered</code></td>
                 <td>Full grid with outer frame and header band</td>
+            </tr>
+            <tr>
+                <td><code>.table-section</code></td>
+                <td>A group row inside <code>.table-bordered</code> (on the <code>&lt;tr&gt;</code>)</td>
             </tr>
             <tr>
                 <td><code>.table-scroll</code></td>
@@ -202,6 +206,42 @@ The example above also carries `.table-horizontal-borders`: a lighter alternativ
     </tr>
 </table>
 </div>
+
+### Group rows
+
+A long reference table — the options of a chart, the fields of an API — reads faster in groups. Inside a `.table-bordered`, a row with `.table-section` is a group heading: one cell across every column with an `h5` (or `h6`) and, if the group needs it, a line of text. The row drops its bottom rule, so the heading belongs to the rows under it, and the heading and the text lose their margins inside the cell. The text runs the full width of the row: a data table is outside the prose measure.
+
+<div class="table-scroll">
+<table class="table-bordered">
+    <thead>
+        <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5>Layout</h5></td>
+        </tr>
+        <tr><td><code>height</code></td><td>number</td><td><code>240</code></td><td>Chart height in px. Width is always 100% of the container.</td></tr>
+        <tr><td><code>yAxisPosition</code></td><td><code>'left'</code> | <code>'right'</code></td><td><code>'right'</code></td><td>The side the Y axis sits on.</td></tr>
+        <tr class="table-section">
+            <td colspan="4">
+                <h5>Legend</h5>
+                <p>Every legend option is optional; without them the chart draws no legend.</p>
+            </td>
+        </tr>
+        <tr><td><code>legend</code></td><td>array</td><td>—</td><td>Items with a <code>label</code> and a <code>type</code>.</td></tr>
+        <tr><td><code>legendPosition</code></td><td><code>'top'</code> | <code>'right'</code></td><td><code>'top'</code></td><td>Above the chart, or in a column beside it.</td></tr>
+    </tbody>
+</table>
+</div>
+
+<pre><code>&lt;tr class="table-section"&gt;
+    &lt;td colspan="4"&gt;
+        &lt;h5&gt;Legend&lt;/h5&gt;
+        &lt;p&gt;Every legend option is optional.&lt;/p&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+
+The example is the reference-table recipe the chart docs use: `.table-bordered` with group rows, inside `.table-scroll`. In the scroll box an option name in `code` never breaks mid-word: on a phone the table keeps its columns and the box scrolls. There is no separate preset class for it — the three pieces are the preset. A Markdown table cannot take a class: write a reference table as HTML.
 
 <div class="caption">
     <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>

@@ -53,6 +53,8 @@ permalink: '/styles/typography/notes/'
     </div>
 </div>
 
+<p>The <code>.sidenote</code> is a direct child of the <code>.sidenote-wrapper</code>, next to the text it comments on. The wrapper places only its own children: whatever sits inside them — a chart card, a grid, a definition list — keeps its own layout, and an embedded chart keeps the color of its own links.</p>
+
 <div class="sidenote-wrapper">
     <div>
         <p>To help readers quickly parse the nature of sidenote content, we provide several modifier classes that add visual cues:</p>

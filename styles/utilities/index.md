@@ -114,3 +114,11 @@ The first link on the page. It stays hidden until it receives keyboard focus, th
 ```
 
 The target scrolls clear of the fixed header on its own: `html` carries `scroll-padding-top` from `--header-height`.
+
+## Print
+
+<div class="meta-info">css/modules/utilities/_print.scss</div>
+
+An article prints, or saves as PDF, without the page chrome: the header, the footer, the sidebar, the search and the menu, the cookie notice and the carousel and copy controls are left off the paper. The prose runs at the full width of the page, outdented blocks fold back into the column, and a heading stays with the text that follows it. A figure, a quote, a code block or a table row is never split across two pages, and a table in a `.table-scroll` box prints whole, wrapped to the page: the code in its cells breaks again where it must.
+
+An external link in the prose prints its address after the text, in small type: `(https://…)`. Links to places on the same page and note marks do not, and neither do links inside an embedded chart (`.rc-chart`): its source line and notes are not prose. Hiding the chart's own controls on paper is the chart library's job.

@@ -16,11 +16,15 @@
     --font-size-xl: 1.5rem;
     --font-size-xxl: 2.2rem;
     --font-size-xxxl: 3.5rem; // display size; consumed by h1 (CSS-109)
-    --line-height: 1.5em;
-    --line-height-xs: 1em;
-    --line-height-sm: 1.2em;
-    --line-height-md: 1.7em;
-    --line-height-lg: 2em;
+    // Unitless, so a line-height inherits as a ratio and every element computes
+    // it from its own font size (CSS-375). In `em` it was computed once, where
+    // it was set, and inherited as a fixed length: `body` passed 24px to 11px
+    // chart labels and 29px headings alike.
+    --line-height: 1.5;
+    --line-height-xs: 1;
+    --line-height-sm: 1.2;
+    --line-height-md: 1.7;
+    --line-height-lg: 2;
     --font-weight-thin: 100;
     --font-weight-light: 200;
     --font-weight-normal: 400;

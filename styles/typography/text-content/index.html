@@ -35,6 +35,8 @@ permalink: '/styles/typography/text-content/'
 <section>
     <h3>Body Text</h3>
     <p>Body text is the default. Paragraphs sit on the text-content column at a comfortable measure, the line-height is tuned for sustained reading, and nothing extra is needed — just write.</p>
+    <p>The measure (<code>--text-content-width</code>) holds for paragraphs and lists anywhere in the article: in its sections, cards, captions, details and sidenotes, and in a plain <code>&lt;table&gt;</code> that sets prose in two columns. It stops at the edge of a data component — a data table (<code>.table-scroll</code>, <code>.table-bordered</code>), a <code>.panel</code>, a <code>.stat</code>, an embedded chart (<code>.rc-chart</code>) — which lays out its own text across its full width. Another component opts out with its own <code>max-width</code>.</p>
+    <p>Paragraphs and headings carry their own vertical margins. Most block components — cards, panels, grids, lists, quotes, callouts, sidenote rows — bring no top margin of their own. In the article flow (and in its sections) a block that directly follows another block keeps <code>--space-md</code> from it, so a card followed by code or a list never touches it. Next to a paragraph, the paragraph's own margin is the gap; two sidenote rows in a row read as two paragraphs and take no extra gap. To change or remove the gap, put a margin-top utility on the second block (<code>.margin-t-0</code> closes it); a margin-bottom on the first block does not reduce it.</p>
 
     <h4><code>.lead</code></h4>
     <p>A single oversized opening paragraph. Think of it as the page's TL;DR: one or two sentences that tell the reader what this page is about and whether to keep reading. Use it once, at the top of a long-read.</p>
@@ -86,7 +88,10 @@ permalink: '/styles/typography/text-content/'
     <p>Inline highlighting for words or phrases inside running text. <mark>Use it to flag the single phrase a skimming reader must not miss.</mark></p>
 
     <h3><code>&lt;cite&gt;</code></h3>
-    <p>The semantic element for attributing a quotation. Renders right-aligned and muted — see the <code>&lt;blockquote&gt;</code> example below.</p>
+    <p><code>&lt;cite&gt;</code> marks the title of a work, and a bare one stays inline, as the browser sets it: in running text, in quoted prose, in a <code>&lt;figcaption&gt;</code>. The <code>&lt;cite&gt;</code> that closes a <code>&lt;blockquote&gt;</code>, as its direct child, is the attribution: its own line, right-aligned, small and light — see the <code>&lt;blockquote&gt;</code> example below. For the same look anywhere else — a credit under an image, a label in the corner of a card — add <code>.attribution</code> to the element.</p>
+
+<pre><code>&lt;img src="…" alt="…"&gt;
+&lt;p class="attribution"&gt;Illustration: Rare Digits&lt;/p&gt;</code></pre>
 
     <h3>Blockquote</h3>
 
@@ -108,6 +113,25 @@ permalink: '/styles/typography/text-content/'
     <div class="boilerplate">
         <p>Rare Styles is a narrow, professional CSS library for clarity-first longreads and decision-first data views — not a general-purpose framework.</p>
     </div>
+
+    <h3 id="callouts"><code>.callout</code></h3>
+
+    <p>A short notice in a thin frame: small, muted and centered. Use it for a tip or a side remark the reader may skip.</p>
+
+    <p class="callout">Tip: the same shortcut works in every view.</p>
+
+    <p>When the reader must not skip it, add a severity. The notice then reads at full strength, left-aligned in the body text color, and the role color marks it with a stripe on the left and a faint fill:</p>
+
+    <p class="callout callout-info"><strong>Info.</strong> The table below is updated every Monday.</p>
+    <p class="callout callout-success"><strong>Done.</strong> All 14 checks passed.</p>
+    <p class="callout callout-warning"><strong>Experimental.</strong> This chart type is outside the 1.0 stability guarantee: its options may change.</p>
+    <p class="callout callout-error"><strong>Error.</strong> The data source did not respond; the figures are from yesterday.</p>
+
+<pre><code>&lt;p class="callout callout-warning"&gt;
+    &lt;strong&gt;Experimental.&lt;/strong&gt; Its options may change.
+&lt;/p&gt;</code></pre>
+
+    <p>The four variants — <code>.callout-info</code>, <code>.callout-success</code>, <code>.callout-warning</code> and <code>.callout-error</code> — go next to <code>.callout</code> and take their color from the <a href="/styles/colors/#semantic-colors">semantic color</a> tokens, so a project that re-maps <code>--color-warning</code> re-colors its warnings too. The color is never the only cue: name the state in the first words. A callout that must be announced as it appears, such as a form error, also needs <code>role="alert"</code> on the element; the class does not add it.</p>
 
     <h3>Definition Lists</h3>
 

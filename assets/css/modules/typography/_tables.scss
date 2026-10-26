@@ -14,6 +14,14 @@ table {
     overflow-x: auto;
 }
 
+// Inside the scroll box a code token keeps its shape (CSS-373). Inline `code`
+// may break anywhere (CSS-354), which let every code cell shrink: the table
+// never outgrew its box and option names broke mid-word on a phone. Here the
+// table grows instead, and the box scrolls.
+.table-scroll :is(th, td) code {
+    overflow-wrap: normal;
+}
+
 th {
     text-align: left;
     vertical-align: bottom;

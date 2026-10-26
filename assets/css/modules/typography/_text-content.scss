@@ -62,9 +62,19 @@ article {
     min-width: 0;
 }
 
-article p,
-article ul, 
-article ol  {
+// The reading measure binds the prose surface: paragraphs and lists in the
+// article, its sections, cards, captions, details and sidenotes. A data
+// component lays out its own content, so the measure stops at its edge
+// (CSS-374): a data table (`.table-scroll`, `.table-bordered`: a group-row
+// line, a cell's paragraph), a panel, a KPI stat, an embedded chart
+// (`.rc-chart`: its subtitle, note and details panel). A plain <table> that
+// sets prose in two columns keeps it: the capped cell is what leaves its
+// label column room. The exclusion sits in `:where()` and adds no
+// specificity; a component not listed opts out with its own `max-width`.
+// Binding the measure to direct children only (`.prose`, CSS-151) would drop
+// it from prose in authored wrappers (`details`, `.caption`, a card), so the
+// list stays until then.
+article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *) {
     max-width: var(--text-content-width);
 
     @include mobile {
@@ -74,6 +84,33 @@ article ol  {
 
 article .meta-info {
     margin-top: var(--space-sm);
+}
+
+// BLOCK RHYTHM IN THE ARTICLE FLOW (CSS-377)
+// Paragraphs and headings bring their own margins; block components do not,
+// so a card followed by code, a list or a grid touched it. A block that
+// follows another block in the article (or in a section of it) keeps
+// `--space-md` from it. Only block after block: next to a paragraph the
+// paragraph's own margin stays the gap, and a spacer between two blocks
+// keeps its height (neither side matches it).
+// The gap is the second block's `margin-top`, weight (0,0,1): a margin-top
+// utility on the second block decides (`.margin-t-0` closes the gap). A
+// margin-bottom on the first block does not shrink it — the two collapse,
+// and the larger wins. A `.table-scroll` box contains its table's bottom
+// margin, so it only takes a gap, never gives one.
+$flow-blocks: ".card, .card-inverted, .panel, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
+
+article > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll),
+:where(article) > section > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll) {
+    margin-top: var(--space-md);
+}
+
+// Sidenote rows are prose split in two columns: one row after another reads
+// as paragraph after paragraph. The last paragraph's margin, inside the
+// row's grid, is the gap; a block gap on top would triple it.
+article > :where(.sidenote-wrapper + .sidenote-wrapper),
+:where(article) > section > :where(.sidenote-wrapper + .sidenote-wrapper) {
+    margin-top: 0;
 }
 
 .nobr {
@@ -138,7 +175,7 @@ mark {
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    line-height: 1.3;
 }
 
 .meta-info {
@@ -146,7 +183,7 @@ mark {
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    line-height: 1.3;
 }
 
 .callout {
@@ -155,12 +192,39 @@ mark {
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    line-height: 1.3;
     border: 1px solid var(--border-color);
     border-radius: var(--space-xs);
 }
 
-cite {
+// Severity variants (CSS-156): `.callout .callout-warning`. A notice the
+// reader must not skip, so it reads at full strength — left-aligned, in the
+// body text colour — and the role colour marks it with a stripe and a faint
+// fill. The colour is never the only cue: the text names the state.
+.callout-info,
+.callout-success,
+.callout-warning,
+.callout-error {
+    text-align: left;
+    color: var(--text-color-dark);
+    font-weight: var(--font-weight-normal);
+    border-left: var(--space-xs) solid var(--callout-color);
+    background-color: color-mix(in srgb, var(--callout-color) 12%, transparent);
+}
+
+.callout-info { --callout-color: var(--color-info); }
+.callout-success { --callout-color: var(--color-success); }
+.callout-warning { --callout-color: var(--color-warning); }
+.callout-error { --callout-color: var(--color-danger); }
+
+// The attribution: a quote's source on its own line, right-aligned and small.
+// `<cite>` marks the title of a work, so a bare one stays inline; the look
+// applies to the cite that closes a <blockquote> (its direct child) and to
+// `.attribution` anywhere else (CSS-379). A title cited inside the quoted
+// prose or in a <figcaption> ("— Author, <cite>Work</cite>") stays inline.
+// `:where()` keeps the weight of the old bare `cite` rule.
+:where(blockquote) > cite,
+.attribution {
     display: block;
     width: 100%;
     margin: var(--space-sm) 0;
@@ -168,7 +232,7 @@ cite {
     color: var(--text-color-dark); // a role, so inverted surfaces re-map it (CSS-364)
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    line-height: 1.3;
 }
 
 blockquote {
@@ -243,6 +307,9 @@ dd + dt {
 }
 
 pre {
+    // Unitless, as it was in `em` (CSS-375): the block's own 19.2px line box
+    // (its strut) sets the pitch of the smaller code inside it, so code lines
+    // and box-drawing trees keep their spacing. The code inherits the ratio.
     line-height: var(--line-height-sm);
     background-color: var(--gray-mid-light);
     color: var(--gray-dark);
@@ -298,7 +365,7 @@ pre code {
 .handwritten {
     font-family: var(--script-font);
     font-size: var(--font-size-lg);
-    line-height: 1em;
+    line-height: 1;
 }
 
 .bold {

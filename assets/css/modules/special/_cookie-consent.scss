@@ -44,15 +44,20 @@ html:has(.cookie-notice:not(.rd-is-hidden)) {
     position: relative;
 }
 
+// The emoji badge over the top edge. Its line box is the glyph (line-height
+// 1), not the heading leading, so `top` places the glyph itself; the values
+// keep it where it sat while the inherited line-height was a fixed 24px
+// (CSS-375).
 .cookie-notice__content h3 {
     position: absolute;
     margin: 0;
-    top: -50px;
+    top: -66px;
     font-size: 3.5em;
+    line-height: var(--line-height-xs);
 
     @include bp.mobile {
         font-size: 2.5em;
-        top: -60px;
+        top: -68px;
     }
 }
 

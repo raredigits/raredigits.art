@@ -1,0 +1,18 @@
+// SEMANTIC COLOURS (CSS-121, v0.7.2)
+// Roles on top of the palette: what a colour means, not which colour it is.
+// Components that signal a state (callouts, KPI deltas, buttons, form
+// validation) read these, so a project re-maps a role once instead of hunting
+// for every `--red`. Each role points at an existing palette token; override
+// it on `:root` (or on a surface) to change the meaning's colour.
+
+// The values are signal colours for borders, stripes, fills and icons. None
+// reaches 4.5:1 as body text on the light surfaces (red and blue about 4:1 on
+// white, green 3.5:1, yellow 1.1:1), so components keep their text in the
+// text-role tokens.
+
+:root {
+    --color-success: var(--green);
+    --color-danger: var(--red);
+    --color-warning: var(--yellow);
+    --color-info: var(--blue);
+}

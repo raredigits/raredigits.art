@@ -9,7 +9,7 @@
     color: var(--text-color-light);
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    line-height: 1.3;
 }
 
 // REFERENCES AND NOTES (CSS-128, v0.7.1)
@@ -37,7 +37,7 @@ sup > a {
     font-size: var(--font-size-sm);
     color: var(--text-color-light);
     margin-right: calc(var(--global-fr) + var(--base-unit));
-    line-height: 1.2em;
+    line-height: 1.2;
 }
 
 .footnote-inside-text a {
@@ -51,34 +51,40 @@ sup > a {
     column-gap: var(--base-unit);
     grid-auto-flow: row dense;
 
+    // The wrapper places its own children only. Content nested inside them —
+    // a chart card's header grid, a legend column, a `<dl>` grid — keeps its
+    // layout (CSS-372: descendant selectors here opened nested grids to five
+    // columns and cut a chart title to an ellipsis).
     & > :first-child {
         margin-top: 0;
         grid-column: 1 / span 5;
     }
 
-    .sidenote {
+    > .sidenote {
         grid-column: 7 / span 2;
         grid-row: 1 / span 2;
         align-self: start;
         width: 100%;
         max-width: calc(2 * var(--global-fr));
         font-size: var(--font-size-sm);
-        line-height: 1.4em;
+        line-height: 1.4;
         color: var(--text-color-light);
         padding-top: var(--space-xs);
         position: relative;
     }
 
-    .sidenote a {
+    // Links in the note are muted with it. Not inside an embedded component
+    // (a chart's source line, `.rc-chart`): it colours its own links. Not
+    // child-scoped, because an ordinary link sits inside a <p>.
+    > .sidenote a:not(:where(.rc-chart *)) {
         color: var(--text-color-light);
     }
 
-    .sidenote p:first-child,
-    .sidenote > :is(h5, h6):first-child {
+    > .sidenote > :is(p, h5, h6):first-child {
         margin-top: 0;
     }
 
-    :not(:first-child, .sidenote) {
+    > :not(:first-child, .sidenote) {
         grid-column: 1 / span 5;
     }
 
@@ -94,12 +100,12 @@ sup > a {
         display: flex;
         flex-direction: column;
 
-        .sidenote {
+        > .sidenote {
             max-width: 100%;
             padding: var(--space-sm);
         }
 
-        .sidenote p:first-child {
+        > .sidenote > p:first-child {
             margin-top: var(--space-md);
         }
     }
@@ -111,7 +117,7 @@ sup > a {
 .sidenote.handwritten p {
     font-family: var(--script-font);
     font-size: var(--font-size-lg);
-    line-height: 1em;
+    line-height: 1;
 }
 
 .sidenote-bookmark::before,

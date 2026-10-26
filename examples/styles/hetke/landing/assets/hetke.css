@@ -86,6 +86,7 @@ body.hetke {
 
 .hetke h4 {
     margin: 0 0 10px;
+    line-height: inherit; /* the page's 18px, not the library's heading leading */
 }
 
 .hetke main {
