@@ -1,0 +1,149 @@
+<!doctype html>
+<!-- Checked by test/browser/controls.test.js: the button system (CSS-040…046,
+     Q-04), the legend toggles' reset, the site widgets that are <button>s,
+     and the forms (CSS-100…105), in page mode.
+     `?host`: the same markup on a host page — no `.rd` on <html>, only the
+     #island block opts in — so the gate keeps every control outside it. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controls fixture</title>
+<script>
+  if (location.search.includes('host')) document.documentElement.classList.remove('rd');
+</script>
+<link rel="stylesheet" href="/assets/css/rare.css">
+<style>
+  /* a page's own component class on a <button> */
+  .probe-class { background: rgb(1, 2, 3); color: rgb(250, 250, 250); border: 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <article>
+      <h2>Buttons</h2>
+      <p id="row-default">
+        <button id="b-default" type="button">Default</button>
+        <a id="b-link-default" class="button" href="#x">Link button</a>
+        <input id="f-beside" type="text" placeholder="Beside">
+      </p>
+      <p>
+        <button id="b-primary" class="button-primary" type="button">Primary</button>
+        <button id="b-secondary" class="button-secondary" type="button">Secondary</button>
+        <button id="b-ghost" class="button-ghost" type="button">Ghost</button>
+        <button id="b-danger" class="button-danger" type="button">Danger</button>
+        <button id="b-link" class="button-link" type="button">Link</button>
+      </p>
+      <p>
+        <button id="b-sm" class="button-sm" type="button">Small</button>
+        <button id="b-md" class="button-md" type="button">Medium</button>
+        <button id="b-lg" class="button-lg" type="button">Large</button>
+      </p>
+      <p>
+        <button id="b-plain2" type="button">Plain</button>
+        <button id="b-lead" type="button"><span id="b-lead-icon" class="rd-icon-download"></span> Download</button>
+        <button id="b-trail" type="button">Next<span id="b-trail-icon" class="rd-icon-arrow_forward"></span></button>
+        <button id="b-icon" class="button-icon" type="button" aria-label="Settings"><span id="b-icon-glyph" class="rd-icon-settings"></span></button>
+        <button id="b-icon-sm" class="button-icon button-sm" type="button" aria-label="Close"><span class="rd-icon-close"></span></button>
+      </p>
+      <p>
+        <button id="b-disabled" type="button" disabled>Disabled</button>
+        <button id="b-primary-disabled" class="button-primary" type="button" disabled>Disabled</button>
+        <a id="a-disabled" class="button" aria-disabled="true">Disabled link</a>
+        <button id="b-busy" class="button-primary" type="button" aria-busy="true">Saving</button>
+      </p>
+      <div id="grp" class="button-group" role="group" aria-label="Range">
+        <button id="g1" type="button">Day</button>
+        <button id="g2" type="button" aria-pressed="true">Week</button>
+        <button id="g3" type="button">Month</button>
+      </div>
+      <div id="block-box" style="width: 300px">
+        <button id="b-block" class="button-block" type="button">Full width</button>
+        <button id="b-block-icon" class="button-block" type="button"><span class="rd-icon-download"></span> Full width</button>
+      </div>
+      <div class="card-inverted padding-md">
+        <button id="b-inverted" type="button">On a dark card</button>
+      </div>
+      <nav><a id="b-nav" class="button" href="#y">In a nav</a></nav>
+      <p><button id="b-classed" class="probe-class" type="button">Own class</button></p>
+
+      <h2>Legend toggles</h2>
+      <div class="legend">
+        <button id="lg-on" class="legend__item" type="button" aria-pressed="true"><span class="legend__swatch"></span>On</button>
+        <button id="lg-off" class="legend__item" type="button" aria-pressed="false"><span class="legend__swatch"></span>Off</button>
+        <button id="lg-dis" class="legend__item" type="button" aria-pressed="true" disabled><span class="legend__swatch"></span>Disabled on</button>
+        <button id="lg-dis-off" class="legend__item" type="button" aria-pressed="false" disabled><span class="legend__swatch"></span>Disabled off</button>
+        <button id="lg-busy" class="legend__item" type="button" aria-pressed="true" aria-busy="true"><span class="legend__swatch"></span>Busy</button>
+      </div>
+
+      <h2>Widgets</h2>
+      <div class="header-icons" style="font-size: 24px"><button id="hdr-search" class="icon-search" aria-label="Search"></button></div>
+      <p style="font-size: 14px">A line <button id="copy-in-p" class="copy-data-icon" aria-label="Copy"></button></p>
+
+      <h2>Forms</h2>
+      <form id="form" onsubmit="return false">
+        <p>
+          <input id="f-text" type="text" placeholder="Text">
+          <input id="f-notype" placeholder="No type">
+          <input id="f-email" type="email">
+          <input id="f-password" type="password">
+          <input id="f-search" type="search">
+          <input id="f-tel" type="tel">
+          <input id="f-url" type="url">
+          <input id="f-number" type="number">
+        </p>
+        <p><textarea id="f-area" rows="3"></textarea></p>
+        <p>
+          <select id="f-select"><option>One</option><option>Two</option></select>
+          <select id="f-multi" multiple><option>One</option><option>Two</option></select>
+        </p>
+        <p>
+          <label id="lbl-check"><input id="f-check" type="checkbox"> Check</label>
+          <label><input id="f-check-on" type="checkbox" checked> On</label>
+          <label><input id="f-check-ind" type="checkbox"> Mixed</label>
+          <label id="lbl-dis"><input id="f-check-dis" type="checkbox" checked disabled> Disabled</label>
+          <label><input id="f-radio" type="radio" name="r"> A</label>
+          <label><input id="f-radio-on" type="radio" name="r" checked> B</label>
+        </p>
+        <p>
+          <input id="f-range" type="range">
+          <input id="f-color" type="color" value="#1677ff">
+          <input id="f-file" type="file">
+        </p>
+        <p>
+          <input id="f-dis" type="text" value="Disabled" disabled>
+          <input id="f-aria-invalid" type="text" aria-invalid="true">
+          <input id="f-req" type="text" required>
+          <input id="f-req-valid" type="text" required>
+          <input id="f-plain" type="text">
+        </p>
+        <fieldset id="fs">
+          <legend id="lg">Shipping</legend>
+          <div id="fg" class="form-group">
+            <label for="fg-input">Name</label>
+            <input id="fg-input" type="text" aria-describedby="fh fe">
+            <span id="fh" class="form-help">As on the card.</span>
+            <span id="fe" class="form-error">Enter a name.</span>
+          </div>
+          <div id="fr" class="form-row">
+            <div id="fr-a" class="form-group"><label for="fr-a-in">City</label><input id="fr-a-in" type="text"></div>
+            <div id="fr-b" class="form-group"><label for="fr-b-in">Zip</label><input id="fr-b-in" type="text"></div>
+            <button id="fr-btn" class="button-primary" type="submit">Save</button>
+          </div>
+        </fieldset>
+      </form>
+
+      <div id="island" class="rd">
+        <button id="i-button" type="button">Island</button>
+        <input id="i-text" type="text">
+        <input id="i-check" type="checkbox">
+      </div>
+    </article>
+  </div>
+</main>
+<script>
+  document.getElementById('f-check-ind').indeterminate = true;
+</script>
+</body>
+</html>

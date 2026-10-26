@@ -28,8 +28,8 @@
     "url": "/styles/typography/interactive/",
     "topics": [
       { "title": "Links", "url": "/styles/typography/interactive/#links" },
-      { "title": "Buttons", "url": "/styles/typography/interactive/#buttons" },
-      { "title": "Forms", "url": "/styles/typography/interactive/#forms" }
+      { "title": "Buttons", "url": "/styles/elements/buttons/" },
+      { "title": "Forms", "url": "/styles/elements/forms/" }
     ]
   },
   {

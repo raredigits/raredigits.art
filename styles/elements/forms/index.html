@@ -1,0 +1,156 @@
+---
+layout: page.njk
+title: "Elements / Forms"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/elements/forms/'
+---
+
+<div class="meta-info">
+    css/modules/elements/_forms.scss
+</div>
+
+<section>
+    <p>Form fields need no class. Inside <code>.rd</code>, on a page or in an island, the plain elements take the library's look; a host form outside <code>.rd</code> never does. The library adds a frame, inner spacing, a 1rem text size and the states below. A field and a <a href="/styles/elements/buttons/">button</a> of the default size are equally tall, so they line up in a row.</p>
+    <form class="demo-row text-content-caption padding-y-sm" onsubmit="return false">
+        <input type="email" aria-label="Email" placeholder="you@example.com">
+        <button class="button-primary" type="submit">Subscribe</button>
+    </form>
+</section>
+
+<section>
+    <h2 id="text-fields">Text fields, textarea, select</h2>
+    <p>The text fields are <code>input</code> without a type and the types <code>text</code>, <code>email</code>, <code>password</code>, <code>search</code>, <code>tel</code>, <code>url</code> and <code>number</code>. The date and time types (<code>date</code>, <code>time</code>, <code>datetime-local</code>, <code>month</code>, <code>week</code>) take the same frame and height; the browser draws their segments and picker inside it. The types <code>submit</code>, <code>button</code> and <code>reset</code> are <a href="/styles/elements/buttons/">buttons</a>. A placeholder is <code>--text-color-light</code> (5.7:1 on white; the browser's own grey is 2.3:1). A textarea grows downwards only. A select draws its own arrow in the text colour; a list box (<code>multiple</code> or <code>size</code>) keeps the browser's.</p>
+    <form class="text-content-caption padding-y-sm" onsubmit="return false">
+        <div class="form-row">
+            <div class="form-group"><label for="d-name">Name</label><input id="d-name" type="text" placeholder="Ada Lovelace"></div>
+            <div class="form-group"><label for="d-topic">Topic</label><select id="d-topic"><option>Styles</option><option>Charts</option><option>Scripts</option></select></div>
+            <div class="form-group"><label for="d-date">Date</label><input id="d-date" type="date"></div>
+        </div>
+        <div class="form-group"><label for="d-message">Message</label><textarea id="d-message" rows="3"></textarea></div>
+    </form>
+</section>
+
+<section>
+    <h2 id="checkbox-radio">Checkbox and radio</h2>
+    <p>Drawn by the library (<code>appearance: none</code>): a 1em box that sits on the text line like a glyph, filled with <code>--field-accent</code> when checked. Wrap the control in its <code>&lt;label&gt;</code>: the whole line becomes the hit area. A checkbox set to <code>indeterminate</code> by script shows a bar.</p>
+    <form class="text-content-caption padding-y-sm" onsubmit="return false">
+        <div class="demo-row">
+            <label><input type="checkbox" name="news" checked> Release notes</label>
+            <label><input id="d-mixed" type="checkbox" name="all"> All projects</label>
+            <label><input type="checkbox" name="beta" disabled> Beta (closed)</label>
+        </div>
+        <div class="demo-row padding-t-sm">
+            <label><input type="radio" name="plan" checked> Monthly</label>
+            <label><input type="radio" name="plan"> Yearly</label>
+            <label><input type="radio" name="plan" disabled> Lifetime</label>
+        </div>
+    </form>
+<pre class="text-content-caption"><code>&lt;label&gt;&lt;input type="checkbox" name="news"&gt; Release notes&lt;/label&gt;
+&lt;label&gt;&lt;input type="radio" name="plan" checked&gt; Monthly&lt;/label&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="range-color-file">Range, colour, file</h2>
+    <p>Minimal: the range takes the accent colour; the colour well is as tall as a text field; the file input's button is a small default button.</p>
+    <form class="text-content-caption padding-y-sm" onsubmit="return false">
+        <p>
+            <input type="range" aria-label="Opacity" value="60">
+            <input type="color" aria-label="Series colour" value="#1677ff">
+        </p>
+        <p><input type="file" aria-label="Data file"></p>
+    </form>
+</section>
+
+<section>
+    <h2 id="layout">Groups, rows, help and errors</h2>
+    <dl>
+        <dt><code>.form-group</code></dt>
+        <dd>One field: its label, the control, a help or error line, stacked. The fields take the group's width; a checkbox, a radio or a button keeps its own.</dd>
+
+        <dt><code>.form-row</code></dt>
+        <dd>Groups and a button side by side, their bottoms aligned so the button lines up with the fields. Stacked on a phone.</dd>
+
+        <dt><code>.form-help</code>, <code>.form-error</code></dt>
+        <dd>Small lines under a control. An error is in the body text colour and marked with the <code>error</code> glyph in <code>--field-invalid-color</code>: red text would read at 4:1, short of AA. Tie both to the control with <code>aria-describedby</code>.</dd>
+    </dl>
+    <form class="text-content-caption padding-y-sm" onsubmit="return false">
+        <fieldset>
+            <legend>Shipping</legend>
+            <div class="form-group">
+                <label for="d-street">Street</label>
+                <input id="d-street" type="text" aria-describedby="d-street-help">
+                <span id="d-street-help" class="form-help">As it appears on the door.</span>
+            </div>
+            <div class="form-group">
+                <label for="d-city">City</label>
+                <input id="d-city" type="text" aria-invalid="true" aria-describedby="d-city-error">
+                <span id="d-city-error" class="form-error">Enter a city.</span>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="d-zip">Postcode</label>
+                    <input id="d-zip" type="text">
+                </div>
+                <div class="form-group">
+                    <label for="d-country">Country</label>
+                    <select id="d-country"><option>Germany</option><option>UAE</option></select>
+                </div>
+                <button class="button-primary" type="submit">Save</button>
+            </div>
+        </fieldset>
+    </form>
+<pre class="text-content-caption"><code>&lt;div class="form-group"&gt;
+    &lt;label for="city"&gt;City&lt;/label&gt;
+    &lt;input id="city" type="text" aria-invalid="true" aria-describedby="city-error"&gt;
+    &lt;span id="city-error" class="form-error"&gt;Enter a city.&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+    <p>A <code>&lt;fieldset&gt;</code> gets a light frame and may shrink with its column; its <code>&lt;legend&gt;</code> is bold.</p>
+</section>
+
+<section>
+    <h2 id="states">States</h2>
+    <dl>
+        <dt>Hover, focus</dt>
+        <dd>The frame darkens under the pointer and turns to <code>--field-accent</code> on focus, inside the library's <a href="/styles/typography/interactive/#keyboard-focus">focus ring</a>.</dd>
+
+        <dt><code>disabled</code></dt>
+        <dd>A grey field with grey text and the default pointer. The label of a disabled checkbox or radio dims with it.</dd>
+
+        <dt>Invalid, valid</dt>
+        <dd>Only after the user has had a go: <code>:user-invalid</code> and <code>:user-valid</code> match once a field was edited or its form submitted, so an untouched form shows no errors. The frame turns <code>--field-invalid-color</code>; a field that asked for something (<code>required</code>, <code>pattern</code>) turns <code>--field-valid-color</code> once it is right. A script marks a field with <code>aria-invalid="true"</code>, which shows at once.</dd>
+    </dl>
+    <form class="text-content-caption padding-y-sm" onsubmit="return false">
+        <div class="form-row">
+            <div class="form-group"><label for="d-req">Required (type, then clear it)</label><input id="d-req" type="email" required placeholder="you@example.com"></div>
+            <div class="form-group"><label for="d-dis">Disabled</label><input id="d-dis" type="text" value="Read only" disabled></div>
+        </div>
+    </form>
+</section>
+
+<section>
+    <h2 id="tokens">Tokens</h2>
+    <div class="table-scroll text-content-caption">
+        <table class="table-bordered">
+            <thead><tr><th>Token</th><th>Default</th><th>Sets</th></tr></thead>
+            <tbody>
+                <tr><td><code>--field-bg</code> / <code>--field-text</code></td><td><code>var(--white)</code> / <code>var(--primary-color)</code></td><td>Fill and text of a field.</td></tr>
+                <tr><td><code>--field-border-color</code></td><td><code>var(--gray-trans)</code></td><td>The frame: 3.5:1 on white, the 3:1 a field's outline needs (WCAG 1.4.11).</td></tr>
+                <tr><td><code>--field-radius</code></td><td><code>var(--button-radius)</code></td><td>Corner radius; a checkbox takes half.</td></tr>
+                <tr><td><code>--field-padding-x</code> / <code>-y</code></td><td><code>12px</code> / <code>var(--button-padding-y)</code></td><td>Inner spacing; <code>-y</code> follows the button so the heights match.</td></tr>
+                <tr><td><code>--field-accent</code></td><td><code>var(--signal)</code></td><td>Checked boxes and radios, the range, the focused frame.</td></tr>
+                <tr><td><code>--field-invalid-color</code></td><td><code>var(--color-danger)</code></td><td>The frame of an invalid field and the error glyph.</td></tr>
+                <tr><td><code>--field-valid-color</code></td><td><code>var(--color-success)</code></td><td>The frame of a required field once it is right.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section>
+    <h2 id="charts">Inside a chart</h2>
+    <p>A <a href="/charts/">RareCharts</a> card (<code>.rc-chart</code>) owns its controls, so these defaults stop at it. The page's own checkboxes and selects that a chart moves into its <code>controls</code> row keep the chart's compact look.</p>
+</section>
+
+<script>
+    document.getElementById('d-mixed').indeterminate = true;
+</script>

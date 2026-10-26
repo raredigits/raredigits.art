@@ -69,9 +69,12 @@
     position: relative;
 }
 
-// A link in a light card nested in the dark one takes `--link-color` from
-// the nearest surface instead (below).
-.card-inverted a:not(:where(.card-inverted .card *)) {
+// Text links only. A link in a light card nested in the dark one takes
+// `--link-color` from the nearest surface instead (below), and a link-button
+// (`.button`) keeps its own label colour, dark on the white default button
+// (elements/_buttons.scss). Zero weight in the exclusion, so the rule keeps
+// (0,1,1).
+.card-inverted a:not(:where(.card-inverted .card *, .button)) {
     color: var(--gray-light);
 }
 

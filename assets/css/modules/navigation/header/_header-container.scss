@@ -88,12 +88,17 @@
     }
 }
 
+// The glyph takes the bar's icon size, not the default button's own
+// (elements/_buttons.scss, v0.7.2); 1.15 is the line box the icons have
+// always sat on (normalize's, before the button system set its own).
 .header-icons button {
     display: inline;
     appearance: none;
     background: none;
     border: none;
     color: var(--primary-text-color);
+    font: inherit;
+    line-height: 1.15;
     -webkit-tap-highlight-color: transparent;
     padding: 0;
     margin-left: var(--base-unit);

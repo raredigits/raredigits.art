@@ -74,9 +74,10 @@ sup > a {
     }
 
     // Links in the note are muted with it. Not inside an embedded component
-    // (a chart's source line, `.rc-chart`): it colours its own links. Not
+    // (a chart's source line, `.rc-chart`): it colours its own links. Not a
+    // link-button (`.button`), which keeps its label colour. Not
     // child-scoped, because an ordinary link sits inside a <p>.
-    > .sidenote a:not(:where(.rc-chart *)) {
+    > .sidenote a:not(:where(.rc-chart *, .button)) {
         color: var(--text-color-light);
     }
 

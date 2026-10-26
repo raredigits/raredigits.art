@@ -173,6 +173,7 @@ html {
     padding: 0;
     color: #fff;
     font-size: 30px;
+    line-height: 1.15; /* the toggle's own line box, not the button's (Rare Styles v0.7.2) */
     background: none;
     border: none;
     cursor: pointer;
@@ -208,6 +209,9 @@ html {
     padding: 6px 15px;
     border: none;
     border-radius: 20px;
+    /* the nav's own type and alignment, not the button's (Rare Styles v0.7.2) */
+    font: inherit;
+    text-align: inherit;
 }
 
 .hetke nav .button a { color: #000; }

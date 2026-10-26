@@ -23,7 +23,7 @@ This file documents the canonical CSS workflow for Rare Styles inside `raredigit
 
 ## The `.rd` gate config
 
-`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically; `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
+`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically, but not one whose classes sit only inside `:not()`: an exclusion does not scope a rule, so `p:not(.lead)` is listed like `p`, by its key without the `:not()` parts (`inventoryKey()` in `scripts/rd-gate.mjs`, `v0.7.2`), and the build error names the keys. `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
 
 ## Reset and normalize (decided 2026-10-16, `CSS-078`)
 
@@ -31,7 +31,17 @@ Both apply only inside `.rd`: `vendor/normalize.css` (v8.0.1, kept **whole and u
 
 **Islands.** The reset matches the island root and everything inside it, at zero specificity (`*:where(.rd, .rd *)`). It removes **user-agent** margins and padding only. Any host rule with a type or class selector (`figcaption { margin: … }`) still wins over it. Same-specificity collisions, such as a host `p {}` against the library's `p:where(…)`, resolve by load order. That is the documented caveat: the gate protects the host from the library, not the library from the host.
 
-**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font inheritance that the `v0.7.9` forms will build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
+**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font family inheritance that the `v0.7.2` forms (`elements/_forms.scss`) build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
+
+## Element defaults: buttons and forms (`v0.7.2`, `Q-04`)
+
+A bare `<button>`, `<input>`, `<select>`, `<textarea>`, `<fieldset>` and `<legend>` inside `.rd` get the library's look (`elements/_buttons.scss`, `elements/_forms.scss`). Three rules keep them from fighting the components that style their own controls:
+
+- **Type weight in every state.** The element rules stay at `(0,0,1)`, hover, active, disabled, busy and validation included: the state goes in `:where()` (`button:where(:hover:not(:disabled))`), so any class beats the defaults in every state and a component never repeats its look for `:hover`. `.button` keeps the `(0,2,0)` its states always had, so a link-button outranks `nav a:hover` and a page's `.button.my-variant` loaded later still wins.
+- **They stop at a RareCharts card.** Every element selector carries `:not(:where(.rc-chart *))` (zero weight), as the prose measure and the print URLs do: the chart owns its controls (RareCharts C-13), the page controls it moves into its `controls:` row included. `test/browser/charts-rd-host.test.js` (`CSS-381`) compares each chart control with the same page without the library. The exclusion does not take the rules out of the inventory: they are listed as `ISLAND` in `rd-gate.config.mjs` by their keys (`button`, `button:where(:hover)`, `select::placeholder`, …). A rule scoped by an attribute (`input:where([type="text"])`) is class context, as before.
+- **A component that resets a button names the states it resets** (see `button.legend__item` in `bricks/_legend.scss`): a disabled toggle must not fade, a busy one must not spin.
+
+A variant only sets colour slots (`--button-bg`, `--button-text`, `--button-border-color`, `--button-bg-hover`, `--button-border-color-hover`, `--button-bg-active`); the base rule reads them. A selector that names the icon set inside a pseudo-class argument (`button:has(> [class*=rd-icon-])`) is gated like any other: only a self-contained `rd-icon-*` compound stays ungated (`classify()` in `scripts/rd-gate.mjs`).
 
 ## Day-to-day editing flow
 

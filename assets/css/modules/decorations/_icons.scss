@@ -259,7 +259,9 @@ $icons: (
     .copy-data-icon {
         @include icon("content_copy");
 
-        line-height: inherit;
+        // Sized by the text it sits in (the glyph is 1em), not by the
+        // default button's own size (elements/_buttons.scss, v0.7.2).
+        font: inherit;
         background: none;
         color: var(--copy-icon-color, var(--text-color-light));
         border: none;

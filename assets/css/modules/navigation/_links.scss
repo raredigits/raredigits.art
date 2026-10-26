@@ -49,8 +49,10 @@ h1 a, h2 a, h3 a, h4 a {
     border: none;
 }
 
+// Text links only in the sidebar: a link-button (`.button`) keeps its box
+// and label (elements/_buttons.scss). The exclusion has zero weight.
 nav a,
-.sidebar a {
+.sidebar a:not(:where(.button)) {
     color: var(--text-color-light);
     background-image: none;
     position: relative;
@@ -73,7 +75,7 @@ nav a.current {
     border-bottom: 2px solid var(--gray-trans);
 }
 
-.sidebar a:hover {
+.sidebar a:not(:where(.button)):hover {
     border-bottom: none;
     display: block;
 }

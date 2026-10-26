@@ -1,0 +1,329 @@
+@use "../utilities/breakpoints" as bp;
+@use "../decorations/icons" as ico;
+
+// FORMS (CSS-100…105, v0.7.2)
+
+// Plain element selectors: no per-field class and no wrapper class. The `.rd`
+// gate scopes them — a form inside `.rd` (page or island) gets them, a host
+// form outside never does. Every rule stays at type specificity (states in
+// `:where()`), so any class of the page's beats it.
+
+// A RareCharts card (`.rc-chart`) owns its controls (RareCharts C-13): the
+// page controls a chart moves into its `controls:` row keep the chart's
+// compact look, and RareCharts' own inputs (RC-003) need no guard.
+
+// Field and button share their height at the default size: the same
+// padding-y, line-height and 1px border.
+
+$-outside-chart: ":not(:where(.rc-chart *))";
+
+// The date and time types take the same frame: the browser draws their
+// segments and picker inside it. The button types (submit, button, reset)
+// are buttons (elements/_buttons.scss).
+$-text-types: ':not([type]), [type="text"], [type="email"], [type="password"], [type="search"], [type="tel"], [type="url"], [type="number"], [type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]';
+$-text-field: "input#{$-outside-chart}:where(#{$-text-types})";
+$-check: "input#{$-outside-chart}:where([type=\"checkbox\"], [type=\"radio\"])";
+
+:root {
+    --field-bg: var(--white);
+    --field-text: var(--primary-color);
+
+    // --gray-trans: 3.5:1 on white, the 3:1 a field's outline needs to be
+    // seen (WCAG 1.4.11); the lighter --border-color is 1.6:1.
+    --field-border-color: var(--gray-trans);
+    --field-radius: var(--button-radius);
+    --field-padding-x: calc(var(--space-sm) * 1.5);
+    --field-padding-y: var(--button-padding-y);
+
+    // Checked boxes, radios and the range thumb.
+    --field-accent: var(--signal);
+
+    // Validation (CSS-103), on the semantic roles (CSS-121).
+    --field-invalid-color: var(--color-danger);
+    --field-valid-color: var(--color-success);
+}
+
+// TEXT FIELDS, TEXTAREA, SELECT (CSS-100)
+#{$-text-field},
+textarea#{$-outside-chart},
+select#{$-outside-chart} {
+    max-width: 100%;
+    padding: var(--field-padding-y) var(--field-padding-x);
+    border: 1px solid var(--field-border-color);
+    border-radius: var(--field-radius);
+    background-color: var(--field-bg);
+    color: var(--field-text);
+
+    // 1rem: iOS zooms into a focused field set smaller than 16px.
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-sm);
+
+    @include bp.motion-safe {
+        transition: border-color 0.15s ease;
+    }
+
+    // --text-color-light: 5.7:1 on white; the browser's grey is 2.3:1.
+    &::placeholder {
+        color: var(--text-color-light);
+        opacity: 1;
+    }
+}
+
+// A select draws its own arrow (a small triangle in the text colour), so
+// its frame and padding match the text fields. A list box (`multiple`,
+// `size`) keeps the browser's own.
+select#{$-outside-chart}:where(:not([multiple], [size])) {
+    appearance: none;
+    padding-inline-end: calc(var(--field-padding-x) + 1em);
+    background-image:
+        linear-gradient(45deg, transparent 50%, currentcolor 50%),
+        linear-gradient(135deg, currentcolor 50%, transparent 50%);
+    background-position:
+        calc(100% - var(--field-padding-x) - 0.3em) 50%,
+        calc(100% - var(--field-padding-x)) 50%;
+    background-size: 0.3em 0.3em;
+    background-repeat: no-repeat;
+}
+
+// Date and time: Chrome pads the segments and the picker glyph inside the
+// frame, 2–4px more than a text field; without that padding the field is as
+// tall as the others.
+input#{$-outside-chart}:where([type="date"], [type="time"], [type="datetime-local"], [type="month"], [type="week"]) {
+    &::-webkit-datetime-edit-fields-wrapper {
+        padding: 0;
+    }
+
+    &::-webkit-calendar-picker-indicator {
+        padding-block: 0;
+    }
+}
+
+// Grows downwards only, and sits on the line's top instead of its baseline.
+textarea#{$-outside-chart} {
+    resize: vertical;
+    vertical-align: top;
+}
+
+// CHECKBOX AND RADIO (CSS-101): drawn by the library (`appearance: none`).
+// A 1em box that sits on the text line like a glyph (the same placement as
+// an `rd-icon-*`), so a label reads as a line of text:
+//   <label><input type="checkbox" name="news"> Send me release notes</label>
+#{$-check} {
+    appearance: none;
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.2em;
+    border: 1px solid var(--field-border-color);
+    border-radius: calc(var(--field-radius) / 2);
+    background: var(--field-bg) no-repeat center / 100%;
+    cursor: pointer;
+}
+
+// A radio is round.
+input#{$-outside-chart}:where([type="radio"]) {
+    border-radius: 50%;
+}
+
+// STATES (CSS-103), in cascade order: each later state wins over the ones
+// before it. The focus ring is the library's (utilities/_a11y.scss); a
+// text field's frame turns to the accent as well, for a focus the browser
+// does not mark as `:focus-visible`.
+:is(#{$-text-field}, textarea#{$-outside-chart}, select#{$-outside-chart}, #{$-check}):where(:hover:not(:disabled, :focus)) {
+    border-color: var(--primary-color);
+}
+
+:is(#{$-text-field}, textarea#{$-outside-chart}, select#{$-outside-chart}):where(:focus) {
+    border-color: var(--field-accent);
+}
+
+#{$-check}:where(:checked, :indeterminate) {
+    border-color: var(--field-accent);
+    background-color: var(--field-accent);
+}
+
+// The tick is white on the accent fill. A data URI cannot read a custom
+// property, so this one colour is written out.
+input#{$-outside-chart}:where([type="checkbox"]:checked) {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+input#{$-outside-chart}:where([type="checkbox"]:indeterminate) {
+    background-image: linear-gradient(var(--white), var(--white));
+    background-size: 60% 2px;
+}
+
+// Checked, a ring of the field colour inside the accent leaves an accent dot.
+input#{$-outside-chart}:where([type="radio"]:checked) {
+    box-shadow: inset 0 0 0 0.2em var(--field-bg);
+}
+
+:is(#{$-text-field}, textarea#{$-outside-chart}, select#{$-outside-chart}, #{$-check}):where(:disabled) {
+    border-color: var(--border-color);
+    background-color: var(--bg-color);
+    color: var(--gray-trans);
+    cursor: default;
+}
+
+#{$-check}:where(:disabled:checked, :disabled:indeterminate) {
+    border-color: var(--gray-trans);
+    background-color: var(--gray-trans);
+}
+
+// Validity shows only after the user has had a go: `:user-valid` /
+// `:user-invalid` match once the field was edited or its form submitted,
+// never on an untouched form. A script marks a field with `aria-invalid`.
+// Both pseudo-classes sit inside `:where()`, a forgiving list, so a browser
+// that lacks them still applies `[aria-invalid]`. Success shows only on a
+// field that asked for something (`required`, `pattern`).
+:is(#{$-text-field}, textarea#{$-outside-chart}, select#{$-outside-chart}, #{$-check}):where(:user-valid:is([required], [pattern])) {
+    border-color: var(--field-valid-color);
+}
+
+:is(#{$-text-field}, textarea#{$-outside-chart}, select#{$-outside-chart}, #{$-check}):where([aria-invalid="true"], :user-invalid) {
+    border-color: var(--field-invalid-color);
+}
+
+// RANGE, COLOR, FILE (CSS-105): minimal.
+input#{$-outside-chart}:where([type="range"]) {
+    vertical-align: middle;
+    accent-color: var(--field-accent);
+    cursor: pointer;
+}
+
+// As tall as a text field; the swatch fills the frame.
+input#{$-outside-chart}:where([type="color"]) {
+    width: 3em;
+    height: calc(1rem * var(--line-height-sm) + 2 * var(--field-padding-y) + 2px);
+    padding: 2px;
+    border: 1px solid var(--field-border-color);
+    border-radius: var(--field-radius);
+    background-color: var(--field-bg);
+    vertical-align: middle;
+    cursor: pointer;
+
+    &::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    &::-webkit-color-swatch {
+        border: 0;
+        border-radius: calc(var(--field-radius) / 2);
+    }
+
+    &::-moz-color-swatch {
+        border: 0;
+        border-radius: calc(var(--field-radius) / 2);
+    }
+}
+
+// The file input's button takes the small default button.
+input#{$-outside-chart}:where([type="file"]) {
+    max-width: 100%;
+
+    &::file-selector-button {
+        margin-inline-end: var(--space-sm);
+        padding: var(--space-xs) var(--space-sm);
+        border: 1px solid var(--border-color);
+        border-radius: var(--button-radius);
+        background: var(--white);
+        color: var(--primary-color);
+        font: inherit;
+        cursor: pointer;
+    }
+
+    &:where(:hover:not(:disabled))::file-selector-button {
+        border-color: var(--primary-color);
+    }
+}
+
+// FIELDSET AND LEGEND (CSS-104). `min-inline-size: 0` lets a fieldset shrink
+// with its column instead of growing to its widest content.
+fieldset#{$-outside-chart} {
+    min-inline-size: 0;
+    padding: var(--space-sm) var(--space-md) var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--field-radius);
+}
+
+legend#{$-outside-chart} {
+    padding-inline: var(--space-xs);
+    font-weight: var(--font-weight-bold);
+}
+
+// LABELS AND LAYOUT (CSS-102)
+
+// A label that wraps a checkbox or a radio is its hit area; the label of a
+// disabled control dims with it.
+label#{$-outside-chart}:where(:has(> [type="checkbox"], > [type="radio"])) {
+    cursor: pointer;
+}
+
+label#{$-outside-chart}:where(:has(> :disabled)) {
+    color: var(--gray-trans);
+    cursor: default;
+}
+
+// One field: its label, the control, a help or error line, stacked. The
+// controls take the group's width; a checkbox or radio keeps its own.
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+
+    > :is([type="checkbox"], [type="radio"]) {
+        align-self: flex-start;
+    }
+}
+
+// Groups (and a button) side by side, bottoms aligned so a button lines up
+// with the fields; stacked on a phone.
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+
+    > .form-group {
+        flex: 1 1 12rem;
+        margin-bottom: 0;
+    }
+
+    // Stacked, the 12rem basis would be a height: each group takes its own.
+    @include bp.mobile {
+        flex-direction: column;
+        align-items: stretch;
+
+        > .form-group {
+            flex: none;
+        }
+    }
+}
+
+.form-help,
+.form-error {
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+}
+
+.form-help {
+    color: var(--text-color-light);
+}
+
+// The message is in the body text colour (red text would be 4:1, short of
+// AA); the role colour marks it with the `error` glyph.
+.form-error {
+    color: var(--text-color-dark);
+
+    &::before {
+        @include ico.icon-mask("error");
+
+        display: inline-block;
+        margin-inline-end: 0.3em;
+        vertical-align: -0.2em;
+        background-color: var(--field-invalid-color);
+    }
+}

@@ -1,0 +1,38 @@
+---
+layout: page.njk
+title: "Elements"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/elements/'
+---
+
+<div class="meta-info">
+    css/modules/elements/
+</div>
+
+<section>
+    <p>Elements are the controls a reader works with: <a href="/styles/elements/buttons/">buttons</a> and <a href="/styles/elements/forms/">form fields</a>. They need no class. Inside <code>.rd</code> a bare <code>&lt;button&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;select&gt;</code> or <code>&lt;textarea&gt;</code> takes the library's look; outside it, a host's own controls stay as the host made them.</p>
+    <div class="demo-row text-content-caption padding-y-sm">
+        <input type="text" aria-label="Search the docs" placeholder="Search the docs">
+        <button type="button">Search</button>
+        <button class="button-primary" type="button">Subscribe</button>
+    </div>
+<pre class="text-content-caption"><code>&lt;input type="text" placeholder="Search the docs"&gt;
+&lt;button type="button"&gt;Search&lt;/button&gt;
+&lt;button class="button-primary" type="button"&gt;Subscribe&lt;/button&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="rules">Three rules</h2>
+    <dl>
+        <dt>Elements first, classes on top</dt>
+        <dd>The element has the default look; a variant, a size or a layout is a class on top of it (<code>.button-primary</code>, <code>.button-sm</code>, <code>.form-group</code>). <code>.button</code> gives a link the button look.</dd>
+
+        <dt>One height</dt>
+        <dd>A button and a text field of the default size are equally tall, so they line up in a row with no extra work.</dd>
+
+        <dt>Any class wins</dt>
+        <dd>The element defaults have type weight in every state, hover and focus included. A component that styles its own <code>&lt;button&gt;</code> (a carousel arrow, a <a href="/styles/bricks/legend/#toggles">legend toggle</a>) overrides them with one class and never fights a <code>:hover</code>.</dd>
+    </dl>
+    <p>A <a href="/charts/">RareCharts</a> card (<code>.rc-chart</code>) draws its own controls, so the element defaults stop at it. That includes the page's own controls a chart moves into its <code>controls</code> row: they keep the chart's compact look.</p>
+</section>

@@ -7,7 +7,7 @@ permalink: '/styles/typography/interactive/'
 ---
 
 <div class="meta-info">
-    css/modules/navigation/_links.scss · css/modules/elements/_buttons.scss · css/modules/utilities/_a11y.scss
+    css/modules/navigation/_links.scss · css/modules/utilities/_a11y.scss
 </div>
 
 ## Keyboard focus
@@ -36,26 +36,6 @@ At rest a link has exactly one line, the underline. Until `v0.7.0` the hover fil
 
 Links that are not text links (icons, cards, logos) take `.no-decoration`.
 
-## Buttons
+## Buttons and forms
 
-`.button` turns a link or a `<button>` into a rounded control sized to its content.
-
-<p>
-    <a class="button" href="/styles/getting-started/">Link as a button</a>
-</p>
-<p>
-    <button class="button" type="button">Button element</button>
-</p>
-
-The full button system (variants, sizes, states) arrives with the interactive core in `v0.7.9`.
-
-## Forms
-
-Form fields are not styled by the library yet; that is the forms work of `v0.7.9`. Inside `.rd` they already inherit the page font and size (from normalize) and show the focus ring.
-
-<form class="padding-y-md" onsubmit="return false">
-    <p><label>Name<br><input type="text" name="name" placeholder="Your name"></label></p>
-    <p><label>Topic<br><select name="topic"><option>Styles</option><option>Charts</option></select></label></p>
-    <p><label><input type="checkbox" name="news"> Send me release notes</label></p>
-    <p><button class="button" type="submit">Send</button></p>
-</form>
+Buttons and form fields have their own section: [Buttons](/styles/elements/buttons/) (the default look of a bare `<button>`, variants, sizes, icons, states, groups) and [Forms](/styles/elements/forms/) (text fields, select, checkbox and radio, groups, validation). Both show the focus ring above.

@@ -17224,7 +17224,7 @@ sup > a:where(.rd, .rd *) {
   padding-top: var(--space-xs);
   position: relative;
 }
-.sidenote-wrapper > .sidenote a:not(:where(.rc-chart *)):where(.rd, .rd *) {
+.sidenote-wrapper > .sidenote a:not(:where(.rc-chart *, .button)):where(.rd, .rd *) {
   color: var(--text-color-light);
 }
 .sidenote-wrapper > .sidenote > :is(p, h5, h6):first-child:where(.rd, .rd *) {
@@ -17538,8 +17538,11 @@ mark:where(.rd, .rd *) {
   line-height: 1.3;
 }
 
-blockquote:where(.rd, .rd *) {
+blockquote:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
+}
+
+blockquote:where(.rd, .rd *) {
   margin-left: calc(var(--space-md) * -1);
   padding: var(--space-md) 0 var(--space-md) var(--space-lg);
   background-image: url("images/common/mark-quote.svg");
@@ -17553,8 +17556,11 @@ blockquote p:first-of-type:where(.rd, .rd *) {
 }
 
 dl:where(.rd, .rd *) {
-  max-width: var(--text-content-width);
   margin: var(--space-md) 0;
+}
+
+dl:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+  max-width: var(--text-content-width);
 }
 
 dt:where(.rd, .rd *) {
@@ -17809,16 +17815,19 @@ pre code:where(.rd, .rd *) {
 }
 
 article figure:not(:where(.carousel-slide, .epigraph)):where(.rd, .rd *), .figure:where(.rd, .rd *) {
-  max-width: var(--text-content-width);
   margin: var(--space-lg) 0;
-}
-@media screen and (width < 769px) {
-  article figure:not(:where(.carousel-slide, .epigraph)):where(.rd, .rd *), .figure:where(.rd, .rd *) {
-    max-width: 100%;
-  }
 }
 article figure:not(:where(.carousel-slide, .epigraph)) > img:where(.rd, .rd *), article figure:not(:where(.carousel-slide, .epigraph)) > picture img:where(.rd, .rd *), .figure > img:where(.rd, .rd *), .figure > picture img:where(.rd, .rd *) {
   width: 100%;
+}
+
+article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+  max-width: var(--text-content-width);
+}
+@media screen and (width < 769px) {
+  article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+    max-width: 100%;
+  }
 }
 
 figure.full-width:where(.rd, .rd *) {
@@ -18476,6 +18485,36 @@ th:first-child:where(.rd, .rd *) {
   --color-warning: var(--yellow);
   --color-info: var(--blue);
   --signal: var(--blue);
+  --surface-current: var(--bg-color);
+}
+
+:root {
+  --chart-series-1: var(--orange);
+  --chart-series-2: #0af;
+  --chart-series-3: #00c97a;
+  --chart-series-4: #fc0;
+  --chart-series-5: #c4f;
+  --chart-series-6: var(--red);
+  --chart-bg: var(--surface-current);
+  --chart-text-color: var(--primary-text-color);
+  --chart-label-color: var(--text-color-light);
+  --chart-axis-color: var(--border-color);
+  --chart-grid-color: var(--border-color-light);
+  --chart-control-text: var(--text-color-light);
+  --chart-control-border: var(--border-color);
+  --chart-control-hover-border: var(--primary-text-color);
+  --chart-control-active-text: var(--primary-text-color);
+  --chart-control-active-bg: var(--white);
+  --chart-control-fill: var(--gray);
+  --chart-tooltip-bg: var(--white);
+  --chart-tooltip-border: var(--border-color-light);
+  --chart-tooltip-text: var(--primary-text-color);
+  --chart-tooltip-muted: var(--text-color-light);
+  --chart-tooltip-shadow: 0 2px 8px color-mix(in srgb, var(--black) 10%, transparent);
+  --chart-tooltip-font-size: 13px;
+  --chart-font-family: var(--primary-font);
+  --chart-font-family-numeric: var(--code-font);
+  --chart-focus-ring: var(--focus-ring-color);
 }
 
 :where(html.rd, body.rd) section {
@@ -18545,21 +18584,14 @@ th:first-child:where(.rd, .rd *) {
 }
 
 .card:where(.rd, .rd *) {
+  --surface-current: var(--gray-lightest);
+  --chart-bg: var(--surface-current);
   display: flex;
   flex-direction: column;
-  background: var(--gray-lightest);
+  background: var(--surface-current);
   position: relative;
 }
-.card .lead:where(.rd, .rd *),
-.card .caption:where(.rd, .rd *),
-.card .highlight:where(.rd, .rd *),
-.card pre:where(.rd, .rd *),
-.card blockquote:where(.rd, .rd *),
-.card .text-content-caption:where(.rd, .rd *),
-.card .full-width-caption:where(.rd, .rd *),
-.card .card-caption:where(.rd, .rd *),
-.card .collapsible-container:where(.rd, .rd *),
-.card .teaser-bottom:where(.rd, .rd *) {
+.card .lead:where(.rd, .rd *), .card .caption:where(.rd, .rd *), .card .highlight:where(.rd, .rd *), .card pre:where(.rd, .rd *), .card blockquote:where(.rd, .rd *), .card .text-content-caption:where(.rd, .rd *), .card .full-width-caption:where(.rd, .rd *), .card .card-caption:where(.rd, .rd *), .card .collapsible-container:where(.rd, .rd *), .card .teaser-bottom:where(.rd, .rd *) {
   width: auto;
   max-width: 100%;
   margin-left: 0;
@@ -18584,15 +18616,55 @@ th:first-child:where(.rd, .rd *) {
   --link-color: var(--gray-light);
   --link-color-secondary: var(--gray-light);
   --link-color-light: var(--gray);
+  --border-color: var(--gray-mid-dark);
+  --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
+  --border-color-dark: var(--gray-light);
+  --surface-current: var(--gray-dark);
+  --chart-bg: var(--surface-current);
+  --chart-text-color: var(--primary-text-color);
+  --chart-label-color: var(--text-color-light);
+  --chart-axis-color: var(--border-color);
+  --chart-grid-color: var(--border-color-light);
+  --chart-control-text: var(--text-color-light);
+  --chart-control-border: var(--border-color);
+  --chart-control-hover-border: var(--primary-text-color);
+  --chart-control-active-text: var(--primary-text-color);
+  --chart-control-active-bg: var(--gray-darkest);
+  --chart-control-fill: var(--gray-mid-dark);
   display: flex;
   flex-direction: column;
-  background: var(--gray-dark);
+  background: var(--surface-current);
   color: var(--gray-light);
   position: relative;
 }
 
-.card-inverted a:where(.rd, .rd *) {
+.card-inverted a:not(:where(.card-inverted .card *, .button)):where(.rd, .rd *) {
   color: var(--gray-light);
+}
+
+:where(.card-inverted .card):where(.rd, .rd *) {
+  --primary-text-color: var(--primary-color);
+  --text-color-dark: var(--gray-dark);
+  --text-color-light: var(--gray-mid-dark);
+  --text-color-lightest: var(--gray);
+  --link-color: var(--primary-text-color);
+  --link-color-secondary: var(--text-color-dark);
+  --link-color-light: var(--text-color-light);
+  --border-color: var(--gray);
+  --border-color-light: var(--gray-mid-light);
+  --border-color-dark: var(--gray-dark);
+  --chart-bg: var(--surface-current);
+  --chart-text-color: var(--primary-text-color);
+  --chart-label-color: var(--text-color-light);
+  --chart-axis-color: var(--border-color);
+  --chart-grid-color: var(--border-color-light);
+  --chart-control-text: var(--text-color-light);
+  --chart-control-border: var(--border-color);
+  --chart-control-hover-border: var(--primary-text-color);
+  --chart-control-active-text: var(--primary-text-color);
+  --chart-control-active-bg: var(--white);
+  --chart-control-fill: var(--gray);
+  color: var(--primary-text-color);
 }
 
 .card-caption:where(.rd, .rd *) {
@@ -18721,16 +18793,7 @@ th:first-child:where(.rd, .rd *) {
     padding: var(--space-md);
   }
 }
-.panel .lead:where(.rd, .rd *),
-.panel .caption:where(.rd, .rd *),
-.panel .highlight:where(.rd, .rd *),
-.panel pre:where(.rd, .rd *),
-.panel blockquote:where(.rd, .rd *),
-.panel .text-content-caption:where(.rd, .rd *),
-.panel .full-width-caption:where(.rd, .rd *),
-.panel .card-caption:where(.rd, .rd *),
-.panel .collapsible-container:where(.rd, .rd *),
-.panel .teaser-bottom:where(.rd, .rd *) {
+.panel .lead:where(.rd, .rd *), .panel .caption:where(.rd, .rd *), .panel .highlight:where(.rd, .rd *), .panel pre:where(.rd, .rd *), .panel blockquote:where(.rd, .rd *), .panel .text-content-caption:where(.rd, .rd *), .panel .full-width-caption:where(.rd, .rd *), .panel .card-caption:where(.rd, .rd *), .panel .collapsible-container:where(.rd, .rd *), .panel .teaser-bottom:where(.rd, .rd *) {
   width: auto;
   max-width: 100%;
   margin-left: 0;
@@ -18850,7 +18913,7 @@ th:first-child:where(.rd, .rd *) {
 }
 
 button.legend__item:where(.rd, .rd *),
-button.legend__item:hover:where(.rd, .rd *) {
+button.legend__item:is(:hover, :active, :disabled, [aria-busy=true]):where(.rd, .rd *) {
   padding: 0;
   background: none;
   border: 0;
@@ -18863,8 +18926,20 @@ button.legend__item:where(.rd, .rd *) {
   cursor: pointer;
 }
 
-button.legend__item:disabled:where(.rd, .rd *) {
+button.legend__item:is(:disabled, [aria-disabled=true]):where(.rd, .rd *) {
   cursor: default;
+}
+
+button.legend__item:is(:disabled, [aria-disabled=true]):not([aria-pressed=false]):where(.rd, .rd *) {
+  opacity: 1;
+}
+
+button.legend__item[aria-busy=true]:where(.rd, .rd *) {
+  cursor: progress;
+}
+
+button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
+  content: none;
 }
 
 .legend__item[aria-pressed=false]:where(.rd, .rd *) {
@@ -18898,6 +18973,52 @@ button.legend__item:disabled:where(.rd, .rd *) {
 .legend__swatch--band:where(.rd, .rd *) {
   border-radius: 2px;
   opacity: 0.85;
+}
+
+.stat:where(.rd, .rd *) {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat__label:where(.rd, .rd *) {
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+  color: var(--text-color-light);
+}
+
+.stat__value:where(.rd, .rd *) {
+  margin-top: auto;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stat--delta-up:where(.rd, .rd *) {
+  --stat-delta-color: var(--color-success);
+}
+
+.stat--delta-down:where(.rd, .rd *) {
+  --stat-delta-color: var(--color-danger);
+}
+
+.stat--delta-up > .stat__value:where(.rd, .rd *)::before,
+.stat--delta-down > .stat__value:where(.rd, .rd *)::before {
+  content: "";
+  padding-left: 1em;
+  color: var(--stat-delta-color);
+  background-color: currentcolor;
+  mask: url("images/icons/arrow_drop_up-400.svg") no-repeat 50% 45%/1.5em;
+}
+
+.stat--delta-down > .stat__value:where(.rd, .rd *)::before {
+  mask-image: url("images/icons/arrow_drop_down-400.svg");
+}
+
+.stat--signal > .stat__value:where(.rd, .rd *) {
+  color: var(--signal);
+  font-weight: var(--font-weight-bold);
 }
 
 .relative:where(.rd, .rd *) {
@@ -19065,6 +19186,8 @@ button.legend__item:disabled:where(.rd, .rd *) {
   background: none;
   border: none;
   color: var(--primary-text-color);
+  font: inherit;
+  line-height: 1.15;
   -webkit-tap-highlight-color: transparent;
   padding: 0;
   margin-left: var(--base-unit);
@@ -19297,7 +19420,7 @@ h1 a:where(.rd, .rd *), h2 a:where(.rd, .rd *), h3 a:where(.rd, .rd *), h4 a:whe
 }
 
 :where(html.rd, body.rd) nav a,
-.sidebar a:where(.rd, .rd *) {
+.sidebar a:not(:where(.button)):where(.rd, .rd *) {
   color: var(--text-color-light);
   background-image: none;
   position: relative;
@@ -19320,7 +19443,7 @@ nav a.current:where(.rd, .rd *) {
   border-bottom: 2px solid var(--gray-trans);
 }
 
-.sidebar a:hover:where(.rd, .rd *) {
+.sidebar a:not(:where(.button)):hover:where(.rd, .rd *) {
   border-bottom: none;
   display: block;
 }
@@ -19569,22 +19692,452 @@ h5.sidebar-header a:hover:where(.rd, .rd *) {
   border: 1px solid var(--primary-color);
 }
 
-button:where(.rd, .rd *),
-.button:where(.rd, .rd *) {
-  display: block;
+:root {
+  --button-radius: var(--space-xs);
+  --button-padding-x: var(--space-md);
+  --button-padding-y: var(--space-sm);
+  --button-font-size: var(--font-size-md);
+  --button-font-weight: var(--font-weight-normal);
+  --button-bg: var(--white);
+  --button-text: var(--primary-color);
+  --button-border-color: var(--border-color);
+  --button-transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+button:not(:where(.rc-chart *)):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(.rd, .rd *), .button:where(.rd, .rd *) {
+  display: inline-block;
   width: fit-content;
-  background: var(--bg-color-light);
-  color: var(--primary-color);
-  border-radius: var(--space-lg);
-  border: 1px solid var(--bg-color-light);
+  padding: var(--button-padding-y) var(--button-padding-x);
+  border: 1px solid var(--button-border-color);
+  border-radius: var(--button-radius);
+  background: var(--button-bg);
+  color: var(--button-text);
+  font-family: inherit;
+  font-size: var(--button-font-size);
+  font-weight: var(--button-font-weight);
+  line-height: var(--line-height-sm);
+  text-align: center;
   text-decoration: none;
-  padding: var(--space-sm) var(--space-md);
   cursor: pointer;
 }
-button:hover:where(.rd, .rd *),
-.button:hover:where(.rd, .rd *) {
-  background: var(--bg-color);
-  border: 1px solid var(--primary-color);
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:where(.rc-chart *)):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(.rd, .rd *), .button:where(.rd, .rd *) {
+    transition: var(--button-transition);
+  }
+}
+
+button:not(:where(.rc-chart *)):where(:hover:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(:hover:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *), .button:hover:where(:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *) {
+  border: 1px solid var(--button-border-color-hover, var(--primary-color));
+  background: var(--button-bg-hover, var(--button-bg));
+  color: var(--button-text);
+}
+
+button:not(:where(.rc-chart *)):where(:active:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(:active:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *), .button:active:where(:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *) {
+  border: 1px solid var(--button-border-color-hover, var(--primary-color));
+  background: var(--button-bg-active, var(--bg-color));
+  color: var(--button-text);
+}
+
+button:not(:where(.rc-chart *)):where(:disabled, [aria-disabled=true]):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(:disabled, [aria-disabled=true]):where(.rd, .rd *), .button:is(:disabled, [aria-disabled=true]):where(.rd, .rd *) {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *),
+.button[aria-busy=true]:where(.rd, .rd *) {
+  position: relative;
+  color: transparent;
+  text-decoration-color: transparent;
+  cursor: progress;
+}
+button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *)::after,
+.button[aria-busy=true]:where(.rd, .rd *)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 1em;
+  height: 1em;
+  margin: auto;
+  border: 2px solid var(--button-text);
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *)::after,
+  .button[aria-busy=true]:where(.rd, .rd *)::after {
+    animation: button-busy-spin 0.75s linear infinite;
+  }
+}
+
+@keyframes button-busy-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+.button-secondary:where(.rd, .rd *) {
+  --button-bg: var(--white);
+  --button-text: var(--primary-color);
+  --button-border-color: var(--border-color);
+  --button-bg-hover: var(--white);
+  --button-border-color-hover: var(--primary-color);
+  --button-bg-active: var(--bg-color);
+}
+
+.button-primary:where(.rd, .rd *) {
+  --button-bg: color-mix(in srgb, var(--signal) 85%, black);
+  --button-text: var(--white);
+  --button-border-color: transparent;
+  --button-bg-hover: color-mix(in srgb, var(--signal) 70%, black);
+  --button-border-color-hover: transparent;
+  --button-bg-active: color-mix(in srgb, var(--signal) 60%, black);
+}
+
+.button-danger:where(.rd, .rd *) {
+  --button-bg: color-mix(in srgb, var(--color-danger) 85%, black);
+  --button-text: var(--white);
+  --button-border-color: transparent;
+  --button-bg-hover: color-mix(in srgb, var(--color-danger) 70%, black);
+  --button-border-color-hover: transparent;
+  --button-bg-active: color-mix(in srgb, var(--color-danger) 60%, black);
+}
+
+.button-ghost:where(.rd, .rd *) {
+  --button-bg: transparent;
+  --button-text: var(--primary-text-color);
+  --button-border-color: transparent;
+  --button-bg-hover: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+  --button-border-color-hover: transparent;
+  --button-bg-active: color-mix(in srgb, var(--primary-text-color) 14%, transparent);
+}
+
+.button-link:where(.rd, .rd *) {
+  --button-bg: transparent;
+  --button-text: var(--link-color);
+  --button-border-color: transparent;
+  --button-bg-hover: transparent;
+  --button-border-color-hover: transparent;
+  --button-bg-active: transparent;
+  text-decoration: underline;
+  text-decoration-color: var(--brand-color-dark);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+.button-link:hover:where(.rd, .rd *) {
+  text-decoration-thickness: 2px;
+}
+.button-link[aria-busy=true]:where(.rd, .rd *) {
+  text-decoration-color: transparent;
+}
+
+.button-sm:where(.rd, .rd *) {
+  --button-padding-x: var(--space-sm);
+  --button-padding-y: var(--space-xs);
+  --button-font-size: var(--font-size-sm);
+}
+
+.button-md:where(.rd, .rd *) {
+  --button-padding-x: var(--space-md);
+  --button-padding-y: var(--space-sm);
+  --button-font-size: var(--font-size-md);
+}
+
+.button-lg:where(.rd, .rd *) {
+  --button-padding-x: var(--space-ml);
+  --button-padding-y: calc(var(--space-sm) * 1.5);
+  --button-font-size: var(--font-size-lg);
+}
+
+button:not(:where(.rc-chart *)):where(:has(> [class*=rd-icon-])):where(.rd, .rd *),
+.button:where(:has(> [class*=rd-icon-])):where(.rd, .rd *) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
+
+:is(button:not(:where(.rc-chart *)), .button) > [class*=rd-icon-]:where(.rd, .rd *)::before {
+  top: calc((var(--line-height-sm) - 1) * 0.5em);
+  vertical-align: top;
+}
+
+.button-icon:where(.rd, .rd *) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y) + 2px);
+  block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y) + 2px);
+  padding: 0;
+}
+
+.button-group:where(.rd, .rd *) {
+  display: inline-flex;
+}
+.button-group > :is(button, .button):where(.rd, .rd *) {
+  position: relative;
+  border-radius: 0;
+}
+.button-group > :is(button, .button):first-child:where(.rd, .rd *) {
+  border-start-start-radius: var(--button-radius);
+  border-end-start-radius: var(--button-radius);
+}
+.button-group > :is(button, .button):last-child:where(.rd, .rd *) {
+  border-start-end-radius: var(--button-radius);
+  border-end-end-radius: var(--button-radius);
+}
+.button-group > :is(button, .button) + :is(button, .button):where(.rd, .rd *) {
+  margin-inline-start: -1px;
+}
+.button-group > :is(button, .button):is(:hover, :focus-visible, [aria-pressed=true]):where(.rd, .rd *) {
+  z-index: 1;
+}
+.button-group > [aria-pressed=true]:where(.rd, .rd *) {
+  --button-bg: var(--button-bg-active, var(--bg-color));
+  --button-bg-hover: var(--button-bg-active, var(--bg-color));
+  --button-border-color: var(--button-border-color-hover, var(--primary-color));
+}
+
+.button-block:where(.rd, .rd *) {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+:root {
+  --field-bg: var(--white);
+  --field-text: var(--primary-color);
+  --field-border-color: var(--gray-trans);
+  --field-radius: var(--button-radius);
+  --field-padding-x: calc(var(--space-sm) * 1.5);
+  --field-padding-y: var(--button-padding-y);
+  --field-accent: var(--signal);
+  --field-invalid-color: var(--color-danger);
+  --field-valid-color: var(--color-success);
+}
+
+input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]):where(.rd, .rd *), textarea:not(:where(.rc-chart *)):where(.rd, .rd *), select:not(:where(.rc-chart *)):where(.rd, .rd *) {
+  max-width: 100%;
+  padding: var(--field-padding-y) var(--field-padding-x);
+  border: 1px solid var(--field-border-color);
+  border-radius: var(--field-radius);
+  background-color: var(--field-bg);
+  color: var(--field-text);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-sm);
+}
+@media (prefers-reduced-motion: no-preference) {
+  input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]):where(.rd, .rd *), textarea:not(:where(.rc-chart *)):where(.rd, .rd *), select:not(:where(.rc-chart *)):where(.rd, .rd *) {
+    transition: border-color 0.15s ease;
+  }
+}
+input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]):where(.rd, .rd *)::placeholder, textarea:not(:where(.rc-chart *)):where(.rd, .rd *)::placeholder, select:not(:where(.rc-chart *)):where(.rd, .rd *)::placeholder {
+  color: var(--text-color-light);
+  opacity: 1;
+}
+
+select:not(:where(.rc-chart *)):where(:not([multiple], [size])):where(.rd, .rd *) {
+  appearance: none;
+  padding-inline-end: calc(var(--field-padding-x) + 1em);
+  background-image: linear-gradient(45deg, transparent 50%, currentcolor 50%), linear-gradient(135deg, currentcolor 50%, transparent 50%);
+  background-position: calc(100% - var(--field-padding-x) - 0.3em) 50%, calc(100% - var(--field-padding-x)) 50%;
+  background-size: 0.3em 0.3em;
+  background-repeat: no-repeat;
+}
+
+input:not(:where(.rc-chart *)):where([type=date], [type=time], [type=datetime-local], [type=month], [type=week]):where(.rd, .rd *)::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+input:not(:where(.rc-chart *)):where([type=date], [type=time], [type=datetime-local], [type=month], [type=week]):where(.rd, .rd *)::-webkit-calendar-picker-indicator {
+  padding-block: 0;
+}
+
+textarea:not(:where(.rc-chart *)):where(.rd, .rd *) {
+  resize: vertical;
+  vertical-align: top;
+}
+
+input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(.rd, .rd *) {
+  appearance: none;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.2em;
+  border: 1px solid var(--field-border-color);
+  border-radius: calc(var(--field-radius) / 2);
+  background: var(--field-bg) no-repeat center/100%;
+  cursor: pointer;
+}
+
+input:not(:where(.rc-chart *)):where([type=radio]):where(.rd, .rd *) {
+  border-radius: 50%;
+}
+
+:is(input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]), textarea:not(:where(.rc-chart *)), select:not(:where(.rc-chart *)), input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio])):where(:hover:not(:disabled, :focus)):where(.rd, .rd *) {
+  border-color: var(--primary-color);
+}
+
+:is(input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]), textarea:not(:where(.rc-chart *)), select:not(:where(.rc-chart *))):where(:focus):where(.rd, .rd *) {
+  border-color: var(--field-accent);
+}
+
+input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:checked, :indeterminate):where(.rd, .rd *) {
+  border-color: var(--field-accent);
+  background-color: var(--field-accent);
+}
+
+input:not(:where(.rc-chart *)):where([type=checkbox]:checked):where(.rd, .rd *) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E");
+}
+
+input:not(:where(.rc-chart *)):where([type=checkbox]:indeterminate):where(.rd, .rd *) {
+  background-image: linear-gradient(var(--white), var(--white));
+  background-size: 60% 2px;
+}
+
+input:not(:where(.rc-chart *)):where([type=radio]:checked):where(.rd, .rd *) {
+  box-shadow: inset 0 0 0 0.2em var(--field-bg);
+}
+
+:is(input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]), textarea:not(:where(.rc-chart *)), select:not(:where(.rc-chart *)), input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio])):where(:disabled):where(.rd, .rd *) {
+  border-color: var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--gray-trans);
+  cursor: default;
+}
+
+input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:disabled:checked, :disabled:indeterminate):where(.rd, .rd *) {
+  border-color: var(--gray-trans);
+  background-color: var(--gray-trans);
+}
+
+:is(input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]), textarea:not(:where(.rc-chart *)), select:not(:where(.rc-chart *)), input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio])):where(:user-valid:is([required], [pattern])):where(.rd, .rd *) {
+  border-color: var(--field-valid-color);
+}
+
+:is(input:not(:where(.rc-chart *)):where(:not([type]), [type=text], [type=email], [type=password], [type=search], [type=tel], [type=url], [type=number], [type=date], [type=time], [type=datetime-local], [type=month], [type=week]), textarea:not(:where(.rc-chart *)), select:not(:where(.rc-chart *)), input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio])):where([aria-invalid=true], :user-invalid):where(.rd, .rd *) {
+  border-color: var(--field-invalid-color);
+}
+
+input:not(:where(.rc-chart *)):where([type=range]):where(.rd, .rd *) {
+  vertical-align: middle;
+  accent-color: var(--field-accent);
+  cursor: pointer;
+}
+
+input:not(:where(.rc-chart *)):where([type=color]):where(.rd, .rd *) {
+  width: 3em;
+  height: calc(1rem * var(--line-height-sm) + 2 * var(--field-padding-y) + 2px);
+  padding: 2px;
+  border: 1px solid var(--field-border-color);
+  border-radius: var(--field-radius);
+  background-color: var(--field-bg);
+  vertical-align: middle;
+  cursor: pointer;
+}
+input:not(:where(.rc-chart *)):where([type=color]):where(.rd, .rd *)::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input:not(:where(.rc-chart *)):where([type=color]):where(.rd, .rd *)::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--field-radius) / 2);
+}
+input:not(:where(.rc-chart *)):where([type=color]):where(.rd, .rd *)::-moz-color-swatch {
+  border: 0;
+  border-radius: calc(var(--field-radius) / 2);
+}
+
+input:not(:where(.rc-chart *)):where([type=file]):where(.rd, .rd *) {
+  max-width: 100%;
+}
+input:not(:where(.rc-chart *)):where([type=file]):where(.rd, .rd *)::file-selector-button {
+  margin-inline-end: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--button-radius);
+  background: var(--white);
+  color: var(--primary-color);
+  font: inherit;
+  cursor: pointer;
+}
+input:not(:where(.rc-chart *)):where([type=file]):where(:hover:not(:disabled)):where(.rd, .rd *)::file-selector-button {
+  border-color: var(--primary-color);
+}
+
+fieldset:not(:where(.rc-chart *)):where(.rd, .rd *) {
+  min-inline-size: 0;
+  padding: var(--space-sm) var(--space-md) var(--space-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--field-radius);
+}
+
+legend:not(:where(.rc-chart *)):where(.rd, .rd *) {
+  padding-inline: var(--space-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+label:not(:where(.rc-chart *)):where(:has(> [type=checkbox], > [type=radio])):where(.rd, .rd *) {
+  cursor: pointer;
+}
+
+label:not(:where(.rc-chart *)):where(:has(> :disabled)):where(.rd, .rd *) {
+  color: var(--gray-trans);
+  cursor: default;
+}
+
+.form-group:where(.rd, .rd *) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+.form-group > :is([type=checkbox], [type=radio]):where(.rd, .rd *) {
+  align-self: flex-start;
+}
+
+.form-row:where(.rd, .rd *) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+.form-row > .form-group:where(.rd, .rd *) {
+  flex: 1 1 12rem;
+  margin-bottom: 0;
+}
+@media screen and (width < 769px) {
+  .form-row:where(.rd, .rd *) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .form-row > .form-group:where(.rd, .rd *) {
+    flex: none;
+  }
+}
+
+.form-help:where(.rd, .rd *),
+.form-error:where(.rd, .rd *) {
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+}
+
+.form-help:where(.rd, .rd *) {
+  color: var(--text-color-light);
+}
+
+.form-error:where(.rd, .rd *) {
+  color: var(--text-color-dark);
+}
+.form-error:where(.rd, .rd *)::before {
+  content: "";
+  width: 1em;
+  height: 1em;
+  background-color: currentcolor;
+  mask: url("images/icons/error-400.svg") no-repeat center/contain;
+  display: inline-block;
+  margin-inline-end: 0.3em;
+  vertical-align: -0.2em;
+  background-color: var(--field-invalid-color);
 }
 
 img:where(.rd, .rd *) {
@@ -19861,7 +20414,7 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/content_copy-400.svg");
 }
 .copy-data-icon:where(.rd, .rd *) {
-  line-height: inherit;
+  font: inherit;
   background: none;
   color: var(--copy-icon-color, var(--text-color-light));
   border: none;
@@ -21739,6 +22292,9 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
     background: none;
     color: #000;
   }
+  :root {
+    --surface-current: var(--white);
+  }
   :where(html.rd, body.rd) main {
     padding: 0;
   }
@@ -21749,12 +22305,7 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   :where(html.rd, body.rd) article {
     width: auto;
   }
-  .text-content-caption:where(.rd, .rd *),
-  .lead:where(.rd, .rd *),
-  .caption:where(.rd, .rd *),
-  .highlight:where(.rd, .rd *),
-  pre:where(.rd, .rd *),
-  blockquote:where(.rd, .rd *) {
+  .lead:where(.rd, .rd *), .caption:where(.rd, .rd *), .highlight:where(.rd, .rd *), pre:where(.rd, .rd *), blockquote:where(.rd, .rd *), .text-content-caption:where(.rd, .rd *), .full-width-caption:where(.rd, .rd *), .card-caption:where(.rd, .rd *), .collapsible-container:where(.rd, .rd *), .teaser-bottom:where(.rd, .rd *) {
     width: auto;
     max-width: 100%;
     margin-left: 0;

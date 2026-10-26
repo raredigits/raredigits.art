@@ -31,10 +31,12 @@
     white-space: nowrap;
 }
 
-// A toggle item is a button: drop the button chrome — the element default and
-// its `:hover` — so the item still reads as a label.
+// A toggle item is a button: drop the button chrome — the element default
+// (elements/_buttons.scss) in every state: hover, active, disabled, busy —
+// so the item still reads as a label. Keyboard focus keeps the library ring
+// (utilities/_a11y.scss), which this rule does not touch.
 button.legend__item,
-button.legend__item:hover {
+button.legend__item:is(:hover, :active, :disabled, [aria-busy="true"]) {
     padding: 0;
     background: none;
     border: 0;
@@ -47,8 +49,24 @@ button.legend__item {
     cursor: pointer;
 }
 
-button.legend__item:disabled {
+// A disabled toggle (`disabled` or `aria-disabled="true"`) is a plain
+// label: not faded like a disabled button, so an item that is on still
+// reads as on. The off state below still dims it.
+button.legend__item:is(:disabled, [aria-disabled="true"]) {
     cursor: default;
+}
+
+button.legend__item:is(:disabled, [aria-disabled="true"]):not([aria-pressed="false"]) {
+    opacity: 1;
+}
+
+// Busy: no spinner over the label; the pointer says it.
+button.legend__item[aria-busy="true"] {
+    cursor: progress;
+}
+
+button.legend__item[aria-busy="true"]::after {
+    content: none;
 }
 
 // Off: the series it names is hidden. RareCharts dims its own items the same.
