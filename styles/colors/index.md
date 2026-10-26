@@ -218,6 +218,16 @@ The <a href="/styles/typography/text-content/#callouts">callout variants</a> are
 
 They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.
 
+#### Signal
+
+One more role, `--signal`, is the accent for attention and action: a primary button, a critical mark, the keyboard focus ring. It is kept apart from `--brand-color`, which is identity. The default is `var(--blue)`, and the focus ring follows it (`--focus-ring-color: var(--signal)`):
+
+<pre class="text-content-caption"><code>:root {
+    --signal: var(--purple); /* the focus ring follows */
+}</code></pre>
+
+An own `--focus-ring-color` on `:root` still wins over the signal.
+
 ### Supporting Colors
 
 <div class="meta-info">css/modules/colors/_supporting.scss</div>

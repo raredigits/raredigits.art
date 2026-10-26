@@ -15,4 +15,11 @@
     --color-danger: var(--red);
     --color-warning: var(--yellow);
     --color-info: var(--blue);
+
+    // SIGNAL (CSS-124, v0.7.2): the attention and action accent: primary
+    // buttons, critical-state marks, threshold violations, the keyboard focus
+    // ring. Kept apart from --brand-color, which is identity (link highlights,
+    // brand marks). Blue (maintainer, 2026-10-26): the focus ring was already
+    // blue, so pointing it here changes nothing on screen.
+    --signal: var(--blue);
 }

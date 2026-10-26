@@ -388,7 +388,7 @@ template:where(.rd, .rd *) {
 }
 
 :root {
-  --focus-ring-color: var(--blue);
+  --focus-ring-color: var(--signal);
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }
@@ -18475,6 +18475,7 @@ th:first-child:where(.rd, .rd *) {
   --color-danger: var(--red);
   --color-warning: var(--yellow);
   --color-info: var(--blue);
+  --signal: var(--blue);
 }
 
 :where(html.rd, body.rd) section {

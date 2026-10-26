@@ -33,6 +33,32 @@ const css = (page, selector, props) => page.evaluate(([s, ps]) => {
   return Object.fromEntries(ps.map((p) => [p, cs.getPropertyValue(p)]));
 }, [selector, props]);
 
+describe('CSS-124: --signal, and the focus ring that follows it', () => {
+  it('--signal is blue; the ring follows a re-mapped --signal; an own --focus-ring-color still wins', async () => {
+    const page = await open(FIXTURE);
+    const ring = () => page.evaluate(() => {
+      const b = document.createElement('button'); b.textContent = 'x'; b.id = 'sig-probe';
+      document.querySelector('article, main, body').appendChild(b);
+      return true;
+    });
+    await ring();
+    const outline = async () => {
+      await page.focus('#sig-probe');
+      // :focus-visible after a keyboard-initiated focus
+      await page.keyboard.press('Shift+Tab'); await page.keyboard.press('Tab');
+      return page.evaluate(() => getComputedStyle(document.activeElement).outlineColor);
+    };
+    const signal = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--signal').trim());
+    expect(signal).toBe('#1677ff');
+    expect(await outline()).toBe('rgb(22, 119, 255)');
+    await page.evaluate(() => document.documentElement.style.setProperty('--signal', 'rgb(200, 0, 0)'));
+    expect(await outline()).toBe('rgb(200, 0, 0)');
+    await page.evaluate(() => document.documentElement.style.setProperty('--focus-ring-color', 'rgb(0, 128, 0)'));
+    expect(await outline()).toBe('rgb(0, 128, 0)');
+    await page.close();
+  });
+});
+
 describe('CSS-121 / CSS-156: callout severity variants on the semantic tokens', () => {
   it('each variant draws its role colour as a stripe, keeps the text in the body colour', async () => {
     const page = await open();
