@@ -8,7 +8,7 @@ import { normalizeLinks } from '../assets/charts/src/core/links.js';
 
 // The flow view's pure layer, without a DOM: lanes and rows (layoutFlow), the
 // automatic placement (autoFlowHints, layout: auto) and the fold / aggregation
-// math (Flows II, 0.9.8_6; spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md). The
+// math (Flows II, 0.9.8_6; spec: _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md). The
 // drawing itself is in graph-flow.test.js.
 
 const lanesOf = ids => new Map(ids.map((id, i) => [id, i]));

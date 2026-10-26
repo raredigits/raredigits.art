@@ -1,8 +1,8 @@
 # RareCharts — ТЗ: Sankey (internal)
 
-> **Непубличный файл** (см. `.eleventyignore`). Запрос от потребителя библиотеки (2026-10-07). Релиз — **0.9.8_3 Flows I** вместе с Graph A1–A3 и видом Graph `flow` ([SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md)); `MapFlow` — в 0.9.8_6 ([SPEC-GRAPH-MAPFLOW](./SPEC-GRAPH-MAPFLOW-INTERNAL.md)); решение — в [ROADMAP-INTERNAL](./ROADMAP-INTERNAL.md).
+> **Непубличный файл** (см. `.eleventyignore`). Запрос от потребителя библиотеки (2026-10-07). Релиз — **0.9.8_3 Flows I** вместе с Graph A1–A3 и видом Graph `flow` ([SPEC-GRAPH-FLOW](SPEC-GRAPH-FLOW-INTERNAL.md)); `MapFlow` — в 0.9.8_6 ([SPEC-GRAPH-MAPFLOW](SPEC-GRAPH-MAPFLOW-INTERNAL.md)); решение — в [ROADMAP-INTERNAL](ROADMAP-INTERNAL.md).
 >
-> Experimental-класс (как Graph и MapFlow): вне semver-гарантии 1.0, заморозку не задевает. В [API-INVENTORY](./API-INVENTORY-INTERNAL.md) заводится **до** выпуска.
+> Experimental-класс (как Graph и MapFlow): вне semver-гарантии 1.0, заморозку не задевает. В [API-INVENTORY](API-INVENTORY-INTERNAL.md) заводится **до** выпуска.
 
 **Зачем:** показать, как величина перетекает между этапами/категориями: бюджеты и их расходование, денежные следы, воронки, балансы. Узлы стоят колонками, ленты между ними — потоки, толщина ленты = `value`.
 
@@ -140,7 +140,7 @@ chart.setData({
 1. Graph A1 — багфикс гонки (дёшево, первым).
 2. Общий слой связей в `core`: словарь `links`/`source`/`target`, направленные мульти-рёбра (A2), `linkTypes`, value → толщина, тултип/выбор связи с пином (A3), `setTimeWindow`.
 3. `Sankey` — проще, обкатывает общий слой.
-4. Graph `view: 'flow'`, этап 1 ([SPEC-GRAPH-FLOW](./SPEC-GRAPH-FLOW-INTERNAL.md)).
+4. Graph `view: 'flow'`, этап 1 ([SPEC-GRAPH-FLOW](SPEC-GRAPH-FLOW-INTERNAL.md)).
 5. Инвентарь, доки, релиз.
 
 `MapFlow` уехал в 0.9.8_6 (Flows II) вместе с этапом 2 вида flow (решение 2026-10-07).

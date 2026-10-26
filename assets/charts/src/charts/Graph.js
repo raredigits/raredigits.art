@@ -99,7 +99,7 @@
 //                   a pinned tooltip are clickable; outside click/Esc closes)
 //   duration      — transition ms (default: 500; reduced-motion aware)
 //
-// Flow view options (view: 'flow'; spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md):
+// Flow view options (view: 'flow'; spec: _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md):
 //   lanes         — [{ id, label, weight? }] in left-to-right order
 //   laneBy        — node field (or fn) naming its lane (default: 'lane')
 //   nodeGroups    — { group: { color, label } } — node color + legend

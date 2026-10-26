@@ -4,7 +4,7 @@ import { MapFlow } from '../assets/charts/src/charts/MapFlow.js';
 import { mount, track } from './helpers.js';
 
 // MapFlow (0.9.8_6): flows over Map geometry. Spec:
-// charts/SPEC-GRAPH-MAPFLOW-INTERNAL.md, part B.
+// _internal_docs/charts/SPEC-GRAPH-MAPFLOW-INTERNAL.md, part B.
 
 // Two square "countries" and a small overseas island for the second one —
 // enough geometry to fit a projection and test centroids. Rings are wound

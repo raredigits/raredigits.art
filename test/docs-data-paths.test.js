@@ -17,7 +17,7 @@ function files(entry) {
   const abs = resolve(ROOT, entry);
   if (!statSync(abs).isDirectory()) return [entry];
   return readdirSync(abs, { recursive: true }).map(f => join(entry, f))
-    .filter(f => /\.(md|njk|html|js)$/.test(f) && !/-INTERNAL\.md$/.test(f) && statSync(resolve(ROOT, f)).isFile());
+    .filter(f => /\.(md|njk|html|js)$/.test(f) && statSync(resolve(ROOT, f)).isFile());
 }
 
 const refs = SOURCES.flatMap(files).flatMap(f =>

@@ -1,6 +1,6 @@
 # Gutenberg — consumer-driven release plan (proposal)
 
-**Status:** proposal. Not merged into `docs/BACKLOG.md`, nothing here is scheduled or decided.
+**Status:** proposal. Not merged into `BACKLOG.md`, nothing here is scheduled or decided.
 **Created:** 1 October 2026. **Library state analysed:** `v0.6.19`, `main` at `ae45177`.
 **Backlog revision this was written against:** 1275 lines, 266 `CSS-NNN` ids, latest `CSS-341`. All references below were verified against that revision.
 **Purpose:** record what a fourth live consumer needs from the library and how that changes the release order, so the two can be reviewed together and folded into the main backlog.
