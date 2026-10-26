@@ -1,14 +1,15 @@
 // RareCharts — Graph Link Presets
 // Ready-made collections of link types for common graph use cases.
 //
-// Usage:
-//   import { linkPresets } from '../core/linkPresets.js';
-//   new Graph('#el', { linkTypes: linkPresets.personal })
+// Usage (bundle):
+//   new RareCharts.Graph('#el', { linkTypes: RareCharts.linkPresets.personal })
+// Inside src/charts (Graph.js re-exports it):
+//   import { linkPresets } from './presets/linkPresets.js';
 //
 // Or mix presets with overrides:
-//   new Graph('#el', {
+//   new RareCharts.Graph('#el', {
 //     linkTypes: {
-//       ...linkPresets.knowledge,
+//       ...RareCharts.linkPresets.knowledge,
 //       contradicts: { color: '#ff3b5c', dash: '2,3', label: 'Contradicts' },
 //     }
 //   })

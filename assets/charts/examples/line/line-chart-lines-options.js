@@ -118,9 +118,6 @@
   controlsEl.className = 'rc-demo-controls';
   root.appendChild(controlsEl);
 
-  const codeWrap = document.createElement('div');
-  codeWrap.className = 'rc-demo-code-wrap';
-
   const codePre = document.createElement('pre');
 
   const codeEl = document.createElement('code');
@@ -270,9 +267,7 @@
   }
 
   function updateChart() {
-    if (chart) {
-      chartEl.innerHTML = '';
-    }
+    chart?.destroy();
 
     chart = new Line('#rc-demo-chart', buildOptions());
     chart.setData(series);

@@ -435,7 +435,7 @@
         <tr>
             <td><code>legend</code></td>
             <td>Series identity <em>and</em> mark.</td>
-            <td>Identifies each series and which mark it uses — <code>type: 'bar'</code> renders a square dot, anything else a line. This is where "which one is the bars" is communicated. See <strong>Legend format</strong> below.</td>
+            <td>Identifies each series and which mark it uses — <code>type: 'bar'</code> renders a dot, <code>'band'</code> a filled square, <code>'dashed'</code> a dashed line, anything else a solid line. This is where "which one is the bars" is communicated. See <strong>Legend format</strong> below.</td>
         </tr>
         <tr>
             <td><code>source</code></td>
@@ -455,6 +455,7 @@
   title:    'Revenue Dynamics',
   subtitle: 'Monthly revenue against year-over-year growth',
   source:   'Source: Internal Accounting',
+  note:     'Growth is against the same month a year earlier; 2024 is restated.',
   legend: [
     { label: 'Revenue',    color: '#4f5be0', type: 'bar' },
     { label: 'YoY growth', color: '#e0564f' },
@@ -468,6 +469,7 @@
 <p><code>options</code> is a plain object. Everything is optional.</p>
 <h2 id="header-options">Header options</h2>
 <p>The chart header sits above the chart area and can contain a title, a subtitle, and a legend.</p>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -485,7 +487,7 @@
 <tr>
 <td><code>subtitle</code></td>
 <td>string</td>
-<td>Smaller line below the title</td>
+<td>Smaller text below the title; wraps onto as many lines as it needs (the title stays on one line)</td>
 </tr>
 <tr>
 <td><code>legend</code></td>
@@ -497,9 +499,16 @@
 <td><code>'right'</code></td>
 <td>Move the legend into a vertical column beside the chart</td>
 </tr>
+<tr>
+<td><code>ariaLabel</code></td>
+<td>string</td>
+<td>Accessible name of the chart drawing (the <code>&lt;svg&gt;</code> gets <code>role=&quot;img&quot;</code>). Defaults to the title and subtitle, joined with &quot; — &quot;; without them, &quot;Chart&quot;</td>
+</tr>
 </tbody>
 </table>
-<p>If none of these are provided, no header element is created — the chart starts right at the top of the container.</p>
+</div>
+<p>Without a title, subtitle or legend — and without timeframe or Lin/Log buttons — no header element is created: the chart starts right at the top of the container.</p>
+<p>The header lays out by the width of the card, not of the window: on a card 460 px wide or narrower the timeframe and Lin/Log buttons move from beside the title to under the subtitle — a narrow card on a wide screen included.</p>
 <h3 id="legend-format">Legend format</h3>
 <p>Pass an array of items and the chart renders them as a horizontal row of labeled indicators:</p>
 <pre class="text-content-caption"><code>legend: [
@@ -508,13 +517,14 @@
 ]</code></pre>
 <p>Each item supports:</p>
 <ul>
-<li><code>label</code> — display name</li>
-<li><code>color</code> — indicator color</li>
-<li><code>type</code> — <code>'bar'</code> or <code>'dot'</code> renders a square dot; anything else (or omitted) renders a short line</li>
+<li><code>label</code> (or <code>name</code>) — display name</li>
+<li><code>color</code> — indicator color (<code>theme.accent</code> by default)</li>
+<li><code>type</code> — the mark: <code>'bar'</code> or <code>'dot'</code> renders a round dot, <code>'band'</code> a small filled square (a shaded range), <code>'dashed'</code> a dashed line (as does <code>dash: true</code>); anything else, or nothing, a short solid line</li>
 </ul>
-<p>For line charts, use the default (line indicator). For bar and donut charts, use <code>type: 'bar'</code> — it renders a square dot instead of a line, which actually matches the shape of what you're labeling.</p>
-<p><code>legendPosition: 'right'</code> places the legend in a vertical column to the right of the chart. Useful when you have many series and don't want the legend eating into the chart's vertical space. The chart area automatically adjusts its width.</p>
+<p>For line charts, use the default line indicator. For bar and donut charts, use <code>type: 'bar'</code> — a dot reads as a filled mark rather than a stroke, which matches the shape of what you're labeling. Use <code>'dashed'</code> for a forecast and <code>'band'</code> for a confidence range.</p>
+<p><code>legendPosition: 'right'</code> places the legend in a vertical column to the right of the chart. Useful when you have many series and don't want the legend eating into the chart's vertical space. The chart area automatically adjusts its width; the navigator, your <code>controls</code> and the footer stay under the drawing, in that order.</p>
 <h2 id="footer">Footer</h2>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -541,11 +551,12 @@
 </tr>
 </tbody>
 </table>
+</div>
 <pre class="text-content-caption"><code>source: 'Source: The Truth',
 note:   'Figures are unaudited and restated monthly.'</code></pre>
 <p>A single linked source:</p>
 <pre class="text-content-caption"><code>source: { text: 'Source: Bloomberg', href: 'https://bloomberg.com' }</code></pre>
-<p>Multiple sources — some linked, some not. Pass an array of parts: a string renders as plain text, a <code>{ text, href }</code> object as a link (in the standard blue, opening in a new tab). Array sources wrap instead of truncating, so every attribution stays visible.</p>
+<p>Multiple sources — some linked, some not. Pass an array of parts: a string renders as plain text, a <code>{ text, href }</code> object as a link (in the source text color, underlined, opening in a new tab), a <code>{ text }</code> object without <code>href</code> as plain text. Array sources wrap instead of truncating, so every attribution stays visible.</p>
 <pre class="text-content-caption"><code>source: [
   'Source: ',
   { text: 'NASDAQ',    href: 'https://nasdaq.com' },
@@ -554,6 +565,7 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   ', Internal calculations',     <span class="code-comment">// plain, no link</span>
 ]</code></pre>
 <h2 id="layout">Layout</h2>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -568,22 +580,24 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
 <td><code>height</code></td>
 <td>number</td>
 <td>varies</td>
-<td>Total container height in px. See each chart's page for its default.</td>
+<td>Total container height in px, with the title, subtitle, legend, buttons, navigator and footer included; see each chart's page for its default. On a narrow card those parts wrap and take more of it, and the plot gets what is left (<code>chart.height</code>). The plot keeps at least 80 px: when the parts would leave it less, the card grows past <code>height</code> by the difference, and returns to <code>height</code> once they fit again.</td>
 </tr>
 <tr>
 <td><code>margin</code></td>
 <td>object</td>
-<td><code>{ top: 16, right: 70, bottom: 16, left: 0 }</code></td>
-<td>Inner padding around the SVG drawing area</td>
+<td>per chart</td>
+<td>Space around the drawing area in px, <code>{ top, right, bottom, left }</code>; a side you leave out keeps the chart's default. Donut, Pie, Gauge, Sankey and Graph fill the card and do not use it — except a vertical Sankey, which adds <code>top</code> and <code>bottom</code> to the height it computes for its card</td>
 </tr>
 </tbody>
 </table>
-<p>The <code>margin</code> defaults are tuned for charts with a right-side Y axis (which is the default for line charts). If you're building something custom or have a left-side axis, you may want to adjust <code>margin.left</code> and <code>margin.right</code>.</p>
+</div>
+<p>Each chart sets its own margins around its axes — Line <code>{ top: 10, right: 64, bottom: 18, left: 0 }</code>, Time Series <code>{ top: 16, right: 70, bottom: 28, left: 0 }</code>, DualAxes a 64px gutter on each side; Map, MapFlow and MultiChart use none. Hiding an axis gives its gutter back, and annotations raise <code>top</code> to make room for their labels. Set <code>margin</code> for a different frame:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   height: 320,
   margin: { top: 8, right: 50, bottom: 16, left: 40 },
 })</code></pre>
 <h2 id="theme">Theme</h2>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -600,7 +614,8 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
 </tr>
 </tbody>
 </table>
-<p>Pass a theme object to override colors, fonts, or sizing defaults. The full theme system is documented on the <a href="/charts/styles/">Styles</a> page.</p>
+</div>
+<p>Pass a theme object to override colors, the tooltip font, or the sizing defaults (line width, crosshair dots, markers, DualAxes bar opacity). The chart's own fonts and spacing are CSS variables. The full theme system is documented on the <a href="/charts/styles/">Styles</a> page.</p>
 <p>Quick example — apply the built-in dark theme:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   theme: RareCharts.darkTheme,
@@ -627,17 +642,17 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   lineColor: '#00c97a',
 }).setData([{ date, value }, ...]);</code></pre>
-<p>Area fills inherit the series <code>color</code>. Their opacity is controlled separately via <code>areaOpacity</code> (default <code>0.12</code>). Bar fill opacity is <code>barOpacity</code> (default <code>0.35</code>). Both can be set as chart options or through the theme.</p>
+<p>Area fills inherit the series <code>color</code>; their opacity is the <code>areaOpacity</code> option (default <code>0.12</code>, also per series on Line and DualAxes). DualAxes bars take the <code>barOpacity</code> option (default <code>0.35</code>) — or set <code>theme.barOpacity</code> for every chart that shares the theme; <code>Bar</code> draws opaque bars.</p>
 <h2 id="axis-labels">Axis labels</h2>
 <p>Y axis tick labels support two levels of customization.</p>
 <p><strong>Prefix and suffix</strong> (Line charts) attach a fixed string before or after each auto-formatted value:</p>
 <pre class="text-content-caption"><code>yPrefix: '$'    <span class="code-comment">// → $1.2M</span>
 ySuffix: '%'    <span class="code-comment">// → 12.5%</span></code></pre>
-<p><strong>Full format override</strong> replaces automatic formatting entirely and works on all chart types:</p>
-<pre class="text-content-caption"><code>yTickFormat: v => d3.format(',.0f')(v) + ' units'</code></pre>
+<p><strong>Full format override</strong> replaces automatic formatting entirely on Line, Time Series and Bar. The bundled D3 is <code>RareCharts.d3</code> — there is no global <code>d3</code> on a page that loads only the library:</p>
+<pre class="text-content-caption"><code>yTickFormat: v => RareCharts.d3.format(',.0f')(v) + ' units'</code></pre>
 <p>DualAxes has independent formatters for each axis — no prefix/suffix shortcuts, use <code>y1TickFormat</code> / <code>y2TickFormat</code> directly:</p>
-<pre class="text-content-caption"><code>y1TickFormat: v => '$' + d3.format(',.2f')(v),
-y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
+<pre class="text-content-caption"><code>y1TickFormat: v => '$' + RareCharts.d3.format(',.2f')(v),
+y2TickFormat: v => RareCharts.d3.format('+.1f')(v) + 'bp'</code></pre>
 <p>When <code>yTickFormat</code> is provided, <code>yPrefix</code>, <code>ySuffix</code>, and <code>yFormat</code> are all ignored — the format function takes full ownership.</p>
 <h2 id="crosshair-and-tooltip">Crosshair and tooltip</h2>
 <p>The crosshair is a vertical tracker that follows the cursor, snaps to the nearest data point on each series, and shows a tooltip. It is enabled by default on Line, TimeSeries, and DualAxes charts.</p>
@@ -646,35 +661,139 @@ y2TickFormat: v => d3.format('+.1f')(v) + 'bp'</code></pre>
 <h3 id="custom-tooltip">Custom tooltip</h3>
 <p><code>tooltipFormat</code> replaces the default tooltip with your own HTML:</p>
 <pre class="text-content-caption"><code>tooltipFormat: ({ date, points }) => {
-  const d = d3.timeFormat('%b %d, %Y')(date);
-  return `&lt;div&gt;${d}&lt;/div&gt;` +
+  const d = RareCharts.d3.timeFormat('%b %d, %Y')(date);
+  return `&lt;div class="rc-tooltip-header rc-tooltip-muted"&gt;${d}&lt;/div&gt;` +
     points.map(p =>
       `&lt;div style="color:${p.color}"&gt;${p.name}: ${p.fmt}&lt;/div&gt;`
     ).join('');
 }</code></pre>
-<p><code>points</code> is an array of <code>{ name, value, color, fmt }</code> — one entry per series. <code>fmt</code> is the value already run through <code>yTickFormat</code> (or the default formatter), so you don't need to reformat it yourself.</p>
+<p><code>points</code> is an array of <code>{ name, series, value, color, fmt }</code> — one entry per series (<code>series</code> is the name again, the role field every formatter shares — see <a href="#formatter-arguments">Formatter arguments</a>). <code>fmt</code> is the value already run through <code>yTickFormat</code> (or the default formatter), so you don't need to reformat it yourself.</p>
+<p>The classes are optional: they are the ones the default tooltips use, so your rows look the same and follow <code>theme.tooltip</code> — <code>rc-tooltip-header</code> for the row naming what is hovered (with <code>rc-tooltip-muted</code> for a date, <code>rc-tooltip-title</code> for a bold title), <code>rc-tooltip-muted</code> for secondary text, <code>rc-tooltip-sub</code> for small secondary text.</p>
+<p>The string you return is inserted as HTML as is — escape anything that comes from your data (series names, labels from a CSV or an API) before putting it in. The default tooltips escape data themselves: a label such as <code>&lt;b&gt;</code> shows as text. This applies to every chart's <code>tooltipFormat</code>.</p>
 <h3 id="tooltip-styling">Tooltip styling</h3>
-<p>Tooltip colors and shadow are controlled through <code>theme.tooltip</code>:</p>
+<p>Tooltip colors and shadow are controlled through <code>theme.tooltip</code> — here a dark tooltip on a light chart:</p>
 <pre class="text-content-caption"><code>theme: {
   tooltip: {
     bg:     '#1a1a1a',
     border: '#333333',
     text:   '#e8e8e8',
-    muted:  '#888888',
+    muted:  '#888888',       <span class="code-comment">// dates and secondary rows</span>
     shadow: '0 2px 12px rgba(0,0,0,0.5)',
+    header: { text: null, bg: null },   <span class="code-comment">// the date row; bg draws a band</span>
   }
 }</code></pre>
-<p>For structural changes (padding, border-radius, font size), target the <code>.rc-tooltip</code> CSS class directly. The crosshair line uses <code>.rc-cross-line</code>.</p>
+<p>For structural changes (padding, border-radius, font size), use a selector that outranks the library's <code>.rc-tooltip</code> — the library appends its stylesheet to <code>&lt;head&gt;</code> when it loads, after any stylesheet already there, so a plain <code>.rc-tooltip { … }</code> loses the tie: <code>.rc-chart .rc-tooltip { font-size: 14px; }</code>. The crosshair line uses <code>.rc-cross-line</code>. All tooltip tokens and classes: <a href="/charts/styles/">Styles</a>.</p>
+<h2 id="formatter-arguments">Formatter arguments</h2>
+<p>The formatters of Line, DualAxes, TimeSeries, Bar, HierarchicalBar, Donut and Pie, Gauge and Map — <code>tooltipFormat</code>, <code>valueFormat</code>, <code>percentFormat</code>, <code>centerText</code> — get the same <strong>role fields</strong>, whichever apply to what it formats: The relation charts keep their own payloads (table below): Graph, MapFlow and Sankey tooltips get one object each, and Sankey's <code>valueFormat</code> takes only the number.</p>
+<ul>
+<li><code>label</code> — the name of the item: a category, a slice, a tree node, a region;</li>
+<li><code>value</code> — the number drawn (<code>null</code> where there is none: an undisclosed node, a region without data);</li>
+<li><code>date</code> — the date of the point, on the time charts;</li>
+<li><code>color</code> — the colour the item is drawn in;</li>
+<li><code>percent</code> — its share of the whole, 0–1: of the category total (stacked bars), of all slices (Donut), of the tree's total (HierarchicalBar), of the range (Gauge);</li>
+<li><code>series</code> — the series name, where a chart has several.</li>
+</ul>
+<p>Where they arrive follows one rule:</p>
+<ul>
+<li>a formatter that gets <strong>an object</strong> made for it finds the role fields on that object, next to its own fields;</li>
+<li>a formatter that gets <strong>a number, a data row or a tree node</strong> first keeps it, and gets the role fields as an object in the <strong>next argument</strong> — the second, or the fourth for Gauge's <code>centerText(value, max, min)</code>.</li>
+</ul>
+<p>So <code>valueFormat: v =&gt; …</code> written for an earlier version still works, and a formatter that needs more reads the second argument — here a HierarchicalBar prints each row's share of the total next to its value:</p>
+<pre class="text-content-caption"><code>valueFormat: (node, { value, percent }) =>
+  `${RareCharts.d3.format(',')(value)} · ${RareCharts.d3.format('.0%')(percent)}`</code></pre>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Formatter</th>
+            <th>Arguments</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Line</td>
+            <td><code>tooltipFormat</code></td>
+            <td><code>({ date, points })</code> — each point <code>{ name, series, type, color, date, value, fmt }</code>; a band has <code>lower</code> and <code>upper</code> instead of <code>value</code></td>
+        </tr>
+        <tr>
+            <td>DualAxes</td>
+            <td><code>tooltipFormat</code></td>
+            <td>as Line; each point also has <code>axis</code></td>
+        </tr>
+        <tr>
+            <td>TimeSeries</td>
+            <td><code>tooltipFormat</code></td>
+            <td><code>(row, { date, value, color })</code> — the row with its extra fields (<code>open</code>, <code>volume</code>…)</td>
+        </tr>
+        <tr>
+            <td>Bar</td>
+            <td><code>tooltipFormat</code>, <code>valueFormat</code></td>
+            <td><code>(row, { label, value, color })</code>; dated bars <code>(row, { date, value, color })</code></td>
+        </tr>
+        <tr>
+            <td>Bar, stacked</td>
+            <td><code>tooltipFormat</code>, <code>valueFormat</code></td>
+            <td><code>(segment)</code> — <code>{ i, name, cat, v0, v1, value, total }</code> with <code>label</code> (= <code>cat</code>), <code>series</code> (= <code>name</code>), <code>color</code>, <code>percent</code></td>
+        </tr>
+        <tr>
+            <td>HierarchicalBar</td>
+            <td><code>tooltipFormat</code>, <code>valueFormat</code></td>
+            <td><code>(node, { label, value, color, percent })</code></td>
+        </tr>
+        <tr>
+            <td>Donut, Pie</td>
+            <td><code>tooltipFormat</code></td>
+            <td><code>({ label, value, percent, color })</code></td>
+        </tr>
+        <tr>
+            <td>Donut, Pie</td>
+            <td><code>valueFormat</code>, <code>percentFormat</code></td>
+            <td><code>(number, { label, value, percent, color })</code> for a slice; the center's value <code>(number, { label, value })</code></td>
+        </tr>
+        <tr>
+            <td>Donut</td>
+            <td><code>centerText</code></td>
+            <td><code>(items, { label, value })</code> — the drawn items, the center label and the total</td>
+        </tr>
+        <tr>
+            <td>Gauge</td>
+            <td><code>tooltipFormat</code></td>
+            <td><code>({ value, max, min, percent, color })</code></td>
+        </tr>
+        <tr>
+            <td>Gauge</td>
+            <td><code>centerText</code></td>
+            <td><code>(value, max, min, { value, max, min, percent, color })</code></td>
+        </tr>
+        <tr>
+            <td>Map</td>
+            <td><code>tooltipFormat</code></td>
+            <td><code>({ feature, item, label, value, color })</code> — <code>item</code> is <code>null</code> for a region without data</td>
+        </tr>
+        <tr>
+            <td>Graph, Sankey, MapFlow</td>
+            <td>node and link formatters</td>
+            <td>one object each (<code>{ node, links }</code>, <code>{ link, source, target }</code>…) — see their pages; Sankey's <code>valueFormat(value)</code> gets the number only</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>The axis formatters (<code>yTickFormat</code>, <code>xTickFormat</code>, <code>y1TickFormat</code>…) take only the tick value.</p>
 <h2 id="setdata">setData()</h2>
-<p>All charts expose a <code>setData(data)</code> method that accepts the chart-specific data format and triggers a render. You can call it multiple times — the chart will update in place without re-initializing.</p>
+<p>All charts expose a <code>setData(data)</code> method that accepts the chart-specific data format and triggers a render. You can call it multiple times — the chart will update in place without re-initializing. The chart keeps its own copy: the array you pass is never modified, dates are read (a <code>Date</code>, an ISO string or epoch milliseconds) and sorted, and rows that cannot be read are dropped. An empty array clears the drawing. On charts with timeframes, the selected timeframe is applied to the new data, and a window the new data no longer reaches falls back to the full range.</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Bar('#chart', options);
 
 chart.setData(initialData);
 
 <span class="code-comment">// Later — same chart, new data, no flicker</span>
 chart.setData(updatedData);</code></pre>
+<h2 id="whenready">whenReady()</h2>
+<p>Every chart has <code>whenReady()</code>: a promise that resolves with the chart once it has drawn what it loads — Graph its queued requests and layout, Map and MapFlow the map geometry (it also resolves when the geometry fails to load; the error goes to the console). The other charts draw on <code>setData()</code>, so theirs is already resolved. Use it before measuring the drawing or taking a screenshot.</p>
+<pre class="text-content-caption"><code>const map = new RareCharts.Map('#map', { geoUrl: '/data/europe.geojson' }).setData(rows);
+map.whenReady().then(() => console.log('drawn'));</code></pre>
 <h2 id="destroy">destroy()</h2>
-<p>Cleans up the chart: disconnects the resize observer and clears the container. Call this when removing a chart from the page to avoid memory leaks.</p>
+<p>Cleans up the chart: disconnects the resize observer, stops pending work (a font load, map geometry, graph requests), empties the container and removes the classes and inline sizes the chart added to it — anything your page set stays. Your own elements moved into the card (<code>controls</code>, a Graph <code>details</code> panel) go back where they were. After <code>destroy()</code> the chart draws nothing and calls none of your callbacks — <code>onViewChange</code>, <code>onScaleChange</code>, not even for a navigator drag that ends after it. Call this when removing a chart from the page to avoid memory leaks.</p>
 <pre class="text-content-caption"><code>chart.destroy();</code></pre>
 <h2 id="complete-example">Complete example</h2>
 <pre class="text-content-caption"><code>new RareCharts.Line('#revenue-chart', {

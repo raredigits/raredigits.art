@@ -1,8 +1,10 @@
 // RareCharts — core/Crosshair.js
 // Reusable vertical crosshair with series dots and tooltip.
-// Works with any number of series and any mix of Y scales.
+// Works with any number of series and any mix of Y scales. Dots take
+// theme.dotRadius (3); a band is reported as a range, without a dot.
 
 import * as d3 from 'd3';
+import { escapeHtml, tipHeader } from './html.js';
 
 export class Crosshair {
   /**
@@ -68,7 +70,11 @@ export class Crosshair {
 
     const move = (event) => {
       const [mx]  = d3.pointer(event, this._overlay.node());
-      const dt    = x.invert(mx);
+      // Clamped to the view: the plot's padding (xPad, and on DualAxes the
+      // half bar inset at each end, C-27) reads as the nearest end, so an
+      // edge bar answers along its whole width.
+      const [d0, d1] = x.domain();
+      const dt    = new Date(Math.min(Math.max(+x.invert(mx), +d0), +d1));
 
       const points = series.map(s => {
         const d = pickNearest(s.values, dt);
@@ -81,13 +87,13 @@ export class Crosshair {
         if (s.type === 'band') {
           // A band has two edges and no single value: report the range, no dot.
           return {
-            name: s.name, type: 'band', color: s.color, date: d.date,
+            name: s.name, series: s.name, type: 'band', color: s.color, date: d.date,
             lower: d.lower, upper: d.upper,
             fmt: `${formatFor(s, d.lower)} – ${formatFor(s, d.upper)}`,
           };
         }
         const fmt = formatFor(s, d.value);
-        return { name: s.name, axis: s.axis, type: s.type, color: s.color, date: d.date, value: d.value, fmt };
+        return { name: s.name, series: s.name, axis: s.axis, type: s.type, color: s.color, date: d.date, value: d.value, fmt };
       }).filter(Boolean);
 
       // Nothing under the cursor (outside every series' date range): clear.
@@ -108,7 +114,7 @@ export class Crosshair {
         .data(points.filter(p => p.type !== 'bar' && p.type !== 'band'), p => p.name)
         .join('circle')
         .attr('class', 'rc-cross-dot')
-        .attr('r', 3)
+        .attr('r', t.dotRadius ?? 3)
         .attr('fill',         p => p.color)
         .attr('stroke',       t.bg)
         .attr('stroke-width', 1.5)
@@ -116,13 +122,15 @@ export class Crosshair {
         .attr('cy', p => scaleFor(p)(p.value))
         .attr('opacity', 1);
 
-      // Tooltip
+      // Tooltip. The payload is an object, so the role fields (K-09) sit on
+      // it: `date` here, and on each point `series` (= name), `value`,
+      // `color`, `date`.
       const payload = { date: points[0]?.date, points };
       const html = tooltipFmt
         ? tooltipFmt(payload)
-        : `<div style="color:${t.muted}">${d3.timeFormat('%b %d, %Y')(payload.date)}</div>` +
+        : tipHeader(d3.timeFormat('%b %d, %Y')(payload.date), { muted: true }) +
           points.map(p =>
-            `<div style="color:${p.color}">${p.name}: ${p.fmt}</div>`
+            `<div style="color:${escapeHtml(p.color)}">${escapeHtml(p.name)}: ${escapeHtml(p.fmt)}</div>`
           ).join('');
 
       const [px, py] = d3.pointer(event, this._overlay.node().closest('.rc-chart') ?? this._overlay.node().parentElement);
@@ -144,5 +152,12 @@ export class Crosshair {
     this._line.attr('opacity', 0);
     this._dots.selectAll('.rc-cross-dot').attr('opacity', 0);
     this._tooltip.hide();
+  }
+
+  // Empty chart: hide, and drop the hover handlers — they hold the last
+  // series and scale. The next bind() attaches fresh ones.
+  unbind() {
+    this._overlay.on('mousemove', null).on('mouseleave', null);
+    this.hide();
   }
 }

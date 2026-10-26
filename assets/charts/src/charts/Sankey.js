@@ -27,11 +27,14 @@
 //                   (default: 'source')
 //   linkOpacity   — band opacity at rest (default: 0.45)
 //   linkTypes     — { type: { color, label } } — colors bands when
-//                   linkColor: 'type' and fills the legend
+//                   linkColor: 'type' and fills the legend with every type it
+//                   describes; a type it does not describe stays muted
 //   labels        — 'auto' | false (default: 'auto'): right of each node, the
 //                   last column in a measured right gutter; cut with an
 //                   ellipsis to the room before the next column
-//   minLabelSize  — px; smaller nodes get no label, only a tooltip (default: 10)
+//   minLabelSize  — px; smaller nodes get no label, only a tooltip (default:
+//                   10); the vertical layout measures node width against
+//                   max(minLabelSize, 24)
 //   showValues    — append the node value to its label (default: true)
 //   valueFormat   — v => string (default: locale number)
 //   tooltipFormat — ({ node, incoming, outgoing }) => html
@@ -48,11 +51,11 @@ import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
 import { applySvgA11y, fitTextNode } from '../core/renderHelpers.js';
 import { motionDuration, resolveEase } from '../core/utils.js';
-import { normalizeLinkData } from '../core/links.js';
+import { normalizeRelationData, resolveLinkType } from '../core/links.js';
 import { sankeyLayout } from '../core/sankey.js';
+import { EntryMotion, entryTransition } from '../core/entryMotion.js';
+import { escapeHtml as esc, tipTitle, tipMuted, tipSub } from '../core/html.js';
 
-const esc = v => String(v).replace(/[&<>"']/g, c =>
-  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 export class Sankey extends Chart {
   constructor(selector, options = {}) {
@@ -71,8 +74,7 @@ export class Sankey extends Chart {
     this._baseHeight   = this.options.height;
     this._nodes        = [];
     this._links        = [];
-    this._didAnimateIn = false;
-    this._uid          = Math.random().toString(36).slice(2, 8);
+    this._entry        = new EntryMotion();   // a fade per dataset (C-16)
     this._tooltip      = new Tooltip(this.container, this.theme);
     this._initSVG();
   }
@@ -80,43 +82,30 @@ export class Sankey extends Chart {
   // ─── Data ─────────────────────────────────────────────────────────────────
 
   setData(data = {}) {
-    const { nodes: rawNodes, links: rawLinks } = normalizeLinkData(data);
-
-    // Valid flows only: a band needs a positive finite value.
-    const links = [];
-    rawLinks.forEach(l => {
-      const v = +l.value;
-      if (l.value == null || l.value === '' || !Number.isFinite(v) || v <= 0) {
-        console.warn(`RareCharts.Sankey: link ${l.source} → ${l.target} has no positive value — dropped`);
-        return;
-      }
-      links.push({ ...l, value: v });
-    });
-
-    // Nodes: explicit list, or derived from the links in order of appearance.
-    let nodes;
-    if (rawNodes.length) {
-      nodes = rawNodes.map(n => ({ ...n, id: String(n.id) }));
-      const known = new Set(nodes.map(n => n.id));
-      for (let i = links.length - 1; i >= 0; i--) {
-        const l = links[i];
-        if (!known.has(l.source) || !known.has(l.target)) {
-          console.warn(`RareCharts.Sankey: link ${l.source} → ${l.target} references an unknown node — dropped`);
-          links.splice(i, 1);
+    // One read of the payload (core/links.js, K-07). Valid flows only: a
+    // band needs a positive finite value — checked first, so a dropped flow
+    // names no node. Nodes: the explicit list (a flow to a node outside it
+    // is dropped), or derived from the flows in order of appearance, the id
+    // as the label.
+    const given = (data.nodes ?? []).length > 0;
+    const { nodes: readNodes, links } = normalizeRelationData(data, {
+      accept: l => {
+        const v = +l.value;
+        if (l.value == null || l.value === '' || !Number.isFinite(v) || v <= 0) {
+          console.warn(`RareCharts.Sankey: link ${l.source} → ${l.target} has no positive value — dropped`);
+          return null;
         }
-      }
-    } else {
-      const seen = new Map();
-      links.forEach(l => [l.source, l.target].forEach(id => {
-        if (!seen.has(id)) seen.set(id, { id, label: id });
-      }));
-      nodes = [...seen.values()];
-    }
+        return { ...l, value: v };
+      },
+      unknownEndpoints: given ? 'drop' : 'create',
+      onUnknown: l => console.warn(`RareCharts.Sankey: link ${l.source} → ${l.target} references an unknown node — dropped`),
+    });
+    const nodes = given ? readNodes : readNodes.map(n => ({ ...n, label: n.id }));
 
     // Same pair + same type = one band; sum it and say so.
     const merged = new Map();
     links.forEach(l => {
-      const key = `${l.source}→${l.target}|${l.type ?? ''}`;
+      const key = JSON.stringify([l.source, l.target, l.type ?? '']);
       const prev = merged.get(key);
       if (prev) {
         console.warn(`RareCharts.Sankey: repeated link ${l.source} → ${l.target}${l.type ? ` (${l.type})` : ''} — values summed`);
@@ -126,11 +115,14 @@ export class Sankey extends Chart {
       }
     });
 
+    // Validate before storing — a cycle is a data error the caller should see
+    // at once, and the chart keeps its previous valid data (otherwise every
+    // later resize would throw again).
+    const nextLinks = [...merged.values()];
+    sankeyLayout({ nodes, links: nextLinks }, { width: 100, height: 100, iterations: 0 });
     this._nodes = nodes;
-    this._links = [...merged.values()];
-    // Validate now — a cycle is a data error the caller should see at once.
-    sankeyLayout({ nodes: this._nodes, links: this._links }, { width: 100, height: 100, iterations: 0 });
-    this._didAnimateIn = false;
+    this._links = nextLinks;
+    this._entry.reset();
     this.render();
     return this;
   }
@@ -249,12 +241,16 @@ export class Sankey extends Chart {
     const palette = t.colors ?? ['#888'];
     const nodeColor = n => n.data.color ?? palette[n.index % palette.length];
     const linkTypes = o.linkTypes ?? {};
+    // The type legend lists the described types only (it is built from
+    // linkTypes), so an undescribed type stays muted here rather than taking
+    // a colour the legend never names.
+    const typeKeys = [];
     const mode = o.linkColor ?? 'source';
-    const gradId = l => `rc-sankey-grad-${this._uid}-${l.index}`;
+    const gradId = l => `${this._uid}-sankey-grad-${l.index}`;
     const linkStroke = l => {
       if (mode === 'source') return nodeColor(l.source);
       if (mode === 'target') return nodeColor(l.target);
-      if (mode === 'type') return linkTypes[l.data.type]?.color ?? t.muted;
+      if (mode === 'type') return resolveLinkType(linkTypes, l.data.type, { keys: typeKeys, theme: t }).color;
       if (mode === 'gradient') return `url(#${gradId(l)})`;
       return mode;
     };
@@ -273,12 +269,9 @@ export class Sankey extends Chart {
     }
 
     const baseOpacity = o.linkOpacity ?? 0.45;
-    const animate = (o.animate ?? true) && !this._didAnimateIn;
-    const dur = animate ? motionDuration(o.duration ?? 600) : 0;
+    const dur = motionDuration(o.duration ?? 600);
     const ease = resolveEase(o.ease ?? 'cubicOut');
-    // Guard set synchronously (the Bar race of 0.9.8_2): a re-render during
-    // the entry transition must not restart it or freeze half-drawn bands.
-    this._didAnimateIn = true;
+    const phase = this._entry.phase((o.animate ?? true) ? dur : 0);
 
     // ── Bands ──
     const linkSel = this.gLinks.selectAll('.rc-sankey-link')
@@ -292,11 +285,19 @@ export class Sankey extends Chart {
       .attr('role', 'img')
       .attr('aria-label', l => `${this._name(l.source)} → ${this._name(l.target)}: ${fmt(l.value)}`)
       .style('cursor', 'pointer');
-    if (dur) {
-      linkSel.interrupt().attr('stroke-opacity', 0)
-        .transition().duration(dur).ease(ease).attr('stroke-opacity', baseOpacity);
-    } else {
+    // The bands fade in on each setData, on the entry timeline (C-16): the
+    // renders that follow setData — fonts.ready, the first ResizeObserver
+    // callback — and a resize mid-fade carry each band on from its current
+    // opacity for the time left, instead of cutting the fade to its end. A
+    // band added mid-fade starts from 0.
+    if (phase === 'none') {
       linkSel.interrupt().attr('stroke-opacity', baseOpacity);
+    } else {
+      if (phase === 'enter') linkSel.interrupt().attr('stroke-opacity', 0);
+      else linkSel.filter(function () { return !this.hasAttribute('stroke-opacity'); }).attr('stroke-opacity', 0);
+      const { moving, settled } = entryTransition(linkSel, this._entry, { duration: dur, ease });
+      settled.attr('stroke-opacity', baseOpacity);
+      moving.attr('stroke-opacity', baseOpacity);
     }
 
     // ── Nodes ──
@@ -355,20 +356,22 @@ export class Sankey extends Chart {
       .each(function (n) { fitTextNode(this, labelText(n), labelRoom(n)); });
 
     // ── Interaction ──
+    // A hover or pin ends the entry fade at once: the fade would otherwise
+    // carry on over the highlight and leave it lost.
     const reset = () => {
-      linkSel.attr('stroke-opacity', baseOpacity);
+      linkSel.interrupt().attr('stroke-opacity', baseOpacity);
       nodeSel.style('opacity', 1);
     };
     const highlightNode = n => {
       const touches = l => l.source === n || l.target === n;
-      linkSel.attr('stroke-opacity', l => touches(l) ? Math.min(1, baseOpacity + 0.35) : 0.12);
+      linkSel.interrupt().attr('stroke-opacity', l => touches(l) ? Math.min(1, baseOpacity + 0.35) : 0.12);
       const near = new Set([n]);
       n.sourceLinks.forEach(l => near.add(l.target));
       n.targetLinks.forEach(l => near.add(l.source));
       nodeSel.style('opacity', x => near.has(x) ? 1 : 0.35);
     };
     const highlightLink = l => {
-      linkSel.attr('stroke-opacity', x => x === l ? Math.min(1, baseOpacity + 0.4) : 0.12);
+      linkSel.interrupt().attr('stroke-opacity', x => x === l ? Math.min(1, baseOpacity + 0.4) : 0.12);
       nodeSel.style('opacity', x => (x === l.source || x === l.target) ? 1 : 0.35);
     };
     const pointer = event => d3.pointer(event, this.container);
@@ -433,11 +436,10 @@ export class Sankey extends Chart {
         outgoing: n.sourceLinks.map(l => l.data),
       });
     }
-    const t = this.theme;
     const inV = n.targetLinks.reduce((s, l) => s + l.value, 0);
     const outV = n.sourceLinks.reduce((s, l) => s + l.value, 0);
-    const row = (k, v) => `<div><span style="color:${t.muted}">${k}</span> ${esc(fmt(v))}</div>`;
-    return `<div style="font-weight:bold;margin-bottom:2px">${esc(this._name(n))}</div>
+    const row = (k, v) => `<div>${tipMuted(k, 'span')} ${esc(fmt(v))}</div>`;
+    return `${tipTitle(esc(this._name(n)))}
       ${n.targetLinks.length ? row('in', inV) : ''}
       ${n.sourceLinks.length ? row('out', outV) : ''}`;
   }
@@ -447,14 +449,12 @@ export class Sankey extends Chart {
     if (o.linkTooltipFormat) {
       return o.linkTooltipFormat({ link: l.data, source: l.source.data, target: l.target.data });
     }
-    const t = this.theme;
     const out = l.source.sourceLinks.reduce((s, x) => s + x.value, 0);
     const share = out ? ` · ${Math.round((l.value / out) * 100)}% of ${esc(this._name(l.source))}` : '';
-    const type = l.data.type
-      ? `<div style="color:${t.muted};font-size:11px">${esc(o.linkTypes?.[l.data.type]?.label ?? l.data.type)}</div>` : '';
+    const type = l.data.type ? tipSub(esc(o.linkTypes?.[l.data.type]?.label ?? l.data.type)) : '';
     const label = l.data.label ? `<div>${esc(l.data.label)}</div>` : '';
-    return `<div style="font-weight:bold;margin-bottom:2px">${esc(this._name(l.source))} → ${esc(this._name(l.target))}</div>
-      <div>${esc(fmt(l.value))}<span style="color:${t.muted};font-size:11px">${share}</span></div>
+    return `${tipTitle(`${esc(this._name(l.source))} → ${esc(this._name(l.target))}`)}
+      <div>${esc(fmt(l.value))}${tipSub(share, { tag: 'span' })}</div>
       ${type}${label}`;
   }
 

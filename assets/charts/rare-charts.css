@@ -1,19 +1,33 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Cousine:wght@400;700&display=swap');
-
-/* RareCharts — charts.css
-   Structure and positioning.
-   Colors — via theme (JS), not CSS. */
+/* RareCharts — rare-charts.css
+   Structure, positioning and spacing; the bundle injects it into <head>.
+   Chart colours come from the theme (JS). The few host colours read here
+   (buttons, panels) all have fallbacks, so a page without Rare Styles works.
+   No fonts are loaded: the page supplies them (README, "Fonts"). */
 
 /* ─── Chart wrapper ──────────────────────────────────────────────────────── */
 
 .rc-chart {
-  --rc-font-family: "Fira Sans", sans-serif;
-  --rc-font-family-numeric: "Cousine", monospace;
+  /* Fira Sans / Cousine when the page has them (Rare Styles self-hosts both),
+     system fonts otherwise — the library loads no webfont (K-01). */
+  --rc-font-family: "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --rc-font-family-numeric: "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --rc-font-size: 16px;
   --rc-font-size-sm: 14px;
+  /* Spacing — the Rare Styles scale at its 16px unit, fixed, so a chart
+     looks the same with or without a host stylesheet (C-13). */
+  --rc-space-xs: 4px;
+  --rc-space-sm: 8px;
+  --rc-space-md: 16px;
+  --rc-space-lg: 32px;
   /* Lin/Log switch fill — an explicit colour, not the page's --border-color,
      which some hosts set to black (the label then disappears). */
   --rc-scale-btn-fill: #ccc;
+  /* Set once: subtitle, legend, source, note and controls inherit it (C-14). */
+  font-family: var(--rc-font-family);
+  /* The header follows the card's width, not the window's (K-17): a narrow
+     card on a wide screen stacks it too. The card takes its width from its
+     parent, as a block, a grid cell or a stretched flex item does. */
+  container: rc-chart / inline-size;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -25,14 +39,15 @@
 .rc-chart > .rc-chart-header { order: 0; }
 .rc-graph-breadcrumbs        { order: 1; }
 .rc-graph-legend             { order: 2; }
+.rc-mapflow-legend           { order: 2; }
 .rc-chart > svg              { order: 3; }
+.rc-chart > .rc-graph-scroll { order: 3; }
 .rc-chart > .rc-chart-navigator { order: 4; }
 .rc-chart > .rc-graph-details   { order: 4; }
 .rc-chart > .rc-chart-controls  { order: 5; }
 .rc-chart > .rc-chart-footer { order: 6; }
 
 .rc-chart > svg {
-  font-family: var(--rc-font-family);
   /* Small size is the chart-text default (axis ticks, labels, values). Charts
      no longer set font-size inline; the few larger texts (donut/gauge center)
      set their own. */
@@ -44,11 +59,27 @@
   min-height: 0;
 }
 
+/* Graph flow view with `minWidth`: the drawing scrolls sideways inside its
+   own wrapper (Graph adds it); the header, legend, navigator, details panel
+   and footer stay put (D5). It takes the space the bare svg would. */
+.rc-chart > .rc-graph-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.rc-graph-scroll > svg {
+  flex: 0 0 auto;
+  font-size: var(--rc-font-size-sm);
+  overflow: visible;
+}
+
 .rc-chart-header,
 .rc-chart-subtitle,
 .rc-legend,
 .rc-chart-source {
-  color: var(--primary-color);
+  color: var(--primary-color, currentColor);
 }
 
 /* ─── Header ─────────────────────────────────────────────────────────────── */
@@ -60,32 +91,47 @@
     "title range"
     "subtitle range"
     "legend legend";
-  column-gap: var(--space-md);
-  row-gap: var(--space-xs);
+  column-gap: var(--rc-space-md);
+  row-gap: var(--rc-space-xs);
   position: relative;
   user-select: none;
 }
 
+/* font-family and size repeated: host heading rules target the <h5> itself,
+   and without a host stylesheet it is the UA's 0.83em. */
 .rc-chart-title {
   grid-area: title;
   min-width: 0;
   margin: 0;
   font-family: var(--rc-font-family);
+  font-size: var(--rc-font-size);
   text-transform: uppercase;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* The subtitle wraps — it often carries the chart's one sentence of
+   context, and an ellipsis cut it mid-thought. The title stays on one line. */
 .rc-chart-subtitle {
   grid-area: subtitle;
   min-width: 0;
   font-size: var(--rc-font-size-sm);
+  line-height: 1.2em;
   margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-wrap: pretty;
 }
+
+/* Each header part's cell again, at three classes: a host rule for every
+   element in a block (Rare Styles' `.sidenote-wrapper :not(:first-child)`
+   spans each one over five columns) would otherwise open empty columns,
+   gaps and all, and squeeze the title into an ellipsis. */
+.rc-chart > .rc-chart-header > .rc-chart-title     { grid-area: title; }
+.rc-chart > .rc-chart-header > .rc-chart-subtitle  { grid-area: subtitle; }
+.rc-chart > .rc-chart-header > .rc-chart-range-row { grid-area: range; }
+.rc-chart > .rc-chart-header > .rc-legend          { grid-area: legend; }
 
 /* ─── Footer ─────────────────────────────────────────────────────────────── */
 
@@ -93,11 +139,14 @@
   user-select: none;
 }
 
+/* A <cite>: inline by default, so without a host stylesheet the margin and
+   the one-line ellipsis did nothing — make it a block here. */
 .rc-chart-source {
+  display: block;
   font-style: italic;
   font-size: var(--rc-font-size-sm);
   font-weight: initial;
-  margin: var(--space-sm) 0;
+  margin: var(--rc-space-sm) 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -127,7 +176,7 @@
   font-size: var(--rc-font-size-sm);
   font-weight: initial;
   line-height: 1.4;
-  margin: var(--space-xs) 0 var(--space-sm);
+  margin: var(--rc-space-xs) 0 var(--rc-space-sm);
   text-align: left;
   /* Long words / URLs break instead of pushing the note past the card edge. */
   overflow-wrap: anywhere;
@@ -138,8 +187,14 @@
 }
 
 .rc-chart-navigator {
-  width: 100%;
+  width: auto;
 }
+
+.rc-chart-navigator svg { overflow: visible; }  /* brush handles at a 0px margin stay whole */
+/* The page's own details panel: host element rules (h4, p…) beat the font
+   the panel inherits, so it is set on every element inside. */
+.rc-graph-details,
+.rc-graph-details * { font-family: var(--rc-font-family); }
 
 .rc-chart-range-row {
   grid-area: range;
@@ -163,22 +218,30 @@
   padding-right: 0;
 }
 
+/* No Y-axis gutter on the right (Map, MapFlow, Graph): flush to the edge. */
+.rc-chart-range-row--flush {
+  padding-right: 0;
+}
+
 /* ─── Legend ─────────────────────────────────────────────────────────────── */
 
 .rc-legend {
   grid-area: legend;
-  padding: var(--space-sm) 0;
+  padding: 0;
   display: flex;
   flex-wrap: wrap;
   /* wrapped lines sit close; items keep their horizontal spacing */
-  column-gap: var(--space-md);
+  column-gap: var(--rc-space-md);
   row-gap: 2px;
   line-height: 1.3;
   font-size: var(--rc-font-size-sm);
   user-select: none;
 }
 
-@media (max-width: 768px) {
+/* A card 460px wide or narrower stacks its header: the buttons move under the
+   subtitle (K-17). The old breakpoint was the window's 768px, where the
+   narrowest card it kept side by side on the docs site is 473px wide. */
+@container rc-chart (max-width: 460px) {
   .rc-chart-header {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
@@ -194,8 +257,8 @@
     padding-right: 0;
   }
 
-  /* Phone: the timeframes keep their place on the left and wrap before the
-     Lin/Log button, which stays pinned right. */
+  /* Narrow card: the timeframes keep their place on the left and wrap
+     before the Lin/Log button, which stays pinned right. */
   .rc-chart-range-row--scale {
     justify-self: stretch;
     padding-right: 60px;
@@ -277,7 +340,6 @@
 .rc-graph-breadcrumbs {
   display: block;
   padding: 4px 0;
-  font-family: var(--rc-font-family);
   font-size: 11px;
   line-height: 1.4;
   white-space: nowrap;
@@ -305,7 +367,7 @@
 
 .rc-graph-breadcrumbs button:disabled {
   cursor: default;
-  font-weight: 600;
+  font-weight: bold;
   opacity: 1;
 }
 
@@ -320,17 +382,16 @@
   padding: 12px;
   border: 1px solid rgba(127, 127, 127, 0.35);
   border-radius: 6px;
-  background: var(--background-color, #fff);
+  background: #fff;
   color: var(--primary-color, #111);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  font-family: var(--rc-font-family);
   font-size: 12px;
 }
 
 .rc-graph-overflow-title {
   padding-right: 28px;
   margin-bottom: 8px;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .rc-graph-overflow-list {
@@ -389,8 +450,8 @@
 
 /* Dot — for bar / donut / scatter */
 .rc-legend-dot {
-  width: var(--space-sm);
-  height: var(--space-sm);
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
   display: inline-block;
   border-radius: 50%;
   flex-shrink: 0;
@@ -398,8 +459,8 @@
 
 /* Band — filled square for shaded ranges (confidence intervals, envelopes) */
 .rc-legend-band {
-  width: var(--space-sm);
-  height: var(--space-sm);
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
   display: inline-block;
   border-radius: 2px;
   opacity: 0.85;
@@ -407,17 +468,90 @@
 }
 
 /* ─── Tooltip ────────────────────────────────────────────────────────────── */
-/* Only positioning and transition. */
-/* bg, border, shadow — Tooltip.js sets inline from theme.tooltip */
+/* Colours: Tooltip.js publishes theme.tooltip on the element as
+   --rc-tooltip-*; the fallbacks here are defaultTheme.tooltip, keep them in
+   step. Size, weight and spacing live here (B-03, C-23): a page rule that
+   outranks .rc-tooltip — .rc-chart .rc-tooltip — restyles any of it.
+   No line-height: the tooltip takes the page's. */
 
 .rc-tooltip {
   position: absolute;
   pointer-events: none;
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--rc-space-sm) var(--rc-space-md);
+  font-family: var(--rc-tooltip-font, var(--rc-font-family-numeric));
+  font-size: 13px;
+  color: var(--rc-tooltip-text, #000000);
+  background: var(--rc-tooltip-bg, #ffffff);
+  border: 1px solid var(--rc-tooltip-border, #e0e0e0);
+  box-shadow: var(--rc-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
   opacity: 0;
   transition: opacity 0.1s;
   white-space: nowrap;
   z-index: 100;
+}
+
+/* Rows of the built-in tooltips (core/html.js); a tooltipFormat may use them.
+   The header names what is hovered: a date stays muted, a title bold —
+   theme.tooltip.header.text recolours both; an inline data colour wins. */
+.rc-tooltip-header {
+  color: var(--rc-tooltip-header-text, currentColor);
+}
+
+.rc-tooltip-header.rc-tooltip-muted {
+  color: var(--rc-tooltip-header-text, var(--rc-tooltip-muted, #666666));
+}
+
+.rc-tooltip-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.rc-tooltip-title:last-child {
+  margin-bottom: 0;
+}
+
+.rc-tooltip-muted,
+.rc-tooltip-sub {
+  color: var(--rc-tooltip-muted, #666666);
+}
+
+.rc-tooltip-sub,
+.rc-tooltip-small {
+  font-size: 11px;
+}
+
+/* A category: a link type in its own colour, a node group muted */
+.rc-tooltip-kind {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rc-tooltip-section {
+  margin-top: var(--rc-space-xs);
+}
+
+/* Relation charts: a capped width; a long name wraps inside the box instead
+   of running past its edge (C-29). max-content: as wide as the widest line
+   up to the cap, wherever the pointer is — near the chart's right edge too. */
+.rc-tooltip-body {
+  width: max-content;
+  max-width: 280px;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+/* TimeSeries: the value under the date */
+.rc-tooltip-value {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* theme.tooltip.header.bg: the header as a band across the top */
+.rc-tooltip--header-band .rc-tooltip-header {
+  background: var(--rc-tooltip-header-bg, transparent);
+  margin: calc(-1 * var(--rc-space-sm)) calc(-1 * var(--rc-space-md)) var(--rc-space-xs);
+  padding: var(--rc-space-xs) var(--rc-space-md);
 }
 
 .rc-tooltip.is-visible {
@@ -433,7 +567,8 @@
   opacity: 1;
 }
 
-.rc-tooltip.is-pinned a {
+/* Links (a tie's sources) in the tooltip's own colour, hover or pinned */
+.rc-tooltip a {
   color: inherit;
   text-decoration: underline;
 }
@@ -461,12 +596,12 @@
 }
 
 .rc-axis text {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-family: var(--rc-font-family-numeric);
   font-variant-numeric: tabular-nums;
 }
 
 .rc-axis-cat text {
-  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+  font-family: var(--rc-font-family);
 }
 
 /* Numeric SVG text set by charts (bar value labels, donut percents, center
@@ -476,7 +611,7 @@
 .rc-donut-label-pct,
 .rc-donut-center-value,
 .rc-gauge-center-value {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-family: var(--rc-font-family-numeric);
   font-variant-numeric: tabular-nums;
 }
 
@@ -500,6 +635,11 @@
 .rc-graph-note,
 .rc-graph-hidden-note  { text-decoration: underline; }
 
+/* Graph nodes take keyboard focus (K-20); the outline is for the keyboard,
+   a click shows the hover ring. */
+.rc-graph-node:focus { outline: none; }
+.rc-graph-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
 /* Axis titles (used in DualAxes) */
 .rc-axis-title {
   text-transform: uppercase;
@@ -511,22 +651,20 @@
 
 /* End labels — last-value labels on the right edge */
 .rc-end-label {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-family: var(--rc-font-family-numeric);
   font-variant-numeric: tabular-nums;
-  background-color: var(--white);
-  padding: var(--space-xs);
 }
 
 /* Hierarchical bar — row label + value text.
    Fonts come from the theme CSS variables declared on .rc-chart, so the chart
    code sets only data-driven attributes (fill, position), not font styles. */
 .rc-hbar-label {
-  font-family: var(--rc-font-family, "Fira Sans", sans-serif);
+  font-family: var(--rc-font-family);
   font-size: var(--rc-font-size-sm, 14px);
 }
 
 .rc-hbar-value {
-  font-family: var(--rc-font-family-numeric, "Cousine", monospace);
+  font-family: var(--rc-font-family-numeric);
   font-size: var(--rc-font-size-sm, 14px);
   font-variant-numeric: tabular-nums;
 }
@@ -560,34 +698,37 @@
 /*
  * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
  * because the DOM order is: header → aside → footer → svg (aside is appended
- * before _initSVG runs). Explicit rows fix placement regardless of DOM order.
+ * before _initSVG runs). Explicit rows fix placement regardless of DOM order
+ * — the page's controls included: left to auto-placement they went below
+ * the footer whenever the navigator took its row (K-19).
  */
 
 .rc-chart--legend-right {
   display: grid;
   grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto auto;  /* header | chart | navigator | footer */
+  grid-template-rows: auto 1fr auto auto auto;  /* header | chart | navigator | controls | footer */
 }
 
 /* Pin each element to its row — overrides DOM insertion order */
 .rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
 .rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
 .rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 4; }
+.rc-chart--legend-right > .rc-chart-controls  { grid-column: 1; grid-row: 4; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }
 
 /* Aside spans the full chart block in column 2 */
 .rc-chart--legend-right > .rc-chart-legend-aside {
   grid-column: 2;
-  grid-row: 1 / 5;
+  grid-row: 1 / 6;
   display: flex;
   align-items: center;
-  padding-left: var(--space-lg);
+  padding-left: var(--rc-space-lg);
 }
 
 /* Stack legend items vertically when in aside */
 .rc-chart-legend-aside .rc-legend {
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--rc-space-sm);
   padding: 0;
 }
 
@@ -595,8 +736,8 @@
 
 .rc-multichart-grid {
   display: grid;
-  gap: var(--space-lg, 16px);
-  order: 1;   /* sits between header (0) and footer (3) in the flex column */
+  gap: var(--rc-space-lg);
+  order: 1;   /* between the header and the footer in the flex column */
 }
 
 .rc-multichart-cell {
@@ -618,7 +759,6 @@
 }
 
 .rc-multichart-cell-title {
-  font-family: var(--rc-font-family);
   font-size: var(--rc-font-size-sm);
   font-weight: bold;
   text-transform: uppercase;
@@ -629,173 +769,71 @@
   margin-bottom: 4px;
 }
 
-/* ─── Demo page controls ────── */
-
-.rc-demo-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin: var(--space-lg) 0;
-}
-
-.rc-demo-group {
-  width: 48%;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--border-color, #ccc);
-  border-radius: var(--space-sm);
-  padding: var(--space-sm);
-}
-
-.rc-demo-group-label {
-  padding-left: var(--space-sm);
-  font-size: var(--rc-font-size-sm);
-  text-transform: uppercase;
-  user-select: none;
-}
-
-.rc-demo-select {
-  border: 1px solid var(--text-color, #000);
-  border-radius: 3px;
-  padding: 2px 4px;
-  font-family: var(--rc-font-family);
-  color: inherit;
-}
-
-.rc-demo-btn-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.rc-demo-btn {
-  background: none;
-  border: 1px solid var(--border-color, #ccc);
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm);
-  padding: 3px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-  color: inherit;
-  transition: background 0.08s, border-color 0.08s, color 0.08s;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.rc-demo-btn:hover {
-  border-color: var(--text-color, #000);
-}
-
-.rc-demo-btn.is-active {
-  background: var(--text-color, #000);
-  border-color: var(--text-color, #000);
-  color: var(--bg-color, #fff);
-}
-
-@media  (max-width: 768px) {
-    .rc-demo-group {
-        width: 100%;
-    }
-}
-
-/* ─── Price Chart ─── */
-
-.price-chart-header {
-  width: calc(100% - 60px);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
-.price-chart-ticker {
-  font-size: var(--font-size-xl);
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
-.price-chart-price {
-  font-size: var(--font-size-xl);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change {
-  font-size: var(--font-size-md);
-  font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change.up   { color: var(--positive-color, #389e0d); }
-.price-chart-change.down { color: var(--negative-color, #ff0000); }
-
 /* ─── Range bar ──────────────────────────────────────────────────────────── */
 
-.price-chart-range-bar,
 .rc-chart-range-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-xs);
+  gap: var(--rc-space-xs);
   align-items: center;
 }
 
-.range-btn,
 .rc-range-btn {
   background: none;
+  /* the chart font, not the UA button font (C-14); the shorthand resets the
+     size, so it comes first */
+  font: inherit;
   font-size: var(--rc-font-size-sm);
-  font-family: var(--rc-font-family);
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
-  padding: var(--space-sm) var(--space-md);
+  /* the shorthand also takes the page's line-height; keep the button's own */
+  line-height: 1.15;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: var(--rc-space-xs);
+  padding: var(--rc-space-sm) var(--rc-space-md);
   cursor: pointer;
   transition: background-color 0.1s, border-color 0.1s;
-  color: var(--text-color-light);
+  color: var(--text-color-light, #666);
 }
 
-.range-btn:hover,
 .rc-range-btn:hover {
-  color: var(--primary-text-color);
-  border-color: var(--primary-color);
+  color: var(--primary-text-color, #000);
+  border-color: var(--primary-color, #000);
+  /* the button's own background, not a host button:hover one (C-24) */
+  background-color: transparent;
 }
 
-.range-btn.active,
 .rc-range-btn.active {
-  color: var(--primary-text-color);
-  background-color: var(--white);
-  border-color: var(--primary-color);
+  color: var(--primary-text-color, #000);
+  background-color: var(--white, #fff);
+  border-color: var(--primary-color, #000);
 }
 
 /* Lin/Log switch — a range button split on the diagonal: the upper-left half
    filled in --rc-scale-btn-fill, so it reads as a switch rather than one more
-   timeframe. The fill flips to the lower-right half on the log scale. */
-.rc-scale-btn {
-  background: linear-gradient(135deg, var(--rc-scale-btn-fill) 50%, transparent 50%);
+   timeframe. The fill flips to the lower-right half on the log scale. Two
+   classes, so a host button:hover background cannot wipe the fill (C-24). */
+.rc-range-btn.rc-scale-btn {
+  background-image: linear-gradient(135deg, var(--rc-scale-btn-fill) 50%, transparent 50%);
   /* narrower than a timeframe button, so it fits the 60px above the Y labels */
-  padding-left: var(--space-sm);
-  padding-right: var(--space-sm);
+  padding-left: var(--rc-space-sm);
+  padding-right: var(--rc-space-sm);
 }
 
-.rc-scale-btn[data-scale="log"] {
-  background: linear-gradient(135deg, transparent 50%, var(--rc-scale-btn-fill) 50%);
+.rc-range-btn.rc-scale-btn[data-scale="log"] {
+  background-image: linear-gradient(135deg, transparent 50%, var(--rc-scale-btn-fill) 50%);
 }
 
-/* ─── Stats row ──────────────────────────────────────────────────────────── */
-
-.price-chart-stats {
-  width: calc(100% - 56px);
-  margin-left: -8px;
+/* One width for both states: the other label sits under this one, unseen and
+   0px tall, so the button is as wide as the wider label ("Log" > "Lin"). */
+.rc-range-btn.rc-scale-btn {
+  text-align: center;
 }
 
-.price-chart-stat {
-  padding: var(--space-xs) var(--space-md);
-  font-size: var(--rc-font-size-sm);
-}
-
-.price-chart-stat-label {
-  color: var(--muted-color, #666);
-}
-
-.price-chart-stat-value {
-  font-variant-numeric: tabular-nums;
+.rc-range-btn.rc-scale-btn::after {
+  content: attr(data-alt);
+  display: block;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 /* ─── Reduced motion ─────────────────────────────────────────────────────────
@@ -832,11 +870,20 @@
 .rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
 .rc-flow-node-label { font-size: 12px; }
 .rc-flow-node-sub,
-.rc-flow-link-label { font-size: 11px; font-family: var(--font-mono, ui-monospace, monospace); }
+.rc-flow-link-label { font-size: 11px; }
 .rc-flow-hull-label { font-size: 11px; }
 /* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
 .rc-flow-node:focus { outline: none; }
 .rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+/* A tie focused from the keyboard (K-20): its hit stroke shows, faint */
+.rc-flow-link-hit:focus { outline: none; }
+.rc-flow-link-hit:focus-visible { stroke: currentColor; stroke-opacity: 0.25; }
+.rc-flow-fold-switch:hover circle { stroke-width: 2.2; }
+
+/* ─── MapFlow ────────────────────────────────────────────────────────────── */
+.rc-mapflow-label { font-size: 12px; }
+.rc-mapflow-link-hit:focus { outline: none; }
+.rc-mapflow-link-hit:focus-visible { stroke: currentColor; stroke-opacity: 0.25; }
 
 /* Footer row with tools (Graph zoom): source on the left, controls pinned
    right, a note (if any) on its own line below. */
@@ -844,7 +891,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  column-gap: var(--space-sm, 8px);
+  column-gap: var(--rc-space-sm);
 }
 .rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }
 .rc-graph-tools {
@@ -856,7 +903,8 @@
   justify-self: end;
 }
 .rc-graph-zoom-controls { display: flex; gap: 4px; }
-.rc-graph-tools button { display: inline-block; margin: 0; width: auto; }
+/* font: the chart font, not the UA button font (C-14); Graph sets the size inline */
+.rc-graph-tools button { display: inline-block; margin: 0; width: auto; font: inherit; }
 .rc-graph-tools button[hidden] { display: none; }
 .rc-graph-tools .rc-graph-note,
 .rc-graph-tools .rc-graph-hidden-note {
@@ -893,8 +941,7 @@
   align-items: center;
   gap: 6px 16px;
   padding: 8px 0 2px;
-  font-family: var(--rc-font-family);
-  font-size: var(--rc-font-size-sm, 12px);
+  font-size: var(--rc-font-size-sm);
 }
 .rc-chart-controls label {
   display: inline-flex;
@@ -913,7 +960,6 @@
   box-sizing: border-box;
   overflow: auto;
   padding: 10px 14px;
-  font-family: var(--rc-font-family);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -948,5 +994,7 @@
 .rc-graph-details dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .rc-graph-details ul { margin: 0; padding-left: 1.1em; }
 .rc-graph-details li { margin: 0 0 2px; }
+/* A node's ties: the → / ← arrow is the marker, not a bullet as well (C-37) */
+.rc-graph-details .rc-graph-details-ties { list-style: none; padding-left: 0; }
 .rc-graph-details a { color: inherit; text-decoration: underline; }
 

@@ -21,3 +21,103 @@
     padding: 0;
     cursor: pointer;
 }
+
+/* RareCharts docs demos — moved out of the library CSS (X-05), which the
+   bundle injects into every consumer's page. The markup lives in the docs
+   pages and the example scripts, outside any chart, so these rules use the
+   site tokens; the class names stay, the synced examples emit them.
+   /charts/line/visual-options/ — option controls (line-chart-lines-options.js) */
+.rc-demo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+}
+
+.rc-demo-group {
+    width: 48%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-sm);
+    padding: var(--space-sm);
+}
+
+.rc-demo-group-label {
+    padding-left: var(--space-sm);
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.rc-demo-select {
+    border: 1px solid var(--primary-color);
+    border-radius: 3px;
+    padding: 2px 4px;
+    color: inherit;
+}
+
+@media (max-width: 768px) {
+    .rc-demo-group {
+        width: 100%;
+    }
+}
+
+/* /charts/line/time-series/ — price header and stats row around the chart */
+.price-chart-header {
+    width: calc(100% - 60px);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+}
+
+.price-chart-ticker {
+    font-size: var(--font-size-xl);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.price-chart-price {
+    font-size: var(--font-size-xl);
+    font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change {
+    font-size: var(--font-size-md);
+    font-variant-numeric: tabular-nums;
+}
+
+.price-chart-change.up   { color: var(--green); }
+.price-chart-change.down { color: var(--red); }
+
+.price-chart-stats {
+    width: calc(100% - 56px);
+    margin-left: -8px;
+}
+
+.price-chart-stat {
+    padding: var(--space-xs) var(--space-md);
+}
+
+.price-chart-stat-label {
+    color: var(--text-color-light);
+}
+
+.price-chart-stat-value {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Chart demo rows on /charts/circular/ — a grid of .card-row-bordered-item
+   cells (so the 3-up row can stack on a phone) keeps the dividers that
+   .card-row-bordered draws; stacked cells are divided top to bottom. */
+.grid.bordered > .card-row-bordered-item + .card-row-bordered-item {
+    border-left: 1px solid var(--border-color);
+}
+
+@media (max-width: 768px) {
+    .grid.bordered.mobile\:grid-cols-1 > .card-row-bordered-item + .card-row-bordered-item {
+        border-left: 0;
+        border-top: 1px solid var(--border-color);
+    }
+}

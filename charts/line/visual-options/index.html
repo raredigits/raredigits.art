@@ -467,14 +467,14 @@
 <p>A chart is not just a visual object. It is an argument. The interpolation method becomes part of that argument.</p>
 <p>Choose it consciously.</p>
 <h3 id="stroke-style">Stroke Style</h3>
-<p>The <code>strokeDash</code> option controls line pattern: <code>null</code> (<code>solid</code>) | <code>dashed</code> | <code>dotted</code> | <code>dashDot</code> | <code>longDash</code></p>
+<p>The <code>strokeDash</code> option controls line pattern: <code>null</code> (<code>solid</code>) | <code>dashed</code> | <code>dotted</code> | <code>dashDot</code> | <code>longDash</code>, or a raw dash array such as <code>'4,3'</code>.</p>
 <p>This is useful when color alone is not enough to differentiate series, or when you want to emphasize one line without changing its weight.</p>
 <h3 id="area-fill">Area Fill</h3>
 <p>The area option enables fill under the line. This can be useful for highlighting magnitude rather than only direction.</p>
 <p>When enabled, the baseline can be controlled via areaBaseline:</p>
 <ul>
-<li><code>zero</code> — fill relative to zero</li>
-<li><code>min</code> — fill relative to the minimum visible value</li>
+<li><code>zero</code> — fill down to zero (the bottom of the plot when the data never reaches 0)</li>
+<li><code>min</code> — fill down to the bottom of the plot</li>
 </ul>
 <p>Opacity is controlled via <code>areaOpacity</code>.</p>
 <p>Example:</p>

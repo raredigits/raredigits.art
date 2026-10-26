@@ -16,6 +16,7 @@
     height:   560,
     depth:    3,          // the whole human-scale network, all three ★ leads visible
     nodeRadius: 13,
+    maxNodes: 24,                 // the whole network on a phone too: the ★ leads sit deepest and went first
     semanticZoom: false,          // small graph — keep the zoom literal
     linkTypes: {
       colleague: { color: '#00aaff', dash: null,  label: 'Colleague'       },

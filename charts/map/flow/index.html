@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" class="rd">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map — Flows | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/" class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/" class="">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/" class="current">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/" class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/" class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/" class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/" class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                        <div class="index-list">
+                            <span class="list-title">Settings</span>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Modules</span>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Layout Patterns</span>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Components</span>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Decorations</span>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <span class="list-title">Usage</span>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header" id="charts">
+          
+            <a href="/charts/">Charts</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/charts/line/">Line</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/bar/">Bar</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/combined/">Combined</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/circular/">Circular</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/graph/">Graph</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/map/">Map</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Flows</span>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/sankey/">Sankey</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/multi/">Multi Charts</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/installation/">Installation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/data-import/">Data Import</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/settings/">Settings</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/styles/">Styles</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/charts/backlog/">Backlog</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title" id="main-content">
+    <h1 id="map-flows">Map — Flows</h1>
+  </section>
+
+    <article>
+      <p><code>MapFlow</code> draws flows between places over a map: capital, goods, influence. Each flow is an arc from one point to another; its width is the value it carries, its color the type, an arrowhead marks where it goes. It is built on <a href="/charts/map/"><code>Map</code></a> — the same geometry, projections and theme — and takes the same <code>{ nodes, links }</code> shape as <a href="/charts/graph/"><code>Graph</code></a> and <a href="/charts/sankey/"><code>Sankey</code></a>.</p>
+<div class="card text-content-caption card-dashboard-bordered">
+  <p><strong>⚠️ Experimental.</strong> <code>MapFlow</code> is not covered by the 1.0 stability guarantee — its rendering and options may change without a major-version bump.</p>
+</div>
+<p>The smallest case: three places, three flows, two types. Hover an arc for its details; click it to pin the tooltip.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="mapflow-triangle"></div>
+</div>
+<h2 id="data">Data</h2>
+<p>Nodes are places, links are flows between them. A node is placed by its own coordinates or by a country on the map.</p>
+<pre class="text-content-caption"><code>new RareCharts.MapFlow('#chart', {
+  topoUrl: '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
+  topoObject: 'countries',
+  fitTo: 'links',                                  <span class="code-comment">// frame the flows, not the whole world</span>
+  linkTypes: {
+    goods:  { color: '#8a5a2b', label: 'goods' },
+    silver: { color: '#5b6b7d', label: 'silver', dash: '6 4' },
+  },
+}).setData({
+  nodes: [
+    { id: 'LDN', label: 'London', coords: [-0.13, 51.51] },   <span class="code-comment">// [longitude, latitude]</span>
+    { id: 'CN',  label: 'China',  country: '156' },           <span class="code-comment">// the country's centroid</span>
+  ],
+  links: [
+    { from: 'CN', to: 'LDN', type: 'silver', value: 2, label: 'silver and tea', start: 1800, end: 1860 },
+  ],
+});</code></pre>
+<ul>
+<li><strong><code>coords</code></strong> — <code>[longitude, latitude]</code>, exact.</li>
+<li><strong><code>country</code></strong> — a feature id of the map (with world-atlas, the ISO 3166-1 numeric code). The node sits at the centroid of the country's largest polygon, so overseas territories don't pull it into the ocean.</li>
+<li><strong><code>color</code></strong> — the dot's color (default: the theme's text color).</li>
+<li><strong>Flows</strong> — <code>source</code> / <code>target</code> (or <code>from</code> / <code>to</code>; a <code>flows</code> array is accepted for <code>links</code>), plus <code>type</code>, <code>value</code>, <code>label</code>, <code>start</code> / <code>end</code> and any fields of your own. A flow to an unknown node is dropped with a console warning.</li>
+</ul>
+<h3 id="drawing">Drawing</h3>
+<ul>
+<li>Each arc follows the <strong>great circle</strong> between its ends and bows slightly to one side, so the flows A → B and B → A never sit on top of each other. Several flows in one direction fan out. An arc too short to show a line between two close places is drawn as its arrowhead alone, pointing at the target.</li>
+<li>The arc is cut where the projection cuts the map. A flow that crosses the edge of a flat map — Tokyo → San Francisco across the Pacific — leaves at one side and comes back at the other, each part bowed on its own. On <code>'orthographic'</code> only the near side of the globe is drawn: a place behind it has no dot, a flow toward it runs to the horizon without an arrowhead, and a flow between two hidden places is not drawn (nor in the Tab order).</li>
+<li><strong>Width</strong> is <code>value</code> through a square-root scale (<code>linkWidth</code>); a flow without a value is drawn at the minimum width.</li>
+<li><strong>Color and dash</strong> come from the flow's <code>type</code> through <code>linkTypes</code>. The legend lists the types in use; click one to hide or show its flows. A flow's tooltip lists its <code>sources</code> (<code>[{ url, title }]</code> or URLs) as links once pinned; only http(s), site-relative and <code>#</code> links are made clickable.</li>
+<li><strong>Labels</strong> of places give way to each other: a place with more flow keeps its label first, a label that would overlap is left to the tooltip.</li>
+</ul>
+<h2 id="time">Time</h2>
+<p>Flows carry <code>start</code> and <code>end</code> — years, <code>YYYY-MM</code> or ISO dates; a missing bound is open. Turn on <code>timeframes</code>, <code>navigator</code> or both and the map gets a time scale, as <a href="/charts/line/time-series/">TimeSeries</a> has: <code>timeframes</code> puts period buttons in the header, <code>navigator</code> a strip under the map with a time axis that shows how many flows run over time — brush it to pick any period. Flows outside the period are hidden (<code>timeWindowMode: 'dim'</code> fades them instead), and a place whose flows are all outside fades with them.</p>
+<div class="text-content-caption card-dashboard-bordered">
+    <div id="mapflow-eurodollar"></div>
+</div>
+<br>
+<pre class="text-content-caption"><code>const chart = new RareCharts.MapFlow('#chart', {
+  timeframes: [
+    { key: '1957', label: '1957', range: ['1957-01-01', '1957-12-31'] },   <span class="code-comment">// an era</span>
+    { key: '1968', label: '1968', range: ['1968-01-01', '1968-12-31'] },
+    'ALL',
+  ],
+  defaultView: ['1957-01-01', '1957-12-31'],   <span class="code-comment">// the period shown first</span>
+  navigator: true,
+});
+
+chart.setTimeframe('1968');
+chart.setTimeWindow(null, '1970');   <span class="code-comment">// everything up to the end of 1970; the buttons and the brush follow</span>
+chart.onViewChange(([from, to]) => { /* … */ });</code></pre>
+<p>Without the time scale, <code>setTimeWindow(from, to)</code> filters the flows on its own, and your page can drive it from any control.</p>
+<h2 id="options">Options</h2>
+<p>Every geometry option of <a href="/charts/map/"><code>Map</code></a> works the same here (<code>topoUrl</code>, <code>topoData</code>, <code>geoUrl</code>, <code>geoData</code>, <code>topoObject</code>, <code>projection</code>, <code>rotate</code>, <code>fitPadding</code>, <code>featureFilter</code>, <code>clipExtent</code>, <code>defaultFill</code>, <code>borderColor</code>, <code>graticule</code>, <code>zoom</code>…); common options (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are on the <a href="/charts/settings/">Settings page</a>.</p>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td><code>height</code></td><td>number</td><td><code>420</code></td><td>Card height in px — title, period buttons, navigator and footer included, the map gets the rest; the type legend adds its own row</td></tr>
+        <tr><td><code>nodes</code> / <code>links</code></td><td>array</td><td>—</td><td>Data at construction; or call <code>setData({ nodes, links })</code></td></tr>
+        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, dash?, label } }</code>; a flow without a type is drawn in the muted color; a type not described here takes a palette color</td></tr>
+        <tr><td><code>hiddenLinkTypes</code></td><td>array</td><td><code>[]</code></td><td>Types hidden at start; the legend shows them dimmed and turns them on</td></tr>
+        <tr><td><code>linkLegend</code></td><td>boolean</td><td><code>true</code></td><td>The type legend (shown with two or more types, or when <code>linkTypes</code> is set)</td></tr>
+        <tr><td><code>linkWidth</code></td><td>object</td><td><code>{ by: 'value', scale: 'sqrt', min: 1, max: 6 }</code></td><td>Arc width from a value field; <code>scale: 'linear'</code> also available. The arrowhead grows with the arc, more slowly</td></tr>
+        <tr><td><code>bend</code></td><td>number</td><td><code>0.18</code></td><td>How far an arc bows to its side: <code>bend</code> × 0.6 of the arc's length, at most <code>bend</code> × 90 px; parallel flows fan out from there</td></tr>
+        <tr><td><code>timeframes</code></td><td>array | true</td><td>—</td><td>Period buttons in the header: <code>'1Y'</code>, <code>'ALL'</code>… or <code>{ key, label, range: [from, to] }</code></td></tr>
+        <tr><td><code>navigator</code></td><td>boolean | object</td><td>—</td><td>A brushable strip with a time axis under the map</td></tr>
+        <tr><td><code>defaultView</code></td><td>array</td><td>—</td><td><code>[from, to]</code> shown first with the time scale on</td></tr>
+        <tr><td><code>defaultTimeframe</code></td><td>string</td><td>—</td><td>Key of the timeframe shown first (instead of <code>defaultView</code>)</td></tr>
+        <tr><td><code>timeWindow</code></td><td>array</td><td><code>null</code></td><td><code>[from, to]</code> at start without the time scale; then <code>setTimeWindow()</code></td></tr>
+        <tr><td><code>timeWindowMode</code></td><td>string</td><td><code>'hide'</code></td><td>What happens to flows outside the window: <code>'hide'</code> or <code>'dim'</code></td></tr>
+        <tr><td><code>fitTo</code></td><td>string</td><td><code>'features'</code></td><td><code>'links'</code> fits the projection to the places and the arcs between them instead of the whole map — a great circle that runs far from its ends and the bow of each arc stay inside the frame; the frame covers every flow, so the time window and the legend do not move it An arc that crosses the projection's cut (the antimeridian, Mercator's polar edge) is framed by its pieces; an end that lies on the cut may sit at the frame's edge.</td></tr>
+        <tr><td><code>nodeRadius</code></td><td>number</td><td><code>4</code></td><td>Dot radius in px</td></tr>
+        <tr><td><code>nodeLabels</code></td><td>boolean</td><td><code>true</code></td><td>Place labels</td></tr>
+        <tr><td><code>tooltipFormat</code></td><td>function</td><td>—</td><td><code>({ node, links }) =&gt; html</code> for a place</td></tr>
+        <tr><td><code>regionTooltipFormat</code></td><td>function</td><td>—</td><td><code>({ feature, item }) =&gt; html</code> for a country under the flows (Map’s <code>tooltipFormat</code>); <code>item</code> is always <code>null</code> — MapFlow takes no region data</td></tr>
+        <tr><td><code>linkTooltipFormat</code></td><td>function</td><td>—</td><td><code>({ link, source, target }) =&gt; html</code> for a flow</td></tr>
+    </tbody>
+</table>
+</div>
+<h2 id="methods">Methods</h2>
+<pre class="text-content-caption"><code>chart.setData({ nodes, links });
+chart.setTimeWindow(from, to);
+chart.setTimeframe(key);                <span class="code-comment">// with timeframes; setView([from, to]), getView(), onViewChange(fn)</span>
+chart.setLinkTypesVisible(['goods']);   <span class="code-comment">// what the legend does; null shows all</span>
+chart.whenReady().then(() => { /* the map and the flows are drawn */ });   <span class="code-comment">// as on Map</span></code></pre>
+<h2 id="interaction">Interaction</h2>
+<p><strong>Hover</strong> a place or an arc for its tooltip. <strong>Click</strong> an arc to pin its tooltip — links inside it stay clickable; click elsewhere or press Escape to close it. Arcs are in the Tab order: Enter pins the tooltip of the focused one.</p>
+<p><strong>Legend</strong> — click a type to hide or show its flows; its buttons are in the Tab order, and Enter or Space keeps focus on the one pressed.</p>
+<p><strong>Zoom</strong> — with <code>zoom: true</code>, as on <a href="/charts/map/"><code>Map</code></a>. Arcs keep their width; dots, labels and arrowheads keep their size and move with the map, and the labels are placed again, so places that crowd each other at first get theirs as you zoom in.</p>
+<h2 id="not-in-this-version">Not in this version</h2>
+<p>Moving particles along the arcs, clustering places on zoom, choropleth values under the flows, and hand-bent curves.</p>
+<script src="/assets/charts/rare-charts.js"></script>
+<script src="/assets/charts/examples/map/mapflow-demo.js"></script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3 id="">🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>

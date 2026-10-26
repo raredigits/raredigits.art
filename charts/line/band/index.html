@@ -440,7 +440,7 @@
   </section>
 
     <article>
-      <p><spn class="meta-info">/examples/line/line-chart-band.js</spn></p>
+      <p><span class="meta-info">/assets/charts/examples/line/line-chart-band.js</span></p>
 <p>A band is a filled ribbon between a lower and an upper value at each point on the X axis. Where an ordinary line answers “what is the number”, a band answers “how sure are we about it”. That makes it the natural shape for confidence intervals, forecast cones, min/max envelopes, and error ranges — anywhere a single line would overstate precision.</p>
 <p>In RareCharts a band is just another series in a <code>Line</code> chart. You mark a series with <code>type: 'band'</code> and give each point a <code>lower</code> and an <code>upper</code> instead of a <code>value</code>. The band renders behind the lines, so a central estimate drawn as a normal line sits cleanly on top of its own range.</p>
 <div class="text-content-caption card-dashboard-bordered">
@@ -448,7 +448,9 @@
 </div>
 <h3 id="data-format">Data format</h3>
 <p>A band series carries <code>{ date, lower, upper }</code> points. It mixes freely with ordinary line series in the same <code>setData</code> call — order matters only for layering, and bands are always drawn behind lines regardless.</p>
-<pre class="text-content-caption"><code>chart.setData([
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
+
+chart.setData([
     {
         name: 'Confidence range',
         type: 'band',
@@ -471,17 +473,17 @@
     },
 ]);</code>
 </pre>
-<p>A series is treated as a band when it has <code>type: 'band'</code>, or when its first point contains both <code>lower</code> and <code>upper</code>. Dates are parsed via <code>parseDate (…)</code>, so strings, timestamps, and Date objects are all accepted.</p>
+<p>A series is treated as a band when it has <code>type: 'band'</code>, or when its first point contains both <code>lower</code> and <code>upper</code>. Dates are parsed via <code>parseDate(…)</code>, so strings, timestamps, and Date objects are all accepted.</p>
 <h3 id="how-bands-behave">How bands behave</h3>
 <p>A band sits behind the lines but stays part of the readout:</p>
 <ul>
 <li>drawn behind every line and area, above the grid</li>
-<li><strong>reported on hover as a range</strong> — the crosshair tooltip shows <code>lower – upper</code> at the cursor date (e.g. <code>P10–P90: $1.95M – $3.65M</code>), so you can read the interval without estimating it by eye</li>
+<li><strong>reported on hover as a range</strong> — the crosshair tooltip shows <code>lower – upper</code> at the cursor date (e.g. <code>P10–P90 range: $1.9M – $3.6M</code> at Jan 2025 in the forecast below — both ends go through <code>yTickFormat</code>, or by default the three-significant-digit format of the end labels), so you can read the interval without estimating it by eye</li>
 <li>no crosshair dot — a band has two edges and no single point, so a dot would be ambiguous; markers and end labels skip it for the same reason</li>
 <li>a series is only reported where its data actually exists, so a forecast band stays silent over the historical region instead of snapping to its first point</li>
 <li>both <code>lower</code> and <code>upper</code> participate in the Y scale, so the axis always grows to contain the full range</li>
 </ul>
-<p>The fill uses the series <code>color</code> at <code>fillOpacity</code> (default <code>0.16</code>). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.</p>
+<p>The fill uses the series <code>color</code> at <code>fillOpacity</code> (default: the chart’s <code>areaOpacity</code>, <code>0.12</code>). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.</p>
 <h3 id="forecasts">Forecasts</h3>
 <p>The most common use is a forecast: actuals up to today, a central path beyond it, and a widening range that makes the growing uncertainty visible instead of pretending the future is a single number.</p>
 <div class="text-content-caption card-dashboard-bordered">
@@ -524,7 +526,7 @@ new RareCharts.Line('#chart', {
 </pre>
 <p>Stacking several bands — for example P10–P90 around an inner P25–P75 — is just two band series with different opacities. Draw the wider, lighter range first so the tighter one reads on top.</p>
 <h2 id="band-series-options">Band series options</h2>
-<p>A band is configured entirely through fields on its series object. It shares the common chart options (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) documented on the <a href="/charts/settings/">Settings</a> page, and lives inside a standard <a href="/charts/line/">Line</a> chart, so all of that chart’s axis and layout options apply too.</p>
+<p>A band is configured entirely through fields on its series object. It shares the common chart options (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) documented on the <a href="/charts/settings/">Settings</a> page, and lives inside a standard <a href="/charts/line/">Line</a> chart, so all of that chart’s axis and layout options apply too.</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
     <thead>
@@ -560,8 +562,8 @@ new RareCharts.Line('#chart', {
         <tr>
             <td><code>fillOpacity</code></td>
             <td>number</td>
-            <td><code>0.16</code></td>
-            <td>Opacity of the fill. Falls back to <code>areaOpacity</code> if set, then to the chart default.</td>
+            <td><code>0.12</code></td>
+            <td>Opacity of the fill. Falls back to the series’ <code>areaOpacity</code>, then the chart’s <code>areaOpacity</code> (<code>0.12</code>).</td>
         </tr>
         <tr>
             <td><code>curve</code></td>

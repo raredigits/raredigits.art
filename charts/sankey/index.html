@@ -437,11 +437,11 @@
 <h3 id="recommended-size">Recommended size</h3>
 <p>Up to <strong>4–5 columns and about 30 nodes</strong>. Past that, bands get too thin to read and labels collide — aggregate small flows into an &quot;Other&quot; node on the data side. There is no hard limit in code.</p>
 <h2 id="money-trail">Money trail</h2>
-<p>Color bands by <code>type</code> and the legend lists the types. Hover a band to highlight it with its two nodes; <strong>click it to pin the tooltip</strong>, so a long label or links inside it can be read. A click elsewhere or Escape releases it.</p>
+<p>Color bands by <code>type</code> with <code>linkColor: 'type'</code> and a <code>linkTypes</code> map, and the legend lists the described types (a type not in <code>linkTypes</code> stays muted). Hover a band to highlight it with its two nodes; <strong>click it to pin the tooltip</strong>, so a long label — or links you add with <code>linkTooltipFormat</code> — can be read. A click elsewhere or Escape releases it.</p>
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-trail"></div>
 </div>
-<p>The setup: <code>linkColor: 'type'</code> and a <code>linkTypes</code> map; anything else on a link — here a <code>label</code> — shows up in its tooltip.</p>
+<p>The setup: <code>linkColor: 'type'</code> and a <code>linkTypes</code> map; a link's <code>label</code> shows up in its tooltip — other fields reach your <code>linkTooltipFormat</code>.</p>
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', {
   linkColor: 'type',
   linkTypes: {
@@ -483,9 +483,9 @@
         <tr><td><code>iterations</code></td><td>number</td><td><code>6</code></td><td>Layout relaxation rounds — more straightens bands at the cost of time</td></tr>
         <tr><td><code>linkColor</code></td><td>string</td><td><code>'source'</code></td><td><code>'source'</code>, <code>'target'</code>, <code>'type'</code>, <code>'gradient'</code>, or any CSS color</td></tr>
         <tr><td><code>linkOpacity</code></td><td>number</td><td><code>0.45</code></td><td>Band opacity at rest</td></tr>
-        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors and legend for <code>linkColor: 'type'</code></td></tr>
+        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors for <code>linkColor: 'type'</code>, and then a legend of every type described here (your own <code>legend</code> replaces it); a type not described stays muted</td></tr>
         <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels, right of each node (the last column gets a gutter sized to its longest label); long ones are cut with an ellipsis to the room before the next column, the full name stays in the tooltip. <code>false</code> leaves them to the tooltip</td></tr>
-        <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip</td></tr>
+        <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip; in the vertical layout a node narrower than 24 px (or this, if larger) gets no label</td></tr>
         <tr><td><code>showValues</code></td><td>boolean</td><td><code>true</code></td><td>Append the node value to its label</td></tr>
         <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for labels, tooltips and the table</td></tr>
         <tr><td><code>tooltipFormat</code></td><td>function</td><td>built-in</td><td><code>({ node, incoming, outgoing }) =&gt; html</code></td></tr>
@@ -497,7 +497,7 @@
 </div>
 <p>Text slots <code>title</code>, <code>subtitle</code>, <code>source</code> and <code>note</code>, and the <code>controls</code> slot for your own inputs, work as on every chart — see <a href="/charts/settings/">Settings</a>.</p>
 <h2 id="accessibility">Accessibility</h2>
-<p>The SVG is labelled from <code>title</code> / <code>subtitle</code>. Every node and band carries an accessible name (&quot;Income tax → Health: 9.4&quot;); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.</p>
+<p>The SVG is labelled by <code>ariaLabel</code>, else from <code>title</code> / <code>subtitle</code>. Every node and band carries an accessible name (&quot;Income tax → Health: 9.4&quot;); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/sankey/sankey-demos.js"></script>
 

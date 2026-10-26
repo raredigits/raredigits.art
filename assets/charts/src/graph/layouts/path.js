@@ -12,15 +12,35 @@
 // Returns { positions: Map<id, {x, y, row?, hop?, context?}>,
 //           rows: [{ y, x, hops, shortest, direct }] } — x/y anchor the row's
 //           caption on the route.
+//
+// A route listed twice is drawn once. A route of one node (connect(a, a))
+// is that node, centred, with no caption (R-18).
+//
+// labelHalf(id) — half the width of a node's label in px (default 0): a node
+// at either end of the drawing moves in so that its label stays inside it,
+// `edge` px from the border (C-36).
 
 export function pathLayout({ paths = [], context = null } = {}, {
   width: W = 800,
   height: H = 520,
   padX = null,
+  labelHalf = null,
+  edge = 4,
 } = {}) {
   const positions = new Map();
   const rows = [];
+  const seenRoutes = new Set();
+  paths = paths.filter(p => {
+    const key = JSON.stringify(p);
+    if (!p?.length || seenRoutes.has(key)) return false;
+    seenRoutes.add(key);
+    return true;
+  });
   if (!paths.length) return { positions, rows };
+  if (paths.length === 1 && paths[0].length === 1) {
+    positions.set(paths[0][0], { x: W / 2, y: H / 2, row: 0, hop: 0 });
+    return { positions, rows };
+  }
 
   const pad = padX ?? (context ? 150 : 70);
   const usableW = Math.max(1, W - pad * 2);
@@ -76,6 +96,15 @@ export function pathLayout({ paths = [], context = null } = {}, {
     const b = paths[0][paths[0].length - 1];
     fan(context[a], positions.get(a), 'left');
     fan(context[b], positions.get(b), 'right');
+  }
+
+  // Labels hang centred under their nodes: the outermost context nodes and
+  // long endpoint names ran past the drawing's edge (C-36).
+  if (typeof labelHalf === 'function') {
+    positions.forEach((p, id) => {
+      const half = Math.max(0, labelHalf(id) || 0) + edge;
+      p.x = W > 2 * half ? Math.min(W - half, Math.max(half, p.x)) : W / 2;
+    });
   }
 
   return { positions, rows };

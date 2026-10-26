@@ -406,7 +406,7 @@
   </section>
 
     <article>
-      <p>Every chart type accepts data via <code>setData ()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
+      <p>Every chart type accepts data via <code>setData()</code>. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.</p>
 <h2 id="direct-data">Direct data</h2>
 <p>The simplest case: your data is already in the right shape and lives in your script. Just pass it straight in.</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', { height: 280 })
@@ -418,15 +418,16 @@
 <p>Each chart type has its own data format — see the chart’s documentation page for the exact shape it expects.</p>
 <h2 id="adapters">Adapters</h2>
 <p>When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for <code>setData()</code>.</p>
-<p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> inside an async function or chain with <code>.then()</code>.</p>
+<p>All adapters (except <code>fromArray</code>) are async. Use them with <code>await</code> — in a <code>&lt;script type=&quot;module&quot;&gt;</code>, where the snippets below run as written, or inside an async function — or chain with <code>.then()</code>.</p>
 <p>The adapters are available as <code>RareCharts.fromJson</code>, <code>RareCharts.fromCsv</code>, <code>RareCharts.fromApi</code>, and <code>RareCharts.fromArray</code>.</p>
 <h2 id="field-mapping">Field mapping</h2>
 <p>Every adapter accepts a <code>mapping</code> object as its second argument. The mapping tells the adapter how to translate your source fields into the fields the chart expects.</p>
 <p>Each key in the mapping is the output field name. The value can be:</p>
 <ul>
 <li><strong>A function</strong> <code>row =&gt; value</code> — for transformations, type coercion, or computed fields</li>
-<li><strong>A string</strong> — a direct field name from the source row (simple rename, no transformation)</li>
+<li><strong>A string</strong> — a direct field name from the source row</li>
 </ul>
+<p>Whatever the mapping returns, <code>date</code> is read as a date (a <code>Date</code>, an ISO string or epoch milliseconds) and <code>value</code> as a number — with a function as with a field name, so a CSV's <code>'148.50'</code> becomes <code>148.5</code> either way.</p>
 <div class="air-md"></div>
 <pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
 // Chart expects:         { date: Date, value: number }</span>
@@ -435,10 +436,11 @@ const mapping = {
   date:  row => new Date(row.ts),     // parse string to Date
   value: row => +row.close,           // coerce string to number
 };</code></pre>
-<p>Rows where <code>date</code> is an invalid Date or <code>value</code> is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.</p>
+<p>Rows where <code>date</code> cannot be read as a date or <code>value</code> is not a finite number are filtered out automatically; an empty <code>value</code> is kept (see the <a href="#mapping-reference">mapping reference</a>). This keeps garbage data from making your chart look broken.</p>
 <h3 id="fromjson">fromJson</h3>
 <p>Fetches a JSON file and applies a mapping.</p>
-<pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
+<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
+const data = await RareCharts.fromJson('/data/prices.json', {
   date:  row => new Date(row.date),
   value: row => +row.close,
 });
@@ -496,7 +498,8 @@ chart.setData(data);</code></pre>
 }</code></pre>
 <h3 id="fromarray">fromArray</h3>
 <p>For data that’s already in memory but needs field remapping. Synchronous — no <code>await</code> needed.</p>
-<pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
+<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
+const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
 
 const data = RareCharts.fromArray(raw, {
   date:  row => new Date(row.ts),
@@ -506,7 +509,7 @@ const data = RareCharts.fromArray(raw, {
 chart.setData(data);</code></pre>
 <p>This is useful when you’re pulling data from a state store, another library, or a function that returns a plain array — and the field names don’t match what the chart expects.</p>
 <h2 id="live-updates">Live updates</h2>
-<p><code>setData ()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
+<p><code>setData()</code> can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.</p>
 <pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
 
 // Initial load
@@ -519,6 +522,7 @@ setInterval(async () => {
   chart.setData(fresh);
 }, 30_000);</code></pre>
 <h2 id="mapping-reference">Mapping reference</h2>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -530,22 +534,22 @@ setInterval(async () => {
 <tbody>
 <tr>
 <td>Function</td>
-<td>Called with each row, return value used</td>
-<td><code>row =&gt; new Date (row.ts)</code></td>
+<td>Called with each row; the return value is used (<code>date</code> read as a date, <code>value</code> as a number)</td>
+<td><code>row =&gt; new Date(row.ts)</code></td>
 </tr>
 <tr>
 <td>String</td>
-<td>Treated as a field name — <code>row[fieldName]</code></td>
+<td>Treated as a field name — <code>row[fieldName]</code>; <code>date</code> is parsed, <code>value</code> coerced to a number</td>
 <td><code>'close_price'</code></td>
 </tr>
 </tbody>
 </table>
+</div>
 <p>Invalid rows are filtered out automatically:</p>
 <ul>
-<li>Rows where <code>date</code> is present but is not a valid <code>Date</code> instance</li>
-<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, <code>null</code>)</li>
+<li>Rows where <code>date</code> is present but cannot be read as a date (a <code>Date</code>, an ISO string or epoch milliseconds)</li>
+<li>Rows where <code>value</code> is present but is not a finite number (<code>NaN</code>, <code>Infinity</code>, text such as <code>'n/a'</code>). An empty <code>value</code> (<code>''</code> — a blank CSV cell — or <code>null</code>) is not filtered: the row is kept as it is, and a line chart skips that point</li>
 </ul>
-<script src="/assets/charts/rare-charts.js"></script>
 
     </article>
   </div>

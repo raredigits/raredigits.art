@@ -407,9 +407,9 @@
 
     <article>
       <div class="meta-info">
-  /charts/rare-charts.js
+  /assets/charts/rare-charts.js
   <p>
-      v0.9.8_5_1 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_5_1/rare-charts.min.js">CDN</a> |
+      v0.9.8_6 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_6/rare-charts.min.js">CDN</a> |
       <a href="/assets/charts/rare-charts.js">Download</a> <span class="rd-icon-download"></span>
   </p>
 </div>
@@ -434,17 +434,18 @@
     <p>The library includes:</p>
     <ul>
       <li>Line and time-series charts</li>
-      <li>Bars and dual-axis combinations</li>
+      <li>Bars — stacked and hierarchical too — and dual-axis combinations</li>
       <li>Circulars: donut, pie, gauge</li>
       <li>Geographic maps</li>
-      <li>Network graphs</li>
+      <li>Grids of two to four charts in one card</li>
+      <li>Experimental: network graphs and money-trail flows, Sankey diagrams, flows on a map</li>
     </ul>
   </div>
 </div>
 <p>The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.</p>
 <p>This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.</p>
 <h2 id="standard-structure">Standard Structure</h2>
-<p>Every chart follows a consistent composition: title, subtitle, legend, chart area and data source. These elements are configurable. They can be provided, extended, overridden or omitted entirely.</p>
+<p>Every chart follows a consistent composition: title, subtitle, legend, chart area, data source and an optional note, with room for your own controls inside the card. These elements are configurable. They can be provided, extended, overridden or omitted entirely.</p>
 <p>The structure is there to support professional reporting standards. It keeps charts from turning into isolated visual fragments and instead makes them part of a coherent document.</p>
 <h3 id="data-handling">Data Handling</h3>
 <p>RareCharts works with internal datasets as well as JSON and CSV inputs. This makes it naturally compatible with APIs, backend responses and analytics pipelines. If your data is structured, it can be visualized.</p>

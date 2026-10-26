@@ -1,6 +1,8 @@
 // RareCharts — Tooltip
 // Shared tooltip used by all chart types.
-// Colors come from theme.tooltip — nothing is hardcoded.
+// Colors come from theme.tooltip, published on the element as --rc-tooltip-*;
+// size, weight and spacing are rare-charts.css (.rc-tooltip and its row
+// classes, which the default HTML builds with core/html.js).
 //
 // Two modes. show()/hide() is the hover tooltip every chart uses: it follows
 // the pointer and takes no pointer events. pin() is opt-in (relation charts
@@ -20,14 +22,22 @@ export class Tooltip {
     this.el = document.createElement('div');
     this.el.className = 'rc-tooltip';
 
-    Object.assign(this.el.style, {
-      fontFamily: theme.numericFont ?? theme.font,
-      fontSize:   '13px',
-      color:      tt.text  ?? theme.text,
-      background: tt.bg    ?? '#fff',
-      border:     `1px solid ${tt.border ?? theme.border}`,
-      boxShadow:  tt.shadow ?? 'none',
-    });
+    // The theme is published as custom properties, not inline styles, so a
+    // page rule that outranks .rc-tooltip (.rc-chart .rc-tooltip) restyles
+    // it; destroy() needs no cleanup — the element goes (B-03, C-23).
+    // null takes the chart token (text, muted, bg, border; shadow: none); an
+    // empty value leaves the property unset and the CSS fallback applies.
+    const header = tt.header ?? {};
+    const set = (name, v) => { if (v != null && v !== '') this.el.style.setProperty(name, String(v)); };
+    set('--rc-tooltip-font',        theme.numericFont ?? theme.font);
+    set('--rc-tooltip-text',        tt.text   ?? theme.text);
+    set('--rc-tooltip-muted',       tt.muted  ?? theme.muted);
+    set('--rc-tooltip-bg',          tt.bg     ?? theme.bg);
+    set('--rc-tooltip-border',      tt.border ?? theme.border);
+    set('--rc-tooltip-shadow',      tt.shadow ?? 'none');
+    set('--rc-tooltip-header-text', header.text);
+    set('--rc-tooltip-header-bg',   header.bg);
+    if (header.bg != null && header.bg !== '') this.el.classList.add('rc-tooltip--header-band');
 
     container.appendChild(this.el);
 

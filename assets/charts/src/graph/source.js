@@ -2,7 +2,8 @@
 // Data-source contract for Graph. A source answers three queries:
 //
 //   neighbors(id, { depth, types })  →  { nodes, links }        (ego view)
-//   paths(a, b, { k })               →  { paths, nodes, links } (path view)
+//   paths(a, b, { k })               →  { paths, nodes, links } (path view;
+//                                        a === b: [[a]], one node, no ties)
 //   aggregates()                     →  { communities, links }  (cluster view)
 //
 // All queries are async — a real backend implements the same contract
@@ -26,6 +27,9 @@ export function memorySource(data = {}) {
     // Good enough to answer "how are these two connected" for a demo backend.
     async paths(a, b, { k = 3 } = {}) {
       if (!model.has(a) || !model.has(b)) return { paths: [], nodes: [], links: [] };
+      // A node and itself: one route of one node, no ties (R-18). The loop
+      // below would find the same one-node route k times.
+      if (String(a) === String(b)) return { paths: [[String(a)]], nodes: [model.node(a)], links: [] };
 
       // Routes ignore direction, as the ego view does: search the undirected
       // projection, then return every stored tie along each hop.

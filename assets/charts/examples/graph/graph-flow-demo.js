@@ -2,10 +2,13 @@
 // Based on a public on-chain trace (anonymised and generalised for the docs),
 // in the RareCharts link contract: lane = network, row = vertical slot
 // (0 = the main line), col = sub-column of a wide lane, value = USD at the
-// day's close, start = month the flow begins.
+// day's close, start / end = the first and last transfer.
+// A second chart (#graph-flow-auto) draws the same trace with every position
+// hint removed — the library's automatic layout.
 (function () {
   const el = document.getElementById('graph-flow-demo');
-  if (!el || !window.RareCharts) return;
+  const autoEl = document.getElementById('graph-flow-auto');
+  if ((!el && !autoEl) || !window.RareCharts) return;
 
   const lanes = [
     { id: 'bostrom',   label: 'Bostrom',    weight: 1.3 },
@@ -41,7 +44,7 @@
     { id: 'bridge-fee', label: 'Bridge fee', sub: 'fee', group: 'fee', kind: 'contract', net: 'axelar', row: 2 },
     { id: 'eth', label: 'Owner wallet', sub: '0x2b48…3248', group: 'tracked', kind: 'wallet', net: 'ethereum', col: 0, row: 0,
       addr: '0x2b48aF8Cd710BE6B019D105CA442471b55E23248', note: 'Buys into a token crowdfunding with 0.245 ETH; two years later receives the project tokens.' },
-    { id: 'crowdfunding', label: 'Crowdfunding', sub: '− close', group: 'protocol', kind: 'contract', net: 'ethereum', col: 1, row: 0,
+    { id: 'crowdfunding', label: 'Crowdfunding', sub: 'token sale', group: 'protocol', kind: 'contract', net: 'ethereum', col: 1, row: 0,
       addr: '0x1d9619e10086fdc1065b114298384aae3f680cc0', note: 'A token sale contract: 228 payments, 107.17 ETH in three days.' },
     // crowdsale side
     { id: 'crowd', label: 'Participants', sub: '206 addresses', group: 'unknown', kind: 'crowd', net: 'ethereum', col: 1, row: -2, crowd: true,
@@ -62,12 +65,11 @@
       addr: '0x33f236f5c34e1f04d7903939209fc55655327a51', note: 'Mimics the team wallet’s address. Fake token transfers were logged from the owner to trick copy-paste; no real money went here.' },
   ];
 
-  // Months from 2023-09 (index 0) to 2026-04 (index 31), as in the mock-up.
-  const MONTHS = Array.from({ length: 32 }, (_, i) =>
-    new Date(Date.UTC(2023, 8 + i, 1)).toISOString().slice(0, 7));
-
-  const E = (from, to, asset, kind, amount, usd, count, period, t0, basis, label, extra = {}) =>
-    ({ from, to, asset, kind, amount, value: usd, count, period, start: MONTHS[t0], basis, label, ...extra });
+  // start / end come from the period: 'YYYY-MM[-DD] … YYYY-MM[-DD]' or one date.
+  const E = (from, to, asset, kind, amount, usd, count, period, _t0, basis, label, extra = {}) => {
+    const [start, end = start] = period.split(' … ');
+    return { from, to, asset, kind, amount, value: usd, count, period, start, end, basis, label, ...extra };
+  };
   const links = [
     E('validator', 'bostrom', 'BOOT', 'income', '≈ 1.1 bn BOOT a week', null, 'weekly', '2023-09 … 2024-08', 0, 'exact', 'commission'),
     E('bostrom', 'batch-dex', 'BOOT', 'swap', 'staking rewards', null, '187 swaps', '2023-09 … 2024-08', 0, 'exact', 'swap'),
@@ -119,17 +121,38 @@
   };
   const OWNER_HULL = [{ id: 'owner', label: 'one key on five networks', members: n => n.cluster, color: '#2c5d8f' }];
 
-  const state = { crowd: true };   // the crowdfunding side starts open
+  // The crowdfunding side folds into one node: the − switch on Crowdfunding
+  // closes it, the + on the folded node opens it again.
+  const FOLDS = [{
+    id: 'sale', label: 'Crowdfunding', anchor: 'crowdfunding',
+    members: n => n.crowd || n.id === 'crowdfunding',
+    sub: '{n} addresses & contracts',
+  }];
+  // Time navigation: the three chapters of the trace, and everything.
+  const TIMEFRAMES = [
+    { key: 'income', label: 'Income & swaps', range: ['2023-09-01', '2024-01-20'] },
+    { key: 'sale',   label: 'The sale',       range: ['2024-01-28', '2024-02-08'] },
+    { key: 'tokens', label: 'Tokens',         range: ['2026-04-01', '2026-04-30'] },
+    { key: 'ALL',    label: 'All' },
+  ];
+
   const panel = document.getElementById('graph-flow-demo-panel');
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+  const nameOf = id => esc(byId[id]?.label ?? 'Crowdfunding (folded)');
+  let graph = null;
 
   function renderPanel({ node, link } = {}) {
     if (!panel) return;
     const row = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
-    if (node) {
-      // only ties the current switches show
-      const shown = l => state.crowd || !l.crowd;
+    if (node?.fold) {
+      panel.innerHTML = `<p class="rc-graph-details-kind">folded · ${esc(node.sub)}</p>
+        <h4>${esc(node.label)}</h4>
+        <dl>${row('Inside', node.members.map(m => esc(m.label)).join('<br>'))}</dl>
+        <p>Press + on the node (or the + key) to open it.</p>`;
+    } else if (node) {
+      // only ties the open folds show
+      const shown = l => !l.crowd || !graph?.isCollapsed('sale');
       const ins = links.filter(l => l.to === node.id && shown(l)).map(l => `${esc(byId[l.from].label)} — ${esc(l.amount)}`);
       const outs = links.filter(l => l.from === node.id && shown(l)).map(l => `${esc(byId[l.to].label)} — ${esc(l.amount)}`);
       panel.innerHTML = `<p class="rc-graph-details-kind">${esc(GROUPS[node.group]?.label ?? node.group)} · ${esc(node.net)}</p>
@@ -138,7 +161,7 @@
         ${node.note ? `<p>${esc(node.note)}</p>` : ''}`;
     } else if (link) {
       panel.innerHTML = `<p class="rc-graph-details-kind">${esc(link.kind)} · ${esc(link.asset)}</p>
-        <h4>${esc(byId[link.source].label)} → ${esc(byId[link.target].label)}</h4>
+        <h4>${nameOf(link.source)} → ${nameOf(link.target)}</h4>
         <dl>${row('Amount', esc(link.amount))}${row('In USD', link.value == null ? 'not valued' : '≈ ' + link.value.toLocaleString('en-US'))}${row('Transfers', esc(link.count))}${row('Period', esc(link.period))}${row('Basis', link.basis === 'derived' ? 'derived (block events)' : 'chain transactions')}</dl>`;
     } else {
       panel.innerHTML = `<p class="rc-graph-details-kind">Hint</p><h4>Nothing selected</h4>
@@ -146,18 +169,9 @@
     }
   }
 
-  function onSelect(sel) {
-    renderPanel(sel);
-    if (sel?.node?.id === 'crowdfunding') setCrowd(!state.crowd);
-  }
-
-  const graph = new RareCharts.Graph('#graph-flow-demo', {
+  const common = {
     view: 'flow',
-    height: 780,
     minWidth: 780,
-    title: 'Following funds across networks',
-    subtitle: 'From validator income through five networks into a token crowdfunding — and where the sale money went',
-    source: 'Demo data based on a public on-chain trace',
     lanes,
     laneBy: 'net',
     nodeGroups: GROUPS,
@@ -166,27 +180,41 @@
     linkTypes: ASSETS,
     linkWidth: { by: 'value', scale: 'sqrt', min: 1.6, max: 22 },
     linkDash: l => l.basis === 'derived' || l.kind === 'noise',
-    hulls: OWNER_HULL,
-    onSelect: onSelect,
-    // The decoy's fake transfers start hidden; the legend's "address
-    // poisoning" item reveals them (with the crowdfunding side open).
     hiddenLinkTypes: ['noise'],
+    folds: FOLDS,
+  };
+
+  if (autoEl) {
+    // Same trace, no row / col anywhere: lanes stay (they are data — the
+    // network), the layout inside them is automatic.
+    // Lane weights go too: an undeclared lane is as wide as its columns.
+    const bare = nodes.map(({ row, col, ...n }) => n);
+    new RareCharts.Graph('#graph-flow-auto', {
+      ...common,
+      lanes: lanes.map(({ weight, ...l }) => l),
+      height: 720,
+      title: 'The same trace, laid out automatically',
+      subtitle: 'No row or column in the data: ranks follow the ties, the heaviest route runs along the middle',
+      source: 'Demo data based on a public on-chain trace',
+    }).setData({ nodes: bare, links });
+  }
+
+  if (!el) return;
+
+  graph = new RareCharts.Graph('#graph-flow-demo', {
+    ...common,
+    height: 880,
+    title: 'Following funds across networks',
+    subtitle: 'From validator income through five networks into a token crowdfunding — and where the sale money went',
+    source: 'Demo data based on a public on-chain trace',
+    hulls: OWNER_HULL,
+    onSelect: renderPanel,
+    // The decoy's fake transfers start hidden (common.hiddenLinkTypes); the
+    // legend's "address poisoning" item reveals them.
+    timeframes: TIMEFRAMES,
+    navigator: true,
     details: '#graph-flow-demo-panel',        // the page's details panel: beside the drawing when wide
   }).setData({ nodes, links });
-
-  const applyFilter = () => graph.setFilter(item => state.crowd || !item.crowd);
-  applyFilter();
   renderPanel();
-
-  // The crowdfunding node opens and closes its side of the trace on click —
-  // a page-level stand-in until collapsible groups land in the library
-  // (0.9.8_4). Its caption says which way the next click goes.
-  function setCrowd(open) {
-    state.crowd = open;
-    const hub = nodes.find(n => n.id === 'crowdfunding');
-    hub.sub = open ? '− close' : '+ open';
-    graph.setData({ nodes, links });   // same layout; filter and selection kept
-    applyFilter();
-  }
 
 })();

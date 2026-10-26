@@ -1,6 +1,6 @@
 /**
  * RareCharts — Circular Charts examples
- * Covers: Donut, Pie (alias with innerRadius:0), Gauge
+ * Covers: Donut, Pie (innerRadius 0 by default), Gauge
  */
 
 (function () {
@@ -46,10 +46,9 @@
   // ── Pie ───────────────────────────────────────────────────────────────────
   new Pie('#chart-pie', {
     title:       'Revenue by Product',
-    subtitle:    'Same data as Pie (innerRadius: 0)',
+    subtitle:    'Same data as a pie: no hole',
     source:      'Source: Internal Accounting',
     height:      420,
-    innerRadius: 0,
     showLabels:  true,
     valueFormat: v => '$' + d3.format(',.0f')(v) + 'K',
   }).setData(segments);

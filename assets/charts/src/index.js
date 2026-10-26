@@ -1,12 +1,21 @@
 // RareCharts — Entry Point
-// esbuild compiles this to rare-charts.js in the assets/charts/ root.
+// scripts/build-charts.mjs compiles this to rare-charts.js and
+// rare-charts.min.js in assets/charts/.
 // Include with a single tag: <script src="/assets/charts/rare-charts.js"></script>
-// Future CDN: <script src="https://cdn.raredigits.io/charts/v1.0.0/rare-charts.js"></script>
+// CDN: <script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@vX.Y.Z/rare-charts.min.js"></script>
+// — pin a release: @latest stays on v0.9.8 until v0.9.9.
 
 // IMPORTANT: imports assume esbuild is configured to load .css as text.
 // CLI flag: --loader:.css=text  or  build config: loader: { '.css': 'text' }
 import baseCssText       from '../rare-charts.css';
 import versionInfo       from './version.json';
+import {
+  format, formatPrefix, timeFormat, timeParse, utcFormat, utcParse,
+  sum, min, max, extent, mean, range,
+  scaleLinear, scaleTime, scaleLog, scaleOrdinal,
+  color, rgb, hsl, interpolate,
+  timeDay, timeWeek, timeMonth, timeYear, utcDay, utcWeek, utcMonth, utcYear,
+} from 'd3';
 
 function injectCssOnce(id, cssText) {
   if (typeof document === 'undefined') return;
@@ -17,7 +26,13 @@ function injectCssOnce(id, cssText) {
   document.head.appendChild(style);
 }
 
-injectCssOnce('rc-base-styles',        baseCssText);
+// A page under a strict Content Security Policy (no 'unsafe-inline' in
+// style-src) blocks an injected <style>. It loads rare-charts.css itself
+// and opts out, before this script runs (K-18):
+//   window.RareChartsConfig = { injectStyles: false };
+// An element with the id rc-base-styles — that <link> — also stops it.
+const config = typeof window !== 'undefined' ? window.RareChartsConfig : undefined;
+if (config?.injectStyles !== false) injectCssOnce('rc-base-styles', baseCssText);
 
 // Public docs URL and version for CDN consumers and console discovery.
 // VERSION has a single source of truth: assets/charts/src/version.json.
@@ -32,19 +47,22 @@ export { Overview   } from './charts/Overview.js';
 export { Bar        } from './charts/Bar.js';
 export { HierarchicalBar } from './charts/HierarchicalBar.js';
 export { DualAxes   } from './charts/DualAxes.js';
-export { Donut      } from './charts/Donut.js';
-export { Donut as Pie } from './charts/Donut.js'; // alias — Pie = Donut with innerRadius: 0
+export { Donut, Pie } from './charts/Donut.js';
 export { Gauge      } from './charts/Gauge.js';
 export { Graph, linkPresets } from './charts/Graph.js';
 export { memorySource } from './graph/source.js';
 export { MultiChart        } from './charts/MultiChart.js';
 export { Map        } from './charts/Map.js';
+export { MapFlow    } from './charts/MapFlow.js';
 export { Sankey     } from './charts/Sankey.js';
 export { fromJson, fromCsv, fromApi, fromArray } from './adapters/index.js';
 export { defaultTheme, darkTheme, createTheme } from './core/theme.js';
 export { defaultTimeframes } from './core/Chart.js';
 
-// Helper data generator for demos and tests
+// Demo helper — outside the stability guarantee (K-04). It makes random,
+// unseeded OHLCV-like rows for examples and quick sketches: calendar days back
+// from today, weekends skipped. Its output and signature may change in any
+// release, and it may move out of the bundle; real pages pass their own data.
 export function generateMockPrices(days = 365, startPrice = 150) {
   const data = [];
   let price = startPrice;
@@ -66,4 +84,22 @@ export function generateMockPrices(days = 365, startPrice = 150) {
   return data;
 }
 
-export * as d3 from 'd3';
+// RareCharts.d3 — a documented subset of the D3 the bundle already carries
+// (K-13): what page code needs for formatters and small calculations next to
+// a chart. Exporting the whole namespace kept all of D3 in the bundle; this
+// list adds no module the charts do not use themselves. README and
+// /charts/installation/ list the same names; test/exports.test.js freezes them.
+export const d3 = Object.freeze({
+  // numbers and dates as text
+  format, formatPrefix,
+  timeFormat, timeParse, utcFormat, utcParse,
+  // arrays
+  sum, min, max, extent, mean, range,
+  // scales
+  scaleLinear, scaleTime, scaleLog, scaleOrdinal,
+  // colour
+  color, rgb, hsl, interpolate,
+  // calendar intervals: timeMonth.every(6) for xTicks, timeDay.offset(…)
+  timeDay, timeWeek, timeMonth, timeYear,
+  utcDay, utcWeek, utcMonth, utcYear,
+});

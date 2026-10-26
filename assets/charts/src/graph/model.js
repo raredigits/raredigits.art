@@ -4,20 +4,22 @@
 //
 // Node shape: { id, label, group?, size?, color?, image?, ... }
 // Link shape: { id?, source, target, type?, weight?, strength?, ... }
-//             (`from`/`to` accepted as endpoint aliases)
+//             (`from`/`to` accepted as endpoint aliases, `flows` for
+//             `links`) — read once by core/links.js normalizeRelationData
+//             with the model's rules (INPUT below); storage takes the
+//             canonical result (mergeCanonical) and never re-reads it.
 //
 // Two graphs, one truth (decision 2026-10-07, API-INVENTORY → "Flows"):
 // - storage `g` is a directed multigraph — every tie is kept as given, so a
 //   pair can carry several typed ties and both directions (A2);
-// - analytics (degree, centrality, Louvain, shortest paths) run on an
-//   undirected simple projection built lazily from storage. Louvain does not
-//   support true mixed graphs, and directed paths/betweenness would change
-//   what the ego/path/cluster views show. The projection keeps them exact.
+// - analytics (degree, Louvain, shortest paths) run on an undirected simple
+//   projection built lazily from storage. Louvain does not support true mixed
+//   graphs, and directed paths would change what the ego/path/cluster views
+//   show. The projection keeps them exact.
 
 import Graphology from 'graphology';
 import louvain from 'graphology-communities-louvain';
-import { degreeCentrality } from 'graphology-metrics/centrality/degree.js';
-import betweennessCentrality from 'graphology-metrics/centrality/betweenness.js';
+import { normalizeRelationData, tieKey } from '../core/links.js';
 
 // Deterministic PRNG — Louvain uses randomness internally; a fixed seed keeps
 // community assignments (and therefore cluster views) stable between renders.
@@ -33,12 +35,26 @@ function mulberry32(seed) {
 
 const edgeWeight = (edge, attrs) => attrs.weight ?? attrs.strength ?? 1;
 
-// Storage key for a tie without a caller id: ordered pair + type. Re-merging
-// the same payload updates in place; another type between the same pair, or
-// the reverse direction, is a separate tie.
-const tieKey = (source, target, type) => `${source}→${target}|${type ?? 'default'}`;
+// How the model reads a raw payload (core/links.js normalizeRelationData):
+// quietly — a link without both ends is dropped without a warning; no tie
+// from a node to itself, and no node for one; an end that names no node
+// gets an endpoint-only node; a tie without a caller id is keyed by tieKey —
+// ordered pair + type. Re-merging the same payload updates in place;
+// another type between the same pair, or the reverse direction, is a
+// separate tie.
+const INPUT = {
+  unknownEndpoints: 'create',
+  accept: l => (l.source === l.target ? null : l),
+  ids: 'tie',
+  warn: false,
+};
 
 export class GraphModel {
+  // A raw payload in the model's canonical form — what merge() stores.
+  static normalize(data = {}) {
+    return normalizeRelationData(data, INPUT);
+  }
+
   constructor(data = null) {
     this.g = new Graphology({ type: 'directed', multi: true });
     this._proj = null;   // undirected simple projection, rebuilt lazily
@@ -63,7 +79,10 @@ export class GraphModel {
 
   has(id) { return this.g.hasNode(id); }
 
+  // Ids are strings inside the model (graphology keys); a number given by a
+  // caller is read as its string, so 1 and '1' are the same node.
   node(id) {
+    id = String(id);
     return this.g.hasNode(id) ? { id, ...this.g.getNodeAttributes(id) } : null;
   }
 
@@ -80,27 +99,38 @@ export class GraphModel {
     return [...keys].map(key => this._linkOf(key));
   }
 
-  // First tie between a and b, or null. Kept for callers that predate the
-  // multigraph; prefer links(a, b).
-  link(a, b) { return this.links(a, b)[0] ?? null; }
-
   // Merge a { nodes, links } payload into the accumulated graph.
   // Repeated merges are how the user "walks" the graph: each recenter adds
   // its neighborhood on top of what is already loaded.
-  merge({ nodes = [], links = [] } = {}) {
+  merge(data = {}) {
+    return this.mergeCanonical(GraphModel.normalize(data));
+  }
+
+  // Store a payload already in canonical form — GraphModel.normalize(), or
+  // normalizeRelationData with unknownEndpoints: 'create' (the flow view
+  // reads its trace once and hands it over): every link has a string id and
+  // string ends, and every end is in `nodes` or already stored.
+  mergeCanonical({ nodes = [], links = [] } = {}) {
     nodes.forEach(n => {
       const { id, ...attrs } = n;
       delete attrs.depth;  // depth is per-query, not a stored property
       this.g.mergeNode(id, attrs);
     });
     links.forEach(l => {
-      const { source: src, target: tgt, from, to, id, ...attrs } = l;
-      const source = src ?? from;
-      const target = tgt ?? to;
-      if (source == null || target == null || source === target) return;
-      if (!this.g.hasNode(source)) this.g.addNode(source);
-      if (!this.g.hasNode(target)) this.g.addNode(target);
-      const key = id != null ? String(id) : tieKey(source, target, attrs.type);
+      const { source, target, id, ...attrs } = l;
+      // no tie from a node to itself — the flow view's trace may hold one
+      if (source === target) return;
+      let key = id;
+      if (id === tieKey(source, target, attrs.type)) {
+        // The readable key can repeat for different pairs when ids contain
+        // '→' or '|' — such a tie takes a numbered key instead of merging
+        // into a stranger's.
+        const base = key;
+        for (let n = 1; this.g.hasEdge(key)
+          && (this.g.source(key) !== source || this.g.target(key) !== target); n++) {
+          key = `${base}#${n}`;
+        }
+      }
       if (this.g.hasEdge(key)) this.g.mergeEdgeAttributes(key, attrs);
       else this.g.addEdgeWithKey(key, source, target, attrs);
     });
@@ -114,6 +144,7 @@ export class GraphModel {
   // between two reached nodes stays out of the result. Untyped links count as
   // 'default', matching how the Graph legend names them.
   neighborhood(rootId, depth = 1, { types = null } = {}) {
+    rootId = String(rootId);
     if (!this.g.hasNode(rootId)) return { nodes: [], links: [] };
 
     const allow = types ? new Set(types.map(String)) : null;
@@ -136,17 +167,6 @@ export class GraphModel {
       frontier = next;
     }
     return this._induced(depths, pass);
-  }
-
-  // Centrality measures over the accumulated graph.
-  // degree ~ "who has the most connections"; betweenness ~ "who do the
-  // shortest paths run through" (finds brokers invisible to the eye).
-  centrality() {
-    const p = this.projection();
-    return {
-      degree: degreeCentrality(p),
-      betweenness: betweennessCentrality(p, { getEdgeWeight: null }),
-    };
   }
 
   // Louvain communities collapsed into meta-nodes + inter-community links.

@@ -25,6 +25,10 @@
     title: 'Trump Earned At Least $1.4B with Crypto Businesses in 2025',
     subtitle: 'Crypto-related assets and income',
     valueFormat: n => money(n.value),
+    // The $1.4B total is in the title, so the root row goes: the bars then
+    // scale to the largest item, and the small holdings stay visible.
+    // Long license names wrap (wide) or shorten to the card (phone) on their own.
+    showRoot: false,
     source: 'Source: US Office of Government Ethics',
     note: "Values marked “?” are not disclosed.",
   }).setData(portfolio);

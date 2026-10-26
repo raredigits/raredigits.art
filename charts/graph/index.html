@@ -421,13 +421,13 @@
   <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
 </div>
 <h3 id="ego-view">Ego view</h3>
-<p>Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node <code>group</code>) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80%), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).</p>
+<p>Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node <code>group</code>) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80% of at least six nodes), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).</p>
 <div id="graph-ego"></div>
 <h3 id="path-view">Path view</h3>
 <p>&quot;How are A and B connected?&quot; — up to <code>pathCount</code> edge-disjoint routes, laid out left to right: columns are hops, each route gets its own row with a hop-count caption, and the shortest route is visually emphasized while the alternatives recede. Each endpoint's other connections fan out behind it, faded — showing that both nodes are well connected beyond these routes (disable with <code>pathContext: false</code>). Pathfinding is the data source's job (server-side on a real backend), because the client only holds the neighborhoods it has walked.</p>
 <div id="graph-path"></div>
 <h3 id="cluster-view">Cluster view</h3>
-<p>The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups. Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.</p>
+<p>The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups (up to eight; more draw at full width). Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.</p>
 <div id="graph-cluster"></div>
 <h3 id="example-warm-intro-routing">Example: warm-intro routing</h3>
 <p>A CRM-style scenario: the ego view is centered on a sales rep, and target leads — deliberately not connected to the rep — are marked with a star glyph. Clicking a lead answers the question that matters: <em>who can introduce me?</em> The <code>onNodeClick</code> callback switches to the path view with the warm-intro routes; clicking the rep restores the ego view. Category glyphs (person, company, partner org, ★ lead) carry the node semantics, so all the color stays on the relationship types.</p>
@@ -439,11 +439,12 @@
   paths(a, b, { k })               // → { paths, nodes, links }  — path view
   aggregates()                     // → { communities, links }   — cluster view
 }</code></pre>
+<p>Ids arrive as strings. <code>types</code> is an array of relation types, or <code>null</code> for all; the path view also asks <code>neighbors(id, { depth: 1 })</code> for each endpoint's context. <code>paths()</code> must return <code>paths</code> — arrays of node ids, shortest first — with the <code>nodes</code> and <code>links</code> along them; for a node and itself (<code>connect(a, a)</code>) that is one route of one node, <code>[[a]]</code>, which the path view draws alone, without routes or context. <code>aggregates()</code> returns <code>communities: [{ id, label, size, top }]</code> (<code>top</code> is the member a click focuses) and <code>links: [{ source, target, weight }]</code> between community ids, <code>weight</code> being the number of ties. A query that throws is logged to the console and the view stays as it was.</p>
 <p>For static payloads, <code>RareCharts.memorySource(data)</code> simulates that backend over a full in-memory graph:</p>
 <pre class="text-content-caption"><code>const dataSource = RareCharts.memorySource({ nodes, links });
 new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</code></pre>
 <p>The option is named <code>dataSource</code> because <code>source</code> keeps its usual RareCharts meaning — the attribution line in the chart footer.</p>
-<p>Everything the user walks through accumulates in a client-side model, so revisiting a node doesn't refetch it. Swapping <code>memorySource</code> for a real backend adapter changes nothing else.</p>
+<p>Everything the user walks through accumulates in a client-side model: views are laid out from it, and nodes keep their identity from one view to the next, so shared nodes travel instead of being redrawn. It is not a response cache: every <code>focus()</code>, <code>connect()</code>, <code>overview()</code> and <code>back()</code> asks the source again, with the current depth and relation filter, so a source that is slow or expensive to call should cache its own answers. Swapping <code>memorySource</code> for a real backend adapter changes nothing else.</p>
 <h3 id="nodes">Nodes</h3>
 <p>Each node requires only <code>id</code>. <code>label</code> and every other field are optional; when no label is supplied, Graph displays the id:</p>
 <div class="table-scroll card-caption">
@@ -472,8 +473,8 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
     <tr>
       <td><code>group</code></td>
       <td>string</td>
-      <td><code>default</code></td>
-      <td>Affects node color; can drive ego sectors via <code>groupBy: 'group'</code></td>
+      <td>—</td>
+      <td>Node category: picks the glyph inside the node (<code>nodeIcons</code>), the ego sector with <code>groupBy: 'group'</code> (nodes without a group share an <code>other</code> sector) and the category line of the tooltip. Nodes stay monochrome; in the flow view <code>nodeGroups</code> colors nodes by group</td>
     </tr>
     <tr>
       <td><code>size</code></td>
@@ -498,6 +499,12 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
       <td>boolean</td>
       <td><code>false</code></td>
       <td>Keep the node out of the ego view without removing it from the data — for known-but-noisy entities. Runtime equivalent: <code>hide(id)</code> / <code>show(id)</code>. The path view still draws routes through hidden nodes</td>
+    </tr>
+    <tr>
+      <td><code>note</code></td>
+      <td>string</td>
+      <td>—</td>
+      <td>A paragraph about the node in the built-in details panel (<code>details: true</code>); <code>description</code> is read too</td>
     </tr>
   </tbody>
 </table>
@@ -543,7 +550,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
       <td><code>weight</code></td>
       <td>number</td>
       <td><code>0.5</code></td>
-      <td><code>0</code>–<code>1</code>. Observable tie strength from your domain (deal count, transaction volume). Drives line thickness and the choice of a node's primary branch in the ego layout. <code>strength</code> is accepted as a legacy alias</td>
+      <td><code>0</code>–<code>1</code>. Observable tie strength from your domain (deal count, transaction volume). Drives line thickness and the choice of a node's primary branch in the ego layout. <code>strength</code> is accepted as a legacy alias; when a link has both, <code>weight</code> wins</td>
     </tr>
     <tr>
       <td><code>label</code></td>
@@ -555,13 +562,13 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
       <td><code>sources</code></td>
       <td>array</td>
       <td>—</td>
-      <td><code>[{ url, title }]</code> or URL strings — evidence for the tie, listed as links in its tooltip (click the tie to pin it and follow them)</td>
+      <td><code>[{ url, title }]</code> or URL strings — evidence for the tie, listed in its tooltip and the details panel. <code>http(s)</code>, site-root (<code>/…</code>) and <code>#</code> URLs become links (click the tie to pin it and follow them); anything else is shown as text</td>
     </tr>
   </tbody>
 </table>
 </div>
-<p><strong>Several ties between one pair.</strong> A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a <code>+N</code> badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once.</p>
-<p>Note the division of labor: link <strong>weight</strong> is data you bring (observable ties), while node <strong>importance</strong> is computed — the model runs degree and betweenness centrality over everything loaded, so &quot;who has the most connections&quot; and &quot;who do the paths run through&quot; are answers, not inputs.</p>
+<p><strong>Several ties between one pair.</strong> A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a <code>+N</code> badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once — in the drawing, the tooltip and the details panel (the flow view, where direction matters, keeps both).</p>
+<p>Note the division of labor: link <strong>weight</strong> is data you bring (observable ties), while node <strong>importance</strong> is computed — with <code>sizeBy: 'degree'</code> a node's size follows how many distinct neighbors it has in everything loaded, so &quot;who has the most connections&quot; is an answer, not an input.</p>
 <h3 id="link-types">Link types</h3>
 <p>The <code>type</code> field on a link is resolved against the <code>linkTypes</code> map you pass in. Each entry defines how that type looks:</p>
 <pre class="text-content-caption"><code>{
@@ -573,7 +580,8 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
 <li><code>dash</code> — SVG <code>stroke-dasharray</code> string, or <code>null</code> for solid</li>
 <li><code>label</code> — text shown in the legend</li>
 </ul>
-<p>If a link type is not found in <code>linkTypes</code>, it falls back to <code>t.muted</code> (theme gray). Five presets are available via <code>RareCharts.linkPresets</code>:</p>
+<p>A link without a type belongs to the <code>default</code> type. While you pass no <code>linkTypes</code>, the ego, path and cluster views draw it gray (<code>#888888</code>) and label it <em>Connection</em>; with a <code>linkTypes</code> map or a preset — and always in the flow view — it takes the theme's muted color and the label <em>connection</em>, unless the map describes <code>default</code> itself. A type that <code>linkTypes</code> does not describe takes a palette color by its order among the types in use — the same rule in every relation chart (Graph views, Sankey, Map Flows). The tooltip and the details panel name a tie's category the way the drawing colors it. Five presets are available via <code>RareCharts.linkPresets</code>:</p>
+<div class="table-scroll">
 <table>
 <thead>
 <tr>
@@ -604,7 +612,9 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
 </tr>
 </tbody>
 </table>
+</div>
 <h3 id="options">Options</h3>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page. Graph ignores <code>margin</code>: the drawing fills the card.</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
     <thead>
@@ -620,7 +630,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>view</code></td>
             <td>string</td>
             <td><code>'ego'</code></td>
-            <td>Initial view: <code>'ego'</code> | <code>'path'</code> | <code>'cluster'</code> | <code>'flow'</code> (lanes and trace options: see <a href="/charts/graph/flow/">Flow view</a>)</td>
+            <td><code>'flow'</code> turns on the flow view (lanes and trace options: see <a href="/charts/graph/flow/">Flow view</a>). Otherwise the view follows the method you call — <code>focus()</code> (ego), <code>connect()</code> (path), <code>overview()</code> (cluster); <code>setData()</code> opens an ego view</td>
         </tr>
         <tr>
             <td><code>dataSource</code></td>
@@ -662,7 +672,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>interactiveLegend</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Legend items filter relation types. A regular click isolates one type; Shift/Ctrl/Cmd-click toggles types in a multi-selection</td>
+            <td>Ego view: legend items filter relation types. A regular click isolates one type; Shift/Ctrl/Cmd-click toggles types in a multi-selection. The flow view's legend always hides and shows categories (see <a href="/charts/graph/flow/">Flow view</a>)</td>
         </tr>
         <tr>
             <td><code>breadcrumbs</code></td>
@@ -680,7 +690,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>onNodeClick</code></td>
             <td>string | function</td>
             <td><code>'recenter'</code></td>
-            <td><code>'recenter'</code>, a <code>({ node, event }) =&gt; …</code> callback, or <code>null</code></td>
+            <td><code>'recenter'</code>, a <code>({ node, event }) =&gt; …</code> callback, or <code>null</code> (also <code>false</code>): clicks do nothing</td>
         </tr>
         <tr>
             <td><code>pathCount</code></td>
@@ -710,7 +720,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>height</code></td>
             <td>number</td>
             <td><code>520</code></td>
-            <td>Card height in px — title, legend, breadcrumbs and footer included (see Sizing below)</td>
+            <td>Card height in px — title, legend, breadcrumbs and footer included; on a narrow card they wrap and take more of it, and the drawing gets what is left (see Sizing below)</td>
         </tr>
         <tr>
             <td><code>nodeRadius</code></td>
@@ -740,7 +750,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>details</code></td>
             <td>boolean | element | selector</td>
             <td>—</td>
-            <td>A details panel inside the card. <code>true</code>: the library shows the hovered or selected node or tie (the focused node when nothing is hovered) — name, group, connections, value, period, <code>sources</code>. An element or selector: your own panel, filled from <code>onSelect</code>. Beside the drawing when the card is at least <code>detailsBreakpoint</code> wide, below it otherwise</td>
+            <td>A details panel inside the card. <code>true</code>: the library shows the hovered node or the clicked tie (in the ego view the focused node when nothing is hovered; in the flow view the selected node or tie) — name, group, connections, a node's <code>note</code>, a tie's value, period and <code>sources</code>. An element or selector: your own panel, which gets the class <code>rc-graph-details</code> — it styles <code>h4</code>, <code>dl</code>, <code>ul</code> and the <code>.rc-graph-details-kind</code> / <code>.rc-graph-details-muted</code> lines, so your content can match the built-in panel; in the flow view fill it from <code>onSelect</code> (the other views have no selection event). Beside the drawing when the card is at least <code>detailsBreakpoint</code> wide, below it otherwise; in the flow view the drawing also keeps <code>minWidth</code> beside the panel</td>
         </tr>
         <tr>
             <td><code>detailsFormat</code></td>
@@ -764,7 +774,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>maxNodes</code></td>
             <td>number | 'auto'</td>
             <td><code>'auto'</code></td>
-            <td>Cap on rendered ego nodes. <code>'auto'</code> derives it from the canvas size; first-ring and best-connected nodes win. Clicking <code>+N more</code> opens the omitted-node list, where any node can become the new focus</td>
+            <td>Cap on rendered ego nodes. <code>'auto'</code> derives it from the canvas size (at least 12); first-ring and best-connected nodes win. Clicking <code>+N more</code> opens the omitted-node list, where any node can become the new focus</td>
         </tr>
         <tr>
             <td><code>draggable</code></td>
@@ -776,7 +786,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
             <td><code>linkTypes</code></td>
             <td>object</td>
             <td><code>{ default: … }</code></td>
-            <td>Type styling map or a preset</td>
+            <td>Type styling map or a preset (see Link types above); without it, untyped ties are gray <code>#888888</code>, labelled <em>Connection</em></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
@@ -825,7 +835,7 @@ new RareCharts.Graph('#chart', { dataSource, depth: 2 }).focus('some-node');</co
 <li><strong>Long labels</strong> are cut to the cell width with an ellipsis; the full name is in the tooltip.</li>
 </ul>
 <h3 id="methods">Methods</h3>
-<p>All methods return the chart instance; fetching and rendering are async — <code>whenReady()</code> resolves when queued view changes are done.</p>
+<p>Methods return the chart instance, so calls chain — except <code>whenReady()</code> (a promise), <code>isCollapsed(id)</code> (a boolean) and <code>getView()</code> (the current period). Fetching and rendering are async: <code>whenReady()</code> resolves when queued view changes are done. A query that fails is logged to the console and the promise still resolves.</p>
 <pre class="text-content-caption"><code>const graph = new RareCharts.Graph('#chart', { dataSource, depth: 2 });
 
 graph.focus('peter-thiel');              // ego view around a node
@@ -846,11 +856,14 @@ graph.back();                            // previous ego/path/cluster state
 graph.clearHistory();                    // keep only the current breadcrumb
 graph.toggleFullscreen();                // full screen on/off (also the ⛶ button, Esc)
 await graph.whenReady();</code></pre>
-<p>The flow view adds <code>setFilter</code>, <code>setTimeWindow</code>, <code>select</code> / <code>clearSelection</code>, <code>setLinkLabels</code> and <code>setHulls</code> — see the Methods section of <a href="/charts/graph/flow/">Flow view</a>.</p>
-<p><code>add()</code> is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id.</p>
+<p><code>await</code> at the top level needs a <code>&lt;script type=&quot;module&quot;&gt;</code> or an async function; in a classic <code>&lt;script&gt;</code> write <code>graph.whenReady().then(() =&gt; …)</code>.</p>
+<p><code>setData()</code> replaces the data and starts over: the breadcrumbs and <code>back()</code> begin with its first view, and the legend lists the relation types of the new data only (under <code>relationTypes</code>, the <code>linkTypes</code> catalogue). Unless a view method follows in the same tick, it focuses the node with the most distinct neighbours — counted over the ties the view draws, so under <code>relationTypes</code> over those types; <code>from</code> / <code>to</code> count as <code>source</code> / <code>target</code>, a tie to itself or without both ends does not count. A payload without nodes or ties clears the drawing, its legend and notes.</p>
+<p>The flow view adds <code>setFilter</code>, <code>setTimeWindow</code>, <code>select</code> / <code>clearSelection</code>, <code>setLinkLabels</code>, <code>setHulls</code>, the fold methods (<code>collapse</code>, <code>expand</code>, <code>isCollapsed</code>, <code>setFolds</code>) and time navigation (<code>setTimeframe</code>, <code>setView</code>, <code>getView</code>, <code>onViewChange</code>) — see the Methods section of <a href="/charts/graph/flow/">Flow view</a>.</p>
+<p><code>add()</code> is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id. It refreshes an ego view. Path and cluster views draw what the source answers, so there the new tie appears with the next ego view (<code>focus()</code>); the flow view takes new data through <code>setData()</code>.</p>
 <h3 id="interaction">Interaction</h3>
 <p><strong>Recenter on click</strong> — clicking a node fetches its neighborhood and re-lays the view around it; shared nodes animate to their new positions so you keep your bearings while walking the graph. In the cluster view, clicking a community recenters on its most-connected member.</p>
 <p><strong>Focus + context on hover</strong> — hovering a node highlights its direct neighborhood and fades everything else, along with a tooltip listing connections by type.</p>
+<p><strong>Keyboard</strong> — the nodes share one Tab stop: the focused node in the ego view, the first endpoint in the path view, otherwise the node focused last. ← and → step through the nodes row by row, so every node can be reached; ↑ and ↓ go to the nearest node above or below, Home and End to the first and last. A focused node shows what hover shows — the tooltip, the highlight and the details panel. Enter or Space acts as a click (<code>onNodeClick</code>), Escape hides the tooltip and the highlight. Each node is announced by its label, group and number of connections.</p>
 <p><strong>Ties: hover and pin</strong> — hovering a tie highlights it and its two endpoints and shows its tooltip: endpoints, type, label, value, period and <code>sources</code>. Clicking a tie pins the tooltip, so links inside it can be followed; a click elsewhere or Escape releases it.</p>
 <p><strong>Filter relations from the legend</strong> — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the <code>neighbors()</code> query and the client-side neighborhood. &quot;Show all&quot; clears the filter. Graphs whose links have no explicit <code>type</code> continue to work as a single <code>default</code> relation type.</p>
 <p><strong>Reveal omitted nodes</strong> — when the viewport cap removes nodes from the drawing, a <code>+N more</code> button appears in the footer tools; it opens an accessible list. Or open the graph full screen (⛶) — the bigger canvas fits more. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with <code>hide()</code>.</p>

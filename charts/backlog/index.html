@@ -420,18 +420,13 @@
         <tr class="table-section">
             <td colspan="3">
                 <h5 id="annotations">Annotations</h5>
-                <p>Options for marking up the chart area with reference context. The base <code>annotations</code> API (vertical and horizontal point/range markers) ships in v0.9.5 — see <a href="/charts/line/annotations/">Annotations</a>. Items below are follow-ups.</p>
+                <p>Options for marking up the chart area with reference context. The base <code>annotations</code> API (vertical and horizontal point/range markers) ships in v0.9.5 — see <a href="/charts/line/annotations/">Annotations</a> — and on the dated <code>Bar</code> since v0.9.8_6. Items below are follow-ups.</p>
             </td>
-        </tr>
-        <tr>
-            <td>Annotations on Bar (time-series mode)</td>
-            <td><code>annotations</code> on <code>RareCharts.Bar</code></td>
-            <td>Wire the same <code>annotations</code> API into <code>Bar</code> when its data has a <code>date</code> field. Useful for marking events on daily volume or transaction-count bars.</td>
         </tr>
         <tr>
             <td>Callouts and image overlays</td>
             <td><code>callouts: [{ x, y, text, image, dx, dy }]</code></td>
-            <td>Text callouts and image overlays anchored to data coordinates or pixel positions inside the chart area. Distinct from <code>annotations</code>: callouts are free-form content at arbitrary <code>(x, y)</code> rather than axis-aligned markers. The data project (Churchbook) asks to bring this, with annotations on Bar, before 1.0: its milestone stories (validator and project timelines — jails, renames, network halt) need labeled events on time series.</td>
+            <td>Text callouts and image overlays anchored to data coordinates or pixel positions inside the chart area. Distinct from <code>annotations</code>: callouts are free-form content at arbitrary <code>(x, y)</code> rather than axis-aligned markers. The data project (Churchbook) asks to bring this before 1.0 (annotations on Bar shipped in v0.9.8_6): its milestone stories (validator and project timelines — jails, renames, network halt) need labeled events on time series.</td>
         </tr>
 <p><tr class="table-section">
 <td colspan="3">
@@ -462,17 +457,17 @@
 <tr>
 <td>Scatter</td>
 <td><code>RareCharts.Scatter</code></td>
-<td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any &quot;rank N items on two axes&quot; figure. <strong>Targeted for v0.9.8_7.</strong></td>
+<td>Two-metric point chart: <code>[{ x, y, label?, size?, color? }]</code> with optional size/color encoding, quadrant reference lines, and point labels. The workhorse of comparison analytics — risk vs. return, valuation vs. growth, any &quot;rank N items on two axes&quot; figure. <strong>Targeted for v0.9.8_8.</strong></td>
 </tr>
 <tr>
 <td>Heatmap</td>
 <td><code>RareCharts.Heatmap</code></td>
-<td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_7.</strong></td>
+<td>Matrix of <code>[{ row, column, value }]</code> cells colored by a diverging or sequential scale, with row/column labels and a cell tooltip. Covers sector-by-period performance grids and correlation matrices. <strong>Targeted for v0.9.8_8.</strong></td>
 </tr>
 <tr>
 <td>Waterfall</td>
 <td><code>RareCharts.Waterfall</code></td>
-<td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_7.</strong></td>
+<td>Sequential deltas from a start value to an end value with connector lines and subtotal steps — the earnings-bridge / P&amp;L-decomposition staple of financial reporting. <strong>Targeted for v0.9.8_8.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -483,7 +478,7 @@
 <tr>
 <td>Stacked area</td>
 <td><code>stacked: true</code> on <code>RareCharts.Line</code> area series</td>
-<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_7.</strong></td>
+<td>Accumulate multi-series areas instead of overlapping them, including a <code>'percent'</code> mode normalizing each slice to 100%. <strong>Targeted for v0.9.8_8.</strong></td>
 </tr>
 <tr>
 <td>Stacked bars on date slots</td>
@@ -493,7 +488,7 @@
 <tr>
 <td>All chart types in MultiChart</td>
 <td><code>type: 'Donut' | 'Gauge' | 'DualAxes' | ...</code> in <code>charts</code> descriptors</td>
-<td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class, and warn on an unknown <code>type</code> instead of silently falling back to <code>Line</code>. Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_8.</strong></td>
+<td>Extend the <code>MultiChart</code> composition grid beyond <code>Line</code> and <code>Bar</code> to every chart class (an unknown <code>type</code> already warns and draws a <code>Line</code> since v0.9.8_6). Unblocks mixed dashboard blocks — a KPI gauge next to a trend line under one shared header. <strong>Targeted for v0.9.8_9.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -503,7 +498,7 @@
 <tr>
 <td>Series rebase / normalization</td>
 <td><code>normalize: 'rebase' | 'percent'</code> on <code>RareCharts.Line</code></td>
-<td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_8.</strong></td>
+<td>Re-express every series relative to its value at the start of the visible window — rebase to 100 or cumulative percent change — so multi-asset comparisons share one axis. Recomputes on zoom/timeframe change, which is why it belongs in the chart rather than in data prep. <strong>Targeted for v0.9.8_9.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
@@ -516,29 +511,14 @@
 <td>Horizontal Bar already prints values at bar ends (<code>showValues</code>, <code>valueFormat</code>; short and negative bars keep their labels since v0.9.8_4_1). Extend it to vertical bars — above positive bars, below negative ones — and to the bar series of Dual Axes.</td>
 </tr>
 <tr>
-<td>Bar width control</td>
-<td><code>barWidth: number</code></td>
-<td>Absolute bar width in px as an alternative to the proportional <code>barWidthRatio</code>. Supports per-series override.</td>
-</tr>
-<tr>
-<td>Per-bar color override</td>
-<td><code>data: [{ label, value, color }]</code></td>
-<td>Allow an individual bar to specify its own fill color without redefining the full chart palette. Useful for highlighting a selected category, outlier, or benchmark item.</td>
-</tr>
-<tr>
 <td>Diverging bar chart</td>
 <td><code>RareCharts.DivergingBar</code></td>
-<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_7.</strong></td>
+<td>Bar chart centered on a shared baseline for before/after, left/right, positive/negative, or category comparison layouts. <strong>Targeted for v0.9.8_8.</strong></td>
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
 <h5 id="map">Map</h5>
 </td>
-</tr>
-<tr>
-<td>Flows on a map</td>
-<td><code>RareCharts.MapFlow</code></td>
-<td>Ties between places drawn over a map — great-circle arcs with width by value and direction, on the same <code>{ nodes, links }</code> contract and link tooltip as Sankey and the Graph flow view, with <code>setTimeWindow</code> to show flows by period. For capital, trade or influence moving between cities and countries. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr>
 <tr>
 <td>Map overlays and labels</td>
@@ -554,11 +534,6 @@
 <td colspan="3">
 <h5 id="graph">Graph</h5>
 </td>
-</tr>
-<tr>
-<td>Graph flow view — automatic layout, groups and time</td>
-<td><code>view: 'flow'</code></td>
-<td>Second stage of the flow view. The first shipped in v0.9.8_3 with lanes, value-weighted ties and <code>setTimeWindow</code>; the money-trail investigations requested by the data project (Churchbook, 2026-10-12) need the rest: automatic in-lane layout for data without position hints — ranks along the flow, the main route on the centre line, fewer crossings, cycles broken — plus aggregation and collapsible groups: a group of nodes folds into one node with summed ties and a +/− control, parallel ties of a pair can be merged, and crowded lanes cap with +N. Time gets the <code>TimeSeries</code> treatment: timeframe buttons and a navigator over the ties’ dates instead of a page-made slider. <strong>Targeted for v0.9.8_6.</strong></td>
 </tr>
 <tr>
 <td>Graph ownership layout</td>
@@ -577,18 +552,49 @@
 </tr></p>
 <p><tr class="table-section">
 <td colspan="3">
+<h5 id="time-series-analytics-ranges">Time Series: analytics ranges</h5>
+<p>Requested by a donor for a website traffic report on <code>RareCharts.TimeSeries</code>: visits per hour, day and month, aggregated on the server. <strong>Targeted for v0.9.8_7.</strong> Charts that do not set the new options keep their current behaviour. The API sketches are provisional.</p>
+</td>
+</tr>
+<tr>
+<td>Calendar presets anchored to now</td>
+<td><code>timeframeAnchor: 'now' | 'dataEnd'</code> (default <code>'dataEnd'</code>); keys <code>TODAY</code>, <code>WTD</code> (with <code>weekStart</code>), <code>MTD</code>, <code>YTD</code>, rolling <code>24H</code>, <code>7D</code>, <code>30D</code>, <code>12M</code></td>
+<td>Presets now count back from the last data point in rolling units, so <code>1D</code> means 24 hours before the last point, not today. Calendar keys start at the beginning of the day, week, month or year in the chart's time zone; rolling keys stay rolling.</td>
+</tr>
+<tr>
+<td>Resolution follows the window</td>
+<td><code>onTimeframeChange(({ key, extent }) =&gt; Promise&lt;data&gt;)</code> with a loading state, or <code>setData({ hour, day, week, month })</code> with <code>resolution: { maxPoints }</code></td>
+<td>Switching from Year to Today shows hourly buckets instead of zooming into the daily series. The navigator keeps the full range at the coarse resolution. Each switch fires one callback with the key and the extent; buttons and brush stay in sync.</td>
+</tr>
+<tr>
+<td>Custom range</td>
+<td>A <em>Custom</em> control in the range bar with from / to date inputs; key <code>'CUSTOM'</code>; can be turned off</td>
+<td>Goes the same way as the preset buttons (<code>setView</code> and <code>onTimeframeChange</code>) and is styled by the library, so a page gets <em>Today / Week / Month / Year / All time / Custom</em> from options alone, without rebuilding the chart.</td>
+</tr>
+<tr>
+<td>A time zone</td>
+<td><code>timeZone: 'UTC' | 'local'</code> — the default <code>xTickFormat</code> by visible span shipped in v0.9.8_6 (<code>%H:%M</code>, <code>%b %d</code>, <code>%b</code>, <code>%b '%y</code>, <code>%Y</code>)</td>
+<td>One zone for parsing, ticks, tooltips and preset boundaries. Today a <code>'YYYY-MM-DD'</code> string is read as UTC midnight while presets compute in local time, so month buckets shift west of UTC; <code>'1M'</code> from 31 March also overflows to 2 March. The span-aware default tick format shipped in v0.9.8_6; its ticks will follow the zone this item picks.</td>
+</tr>
+<tr>
+<td>Comparison series</td>
+<td><code>compare: 'previousPeriod'</code> or a second series</td>
+<td>The same metric for the previous period of equal length, aligned to the current window and drawn as a dashed line without area (&quot;this week vs last week&quot;). The tooltip shows it next to the main value.</td>
+</tr>
+<tr>
+<td>Counts and gaps</td>
+<td><code>yFormat: 'number'</code> as on <code>Line</code>; <code>gaps: 'zero' | 'break'</code></td>
+<td>The default y format is dollars (<code>'$' + ',.0f'</code>); a count option keeps that default for existing charts. Missing buckets drawn as zero or as a break in the line (today a missing value is dropped and the line joins its neighbours).</td>
+</tr></p>
+<p><tr class="table-section">
+<td colspan="3">
 <h5 id="interactivity">Interactivity</h5>
 </td>
 </tr>
 <tr>
 <td>Legend series isolation</td>
 <td><code>legendInteractive: true</code></td>
-<td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_8.</strong></td>
-</tr>
-<tr>
-<td>Tooltip header style</td>
-<td><code>theme.tooltip.header</code></td>
-<td>Dedicated theme token for the tooltip header row (date label). Allows independent control of header background and text color, separate from <code>tooltip.bg</code> and <code>tooltip.text</code>.</td>
+<td>Clicking a legend item isolates that series. All others are dimmed. Clicking the active item or double-clicking restores all series. <strong>Targeted for v0.9.8_9.</strong></td>
 </tr>
 <tr>
 <td>Arbitrary in-chart labels</td>

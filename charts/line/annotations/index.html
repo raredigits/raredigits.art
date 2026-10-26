@@ -448,7 +448,7 @@
 <li><strong>Horizontal line</strong> — a reference level at a Y value. Drawn as a horizontal line spanning the full plot width, with an inline label. Useful for break-even, targets, KPI thresholds.</li>
 <li><strong>Horizontal band</strong> — a Y-value range with optional fill. Useful for tolerance windows or “acceptable range” bands.</li>
 </ul>
-<p>Annotations are supported on <code>Line</code>, <code>DualAxes</code>, and <code>TimeSeries</code> charts. The kind is inferred from which fields are present — <code>date</code>, <code>from/to</code>, <code>value</code>, or <code>yFrom/yTo</code>.</p>
+<p>Annotations are supported on <code>Line</code>, <code>DualAxes</code>, and <code>TimeSeries</code> charts, and on a vertical <code>Bar</code> fed <code>{ date, value }</code> rows (see <a href="/charts/bar/">Bar</a> → Annotations). The kind is inferred from which fields are present — <code>date</code>, <code>from/to</code>, <code>value</code>, or <code>yFrom/yTo</code>.</p>
 <div class="card-dashboard-bordered text-content-caption">
     <div id="btc-price-chart"></div>
 </div>
@@ -502,7 +502,7 @@
 });</code></pre>
 <p><code>axis</code> defaults to <code>'y1'</code>. Vertical (date-based) annotations don’t need this — they span both axes by definition.</p>
 <h3 id="layout">Layout</h3>
-<p>Labels are rendered <em>above</em> the plot area. The chart automatically pushes its top margin down by <code>annotationLabelHeight + 4</code> pixels when at least one annotation is configured, so labels never collide with the line. The default height is <code>22</code>. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:</p>
+<p>Labels are rendered <em>above</em> the plot area. The chart automatically raises its top margin to <code>annotationLabelHeight + 4</code> pixels (26 by default) when at least one annotation is configured, so labels never collide with the line. The default height is <code>22</code>. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
     annotations: [{ date: '2024-04-19', label: '4th Halving' }],
     annotationLabelHeight: 28,
@@ -510,6 +510,7 @@
 <p>If you provide an explicit <code>margin.top</code> it will be respected — but you must reserve enough room yourself.</p>
 <h3 id="view-clipping">View clipping</h3>
 <p>Annotations whose date(s) fall outside the visible X extent are skipped automatically. This is the expected behavior when used together with <code>timeframes</code>, <code>navigator</code>, or <code>setView()</code>: as the user zooms or pans, in-range annotations appear and out-of-range ones disappear. For range annotations partially visible, the fill is clamped to the visible portion and only the boundary line(s) inside the extent are drawn.</p>
+<p>Horizontal annotations follow the same rule on the value axis: a level outside the visible Y range is skipped, and a band that runs past the top or bottom of the plot is cut there, with only its real edges drawn. Annotations never widen the axis, so a level far from the data stays hidden — on <code>Line</code> widen the axis with <code>yTickValues</code>, on <code>DualAxes</code> with <code>y1Domain</code> / <code>y2Domain</code>. On a chart with bars (<code>DualAxes</code>, a dated <code>Bar</code>) the time scale is inset by half a bar so the first and last bars are drawn whole: ranges and horizontal lines and bands still reach the edges of the plot, so a range that starts half a period before the first bar shades it whole.</p>
 <h3 id="styling">Styling</h3>
 <p>Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:</p>
 <div class="table-scroll card-caption">
@@ -734,7 +735,7 @@
             <td><code>annotations</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Array of point and/or range annotations. Mixed entries are allowed.</td>
+            <td>Array of annotations of any of the four kinds (point, range, horizontal line, horizontal band); mixed entries are allowed.</td>
         </tr>
         <tr>
             <td><code>annotationLabelHeight</code></td>

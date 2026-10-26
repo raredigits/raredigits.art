@@ -413,12 +413,10 @@
 <pre class="code-block text-content-caption"><code data-copy="">git clone https://github.com/raredigits/rare-charts.git</code>
 <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
 <p>Copy <code>rare-charts.js</code> wherever your project keeps static assets.</p>
-<p><strong>From CDN</strong> — load it directly, no download required:</p>
-<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@latest/rare-charts.js"&gt;&lt;/script&gt;</code>
+<p><strong>From CDN</strong> — load a release directly, no download required:</p>
+<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_6/rare-charts.min.js"&gt;&lt;/script&gt;</code>
 <button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
-<p>For production, pin to a specific version. <code>@latest</code> is fine for prototyping, bad for anything that ships:</p>
-<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_5_1/rare-charts.min.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<p>Always name the version. Releases after <code>v0.9.8</code> are tagged <code>v0.9.8_N</code>, which jsDelivr does not treat as newer, so <code>@latest</code> still serves <code>v0.9.8</code> — without <code>HierarchicalBar</code>, <code>Sankey</code> and <code>MapFlow</code> — until <code>v0.9.9</code>. The readable <code>rare-charts.js</code> sits next to the minified file under the same tag.</p>
 <h2 id="where-to-put-the-script-tag">Where to put the script tag</h2>
 <p>Two standard options, both work fine.</p>
 <p><strong>Before <code>&lt;/body&gt;</code></strong> — the classic approach. The page renders first, then the script loads. Charts initialize against already-present DOM elements.</p>
@@ -430,14 +428,16 @@
     new RareCharts.Line('#chart', { height: 260 }).setData(data);
   &lt;/script&gt;
 &lt;/body&gt;</code></pre>
-<p><strong>In <code>&lt;head&gt;</code> with <code>defer</code></strong> — loads in parallel, executes after the DOM is ready. Same result, slightly cleaner separation:</p>
+<p><strong>In <code>&lt;head&gt;</code> with <code>defer</code></strong> — loads in parallel and runs after the HTML is parsed. Inline scripts ignore <code>defer</code>, so start the chart on <code>DOMContentLoaded</code> (deferred scripts run before it):</p>
 <pre><code>&lt;head&gt;
   &lt;script src="/assets/rare-charts.js" defer&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;div id="chart"&gt;&lt;/div&gt;
-  &lt;script defer&gt;
-    new RareCharts.Line('#chart', { height: 260 }).setData(data);
+  &lt;script&gt;
+    document.addEventListener('DOMContentLoaded', () =&gt; {
+      new RareCharts.Line('#chart', { height: 260 }).setData(data);
+    });
   &lt;/script&gt;
 &lt;/body&gt;</code></pre>
 <p>The only rule: your chart initialization code must run after both the library and the container element are in the DOM. Either approach guarantees that.</p>
@@ -457,7 +457,7 @@
 <p><code>setData()</code> can be called multiple times. The chart updates in place — useful for filters, date range selectors, or live data.</p>
 <h2 id="sizing">Sizing</h2>
 <p><strong>Width</strong> is always 100% of the container. Make the container whatever width you need — the chart fills it and redraws automatically on resize. No <code>window.addEventListener('resize', ...)</code> required.</p>
-<p><strong>Height</strong> is set per instance via the <code>height</code> option. Each chart type has its own default (240–520px), but you almost always want to set it explicitly.</p>
+<p><strong>Height</strong> is set per instance via the <code>height</code> option. Each chart type has its own default (200–520px; <code>HierarchicalBar</code>, <code>MultiChart</code> and a vertical <code>Sankey</code> grow with their content), but you almost always want to set it explicitly.</p>
 <pre><code>new RareCharts.Graph('#network', { height: 600 }).setData(data);</code></pre>
 <h2 id="available-chart-types">Available chart types</h2>
 <div class="table-scroll card-caption">
@@ -475,11 +475,19 @@
     </tr>
     <tr>
       <td><code>RareCharts.TimeSeries</code></td>
-      <td>Price time series with OHLCV data support</td>
+      <td>Long date series with range buttons, zoom, pan and a navigator; extra fields (open, high, low, volume) reach <code>tooltipFormat</code></td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Overview</code></td>
+      <td>The navigator strip on its own: a brush for picking a date window that drives charts you wire to it — <a href="/charts/line/time-series/#overview-standalone-navigator">Overview (standalone navigator)</a></td>
     </tr>
     <tr>
       <td><code>RareCharts.Bar</code></td>
       <td>Category comparisons, ranked lists</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.HierarchicalBar</code></td>
+      <td>A tree as an outline of bars: portfolio, org and budget breakdowns</td>
     </tr>
     <tr>
       <td><code>RareCharts.DualAxes</code></td>
@@ -495,7 +503,7 @@
     </tr>
     <tr>
       <td><code>RareCharts.Pie</code></td>
-      <td>Part-to-whole, no hole (alias for Donut with <code>innerRadius: 0</code>)</td>
+      <td>Part-to-whole, no hole (Donut with <code>innerRadius: 0</code> by default)</td>
     </tr>
     <tr>
       <td><code>RareCharts.Gauge</code></td>
@@ -503,19 +511,56 @@
     </tr>
     <tr>
       <td><code>RareCharts.Graph</code></td>
-      <td>Force-directed network of nodes and links</td>
+      <td>Relationship networks: ego, path and cluster views, and money-trail flows (experimental)</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.Sankey</code></td>
+      <td>Flows between stages: budgets, money trails, balances (experimental)</td>
+    </tr>
+    <tr>
+      <td><code>RareCharts.MultiChart</code></td>
+      <td>Two to four <code>Line</code> or <code>Bar</code> charts in one card</td>
     </tr>
     <tr>
       <td><code>RareCharts.Map</code></td>
       <td>Choropleth and region-highlight geographic maps</td>
     </tr>
+    <tr>
+      <td><code>RareCharts.MapFlow</code></td>
+      <td>Flows between places over a map (experimental)</td>
+    </tr>
   </tbody>
 </table>
 </div>
-<p>All types share the same base options (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>height</code>, <code>theme</code>) — documented on the <a href="/charts/settings/">Settings</a> page.</p>
-<h2 id="using-with-rare-styles">Using with Rare Styles</h2>
-<p>If your project uses <a href="/styles/">Rare Styles</a>, RareCharts will sit comfortably next to the rest of the UI. But the charts do not depend on host-site font variables anymore: the library ships with its own typography defaults and its own chart-level CSS variables.</p>
-<p>If you are using RareCharts standalone, the built-in defaults take over. If you want to change the type system, override the chart theme or the <code>--rc-*</code> variables documented on the <a href="/charts/styles/">Styles</a> page.</p>
+<p>All types share the same base options (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>height</code> — except <code>HierarchicalBar</code> and <code>MultiChart</code>, which size to their content — <code>margin</code> (axis charts; Donut, Pie, Gauge, Sankey and Graph fill the card), <code>theme</code>) — documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<h2 id="d3-and-helpers-in-the-bundle">D3 and helpers in the bundle</h2>
+<p><code>RareCharts.d3</code> is the part of the bundled <a href="https://d3js.org/">D3</a> that page code needs next to a chart — for formatters and small calculations. There is no global <code>d3</code> on a page that loads only the library.</p>
+<ul>
+<li>numbers and dates as text: <code>format</code>, <code>formatPrefix</code>, <code>timeFormat</code>, <code>timeParse</code>, <code>utcFormat</code>, <code>utcParse</code>;</li>
+<li>arrays: <code>sum</code>, <code>min</code>, <code>max</code>, <code>extent</code>, <code>mean</code>, <code>range</code>;</li>
+<li>scales: <code>scaleLinear</code>, <code>scaleTime</code>, <code>scaleLog</code>, <code>scaleOrdinal</code>;</li>
+<li>colour: <code>color</code>, <code>rgb</code>, <code>hsl</code>, <code>interpolate</code>;</li>
+<li>calendar intervals: <code>timeDay</code>, <code>timeWeek</code>, <code>timeMonth</code>, <code>timeYear</code>, <code>utcDay</code>, <code>utcWeek</code>, <code>utcMonth</code>, <code>utcYear</code>.</li>
+</ul>
+<pre class="text-content-caption"><code>const d3 = RareCharts.d3;
+yTickFormat: v => '$' + d3.format(',.0f')(v)</code></pre>
+<p>Before v0.9.8_6 <code>RareCharts.d3</code> was the whole D3 namespace, which kept all of D3 in the bundle; the subset adds nothing the charts do not use themselves. A page that needs more of D3 — selections, shapes, geo — loads D3 itself.</p>
+<p><code>RareCharts.generateMockPrices(days, startPrice)</code> makes random price rows (<code>date</code>, <code>value</code>, <code>open</code>, <code>high</code>, <code>low</code>, <code>volume</code>) for demos and sketches. It is a demo helper, <strong>outside the stability guarantee</strong>: its output and signature may change in any release, and it may leave the bundle. Real pages pass their own data.</p>
+<h2 id="fonts-and-rare-styles">Fonts and Rare Styles</h2>
+<p>RareCharts does not need <a href="/styles/">Rare Styles</a> or any other stylesheet. The chart CSS is bundled in with its own spacing and type variables, so a chart keeps its layout on any page, a blank one included.</p>
+<p>The library loads no fonts. Charts use Fira Sans for text and Cousine for numbers when the page provides them, and the system sans-serif and monospace fonts otherwise. Rare Styles self-hosts both families, so a Rare Styles page needs nothing more. On any other page, load them yourself for the same look:</p>
+<pre class="code-block"><code data-copy="">&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,700;1,400&amp;family=Cousine:wght@400;700&amp;display=swap"&gt;</code>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<p>To change the type system, override the <code>--rc-*</code> variables with a selector that outranks the library's <code>.rc-chart</code> rule, such as <code>:root .rc-chart</code> — see <a href="/charts/styles/">Styles</a>.</p>
+<h2 id="strict-content-security-policy">Strict Content Security Policy</h2>
+<p>The bundle adds its stylesheet to <code>&lt;head&gt;</code> as a <code>&lt;style&gt;</code> element. A <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">Content Security Policy</a> without <code>'unsafe-inline'</code> in <code>style-src</code> blocks it, and the charts lose their layout. Serve the stylesheet as a file instead:</p>
+<p><strong>1.</strong> Take <code>rare-charts.css</code> of the same version as your bundle. Each release publishes it next to the bundle — <code>https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_6/rare-charts.css</code> — if your policy allows that origin in <code>style-src</code>; otherwise save it with your other static files (the copy at <a href="/assets/charts/rare-charts.css"><code>/assets/charts/rare-charts.css</code></a> is the one these pages document, <code>v0.9.8_6</code>) and take it again when you update the bundle.</p>
+<p><strong>2.</strong> Link it with the id <code>rc-base-styles</code>. The bundle finds the id and adds no <code>&lt;style&gt;</code> of its own:</p>
+<pre class="code-block"><code data-copy="">&lt;link id="rc-base-styles" rel="stylesheet" href="/assets/rare-charts.css"&gt;</code>
+<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<p>If the stylesheet reaches the page another way — inside your own CSS bundle, say — turn the injection off before the bundle runs. Under such a policy an inline <code>&lt;script&gt;</code> is blocked too, so set it in a script file of your own (or one with the policy's nonce), loaded before <code>rare-charts.js</code>:</p>
+<pre><code>window.RareChartsConfig = { injectStyles: false };</code></pre>
+<p>Everything else the charts style from script — sizes, positions, theme colours — goes through the DOM style API, which the policy allows. One thing it does block: colours written as <code>style</code> attributes into the markup of the built-in tooltips (a series colour on its row, a slice colour on its label) and of the Graph details hint — that text then takes the tooltip's or the panel's own colour.</p>
 <h2 id="minimal-working-example">Minimal working example</h2>
 <pre class="text-content-caption"><code>&lt;div id="chart"&gt;&lt;/div&gt;
 

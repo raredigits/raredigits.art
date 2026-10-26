@@ -13,12 +13,32 @@
 //   ...
 // ]
 //
+// series.name is the tooltip label and the key that matches lines and bars
+// across setData; no legend is built from series (pass `legend`).
+//
+// Per-series overrides (line series only):
+//   series.curve, series.strokeWidth (default: theme.strokeWidth, 2),
+//   series.strokeDash, series.area, series.areaOpacity, series.areaBaseline,
+//   series.markers, series.markerShape, series.markerSize,
+//   series.markerFill, series.markerStroke
+// Per-series override (bar series only):
+//   series.barWidth — px, overrides barWidth for this series
+//
 // Options:
-//   height, margin
-//   xPad            — inner padding for X scale (default: 8)
+//   height
+//   margin          — { top, right, bottom, left }; defaults: top 10 (30 with
+//                     y1Title/y2Title, annotationLabelHeight + 4 with
+//                     annotations), right and left 64, bottom 18; a hidden
+//                     axis collapses its side; each side set explicitly wins
+//   navigator       — the strip draws the first line series (the first series
+//                     when all are bars)
+//   xPad            — gap between the plot edge and the outermost mark; with bars,
+//                     the outer edge of the first/last bar (default: 8)
 //   curve           — 'linear' (default) | 'monotone' | 'step' | ...
 //   curveTension    — 0..1 for 'cardinal' (default: 0)
-//   animate         — animate on first render (default: true)
+//   animate         — animate on first render, once per instance (default: true):
+//                     lines draw in, bars grow; renders that land in the middle
+//                     (fonts, resize) carry the motion on to the new geometry
 //   duration        — ms (default: 650)
 //   ease            — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //
@@ -28,13 +48,17 @@
 //   strokeDash      — dash pattern for all line series: preset name or dash-array (default: solid)
 //   markers         — draw point markers on line series (default: false)
 //   markerShape     — 'circle'|'square'|'diamond'|'triangle'|'cross' (default: 'circle')
-//   markerSize      — marker radius / half-size px (default: 4)
+//   markerSize      — marker radius / half-size px (default: theme.markerSize, 4)
 //
-//   y1Ticks/y2Ticks — tick count (default: 4)
-//   y1TickFormat    — function(value) => string
-//   y2TickFormat    — function(value) => string
-//   xTickFormat     — function(date) => string
-//   y1Domain / y2Domain — override auto domains
+//   y1Ticks/y2Ticks — approximate tick count (default: 4); the auto domain is
+//                     rounded (d3 nice) to the same count
+//   y1TickFormat    — function(value) => string (default: ',.2f'; log: '.3~s')
+//   y2TickFormat    — function(value) => string (default: '+.2f', '0' near
+//                     zero; log: '.3~s')
+//   xTickFormat     — function(date) => string (default: '%m/%d', at most one
+//                     tick per day of the view)
+//   y1Domain / y2Domain — override auto domains (used as given; a log axis
+//                     needs 0 < min < max)
 //   y1Scale / y2Scale — 'linear' (default) | 'log', per axis. Log: powers-of-ten
 //                     ticks, the margin above/below is a factor of the axis's
 //                     data span, values ≤ 0 on that axis are skipped (warned once
@@ -51,16 +75,21 @@
 //                     margin once endLabels is off and no y1Title is set — shared gutter)
 //   showY2Axis      — show left Y2 axis (default: true; hiding it reclaims the left
 //                     margin unless a y2Title is set)
-//   endLabels       — show last value labels on the right (default: true)
-//   endLabelsAxis   — which axis to label ('y1' default)
+//   endLabels       — last value of each line series on endLabelsAxis, at the
+//                     right edge; bar series are not labelled (default: true)
+//   endLabelsAxis   — whose line series get end labels, placed and formatted
+//                     on that axis ('y1' default: Y2 series have none)
 //
 //   y1Title / y2Title — axis title labels (terse units; trimmed with an
 //                     ellipsis if wider than their axis margin)
 //   axisTitleMaxLength — optional hard character cap for axis titles
 //
-//   barOpacity      — opacity for bars (default: 0.35)
-//   barWidthRatio   — width ratio vs time step (default: 0.65)
-//   barGrouping     — 'overlap' (default) | 'cluster'
+//   barOpacity      — opacity for bars (default: theme.barOpacity, 0.35)
+//   barWidth        — bar width in px (each bar of a cluster); capped at the
+//                     smallest gap between bar dates, a cluster narrowed to fit it
+//   barWidthRatio   — width as a share of the smallest gap between bar dates
+//                     (default: 0.65); ignored when barWidth is set
+//   barGrouping     — 'overlap' (default) | 'cluster' (side by side, centred on the date)
 //
 //   annotations     — event markers. Vertical (point/range) and horizontal (line/band).
 //                     Horizontal entries take `axis: 'y1'|'y2'` (default 'y1') for DualAxes.
@@ -71,7 +100,10 @@
 //   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22)
 //
 //   crosshair       — vertical crosshair + dots + tooltip (default: true)
-//   tooltipFormat   — function({date, points:[{...}]}) => html
+//   tooltipFormat   — function({ date, points }) => html; points is
+//                     [{ name, series, axis, type, color, date, value, fmt }],
+//                     one per series covering the hovered date (formatter
+//                     arguments: /charts/settings/#formatter-arguments, K-09)
 //
 // Notes:
 //   Y1 axis is drawn on the RIGHT.
@@ -81,18 +113,20 @@ import * as d3 from 'd3';
 import { Chart }                  from '../core/Chart.js';
 import { Tooltip }                from '../core/Tooltip.js';
 import { Crosshair }              from '../core/Crosshair.js';
-import { parseDate, resolveEase, resolveStrokeDash, normalizeAnnotations, motionDuration, logTickValues, logPaddedDomain } from '../core/utils.js';
-import { linePath, areaPath }     from '../core/seriesPath.js';
+import { resolveEase, resolveStrokeDash, normalizeAnnotations, motionDuration, logTickValues, logPaddedDomain } from '../core/utils.js';
+import { EntryMotion, entryTransition, drawLinesIn } from '../core/entryMotion.js';
+import { linePath, areaPath, normalizeLineSeries } from '../core/seriesPath.js';
+import { readBarWidth, timeSlot, barInset } from '../core/barLayout.js';
 import {
   renderGrid,
   renderZeroBaseline,
   renderAxisX,
+  dayTicks,
   renderAxisYRight,
   renderAxisYLeft,
   applySvgA11y,
   renderEndLabels,
   renderAxisTitles,
-  animateLines,
   renderMarkers,
   renderAnnotations,
 } from '../core/renderHelpers.js';
@@ -100,7 +134,6 @@ import {
 export class DualAxes extends Chart {
   constructor(selector, options = {}) {
     const hasAxisTitles = !!(options.y1Title || options.y2Title);
-    const topDefault    = options.margin?.top ?? 10;
     const annotations    = normalizeAnnotations(options.annotations);
     const annLabelHeight = options.annotationLabelHeight ?? 22;
     const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
@@ -108,8 +141,10 @@ export class DualAxes extends Chart {
 
     // Margin defaults track what occupies each gutter: the right one hosts the
     // Y1 axis, its title, and end labels; the left one the Y2 axis and title;
-    // the bottom one the X axis. Hiding all of a gutter's occupants collapses
-    // it so the plot runs flush; an explicit margin always wins.
+    // the bottom one the X axis; the top one the axis titles and annotation
+    // labels. Hiding all of a gutter's occupants collapses it so the plot runs
+    // flush; each side set explicitly wins — margin.top too, as on Line and
+    // Bar (K-10).
     const y1Gutter  = options.showY1Axis !== false || !!options.y1Title;
     const y2Gutter  = options.showY2Axis !== false || !!options.y2Title;
     const endGutter = options.endLabels  !== false;
@@ -117,7 +152,7 @@ export class DualAxes extends Chart {
     super(selector, {
       height: 280,
       margin: {
-        top:    Math.max(hasAxisTitles ? Math.max(topDefault, 30) : topDefault, annTopReserve),
+        top:    options.margin?.top    ?? Math.max(hasAxisTitles ? 30 : 10, annTopReserve),
         right:  options.margin?.right  ?? (y1Gutter || endGutter ? 64 : 0),
         bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
         left:   options.margin?.left   ?? (y2Gutter ? 64 : 0),
@@ -126,7 +161,7 @@ export class DualAxes extends Chart {
     });
 
     this._series          = [];
-    this._didAnimateIn    = false;
+    this._entry           = new EntryMotion();   // once per instance (C-16)
     this._annotations     = annotations;
     this._annLabelHeight  = annLabelHeight;
 
@@ -139,7 +174,7 @@ export class DualAxes extends Chart {
   setData(series) {
     this._series = this._normalizeData(series);
     this._warnedNonPositive = false;
-    this._syncTimeframeButtons(this._getDataExtent());
+    this._refreshViewForData();
     this.render();
     return this;
   }
@@ -178,25 +213,23 @@ export class DualAxes extends Chart {
     return preferred?.values?.length ? preferred.values : null;
   }
 
+  // One normaliser with Line (C-03): every per-series style field reaches
+  // render; values are parsed, sorted, and unreadable rows dropped.
   _normalizeData(series) {
     const colors = this.theme.colors ?? [];
 
-    return (series ?? [])
-      .map((s, idx) => ({
-        name:         s.name   ?? `Series ${idx + 1}`,
-        axis:         s.axis === 'y2' ? 'y2' : 'y1',
-        type:         s.type === 'bar' ? 'bar' : 'line',
-        color:        s.color ?? (colors[idx % (colors.length || 1)] ?? this.theme.accent),
-        curve:        s.curve,
-        area:         s.area,
-        areaOpacity:  s.areaOpacity,
-        areaBaseline: s.areaBaseline,
-        strokeWidth:  Number.isFinite(+s.strokeWidth) ? +s.strokeWidth : 2,
-        values: (s.values ?? [])
-          .map(d => ({ date: parseDate(d.date), value: +d.value }))
-          .filter(d => d.date && Number.isFinite(d.value)),
-      }))
-      .filter(s => s.values.length);
+    // Mapped before filtering, so default names and palette slots keep the
+    // input index.
+    return (Array.isArray(series) ? series : [])
+      .map((s, idx) => {
+        if (s == null || typeof s !== 'object') return null;
+        return normalizeLineSeries(s, idx, {
+          color: colors[idx % (colors.length || 1)] ?? this.theme.accent,
+          type:  s.type === 'bar' ? 'bar' : 'line',
+          axis:  s.axis === 'y2' ? 'y2' : 'y1',
+        });
+      })
+      .filter(s => s?.values.length);
   }
 
   // ─── Init ─────────────────────────────────────────────────────────────────
@@ -226,8 +259,7 @@ export class DualAxes extends Chart {
     this.gAnnotations = this.g.append('g').attr('class', 'rc-annotations');
 
     // Clip bars and lines to the drawing area so bar stubs don't bleed past edges
-    const uid = Math.random().toString(36).slice(2, 8);
-    this._clipId   = `rc-clip-${uid}`;
+    this._clipId   = `${this._uid}-clip`;
     this._clipRect = this.svg.append('defs')
       .append('clipPath').attr('id', this._clipId)
       .append('rect');
@@ -245,8 +277,51 @@ export class DualAxes extends Chart {
 
   // ─── Bars ─────────────────────────────────────────────────────────────────
 
-  _renderBars({ bars, allValues, x, y1, y2, barOpacity, barWidthRatio, barGrouping, animate, duration, ease }) {
-    const barItems = bars.flatMap(s =>
+  // Bar widths per visible bar series for a scale L px long (B-07): an
+  // explicit width — series.barWidth, then barWidth — in px; otherwise the
+  // ratio share as before. The space per date (the smallest gap between bar
+  // dates) caps explicit widths: an overlapping bar is never wider than it,
+  // a cluster is narrowed proportionally to fit it.
+  _barLayout(bars, viewExtent, allValues) {
+    const o       = this.options;
+    const ratio   = o.barWidthRatio ?? 0.65;
+    const cluster = (o.barGrouping ?? 'overlap') === 'cluster';
+    const msOf    = values => Array.from(new Set(values.map(d => +d.date))).sort((a, b) => a - b);
+    // The space per date is the smallest gap between bar dates (it was the
+    // first gap among all dates, lines included, so irregular dates overlapped);
+    // with a single bar date in view, among all visible dates. With one date
+    // there is no neighbour: the ratio share keeps its old 12px slot, and an
+    // explicit width is capped only by the scale itself (as on Bar).
+    const gapAt   = timeSlot(msOf(bars.flatMap(s => s.values)), viewExtent,
+      timeSlot(msOf(allValues), viewExtent, null));
+    const slotAt  = gapAt ?? (() => 12);
+    const capAt   = gapAt ?? (L => L);
+    const fixed   = bars.map(s => readBarWidth(s.barWidth) ?? readBarWidth(o.barWidth));
+    const anyFixed = fixed.some(w => w !== undefined);
+    const widths = L => {
+      const share = Math.max(4, Math.max(6, slotAt(L)) * ratio) / (cluster ? bars.length : 1);
+      let ws = fixed.map(w => w ?? share);
+      if (anyFixed) {
+        const cap = Math.max(0, capAt(L));   // a plot narrower than 2·xPad: 0, never negative
+        if (cluster) {
+          const total = d3.sum(ws);
+          if (total > cap) ws = ws.map(w => w * cap / total);
+        } else {
+          ws = ws.map((w, i) => (fixed[i] !== undefined ? Math.min(w, cap) : w));
+        }
+      }
+      return ws;
+    };
+    const extent = L => (cluster ? d3.sum(widths(L)) : d3.max(widths(L)));
+    return { cluster, widths, extent };
+  }
+
+  _renderBars({ bars, x, widths, cluster, y1, y2, barOpacity, phase, duration, ease }) {
+    // Left edge of each series' bar from its date: a cluster sits side by
+    // side, centred on the date; overlapping bars are each centred on it.
+    let acc = -d3.sum(widths) / 2;
+    const left = widths.map(w => (cluster ? (acc += w) - w : -w / 2));
+    const barItems = bars.flatMap((s, i) =>
       s.values.map(v => ({
         key:    `${s.name}|${+v.date}`,
         series: s.name,
@@ -254,64 +329,55 @@ export class DualAxes extends Chart {
         color:  s.color,
         date:   v.date,
         value:  v.value,
+        dx:     left[i],
+        w:      widths[i],
       }))
     );
-
-    const uniqueDates = Array.from(new Set(allValues.map(d => +d.date))).sort((a, b) => a - b);
-    const step = uniqueDates.length > 1
-      ? Math.max(6, x(new Date(uniqueDates[1])) - x(new Date(uniqueDates[0])))
-      : 12;
-    const baseBarW = Math.max(4, step * barWidthRatio);
-
-    const barSeriesNames = Array.from(new Set(bars.map(b => b.name)));
-    const clusterCount   = barGrouping === 'cluster' ? Math.max(1, barSeriesNames.length) : 1;
-    const barW           = barGrouping === 'cluster' ? baseBarW / clusterCount : baseBarW;
-
-    const xOffset = (seriesName) => {
-      if (barGrouping !== 'cluster') return 0;
-      const i = barSeriesNames.indexOf(seriesName);
-      return ((i < 0 ? 0 : i) - (clusterCount - 1) / 2) * (baseBarW / clusterCount);
-    };
 
     const scaleFor = (d) => (d.axis === 'y2' ? y2 : y1);
     // Bars grow from zero; a log axis (it has .base()) has no zero, so they
     // grow from the bottom of the axis.
     const baseFor  = (d) => (typeof scaleFor(d).base === 'function' ? scaleFor(d).domain()[0] : 0);
 
+    // Bars entering during the entry (the first render, or mid-entry)
+    // start flat on their baseline and grow.
+    const grow = phase !== 'none';
     const barsSel = this.gBars.selectAll('.rc-dual-bar')
       .data(barItems, d => d.key)
       .join(
         enter => enter.append('rect')
           .attr('class',   'rc-dual-bar')
-          .attr('x',       d => x(d.date) - barW / 2 + xOffset(d.series))
-          .attr('width',   barW)
-          .attr('fill',    d => d.color)
-          .attr('opacity', barOpacity)
-          .attr('y',       d => animate ? scaleFor(d)(baseFor(d)) : scaleFor(d)(Math.max(baseFor(d), d.value)))
-          .attr('height',  d => animate ? 0 : Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d)))),
+          .attr('x',       d => x(d.date) + d.dx)
+          .attr('width',   d => d.w)
+          .attr('y',       d => grow ? scaleFor(d)(baseFor(d)) : scaleFor(d)(Math.max(baseFor(d), d.value)))
+          .attr('height',  d => grow ? 0 : Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d)))),
         update => update,
         exit   => exit.remove()
       );
 
-    barsSel
-      .call(sel => {
-        const apply = (sel) => sel
-          .attr('x',      d => x(d.date) - barW / 2 + xOffset(d.series))
-          .attr('width',  barW)
-          .attr('y',      d => scaleFor(d)(Math.max(baseFor(d), d.value)))
-          .attr('height', d => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d))));
+    // Colour and opacity follow setData and options, not only the first draw.
+    barsSel.attr('fill', d => d.color).attr('opacity', barOpacity);
+    const apply = (sel) => sel
+      .attr('x',      d => x(d.date) + d.dx)
+      .attr('width',  d => d.w)
+      .attr('y',      d => scaleFor(d)(Math.max(baseFor(d), d.value)))
+      .attr('height', d => Math.abs(scaleFor(d)(d.value) - scaleFor(d)(baseFor(d))));
 
-        if (animate && barItems.length) {
-          apply(sel.transition().duration(duration).ease(ease));
-        } else {
-          apply(sel);
-        }
-      });
+    // The growth runs on the chart's entry timeline: a render in the middle
+    // of it retargets the bars from where they stand (C-16); after it, or
+    // with animate off, they take their place at once.
+    if (phase === 'none') {
+      apply(barsSel.interrupt());
+    } else {
+      const { moving, settled } = entryTransition(barsSel, this._entry, { duration, ease });
+      apply(settled);
+      apply(moving);
+    }
   }
 
   // ─── Lines ────────────────────────────────────────────────────────────────
 
-  _renderLines({ lines, x, y1, y2, defaultCurve, tension, globalDash, animate, duration, ease }) {
+  _renderLines({ lines, x, y1, y2, defaultCurve, tension, globalDash, phase, duration, ease }) {
     const globalArea    = this.options.area        ?? false;
     const globalAreaOp  = this.options.areaOpacity ?? 0.12;
     const globalAreaBase= this.options.areaBaseline?? 'zero';
@@ -335,31 +401,29 @@ export class DualAxes extends Chart {
       .attr('class',        'rc-dual-line')
       .attr('fill',         'none')
       .attr('stroke',       s => s.color)
-      .attr('stroke-width',   s => s.strokeWidth ?? 2)
+      .attr('stroke-width',   s => s.strokeWidth ?? this.theme.strokeWidth ?? 2)
       .attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
       .attr('d', s => linePath(s, x, yFor(s), defaultCurve, tension));
 
-    if (animate && lines.length) {
-      const solidPaths  = paths.filter(s => !resolveStrokeDash(s.strokeDash ?? globalDash));
-      const dashedPaths = paths.filter(s =>  resolveStrokeDash(s.strokeDash ?? globalDash));
-
-      dashedPaths.attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
-                 .attr('stroke-dashoffset', null);
-
-      animateLines(solidPaths, duration, ease, () => { this._didAnimateIn = true; });
-
-      if (solidPaths.empty()) this._didAnimateIn = true;
-    } else {
-      paths.attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
-           .attr('stroke-dashoffset', null);
-      this._didAnimateIn = true;
-    }
+    // Dashed lines appear at once with their pattern (the draw-in uses the
+    // same attribute); solid ones draw in on the entry timeline, as on Line.
+    const dashOf = s => resolveStrokeDash(s.strokeDash ?? globalDash);
+    paths.filter(s => dashOf(s)).interrupt()
+      .attr('stroke-dasharray', dashOf)
+      .attr('stroke-dashoffset', null);
+    drawLinesIn(paths.filter(s => !dashOf(s)),
+      phase === 'none' ? null : this._entry.timing(0, duration, ease));
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
+  _dataLayers() {
+    return [this.gGrid, this.gBars, this.gLines, this.gAxisX, this.gAxisY1, this.gAxisY2,
+      this.gAxisTitles, this.gEnds, this.gMarkers, this.gZero, this.gAnnotations];
+  }
+
   render() {
-    if (!this._series.length) return;
+    if (!this._series.length) { this._renderEmpty(); return; }
 
     const W = this.width, H = this.height;
     if (W <= 0 || H <= 0) return;
@@ -383,14 +447,15 @@ export class DualAxes extends Chart {
       this._warnedNonPositive = true;
       console.warn(`RareCharts.DualAxes: ${skipped} value${skipped === 1 ? '' : 's'} ≤ 0 skipped on the log axis`);
     }
-    if (!visibleSeries.length) return;
+    if (!visibleSeries.length) { this._renderEmpty(); return; }
 
     this._syncTimeframeButtons(fullExtent, viewExtent);
     this._syncNavigator();
 
-    // Animation
-    const animate  = (o.animate ?? true) && !this._didAnimateIn;
+    // Animation — once per instance; lines and bars share one timeline that
+    // a render in the middle of it carries on (C-16).
     const duration = motionDuration(o.duration ?? 650);
+    const phase    = this._entry.phase((o.animate ?? true) ? duration : 0);
     const ease     = resolveEase(o.ease ?? 'cubicOut');
 
     // Curve / dash options
@@ -408,10 +473,15 @@ export class DualAxes extends Chart {
     // Update clip rect to match current drawing area
     this._clipRect.attr('x', xPad).attr('y', 0).attr('width', W - 2 * xPad).attr('height', H);
 
-    // Scales
+    // Scales. With bars, the range is inset by half the widest bar or cluster
+    // (C-27): the first and last bars end at the clip edges instead of being
+    // centred on them and cut in half. Lines share the scale, so their points
+    // stay on the bar centres; a chart without bars is unchanged.
+    const barLayout = bars.length ? this._barLayout(bars, viewExtent, allValues) : null;
+    const inset = barLayout ? barInset(W - 2 * xPad, barLayout.extent) : 0;
     const x = d3.scaleTime()
       .domain(viewExtent)
-      .range([xPad, W - xPad]);
+      .range([xPad + inset, W - xPad - inset]);
 
     // Each axis is linear (a niced auto domain, as before) or log: a padded
     // domain whose margin is a factor of the data's span, with ticks on powers
@@ -421,9 +491,11 @@ export class DualAxes extends Chart {
       const values = (own.length ? own : other).map(d => d.value);
       const domain = o[`${axis}Domain`];
       if (!logOn[axis]) {
+        // The auto domain is rounded to the axis's own tick count (C-21: it
+        // was always 4, whatever y1Ticks / y2Ticks asked for).
         const scale = Array.isArray(domain)
           ? d3.scaleLinear().domain(domain)
-          : d3.scaleLinear().domain(d3.extent(values)).nice(4);
+          : d3.scaleLinear().domain(d3.extent(values)).nice(o[`${axis}Ticks`] ?? 4);
         return { scale: scale.range([H, 0]), tickValues: null };
       }
       const positive = values.filter(v => v > 0);
@@ -441,6 +513,13 @@ export class DualAxes extends Chart {
     // Formatters — log ticks are round powers: trim the zeros (1k, not 1,000.00).
     const logFormat    = d3.format('.3~s');
     const xTickFormat  = o.xTickFormat  ?? (d => d3.timeFormat('%m/%d')(d));
+    // The default '%m/%d' labels days: on a span of a few days d3 would place
+    // ticks every few hours and repeat a date ("01/01 01/01 01/02"), so the
+    // count is capped at one tick per whole day of the view (E-03; the same
+    // rule as Line). A page's own xTickFormat keeps the full count.
+    const xTicks = o.xTickFormat
+      ? 6
+      : (dayTicks(viewExtent, 6) ?? 6);
     const y1TickFormat = o.y1TickFormat ?? (logOn.y1 ? logFormat : v => d3.format(',.2f')(v));
     const y2TickFormat = o.y2TickFormat ?? (logOn.y2 ? logFormat : v => Math.abs(v) < 1e-6 ? '0' : d3.format('+.2f')(v));
 
@@ -454,7 +533,7 @@ export class DualAxes extends Chart {
     renderZeroBaseline(this.gZero, y2, W, t);
 
     if (o.showXAxis ?? true) {
-      renderAxisX(this.gAxisX, x, H, xTickFormat, t);
+      renderAxisX(this.gAxisX, x, H, xTickFormat, t, xTicks);
     } else {
       this.gAxisX.selectAll('*').remove();
     }
@@ -487,21 +566,20 @@ export class DualAxes extends Chart {
     // Series
     if (bars.length) {
       this._renderBars({
-        bars, allValues, x, y1, y2,
-        barOpacity:    o.barOpacity    ?? 0.35,
-        barWidthRatio: o.barWidthRatio ?? 0.65,
-        barGrouping:   o.barGrouping   ?? 'overlap',
-        animate, duration, ease,
+        bars, x, y1, y2,
+        widths:     barLayout.widths(W - 2 * xPad - 2 * inset),
+        cluster:    barLayout.cluster,
+        barOpacity: o.barOpacity ?? t.barOpacity ?? 0.35,
+        phase, duration, ease,
       });
     } else {
       this.gBars.selectAll('*').remove();
     }
 
     if (lines.length) {
-      this._renderLines({ lines, x, y1, y2, defaultCurve, tension, globalDash: o.strokeDash ?? null, animate, duration, ease });
+      this._renderLines({ lines, x, y1, y2, defaultCurve, tension, globalDash: o.strokeDash ?? null, phase, duration, ease });
     } else {
       this.gLines.selectAll('*').remove();
-      this._didAnimateIn = true;
     }
 
     // End labels
@@ -521,24 +599,19 @@ export class DualAxes extends Chart {
       s => (s.axis === 'y2' ? y2 : y1),
       o.markers ?? false,
       o.markerShape ?? 'circle',
-      o.markerSize  ?? 4,
+      o.markerSize  ?? t.markerSize ?? 4,
       t
     );
 
-    // Annotations — horizontal markers at or below zero have no position on a
-    // log axis; a band is cut at the bottom of the axis.
-    const annotations = this._annotations.flatMap(a => {
-      const axis = a.axis === 'y2' ? 'y2' : 'y1';
-      if (!logOn[axis]) return [a];
-      const lo = (axis === 'y2' ? y2 : y1).domain()[0];
-      if (a.kind === 'hPoint') return a.value > 0 ? [a] : [];
-      if (a.kind === 'hRange') return a.yTo > 0 ? [{ ...a, yFrom: Math.max(a.yFrom, lo) }] : [];
-      return [a];
-    });
+    // Annotations — levels outside their axis's range (on a log axis: at or
+    // below zero) are skipped by renderAnnotations itself; a band is cut at
+    // the edge of the axis.
+    // Levels span the plot, not the scale: with bars the scale is inset by
+    // half a bar (C-27), and a reference line should reach past the edge bars.
     renderAnnotations(
-      this.gAnnotations, annotations, x,
+      this.gAnnotations, this._annotations, x,
       axis => axis === 'y2' ? y2 : y1,
-      H, this._annLabelHeight, t
+      H, this._annLabelHeight, t, [xPad, W - xPad]
     );
 
     // Crosshair

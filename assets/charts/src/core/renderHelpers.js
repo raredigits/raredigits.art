@@ -5,6 +5,21 @@
 import * as d3 from 'd3';
 import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js';
 
+// ─── Text ──────────────────────────────────────────────────────────────────────
+
+// Truncate a text node's content with an ellipsis until it fits `avail` px.
+// The full text stays available in the tooltip. No-op where text measurement
+// is unavailable (jsdom).
+export function fitTextNode(node, full, avail) {
+  if (!node.getComputedTextLength) return;
+  let s = String(full);
+  node.textContent = s;
+  while (s.length > 1 && node.getComputedTextLength() > avail) {
+    s = s.slice(0, -1).trimEnd();
+    node.textContent = s + '…';
+  }
+}
+
 // ─── Accessibility ─────────────────────────────────────────────────────────────
 
 /**
@@ -19,19 +34,6 @@ import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js'
  * @param {d3.Selection} svg     — the root <svg> selection
  * @param {object}       options — chart options (reads ariaLabel, title, subtitle)
  */
-// Truncate a text node's content with an ellipsis until it fits `avail` px.
-// The full text stays available in the tooltip. No-op where text measurement
-// is unavailable (jsdom).
-export function fitTextNode(node, full, avail) {
-  if (!node.getComputedTextLength) return;
-  let s = String(full);
-  node.textContent = s;
-  while (s.length > 1 && node.getComputedTextLength() > avail) {
-    s = s.slice(0, -1).trimEnd();
-    node.textContent = s + '…';
-  }
-}
-
 export function applySvgA11y(svg, options = {}) {
   if (!svg) return;
   const explicit = typeof options.ariaLabel === 'string' ? options.ariaLabel.trim() : '';
@@ -99,14 +101,27 @@ export function renderZeroBaseline(g, scale, W, theme) {
  * @param {Function}     tickFormat — date formatter
  * @param {object}       theme
  */
+// Ticks for a day-labelled time axis (the default '%m/%d'): a span with
+// fewer midnights than `max` gets exactly those midnights — a count would let
+// d3 pick 12-hour steps (repeating a date) or a 2-day step with no tick in
+// view — and a span inside one day gets one tick at its start. null: the
+// span holds enough days for d3's own ticks.
+export function dayTicks([d0, d1], max) {
+  const days = d3.timeDay.range(d3.timeDay.ceil(d0), +d1 + 1);
+  if (days.length >= max) return null;
+  return days.length ? days : [d0];
+}
+
 export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
   g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
   const apply = (n) => {
+    const axis = d3.axisBottom(scale).tickSize(0).tickPadding(6).tickFormat(tickFormat);
     g.attr('transform', `translate(0,${H})`)
-      .call(d3.axisBottom(scale).ticks(n).tickSize(0).tickPadding(6).tickFormat(tickFormat))
+      .call(Array.isArray(n) ? axis.tickValues(n) : axis.ticks(n))
       .call(sel => {
         sel.selectAll('text')
           .attr('fill', theme.muted)
+          .attr('dx', null)
           .attr('dy', '0.71em');
         sel.select('.domain').remove();
         sel.selectAll('line').remove();
@@ -114,13 +129,17 @@ export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
   };
 
   apply(ticks);
+  if (typeof ticks === 'number') thinAxisX(g, ticks, apply);
+  keepEdgeLabelsInside(g);
+}
 
-  // Auto-thin labels when they overlap. Only kicks in for numeric tick counts;
-  // explicit time intervals (d3.timeMonth.every(N)) are respected as-is.
-  if (typeof ticks !== 'number') return;
-
+// Auto-thin labels when they overlap. Only kicks in for numeric tick counts;
+// explicit tick values and time intervals (d3.timeMonth.every(N)) are
+// respected as-is.
+function thinAxisX(g, ticks, apply) {
   const minGap = 8;
   let attempts = 5;
+  let count = ticks;
   while (attempts-- > 0) {
     const labels = g.selectAll('text').nodes();
     if (labels.length <= 2) break;
@@ -132,10 +151,45 @@ export function renderAxisX(g, scale, H, tickFormat, theme, ticks = 6) {
       prev = cur;
     }
     if (!overlap) break;
-    const newCount = Math.max(2, Math.floor(labels.length / 2));
-    if (newCount === labels.length) break;
+    // Halve the count asked of d3, not the labels drawn: a time scale may
+    // answer ticks(6) with 12 quarter ticks, and asking 6 again changes
+    // nothing.
+    const newCount = Math.max(1, Math.floor(Math.min(count, labels.length) / 2));
+    if (newCount >= count) break;
+    count = newCount;
     apply(newCount);
   }
+}
+
+// A label centred on a tick near the plot's edge reaches past the svg (a 1M
+// view's first weekly tick sits a few px from a zero left margin) and is cut
+// off: shift the first and last labels just far enough back inside, as most
+// chart libraries do; one that would then run into its neighbour is hidden.
+// Measured in screen px (the svg is not scaled), so a no-layout DOM moves
+// nothing.
+function keepEdgeLabelsInside(g) {
+  const svg = g.node()?.ownerSVGElement;
+  const labels = g.selectAll('text').nodes();
+  if (!svg || !labels.length) return;
+  const box = svg.getBoundingClientRect();
+  if (!(box.width > 0)) return;
+  labels.forEach(n => n.removeAttribute('display'));
+  const shift = (node, neighbour, dx) => {
+    node.setAttribute('dx', String(dx > 0 ? Math.ceil(dx) : Math.floor(dx)));
+    if (!neighbour) return;
+    const r = node.getBoundingClientRect();
+    const o = neighbour.getBoundingClientRect();
+    if (r.right > o.left - 4 && o.right > r.left - 4) node.setAttribute('display', 'none');
+  };
+  const first = labels[0];
+  const last  = labels[labels.length - 1];
+  const r0 = first.getBoundingClientRect();
+  const left = r0.width > 0 && r0.left < box.left;
+  if (left) shift(first, labels[1], box.left - r0.left);
+  // A lone label wider than the svg keeps its start in view.
+  if (left && last === first) return;
+  const r1 = last.getBoundingClientRect();
+  if (r1.width > 0 && r1.right > box.right) shift(last, labels[labels.length - 2], box.right - r1.right);
 }
 
 // ─── Y axis (right) ──────────────────────────────────────────────────────────
@@ -235,12 +289,17 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
     .data(points, d => d.name)
     .join('g')
     .attr('class', 'rc-end-label-g')
-    .attr('transform', d => `translate(${W + 10},${yScale(d.value)})`);
+    // 3px past the plot edge (was 10): longer values ($88.4K, 1,234.56) kept
+    // running into the card's edge; the label may sit over the line's last
+    // few px instead.
+    .attr('transform', d => `translate(${W + 3},${yScale(d.value)})`);
 
-  // Background rect — sized after text renders via getBBox()
+  // Background plate — the chart's own background (theme.bg), so it masks
+  // the line under the label in any theme (C-12). Sized after text renders
+  // via getBBox().
   groups.append('rect')
     .attr('class', 'rc-end-label-bg')
-    .attr('fill', theme.service);
+    .attr('fill', theme.bg);
 
   groups.append('text')
     .attr('class', 'rc-end-label')
@@ -321,41 +380,6 @@ export function renderAxisTitles(g, W, y1Title, y2Title, theme, opts = {}) {
   });
 }
 
-// ─── Line animation ───────────────────────────────────────────────────────────
-
-/**
- * Animate SVG line paths using the stroke-dasharray draw technique.
- * Only call for solid lines — dashed/dotted paths must be rendered
- * instantly since they share the same stroke-dasharray attribute.
- *
- * @param {d3.Selection} paths    — selection of solid <path> elements
- * @param {number}       duration — ms
- * @param {Function}     ease     — d3 ease function
- * @param {Function}     onDone   — callback when animation completes
- */
-export function animateLines(paths, duration, ease, onDone) {
-  paths.each(function () {
-    const p     = d3.select(this);
-    const total = this.getTotalLength?.() ?? 0;
-    if (!total) return;
-
-    p.attr('stroke-dasharray', `${total} ${total}`)
-      .attr('stroke-dashoffset', total)
-      .transition()
-      .duration(duration)
-      .ease(ease)
-      .attr('stroke-dashoffset', 0)
-      .on('end', function () {
-        // Clean up after animation so the attribute doesn't linger
-        d3.select(this)
-          .attr('stroke-dasharray', null)
-          .attr('stroke-dashoffset', null);
-      });
-  });
-
-  if (onDone) setTimeout(onDone, duration + 20);
-}
-
 // ─── Markers ─────────────────────────────────────────────────────────────────
 
 /**
@@ -434,7 +458,10 @@ export function renderMarkers(g, series, x, scaleFor, globalMarkers = false, glo
  * the caller must reserve vertical space via `margin.top` ≥ `labelHeight + ~6`
  * when at least one vertical annotation has a label.
  *
- * Annotations outside the visible extent are skipped automatically.
+ * Annotations outside the visible extent are skipped automatically: dates
+ * outside the X domain, values outside the Y domain. A range or band that
+ * runs past an edge is cut there and draws only the edges inside the plot.
+ * Values never widen the Y domain — the caller's scale decides what shows.
  *
  * @param {d3.Selection} g           — target <g> element (chart-relative)
  * @param {Array}        annotations — normalized annotations from normalizeAnnotations()
@@ -443,22 +470,30 @@ export function renderMarkers(g, series, x, scaleFor, globalMarkers = false, glo
  * @param {number}       H           — chart drawing height
  * @param {number}       labelHeight — px reserved above the chart for vertical labels
  * @param {object}       theme
+ * @param {number[]}     [hSpan]     — [x0, x1] px of the plot (default x.range()):
+ *                                      horizontal entries span it, and a date range
+ *                                      is cut at its edges. A chart that insets its
+ *                                      scale for bars passes the full plot width, so
+ *                                      a range can shade the edge bars whole.
  */
-export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, theme) {
+export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, theme, hSpan) {
   g.selectAll('*').remove();
   if (!annotations?.length) return;
 
   const [xLo, xHi] = x.domain();
   const xLoT = +xLo, xHiT = +xHi;
-  const xR0  = x.range()[0];
-  const xR1  = x.range()[1];
+  const [xR0, xR1] = hSpan ?? x.range();
+  // Ranges are cut at the plot's edges, which lie past the domain on a scale
+  // inset for bars; points stay on the domain (the data's dates).
+  const rLoT = hSpan ? +x.invert(xR0) : xLoT;
+  const rHiT = hSpan ? +x.invert(xR1) : xHiT;
 
   // ── Vertical: ranges + points ────────────────────────────────────────────
   const ranges = annotations
-    .filter(a => a.kind === 'range' && +a.to >= xLoT && +a.from <= xHiT)
+    .filter(a => a.kind === 'range' && +a.to >= rLoT && +a.from <= rHiT)
     .map(a => {
-      const fromClamped = new Date(Math.max(+a.from, xLoT));
-      const toClamped   = new Date(Math.min(+a.to,   xHiT));
+      const fromClamped = new Date(Math.max(+a.from, rLoT));
+      const toClamped   = new Date(Math.min(+a.to,   rHiT));
       return { ...a, x1: x(fromClamped), x2: x(toClamped) };
     });
 
@@ -467,14 +502,22 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     .map(a => ({ ...a, cx: x(a.date) }));
 
   // ── Horizontal: ranges + points ──────────────────────────────────────────
+  // Kept to the Y domain as the vertical ones are to the X domain: a level
+  // off the scale is skipped, a band is cut at the plot's edge and draws only
+  // the edges it really has (B-04). This also covers a log scale, whose
+  // domain starts above zero.
+  const yBounds = s => { const [a, b] = s.domain(); return [Math.min(a, b), Math.max(a, b)]; };
+
   const hRanges = annotations
     .filter(a => a.kind === 'hRange')
     .map(a => {
       const yScale = yScaleFor(a.axis);
       if (!yScale) return null;
-      const yA = yScale(a.yFrom);
-      const yB = yScale(a.yTo);
-      return { ...a, yA, yB, yScale };
+      const [yLo, yHi] = yBounds(yScale);
+      if (a.yTo < yLo || a.yFrom > yHi) return null;
+      const yA = yScale(Math.max(a.yFrom, yLo));
+      const yB = yScale(Math.min(a.yTo, yHi));
+      return { ...a, yA, yB, edgeA: a.yFrom >= yLo, edgeB: a.yTo <= yHi, yScale };
     })
     .filter(Boolean);
 
@@ -483,6 +526,8 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     .map(a => {
       const yScale = yScaleFor(a.axis);
       if (!yScale) return null;
+      const [yLo, yHi] = yBounds(yScale);
+      if (a.value < yLo || a.value > yHi) return null;
       return { ...a, cy: yScale(a.value), yScale };
     })
     .filter(Boolean);
@@ -511,7 +556,8 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     const sel    = d3.select(this);
     const dash   = resolveStrokeDash(d.strokeDash);
     const stroke = d.color ?? theme.muted;
-    [d.yA, d.yB].forEach(yPx => {
+    [[d.yA, d.edgeA], [d.yB, d.edgeB]].forEach(([yPx, real]) => {
+      if (!real) return;
       sel.append('line')
         .attr('class', 'rc-annotation-h-range-edge')
         .attr('x1', xR0).attr('x2', xR1)
@@ -551,7 +597,7 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
     const sel    = d3.select(this);
     const dash   = resolveStrokeDash(d.strokeDash);
     const stroke = d.color ?? theme.muted;
-    if (+d.from >= xLoT) {
+    if (+d.from >= rLoT) {
       sel.append('line')
         .attr('class', 'rc-annotation-range-edge')
         .attr('x1', d.x1).attr('x2', d.x1)
@@ -559,7 +605,7 @@ export function renderAnnotations(g, annotations, x, yScaleFor, H, labelHeight, 
         .attr('stroke', stroke)
         .attr('stroke-dasharray', dash);
     }
-    if (+d.to <= xHiT) {
+    if (+d.to <= rHiT) {
       sel.append('line')
         .attr('class', 'rc-annotation-range-edge')
         .attr('x1', d.x2).attr('x2', d.x2)

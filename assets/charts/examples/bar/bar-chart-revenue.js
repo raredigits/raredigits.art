@@ -25,7 +25,7 @@
     barColor: '#00aaff',
     yTickFormat: d => '$' + Number(d).toLocaleString('en-US'),
     tooltipFormat: d => `
-      <div style="color:#555">${d.label} 2025</div>
+      <div style="color:#555">${d.label} 2024</div>
       <div style="color:#00aaff">$${(d.value / 1000).toFixed(0)}K</div>
     `,
   }).setData(data);

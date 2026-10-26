@@ -1,16 +1,21 @@
 // RareCharts — Theme
-// Single source of truth for colors, fonts, spacing, and sizing defaults.
-// Charts read sizing tokens (strokeWidth, dotRadius…) as fallbacks —
-// explicit chart options always take priority.
+// Colours, the tooltip font, and sizing fallbacks for the charts. Spacing,
+// type sizes and the chart font live in rare-charts.css (--rc-*). Charts read
+// the sizing tokens (strokeWidth, dotRadius, markerSize, barOpacity) as
+// fallbacks — explicit chart and series options take priority.
+// map.hoverBrighten (hover: (factor − 1) of the way towards white) and map.graticule (colour of
+// Map's graticule option) are read by Map.
 
 // ─── Default (light) ─────────────────────────────────────────────────────────
 
 export const defaultTheme = {
 
   // ── Backgrounds ────────────────────────────────────────────────────────────
-  bg:      'var(--bg-color)',
-  surface: '#f5f5f5',     // tooltip bg, panel fills
-  service:  '#ffffff',     // used for map borders and tooltip bg in light theme
+  // bg is what the chart sits on: plates behind end and annotation labels,
+  // halos and knockouts are painted with it. The page background under Rare
+  // Styles, white without it — the fallback keeps fill="var(…)" valid (C-13).
+  bg:      'var(--bg-color, #ffffff)',
+  surface: '#f5f5f5',     // Graph node fills, flow lane bands
 
   // ── Structure ──────────────────────────────────────────────────────────────
   grid:      '#e8e8e8',   // horizontal grid lines
@@ -38,12 +43,16 @@ export const defaultTheme = {
   ],
 
   // ── Typography ─────────────────────────────────────────────────────────────
-  font:        'var(--rc-font-family, "Fira Sans", sans-serif)',
+  // The fallbacks are the --rc-font-family(-numeric) stacks of
+  // rare-charts.css; keep them in step. Chart text takes the CSS stack set on
+  // .rc-chart; `font` is only the tooltip's fallback when numericFont is unset.
+  font:        'var(--rc-font-family, "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
+  // Not used: the tooltip size lives in rare-charts.css (B-03). Removal at 1.0.
   fontSize:    'var(--rc-font-size-sm, 14px)',
 
-  // Separate monospace font for numbers on axes and in tooltips.
+  // The tooltip font family (published as --rc-tooltip-font).
   // Falls back through a chain of common tabular fonts.
-  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
+  numericFont: 'var(--rc-font-family-numeric, "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace)',
 
   // ── Sizing defaults ────────────────────────────────────────────────────────
   // Charts use these as fallbacks when options are not passed explicitly.
@@ -55,19 +64,25 @@ export const defaultTheme = {
   map: {
     matchFill:      '#00aaff',
     unmatchedFill:  '#e8e8e8',
-    ocean:          'var(--bg-color)',
+    ocean:          'transparent',   // the card shows through (C-13)
     border:         '#ffffff',
     hoverBrighten:  1.3,
     graticule:      'rgba(0,0,0,0.08)',
   },
 
   // ── Tooltip ────────────────────────────────────────────────────────────────
+  // Colours only: Tooltip.js publishes them as --rc-tooltip-* custom
+  // properties, rare-charts.css sets size, weight and spacing — its var()
+  // fallbacks repeat these values; keep them in step (B-03).
   tooltip: {
     bg:     '#ffffff',
     border: '#e0e0e0',
-    text:   '#000000',
-    muted:  '#888888',
+    text:   '#000000',      // plain rows and subject titles
+    muted:  '#666666',      // dates, percentages, counts — every secondary row
     shadow: '0 2px 8px rgba(0,0,0,0.10)',
+    // The row naming what is hovered (date, label, title). null keeps the
+    // role look: a date stays muted, a title bold in text. bg draws a band.
+    header: { text: null, bg: null },
   },
 };
 
@@ -82,7 +97,6 @@ export const darkTheme = createTheme({
   text:    '#e8e8e8',
   muted:   '#888888',
   accent:  '#ff6200',
-  numericFont: 'var(--rc-font-family-numeric, "Cousine", monospace)',
   tooltip: {
     bg:     '#1a1a1a',
     border: '#2e2e2e',
@@ -93,7 +107,7 @@ export const darkTheme = createTheme({
   map: {
     matchFill:      '#ff6200',
     unmatchedFill:  '#1e1e2e',
-    ocean:          'var(--bg-color)',
+    ocean:          'transparent',
     border:         '#444455',
     hoverBrighten:  1.2,
     graticule:      'rgba(255,255,255,0.06)',
@@ -103,23 +117,31 @@ export const darkTheme = createTheme({
 // ─── Factory ──────────────────────────────────────────────────────────────────
 
 /**
- * Create a theme by merging overrides with the default.
- * Performs a shallow merge for top-level keys and a deep merge for `tooltip`.
+ * Create a theme by merging overrides with a base theme (the default one
+ * unless given). Top-level keys merge shallow; `tooltip`, `tooltip.header`
+ * and `map` merge deep, so a partial override keeps the base's other keys —
+ * createTheme({ tooltip: { bg } }, darkTheme) stays dark (B-03).
  *
  * @param {object} overrides
+ * @param {object} [base=defaultTheme]
  * @returns {object}
  */
-export function createTheme(overrides = {}) {
+export function createTheme(overrides = {}, base = defaultTheme) {
+  const o = overrides ?? {};
+  const tip = o.tooltip ?? {};
+  // a non-object header ('#f00') is ignored: spread, a string becomes {0:'#',…}
+  const header = tip.header && typeof tip.header === 'object' ? tip.header : {};
   return {
-    ...defaultTheme,
-    ...overrides,
+    ...base,
+    ...o,
     tooltip: {
-      ...defaultTheme.tooltip,
-      ...(overrides.tooltip ?? {}),
+      ...base.tooltip,
+      ...tip,
+      header: { ...base.tooltip?.header, ...header },
     },
     map: {
-      ...defaultTheme.map,
-      ...(overrides.map ?? {}),
+      ...base.map,
+      ...(o.map ?? {}),
     },
   };
 }

@@ -1,12 +1,21 @@
 // RareCharts — TimeSeries
-// Price time series with zoom (wheel), pan (drag), crosshair and mini-map support.
+// Long date series with range buttons, zoom (wheel), pan (drag), crosshair
+// and a navigator strip.
 //
 // Expected data format:
-// [{ date: Date, value: number, open?, high?, low?, volume? }, ...]
+// [{ date, value, ...extra }, ...] — `date` a Date, ISO string or epoch ms,
+// `value` a number (numeric strings are coerced). Only `value` is drawn; any
+// other fields (open, high, low, volume…) pass through to tooltipFormat(d, info).
+// The input is copied, parsed and sorted by date; rows with an unreadable
+// date or value are dropped. The caller's array is never modified.
 //
 // Options:
 //   height        — px (default: 340)
-//   tooltipFormat — fn(d) => HTML string for tooltip
+//   tooltipFormat — fn(d, info) => HTML string for tooltip; d is the row (a
+//                   copy, date parsed), info the role fields { date, value,
+//                   color } — the rule for every class (K-09):
+//                   /charts/settings/#formatter-arguments
+//   crosshair     — crosshair lines and tooltip on hover (default: true)
 //   theme         — theme override object
 //   curve         — 'linear'|'monotone'|'basis'|'cardinal'|'step'|'stepBefore'|'stepAfter' (default: 'monotone')
 //   area          — false | true (gradient) | number (solid fill at that opacity) (default: true)
@@ -19,9 +28,13 @@
 //                   (true | { labels: { linear, log } }); onScaleChange(fn)
 //                   gets { scale, axis: 'y' } on every switch
 //   yTicks        — Y tick count (default: 5)
-//   yTickValues   — explicit Y tick positions (overrides yTicks)
+//   yTickValues   — explicit Y tick positions (overrides yTicks); the value
+//                   range widens to include them
 //   yTickFormat   — fn(value) => string (default: '$' + ',.0f')
-//   xTickFormat   — fn(date) => string (default: '%b')
+//   xTickFormat   — fn(date) => string. Default by the span in view (C-31):
+//                   ≤ 36 h '%H:%M' (a midnight tick names the day), ≤ 92 days
+//                   '%b %d' (at most one tick per day), ≤ 366 days '%b',
+//                   ≤ 5 years "%b '%y", longer '%Y'
 //   showGrid      — show grid lines (default: true)
 //   showXAxis     — show X axis (default: true; hiding it also reclaims the bottom margin)
 //   showYAxis     — show Y axis (default: true; hiding it also reclaims the right margin)
@@ -30,13 +43,20 @@
 //                   range:  { from, to, label?, color?, fill?, fillOpacity?, strokeDash? }
 //                   hPoint: { value, label?, color?, strokeDash?, labelPosition? }
 //                   hRange: { yFrom, yTo, label?, color?, fill?, fillOpacity?, strokeDash? }
-//   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22)
+//   annotationLabelHeight — px reserved above the chart for vertical labels (default: 22);
+//                   an explicit margin.top wins over the reserve
+//
+// The line takes theme.accent and theme.strokeWidth. setData and appendPoint
+// keep the view: a selected timeframe re-applies to the new data, a window
+// the data no longer reaches falls back to the default view.
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
 import { Tooltip } from '../core/Tooltip.js';
-import { renderGrid, renderAxisX, renderAxisYRight, renderAnnotations, applySvgA11y } from '../core/renderHelpers.js';
-import { normalizeAnnotations, logTickValues, logPaddedDomain } from '../core/utils.js';
+import { renderGrid, renderAxisX, dayTicks, renderAxisYRight, renderAnnotations, applySvgA11y } from '../core/renderHelpers.js';
+import { normalizeAnnotations, logTickValues, logPaddedDomain, byDate, spanTimeFormat, spanTimeFormatter } from '../core/utils.js';
+import { normalizePoints } from '../core/seriesPath.js';
+import { escapeHtml, tipHeader } from '../core/html.js';
 
 export class TimeSeries extends Chart {
   constructor(selector, options = {}) {
@@ -45,12 +65,12 @@ export class TimeSeries extends Chart {
     const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
     const { margin: _margin, ...restOptions } = options;
 
-    // A hidden axis collapses its margin so the plot runs flush; an explicit
-    // margin always wins.
+    // A hidden axis collapses its margin so the plot runs flush; annotations
+    // raise the top for their labels. An explicit margin always wins.
     super(selector, {
       height: 340,
       margin: {
-        top:    Math.max(options.margin?.top ?? 16, annTopReserve),
+        top:    options.margin?.top    ?? Math.max(16, annTopReserve),
         right:  options.margin?.right  ?? (options.showYAxis === false ? 0 : 70),
         bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 28),
         left:   options.margin?.left   ?? 0,
@@ -73,10 +93,12 @@ export class TimeSeries extends Chart {
   // ── Public API ────────────────────────────────────────────────────────────
 
   setData(data) {
-    this._data       = data;
-    this._viewExtent = null;
+    // Extra fields (open, volume…) are kept for tooltipFormat (C-06).
+    this._data       = normalizePoints(data, { keep: true });
     this._warnedNonPositive = false;
-    this._syncTimeframeButtons(this._getDataExtent());
+    // As on every time chart (T-03): a selected timeframe re-applies to the
+    // new data, a window the data no longer reaches falls back.
+    this._refreshViewForData();
     this.render();
     return this;
   }
@@ -95,9 +117,14 @@ export class TimeSeries extends Chart {
     return this.options.yScale === 'log';
   }
 
+  // Add one point (normalized like setData) and redraw. The chart keeps its
+  // own copy of the data, so the array passed to setData is never touched.
+  // A selected timeframe moves with the new point.
   appendPoint(point) {
-    this._data.push(point);
-    this._data.sort((a, b) => a.date - b.date);
+    const [p] = normalizePoints([point], { keep: true });
+    if (!p) return this;
+    this._data = this._data.concat(p).sort(byDate);
+    this._refreshViewForData();
     this.render();
     return this;
   }
@@ -123,7 +150,7 @@ export class TimeSeries extends Chart {
     this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
 
     // Clip path — keep the line inside the plot area while zooming
-    const clipId = 'rc-clip-' + Math.random().toString(36).slice(2);
+    const clipId = `${this._uid}-clip`;
     this.clipRect = this.svg.append('defs').append('clipPath')
       .attr('id', clipId).append('rect');
     this.clipId = clipId;
@@ -144,8 +171,19 @@ export class TimeSeries extends Chart {
 
   // ── Render ────────────────────────────────────────────────────────────────
 
+  _dataLayers() {
+    return [this.gGrid, this.gPaths, this.gAnnotations, this.gAxisX, this.gAxisY];
+  }
+
+  _renderEmpty() {
+    this._visible = [];          // the hover reads it: no old points under the cursor
+    this.crossX?.style('opacity', 0);
+    this.crossY?.style('opacity', 0);
+    super._renderEmpty();
+  }
+
   render() {
-    if (!this._data.length) return;
+    if (!this._data.length) { this._renderEmpty(); return; }
     const W = this.width, H = this.height;
     if (W <= 0 || H <= 0) return;
 
@@ -158,6 +196,7 @@ export class TimeSeries extends Chart {
     const viewExtent = this._resolveViewExtent(fullExtent);
     this._syncTimeframeButtons(fullExtent, viewExtent);
     this._syncNavigator();
+    this._syncZoomToView(fullExtent, viewExtent, W);
 
     // A log scale has no place for zero or negatives: such points are skipped
     // (the line joins its neighbours) instead of drawing NaN.
@@ -170,7 +209,7 @@ export class TimeSeries extends Chart {
       console.warn(`RareCharts.TimeSeries: ${n} value${n === 1 ? '' : 's'} ≤ 0 skipped on the log scale`);
     }
     this._visible = visible;
-    if (!visible.length) return;
+    if (!visible.length) { this._renderEmpty(); return; }
 
     const yTicks = this.options.yTicks ?? 5;
     this.xScale = d3.scaleTime().domain(viewExtent).range([0, W]);
@@ -186,8 +225,13 @@ export class TimeSeries extends Chart {
       }
       this.yScale = d3.scaleLog().domain([lo, hi]).range([H, 0]);
     } else {
-      const yMin  = d3.min(visible, d => d.value) * 0.99;
-      const yMax  = d3.max(visible, d => d.value) * 1.01;
+      let yMin = d3.min(visible, d => d.value) * 0.99;
+      let yMax = d3.max(visible, d => d.value) * 1.01;
+      // explicit ticks widen the range, as on Line — none is drawn off the plot
+      if (yTickValues?.length) {
+        yMin = Math.min(yMin, d3.min(yTickValues));
+        yMax = Math.max(yMax, d3.max(yTickValues));
+      }
       this.yScale = d3.scaleLinear().domain([yMin, yMax]).range([H, 0]);
     }
 
@@ -233,11 +277,14 @@ export class TimeSeries extends Chart {
           .attr('fill', areaColor)
           .attr('fill-opacity', solidOpacity);
       } else {
-        // Gradient — area: true (default)
-        let grad = this.svg.select('#rc-ts-grad');
+        // Gradient — area: true (default). The id is this chart's own (C-04);
+        // the old name rc-ts-grad stays as the class it is found by.
+        const gradId = `${this._uid}-ts-grad`;
+        let grad = this.svg.select('.rc-ts-grad');
         if (grad.empty()) {
           grad = this.svg.select('defs').append('linearGradient')
-            .attr('id', 'rc-ts-grad')
+            .attr('id', gradId)
+            .attr('class', 'rc-ts-grad')
             .attr('x1', '0').attr('x2', '0').attr('y1', '0').attr('y2', '1');
           grad.append('stop').attr('offset', '0%').attr('stop-opacity', 0.22);
           grad.append('stop').attr('offset', '100%').attr('stop-opacity', 0);
@@ -247,7 +294,7 @@ export class TimeSeries extends Chart {
         this.gPaths.selectAll('.rc-ts-area').data([visible]).join('path')
           .attr('class', 'rc-ts-area')
           .attr('d', area)
-          .attr('fill', 'url(#rc-ts-grad)')
+          .attr('fill', `url(#${gradId})`)
           .attr('fill-opacity', 1);
       }
     } else {
@@ -263,8 +310,15 @@ export class TimeSeries extends Chart {
 
     // X axis
     if (this.options.showXAxis ?? true) {
-      const xTickFormat = this.options.xTickFormat ?? (d => d3.timeFormat('%b')(d));
-      renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t);
+      // The default follows the span in view (C-31): '%b' alone repeated a
+      // month on a 1M view ("Sep Oct Oct Oct") and dropped the year on a long
+      // one. A day-labelled view of a few days gets at most one tick per
+      // midnight, as on Line. A page's own xTickFormat keeps d3's ticks.
+      const own  = this.options.xTickFormat;
+      const spec = own ? null : spanTimeFormat(viewExtent);
+      const xTickFormat = own ?? spanTimeFormatter(viewExtent);
+      const xTicks = spec === '%b %d' ? (dayTicks(viewExtent, 6) ?? 6) : 6;
+      renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t, xTicks);
     } else {
       this.gAxisX.selectAll('*').remove();
     }
@@ -286,15 +340,10 @@ export class TimeSeries extends Chart {
       this.gAxisY.selectAll('*').remove();
     }
 
-    // Annotations — horizontal markers at or below zero have no position on a log scale.
-    const lo = this.yScale.domain()[0];
-    const annotations = isLog ? this._annotations.flatMap(a => {
-      if (a.kind === 'hPoint') return a.value > 0 ? [a] : [];
-      if (a.kind === 'hRange') return a.yTo > 0 ? [{ ...a, yFrom: Math.max(a.yFrom, lo) }] : [];
-      return [a];
-    }) : this._annotations;
+    // Annotations — levels outside the value range (on a log scale: at or
+    // below zero) are skipped by renderAnnotations itself.
     renderAnnotations(
-      this.gAnnotations, annotations, this.xScale,
+      this.gAnnotations, this._annotations, this.xScale,
       () => this.yScale,
       H, this._annLabelHeight, t
     );
@@ -308,6 +357,19 @@ export class TimeSeries extends Chart {
   }
 
   // ── Zoom & Pan ────────────────────────────────────────────────────────────
+
+  // The wheel/drag zoom is measured against the full extent: after a view
+  // set elsewhere (a button, the brush, setView, setData) put its transform
+  // where that view is, so the next wheel step starts from the window on
+  // screen instead of jumping back towards the whole range.
+  _syncZoomToView(full, view, W) {
+    if (!this._zoom || !full || !view || W <= 0) return;
+    const span = +full[1] - +full[0], vspan = +view[1] - +view[0];
+    if (!(span > 0) || !(vspan > 0)) return;
+    const k = span / vspan;
+    const xFull = d3.scaleTime().domain(full).range([0, W]);
+    this.svg.property('__zoom', d3.zoomIdentity.translate(-k * xFull(view[0]), 0).scale(k));
+  }
 
   _bindZoomPan() {
     this._zoom = d3.zoom()
@@ -324,10 +386,9 @@ export class TimeSeries extends Chart {
           d3.min([newX.invert(this.width),  fullExtent[1]]),
         ];
 
-        this._viewExtent = extent;
-        this._syncTimeframeButtons(fullExtent, extent);
-        this.render();
-        if (this._onViewChangeCb) this._onViewChangeCb(extent);
+        // a view change like any other: the timeframe selection clears, the
+        // buttons and the navigator follow, onViewChange reports it
+        this.setView(extent);
       });
 
     this.svg.call(this._zoom);
@@ -338,6 +399,8 @@ export class TimeSeries extends Chart {
   _bindHover() {
     this.overlay
       .on('mousemove', (event) => {
+        // crosshair: false — no lines and no tooltip, as on Line and DualAxes
+        if (!(this.options.crosshair ?? true)) return;
         if (!this._visible?.length) return;
         const [mx] = d3.pointer(event);
         const W = this.width, H = this.height;
@@ -356,11 +419,19 @@ export class TimeSeries extends Chart {
         this.crossX.attr('x1', cx).attr('x2', cx).attr('y1', 0).attr('y2', H).style('opacity', 1);
         this.crossY.attr('x1', 0).attr('x2', W).attr('y1', cy).attr('y2', cy).style('opacity', 1);
 
+        // The row first, as before; the role fields second (K-09).
         const html = this.options.tooltipFormat
-          ? this.options.tooltipFormat(d)
+          ? this.options.tooltipFormat(d, { date: d.date, value: d.value, color: this.theme.accent })
           : this._defaultTooltip(d);
 
-        this._tooltip.show(cx + this.margin.left, cy + this.margin.top, html);
+        // The tooltip lives in the card, below the header and range row: map
+        // the snapped point from plot to container coordinates (the same
+        // frame d3.pointer(event, container) gives every other chart).
+        const svgBox  = this.svg.node().getBoundingClientRect();
+        const cardBox = this.container.getBoundingClientRect();
+        const dx = svgBox.left - cardBox.left - this.container.clientLeft;
+        const dy = svgBox.top - cardBox.top - this.container.clientTop;
+        this._tooltip.show(cx + this.margin.left + dx, cy + this.margin.top + dy, html);
       })
       .on('mouseleave', () => {
         this.crossX.style('opacity', 0);
@@ -372,10 +443,11 @@ export class TimeSeries extends Chart {
   _defaultTooltip(d) {
     const t    = this.theme;
     const date = d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    // the date header as in Crosshair: 13px, muted, no gap (B-03)
     return `
-      <div style="color:${t.muted};font-size:${t.fontSize};margin-bottom:4px">${date}</div>
-      <div style="color:${t.accent};font-size:14px;font-weight:bold">
-        ${typeof d.value === 'number' ? '$' + d3.format(',.2f')(d.value) : d.value}
+      ${tipHeader(date, { muted: true })}
+      <div class="rc-tooltip-value" style="color:${escapeHtml(t.accent)}">
+        ${typeof d.value === 'number' ? '$' + d3.format(',.2f')(d.value) : escapeHtml(d.value)}
       </div>
     `;
   }
