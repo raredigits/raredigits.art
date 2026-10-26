@@ -2,7 +2,7 @@
 // Flows between places drawn over a map: capital, goods, influence. Built on
 // Map — same geometry options, projections and theme — with the relation
 // charts' link contract (core/links.js) on top. Spec:
-// charts/SPEC-GRAPH-MAPFLOW-INTERNAL.md, part B.
+// _internal_docs/charts/SPEC-GRAPH-MAPFLOW-INTERNAL.md, part B.
 //
 // Data (setData or the `nodes` / `links` options):
 //   nodes: [{ id, label?, coords?: [lon, lat], country?: featureId, color?, ... }]

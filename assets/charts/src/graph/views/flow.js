@@ -10,7 +10,7 @@
 // nodes without hints (layouts/flowAuto.js), folds that collapse a set of
 // nodes into one +/− meta-node, tie aggregation, a per-lane cap, and time
 // navigation (timeframes / navigator, wired in Graph). Spec:
-// charts/SPEC-GRAPH-FLOW-INTERNAL.md.
+// _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md.
 //
 // Parts: layoutFlow() is pure (no DOM) and unit-tested; flowFold.js folds and
 // aggregates (pure); FlowView draws inside the Graph's zoom group and owns
