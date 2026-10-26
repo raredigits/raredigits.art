@@ -511,6 +511,14 @@
 <h3 id="view-clipping">View clipping</h3>
 <p>Annotations whose date(s) fall outside the visible X extent are skipped automatically. This is the expected behavior when used together with <code>timeframes</code>, <code>navigator</code>, or <code>setView()</code>: as the user zooms or pans, in-range annotations appear and out-of-range ones disappear. For range annotations partially visible, the fill is clamped to the visible portion and only the boundary line(s) inside the extent are drawn.</p>
 <p>Horizontal annotations follow the same rule on the value axis: a level outside the visible Y range is skipped, and a band that runs past the top or bottom of the plot is cut there, with only its real edges drawn. Annotations never widen the axis, so a level far from the data stays hidden — on <code>Line</code> widen the axis with <code>yTickValues</code>, on <code>DualAxes</code> with <code>y1Domain</code> / <code>y2Domain</code>. On a chart with bars (<code>DualAxes</code>, a dated <code>Bar</code>) the time scale is inset by half a bar so the first and last bars are drawn whole: ranges and horizontal lines and bands still reach the edges of the plot, so a range that starts half a period before the first bar shades it whole.</p>
+<h3 id="when-to-use-them">When to use them</h3>
+<p>Annotations are content, not decoration. A good annotation answers a question the chart raises:</p>
+<ul>
+<li>“Why did hashrate drop in April 2024?” → halving annotation.</li>
+<li>“Why did revenue plateau in Q3?” → range covering the marketing freeze.</li>
+<li>“When did the new pricing roll out?” → point on launch day.</li>
+</ul>
+<p>Avoid annotating every minor event. The chart starts to look like a footnote index, and the reader stops reading them. Three or four well-chosen markers are usually enough — the rest belongs in the article body.</p>
 <h3 id="styling">Styling</h3>
 <p>Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:</p>
 <div class="table-scroll card-caption">
@@ -746,14 +754,6 @@
     </tbody>
 </table>
 </div>
-<h3 id="when-to-use-them">When to use them</h3>
-<p>Annotations are content, not decoration. A good annotation answers a question the chart raises:</p>
-<ul>
-<li>“Why did hashrate drop in April 2024?” → halving annotation.</li>
-<li>“Why did revenue plateau in Q3?” → range covering the marketing freeze.</li>
-<li>“When did the new pricing roll out?” → point on launch day.</li>
-</ul>
-<p>Avoid annotating every minor event. The chart starts to look like a footnote index, and the reader stops reading them. Three or four well-chosen markers are usually enough — the rest belongs in the article body.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/btc-price-chart.js"></script>
 
@@ -764,8 +764,9 @@
 <footer class="padding-x-md">
   <div class="site-max-width padding-y-lg row stretched">
     <div>
-      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits Production</a> | 
-      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a></p>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
+      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
