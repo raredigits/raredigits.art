@@ -7,6 +7,91 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ---
 
+## [v0.7.2] — 2026-10-27 — Charts Dependencies, Site Harvest & Consumer Requests
+
+**Breaking: buttons and forms come into the library, and data surfaces get their own family.**
+- A bare `<button>` inside `.rd` is now an inline button with the library look.
+- Form fields, checkboxes and radios inside `.rd` are styled. Host forms outside `.rd` stay untouched.
+- `.card-dashboard-bordered` and `.card-row-bordered(-item)` give way to the `.panel` family, with no alias.
+
+Alongside, everything RareCharts and its docs needed from the library is in: chart tokens, a surface token, the legend, KPI figures, and a set of fixes for defects the charts pages had to work around. The steps a site has to take are in [`MIGRATION.md`](https://github.com/raredigits/rare-styles/blob/v0.7.2/docs/MIGRATION.md).
+
+### Added
+
+- **The button system** (`CSS-040`…`CSS-046`, `Q-04`).
+  - **Default look** for `<button>`, `<input type=submit|button|reset>` and `.button`.
+  - **Variants:**
+    - `.button-primary` on `--signal`;
+    - `-secondary`;
+    - `-ghost`, whose label follows the surface;
+    - `-danger` on `--color-danger`;
+    - `-link`.
+  - **Sizes:** `.button-sm`, `-md` and `-lg`.
+  - **Icons:** `rd-icon-*` glyph layout, and `.button-icon`.
+  - **States:** hover, active, focus, disabled / `aria-disabled`, and `aria-busy` (a spinner that holds still under reduced motion).
+  - **Layout:** `.button-group` (a pressed toggle keeps its variant's look) and `.button-block`.
+  - **Tokens:** `--button-*`.
+  - **Docs:** `/styles/elements/buttons/`.
+- **Forms** (`CSS-100`…`CSS-105`).
+  - **Fields:** text fields, the date and time types included; `textarea`; `select` with the library's arrow.
+  - **Choices:** checkbox and radio drawn by the library.
+  - **Other inputs:** range, color and file; `fieldset`, `legend` and `label`.
+  - **Layout:** `.form-group`, `.form-row`, `.form-help`, `.form-error`.
+  - **Validity:** shown only after interaction (`:user-invalid` / `:user-valid`, `[aria-invalid]`).
+  - **Tokens:** `--field-*`.
+  - **Docs:** `/styles/elements/forms/`.
+- **The panel family** (`CSS-180`, `CSS-183`, `CSS-371`).
+  - **Parts:** `.panel` with `__header`, `__body` and `__footer`.
+  - **Modifiers:** `--bordered` and `--flush`.
+  - **Layout:** `.panel-grid` (`--panel-grid-min`).
+  - **Row:** `.panel__row` and `__row-item`, with the `--stack` and `--text-start` modes harvested from the site.
+  - **Behaviour:** a panel is a data surface. It paints no background, and it is a block, or a flex column once it has parts.
+  - **Docs:** `/styles/bricks/panels/`; the card vs panel rule is in `STYLEGUIDE.md` (`CSS-182`).
+- **KPI figures** (`CSS-184`). `.stat`, `__label` and `__value`: tabular, and the value never wraps. `.stat--delta-up/-down` (with `--stat-delta-color`) and `.stat--signal`. Docs: `/styles/bricks/stats/`.
+- **The legend** (`CSS-178`). `.legend`, `__item` and `__swatch` (`--line`, `--dashed`, `--dot`, `--band`), with colour from `--swatch-color` and the off state on `aria-pressed="false"`. Usable outside charts. Docs: `/styles/bricks/legend/`.
+- **Chart tokens** (`CSS-380`, `CSS-240`, `CSS-176`). 26 `--chart-*` names on `:root`:
+  - six series in RareCharts' palette;
+  - surface, text, label, axis and grid;
+  - range controls;
+  - the tooltip, its size a fixed 13px;
+  - fonts, and the focus ring.
+
+  Also `--surface-current`: cards set and paint it, a panel passes it through, and it is white on paper. RareCharts reads these names first from its `0.9.8_7`. Docs: `/styles/colors/chart-tokens/`.
+- **Semantic colour roles** (`CSS-121`): `--color-success`, `-danger`, `-warning`, `-info`.
+- **`--signal`** (`CSS-124`): the action and attention accent. It is blue, and the focus ring follows it (no visual change).
+- **Callout variants** (`CSS-156`): `.callout-info`, `-success`, `-warning`, `-error`.
+- **`.attribution`** (`CSS-379`): the credit look outside a blockquote.
+- **Docs:**
+  - `.table-section` group rows and the reference-table recipe (`CSS-378`);
+  - "Line height" on `/styles/typography/`;
+  - "Print" on `/styles/utilities/`.
+
+### Changed
+
+- **Unitless line-heights** (`CSS-375`): the tokens and every em leading in the text components. Each element now computes its own leading. Headings and code blocks keep theirs (`--line-height-sm`).
+- **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px. Paragraph gaps, sidenote rows and the `.air-*` spacers are unchanged.
+- **The prose measure stops at data components** (`CSS-374`, `CSS-384`): data tables, panels, stats and charts. This covers `p`, lists, `dl`, `blockquote` and `figure`.
+- **The `cite` look is scoped** to a blockquote's closing `cite` and `.attribution` (`CSS-379`).
+- **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground. A `.card` nested in it restores the light roles (`CSS-380`).
+- **The bordered panel pads 16px on a phone** (`CSS-376`).
+- **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there.
+- **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
+- **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory. The output is unchanged.
+
+### Fixed
+
+- **Sidenote rules** reached every nested element (`CSS-372`). A chart in a sidenote had its header opened to five grid columns and its title cut.
+- **Option-table code broke mid-word** at 375px (`CSS-373`). On paper it wraps again.
+- **Link-buttons kept the text-link colour** in `.card-inverted`, sidenotes and the sidebar.
+- **Print:**
+  - links inside charts printed their URL (`CSS-383`);
+  - caption outdents hung off the paper column (`CSS-385`).
+- **A panel that is an article's first child** lost its padding.
+
+### Removed
+
+- **`.card-dashboard-bordered`**, **`.card-row-bordered`**, **`.card-row-bordered-item`**. Use `.panel .panel--bordered`, `.panel__row` and `.panel__row-item` (`CSS-181`). The site migrated in the same change (`CSS-183a`).
+
 ## [v0.7.1] — 2026-10-20 — Content Starter
 
 **A content site can start from two working pages.** A portable starter, an article index and an article with an image, a table and two charts, lives in [`examples/styles/content-starter/demo/`](https://github.com/raredigits/raredigits.art/tree/main/examples/styles/content-starter/demo). It is plain HTML and CSS with RareCharts, needs no build or server, opens straight from disk and works on any static host or sub-path; download it as `content-starter.zip` from [raredigits.art/examples/styles/content-starter](https://raredigits.art/examples/styles/content-starter/). The library gains what such an article needs: figures with captions and sources, note references, and print rules. An audit of `_text-content.scss` removes five unused classes (no known consumer uses them, see `MIGRATION.md`), and `<html class="rd">` is still the only integration step.
