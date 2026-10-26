@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- K-18: a strict policy — no inline <style>, no inline <script>. The page
+       serves rare-charts.css itself and opts out of the injected copy in its
+       own script (config.js), before the bundle. ?inject leaves the opt-out
+       out, to show what the policy does to the injected <style>.
+       Checked by test/browser/charts-card-layout.test.js. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'">
+  <title>RareCharts under a strict CSP</title>
+  <link rel="stylesheet" href="/assets/charts/rare-charts.css">
+  <script src="/test/browser/fixtures/csp/config.js"></script>
+  <script src="/assets/charts/rare-charts.js"></script>
+</head>
+<body>
+  <div id="chart"></div>
+  <script src="/test/browser/fixtures/csp/chart.js"></script>
+</body>
+</html>

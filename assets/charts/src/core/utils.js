@@ -5,18 +5,28 @@ import * as d3 from 'd3';
 
 // ─── Date ────────────────────────────────────────────────────────────────────
 
+// A valid Date or null. Accepts Date objects, epoch milliseconds (0 is a
+// valid epoch) and date strings. Invalid Dates, NaN/Infinity, null,
+// undefined, booleans and empty strings are null — never 1970-01-01 or an
+// Invalid Date that slips past a truthiness filter.
 export function parseDate(v) {
-  if (v instanceof Date) return v;
-  if (typeof v === 'number') return new Date(v);
-  const dt = new Date(v);
+  if (v == null || v === '' || typeof v === 'boolean') return null;
+  const dt = v instanceof Date ? v : new Date(v);
   return Number.isNaN(+dt) ? null : dt;
 }
 
-export function clampDateExtent(extent, fullExtent) {
+// Ascending by `date` — time-series input is drawn in date order whatever
+// order it arrives in (APIs often return newest first).
+export const byDate = (a, b) => a.date - b.date;
+
+// `parse(value, isEnd)` reads a bound — parseDate by default; relation
+// charts pass a reader that takes years and 'YYYY-MM' periods (see
+// Chart._parseViewBound).
+export function clampDateExtent(extent, fullExtent, parse = parseDate) {
   if (!Array.isArray(extent) || extent.length < 2) return null;
 
-  const start = parseDate(extent[0]);
-  const end   = parseDate(extent[1]);
+  const start = parse(extent[0], false);
+  const end   = parse(extent[1], true);
   if (!start || !end) return null;
 
   const lo = start <= end ? start : end;
@@ -30,13 +40,15 @@ export function clampDateExtent(extent, fullExtent) {
   const fullEnd   = parseDate(fullExtent[1]);
   if (!fullStart || !fullEnd) return [lo, hi];
 
-  return [
-    new Date(Math.max(+lo, +fullStart)),
-    new Date(Math.min(+hi, +fullEnd)),
-  ];
+  const from = Math.max(+lo, +fullStart);
+  const to   = Math.min(+hi, +fullEnd);
+  // A window that misses the data entirely clamps to nothing — null, so
+  // callers fall back to the full extent instead of an inverted window.
+  if (from > to) return null;
+  return [new Date(from), new Date(to)];
 }
 
-export function resolveTimeframeExtent(step, fullExtent) {
+export function resolveTimeframeExtent(step, fullExtent, parse = parseDate) {
   if (!step || !Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
 
   const fullStart = parseDate(fullExtent[0]);
@@ -47,7 +59,7 @@ export function resolveTimeframeExtent(step, fullExtent) {
   if (!cfg) return null;
 
   if (Array.isArray(cfg.range)) {
-    return clampDateExtent(cfg.range, fullExtent);
+    return clampDateExtent(cfg.range, fullExtent, parse);
   }
 
   const key = String(cfg.key ?? cfg.label ?? '').trim().toUpperCase();
@@ -79,6 +91,21 @@ export function resolveTimeframeExtent(step, fullExtent) {
 export function extentEquals(a, b) {
   if (!Array.isArray(a) || !Array.isArray(b) || !a[0] || !a[1] || !b[0] || !b[1]) return false;
   return +a[0] === +b[0] && +a[1] === +b[1];
+}
+
+// ─── Ids ─────────────────────────────────────────────────────────────────────
+
+// Ids in <defs> (gradients, clip paths, markers) are document-global: two
+// charts on one page must never share one, or the second paints with the
+// first one's gradient — or with nothing, when the first is hidden (C-04).
+// The counter keeps ids unique within this bundle; the salt keeps two copies
+// of the bundle on one page apart. Starts with a letter, [a-z0-9-] only, so
+// an id is safe in url(#…) and as a CSS selector.
+const ID_SALT = Math.random().toString(36).slice(2, 6).padEnd(4, '0');
+let idCount = 0;
+
+export function uid(prefix = 'rc') {
+  return `${prefix}-${ID_SALT}-${++idCount}`;
 }
 
 // ─── Axis title length guard ───────────────────────────────────────────────────
@@ -176,66 +203,13 @@ export function markerPath(shape, size = 4) {
   }
 }
 
-// ─── Nice tick values ─────────────────────────────────────────────────────────
-
-/**
- * Generate exactly `count` evenly-spaced tick values covering [lo, hi],
- * snapped to a "nice" step (1×, 2×, 5×, or 10× a power of 10).
- *
- * The returned array always has exactly `count` elements. If the last tick
- * exceeds `hi`, the caller should extend the scale domain to match.
- *
- * @param {number} lo    — lower bound of the (already-nice) domain
- * @param {number} hi    — upper bound
- * @param {number} count — number of tick values to produce (≥ 2)
- * @returns {number[]}
- */
-export function niceTickValues(lo, hi, count) {
-  if (count < 2 || lo === hi) return [lo];
-
-  const rawStep = (hi - lo) / (count - 1);
-  const exp     = Math.floor(Math.log10(rawStep));
-  const base    = Math.pow(10, exp);
-
-  // Try a richer multiplier set across two adjacent decades. Pick the step that
-  // (a) covers [lo, hi] with `count` evenly-spaced ticks, and (b) minimizes
-  // the gap between the last tick and `hi` (i.e. avoids domain overshoot like
-  // [50, 100, 150, 200] when data tops at 125).
-  const multipliers = [1, 2, 2.5, 5, 10];
-  const candidates = [];
-  for (const m of multipliers) {
-    candidates.push(m * base);
-    candidates.push(m * base * 10);
-  }
-
-  let best = null;
-  for (const step of candidates) {
-    const start    = Math.ceil(lo / step) * step;
-    const lastTick = start + step * (count - 1);
-    if (lastTick < hi - 1e-9) continue; // doesn't cover data top
-    const overshoot = lastTick - hi;
-    if (!best || overshoot < best.overshoot) {
-      best = { step, start, overshoot };
-    }
-  }
-
-  if (!best) {
-    // Fallback to the original simple choice.
-    const frac  = rawStep / base;
-    const m     = frac <= 1 ? 1 : frac <= 2 ? 2 : frac <= 5 ? 5 : 10;
-    const step  = m * base;
-    const start = Math.ceil(lo / step) * step;
-    best = { step, start };
-  }
-
-  return Array.from({ length: count }, (_, i) => +((best.start + best.step * i).toPrecision(10)));
-}
+// ─── Tick values ──────────────────────────────────────────────────────────────
 
 /**
  * Linear Y ticks for a fixed domain: d3's 1-2-5 steps, every tick inside
  * [lo, hi]. The tick count follows the step (≈ `count`, not exactly it), so the
- * axis never stretches past the data to fit a fixed number of steps — what
- * niceTickValues() does when the range sits awkwardly (193 → an axis to 400).
+ * axis never stretches past the data to fit a fixed number of steps, as a
+ * fixed-count step does when the range sits awkwardly (193 → an axis to 400).
  */
 export function linearTickValues(lo, hi, count = 4) {
   if (!(hi > lo)) return [lo];
@@ -278,6 +252,99 @@ export function logTickValues(lo, hi, count = 4) {
   if (steps.length >= 2) return steps;
 
   return linearTickValues(lo, hi, count);
+}
+
+// ─── Number formats ──────────────────────────────────────────────────────────
+
+/**
+ * Default labels for the ticks of a linear value axis (C-30). The precision
+ * comes from the step between the ticks actually drawn, as d3's
+ * scale.tickFormat picks it: SI prefixes ('~s', one prefix for the whole
+ * axis) once the largest |tick| reaches 1000, grouped decimals (',~f') below
+ * it; zero always prints as '0'. 145…160 reads "145 150 155 160" (not
+ * "150 150 160 160"), 0 reads "0" (not "0.0" or "0k"), −0.6 reads "−0.6"
+ * (not "−600m"). A tick that falls between round steps (a stacked axis
+ * divided into exact intervals) gets up to three more digits instead of a
+ * rounded label.
+ *
+ * @param {number[]} ticks — the tick values the axis draws
+ * @returns {(v: number) => string}
+ */
+export function compactTickFormat(ticks) {
+  const vals   = (Array.isArray(ticks) ? ticks : []).map(Number).filter(Number.isFinite);
+  const max    = d3.max(vals, Math.abs) ?? 0;
+  const sorted = [...new Set(vals)].sort((a, b) => a - b);
+  let step = Infinity;
+  for (let i = 1; i < sorted.length; i++) step = Math.min(step, sorted[i] - sorted[i - 1]);
+  step = Number.isFinite(step) && step > 0 ? +step.toPrecision(12) : (max || 1);
+
+  const si    = max >= 1e3;
+  const scale = si ? Math.pow(10, -Math.max(-8, Math.min(8, Math.floor(Math.log10(max) / 3))) * 3) : 1;
+  const exact = p => vals.every(v => {
+    const x = v * scale * Math.pow(10, p);
+    return Math.abs(x - Math.round(x)) < 1e-6 * Math.max(1, Math.abs(x));
+  });
+  const p0 = si ? d3.precisionPrefix(step, max) : d3.precisionFixed(step);
+  let p = p0;
+  while (p < p0 + 3 && !exact(p)) p++;
+
+  const f   = si ? d3.formatPrefix(`.${p}~s`, max) : d3.format(`,.${p}~f`);
+  const eps = step * 1e-9;
+  return v => (Math.abs(v) <= eps ? '0' : f(v));
+}
+
+/**
+ * Default value labels — end labels, tooltip values (C-30): three significant
+ * digits, '.3~r' below 1000 and SI '.3~s' from 1000 on: 147.3 → "147",
+ * −0.6 → "−0.6", 0 → "0", 1234 → "1.23k".
+ *
+ * @param {number} v
+ * @returns {string}
+ */
+export function compactValue(v) {
+  const n = +v;
+  if (!Number.isFinite(n)) return String(v);
+  return Math.abs(n) >= 1e3 ? d3.format('.3~s')(n) : d3.format('.3~r')(n);
+}
+
+// ─── Date formats ────────────────────────────────────────────────────────────
+
+const HOUR = 36e5;
+const DAY  = 864e5;
+
+/**
+ * Default date-tick format for the span in view (C-31, TimeSeries): ≤ 36 h
+ * '%H:%M', ≤ 92 days '%b %d', ≤ 366 days '%b', ≤ 5 years "%b '%y", longer
+ * '%Y' — a month name never repeats ("Sep Oct Oct Oct") and a view across a
+ * new year says which year.
+ *
+ * @param {[Date, Date]} extent — the dates in view
+ * @returns {string} a d3.timeFormat specifier
+ */
+export function spanTimeFormat(extent) {
+  const span = Array.isArray(extent) ? Math.abs(+extent[1] - +extent[0]) : NaN;
+  if (!Number.isFinite(span)) return '%b';
+  if (span <= 36 * HOUR)  return '%H:%M';
+  if (span <= 92 * DAY)   return '%b %d';
+  if (span <= 366 * DAY)  return '%b';
+  if (span <= 1827 * DAY) return "%b '%y";   // five years, two of them leap
+  return '%Y';
+}
+
+/**
+ * The date-tick formatter for that span: spanTimeFormat's specifier, except
+ * that on a clock-time axis a tick at midnight names the day ('%b %d'), so
+ * a view across midnight reads "18:00 Jan 06 06:00", not "18:00 00:00 06:00".
+ *
+ * @param {[Date, Date]} extent — the dates in view
+ * @returns {(d: Date) => string}
+ */
+export function spanTimeFormatter(extent) {
+  const spec = spanTimeFormat(extent);
+  const f    = d3.timeFormat(spec);
+  if (spec !== '%H:%M') return f;
+  const day = d3.timeFormat('%b %d');
+  return d => (+d3.timeDay.floor(d) === +d ? day(d) : f(d));
 }
 
 // ─── Annotations ─────────────────────────────────────────────────────────────

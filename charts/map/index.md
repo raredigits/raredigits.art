@@ -8,7 +8,7 @@ permalink: '/charts/map/'
 
 The Map chart renders geographic data as a choropleth or region-highlight map. In practice this usually means one simple thing: you have data tied to places and you want to show it on a map.
 
-Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number.
+Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number. To draw flows between places — capital, goods, influence — use [Map Flows](/charts/map/flow/).
 
 <div class="text-content-caption card-dashboard-bordered">
     <div id="map-europe-visited"></div>
@@ -27,7 +27,7 @@ Pass a URL to fetch, or an inline object — whichever fits your pipeline.
 
 <pre class="text-content-caption"><code><span class="code-comment">// TopoJSON from a local file</span>
 new RareCharts.Map('#chart', {
-    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoUrl:    '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
     topoObject: 'countries',  <span class="code-comment">// named object inside the topology</span>
 });
 
@@ -41,7 +41,18 @@ new RareCharts.Map('#chart', {
     geoData: myFeatureCollection,
 });</code></pre>
 
-RareCharts supports both **GeoJSON** and **TopoJSON**.
+RareCharts supports both **GeoJSON** and **TopoJSON**. Give one source; if several are set, the first of `geoData`, `topoData`, `geoUrl`, `topoUrl` is used.
+
+A URL loads asynchronously. `chart.whenReady()` returns a promise that resolves to the chart once the geometry has loaded and the map is drawn. It also resolves when the file fails to load: the error goes to the console and the map stays empty. A map given no source at all draws nothing and warns in the console.
+
+<pre class="text-content-caption"><code>const chart = new RareCharts.Map('#chart', {
+    topoUrl:    '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
+    topoObject: 'countries',
+}).setData([{ id: '250', label: 'France' }]);
+
+chart.whenReady().then(() => {
+    <span class="code-comment">// the regions are on the page now</span>
+});</code></pre>
 
 In practice TopoJSON is usually the better choice for world maps: it is smaller, simpler to ship with your bundle, and avoids duplicated borders between neighboring regions.
 
@@ -51,11 +62,15 @@ A convenient public source of world map data is the **world-atlas** dataset: 
 
 It provides several ready-to-use TopoJSON files that differ only by geometric detail:
 
+<div class="table-scroll">
+
 | File | Description |
 |-----|-------------|
 | `countries-110m.json` | Smallest dataset. Best for dashboards and simple maps (~100 Kb) |
 | `countries-50m.json` | Medium detail. Good default for most projects (~750 Kb) |
 | `countries-10m.json` | High detail. Suitable for zoomable or full-screen maps (~3.5 Mb) |
+
+</div>
 
 Example:
 
@@ -89,6 +104,8 @@ If needed, use the `idField` option to tell the chart which property should be
 
 RareCharts supports five projections:
 
+<div class="table-scroll">
+
 | Name | Description |
 |------|-------------|
 | `'naturalEarth1'` | Default. Balanced projection suitable for most maps |
@@ -97,7 +114,11 @@ RareCharts supports five projections:
 | `'orthographic'` | Globe view. Mostly for visual context |
 | `'identity'` | No geographic projection. Useful when your GeoJSON is already in screen coordinates or a custom planar space |
 
+</div>
+
 The chart automatically fits the projection to the loaded features using `fitExtent`, so you normally do not need to set scale or center manually.
+
+`graticule: true` draws a 10° grid of meridians and parallels under the regions, in `theme.map.graticule` — it shows over the sea and wherever no region covers it. With `projection: 'identity'` there is none: planar data has no meridians.
 
 ## Coloring
 
@@ -111,7 +132,9 @@ For a simple highlight map (visited countries, market presence), a single `mat
 
 For a choropleth map, you will typically compute colors yourself using a scale and pass them through the `color` field.
 
-Default colors used by the chart come from the RareCharts theme. They are defined in: `/src/core/theme.js`. The map section of the theme defines values such as `matchFill`, `unmatchedFill`, `border`, and hover behavior. In most cases it is better to adjust those defaults in the theme rather than overriding colors in every chart instance.
+Hovering a region with data lightens it: its fill moves `theme.map.hoverBrighten − 1` of the way towards white (`1.3`, so 30%; dark `1.2`) — black lightens too and nothing turns pure white, while a fill already very light (lightness above 0.85) darkens a little instead, so each color of a choropleth gets its own lighter shade. Set `hoverFill` for one fixed hover color instead, or `hoverBrighten: 1` in the theme to turn the effect off. Regions without data do not react.
+
+Default colors come from the theme's `map` section — `RareCharts.defaultTheme.map` and `RareCharts.darkTheme.map`: `matchFill` (`#00aaff`; dark `#ff6200`), `unmatchedFill` (`#e8e8e8`; dark `#1e1e2e`), `border` (`#ffffff`; dark `#444455`), `ocean` (`transparent`), `hoverBrighten` (`1.3`; dark `1.2`) and `graticule` (`rgba(0,0,0,0.08)`; dark `rgba(255,255,255,0.06)`). The theme's `accent`, `surface` and `border` are only fallbacks for a theme without them, so changing `accent` alone does not recolor a map. In most cases it is better to set them once in the theme — `createTheme({ map: { matchFill: '#ff6200' } })` — than in every chart instance.
 
 ## Tooltip
 
@@ -124,11 +147,11 @@ If you need something more specific, override it:
     &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
 `</code></pre>
 
-The formatter receives both the raw `feature` and the matched `item`, so you can display whatever makes sense. For unmatched regions, `item` will be `null`.
+The formatter receives both the raw `feature` and the matched `item`, so you can display whatever makes sense. For unmatched regions, `item` will be `null`. It also gets the role fields every formatter gets: `label` (the name the default tooltip shows), `value` (`item.value`, or `null`) and `color` (the region’s fill).
 
 ## Map chart options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -234,37 +257,43 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td>—</td>
             <td>Optional projection rotation passed to <code>projection.rotate([lambda, phi, gamma])</code> when supported by the chosen projection.</td>
         </tr>
+        <tr>
+            <td><code>graticule</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>Draw a 10° grid of meridians and parallels under the regions, in <code>theme.map.graticule</code> (<code>rgba(0,0,0,0.08)</code>; dark <code>rgba(255,255,255,0.06)</code>). Not drawn with <code>projection: 'identity'</code>.</td>
+        </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Colors</h5></td>
         </tr>
         <tr>
             <td><code>defaultFill</code></td>
             <td>CSS color</td>
-            <td><code>theme.surface</code></td>
+            <td><code>theme.map.unmatchedFill</code> (<code>#e8e8e8</code>; dark <code>#1e1e2e</code>)</td>
             <td>Fill for regions with no matching data item.</td>
         </tr>
         <tr>
             <td><code>matchFill</code></td>
             <td>CSS color</td>
-            <td><code>theme.accent</code></td>
+            <td><code>theme.map.matchFill</code> (<code>#00aaff</code>; dark <code>#ff6200</code>)</td>
             <td>Fill for matched regions that have no explicit <code>color</code> field.</td>
         </tr>
         <tr>
             <td><code>hoverFill</code></td>
             <td>CSS color</td>
             <td>auto</td>
-            <td>Fill on mouse-over. Defaults to a lighter version of <code>matchFill</code>.</td>
+            <td>Fill of a region with data under the pointer — its own <code>color</code> included; regions without data keep theirs. Default: the region's own fill moved <code>theme.map.hoverBrighten − 1</code> of the way towards white (<code>1.3</code>; dark <code>1.2</code>; <code>1</code> turns the effect off); a very light fill darkens a little instead.</td>
         </tr>
         <tr>
             <td><code>oceanColor</code></td>
             <td>CSS color</td>
             <td><code>'transparent'</code></td>
-            <td>SVG background fill (the "ocean" behind land features).</td>
+            <td>SVG background fill (the "ocean" behind land features). Transparent by default (<code>theme.map.ocean</code>, light and dark), so the card's background shows through.</td>
         </tr>
         <tr>
             <td><code>borderColor</code></td>
             <td>CSS color</td>
-            <td><code>theme.border</code></td>
+            <td><code>theme.map.border</code> (<code>#ffffff</code>; dark <code>#444455</code>)</td>
             <td>Stroke color for feature borders.</td>
         </tr>
         <tr>
@@ -292,7 +321,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>built-in</td>
-            <td><code>({ feature, item }) =&gt; html</code> — custom tooltip for any region. <code>item</code> is <code>null</code> when no data item matches.</td>
+            <td><code>({ feature, item, label, value, color }) =&gt; html</code> — custom tooltip for any region. <code>item</code> is <code>null</code> when no data item matches; <code>label</code> is the name the default tooltip shows (<code>item.label</code>, then the feature’s name or id), <code>value</code> is <code>item.value</code> (<code>null</code> without an item), <code>color</code> the region’s fill (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>).</td>
         </tr>
     </tbody>
 </table>
@@ -338,7 +367,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
 
 <pre class="text-content-caption"><code>new RareCharts.Map('#chart', {
     title:      'Market Presence',
-    topoUrl:    '/assets/charts/data/countries-110m.json',
+    topoUrl:    '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
     topoObject: 'countries',
     height:     400,
     matchFill:  '#00aaff',

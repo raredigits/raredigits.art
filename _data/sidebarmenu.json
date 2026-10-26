@@ -82,7 +82,13 @@
             { "title": "Flow view", "url": "/charts/graph/flow/" }
           ]
       },
-      { "title": "Map", "url": "/charts/map/" },
+      {
+          "title": "Map",
+          "url": "/charts/map/",
+          "subitems": [
+            { "title": "Flows", "url": "/charts/map/flow/" }
+          ]
+      },
       { "title": "Sankey", "url": "/charts/sankey/" },
       { "title": "Multi Charts", "url": "/charts/multi/" },
       { "title": "Installation", "url": "/charts/installation/" },

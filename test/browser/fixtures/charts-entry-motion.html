@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RareCharts entry motion</title>
+  <!-- Checked by test/browser/charts-entry-motion.test.js (C-16): each chart
+       is built on demand by window.run(), and its entry animation is sampled
+       on every animation frame. The renders that follow setData in a real
+       browser — fonts.ready, the first ResizeObserver callback — happen by
+       themselves; run() adds a resize in the middle of the entry. -->
+  <style>
+    body { margin: 0; padding: 16px; }
+    .host { width: 720px; }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <script src="/assets/charts/rare-charts.js"></script>
+  <script>
+    const DAY = 864e5;
+    const dated = n => Array.from({ length: n }, (_, i) => ({ date: new Date(Date.UTC(2025, 0, 1) + i * DAY), value: 50 + 20 * Math.sin(i / 3) + i }));
+    const cats = [{ label: 'Alpha', value: 40 }, { label: 'Beta', value: 75 }, { label: 'Gamma', value: 60 }];
+
+    // name → [build(el), read(el) → number | null (share of the way, 0…1 or a raw size)]
+    const charts = {
+      bar: [el => new RareCharts.Bar(el, { duration: 600 }).setData(cats),
+            el => +el.querySelector('rect.rc-bar:nth-of-type(2)')?.getAttribute('height')],
+      hbar: [el => new RareCharts.Bar(el, { duration: 600, orientation: 'horizontal', showValues: true }).setData(cats),
+             el => +el.querySelector('rect.rc-bar:nth-of-type(2)')?.getAttribute('width')],
+      hierarchical: [el => new RareCharts.HierarchicalBar(el, { duration: 600 }).setData({ label: 'All', value: 100, children: [{ label: 'a', value: 60 }, { label: 'b', value: 40 }] }),
+                     el => +el.querySelectorAll('.rc-hbar-bar')[1]?.getAttribute('width')],
+      line: [el => new RareCharts.Line(el, { duration: 600 }).setData(dated(30)),
+             el => {
+               const p = el.querySelector('path.rc-line');
+               const dash = p?.getAttribute('stroke-dasharray');
+               if (!dash) return 1;   // whole
+               const total = parseFloat(dash);
+               return 1 - parseFloat(p.getAttribute('stroke-dashoffset')) / total;
+             }],
+      dual: [el => new RareCharts.DualAxes(el, { duration: 600 }).setData([
+               { name: 'bars', type: 'bar', axis: 'y2', values: dated(12) },
+               { name: 'line', type: 'line', axis: 'y1', values: dated(12) },
+             ]),
+             el => +el.querySelectorAll('rect.rc-dual-bar')[5]?.getAttribute('height')],
+      donut: [el => new RareCharts.Donut(el, { duration: 600 }).setData(cats),
+              el => el.querySelector('.rc-donut-slices path:last-of-type')?.getBBox().width ?? 0],
+      gauge: [el => new RareCharts.Gauge(el, { duration: 600, needle: true }).setData(70),
+              el => {
+                const t = el.querySelector('.rc-gauge-needle-pointer')?.getAttribute('transform') ?? '';
+                return parseFloat((t.match(/rotate\(([-\d.e]+)/) ?? [])[1]);
+              }],
+      sankey: [el => new RareCharts.Sankey(el, { duration: 600, orientation: 'horizontal' }).setData({ links: [
+                 { source: 'Budget', target: 'Schools', value: 40 }, { source: 'Budget', target: 'Roads', value: 25 },
+                 { source: 'Schools', target: 'Staff', value: 30 }, { source: 'Schools', target: 'Buildings', value: 10 },
+               ] }),
+               el => +(el.querySelector('.rc-sankey-link')?.getAttribute('stroke-opacity') ?? 0)],
+    };
+
+    // Build one chart and sample it on every frame for `ms`; at `resizeAt`
+    // the host narrows to `narrow` px (a resize in the middle of the entry).
+    window.run = (name, { ms = 900, resizeAt = null, narrow = 520 } = {}) => new Promise(done => {
+      const host = document.createElement('div');
+      host.className = 'host';
+      document.getElementById('stage').replaceChildren(host);
+      const [build, read] = charts[name];
+      const t0 = performance.now();
+      build(host);
+      const samples = [];
+      let resized = false;
+      const frame = () => {
+        const t = performance.now() - t0;
+        samples.push([Math.round(t), read(host)]);
+        if (resizeAt != null && !resized && t >= resizeAt) { resized = true; host.style.width = narrow + 'px'; }
+        if (t < ms) requestAnimationFrame(frame); else done(samples);
+      };
+      samples.push([0, read(host)]);
+      requestAnimationFrame(frame);
+    });
+  </script>
+</body>
+</html>

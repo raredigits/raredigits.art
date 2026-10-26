@@ -2,8 +2,9 @@ name: Sync Charts to rare-charts
 
 # Release-gated: the sync runs only when assets/charts/src/version.json names a
 # version that is not yet tagged in raredigits/rare-charts. jsDelivr resolves
-# @latest and version pins from those tags, so main pushes between releases
-# never reach CDN consumers. To release: bump version.json and push.
+# version pins from these tags, and @latest only from semver tags (it stays on
+# v0.9.8 while tags are v0.9.8_N), so main pushes between releases never reach
+# CDN consumers. To release: bump version.json and push.
 
 on:
   push:
@@ -55,9 +56,7 @@ jobs:
 
       - name: Build charts bundles
         if: steps.release.outputs.new == 'true'
-        run: |
-          npm run charts:build
-          npm run charts:build:min
+        run: npm run charts:build
 
       - name: Clone rare-charts repo
         if: steps.release.outputs.new == 'true'
@@ -71,6 +70,7 @@ jobs:
           rsync -av --delete assets/charts/data/ temp-rare-charts/data/
           cp assets/charts/rare-charts.js temp-rare-charts/rare-charts.js
           cp assets/charts/rare-charts.min.js temp-rare-charts/rare-charts.min.js
+          cp assets/charts/rare-charts.css temp-rare-charts/rare-charts.css   # for pages under a strict CSP (K-18)
           cp assets/charts/README.md temp-rare-charts/README.md
           cp assets/charts/LICENSE temp-rare-charts/LICENSE
           CHARTS_VERSION=$(node -p "require('./assets/charts/src/version.json').version")

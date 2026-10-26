@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RareCharts card layout</title>
+  <!-- Checked by test/browser/charts-card-layout.test.js (C-24, C-32, K-17,
+       K-19, the Lin/Log width, x-axis edge labels). The one page rule is a host button style as Rare Styles has it:
+       a hover background on every button, specificity (0,1,1). -->
+  <style>
+    body { margin: 0; padding: 16px; }
+    button:hover { background: rgb(255, 0, 0); }
+    .card { margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div id="wide" class="card" style="width: 900px"></div>
+  <div id="narrow" class="card" style="width: 420px"></div>
+  <div id="legend-right" class="card" style="width: 900px"></div>
+  <div id="tight" class="card" style="width: 260px"></div>
+  <div id="grows" class="card" style="width: 260px"></div>
+  <div id="ts-month" class="card" style="width: 900px"></div>
+  <div id="page-controls"><label><input type="checkbox" checked> Show the band</label></div>
+
+  <script src="/assets/charts/rare-charts.js"></script>
+  <script>
+    const DAY = 864e5;
+    const days = (n, from = Date.UTC(2025, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+      date: new Date(from + i * DAY),
+      value: 100 + 10 * Math.sin(i / 9) + i / 20,
+    }));
+    const header = {
+      title: 'Revenue by quarter and region',
+      subtitle: 'Two years of daily figures, in thousands of dollars',
+      timeframes: ['1M', '3M', '6M', 'YTD', '1Y', 'ALL'],
+      scaleToggle: true,
+    };
+
+    window.charts = {
+      wide: new RareCharts.Line('#wide', { height: 320, animate: false, ...header }).setData(days(400)),
+      narrow: new RareCharts.Line('#narrow', { height: 320, animate: false, ...header }).setData(days(400)),
+
+      legendRight: new RareCharts.Line('#legend-right', {
+        height: 360,
+        animate: false,
+        title: 'Legend on the right',
+        legend: [{ label: 'Revenue' }, { label: 'Costs' }],
+        legendPosition: 'right',
+        navigator: true,
+        controls: '#page-controls',
+        source: 'Source: fixture',
+      }).setData(days(200)),
+
+      // C-32: on a 260px card the title, subtitle, six timeframes, the legend
+      // and the footer wrap and would take all of the 220px.
+      tight: new RareCharts.Line('#tight', {
+        height: 220,
+        animate: false,
+        ...header,
+        legend: [{ label: 'North America' }, { label: 'Europe' }, { label: 'Asia Pacific' }, { label: 'Rest of the world' }],
+        source: ['Source: ', { text: 'Internal accounting', href: '#' }, ', restated quarterly'],
+        note: 'Figures are unaudited and restated monthly; the last quarter is an estimate.',
+      }).setData(days(400)),
+
+      // The same header with a plain source: it wraps at 260px, fits at 900px.
+      grows: new RareCharts.Line('#grows', { height: 240, animate: false, ...header, source: 'Source: fixture' })
+        .setData(days(400)),
+
+      // A 1M view from Sun 4 Jan 2026 (the page runs in UTC): the first
+      // weekly tick sits on the left edge, at a 0px left margin.
+      tsMonth: new RareCharts.TimeSeries('#ts-month', {
+        height: 280, animate: false, timeframes: ['1M', 'ALL'], defaultTimeframe: '1M',
+      }).setData(days(400)),
+    };
+  </script>
+</body>
+</html>

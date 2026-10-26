@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/multi/'
 ---
 
-`MultiChart` combines two to four charts inside a single block with a shared title, subtitle, legend, and source footer. Each panel is an independent chart instance — `Line`, `Bar`, or any other type — arranged in a CSS grid.
+`MultiChart` combines two to four charts inside a single block with a shared title, subtitle, legend, and source footer. Each panel is an independent chart instance — a `Line` or a `Bar` — arranged in a CSS grid.
 
 <div class="card text-content-caption card-dashboard-bordered">
     <div id="multi-chart-market-overview"></div>
@@ -14,12 +14,12 @@ permalink: '/charts/multi/'
 
 ### Usage
 
-<pre class="text-content-caption"><code>new RareCharts.MultiChart('#container', {
+<pre class="text-content-caption"><code>const mc = new RareCharts.MultiChart('#container', {
   title:    'A Selloff Takes Shape',
   subtitle: 'Selling intensified on the second day of trading',
-  source:   'Bloomberg',
+  source:   'Source: Bloomberg',
   columns:  2,         // 1 – 4 columns
-  chartHeight: 200,    // height of each cell in px
+  chartHeight: 200,    // height of each chart in px
 
   charts: [
     {
@@ -42,13 +42,13 @@ permalink: '/charts/multi/'
   ],
 });</code></pre>
 
-Each child chart is accessible via `mc.charts[index]` after construction, so individual panels can be updated independently:
+Each child chart is accessible via `mc.charts[index]` after construction, so individual panels can be updated independently — either way the grid keeps the panel’s last data for a rebuild at the breakpoint (see below):
 
 <pre class="text-content-caption"><code>mc.charts[0].setData(newBrentData);</code></pre>
 
-Or update all panels in a single call:
+Or update all panels in a single call — one dataset per panel, in the order of `charts`:
 
-<pre class="text-content-caption"><code>mc.setData([brentData, dxyData, ftseData, volumeData]);</code></pre>
+<pre class="text-content-caption"><code>mc.setData([brentData, dxyData, volumeData]);</code></pre>
 
 ### Responsive layout
 
@@ -69,6 +69,8 @@ Use `mobileOptions` on any chart descriptor to override that panel's options whe
   },
 }</code></pre>
 
+The narrow layout depends on the container width alone — at most `mobileBreakpoint` px — not on the column counts: a one-column grid on a desktop screen still uses `options`. When the container crosses the breakpoint — a window resized past it, a phone turned — the grid switches its columns and rebuilds each panel that has `mobileOptions`: the old chart is destroyed and a new one is made with the options of the new side and given the panel’s last data, so every key applies, `height` and `margin` included. The rebuilt panel is a new instance: read it from `mc.charts[i]` again rather than keeping a reference, and expect state set through its own methods (a y scale, a view window) to start over from its options.
+
 Side-by-side horizontal bar charts are a natural fit for group comparisons where labels are shared. Suppress the Y axis on panels after the first to keep things clean:
 
 <div class="card text-content-caption card-dashboard-bordered">
@@ -83,7 +85,7 @@ When you need a third panel, the `span` field on a chart descriptor stretches th
 
 ## MultiChart options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -121,12 +123,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td><code>chartHeight</code></td>
             <td>number</td>
             <td><code>200</code></td>
-            <td>Height of each chart cell in px.</td>
+            <td>Height of each chart in px. A child’s own <code>options.height</code> wins; a cell title adds its line above the chart.</td>
         </tr>
         <tr>
             <td><code>gap</code></td>
             <td>number | string</td>
-            <td><code>--space-lg</code></td>
+            <td><code>32px</code></td>
             <td>Grid gap between cells — a px number or any CSS value.</td>
         </tr>
         <tr>
@@ -167,7 +169,7 @@ Each object in the `charts` array defines one panel:
             <td><code>type</code></td>
             <td><code>'Line'</code> | <code>'Bar'</code></td>
             <td><code>'Line'</code></td>
-            <td>Chart class to instantiate for this cell.</td>
+            <td>Chart class to instantiate for this cell. Without <code>type</code> (or with <code>null</code>) the cell is a <code>Line</code>. Any other value also draws a <code>Line</code> and warns in the console — a wrong case such as <code>'bar'</code> included.</td>
         </tr>
         <tr>
             <td><code>title</code></td>
@@ -191,13 +193,13 @@ Each object in the `charts` array defines one panel:
             <td><code>options</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Forwarded to the child chart constructor. All standard <code>Line</code> and <code>Bar</code> options apply.</td>
+            <td>Forwarded to the child chart constructor. All standard <code>Line</code> and <code>Bar</code> options apply. The grid sets <code>height</code> (<code>chartHeight</code>), <code>animate</code>, <code>theme</code> (the grid’s) and <code>margin.bottom: 26</code> — also with <code>showXAxis: false</code> — unless these options set them.</td>
         </tr>
         <tr>
             <td><code>mobileOptions</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Merged over <code>options</code> when the container is at or below <code>mobileBreakpoint</code>. Restored to <code>options</code> values when the container widens again. Supports all the same keys as <code>options</code>, including <code>margin</code>.</td>
+            <td>Merged over <code>options</code> while the container is at or below <code>mobileBreakpoint</code> wide, whatever the column counts. Supports all the same keys as <code>options</code>, <code>height</code> and <code>margin</code> included. Crossing the breakpoint rebuilds the panel with the options of the new side and its last data, so <code>mc.charts[i]</code> is then a new instance.</td>
         </tr>
     </tbody>
 </table>

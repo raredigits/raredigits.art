@@ -11,5 +11,9 @@ export default defineConfig({
     // Real-browser checks run separately: npm run test:browser (CSS-118).
     exclude: ['test/browser/**', 'node_modules/**'],
     setupFiles: ['./test/setup.js'],
+    // Spies and stubbed globals are restored between tests even when an
+    // assertion fails before a manual restore would have run.
+    restoreMocks: true,
+    unstubGlobals: true,
   },
 });

@@ -2,16 +2,21 @@
 // Normalize any data source into the format charts expect.
 // Work anywhere: browser, 11ty, any framework.
 //
-// Usage:
-//   import { fromJson, fromCsv, fromApi } from './adapters/index.js';
+// Usage — the bundle has them as RareCharts.fromJson / fromCsv / fromApi /
+// fromArray (in src: import { fromJson } from './adapters/index.js'):
 //
-//   const data = await fromJson('/data/prices.json', {
-//     date:  row => new Date(row.date),
-//     value: row => +row.close,
+//   const data = await RareCharts.fromJson('/data/prices.json', {
+//     date:  'date',               // a field name…
+//     value: row => +row.close,    // …or a function of the row
 //   });
 //   chart.setData(data);
+//
+// Whatever the mapping kind, `date` is then read as a date (Date, ISO string,
+// epoch ms) and `value` as a number; a row where either is present but
+// unreadable is dropped, an empty value ('' or null) is kept.
 
 import * as d3 from 'd3';
+import { parseDate } from '../core/utils.js';
 
 /**
  * From a JSON file or URL
@@ -49,7 +54,9 @@ export function fromArray(data, mapping) {
   return applyMapping(data, mapping);
 }
 
-// Apply field mapping to an array of rows
+// Apply field mapping to an array of rows. Whatever produced it — a key
+// rename ({ date: 'ts' }) or a function — a mapped `date` is parsed to a
+// Date and a mapped `value` coerced to a number.
 function applyMapping(rows, mapping) {
   return rows
     .map(row => {
@@ -60,11 +67,17 @@ function applyMapping(rows, mapping) {
       return result;
     })
     .filter(row => {
-      // Drop rows with invalid date or value. Keep an absent value and a
-      // legitimate 0; drop a present-but-non-finite value (e.g. +'x' → NaN,
-      // which is falsy and previously slipped through the `!row.value` guard).
-      const hasDate  = !row.date  || row.date instanceof Date && !isNaN(row.date);
-      const hasValue = row.value == null || Number.isFinite(+row.value);
-      return hasDate && hasValue;
+      // Drop rows whose date is present but unreadable, or whose value is
+      // present but non-finite (+'x' → NaN). Keep an absent value and a
+      // legitimate 0.
+      if ('date' in row && row.date != null && row.date !== '') {
+        const date = parseDate(row.date);
+        if (!date) return false;
+        row.date = date;
+      }
+      if (row.value == null || row.value === '') return true;
+      if (!Number.isFinite(+row.value)) return false;
+      row.value = +row.value;
+      return true;
     });
 }

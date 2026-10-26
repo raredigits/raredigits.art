@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   normalizeLinks, normalizeLinkData, parseTime, linkInWindow, applyTimeWindow,
   linkWidthScale, pairKey, dedupeUndirected, parallelIndex,
+  resolveLinkType, linkTimeExtent, activeLinkSeries,
 } from '../assets/charts/src/core/links.js';
 
 describe('normalizeLinks', () => {
@@ -24,7 +25,6 @@ describe('normalizeLinks', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     expect(normalizeLinks([{ source: 'a' }, null, { source: 'a', target: 'b' }])).toHaveLength(1);
     expect(warn).toHaveBeenCalledTimes(1);
-    warn.mockRestore();
   });
 
   it('accepts `flows` as the collection alias', () => {
@@ -120,5 +120,58 @@ describe('pairs', () => {
     expect(idx.get('x')).toEqual({ index: 0, count: 2 });
     expect(idx.get('y')).toEqual({ index: 1, count: 2 });
     expect(idx.get('z')).toEqual({ index: 0, count: 1 });
+  });
+});
+
+describe('resolveLinkType — one category rule for every relation chart (R-01)', () => {
+  const theme = { muted: '#999', colors: ['#a', '#b', '#c'] };
+  it('a described category uses its own color, dash and label', () => {
+    expect(resolveLinkType({ ETH: { color: '#123', dash: '4 2', label: 'Ether' } }, 'ETH', { keys: ['ETH'], theme }))
+      .toEqual({ key: 'ETH', color: '#123', dash: '4 2', label: 'Ether' });
+  });
+  it('an untyped tie is muted; an undescribed category takes the palette by position', () => {
+    expect(resolveLinkType({}, null, { keys: ['x', 'y'], theme })).toMatchObject({ key: 'default', color: '#999', label: 'connection' });
+    expect(resolveLinkType({}, 'y', { keys: ['x', 'y'], theme })).toMatchObject({ color: '#b', label: 'y' });
+  });
+  it('never a colour a described type uses; muted once the free colours run out', () => {
+    const types = { x: { color: '#a' } };
+    const keys = ['x', 'p', 'q', 'r'];
+    expect(['p', 'q', 'r'].map(k => resolveLinkType(types, k, { keys, theme }).color)).toEqual(['#b', '#c', '#999']);
+  });
+});
+
+describe('ids and keys stay unambiguous when ids contain separators (R-20)', () => {
+  it('normalizeLinks never gives two links the same generated id', () => {
+    const ls = normalizeLinks([{ from: 'a→b', to: 'c' }, { from: 'a', to: 'b→c' }]);
+    expect(new Set(ls.map(l => l.id)).size).toBe(2);
+  });
+  it('parallelIndex and dedupeUndirected do not merge different pairs', () => {
+    const ls = normalizeLinks([{ from: 'a|b', to: 'c' }, { from: 'a', to: 'b|c' }]);
+    expect([...parallelIndex(ls).values()].map(v => v.count)).toEqual([1, 1]);
+    expect(dedupeUndirected(ls)).toHaveLength(2);
+  });
+});
+
+describe('time of ties', () => {
+  it("'YYYY-00' is the month before January, one month long", () => {
+    expect(new Date(parseTime('2024-00')).toISOString().slice(0, 7)).toBe('2023-12');
+    expect(new Date(parseTime('2024-00', { end: true })).toISOString().slice(0, 10)).toBe('2023-12-31');
+  });
+
+  it('years 0–99 are those years, not 1900–1999 (T-01)', () => {
+    expect(new Date(parseTime(14)).getUTCFullYear()).toBe(14);
+    expect(new Date(parseTime('0099', { end: true })).toISOString()).toBe('0099-12-31T23:59:59.999Z');
+  });
+  it('linkTimeExtent spans every start and end; null without time', () => {
+    const ext = linkTimeExtent([{ start: 1990 }, { start: '1995-03', end: 2001 }]);
+    expect(ext.map(d => d.toISOString().slice(0, 7))).toEqual(['1990-01', '2001-12']);
+    expect(linkTimeExtent([{ source: 'a' }])).toBeNull();
+  });
+  it('activeLinkSeries counts open-ended ties as still running, by month or year', () => {
+    const monthly = activeLinkSeries([{ start: '2020-01', end: '2020-02' }, { start: '2020-02' }, { start: '2020-01', end: '2020-06' }]);
+    expect(monthly.map(d => d.value)).toEqual([2, 3, 2, 2, 2, 2, 2]);
+    const yearly = activeLinkSeries([{ start: 1900, end: 1960 }, { start: 1950 }]);
+    expect(yearly[0].date.getUTCFullYear()).toBe(1900);
+    expect(yearly.at(-1).value).toBe(2);
   });
 });

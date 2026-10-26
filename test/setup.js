@@ -24,3 +24,29 @@ if (typeof SVGElement !== 'undefined') {
   SVGElement.prototype.getTotalLength = SVGElement.prototype.getTotalLength
     || function () { return 0; };
 }
+
+// ── Library errors and chart cleanup (test/helpers.js) ──
+// console.error calls whose message starts with "RareCharts" come from the
+// library (Graph queue failures, Map geometry load). They used to scroll by
+// while the test passed; now they fail the test that caused them, unless it
+// called allowChartErrors(). Other console.error output is left alone.
+import { afterEach } from 'vitest';
+import { recordChartError, cleanupCharts, takeChartErrors } from './helpers.js';
+
+const originalError = console.error;
+console.error = (...args) => {
+  if (typeof args[0] === 'string' && args[0].startsWith('RareCharts')) recordChartError(args);
+  originalError(...args);
+};
+
+afterEach(async () => {
+  // Let queued work (Graph view tasks, fetch callbacks) settle first, so its
+  // errors are charged to this test and not the next one.
+  await new Promise(resolve => setTimeout(resolve, 0));
+  cleanupCharts();
+  const errors = takeChartErrors();
+  if (errors.length) {
+    const first = errors[0].map(a => (a instanceof Error ? a.stack ?? a.message : String(a))).join(' ');
+    throw new Error(`Library logged ${errors.length} unexpected error(s): ${first}`);
+  }
+});

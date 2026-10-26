@@ -46,13 +46,13 @@ Up to **4–5 columns and about 30 nodes**. Past that, bands get too thin to rea
 
 ## Money trail
 
-Color bands by `type` and the legend lists the types. Hover a band to highlight it with its two nodes; **click it to pin the tooltip**, so a long label or links inside it can be read. A click elsewhere or Escape releases it.
+Color bands by `type` with `linkColor: 'type'` and a `linkTypes` map, and the legend lists the described types (a type not in `linkTypes` stays muted). Hover a band to highlight it with its two nodes; **click it to pin the tooltip**, so a long label — or links you add with `linkTooltipFormat` — can be read. A click elsewhere or Escape releases it.
 
 <div class="text-content-caption card-dashboard-bordered">
     <div id="sankey-trail"></div>
 </div>
 
-The setup: `linkColor: 'type'` and a `linkTypes` map; anything else on a link — here a `label` — shows up in its tooltip.
+The setup: `linkColor: 'type'` and a `linkTypes` map; a link's `label` shows up in its tooltip — other fields reach your `linkTooltipFormat`.
 
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', {
   linkColor: 'type',
@@ -102,9 +102,9 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
         <tr><td><code>iterations</code></td><td>number</td><td><code>6</code></td><td>Layout relaxation rounds — more straightens bands at the cost of time</td></tr>
         <tr><td><code>linkColor</code></td><td>string</td><td><code>'source'</code></td><td><code>'source'</code>, <code>'target'</code>, <code>'type'</code>, <code>'gradient'</code>, or any CSS color</td></tr>
         <tr><td><code>linkOpacity</code></td><td>number</td><td><code>0.45</code></td><td>Band opacity at rest</td></tr>
-        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors and legend for <code>linkColor: 'type'</code></td></tr>
+        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors for <code>linkColor: 'type'</code>, and then a legend of every type described here (your own <code>legend</code> replaces it); a type not described stays muted</td></tr>
         <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels, right of each node (the last column gets a gutter sized to its longest label); long ones are cut with an ellipsis to the room before the next column, the full name stays in the tooltip. <code>false</code> leaves them to the tooltip</td></tr>
-        <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip</td></tr>
+        <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip; in the vertical layout a node narrower than 24 px (or this, if larger) gets no label</td></tr>
         <tr><td><code>showValues</code></td><td>boolean</td><td><code>true</code></td><td>Append the node value to its label</td></tr>
         <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for labels, tooltips and the table</td></tr>
         <tr><td><code>tooltipFormat</code></td><td>function</td><td>built-in</td><td><code>({ node, incoming, outgoing }) =&gt; html</code></td></tr>
@@ -119,7 +119,7 @@ Text slots `title`, `subtitle`, `source` and `note`, and the `controls` slot for
 
 ## Accessibility
 
-The SVG is labelled from `title` / `subtitle`. Every node and band carries an accessible name ("Income tax → Health: 9.4"); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.
+The SVG is labelled by `ariaLabel`, else from `title` / `subtitle`. Every node and band carries an accessible name ("Income tax → Health: 9.4"); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/sankey/sankey-demos.js"></script>

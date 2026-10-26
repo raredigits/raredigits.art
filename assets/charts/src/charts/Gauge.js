@@ -4,7 +4,8 @@
 //
 // Expected data: a number, or { value, max?, min? }
 //   setData(73)                        — value only, max from options
-//   setData({ value: 50, max: 80 })   — value + max override
+//   setData({ value: 50, max: 80 })   — value + max override for this call;
+//                                        the next setData starts from options
 //
 // Options:
 //   height       — chart height px (default: 220)
@@ -24,21 +25,27 @@
 //   trackColor   — background arc color (default: theme.grid)
 //
 //   showCenter   — render center text (default: true)
-//   centerText   — string | function(value, max, min) => string
-//                  default: percentage string (e.g. "63%")
+//   centerText   — string | function(value, max, min, info) => string
+//                  default: percentage string (e.g. "63%"); info — the role
+//                  fields { value, max, min, percent, color }, after the
+//                  positional arguments it always had (K-09)
 //   centerLabel  — secondary label below centerText (default: none)
 //
 //   animate      — animate fill on first render (default: true)
 //   duration     — animation duration ms (default: 800)
 //   ease         — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //
-//   tooltipFormat — function({ value, max, min, percent }) => html
+//   tooltipFormat — function({ value, max, min, percent, color }) => html;
+//                  color — the fill arc's. Formatter arguments, the rule for
+//                  every class (K-09): /charts/settings/#formatter-arguments
 
 import * as d3 from 'd3';
 import { Chart }       from '../core/Chart.js';
 import { Tooltip }     from '../core/Tooltip.js';
 import { resolveEase, motionDuration } from '../core/utils.js';
+import { EntryMotion } from '../core/entryMotion.js';
 import { applySvgA11y } from '../core/renderHelpers.js';
+import { escapeHtml, tipMuted } from '../core/html.js';
 
 export class Gauge extends Chart {
   constructor(selector, options = {}) {
@@ -51,7 +58,10 @@ export class Gauge extends Chart {
     this._value        = 0;
     this._max          = options.max ?? 100;
     this._min          = options.min ?? 0;
-    this._didAnimateIn = false;
+    // The fill sweeps in once per instance; a render in the middle of it
+    // carries it on to the current value (C-16). _sweep: the angle reached.
+    this._entry        = new EntryMotion();
+    this._sweep        = null;
     this._tooltip      = new Tooltip(this.container, this.theme);
 
     this._initSVG();
@@ -59,7 +69,12 @@ export class Gauge extends Chart {
 
   // ─── Data ─────────────────────────────────────────────────────────────────
 
+  // A `max` / `min` in the object holds for that call only: every setData
+  // starts again from the options (C-21), so setData({ value, max: 80 })
+  // followed by setData(40) reads 40 of the options' max, not of 80.
   setData(data) {
+    this._max = this.options.max ?? 100;
+    this._min = this.options.min ?? 0;
     if (typeof data === 'number') {
       this._value = data;
     } else if (data !== null && typeof data === 'object') {
@@ -101,9 +116,9 @@ export class Gauge extends Chart {
     const endAngle   = o.endAngle    ??  Math.PI * 0.75;   // +135°
     const thickness  = o.thickness   ?? 0.18;
     const cornerR    = o.cornerRadius ?? 6;
-    const animate    = (o.animate ?? true) && !this._didAnimateIn;
     const duration   = motionDuration(o.duration ?? 800);
     const ease       = resolveEase(o.ease ?? 'cubicOut');
+    const phase      = this._entry.phase((o.animate ?? true) ? duration : 0);
 
     const trackColor  = o.trackColor  ?? t.grid;
     const fillColor   = o.color       ?? t.accent;
@@ -184,18 +199,24 @@ export class Gauge extends Chart {
       .attr('class', 'rc-gauge-fill')
       .attr('fill',  fillColor);
 
-    if (animate) {
+    // The sweep runs on the entry timeline (C-16): 'enter' from the start of
+    // the arc; a render in its middle ('resume': fonts.ready, the first
+    // resize, a new value) carries it on from the angle reached to this
+    // render's value with the time left, instead of starting over.
+    const timing = phase === 'none' ? null : this._entry.timing(0, duration, ease);
+    const from   = !timing ? fillEnd : (phase === 'enter' ? startAngle : (this._sweep ?? startAngle));
+    const sweep  = d3.interpolate(from, fillEnd);
+    fillPath.interrupt();
+    if (timing) {
+      this._sweep = from;
       fillPath
-        .attr('d', fillArc.endAngle(startAngle)())
-        .transition().duration(duration).ease(ease)
-        .attrTween('d', () => {
-          const interp = d3.interpolate(startAngle, fillEnd);
-          return t => fillArc.endAngle(interp(t))();
-        })
-        .on('end', () => { this._didAnimateIn = true; });
+        .attr('d', fillArc.endAngle(from)())
+        .transition().duration(timing.duration).ease(timing.ease)
+        .attrTween('d', () => t => { this._sweep = sweep(t); return fillArc.endAngle(this._sweep)(); })
+        .on('end', () => { this._sweep = null; });
     } else {
+      this._sweep = null;
       fillPath.attr('d', fillArc.endAngle(fillEnd)());
-      this._didAnimateIn = true;
     }
 
     // ── Needle (speedometer pointer) ──────────────────────────────────────────
@@ -217,13 +238,11 @@ export class Gauge extends Chart {
         .attr('r', hubR)
         .attr('fill', needleColor);
 
-      if (animate) {
-        pointer.attr('transform', `rotate(${deg(startAngle)})`)
-          .transition().duration(duration).ease(ease)
-          .attrTween('transform', () => {
-            const interp = d3.interpolate(deg(startAngle), deg(fillEnd));
-            return tt => `rotate(${interp(tt)})`;
-          });
+      // The needle rides the same sweep as the fill.
+      if (timing) {
+        pointer.attr('transform', `rotate(${deg(from)})`)
+          .transition().duration(timing.duration).ease(timing.ease)
+          .attrTween('transform', () => tt => `rotate(${deg(sweep(tt))})`);
       } else {
         pointer.attr('transform', `rotate(${deg(fillEnd)})`);
       }
@@ -231,10 +250,13 @@ export class Gauge extends Chart {
 
     // ── Tooltip ───────────────────────────────────────────────────────────────
     const pct = fraction;
+    // The role fields (K-09): the tooltip payload, and centerText's last
+    // argument.
+    const role = { value: this._value, max: this._max, min: this._min, percent: pct, color: fillColor };
     const tooltipHtml = o.tooltipFormat
-      ? o.tooltipFormat({ value: this._value, max: this._max, min: this._min, percent: pct })
+      ? o.tooltipFormat({ ...role })
       : `<div>${d3.format('.1%')(pct)}</div>
-         <div style="color:${t.muted}">${this._value} / ${this._max}</div>`;
+         ${tipMuted(`${escapeHtml(this._value)} / ${escapeHtml(this._max)}`)}`;
 
     this.gArc.selectAll('path')
       .on('mousemove', (event) => {
@@ -249,7 +271,7 @@ export class Gauge extends Chart {
     if (o.showCenter !== false) {
       const rawText = o.centerText;
       const centerVal = typeof rawText === 'function'
-        ? rawText(this._value, this._max, this._min)
+        ? rawText(this._value, this._max, this._min, { ...role })
         : (rawText ?? d3.format('.0%')(fraction));
 
       const centerLabel = o.centerLabel ?? null;

@@ -6,48 +6,92 @@
 // (color), certainty (dash) and labels.
 //
 // Stage 1 (0.9.8_3): layout from data hints — `lane` (required), `row`,
-// `col`, exact `x`/`y`. Automatic in-lane layout, aggregation and collapsible
-// groups are stage 2 (0.9.8_6). Spec: charts/SPEC-GRAPH-FLOW-INTERNAL.md.
+// `col`, exact `x`/`y`. Stage 2 (0.9.8_6): automatic in-lane layout for
+// nodes without hints (layouts/flowAuto.js), folds that collapse a set of
+// nodes into one +/− meta-node, tie aggregation, a per-lane cap, and time
+// navigation (timeframes / navigator, wired in Graph). Spec:
+// charts/SPEC-GRAPH-FLOW-INTERNAL.md.
 //
-// Two parts: layoutFlow() is pure (no DOM) and unit-tested; FlowView draws
-// inside the Graph's zoom group and owns the view's interaction.
+// Parts: layoutFlow() is pure (no DOM) and unit-tested; flowFold.js folds and
+// aggregates (pure); FlowView draws inside the Graph's zoom group and owns
+// the view's interaction.
 
 import * as d3 from 'd3';
 import {
-  applyTimeWindow, linkWidthScale, parallelIndex,
+  applyTimeWindow, linkWidthScale, parallelIndex, resolveLinkType,
 } from '../../core/links.js';
 import { fitTextNode } from '../../core/renderHelpers.js';
+import { escapeHtml as esc, tipBody, tipTitle, tipSub, tipKind } from '../../core/html.js';
+import { autoFlowHints } from '../layouts/flowAuto.js';
+import { legendFocus } from '../legendFocus.js';
+import { rovingTabindex, holdsFocus, listStep } from '../roving.js';
+import { resolveFolds, foldGraph, metaId, META_PREFIX } from './flowFold.js';
 
 // ─── Layout ─────────────────────────────────────────────────────────────────
 
 // Positions from hints. Lanes split the width by `weight`; a lane holds
 // sub-columns (`col`, default 0) and rows (`row`: 0 = the main line, ±1, ±2
-// above/below). A node without `row` takes the next free row of its cell —
-// 0, then 1, −1, 2, −2… — in input order. Exact `x`/`y` are fractions:
-// `x` of the lane width, `y` of the drawing height below the lane headers.
-// Nodes that still share a spot are pushed apart vertically.
-export function layoutFlow({ nodes = [], lanes = [] } = {}, {
+// above/below). Exact `x`/`y` are fractions: `x` of the lane width, `y` of
+// the drawing height below the lane headers. Nodes that still share a spot
+// are pushed apart vertically.
+//
+// layout 'auto' (default): nodes without any hint get `col`/`row` from the
+// ties (layouts/flowAuto.js), and a lane without a declared weight is as
+// wide as its columns. layout 'hints': a node without `row` takes the next
+// free row of its cell — 0, then 1, −1, 2, −2… — in input order (stage 1).
+// A drawing too short for its rows gives up its top and bottom padding
+// (down to minPad) before rows get closer than a node and its captions.
+export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
   width = 900,
   height = 600,
   laneBy = 'lane',
+  layout = 'auto',
   header = 34,
   pad = 24,
   minGap = 56,
   nodeRadius = 18,
   captionRoom = 36,   // below a node's edge: label + sub line
   padBottom = pad,    // extra room under the drawing (e.g. zoom controls)
+  minPad = 8,         // the least either padding shrinks to (C-38)
 } = {}) {
-  const laneOf = n => (typeof laneBy === 'function' ? laneBy(n) : n[laneBy]);
+  const laneOf = n => (n._lane !== undefined ? n._lane
+    : typeof laneBy === 'function' ? laneBy(n) : n[laneBy]);
 
   // Lanes: declared order first, then any lane only the data mentions.
-  const laneList = lanes.map(l => ({ id: String(l.id), label: l.label ?? String(l.id), weight: l.weight ?? 1 }));
+  const laneList = lanes.map(l => ({ id: String(l.id), label: l.label ?? String(l.id), weight: l.weight, declared: l.weight != null }));
   const known = new Set(laneList.map(l => l.id));
   nodes.forEach(n => {
     const id = laneOf(n) == null ? '' : String(laneOf(n));
     if (!known.has(id)) {
       known.add(id);
-      laneList.push({ id, label: id, weight: 1 });
+      laneList.push({ id, label: id, weight: undefined, declared: false });
     }
+  });
+  const laneIdx = new Map(laneList.map((l, i) => [l.id, i]));
+
+  // Automatic hints for nodes that carry none.
+  let auto = null;
+  if (layout === 'auto' && nodes.length) {
+    auto = autoFlowHints({
+      nodes, links,
+      laneOf: n => String(laneOf(n) ?? ''),
+      laneIndex: id => laneIdx.get(id) ?? 0,
+    }).hints;
+    if (auto.size) nodes = nodes.map(n => (auto.has(n.id) ? { ...n, ...auto.get(n.id) } : n));
+  }
+
+  const colsOf = new Map();
+  nodes.forEach(n => {
+    const lane = String(laneOf(n) ?? '');
+    const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
+    colsOf.set(lane, Math.max(colsOf.get(lane) ?? 1, c + 1));
+  });
+  laneList.forEach(l => {
+    // undeclared lanes widen with their columns only when the automaton
+    // placed something (an empty map is truthy: a fully hinted trace keeps
+    // the stage-1 equal widths)
+    if (!l.declared) l.weight = auto?.size ? (colsOf.get(l.id) ?? 1) : 1;
+    delete l.declared;
   });
   const totalW = laneList.reduce((s, l) => s + l.weight, 0) || 1;
   let x = 0;
@@ -57,9 +101,6 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
     x = l.x1;
   });
   const laneById = new Map(laneList.map(l => [l.id, l]));
-
-  const top = header + pad;
-  const usableH = Math.max(1, height - top - padBottom);
 
   // Cells: lane × col. Count columns per lane.
   const colsPerLane = new Map();
@@ -99,6 +140,25 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
   const rows = [...rowOf.values()];
   const minRow = Math.min(0, ...rows), maxRow = Math.max(0, ...rows);
   const span = maxRow - minRow;
+  // A row needs a node, its caption (two lines with a `sub`) and the top of
+  // the node below with its fold switch. A drawing too short for that gives
+  // its top and bottom padding to the rows first, down to minPad (C-38).
+  let padTop = pad, padBot = padBottom;
+  if (span) {
+    const needStep = 2 * nodeRadius + (nodes.some(n => n.sub) ? 38 : 24);
+    const bandAt = (pt, pb) => Math.max(1, height - header - pt - pb) - nodeRadius * 2 - captionRoom;
+    const short = needStep * span - bandAt(pad, padBottom);
+    if (short > 0) {
+      // evenly from both, then what one side still has
+      const spareTop = Math.max(0, pad - minPad), spareBot = Math.max(0, padBottom - minPad);
+      const t = Math.min(spareTop, short / 2);
+      const b = Math.min(spareBot, short - t);
+      padTop = pad - t - Math.min(spareTop - t, short - t - b);
+      padBot = padBottom - b;
+    }
+  }
+  const top = header + padTop;
+  const usableH = Math.max(1, height - top - padBot);
   const bandTop = top + nodeRadius;
   const bandH = Math.max(1, usableH - nodeRadius * 2 - captionRoom);
   const rowStep = span ? Math.min(120, bandH / span) : 0;
@@ -137,8 +197,7 @@ export function layoutFlow({ nodes = [], lanes = [] } = {}, {
 // ─── View ───────────────────────────────────────────────────────────────────
 
 const SHAPES = ['circle', 'square', 'diamond', 'stack'];
-const esc = v => String(v).replace(/[&<>"']/g, c =>
-  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const sameSelection = (a, b) => (a?.node ?? null) === (b?.node ?? null) && (a?.link ?? null) === (b?.link ?? null);
 
 export class FlowView {
   constructor(graph) {
@@ -151,6 +210,13 @@ export class FlowView {
     this.hiddenTypes = new Set((graph.options.hiddenLinkTypes ?? []).map(String));
     this.selected = null;          // { node: id } | { link: id }
     this.labels = graph.options.linkLabels !== false;
+    // Fold id → collapsed. Seeded from each fold's `collapsed` (lane-cap
+    // folds start collapsed); kept across setData so a reload of the same
+    // trace keeps what the reader opened.
+    this.foldState = new Map();
+    // keyboard: the node and the tie holding each set's Tab stop (K-20)
+    this._nodeRoving = { current: null };
+    this._tieRoving = { current: null };
     this.layer = graph.gZoom.append('g').attr('class', 'rc-flow');
     this.gLanes = this.layer.append('g').attr('class', 'rc-flow-lanes');
     this.gHulls = this.layer.append('g').attr('class', 'rc-flow-hulls');
@@ -164,7 +230,8 @@ export class FlowView {
 
   setData({ nodes, links }) {
     this.data = { nodes, links };
-    if (this.selected && !this._exists(this.selected)) this.selected = null;
+    this._foldCache = null;
+    this._keyList = null;
   }
 
   clear() {
@@ -175,6 +242,7 @@ export class FlowView {
   // ── Option helpers ──
   _opt(name, fallback) { return this.g.options[name] ?? fallback; }
   _laneOf(n) {
+    if (n._lane !== undefined) return n._lane;
     const by = this._opt('laneBy', 'lane');
     return typeof by === 'function' ? by(n) : n[by];
   }
@@ -188,23 +256,105 @@ export class FlowView {
     return palette[i % palette.length];
   }
   _shape(n) {
+    if (n.fold != null && n.id.startsWith(META_PREFIX)) return 'stack';
     const by = this._opt('shapeBy', 'kind');
     const key = typeof by === 'function' ? by(n) : n[by];
-    const map = this._opt('nodeShapes', {});
-    const shape = map[key] ?? key ?? 'circle';
-    return shape;
+    // The nodeShapes map first (an SVG path comes only from there); a kind
+    // that names a built-in shape is that shape; any other kind is a circle.
+    // A kind value is never drawn as a path itself: 'mixer' or 'Multisig'
+    // made an invisible <path d="mixer">.
+    const map = this._opt('nodeShapes', {}) ?? {};
+    if (key != null && Object.prototype.hasOwnProperty.call(map, key) && map[key] != null) return map[key];
+    return SHAPES.includes(key) ? key : 'circle';
   }
   _linkKey(l) {
     const by = this._opt('linkColorBy', 'type');
     const v = typeof by === 'function' ? by(l) : l[by];
     return v == null ? 'default' : String(v);
   }
-  _exists(sel) {
-    if (sel.node) return this.data.nodes.some(n => n.id === sel.node);
-    return this.data.links.some(l => l.id === sel.link);
+
+  // A tie's category (by linkColorBy) → { key, color, dash, label }, the
+  // rule every relation chart shares (core/links.js resolveLinkType). The
+  // Graph's tooltip and details panel ask here, so they name the category
+  // the drawing shows.
+  typeOf(l) {
+    this._keyList ??= [...new Set(this.data.links.map(x => this._linkKey(x)))];
+    return resolveLinkType(this._opt('linkTypes', {}), this._linkKey(l), { keys: this._keyList, theme: this.g.theme });
+  }
+
+  // ── Folds ──
+  // The page's folds plus, with laneCap, one per crowded lane holding its
+  // lightest nodes ("+N more"). Resolved once per payload.
+  _folds() {
+    if (this._foldCache) return this._foldCache;
+    const nodes = this.data.nodes;
+    const user = resolveFolds(nodes, this._opt('folds', []));
+    const cap = this._opt('laneCap', null);
+    const extra = [];
+    if (Number.isInteger(cap) && cap >= 1) {
+      const claimed = new Set(user.flatMap(f => f.members));
+      const weight = new Map(nodes.map(n => [n.id, [0, 0]]));
+      this.data.links.forEach(l => [l.source, l.target].forEach(id => {
+        const w = weight.get(id);
+        if (!w) return;
+        const v = +l.value;
+        w[0] += Number.isFinite(v) && l.value !== null ? Math.max(0, v) : 0;
+        w[1] += 1;
+      }));
+      const index = new Map(nodes.map((n, i) => [n.id, i]));
+      d3.group(nodes.filter(n => !claimed.has(n.id)), n => String(this._laneOf(n) ?? ''))
+        .forEach((list, lane) => {
+          if (list.length <= cap) return;
+          const ranked = list.slice().sort((a, b) => {
+            const wa = weight.get(a.id), wb = weight.get(b.id);
+            return (wb[0] - wa[0]) || (wb[1] - wa[1]) || (index.get(a.id) - index.get(b.id));
+          });
+          const rest = ranked.slice(Math.max(0, cap - 1)).sort((a, b) => index.get(a.id) - index.get(b.id));
+          extra.push({
+            id: `lane:${lane}`, members: rest.map(n => n.id), collapsed: true,
+            label: `+${rest.length} more`, sub: '', laneCap: true,
+          });
+        });
+    }
+    const folds = user.concat(resolveFolds(nodes, extra));
+    folds.forEach(f => {
+      if (!this.foldState.has(f.id)) this.foldState.set(f.id, !!f.collapsed);
+    });
+    this._foldCache = folds;
+    return folds;
+  }
+
+  _collapsed() {
+    return new Set(this._folds().filter(f => this.foldState.get(f.id)).map(f => f.id));
+  }
+
+  _fold(payload) {
+    return foldGraph(payload, this._folds(), this._collapsed(), {
+      keyOf: l => this._linkKey(l),
+      aggregate: !!this._opt('aggregateLinks', false),
+      laneOf: n => this._laneOf(n),
+    });
+  }
+
+  isCollapsed(id) { return !!this.foldState.get(String(id)); }
+
+  // Collapse or expand a fold. The selection follows: a selected member
+  // becomes the selected meta-node, a selected meta-node its anchor.
+  setCollapsed(id, collapsed, event = null) {
+    id = String(id);
+    const fold = this._folds().find(f => f.id === id);
+    if (!fold || this.isCollapsed(id) === !!collapsed) return false;
+    this.foldState.set(id, !!collapsed);
+    // The selection follows into and out of the fold at render
+    // (_resolveSelection), which also tells onSelect.
+    const cb = this._opt('onFoldChange', null);
+    this.g._emit(cb, { id, collapsed: !!collapsed, fold, event });   // nothing after destroy() (C-33)
+    return true;
   }
 
   // ── Visibility ──
+  // Filter, legend and time window work on the original nodes and ties;
+  // folds and aggregation apply to what passes.
   _visible() {
     const pass = item => !this.filter || this.filter(item);
     let nodes = this.data.nodes.filter(pass);
@@ -222,8 +372,19 @@ export class FlowView {
       keep = new Set(nodes.map(n => n.id));
       links = links.filter(l => keep.has(l.source) && keep.has(l.target));
     }
-    links = applyTimeWindow(links, this.window, this._opt('timeWindowMode', 'dim'));
-    return { nodes, links };
+    const out = this._fold({ nodes, links: applyTimeWindow(links, this.window, this._opt('timeWindowMode', 'dim')) });
+    // Nodes with ties before the time window — as drawn, a folded member by
+    // its meta-node, ties inside a fold not counted. A node among them with
+    // no tie in the window fades, in 'hide' mode too: there the window
+    // removes its ties, and the node used to stay at full strength.
+    const tied = new Set();
+    links.forEach(l => {
+      const s = out.metaOf.get(l.source) ?? l.source;
+      const t = out.metaOf.get(l.target) ?? l.target;
+      if (s === t && (s !== l.source || t !== l.target)) return;
+      tied.add(s); tied.add(t);
+    });
+    return { ...out, tied };
   }
 
   // ── Render ──
@@ -234,19 +395,34 @@ export class FlowView {
     const palette = t.colors ?? ['#888'];
     const R = o.nodeRadius ?? 18;
 
+    // Positions come from the whole trace (folded as it stands), so the
+    // filter, the legend and the time window never move a node.
+    const whole = this._fold(this.data);
     const { positions, lanes, top, colsPerLane } = layoutFlow(
-      { nodes: this.data.nodes, lanes: o.lanes ?? [] },
-      { width: W, height: H, laneBy: o.laneBy ?? 'lane', nodeRadius: R });
-    const { nodes, links } = this._visible();
+      { nodes: whole.nodes, links: whole.links, lanes: o.lanes ?? [] },
+      { width: W, height: H, laneBy: n => this._laneOf(n), layout: o.layout ?? 'auto', nodeRadius: R });
+    const { nodes, links, metas, metaOf, tied } = this._visible();
     const byId = new Map(nodes.map(n => [n.id, n]));
+    const resolve = s => this._resolveSelection(s, byId, links, metaOf);
+    const prevSelection = this.selected;
+    this.selected = resolve(prevSelection);
+    // Fold switches: "+" on a collapsed meta-node, "−" on an open fold's
+    // anchor — or, when the anchor is filtered or hidden, on its first
+    // member still drawn, so the fold can always be closed.
+    const folds = this._folds();
+    const foldOfAnchor = new Map(folds.filter(f => !this.isCollapsed(f.id)).flatMap(f => {
+      const shown = this._shownMember(f, byId);
+      return shown ? [[shown, f]] : [];
+    }));
+    const switchOf = n => (metas.has(n.id) ? { fold: metas.get(n.id), open: false }
+      : foldOfAnchor.has(n.id) ? { fold: foldOfAnchor.get(n.id), open: true } : null);
 
-    // Active = in the time window; a node with ties but none active fades.
+    // Active = in the time window; a node with ties but none active fades
+    // (in both timeWindowMode settings — `tied` counts ties before the window).
     const active = links.filter(l => !l._dim);
     const live = new Set();
     active.forEach(l => { live.add(l.source); live.add(l.target); });
-    const hasTies = new Set();
-    links.forEach(l => { hasTies.add(l.source); hasTies.add(l.target); });
-    const nodeDim = n => hasTies.has(n.id) && !live.has(n.id);
+    const nodeDim = n => tied.has(n.id) && !live.has(n.id);
 
     // ── Lanes ──
     this.gLanes.selectAll('.rc-flow-lane')
@@ -305,23 +481,27 @@ export class FlowView {
         .text(h => h.label ?? ''));
 
     // ── Ties ──
-    const widthOf = linkWidthScale(this.data.links, {
+    const widthOf = linkWidthScale(this.data.links.concat(whole.links), {
       min: 1.6, max: 22, ...(o.linkWidth ?? {}),
     });
     const types = o.linkTypes ?? {};
     const keys = [...new Set(this.data.links.map(l => this._linkKey(l)))];
-    const colorOf = l => types[this._linkKey(l)]?.color
-      ?? palette[keys.indexOf(this._linkKey(l)) % palette.length];
+    const colorOf = l => this.typeOf(l).color;
     const dashOf = l => {
-      const fromType = types[this._linkKey(l)]?.dash;
+      const fromType = this.typeOf(l).dash;
       if (fromType) return fromType;
-      return o.linkDash && o.linkDash(l) ? '6 5' : null;
+      if (!o.linkDash) return null;
+      // an aggregated tie is dashed only when every tie in it is
+      const dashed = l.links ? l.links.every(x => o.linkDash(x)) : o.linkDash(l);
+      return dashed ? '6 5' : null;
     };
 
-    const markerId = key => `rc-flow-arrow-${graph._uid}-${String(key).replace(/[^\w-]/g, '_')}`;
+    // ids by position: a category may hold characters an id cannot
+    // (Cyrillic, spaces), and two categories must never share one marker
+    const markerId = key => `${graph._uid}-flow-arrow-${keys.indexOf(key)}`;
     graph._defs.selectAll('.rc-flow-arrow').remove();
     keys.forEach(key => {
-      const color = types[key]?.color ?? palette[keys.indexOf(key) % palette.length];
+      const color = resolveLinkType(types, key, { keys, theme: t }).color;
       graph._defs.append('marker')
         .attr('class', 'rc-flow-arrow')
         .attr('id', markerId(key))
@@ -372,6 +552,10 @@ export class FlowView {
       .attr('stroke-linecap', 'round')
       .attr('marker-end', l => `url(#${markerId(this._linkKey(l))})`);
 
+    // Read before the join (removing the focused tie fires blur, which
+    // clears the pointer flag): a click that changed the view is no reason
+    // to move keyboard focus.
+    const tiesHadFocus = holdsFocus(this.gHits.node()) && !this._pointerFocus;
     const hitSel = this.gHits.selectAll('.rc-flow-link-hit')
       .data(links, l => l.id)
       .join('path')
@@ -441,6 +625,7 @@ export class FlowView {
       const pa = positions.get(a.id), pb = positions.get(b.id);
       return (pa.x - pb.x) || (pa.y - pb.y);
     });
+    const nodesHadFocus = holdsFocus(this.gNodes.node());
     const nodeSel = this.gNodes.selectAll('.rc-flow-node')
       .data(ordered, n => n.id)
       .join(enter => enter.append('g').attr('class', 'rc-flow-node'))
@@ -448,10 +633,10 @@ export class FlowView {
         const p = positions.get(n.id);
         return `translate(${p.x},${p.y})`;
       })
-      .attr('tabindex', 0)
       .attr('role', 'button')
-      .attr('aria-label', n => [n.label ?? n.id, this._groupCfg(n)?.label ?? n.group]
-        .filter(Boolean).join(' — '))
+      .attr('aria-label', n => [n.label ?? n.id, n.fold != null && metas.has(n.id) ? n.sub : null,
+        this._groupCfg(n)?.label ?? n.group].filter(Boolean).join(' — '))
+      .attr('aria-expanded', n => { const sw = switchOf(n); return sw ? String(sw.open) : null; })
       .style('cursor', 'pointer')
       .order();
     nodeSel.each((n, i, els) => {
@@ -488,6 +673,24 @@ export class FlowView {
       if (n.terminal) {
         g.append('text').attr('class', 'rc-flow-node-sub')
           .attr('x', R + 6).attr('y', -R + 4).attr('fill', t.muted).text('end');
+      }
+      const sw = switchOf(n);
+      if (sw) {
+        // The switch sits on the node's upper-left shoulder; it toggles the
+        // fold without selecting (the node itself still selects).
+        const b = g.append('g').attr('class', 'rc-flow-fold-switch')
+          .attr('transform', `translate(${-R * 0.78},${-R * 0.78})`)
+          .attr('aria-hidden', 'true')
+          .style('cursor', 'pointer')
+          .on('click', event => {
+            event.stopPropagation();
+            this._toggle(sw.fold.id, event);
+          });
+        b.append('circle').attr('r', 8.5).attr('fill', t.bg).attr('stroke', t.text).attr('stroke-width', 1.4);
+        b.append('path')
+          .attr('d', sw.open ? 'M-4,0H4' : 'M-4,0H4M0,-4V4')
+          .attr('stroke', t.text).attr('stroke-width', 1.8).attr('stroke-linecap', 'round');
+        b.append('title').text(sw.open ? `Collapse ${sw.fold.label ?? sw.fold.id}` : `Expand ${sw.fold.label ?? sw.fold.id}`);
       }
     });
 
@@ -529,24 +732,33 @@ export class FlowView {
         });
     };
     this._apply = apply;
+    this._lastVisible = { nodes, links };
     apply();
 
     // ── Interaction ──
     const nodeById = id => byId.get(id) ?? { id };
     const select = (s, event = null) => {
+      if (s) {
+        s = resolve(s);
+        if (!s) return;                  // an id not in the drawing: nothing to select
+      }
       this.selected = s;
       apply();
+      this._preferStops?.();
       graph._showDetails(!s ? null
         : s.node ? { node: byId.get(s.node) ?? null }
         : { link: links.find(l => l.id === s.link) ?? null });
-      const cb = o.onSelect;
-      if (typeof cb === 'function') {
-        if (!s) cb({ node: null, link: null, event });
-        else if (s.node) cb({ node: byId.get(s.node) ?? null, link: null, event });
-        else cb({ node: null, link: links.find(l => l.id === s.link) ?? null, event });
-      }
+      // through _emit: no call after destroy() (C-33)
+      if (!s) graph._emit(o.onSelect, { node: null, link: null, event });
+      else if (s.node) graph._emit(o.onSelect, { node: byId.get(s.node) ?? null, link: null, event });
+      else graph._emit(o.onSelect, { node: null, link: links.find(l => l.id === s.link) ?? null, event });
     };
     this._select = select;
+
+    // ── Keyboard (K-20): the nodes share one Tab stop and the ties another
+    // (graph/roving.js); the ties come first in the Tab order. The stop is
+    // the selected node / tie, else the one focused last, else the first.
+    const nodeStop = rovingTabindex(nodeSel, { state: this._nodeRoving, preferred: this.selected?.node ?? null });
 
     nodeSel
       .on('click', (event, n) => { event.stopPropagation(); select({ node: n.id }, event); })
@@ -557,10 +769,17 @@ export class FlowView {
           return;
         }
         if (event.key === 'Escape') { select(null, event); return; }
-        const next = this._neighborFor(n, event.key, ordered, links, positions);
+        const sw = switchOf(n);
+        if (sw && (event.key === '+' || event.key === '=' || event.key === '-' || event.key === '−')) {
+          event.preventDefault();
+          const collapse = event.key === '-' || event.key === '−';
+          if (collapse === sw.open) this._toggle(sw.fold.id, event, true);
+          return;
+        }
+        const next = this._neighborFor(n, event.key, ordered, links, positions, lanes);
         if (next) {
           event.preventDefault();
-          nodeSel.filter(x => x.id === next.id).node()?.focus();
+          nodeStop.focus(next.id);
         }
       })
       .on('mouseover', (event, n) => {
@@ -569,7 +788,7 @@ export class FlowView {
         const nodeLinks = links.filter(l => l.source === n.id || l.target === n.id);
         const html = o.tooltipFormat
           ? o.tooltipFormat({ node: n, links: nodeLinks })
-          : this._nodeTooltip(n, nodeLinks, nodeById);
+          : this._nodeTooltip(n, nodeLinks, nodeById, switchOf(n));
         graph._tooltip.show(mx, my, html);
       })
       .on('mouseout', () => { if (!graph._tooltip.isPinned) graph._tooltip.hide(); });
@@ -578,8 +797,15 @@ export class FlowView {
       const source = nodeById(l.source), target = nodeById(l.target);
       return o.linkTooltipFormat
         ? o.linkTooltipFormat({ link: l, source, target })
-        : graph._defaultLinkTooltip(l, source, target);
+        : graph._defaultLinkTooltip(l.links?.length > 1 ? { ...l, _siblings: l.links } : l, source, target);
     };
+    const pickTie = (event, l, [x, y]) => {
+      select({ link: l.id, originals: (l.links ?? [l]).map(x => x.id) }, event);
+      // Without an external details panel, the pinned tooltip is the panel.
+      if (typeof o.onSelect !== 'function') graph._tooltip.pin(x, y, tieHtml(l));
+    };
+    // where a tie's tooltip opens from the keyboard: the middle of its bow
+    const tieAt = l => { const m = geom(l)?.mid ?? { x: 0, y: 0 }; return graph._toCard(m.x, m.y); };
     hitSel
       .on('mouseover', (event, l) => {
         if (graph._tooltip.isPinned) return;
@@ -589,13 +815,60 @@ export class FlowView {
       .on('mouseout', () => { if (!graph._tooltip.isPinned) graph._tooltip.hide(); })
       .on('click', (event, l) => {
         event.stopPropagation();
-        select({ link: l.id }, event);
-        // Without an external details panel, the pinned tooltip is the panel.
-        if (typeof o.onSelect !== 'function') {
-          const [mx, my] = d3.pointer(event, graph.container);
-          graph._tooltip.pin(mx, my, tieHtml(l));
+        pickTie(event, l, d3.pointer(event, graph.container));
+      });
+
+    // Ties from the keyboard (K-20): left to right by their source, then
+    // their target; arrows step through them, Enter or Space picks one as a
+    // click does, Escape clears. Focus shows what hover shows — a tie a
+    // pointer pressed takes focus too, and hover already handles it.
+    const pos = id => positions.get(id) ?? { x: 0, y: 0 };
+    const tieOrder = links.slice().sort((a, b) =>
+      (pos(a.source).x - pos(b.source).x) || (pos(a.source).y - pos(b.source).y)
+      || (pos(a.target).x - pos(b.target).x) || (pos(a.target).y - pos(b.target).y));
+    const tieStop = rovingTabindex(hitSel, { state: this._tieRoving, preferred: this.selected?.link ?? null });
+    hitSel
+      .attr('role', 'button')
+      .attr('aria-label', l => this._tieLabel(l, nodeById))
+      .on('pointerdown.key', () => { this._pointerFocus = true; })
+      .on('focus.tip', (event, l) => {
+        if (graph._destroyed) return;
+        if (!this._pointerFocus && !graph._tooltip.isPinned) graph._tooltip.show(...tieAt(l), tieHtml(l));
+      })
+      .on('blur.tip', event => {
+        if (!event.target.isConnected || graph._destroyed) return;   // removed by a redraw / destroy()
+        if (!this._pointerFocus && !graph._tooltip.isPinned) graph._tooltip.hide();
+        this._pointerFocus = false;
+      })
+      .on('keydown', (event, l) => {
+        this._pointerFocus = false;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          pickTie(event, l, tieAt(l));
+          return;
+        }
+        if (event.key === 'Escape') {
+          if (graph._tooltip.isPinned) graph._tooltip.unpin();
+          graph._tooltip.hide();
+          select(null, event);
+          return;
+        }
+        const next = listStep(tieOrder, l, event.key);
+        if (next) {
+          event.preventDefault();
+          tieStop.focus(next.id);
         }
       });
+    // A selection made with the mouse or select() moves the Tab stops to it.
+    this._preferStops = () => {
+      nodeStop.prefer(this.selected?.node ?? null);
+      tieStop.prefer(this.selected?.link ?? null);
+    };
+    // A redraw that took away the node or tie keyboard focus was on (a fold,
+    // the filter) hands focus to the new Tab stop of the same set.
+    const focusedEl = typeof document !== 'undefined' ? document.activeElement : null;
+    if (nodesHadFocus && !this.gNodes.node().contains(focusedEl)) nodeStop.focus(this._nodeRoving.current);
+    if (tiesHadFocus && !this.gHits.node().contains(focusedEl)) tieStop.focus(this._tieRoving.current);
 
     graph.svg.on('click.flow', () => { if (this.selected) select(null); });
 
@@ -610,11 +883,25 @@ export class FlowView {
       .filter(l => pass(l) && passing.has(l.source) && passing.has(l.target))
       .map(l => this._linkKey(l)));
     this._renderLegend(keys.filter(k => shown.has(k)), colorOf, dashOf, palette);
+
+    // The selection moved or went (a fold, the filter, the legend, the time
+    // window): the details panel and onSelect hear about it, as on a click —
+    // last, once handlers, select() and the legend belong to this render, so
+    // a page that changes the chart from onSelect starts from a whole one.
+    if (prevSelection && !sameSelection(prevSelection, this.selected)) {
+      const s = this.selected;
+      const node = s?.node ? byId.get(s.node) ?? null : null;
+      const link = s?.link ? links.find(l => l.id === s.link) ?? null : null;
+      graph._showDetails(node ? { node } : link ? { link } : null);
+      graph._emit(o.onSelect, { node, link, event: null });
+    }
   }
 
   // Arrow keys walk the trace: → first outgoing tie, ← first incoming tie,
-  // ↑/↓ the previous/next node of the same lane.
-  _neighborFor(n, key, ordered, links, positions) {
+  // ↑/↓ the previous/next node of the same lane — past the lane's last node
+  // into the next lane, so every node can be reached (K-20) — and Home /
+  // End the first / last node.
+  _neighborFor(n, key, ordered, links, positions, lanes = []) {
     if (key === 'ArrowRight') {
       const l = links.find(x => x.source === n.id);
       return l ? ordered.find(x => x.id === l.target) : null;
@@ -624,26 +911,97 @@ export class FlowView {
       return l ? ordered.find(x => x.id === l.source) : null;
     }
     if (key === 'ArrowUp' || key === 'ArrowDown') {
-      const lane = positions.get(n.id).lane;
-      const same = ordered.filter(x => positions.get(x.id).lane === lane)
-        .sort((a, b) => positions.get(a.id).y - positions.get(b.id).y);
-      const i = same.findIndex(x => x.id === n.id);
-      return same[i + (key === 'ArrowDown' ? 1 : -1)] ?? null;
+      // lane by lane, top to bottom within a lane
+      const laneIdx = new Map(lanes.map((l, i) => [l.id, i]));
+      const at = x => positions.get(x.id);
+      const walk = ordered.slice().sort((a, b) =>
+        ((laneIdx.get(at(a).lane) ?? 0) - (laneIdx.get(at(b).lane) ?? 0)) || (at(a).y - at(b).y) || (at(a).x - at(b).x));
+      const i = walk.findIndex(x => x.id === n.id);
+      return walk[i + (key === 'ArrowDown' ? 1 : -1)] ?? null;
     }
+    if (key === 'Home') return ordered[0] ?? null;
+    if (key === 'End') return ordered[ordered.length - 1] ?? null;
     return null;
   }
 
-  _nodeTooltip(n, nodeLinks, nodeById) {
-    const t = this.g.theme;
+  // The accessible name of a tie: its ends, its category and its label.
+  _tieLabel(l, nodeById) {
+    const name = id => String(nodeById(id).label ?? id);
+    const kind = this.typeOf(l).label;
+    const label = l.links?.length > 1 ? `${l.links.length} ties` : l.label;
+    return [`${name(l.source)} → ${name(l.target)}`, kind, label].filter(v => v != null && v !== '').join(', ');
+  }
+
+  _nodeTooltip(n, nodeLinks, nodeById, sw = null) {
     const ins = nodeLinks.filter(l => l.target === n.id);
     const outs = nodeLinks.filter(l => l.source === n.id);
     const group = this._groupCfg(n)?.label ?? n.group;
-    return `<div style="max-width:280px">
-      <div style="font-weight:bold;margin-bottom:2px">${esc(n.label ?? n.id)}</div>
-      ${group ? `<div style="color:${t.muted};font-size:10px;text-transform:uppercase;letter-spacing:0.06em">${esc(group)}</div>` : ''}
-      ${n.sub ? `<div style="color:${t.muted};font-size:11px">${esc(n.sub)}</div>` : ''}
-      <div style="color:${t.muted};font-size:11px;margin-top:4px">${ins.length} in · ${outs.length} out</div>
-    </div>`;
+    const members = Array.isArray(n.members) && sw && !sw.open
+      ? `<div class="rc-tooltip-small rc-tooltip-section">${n.members.slice(0, 8).map(m => esc(m.label ?? m.id)).join('<br>')}${n.members.length > 8 ? `<br>… +${n.members.length - 8}` : ''}</div>`
+      : '';
+    const hint = sw ? tipSub(`${sw.open ? '− collapses' : '+ expands'} · keys + / −`, { section: true }) : '';
+    return tipBody(`${tipTitle(esc(n.label ?? n.id))}
+      ${group ? tipKind(esc(group), null, 'div') : ''}
+      ${n.sub ? tipSub(esc(n.sub)) : ''}
+      ${members}
+      ${tipSub(`${ins.length} in · ${outs.length} out`, { section: true })}
+      ${hint}`);
+  }
+
+  // Toggle a fold from the drawing (switch click or + / − key) and redraw;
+  // keyboard focus returns to the node that now stands there.
+  _toggle(id, event = null, refocus = false) {
+    if (!this.setCollapsed(id, !this.isCollapsed(id), event)) return;
+    this.g._tooltip?.hide?.();
+    this.g.render();
+    if (this.selected) this.g._showDetails(this._selectedSubject());
+    if (refocus) {
+      const fold = this._folds().find(f => f.id === id);
+      const drawn = new Map((this._lastVisible?.nodes ?? []).map(n => [n.id, n]));
+      const target = this.isCollapsed(id) ? metaId(id) : fold && this._shownMember(fold, drawn);
+      this.gNodes.selectAll('.rc-flow-node').filter(n => n.id === target).node()?.focus();
+    }
+  }
+
+  // A selection against what is drawn: a node folded away becomes its
+  // meta-node; a tie is found by its id or by the original ties it holds
+  // (an aggregate's id changes as ties merge and split). null when gone.
+  _resolveSelection(sel, byId, links, metaOf) {
+    if (!sel) return null;
+    if (sel.node != null) {
+      const id = String(sel.node);
+      if (byId.has(id)) return { node: id };
+      const meta = metaOf?.get(id);
+      if (meta && byId.has(meta)) return { node: meta };
+      // a fold's meta-node after the fold opened: its anchor, or the first
+      // member still drawn
+      const fold = id.startsWith(META_PREFIX) ? this._folds().find(f => metaId(f.id) === id) : null;
+      const shown = fold && this._shownMember(fold, byId);
+      return shown ? { node: shown } : null;
+    }
+    if (sel.link == null) return null;
+    // the ties the user picked, kept as picked: merging never widens them,
+    // so a split returns to the chosen tie, not a neighbour
+    const originals = sel.originals ?? [String(sel.link)];
+    const hit = links.find(l => l.id === String(sel.link))
+      ?? links.find(l => originals.includes(l.id))
+      ?? links.find(l => (l.links ?? []).some(x => originals.includes(x.id)));
+    return hit ? { link: hit.id, originals } : null;
+  }
+
+  // The member that stands for an open fold: its anchor when drawn, else
+  // the first member still drawn (the − switch sits there too).
+  _shownMember(fold, byId) {
+    return byId.has(fold.anchor) ? fold.anchor : fold.members.find(m => byId.has(m)) ?? null;
+  }
+
+  _selectedSubject() {
+    const s = this.selected;
+    if (!s) return null;
+    const vis = this._lastVisible;
+    if (!vis) return null;
+    return s.node ? { node: vis.nodes.find(n => n.id === s.node) ?? null }
+      : { link: vis.links.find(l => l.id === s.link) ?? null };
   }
 
   // Legend: node groups (dots) and tie categories (lines). Clicking a tie
@@ -652,6 +1010,7 @@ export class FlowView {
     const el = this.g._legendEl;
     if (!el) return;
     const o = this.g.options;
+    const refocus = legendFocus(el);
     el.replaceChildren();
     const groups = o.nodeGroups ?? {};
     Object.entries(groups).forEach(([key, cfg], i) => {
@@ -667,14 +1026,16 @@ export class FlowView {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'rc-legend-item rc-graph-legend-item';
+      button.dataset.type = key;
       const off = this.hiddenTypes.has(key);
       button.setAttribute('aria-pressed', String(!off));
       button.style.opacity = off ? '0.35' : '1';
       // the category's own style — not one tie's (a derived first tie would
       // make the whole category look dashed)
-      const dash = types[key]?.dash ?? '';
+      const info = this.typeOf(sample);
+      const dash = info.dash ?? '';
       button.innerHTML = `<svg width="22" height="12" aria-hidden="true"><line x1="1" y1="6" x2="21" y2="6" stroke="${colorOf(sample)}" stroke-width="3" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span></span>`;
-      button.querySelector('span').textContent = types[key]?.label ?? key;
+      button.querySelector('span').textContent = info.label;
       button.addEventListener('click', () => {
         if (this.hiddenTypes.has(key)) this.hiddenTypes.delete(key);
         else this.hiddenTypes.add(key);
@@ -682,5 +1043,6 @@ export class FlowView {
       });
       el.appendChild(button);
     });
+    refocus();
   }
 }

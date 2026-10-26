@@ -28,7 +28,7 @@ Both axes are configured independently. You can set titles (`y1Title`, `y2Title`
 
 Axis titles are meant to be terse units (`PRICE`, `N · K HLX`). A title that would run past its axis margin is trimmed with an ellipsis — measured by rendered width, so a short label that fits is left alone — with the full text on hover and a one-time console hint. Set `axisTitleMaxLength` to cap it explicitly, or widen `margin` if you need more room.
 
-In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine.
+In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine. That is also the default `y2TickFormat`: a sign, two decimals, and a plain `0` near zero.
 
 ### Logarithmic scale
 
@@ -36,7 +36,7 @@ Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) o
 
 ### Interaction
 
-Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through `tooltipFormat ({ date, points })`, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.
+Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through `tooltipFormat: ({ date, points }) => html`, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.
 
 ### Built-in timeframe controls
 
@@ -56,7 +56,8 @@ Available pieces:
 - `navigator: true` renders the built-in overview strip with a brush under the main chart.
 - `setView([start, end])` sets any custom visible date window.
 - `getView()` returns the currently visible `[start, end]`.
-- `onViewChange(fn)` lets external UI or a linked navigator stay synchronized.
+- `setTimeframe(key, { silent })` selects a timeframe from code, as a button click does.
+- `onViewChange(fn)` calls `fn([start, end])` (Dates, clamped to the data; a window entirely outside the data is passed as given) after every view change — a button, the end of a navigator drag, `setTimeframe()` or `setView()` — unless that call passed `{ silent: true }`, so external UI stays synchronized.
 - `scaleToggle` adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).
 
 Example:
@@ -75,7 +76,7 @@ DualAxes supports the full annotation API — vertical date markers (point and r
 
 <h2 id="options-reference">Dual Axes chart options</h2>
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -95,22 +96,26 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>height</code></td>
             <td>number</td>
             <td><code>280</code></td>
-            <td>Chart height in px.</td>
+            <td>Chart height in px, the whole card: title, legend, timeframe buttons, navigator and footer come out of it, and the plot gets what is left. On a narrow card they wrap and take more, so leave the plot room.</td>
         </tr>
         <tr>
             <td><code>margin</code></td>
             <td>object</td>
-            <td>—</td>
+            <td><code>{10, 64, 18, 64}</code></td>
             <td>
                 Inner padding <code>{top, right, bottom, left}</code>.<br>
-                Right defaults to <code>92</code>, left to <code>64</code> to give both axes room.
+                Right and left default to <code>64</code> to give both axes room; a hidden axis collapses its side (see <code>showY1Axis</code>, <code>showY2Axis</code>, <code>showXAxis</code>). Top grows to <code>30</code> with <code>y1Title</code> or <code>y2Title</code>, and to <code>annotationLabelHeight + 4</code> with <code>annotations</code>.<br>
+                Each side you set explicitly wins — <code>margin.top</code> too.
             </td>
         </tr>
         <tr>
             <td><code>xPad</code></td>
             <td>number</td>
             <td><code>8</code></td>
-            <td>Extra horizontal padding on both ends of the X scale.</td>
+            <td>
+                Gap in px between the plot edge and the outermost mark on both ends of the X scale.<br>
+                With bars, the scale is inset by half the widest bar or cluster, so the first and last bars are drawn whole and <code>xPad</code> is the gap to their outer edge; lines start and end at the bar centres.
+            </td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -134,7 +139,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
-            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options.</td>
+            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options. The strip draws the first line series (or the first series when all are bars); its brush spans every series.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4">
@@ -147,7 +152,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>[min, max]</code></td>
             <td>auto</td>
             <td>
-                Override the Y1 scale domain.<br>
+                Override the Y1 scale domain — used as given, not rounded. On a log axis it needs <code>0 &lt; min &lt; max</code>; otherwise the auto domain is used.<br>
                 Useful for keeping charts comparable across snapshots.
             </td>
         </tr>
@@ -161,13 +166,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>y1Ticks</code></td>
             <td>number</td>
             <td><code>4</code></td>
-            <td>Tick count on Y1.</td>
+            <td>Approximate tick count on Y1 — d3 picks round steps; a log axis uses powers of ten. The auto domain is rounded to the same count, so more ticks hug the data closer (<code>y1Ticks: 10</code> on 12…87 gives 10…90, not 0…100).</td>
         </tr>
         <tr>
             <td><code>y1TickFormat</code></td>
             <td>function</td>
-            <td><code>,.2f</code></td>
-            <td><code>(value) =&gt; string</code> — Y1 tick labels.</td>
+            <td><code>,.2f</code> (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y1 tick labels, also used for the Y1 end labels and tooltip values.</td>
         </tr>
         <tr>
             <td><code>y1LabelsOnly</code></td>
@@ -191,7 +196,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>y2Domain</code></td>
             <td><code>[min, max]</code></td>
             <td>auto</td>
-            <td>Override the Y2 scale domain.</td>
+            <td>Override the Y2 scale domain — used as given, not rounded. On a log axis it needs <code>0 &lt; min &lt; max</code>; otherwise the auto domain is used.</td>
         </tr>
         <tr>
             <td><code>y2Scale</code></td>
@@ -203,13 +208,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>y2Ticks</code></td>
             <td>number</td>
             <td><code>4</code></td>
-            <td>Tick count on Y2.</td>
+            <td>Approximate tick count on Y2 — d3 picks round steps; a log axis uses powers of ten. The auto domain is rounded to the same count.</td>
         </tr>
         <tr>
             <td><code>y2TickFormat</code></td>
             <td>function</td>
-            <td><code>+.2f</code></td>
-            <td><code>(value) =&gt; string</code> — Y2 tick labels.</td>
+            <td><code>+.2f</code>, <code>0</code> near zero (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y2 tick labels, also used for the Y2 end labels and tooltip values.</td>
         </tr>
         <tr>
             <td><code>y2LabelsOnly</code></td>
@@ -230,7 +235,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>xTickFormat</code></td>
             <td>function</td>
             <td><code>'%m/%d'</code></td>
-            <td><code>(date) =&gt; string</code> — X tick labels.</td>
+            <td><code>(date) =&gt; string</code> — X tick labels. With the default format a view of a few days gets at most one tick per day, so a date is never repeated.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Lines</h5></td>
@@ -277,20 +282,29 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>barOpacity</code></td>
             <td>number</td>
-            <td><code>0.35</code></td>
-            <td>Bar fill opacity.</td>
+            <td>theme <code>barOpacity</code> (<code>0.35</code>)</td>
+            <td>Bar fill opacity. Falls back to the theme’s <code>barOpacity</code>.</td>
+        </tr>
+        <tr>
+            <td><code>barWidth</code></td>
+            <td>number</td>
+            <td>—</td>
+            <td>
+                Bar width in px for every bar series; with <code>'cluster'</code>, the width of each bar. Overrides <code>barWidthRatio</code>; a series' own <code>barWidth</code> overrides it.<br>
+                Capped at the smallest gap between bar dates: an overlapping bar is cut to it, a cluster is narrowed to fit it, so neighbours touch but never overlap. Anything that is not a positive number is ignored.
+            </td>
         </tr>
         <tr>
             <td><code>barWidthRatio</code></td>
             <td>number</td>
             <td><code>0.65</code></td>
-            <td>Bar width as a fraction of the time step width.</td>
+            <td>Bar width as a fraction of the smallest gap between bar dates (the whole cluster with <code>'cluster'</code>). Ignored when <code>barWidth</code> is set.</td>
         </tr>
         <tr>
             <td><code>barGrouping</code></td>
             <td><code>'overlap'</code> | <code>'cluster'</code></td>
             <td><code>'overlap'</code></td>
-            <td>How multiple bar series are arranged. <code>'cluster'</code> places them side by side.</td>
+            <td>How multiple bar series are arranged. <code>'overlap'</code> centres every bar on its date; <code>'cluster'</code> places them side by side, each at its own width, the group centred on the date.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Visibility</h5></td>
@@ -326,13 +340,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>endLabels</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Show last-value labels at the right edge for line series.</td>
+            <td>Show the last value of each line series on <code>endLabelsAxis</code> at the right edge (bar series are not labelled).</td>
         </tr>
         <tr>
             <td><code>endLabelsAxis</code></td>
             <td><code>'y1'</code> | <code>'y2'</code></td>
             <td><code>'y1'</code></td>
-            <td>Which axis to use when formatting end labels.</td>
+            <td>Which axis’s line series get end labels; they are placed and formatted on that axis. With the default <code>'y1'</code>, Y2 series have none.</td>
         </tr>
         <tr>
             <td><code>markers</code></td>
@@ -344,20 +358,20 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>markerShape</code></td>
             <td>string</td>
             <td><code>'circle'</code></td>
-            <td>Marker shape: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>.</td>
+            <td>Marker shape: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>, <code>'triangle'</code>, <code>'cross'</code>.</td>
         </tr>
         <tr>
             <td><code>markerSize</code></td>
             <td>number</td>
-            <td><code>4</code></td>
-            <td>Marker radius in px.</td>
+            <td>theme <code>markerSize</code> (<code>4</code>)</td>
+            <td>Marker radius in px. Falls back to the theme’s <code>markerSize</code>.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Interaction</h5></td>
         </tr>
         <tr>
             <td><code>scaleToggle</code></td>
-            <td>boolean | <code>'y1'</code> | <code>'y2'</code> | object</td>
+            <td>boolean | <code>'y1'</code> | <code>'y2'</code> | <code>'both'</code> | object</td>
             <td><code>false</code></td>
             <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both; or <code>{ axis, labels: { linear, log } }</code>. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
         </tr>
@@ -373,7 +387,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>
                 <code>({ date, points }) =&gt; html</code> — where
-                <code>points</code> is <code>[{name, value, color, fmt}]</code>.
+                <code>points</code> is <code>[{ name, series, axis, type, color, date, value, fmt }]</code>, one per series covering the hovered date; <code>fmt</code> is the value through that axis’s tick format. All formatters: <a href="/charts/settings/#formatter-arguments">formatter arguments</a>.
             </td>
         </tr>
         <tr class="table-section">
@@ -389,7 +403,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>annotationLabelHeight</code></td>
             <td>number</td>
             <td><code>22</code></td>
-            <td>Pixels reserved above the chart for vertical annotation labels.</td>
+            <td>Pixels reserved above the chart for vertical annotation labels (top margin <code>annotationLabelHeight + 4</code>); an explicit <code>margin.top</code> wins.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Animation</h5></td>
@@ -398,7 +412,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>animate</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Animate on first render.</td>
+            <td>Animate on first render, once per chart instance: lines draw in, bars grow. A render in the middle of it (font load, resize) carries the motion on to the new geometry instead of restarting it.</td>
         </tr>
         <tr>
             <td><code>duration</code></td>
@@ -422,7 +436,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>name</code></td>
             <td>string</td>
             <td><code>'Series N'</code></td>
-            <td>Series name — used in legend and tooltip.</td>
+            <td>Series name — shown in the tooltip (the legend is not built from series; pass <code>legend</code>). Also the key that matches lines and bars across <code>setData</code>, so keep names unique.</td>
         </tr>
         <tr>
             <td><code>axis</code></td>
@@ -443,9 +457,15 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Series color.</td>
         </tr>
         <tr>
+            <td><code>barWidth</code></td>
+            <td>number</td>
+            <td>chart <code>barWidth</code></td>
+            <td>Bar width in px for this series (bars only). Overrides the chart-level <code>barWidth</code>; an invalid value falls back to it.</td>
+        </tr>
+        <tr>
             <td><code>strokeWidth</code></td>
             <td>number</td>
-            <td><code>2</code></td>
+            <td>theme <code>strokeWidth</code> (<code>2</code>)</td>
             <td>Line thickness in px (lines only).</td>
         </tr>
         <tr>
@@ -479,10 +499,40 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>Per-series area baseline.</td>
         </tr>
         <tr>
+            <td><code>markers</code></td>
+            <td>boolean</td>
+            <td>global <code>markers</code></td>
+            <td>Point markers on this series (lines only); <code>false</code> hides them when the global <code>markers</code> is on.</td>
+        </tr>
+        <tr>
+            <td><code>markerShape</code></td>
+            <td>string</td>
+            <td>global <code>markerShape</code></td>
+            <td>Marker shape (lines only): <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>, <code>'triangle'</code>, <code>'cross'</code>.</td>
+        </tr>
+        <tr>
+            <td><code>markerSize</code></td>
+            <td>number</td>
+            <td>global <code>markerSize</code></td>
+            <td>Marker radius in px (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>markerFill</code></td>
+            <td>CSS color</td>
+            <td>series <code>color</code></td>
+            <td>Marker fill color (lines only).</td>
+        </tr>
+        <tr>
+            <td><code>markerStroke</code></td>
+            <td>CSS color</td>
+            <td>theme background</td>
+            <td>Marker outline color (lines only).</td>
+        </tr>
+        <tr>
             <td><code>values</code></td>
             <td>array</td>
             <td>—</td>
-            <td><code>[{date, value}, ...]</code> — the data points.</td>
+            <td><code>[{date, value}, ...]</code> — the data points; a point with a missing value (<code>null</code>, <code>''</code>) is dropped.</td>
         </tr>
     </tbody>
 </table>

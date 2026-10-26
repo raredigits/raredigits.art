@@ -40,7 +40,7 @@ Choose it consciously.
 
 ### Stroke Style
 
-The `strokeDash` option controls line pattern: `null` (`solid`) | `dashed` | `dotted` | `dashDot` | `longDash`
+The `strokeDash` option controls line pattern: `null` (`solid`) | `dashed` | `dotted` | `dashDot` | `longDash`, or a raw dash array such as `'4,3'`.
 
 This is useful when color alone is not enough to differentiate series, or when you want to emphasize one line without changing its weight.
 
@@ -50,8 +50,8 @@ The area option enables fill under the line. This can be useful for highlightin
 
 When enabled, the baseline can be controlled via areaBaseline:
 
-- `zero` — fill relative to zero
-- `min` — fill relative to the minimum visible value
+- `zero` — fill down to zero (the bottom of the plot when the data never reaches 0)
+- `min` — fill down to the bottom of the plot
 
 Opacity is controlled via `areaOpacity`.
 

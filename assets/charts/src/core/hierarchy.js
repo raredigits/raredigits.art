@@ -16,7 +16,9 @@
 //           it does NOT reduce a parent's remainder, and consumers render it as
 //           a "?" marker.
 //         · absent, 0, negative, or non-finite → no usable value. A leaf is
-//           dropped; an internal node falls back to the sum of its children.
+//           dropped; an internal node falls back to the sum of its children —
+//           and when none of them is disclosed either, it is itself a missing
+//           placeholder (value: null, missing: true), never a 0.
 //           Compositional charts (donut, bar) can only draw positive magnitudes,
 //           so 0/negative are rejected here rather than passed through for each
 //           consumer to re-filter differently.
@@ -39,7 +41,8 @@
 //   { id, label, value, depth, path, children, remainder, color?, missing?,
 //     isRemainder?, overflow?, data }
 //     - value:     effective magnitude — the disclosed value, else the sum of
-//                  children; null for a missing placeholder.
+//                  the disclosed children; null for a missing placeholder
+//                  (a leaf, or a parent without a disclosed value or child).
 //     - remainder: disclosed value minus the sum of children, on an INTERNAL
 //                  node only (0 on any leaf and on a parent with no own value).
 //                  Negative only when children exceed the stated parent, which
@@ -112,6 +115,17 @@ function buildNode(raw, depth, opts) {
     (s, c) => s + (typeof c.value === 'number' ? c.value : 0), 0);
 
   const hasOwn    = kind === 'disclosed';
+
+  // No value of its own and not one disclosed child: the node's magnitude is
+  // unknown, not 0 (C-19). It is a missing placeholder itself — excluded from
+  // every sum, a "?" in the bar, "not disclosed" in the donut — and keeps its
+  // children, so the outline still names them.
+  if (!hasOwn && !children.some(c => typeof c.value === 'number')) {
+    const node = leaf(raw, label, depth, null, true);
+    node.children = children;
+    return node;
+  }
+
   const value     = hasOwn ? ownValue : childrenSum;
   const remainder = hasOwn ? ownValue - childrenSum : 0;
 

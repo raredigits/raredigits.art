@@ -1,70 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { layoutFlow } from '../assets/charts/src/graph/views/flow.js';
 import { Graph } from '../assets/charts/src/charts/Graph.js';
+import { mount, track } from './helpers.js';
 
-// ─── layoutFlow (pure) ─────────────────────────────────────────────────────────
-
-describe('layoutFlow', () => {
-  const lanes = [{ id: 'l1', label: 'One' }, { id: 'l2', label: 'Two', weight: 3 }];
-
-  it('splits the width by lane weight, in declared order', () => {
-    const { lanes: out } = layoutFlow({ nodes: [], lanes }, { width: 800, height: 400 });
-    expect(out.map(l => [l.x0, l.x1])).toEqual([[0, 200], [200, 800]]);
-  });
-
-  it('places rows around the main line and honours col and x/y hints', () => {
-    const { positions: p, top, height } = layoutFlow({
-      lanes,
-      nodes: [
-        { id: 'main', lane: 'l1', row: 0 },
-        { id: 'above', lane: 'l1', row: -1 },
-        { id: 'c1', lane: 'l2', col: 1 },
-        { id: 'c0', lane: 'l2', col: 0 },
-        { id: 'exact', lane: 'l2', x: 0, y: 1 },
-      ],
-    }, { width: 800, height: 400 });
-    expect(p.get('above').y).toBeLessThan(p.get('main').y);
-    expect(p.get('main').x).toBe(100);                 // centre of lane 1
-    expect(p.get('c1').x).toBeGreaterThan(p.get('c0').x);
-    expect(p.get('exact').x).toBe(200);                 // left edge of lane 2
-    expect(p.get('exact').y).toBeCloseTo(height - 24, 6);   // bottom of the drawing area
-    expect(top).toBe(58);
-  });
-
-  it('fills free rows 0, 1, −1, 2… around explicit ones; never stacks two in one spot', () => {
-    const { positions: p } = layoutFlow({
-      lanes,
-      nodes: [
-        { id: 'a', lane: 'l1', row: 0 },
-        { id: 'b', lane: 'l1' },
-        { id: 'c', lane: 'l1' },
-        { id: 'd', lane: 'l1', row: 1 },   // collides with b's auto row
-      ],
-    }, { width: 800, height: 600 });
-    // explicit rows (a: 0, d: 1) are reserved first; b and c take the next free ones
-    expect(p.get('b').row).toBe(-1);
-    expect(p.get('c').row).toBe(2);
-    const ys = ['a', 'b', 'c', 'd'].map(id => p.get(id).y);
-    expect(new Set(ys.map(y => Math.round(y))).size).toBe(4);
-  });
-
-  it('keeps the outermost rows and their captions inside the drawing', () => {
-    const { positions: p } = layoutFlow({
-      lanes,
-      nodes: [{ id: 'top', lane: 'l1', row: -2 }, { id: 'main', lane: 'l1', row: 0 }, { id: 'low', lane: 'l1', row: 3 }],
-    }, { width: 800, height: 600, nodeRadius: 18, captionRoom: 36 });
-    expect(p.get('top').y - 18).toBeGreaterThanOrEqual(58);            // below the lane header
-    expect(p.get('low').y + 18 + 36).toBeLessThanOrEqual(600 - 24 + 1e-6);   // node edge + captions fit
-    expect(p.get('top').y).toBeLessThan(p.get('main').y);
-  });
-
-  it('appends lanes that only the data mentions; laneBy can be a field or a function', () => {
-    const r1 = layoutFlow({ lanes, nodes: [{ id: 'x', net: 'l3' }] }, { laneBy: 'net' });
-    expect(r1.lanes.map(l => l.id)).toEqual(['l1', 'l2', 'l3']);
-    const r2 = layoutFlow({ lanes, nodes: [{ id: 'y', meta: { lane: 'l2' } }] }, { laneBy: n => n.meta.lane });
-    expect(r2.positions.get('y').lane).toBe('l2');
-  });
-});
+// The Graph flow view in the DOM: lanes, nodes and ties drawn, selection,
+// legend, filters, the details panel (stage 1), folds, the lane cap and time
+// navigation (Flows II, 0.9.8_6). The layout math without a DOM is in
+// flow-layout.test.js.
 
 // ─── Graph view: 'flow' ────────────────────────────────────────────────────────
 
@@ -103,6 +44,203 @@ describe('Graph view: flow', () => {
     host = document.getElementById('chart');
   });
   const count = sel => host.querySelectorAll(sel).length;
+
+  it('setData with an empty trace clears the drawing, the legend and the navigator (C-02)', () => {
+    const g = new Graph('#chart', opts({ navigator: true })).setData(trace);
+    expect(count('.rc-flow-node')).toBeGreaterThan(0);
+    g.setData({ nodes: [], links: [] });
+    expect(count('.rc-flow-node')).toBe(0);
+    expect(count('.rc-flow-link')).toBe(0);
+    expect(host.querySelector('.rc-graph-legend').children.length).toBe(0);
+    expect(host.querySelector('.rc-chart-navigator').style.display).toBe('none');
+    g.destroy();
+  });
+
+  it('setData with an empty trace also releases a pinned tie tooltip and empties the details panel (C-02)', () => {
+    const g = new Graph('#chart', opts({ details: true })).setData(trace);
+    host.querySelector('.rc-flow-link-hit').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(host.querySelector('.rc-tooltip.is-pinned')).not.toBeNull();
+    g.setData({ nodes: [], links: [] });
+    expect(host.querySelector('.rc-tooltip.is-pinned')).toBeNull();
+    expect(host.querySelector('.rc-graph-details').textContent).not.toMatch(/→/);
+    g.destroy();
+  });
+
+  it('a tie tooltip names the category the drawing shows, by linkColorBy (R-01)', () => {
+    const g = new Graph('#chart', opts({ linkTypes: { ETH: { color: '#123456', label: 'Ether' } } })).setData(trace);
+    const ethTie = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.asset === 'ETH');
+    ethTie.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    const tip = host.querySelector('.rc-tooltip');
+    expect(tip.textContent).toContain('Ether');
+    expect(tip.innerHTML).toContain('#123456');
+    g.destroy();
+  });
+
+  it('two categories in Cyrillic get two arrow markers, each in its own colour (R-02)', () => {
+    const g = new Graph('#chart', opts({
+      linkColorBy: 'kind',
+      linkTypes: { друг: { color: '#aa0000' }, брат: { color: '#00aa00' } },
+    })).setData({
+      nodes: trace.nodes,
+      links: [{ from: 'osmo', to: 'pools', kind: 'друг' }, { from: 'osmo', to: 'eth', kind: 'брат' }],
+    });
+    const ids = [...host.querySelectorAll('.rc-flow-link')].map(p => p.getAttribute('marker-end'));
+    expect(new Set(ids).size).toBe(2);
+    const colours = ids.map(u => host.querySelector(u.slice(4, -1) + ' path').getAttribute('fill'));
+    expect(colours.sort()).toEqual(['#00aa00', '#aa0000']);
+    g.destroy();
+  });
+
+  it('the built-in details panel describes a selected fold and names ties by what is drawn (R-03)', () => {
+    const folds = [{ id: 'eth-side', label: 'Ethereum side', anchor: 'eth', members: ['eth', 'binance', 'poison'] }];
+    const g = new Graph('#chart', opts({ details: true, folds })).setData(trace);
+    g.collapse('eth-side');
+    g.select('fold:eth-side');
+    const panel = host.querySelector('.rc-graph-details');
+    expect(panel.textContent).toContain('Ethereum side');
+    expect(panel.textContent).toMatch(/Folded/i);
+    const tie = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.target === 'fold:eth-side');
+    g.select({ link: tie.__data__.id });
+    expect(panel.textContent).not.toContain('fold:');
+    expect(panel.textContent).toContain('Ethereum side');
+    g.destroy();
+  });
+
+  it('a selection that disappears or moves is reported to onSelect and the panel (R-04)', () => {
+    const onSelect = vi.fn();
+    const folds = [{ id: 'eth-side', label: 'Ethereum side', anchor: 'eth', members: ['eth', 'binance'] }];
+    const g = new Graph('#chart', opts({ onSelect, folds })).setData(trace);
+    g.select('binance');
+    onSelect.mockClear();
+    g.collapse('eth-side');                         // binance folds away → the fold is selected
+    expect(onSelect).toHaveBeenLastCalledWith(expect.objectContaining({ node: expect.objectContaining({ id: 'fold:eth-side' }) }));
+    g.expand('eth-side');
+    g.select('osmo');
+    onSelect.mockClear();
+    g.setFilter(n => n.id !== 'osmo');              // the selected node is filtered out
+    expect(onSelect).toHaveBeenLastCalledWith({ node: null, link: null, event: null });
+    g.destroy();
+  });
+
+  it('a selected tie survives folding: it follows into the merged tie (R-04)', () => {
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'] }];
+    const g = new Graph('#chart', opts({ folds })).setData(trace);
+    const tie = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.source === 'osmo' && p.__data__.target === 'eth');
+    g.select({ link: tie.__data__.id });
+    g.collapse('eth-side');
+    const sel = host.querySelectorAll('.rc-flow-link[stroke-opacity="1"]');
+    expect(sel).toHaveLength(1);
+    expect(sel[0].__data__.target).toBe('fold:eth-side');
+    g.destroy();
+  });
+
+  it('select() of a folded member selects its fold; an unknown id fades nothing (R-05)', () => {
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'], collapsed: true }];
+    const g = new Graph('#chart', opts({ folds })).setData(trace);
+    g.select('binance');
+    expect(host.querySelector('.rc-flow-node.is-selected').__data__.id).toBe('fold:eth-side');
+    g.clearSelection();
+    g.select('nowhere');
+    const faded = [...host.querySelectorAll('.rc-flow-node')].filter(n => n.style.opacity === '0.15');
+    expect(faded).toHaveLength(0);
+    g.destroy();
+  });
+
+  it('an open fold whose anchor is filtered out keeps its − switch on a member still drawn (R-07)', () => {
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'] }];
+    const g = new Graph('#chart', opts({ folds })).setData(trace);
+    g.setFilter(n => n.id !== 'eth');
+    expect(host.querySelectorAll('.rc-flow-fold-switch')).toHaveLength(1);
+    g.collapse('eth-side');
+    expect(g.isCollapsed('eth-side')).toBe(true);
+    g.destroy();
+  });
+
+  it('expanding a selected fold moves the selection to its anchor and tells onSelect (R-04)', () => {
+    const onSelect = vi.fn();
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'], collapsed: true }];
+    const g = new Graph('#chart', opts({ onSelect, folds })).setData(trace);
+    g.select('fold:eth-side');
+    onSelect.mockClear();
+    g.expand('eth-side');
+    expect(host.querySelector('.rc-flow-node.is-selected').__data__.id).toBe('eth');
+    expect(onSelect).toHaveBeenLastCalledWith(expect.objectContaining({ node: expect.objectContaining({ id: 'eth' }) }));
+    g.destroy();
+  });
+
+  it('with the anchor filtered out, expand selects and focuses the first member still drawn (R-07)', () => {
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'], collapsed: true }];
+    const g = new Graph('#chart', opts({ folds })).setData(trace);
+    g.setFilter(n => n.id !== 'eth');
+    g.select('fold:eth-side');
+    const meta = [...host.querySelectorAll('.rc-flow-node')].find(n => n.__data__.id === 'fold:eth-side');
+    meta.focus();
+    meta.dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }));
+    expect(host.querySelector('.rc-flow-node.is-selected').__data__.id).toBe('binance');
+    expect(document.activeElement.__data__?.id).toBe('binance');
+    g.destroy();
+  });
+
+  it('a tie picked, merged by a fold and split again comes back as the tie picked (R-04)', () => {
+    const folds = [{ id: 'eth-side', anchor: 'eth', members: ['eth', 'binance'] }];
+    const g = new Graph('#chart', opts({ folds })).setData({
+      nodes: trace.nodes,
+      // the neighbour comes first: a split must not settle on it
+      links: [{ id: 'to-binance', from: 'osmo', to: 'binance', asset: 'ETH', value: 5 }, ...trace.links],
+    });
+    const picked = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.source === 'osmo' && p.__data__.target === 'eth');
+    picked.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const selectedTie = () => [...host.querySelectorAll('.rc-flow-link')].filter(p => p.getAttribute('stroke-opacity') === '1');
+    g.collapse('eth-side');
+    expect(selectedTie()).toHaveLength(1);
+    expect(selectedTie()[0].__data__.id).toMatch(/^agg:/);           // two ties merged into the fold's tie
+    g.expand('eth-side');
+    expect(selectedTie().map(p => p.__data__.id)).toEqual([picked.__data__.id]);
+    g.destroy();
+  });
+
+  it('a selected tie the filter removes empties the details panel (R-04)', () => {
+    const g = new Graph('#chart', opts({ details: true })).setData(trace);
+    const tie = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.target === 'binance');
+    g.select({ link: tie.__data__.id });
+    expect(host.querySelector('.rc-graph-details').textContent).toContain('Binance');
+    g.setFilter(n => n.id !== 'binance');
+    expect(host.querySelector('.rc-graph-details').textContent).not.toContain('Binance');
+    g.destroy();
+  });
+
+  it('onSelect may change the chart: a re-render from it leaves a working select() (R-04)', () => {
+    let g;
+    const onSelect = ({ node, link }) => { if (!node && !link) g.setFilter(null); };
+    g = new Graph('#chart', opts({ onSelect })).setData(trace);
+    g.select('eth');
+    g.setFilter(n => n.id !== 'eth');               // drops the selection → onSelect clears the filter
+    g.select('eth');
+    expect(host.querySelector('.rc-flow-node.is-selected')?.__data__.id).toBe('eth');
+    g.destroy();
+  });
+
+  it('setData with an empty trace reports the cleared selection; select() then finds nothing (R-04)', () => {
+    const onSelect = vi.fn();
+    const g = new Graph('#chart', opts({ onSelect, details: true })).setData(trace);
+    g.select('osmo');
+    onSelect.mockClear();
+    g.setData({ nodes: [], links: [] });
+    expect(onSelect).toHaveBeenCalledWith({ node: null, link: null, event: null });
+    onSelect.mockClear();
+    g.select('osmo');
+    expect(onSelect).not.toHaveBeenCalled();
+    expect(host.querySelector('.rc-graph-details').textContent).not.toContain('Osmosis');
+    g.destroy();
+  });
+
+  it('the details panel names a tie by its linkColorBy category (R-01)', () => {
+    const g = new Graph('#chart', opts({ details: true, linkTypes: { ETH: { color: '#123456', label: 'Ether' } } })).setData(trace);
+    const tie = [...host.querySelectorAll('.rc-flow-link-hit')].find(p => p.__data__.asset === 'ETH');
+    g.select({ link: tie.__data__.id });
+    expect(host.querySelector('.rc-graph-details').textContent).toContain('Ether');
+    g.destroy();
+  });
 
   it('draws lanes, nodes with shapes, every tie (both directions of a pair) and the hull', async () => {
     const g = new Graph('#chart', opts()).setData(trace);
@@ -299,5 +437,138 @@ describe('Graph view: flow — hiddenLinkTypes', () => {
     await g.whenReady();
     g.setFilter(item => item.id !== 'decoy');
     expect(host.querySelector('.rc-graph-legend').textContent).not.toContain('poisoning');
+  });
+});
+
+// ─── Graph flow view: folds, lane cap, time navigation ─────────────────────────
+
+// A sale with two crowd backers, for folds, the lane cap and time navigation.
+const crowdTrace = {
+  nodes: [
+    { id: 'w', label: 'Wallet', lane: 'a' },
+    { id: 'sale', label: 'Sale', lane: 'b' },
+    { id: 'p1', label: 'Backer 1', lane: 'b', crowd: true },
+    { id: 'p2', label: 'Backer 2', lane: 'b', crowd: true },
+    { id: 'x', label: 'Exchange', lane: 'c' },
+  ],
+  links: [
+    { from: 'w', to: 'sale', value: 1, start: '2024-01-01', end: '2024-01-02' },
+    { from: 'p1', to: 'sale', value: 10, start: '2024-01-03', end: '2024-01-04' },
+    { from: 'p2', to: 'sale', value: 20, start: '2024-01-03', end: '2024-01-05' },
+    { from: 'sale', to: 'x', value: 30, start: '2024-02-01', end: '2024-02-10' },
+  ],
+};
+const mkGraph = (opts = {}) => track(new Graph(mount(null), {
+  view: 'flow', height: 500, lanes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }], ...opts,
+}));
+const nodeIds = g => [...g.container.querySelectorAll('.rc-flow-node')].map(n => n.__data__.id);
+
+describe('Graph flow — folds', () => {
+  const folds = [{ id: 'sale', label: 'Sale', anchor: 'sale', members: n => n.crowd || n.id === 'sale' }];
+
+  it('draws − on an open fold\'s anchor; collapse() swaps in the + meta-node and fires onFoldChange', () => {
+    const onFoldChange = vi.fn();
+    const g = mkGraph({ folds, onFoldChange }).setData(crowdTrace);
+    expect(g.container.querySelectorAll('.rc-flow-fold-switch')).toHaveLength(1);
+    expect(g.container.querySelector('.rc-flow-node[aria-expanded="true"]').__data__.id).toBe('sale');
+    g.collapse('sale');
+    expect(g.isCollapsed('sale')).toBe(true);
+    expect(nodeIds(g).sort()).toEqual(['fold:sale', 'w', 'x']);
+    expect(g.container.querySelector('.rc-flow-node[aria-expanded="false"]').__data__.sub).toBe('3 nodes');
+    expect(onFoldChange).toHaveBeenCalledWith(expect.objectContaining({ id: 'sale', collapsed: true }));
+    g.expand('sale');
+    expect(nodeIds(g)).toHaveLength(5);
+  });
+
+  it('starts collapsed with collapsed: true, and the switch toggles it', () => {
+    const g = mkGraph({ folds: [{ ...folds[0], collapsed: true }] }).setData(crowdTrace);
+    expect(nodeIds(g)).toContain('fold:sale');
+    g.container.querySelector('.rc-flow-fold-switch').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(g.isCollapsed('sale')).toBe(false);
+    expect(nodeIds(g)).toContain('p1');
+  });
+
+  it('keeps the selection: a selected member becomes the meta-node, and back to the anchor', () => {
+    const onSelect = vi.fn();
+    const g = mkGraph({ folds, onSelect }).setData(crowdTrace);
+    g.select('p1');
+    g.collapse('sale');
+    expect(g.container.querySelector('.rc-flow-node.is-selected').__data__.id).toBe('fold:sale');
+    g.expand('sale');
+    expect(g.container.querySelector('.rc-flow-node.is-selected').__data__.id).toBe('sale');
+  });
+
+  it('+ and − keys on the node fold and unfold', () => {
+    const g = mkGraph({ folds }).setData(crowdTrace);
+    const anchor = () => [...g.container.querySelectorAll('.rc-flow-node')].find(n => n.__data__.id === 'sale' || n.__data__.id === 'fold:sale');
+    anchor().dispatchEvent(new KeyboardEvent('keydown', { key: '-', bubbles: true }));
+    expect(g.isCollapsed('sale')).toBe(true);
+    anchor().dispatchEvent(new KeyboardEvent('keydown', { key: '+', bubbles: true }));
+    expect(g.isCollapsed('sale')).toBe(false);
+  });
+
+  it('laneCap folds the lightest nodes of a crowded lane into "+N more"', () => {
+    const g = mkGraph({ laneCap: 2 }).setData(crowdTrace);
+    const meta = [...g.container.querySelectorAll('.rc-flow-node')].map(n => n.__data__).find(n => n.fold);
+    expect(meta).toMatchObject({ id: 'fold:lane:b', label: '+2 more' });
+    // cap 2 = the heaviest node (sale) + the fold of the rest
+    expect(meta.members.map(m => m.id).sort()).toEqual(['p1', 'p2']);
+    g.expand('lane:b');
+    expect(nodeIds(g)).toHaveLength(5);
+  });
+
+  it('aggregateLinks lists the merged ties in the tooltip', () => {
+    const g = mkGraph({ aggregateLinks: true }).setData({
+      nodes: crowdTrace.nodes,
+      links: [...crowdTrace.links, { from: 'w', to: 'sale', value: 2, label: 'second' }],
+    });
+    const ties = [...g.container.querySelectorAll('.rc-flow-link')].map(p => p.__data__);
+    const merged = ties.find(l => l.source === 'w');
+    expect(merged.links).toHaveLength(2);
+    expect(merged.value).toBe(3);
+  });
+});
+
+describe('Graph flow — time navigation', () => {
+  it('derives the data extent from the ties and an overview of active ties per day', () => {
+    const g = mkGraph({ navigator: true }).setData(crowdTrace);
+    const [a, b] = g._getDataExtent();
+    expect(a.toISOString().slice(0, 10)).toBe('2024-01-01');
+    expect(b.toISOString().slice(0, 10)).toBe('2024-02-10');
+    const series = g._getNavigatorData();
+    expect(series[0].value).toBe(1);
+    expect(series.find(d => d.date.toISOString().startsWith('2024-01-03')).value).toBe(2);
+    // the strip spans the data exactly, so a full view ends at its right edge
+    expect(+series[0].date).toBe(+a);
+    expect(+series[series.length - 1].date).toBe(+b);
+    expect(g.container.querySelector('.rc-chart-navigator')).not.toBeNull();
+  });
+
+  it('timeframes dim ties outside the period; setTimeWindow moves the view and the buttons follow', () => {
+    const onViewChange = vi.fn();
+    const g = mkGraph({
+      timeframes: [{ key: 'jan', label: 'January', range: ['2024-01-01', '2024-01-31'] }, 'ALL'],
+    }).setData(crowdTrace);
+    g.onViewChange(onViewChange);
+    const dimmed = () => [...g.container.querySelectorAll('.rc-flow-link')]
+      .filter(p => p.getAttribute('stroke-opacity') === '0.14').map(p => p.__data__.source);
+    expect(dimmed()).toEqual([]);
+    g.setTimeframe('jan');
+    expect(dimmed()).toEqual(['sale']);
+    expect(g.container.querySelector('.rc-range-btn.active').textContent).toBe('January');
+    expect(onViewChange).toHaveBeenCalled();
+    g.setTimeWindow('2024-02', null);
+    expect(dimmed().sort()).toEqual(['p1', 'p2', 'w']);
+    expect(g.container.querySelector('.rc-range-btn.active')).toBeNull();
+    g.setTimeWindow();
+    expect(dimmed()).toEqual([]);
+    expect(g.container.querySelector('.rc-range-btn.active').textContent).toBe('ALL');
+  });
+
+  it('without timeframes or navigator setTimeWindow behaves as in stage 1', () => {
+    const g = mkGraph().setData(crowdTrace);
+    g.setTimeWindow('2024-02', null);
+    expect(g._flow().window).toEqual({ from: '2024-02', to: null });
+    expect(g.container.querySelector('.rc-chart-range-row')).toBeNull();
   });
 });

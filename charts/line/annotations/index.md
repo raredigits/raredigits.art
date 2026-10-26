@@ -15,7 +15,7 @@ RareCharts supports four kinds of annotations within a single `annotations` arra
 - **Horizontal line** — a reference level at a Y value. Drawn as a horizontal line spanning the full plot width, with an inline label. Useful for break-even, targets, KPI thresholds.
 - **Horizontal band** — a Y-value range with optional fill. Useful for tolerance windows or “acceptable range” bands.
 
-Annotations are supported on `Line`, `DualAxes`, and `TimeSeries` charts. The kind is inferred from which fields are present — `date`, `from/to`, `value`, or `yFrom/yTo`.
+Annotations are supported on `Line`, `DualAxes`, and `TimeSeries` charts, and on a vertical `Bar` fed `{ date, value }` rows (see [Bar](/charts/bar/) → Annotations). The kind is inferred from which fields are present — `date`, `from/to`, `value`, or `yFrom/yTo`.
 
 <div class="card-dashboard-bordered text-content-caption">
     <div id="btc-price-chart"></div>
@@ -84,7 +84,7 @@ For a `DualAxes` chart, horizontal annotations need to specify which Y axis they
 
 ### Layout
 
-Labels are rendered *above* the plot area. The chart automatically pushes its top margin down by `annotationLabelHeight + 4` pixels when at least one annotation is configured, so labels never collide with the line. The default height is `22`. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:
+Labels are rendered *above* the plot area. The chart automatically raises its top margin to `annotationLabelHeight + 4` pixels (26 by default) when at least one annotation is configured, so labels never collide with the line. The default height is `22`. Override it when you need taller labels (multi-line, larger font) or want to compact the layout:
 
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
     annotations: [{ date: '2024-04-19', label: '4th Halving' }],
@@ -96,6 +96,8 @@ If you provide an explicit `margin.top` it will be respected — but you must re
 ### View clipping
 
 Annotations whose date(s) fall outside the visible X extent are skipped automatically. This is the expected behavior when used together with `timeframes`, `navigator`, or `setView()`: as the user zooms or pans, in-range annotations appear and out-of-range ones disappear. For range annotations partially visible, the fill is clamped to the visible portion and only the boundary line(s) inside the extent are drawn.
+
+Horizontal annotations follow the same rule on the value axis: a level outside the visible Y range is skipped, and a band that runs past the top or bottom of the plot is cut there, with only its real edges drawn. Annotations never widen the axis, so a level far from the data stays hidden — on `Line` widen the axis with `yTickValues`, on `DualAxes` with `y1Domain` / `y2Domain`. On a chart with bars (`DualAxes`, a dated `Bar`) the time scale is inset by half a bar so the first and last bars are drawn whole: ranges and horizontal lines and bands still reach the edges of the plot, so a range that starts half a period before the first bar shades it whole.
 
 ### Styling
 
@@ -325,7 +327,7 @@ Annotations inherit the muted theme color by default so they don’t compete wit
             <td><code>annotations</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Array of point and/or range annotations. Mixed entries are allowed.</td>
+            <td>Array of annotations of any of the four kinds (point, range, horizontal line, horizontal band); mixed entries are allowed.</td>
         </tr>
         <tr>
             <td><code>annotationLabelHeight</code></td>

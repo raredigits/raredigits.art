@@ -18,7 +18,9 @@ Data can be passed either as a single series or as multiple named series.
 
 **Single series format**
 
-<pre class="text-content-caption"><code>chart.setData([
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
+
+chart.setData([
     { date: '2026-01-01', value: 1.00 },
     { date: '2026-01-02', value: 2.5 },
     { date: '2026-01-03', value: -0.6 },
@@ -29,7 +31,9 @@ When you pass data like this, the library will use options.seriesName (default: 
 
 **Multi-series format**
 
-<pre class="text-content-caption"><code>chart.setData([
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
+
+chart.setData([
     {
         name: 'Portfolio A',
         color: '#00c97a',
@@ -49,7 +53,7 @@ When you pass data like this, the library will use options.seriesName (default: 
 ]);</code>
 </pre>
 
-Dates are parsed via `parseDate (…)`, so strings, timestamps, and Date objects are accepted as long as they can be converted to a valid date.
+Dates are parsed via `parseDate(…)`, so strings, timestamps, and Date objects are accepted as long as they can be converted to a valid date. A point whose value is missing (`null`, an empty string, `true` or `false`) or not a number is dropped as well: the line joins its neighbours instead of dipping to zero.
 
 ### Built-in timeframe controls
 
@@ -71,6 +75,7 @@ Available pieces:
 - `defaultTimeframe` selects the initial visible range and active button.
 - `navigator: true` renders the built-in overview strip with a brush under the main chart.
 - `setView([start, end])` sets any custom visible date window.
+- `setTimeframe(key)` applies a timeframe from code — a key of `timeframes` or a preset such as `'1Y'` — as its button does, and highlights the button.
 - `getView()` returns the currently visible `[start, end]`.
 - `onViewChange(fn)` lets external UI stay synchronized with the chart’s active date window.
 - `scaleToggle: true` adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels; `onScaleChange(fn)` reports each switch (see Logarithmic scale below).
@@ -100,19 +105,19 @@ The Line chart exposes a set of options that focus on business readability: f
 
 ### Layout and animation
 
-`height` sets the chart height (default 240). `margin` controls the inner padding (top/right/bottom/left); by default, the right margin is wider (60) to accommodate the Y axis labels.
+`height` sets the chart height (default 240). `margin` controls the inner padding (top/right/bottom/left); by default, the right margin is wider (64) to accommodate the Y axis labels and end labels.
 
-Animation is enabled on the first render by default (`animate: true`). You can control timing via duration (default 650 ms) and easing via `ease` (`cubicOut` by default; supported values include `cubicOut`, `cubicInOut`, `linear`).
+Animation is enabled on the first render by default (`animate: true`). You can control timing via duration (default 650 ms) and easing via `ease` (`cubicOut` by default; supported values include `cubicOut`, `cubicInOut`, `linear`). With `prefers-reduced-motion: reduce` the duration is 0. The lines draw in once per chart instance. Renders that land in the middle of it — the font load and the first resize right after `setData`, a later resize — carry the draw-in on from the share already drawn, on the new geometry, instead of starting it over.
 
 ### Y axis formatting
 
 RareCharts can format the Y axis automatically or explicitly.
 
-`yFormat` supports `auto` (default), `percent`, and `number`. In `auto` mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes 12%). If you already store values as real numbers and still happen to be below 1, you probably want to force `number` to avoid accidental percent formatting.
+`yFormat` supports `auto` (default), `percent`, and `number`. In `auto` mode, the chart treats data as percent-like when the maximum absolute value is ≤ 1 (for example, 0.12 becomes +12.00%). If you already store values as real numbers and still happen to be below 1, you probably want to force `number` to avoid accidental percent formatting. Number ticks follow the step between them: plain numbers below 1,000 (`145 150 155 160`, `0 0.5 1`), SI prefixes from 1,000 on with one prefix for the whole axis (`0.5k 1k 1.5k`), and zero always as `0` — neighbouring ticks never print alike. End labels and tooltip values take three significant digits (`147`, `−0.6`, `1.23k`). Percents keep a sign (`+12.00%`) on the ticks, the end labels and the tooltip; a log axis labels its powers `10 100 1k`.
 
 Zero is treated carefully: values with `|v| < zeroEpsilon` are printed as `0` (default `1e-6`). This prevents the classic “-0.00%” or “+0.00%” artifacts that make charts look broken even when the data is correct.
 
-You can also add `yPrefix` and `ySuffix` for units. If you need full control, provide `yTickFormat: (value) => string` and ignore the automatic formatting entirely.
+You can also add `yPrefix` and `ySuffix` for units. If you need full control, provide `yTickFormat: (value) => string` and ignore the automatic formatting entirely — it then formats the ticks, the end labels and the tooltip values alike.
 
 Tick density is controlled by `yTicks` (default 4). The number is a target, not a quota: ticks fall on round 1-2-5 steps inside the data range, so the axis never stretches past the data just to fit four steps. For minimalist displays, `yLabelsOnly` can be enabled (default true), keeping the axis visually restrained.
 
@@ -154,10 +159,9 @@ chart.setYScale('linear').setData(lastYear);</code></pre>
 
 `xTickFormat` is a function `(date) => string`. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:
 
-<pre class="text-content-caption"><code>xTickFormat: d3.timeFormat('%b %d')   <span class="code-comment">// Jan 05</span>
-// or
-xTickFormat: d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</span>
-]);</code>
+<pre class="text-content-caption"><code>xTickFormat: RareCharts.d3.timeFormat('%b %d')   <span class="code-comment">// Jan 05</span>
+<span class="code-comment">// or</span>
+xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</span></code>
 </pre>
 
 ### Baseline, grid, and “relative to zero”
@@ -176,21 +180,21 @@ If you disable it, the chart clears that layer.
 
 You can override tooltip content via:
 
-<pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, value, color }, …] }) => html</code></pre>
+<pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, series, value, color, fmt }, …] }) => html</code></pre>
 
 If you need a plain-text tooltip, return simple HTML with minimal markup, or keep the default and let the library handle it.
 
 ### Line shape, area fills, and markers
 
-Line interpolation is controlled by curve (default `monotone`). You can use `linear`, `basis`, `cardinal`, `step`, and other D3 curve names supported by the library. If you choose `cardinal`, you can tune the smoothing via `curveTension` (0.1, default 0).
+Line interpolation is controlled by curve (default `monotone`). You can use `linear`, `basis`, `cardinal`, `step`, and other D3 curve names supported by the library. If you choose `cardinal`, you can tune the smoothing via `curveTension` (0–1, default 0).
 
-Area under the line can be enabled globally via `area: true`. `areaOpacity` defaults to 0.12. `areaBaseline` supports `zero`, `min`, or a numeric value.
+Area under the line can be enabled globally via `area: true`. `areaOpacity` defaults to 0.12. `areaBaseline` supports `zero`, `min`, or a numeric value; the fill always ends inside the plot.
 
 Markers (point dots) are supported via `markers` (default false), with `markerShape` (default `circle`) and `markerSize` (default 4). Markers are useful when data is sparse or you want to emphasize sampling points, but they can clutter dense series, so they’re off by default for a reason.
 
 ### Per-series overrides
 
-In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include `curve`, `strokeWidth`, `area`, `areaOpacity`, and `areaBaseline`. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.
+In multi-series mode, you can override some style/shape settings per series, without affecting the rest. Supported per-series fields include `curve`, `strokeWidth`, `strokeDash`, `area`, `areaOpacity`, `areaBaseline`, and the marker fields: `markers`, `markerShape`, `markerSize`, `markerFill`, and `markerStroke`. This is the clean way to highlight a “main” series, or to render one series as an area while keeping others as plain lines.
 
 ### Annotations
 
@@ -198,7 +202,7 @@ Line charts support event markers and reference levels via the `annotations` opt
 
 ## Line chart options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -226,14 +230,14 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>—</td>
             <td>
                 Inner padding <code>{top, right, bottom, left}</code>.<br>
-                Right defaults to <code>60</code> (Y axis on right) or <code>0</code> (Y axis on left).
+                Defaults <code>{ top: 10, right: 64, bottom: 18, left: 0 }</code>; with <code>yAxisPosition: 'left'</code> the Y axis takes a 64px gutter on the left, and the right one stays for the end labels. Hidden axes and end labels give their gutters back; annotations raise <code>top</code> to <code>annotationLabelHeight + 4</code>.
             </td>
         </tr>
         <tr>
             <td><code>yAxisPosition</code></td>
             <td><code>'right'</code> | <code>'left'</code></td>
             <td><code>'right'</code></td>
-            <td>Side the Y axis is rendered on.</td>
+            <td>Side the Y axis is rendered on. End labels stay on the right either way.</td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -251,13 +255,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>defaultView</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent. If it misses the data, the chart shows the full range; set together with <code>defaultTimeframe</code>, <code>defaultView</code> wins.</td>
         </tr>
         <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
-            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
+            <td>Built-in overview strip with brush selection under the chart. Pass <code>true</code> for defaults or an object with overview options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, <code>brushColor</code>, <code>margin</code> (defaults to the chart’s side margins) and <code>axis</code> (a time axis under the strip). On a multi-series chart the strip draws the first line series over the dates of all of them.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Y axis</h5></td>
@@ -290,13 +294,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>xTicks</code></td>
             <td>number</td>
             <td><code>6</code></td>
-            <td>Number of X tick marks.</td>
+            <td>Number of X tick marks. With the default date format, a span of fewer days gets one label per midnight in view (one at its start inside a single day), so a date is never repeated.</td>
         </tr>
         <tr>
             <td><code>yTickFormat</code></td>
             <td>function</td>
             <td>—</td>
-            <td><code>(value) =&gt; string</code> — overrides all automatic formatting.</td>
+            <td><code>(value) =&gt; string</code> — overrides all automatic formatting: ticks, end labels and tooltip values. Default: ticks by their step — <code>,~f</code> below 1,000, SI <code>~s</code> (one prefix per axis) from 1,000, <code>0</code> for zero; end labels and tooltip to three significant digits (<code>.3~r</code>, <code>.3~s</code> from 1,000); percent <code>+.2%</code>; log ticks <code>.3~s</code>.</td>
         </tr>
         <tr>
             <td><code>yTickValues</code></td>
@@ -354,9 +358,9 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         </tr>
         <tr>
             <td><code>strokeDash</code></td>
-            <td>string</td>
+            <td>string | number[]</td>
             <td>—</td>
-            <td>SVG <code>stroke-dasharray</code> applied to all series globally (e.g. <code>'4,3'</code>).</td>
+            <td>Dash pattern for every series: <code>'dashed'</code>, <code>'dotted'</code>, <code>'dashDot'</code>, <code>'longDash'</code>, or a raw <code>stroke-dasharray</code> such as <code>'4,3'</code> / <code>[4, 3]</code>.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Area fill</h5></td>
@@ -365,7 +369,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>area</code></td>
             <td>boolean</td>
             <td><code>false</code></td>
-            <td>Fill the area under the line (s).</td>
+            <td>Fill the area under the lines.</td>
         </tr>
         <tr>
             <td><code>areaOpacity</code></td>
@@ -377,7 +381,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>areaBaseline</code></td>
             <td><code>'zero'</code> | <code>'min'</code> | number</td>
             <td><code>'zero'</code></td>
-            <td>Where the fill anchors — bottom of chart, minimum data value, or a fixed Y value.</td>
+            <td>Where the fill ends: <code>'zero'</code> — at 0, or the bottom of the plot when every value is above 0; <code>'min'</code> — the bottom of the plot; a number — that value, kept inside the plot.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Markers</h5></td>
@@ -392,13 +396,13 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>markerShape</code></td>
             <td>string</td>
             <td><code>'circle'</code></td>
-            <td>Marker shape. Supported: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>.</td>
+            <td>Marker shape. Supported: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>, <code>'triangle'</code>, <code>'cross'</code>.</td>
         </tr>
         <tr>
             <td><code>markerSize</code></td>
             <td>number</td>
             <td><code>4</code></td>
-            <td>Marker radius in px.</td>
+            <td>Marker radius in px. Defaults to <code>theme.markerSize</code>.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Visibility</h5></td>
@@ -434,7 +438,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>—</td>
-            <td><code>({ date, points }) =&gt; html</code> — where <code>points</code> is <code>[{name, value, color}]</code>.</td>
+            <td><code>({ date, points }) =&gt; html</code> — <code>points</code> is <code>[{ name, series, type, color, date, value, fmt }]</code>, one per series covering the hovered date (a band has <code>lower</code> and <code>upper</code> instead of <code>value</code>); <code>fmt</code> is the value already formatted. All formatters: <a href="/charts/settings/#formatter-arguments">formatter arguments</a>.</td>
         </tr>
         <tr>
             <td><code>endLabels</code></td>
@@ -464,7 +468,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>animate</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Animate lines on first render. Plays only once per chart instance.</td>
+            <td>Animate lines on first render. Plays only once per chart instance; a render in the middle of it (font load, resize) carries the draw-in on instead of restarting it.</td>
         </tr>
         <tr>
             <td><code>duration</code></td>
@@ -488,7 +492,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>seriesName</code></td>
             <td>string</td>
             <td><code>'Series'</code></td>
-            <td>Label used in the tooltip and end label.</td>
+            <td>Series name shown in the crosshair tooltip.</td>
         </tr>
         <tr>
             <td><code>lineColor</code></td>
@@ -506,7 +510,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>name</code></td>
             <td>string</td>
             <td><code>'Series N'</code></td>
-            <td>Series name — appears in tooltip and legend.</td>
+            <td>Series name — shown in the tooltip; also the key that keeps a series’ line in place on setData. The header legend is the separate <code>legend</code> option.</td>
         </tr>
         <tr>
             <td><code>color</code></td>
@@ -518,7 +522,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>strokeWidth</code></td>
             <td>number</td>
             <td><code>2</code></td>
-            <td>Line thickness in px.</td>
+            <td>Line thickness in px. Defaults to <code>theme.strokeWidth</code>.</td>
         </tr>
         <tr>
             <td><code>strokeDash</code></td>
@@ -549,6 +553,36 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>string | number</td>
             <td>global <code>areaBaseline</code></td>
             <td>Area baseline for this series.</td>
+        </tr>
+        <tr>
+            <td><code>markers</code></td>
+            <td>boolean</td>
+            <td>global <code>markers</code></td>
+            <td>Point markers on this series; <code>false</code> hides them when the global <code>markers</code> is on.</td>
+        </tr>
+        <tr>
+            <td><code>markerShape</code></td>
+            <td>string</td>
+            <td>global <code>markerShape</code></td>
+            <td>Marker shape: <code>'circle'</code>, <code>'square'</code>, <code>'diamond'</code>, <code>'triangle'</code>, <code>'cross'</code>.</td>
+        </tr>
+        <tr>
+            <td><code>markerSize</code></td>
+            <td>number</td>
+            <td>global <code>markerSize</code></td>
+            <td>Marker radius in px.</td>
+        </tr>
+        <tr>
+            <td><code>markerFill</code></td>
+            <td>CSS color</td>
+            <td>series <code>color</code></td>
+            <td>Marker fill color.</td>
+        </tr>
+        <tr>
+            <td><code>markerStroke</code></td>
+            <td>CSS color</td>
+            <td>theme background</td>
+            <td>Marker outline color.</td>
         </tr>
         <tr>
             <td><code>values</code></td>

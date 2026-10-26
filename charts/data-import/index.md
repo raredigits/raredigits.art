@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/data-import/'
 ---
 
-Every chart type accepts data via `setData ()`. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.
+Every chart type accepts data via `setData()`. What you pass in can come from anywhere — a hardcoded array in your script, a JSON file on the server, a CSV export, or a live API endpoint. RareCharts ships with four adapters that cover the common cases, plus a mapping system that handles the boring part of transforming raw source fields into what the chart expects.
 
 ## Direct data
 
@@ -25,7 +25,7 @@ Each chart type has its own data format — see the chart’s documentation page
 
 When data comes from a file or an API, use one of the built-in adapters. They fetch the data, apply a field mapping, and return a clean array ready for `setData()`.
 
-All adapters (except `fromArray`) are async. Use them with `await` inside an async function or chain with `.then()`.
+All adapters (except `fromArray`) are async. Use them with `await` — in a `<script type="module">`, where the snippets below run as written, or inside an async function — or chain with `.then()`.
 
 The adapters are available as `RareCharts.fromJson`, `RareCharts.fromCsv`, `RareCharts.fromApi`, and `RareCharts.fromArray`.
 
@@ -35,7 +35,9 @@ Every adapter accepts a `mapping` object as its second argument. The mapping tel
 
 Each key in the mapping is the output field name. The value can be:
 - **A function** `row => value` — for transformations, type coercion, or computed fields
-- **A string** — a direct field name from the source row (simple rename, no transformation)
+- **A string** — a direct field name from the source row
+
+Whatever the mapping returns, `date` is read as a date (a `Date`, an ISO string or epoch milliseconds) and `value` as a number — with a function as with a field name, so a CSV's `'148.50'` becomes `148.5` either way.
 
 <div class="air-md"></div>
 
@@ -47,13 +49,14 @@ const mapping = {
   value: row => +row.close,           // coerce string to number
 };</code></pre>
 
-Rows where `date` is an invalid Date or `value` is not finite are filtered out automatically. This keeps garbage data from making your chart look broken.
+Rows where `date` cannot be read as a date or `value` is not a finite number are filtered out automatically; an empty `value` is kept (see the [mapping reference](#mapping-reference)). This keeps garbage data from making your chart look broken.
 
 ### fromJson
 
 Fetches a JSON file and applies a mapping.
 
-<pre><code>const data = await RareCharts.fromJson('/data/prices.json', {
+<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
+const data = await RareCharts.fromJson('/data/prices.json', {
   date:  row => new Date(row.date),
   value: row => +row.close,
 });
@@ -130,7 +133,8 @@ If the HTTP response is not OK (4xx, 5xx), `fromApi` throws an error with th
 
 For data that’s already in memory but needs field remapping. Synchronous — no `await` needed.
 
-<pre><code>const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
+<pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
+const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
 
 const data = RareCharts.fromArray(raw, {
   date:  row => new Date(row.ts),
@@ -143,7 +147,7 @@ This is useful when you’re pulling data from a state store, another library,
 
 ## Live updates
 
-`setData ()` can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.
+`setData()` can be called any number of times on the same chart instance. Call it again when your data changes — the chart re-renders in place.
 
 <pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
 
@@ -159,13 +163,15 @@ setInterval(async () => {
 
 ## Mapping reference
 
+<div class="table-scroll">
+
 | Value type | Behavior | Example |
 |------------|----------|---------|
-| Function | Called with each row, return value used | `row => new Date (row.ts)` |
-| String | Treated as a field name — `row[fieldName]` | `'close_price'` |
+| Function | Called with each row; the return value is used (`date` read as a date, `value` as a number) | `row => new Date(row.ts)` |
+| String | Treated as a field name — `row[fieldName]`; `date` is parsed, `value` coerced to a number | `'close_price'` |
+
+</div>
 
 Invalid rows are filtered out automatically:
-- Rows where `date` is present but is not a valid `Date` instance
-- Rows where `value` is present but is not a finite number (`NaN`, `Infinity`, `null`)
-
-<script src="/assets/charts/rare-charts.js"></script>
+- Rows where `date` is present but cannot be read as a date (a `Date`, an ISO string or epoch milliseconds)
+- Rows where `value` is present but is not a finite number (`NaN`, `Infinity`, text such as `'n/a'`). An empty `value` (`''` — a blank CSV cell — or `null`) is not filtered: the row is kept as it is, and a line chart skips that point

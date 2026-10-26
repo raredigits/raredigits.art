@@ -4,10 +4,12 @@ import { TimeSeries } from '../assets/charts/src/charts/TimeSeries.js';
 import { DualAxes } from '../assets/charts/src/charts/DualAxes.js';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
 
-// v0.9.8_5: the log scale beyond Line — per-axis on DualAxes (y1Scale /
-// y2Scale), yScale on TimeSeries — and one Lin/Log button (scaleToggle) in the
-// header row, pinned right above the Y-axis labels, with an onScaleChange event,
-// shared by Line, TimeSeries and DualAxes.
+// The log Y scale: yScale 'log' on Line (v0.9.8_4) and TimeSeries, per axis on
+// DualAxes (y1Scale / y2Scale, v0.9.8_5), switchable with setYScale(); and one
+// Lin/Log button (scaleToggle) in the header row, pinned right above the
+// Y-axis labels, with an onScaleChange event, shared by the three charts.
+// The tick helpers themselves (logTickValues, logPaddedDomain,
+// linearTickValues) are covered in utils.test.js.
 
 let host;
 beforeEach(() => {
@@ -32,13 +34,116 @@ const dual = (y2Values = [-2, 1, 3, -1, 2]) => [
   { name: 'Change', axis: 'y2', type: 'bar',  values: points(y2Values) },
 ];
 
-describe('DualAxes — per-axis log scale', () => {
-  it('y1Scale log: powers-of-ten ticks on the right axis, y2 stays linear', () => {
-    new DualAxes('#chart', { animate: false, y1Scale: 'log' }).setData(dual());
-    expect(ticks('.rc-axis-y1')).toEqual(['10', '100', '1k', '10k', '100k']);
-    // y2 keeps its signed linear ticks, zero included.
-    expect(ticks('.rc-axis-y2')).toContain('0');
+// ─── Shared contracts ─────────────────────────────────────────────────────────
+// What every chart with a log scale owes: powers-of-ten ticks without NaN, and
+// values ≤ 0 skipped with a single warning (not one per render).
+
+const LOG_CHARTS = [
+  {
+    name: 'Line',
+    build: o => new Line('#chart', { animate: false, ...o }),
+    decades: {
+      opts: { yScale: 'log' }, axis: '.rc-axis-y',
+      data: () => points([8, 90, 1200, 15000, 160000]),
+      ticks: ['10', '100', '1k', '10k', '100k'],
+    },
+    // area and markers on: no NaN in any of the three marks
+    nonPositive: { opts: { yScale: 'log', area: true, markers: true }, data: () => points([10, 0, -5, 100, 1000]) },
+  },
+  {
+    name: 'DualAxes',
+    build: o => new DualAxes('#chart', { animate: false, ...o }),
+    decades: {
+      opts: { y1Scale: 'log' }, axis: '.rc-axis-y1',
+      data: () => dual(),
+      ticks: ['10', '100', '1k', '10k', '100k'],
+    },
+    // the signed change series on a log y2
+    nonPositive: { opts: { y2Scale: 'log' }, data: () => dual() },
+  },
+  {
+    name: 'TimeSeries',
+    build: o => new TimeSeries('#chart', o),
+    decades: {
+      opts: { yScale: 'log', yTickFormat: v => String(v) }, axis: '.rc-axis',
+      data: () => points([3, 40, 500, 6000, 70000]),
+      ticks: ['10', '100', '1000', '10000'], partial: true,
+    },
+    nonPositive: { opts: { yScale: 'log' }, data: () => points([0, 10, -3, 100, 1000]) },
+  },
+];
+
+describe('log scale — shared contracts', () => {
+  const rows = LOG_CHARTS.map(c => [c.name, c]);
+
+  it.each(rows)('%s: powers-of-ten ticks on the log axis, no NaN', (_name, { build, decades }) => {
+    build(decades.opts).setData(decades.data());
+    const drawn = ticks(decades.axis);
+    if (decades.partial) expect(drawn).toEqual(expect.arrayContaining(decades.ticks));
+    else expect(drawn).toEqual(decades.ticks);
     expect(pathsHaveNaN()).toBe(false);
+  });
+
+  it.each(rows)('%s: values ≤ 0 are skipped with one warning, also across a re-render, no NaN', (_name, { build, nonPositive }) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const chart = build(nonPositive.opts).setData(nonPositive.data());
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toMatch(/2 values ≤ 0 skipped/);
+    chart.render();
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(pathsHaveNaN()).toBe(false);
+  });
+});
+
+// ─── Line ─────────────────────────────────────────────────────────────────────
+
+describe('Line — yScale', () => {
+  const yTickLabels = () => ticks('.rc-axis-y');
+
+  it('stays linear by default with ticks inside the padded data range', () => {
+    const c = new Line('#chart', { animate: false });
+    c.setData(points([60, 120, 193]));
+    expect(c.options.yScale).toBeUndefined();
+    expect(yTickLabels()).toEqual(['50', '100', '150', '200']);
+  });
+
+  it('switches scales between setData() calls with setYScale()', () => {
+    const c = new Line('#chart', { animate: false });
+    c.setData(points([60, 120, 193]));
+    expect(yTickLabels()).toEqual(['50', '100', '150', '200']);
+
+    expect(c.setYScale('log')).toBe(c);
+    c.setData(points([8, 90, 1200, 15000, 160000]));
+    expect(yTickLabels()).toEqual(['10', '100', '1k', '10k', '100k']);
+
+    c.setYScale('linear').setData(points([60, 120, 193]));
+    expect(yTickLabels()).toEqual(['50', '100', '150', '200']);
+  });
+
+  it('fills the area down to the domain floor on a log scale', () => {
+    new Line('#chart', { animate: false, yScale: 'log', area: true }).setData(points([10, 100, 1000]));
+    const d = host.querySelector('.rc-line-area').getAttribute('d');
+    expect(d).not.toMatch(/NaN|Infinity/);
+  });
+
+  it('drops horizontal annotations at or below zero on a log scale', () => {
+    new Line('#chart', {
+      animate: false, yScale: 'log',
+      annotations: [{ value: 0, label: 'zero' }, { value: 100, label: 'hundred' }],
+    }).setData(points([10, 100, 1000]));
+    const text = host.querySelector('.rc-annotations').textContent;
+    expect(text).toContain('hundred');
+    expect(text).not.toContain('zero');
+    expect(pathsHaveNaN()).toBe(false);
+  });
+});
+
+// ─── DualAxes ─────────────────────────────────────────────────────────────────
+
+describe('DualAxes — per-axis log scale', () => {
+  it('y1Scale log leaves y2 linear: its signed ticks keep zero', () => {
+    new DualAxes('#chart', { animate: false, y1Scale: 'log' }).setData(dual());
+    expect(ticks('.rc-axis-y2')).toContain('0');
   });
 
   it('linear by default — the existing axes are unchanged', () => {
@@ -62,16 +167,10 @@ describe('DualAxes — per-axis log scale', () => {
     expect(pathsHaveNaN()).toBe(false);
   });
 
-  it('skips values ≤ 0 on a log axis with one warning', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    const chart = new DualAxes('#chart', { animate: false, y2Scale: 'log' }).setData(dual());
-    expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn.mock.calls[0][0]).toMatch(/2 values ≤ 0 skipped/);
+  it('a skipped value ≤ 0 takes its bar with it', () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    new DualAxes('#chart', { animate: false, y2Scale: 'log' }).setData(dual());
     expect(host.querySelectorAll('.rc-dual-bar')).toHaveLength(3);
-    chart.render();
-    expect(warn).toHaveBeenCalledTimes(1);
-    expect(pathsHaveNaN()).toBe(false);
-    warn.mockRestore();
   });
 
   it('setYScale switches one axis or both', () => {
@@ -106,23 +205,9 @@ describe('DualAxes — per-axis log scale', () => {
   });
 });
 
+// ─── TimeSeries ───────────────────────────────────────────────────────────────
+
 describe('TimeSeries — yScale log', () => {
-  it('draws powers-of-ten ticks and no NaN', () => {
-    new TimeSeries('#chart', { yScale: 'log', yTickFormat: v => String(v) })
-      .setData(points([3, 40, 500, 6000, 70000]));
-    expect(ticks('.rc-axis')).toEqual(expect.arrayContaining(['10', '100', '1000', '10000']));
-    expect(pathsHaveNaN()).toBe(false);
-  });
-
-  it('skips values ≤ 0 with one warning', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    new TimeSeries('#chart', { yScale: 'log' }).setData(points([0, 10, -3, 100, 1000]));
-    expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn.mock.calls[0][0]).toMatch(/2 values ≤ 0 skipped/);
-    expect(pathsHaveNaN()).toBe(false);
-    warn.mockRestore();
-  });
-
   it('setYScale switches back to linear', () => {
     const chart = new TimeSeries('#chart', { yScale: 'log' }).setData(points([10, 100, 1000]));
     chart.setYScale('linear');
@@ -131,6 +216,8 @@ describe('TimeSeries — yScale log', () => {
     expect(typeof chart.yScale.base).toBe('function');
   });
 });
+
+// ─── The Lin/Log button ───────────────────────────────────────────────────────
 
 describe('scaleToggle — one Lin/Log button in the header row', () => {
   const make = {

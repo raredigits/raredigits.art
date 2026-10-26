@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/line/time-series/'
 ---
 
-<spn class="meta-info">/examples/line/line-chart-time-series.js</spn>
+<span class="meta-info">/assets/charts/examples/line/line-chart-time-series.js</span>
 
 Time Series is the chart for long date-based series where the main problem is navigation, not drawing a line. Price history, balances, revenue, traffic, sensor data: the moment the dataset stops fitting into one comfortable view, you need a way to switch windows without rebuilding the chart by hand.
 
@@ -94,6 +94,8 @@ So:
 - if you pass `timeframes: true`, you get the built-in preset set
 - if you pass `['1Y', 'ALL']`, you get exactly those two buttons
 
+`viewSteps`, the old name of `timeframes`, is deprecated: it still works (`timeframes` wins when both are set) and warns once per chart in the console. Removal is planned for v0.9.9.
+
 ### Navigator
 
 The gray strip under the chart is controlled by `navigator`.
@@ -117,14 +119,17 @@ const chart = new RareCharts.TimeSeries('#chart', {
 });
 ```
 
-If enabled, the navigator always reflects the full dataset and highlights the current `view`. Dragging the brush updates the main chart. Clicking a range button also updates the brush. Same state, two controls, fewer bugs.
+If enabled, the navigator always reflects the full dataset and highlights the current `view`. Dragging the brush updates the main chart; when the drag ends, `onViewChange` reports the new window, as a range button does. A click on the strip without a drag keeps the current selection. Clicking a range button also updates the brush. The strip lines up with the plot area (its side margins follow the chart's); pass `margin: { left, right }` to set them, and `area: false` to draw the line alone. Same state, two controls, fewer bugs.
 
 ### Programmatic control
 
 The visible window is part of the chart API.
 
 ```js
-chart.setView([start, end]);
+const chart = new RareCharts.TimeSeries('#chart', { timeframes: true }).setData(data);
+
+chart.setView([new Date('2025-01-01'), new Date('2025-06-30')]);
+chart.setTimeframe('3M');   // as a click on the 3M button
 const current = chart.getView();
 
 chart.onViewChange(extent => {
@@ -175,7 +180,7 @@ Rules:
 - custom buttons use `{ key, label, range }`
 - `range` is `[start, end]`
 - the final range is clamped to the real data extent, so overshooting the dataset is safe
-- if multiple buttons resolve to the same final extent, the chart keeps the last explicitly selected button active
+- if multiple buttons resolve to the same final extent, the button chosen last stays active — clicked or set with `setTimeframe()`, or `defaultTimeframe` while its view holds; without one (before any selection, or after a brush drag, the wheel or `setView`, which clear it) a view of the whole data lights `ALL` (or `MAX`), any other the first matching button in the list
 
 ### Annotations
 
@@ -183,7 +188,7 @@ Time Series supports event markers and reference levels via the `annotations` op
 
 ## Time Series chart options
 
-Common options shared by all chart types (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) are documented on the [Settings](/charts/settings/) page.
+Common options shared by all chart types (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `note`, `controls`, `theme`) are documented on the [Settings](/charts/settings/) page.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -209,7 +214,7 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>margin</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Inner padding <code>{top, right, bottom, left}</code>.</td>
+            <td>Inner padding <code>{top, right, bottom, left}</code>. Defaults <code>{ top: 16, right: 70, bottom: 28, left: 0 }</code>; hidden axes give their gutters back, and annotations raise <code>top</code> to <code>annotationLabelHeight + 4</code> unless you set <code>margin.top</code>.</td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -227,13 +232,13 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>defaultView</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent.</td>
+            <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent. If it misses the data, the chart shows the full range; set together with <code>defaultTimeframe</code>, <code>defaultView</code> wins.</td>
         </tr>
         <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
-            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, and <code>brushColor</code>.</td>
+            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, <code>brushColor</code>, <code>margin</code> (defaults to the chart’s side margins, so the strip lines up with the plot) and <code>axis</code> (a time axis under the strip).</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Axes</h5></td>
@@ -241,8 +246,8 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
         <tr>
             <td><code>xTickFormat</code></td>
             <td>function</td>
-            <td><code>'%b'</code></td>
-            <td><code>(date) =&gt; string</code> — formats X axis labels.</td>
+            <td>by span</td>
+            <td><code>(date) =&gt; string</code> — formats X axis labels. The default follows the span in view: <code>'%H:%M'</code> up to 36 hours (a tick at midnight names the day), <code>'%b %d'</code> up to 92 days (at most one tick per day), <code>'%b'</code> up to a year, <code>"%b '%y"</code> up to five years, <code>'%Y'</code> beyond — so a 1M view reads days and a long one names its years.</td>
         </tr>
         <tr>
             <td><code>yTickFormat</code></td>
@@ -272,7 +277,7 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>yTickValues</code></td>
             <td>array</td>
             <td>—</td>
-            <td>Explicit Y tick positions. Overrides automatic tick generation.</td>
+            <td>Explicit Y tick positions. Overrides automatic tick generation; the value range widens to include them.</td>
         </tr>
         <tr>
             <td><code>yLabelsOnly</code></td>
@@ -302,7 +307,10 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td>Show the Y (price) axis on the right. Hiding it also collapses the right margin. An explicit <code>margin</code> always wins.</td>
         </tr>
         <tr class="table-section">
-            <td colspan="4"><h5>Line and Area</h5></td>
+            <td colspan="4">
+                <h5>Line and Area</h5>
+                <p>The line takes <code>theme.accent</code> and <code>theme.strokeWidth</code> (2px) — set them through <code>theme</code>.</p>
+            </td>
         </tr>
         <tr>
             <td><code>curve</code></td>
@@ -329,7 +337,13 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>—</td>
-            <td><code>(point) =&gt; html</code> — custom tooltip renderer for the active point.</td>
+            <td><code>(point, info) =&gt; html</code> — custom tooltip for the active point: <code>point</code> is the row, with its extra fields; <code>info</code> is <code>{ date, value, color }</code> (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>). The default shows the date and the value as <code>$1,234.56</code>.</td>
+        </tr>
+        <tr>
+            <td><code>crosshair</code></td>
+            <td>boolean</td>
+            <td><code>true</code></td>
+            <td>Crosshair lines and the tooltip on hover; <code>false</code> turns both off.</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5>Annotations</h5></td>
@@ -365,17 +379,22 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
         <tr>
             <td><code>setData</code></td>
             <td><code>(data)</code></td>
-            <td>Sets the full dataset and re-renders the chart.</td>
+            <td>Sets the full dataset and re-renders. The chart keeps a sorted copy: <code>date</code> may be a Date, an ISO string or epoch ms, <code>value</code> a number or a numeric string; unreadable rows are dropped; other fields (<code>open</code>, <code>volume</code>…) reach <code>tooltipFormat</code>. A selected timeframe re-applies to the new data; a window the new data no longer reaches falls back to the default view.</td>
         </tr>
         <tr>
             <td><code>appendPoint</code></td>
             <td><code>(point)</code></td>
-            <td>Adds one point, re-sorts by date, and re-renders.</td>
+            <td>Adds one point (read like <code>setData</code>) to the chart’s copy, keeps it in date order, and re-renders. A selected timeframe moves with the new point. The array passed to <code>setData</code> is not modified.</td>
         </tr>
         <tr>
             <td><code>setView</code></td>
-            <td><code>([start, end])</code></td>
-            <td>Sets the visible date window explicitly.</td>
+            <td><code>([start, end], { silent? })</code></td>
+            <td>Sets the visible date window and returns the chart. A window outside the data shows an empty plot; <code>setView(null)</code> goes back to <code>defaultView</code> / <code>defaultTimeframe</code> / the full range. <code>{ silent: true }</code> skips <code>onViewChange</code>.</td>
+        </tr>
+        <tr>
+            <td><code>setTimeframe</code></td>
+            <td><code>(key, { silent? })</code></td>
+            <td>Applies a timeframe — a key of <code>timeframes</code> or a preset such as <code>'1Y'</code> — as its button does, and highlights the button. Returns the chart.</td>
         </tr>
         <tr>
             <td><code>getView</code></td>
@@ -385,7 +404,7 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
         <tr>
             <td><code>onViewChange</code></td>
             <td><code>(fn)</code></td>
-            <td>Registers a callback that runs whenever the visible date window changes.</td>
+            <td>Registers a callback that runs whenever the visible date window changes: a range button, <code>setView</code>, the wheel, or the end of a navigator drag.</td>
         </tr>
         <tr>
             <td><code>setYScale</code></td>
@@ -396,6 +415,111 @@ Common options shared by all chart types (`title`, `subtitle`, `legend`, `legend
             <td><code>onScaleChange</code></td>
             <td><code>(fn)</code></td>
             <td>Registers a callback that gets <code>{ scale, axis: 'y' }</code> whenever the scale switches (the Lin/Log button or <code>setYScale</code> without <code>silent</code>).</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<h2 id="overview-standalone-navigator">Overview (standalone navigator)</h2>
+
+`RareCharts.Overview` is the strip the `navigator` option builds, as a class of its own: a small line of a series with a brush for picking a date window. Use it when the strip and what it drives are apart — a chart in another card, a table, several charts at once. It is not a chart: no header, footer, timeframes or `whenReady()`, and `new Overview(…)` draws nothing until `setData`.
+
+```js
+const overview = new RareCharts.Overview('#overview', { height: 56 });
+
+overview.setData(data, extent => chart.setView(extent));
+chart.onViewChange(extent => overview.setBrush(extent));
+```
+
+Dates are read as the charts read them — a `Date`, an ISO string or epoch milliseconds — in the rows, in `extent` and in `setBrush`. The strip keeps a sorted copy of the rows; a row with an unreadable date or value is dropped.
+
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td><code>52</code></td>
+            <td>Height of the strip in pixels, its margins included.</td>
+        </tr>
+        <tr>
+            <td><code>color</code></td>
+            <td>CSS color</td>
+            <td>theme border</td>
+            <td>Line color.</td>
+        </tr>
+        <tr>
+            <td><code>area</code></td>
+            <td>boolean | number</td>
+            <td><code>true</code></td>
+            <td>Fill under the line: <code>true</code> a gradient, a number a solid fill at that opacity, <code>false</code> none.</td>
+        </tr>
+        <tr>
+            <td><code>areaColor</code></td>
+            <td>CSS color</td>
+            <td>theme accent</td>
+            <td>Fill color.</td>
+        </tr>
+        <tr>
+            <td><code>brushColor</code></td>
+            <td>CSS color</td>
+            <td>theme text</td>
+            <td>Outline and handles of the selection.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td><code>{ top: 6, right: 70, bottom: 16, left: 0 }</code></td>
+            <td>Space around the line; a side you leave out keeps its default. The right <code>70</code> lines the strip up with the Y-axis gutter of the charts it sits under.</td>
+        </tr>
+        <tr>
+            <td><code>axis</code></td>
+            <td>boolean</td>
+            <td><code>false</code></td>
+            <td>A time axis under the strip.</td>
+        </tr>
+        <tr>
+            <td><code>theme</code></td>
+            <td>object</td>
+            <td>default theme</td>
+            <td>Theme overrides, merged over the default theme — <code>RareCharts.darkTheme</code> on a dark page.</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Signature</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>setData</code></td>
+            <td><code>(data, onBrush, { extent }?)</code></td>
+            <td>Draws <code>data</code>, rows of <code>{ date, value }</code>. <code>onBrush(extent, { final })</code> runs while the selection is dragged, with <code>[start, end]</code> as Dates; <code>final</code> is <code>true</code> once, when the drag ends. <code>extent</code> is the span of the strip, the data’s own by default — pass the full span of the chart, so dates that only its other series cover can be brushed to. Returns the strip.</td>
+        </tr>
+        <tr>
+            <td><code>setBrush</code></td>
+            <td><code>([start, end])</code></td>
+            <td>Moves the selection to that window, clamped to the strip, without calling <code>onBrush</code>. Does nothing before <code>setData</code> or for a bound that is not a date.</td>
+        </tr>
+        <tr>
+            <td><code>destroy</code></td>
+            <td><code>()</code></td>
+            <td>Removes the strip and stops watching the container’s size. <code>onBrush</code> is never called after it, not even for a drag already under way.</td>
         </tr>
     </tbody>
 </table>

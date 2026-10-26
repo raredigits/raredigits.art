@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { HierarchicalBar } from '../assets/charts/src/charts/HierarchicalBar.js';
-import { Donut } from '../assets/charts/src/charts/Donut.js';
+import { Donut, Pie } from '../assets/charts/src/charts/Donut.js';
+import { mount, track } from './helpers.js';
 
-// Both charts render a normalized tree (core/hierarchy.js). Imports are direct
-// (not via index.js, which imports CSS as text — esbuild-only).
+// Both charts render a normalized tree (core/hierarchy.js). Imports are direct;
+// the entry point and its CSS are covered by exports.test.js and
+// bundle-smoke.test.js.
 
 let host;
 beforeEach(() => {
@@ -133,6 +135,84 @@ describe('Donut — drill-down (hierarchy mode)', () => {
     expect(c._trail).toHaveLength(2);
     c.drillToDepth(0);
     expect(c._trail).toHaveLength(1);
+    expect(c._focus().label).toBe('Root');
+  });
+});
+
+describe('Donut — drill-down transitions and the way back up', () => {
+  const sliceOf = (c, label) =>
+    [...c.container.querySelectorAll('path.rc-donut-slice')].find(p => p.__data__.data.label === label);
+  const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  it('the slice clicked to drill in leaves the DOM, even when the pointer then leaves it (E-04)', async () => {
+    const c = track(new Donut(mount(null), { duration: 40 })).setData(portfolio);
+    const a = sliceOf(c, 'A');
+    a.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+    a.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(c._focus().label).toBe('A');
+    // on its way out: no hover, no tooltip, no second drill
+    expect(a.style.pointerEvents).toBe('none');
+    // the pointer leaving it used to start a hover transition that cancelled the exit
+    a.dispatchEvent(new MouseEvent('mouseout', { bubbles: true }));
+    expect(c._tooltip.el.classList.contains('is-visible')).toBe(false);
+    await wait(120);
+    expect(a.isConnected).toBe(false);
+    expect([...c.container.querySelectorAll('path.rc-donut-slice')].map(p => p.__data__.data.label))
+      .toEqual(['A1', 'A2', 'A other']);
+  });
+
+  it('drilling in and straight back up keeps the slice that returns, live (E-04)', async () => {
+    const c = track(new Donut(mount(null), { duration: 40 })).setData(portfolio);
+    const a = sliceOf(c, 'A');
+    c.drillTo(c._tree.children.find(n => n.label === 'A'));
+    c.drillUp();                                  // before A's exit has finished
+    await wait(120);
+    expect(a.isConnected).toBe(true);
+    expect(a.style.pointerEvents).toBe('');
+    expect([...c.container.querySelectorAll('path.rc-donut-slice')].map(p => p.__data__.data.label)).toEqual(['A', 'B']);
+  });
+
+  it('animate: false removes the previous level at once (D14)', () => {
+    const c = track(new Donut(mount(null), { animate: false })).setData(portfolio);
+    c.drillTo(c._tree.children.find(n => n.label === 'A'));
+    expect(c.container.querySelectorAll('path.rc-donut-slice')).toHaveLength(3);
+  });
+
+  it('drilled in, the whole hole is a button back up — click, Enter or Space (E-21)', () => {
+    const c = track(new Donut(mount(null), { animate: false })).setData(portfolio);
+    const center = c.container.querySelector('.rc-donut-center');
+    expect(center.getAttribute('tabindex')).toBeNull();          // nothing to go up to at the root
+    expect(center.querySelector('circle')).toBeNull();
+
+    const A = c._tree.children.find(n => n.label === 'A');
+    c.drillTo(A);
+    const disc = center.querySelector('circle.rc-donut-center-hit');
+    expect(disc).not.toBeNull();
+    expect(center.firstElementChild).toBe(disc);                  // under the text
+    expect(+disc.getAttribute('r')).toBeGreaterThan(0);
+    expect(center.getAttribute('tabindex')).toBe('0');
+    expect(center.getAttribute('role')).toBe('button');
+    expect(center.getAttribute('aria-label')).toBe('Back to Root');
+    disc.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(c._focus().label).toBe('Root');
+    expect(center.getAttribute('tabindex')).toBeNull();
+
+    c.drillTo(A);
+    center.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    expect(c._focus().label).toBe('Root');
+    c.drillTo(A);
+    center.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(c._focus().label).toBe('Root');
+  });
+
+  it('a pie has no hole to click: no center button, the breadcrumb goes back up', () => {
+    const c = track(new Pie(mount(null), { animate: false })).setData(portfolio);
+    c.drillTo(c._tree.children.find(n => n.label === 'A'));
+    const center = c.container.querySelector('.rc-donut-center');
+    expect(center.querySelector('circle')).toBeNull();
+    expect(center.getAttribute('tabindex')).toBeNull();
+    const crumb = [...c.container.querySelectorAll('.rc-donut-crumb text')].find(t => t.textContent === 'Root');
+    crumb.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(c._focus().label).toBe('Root');
   });
 });

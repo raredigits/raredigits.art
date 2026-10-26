@@ -11,7 +11,7 @@
 
   const chgEl = document.getElementById('hd-change');
   chgEl.textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${pct.toFixed(2)}%)`;
-  // Обновлённые классы совпадают с price-chart.css
+  // .price-chart-* styles live in the site stylesheet, assets/css/rare-website.css
   chgEl.className = 'price-chart-change ' + (chg >= 0 ? 'up' : 'down');
 
   // ── Stats ──────────────────────────────────
@@ -19,8 +19,10 @@
   document.getElementById('s-high').textContent = '$' + last.high.toFixed(2);
   document.getElementById('s-low').textContent  = '$' + last.low.toFixed(2);
   document.getElementById('s-vol').textContent  = d3.format('.2s')(last.volume);
-  document.getElementById('s-52h').textContent  = '$' + d3.max(data, d => d.high).toFixed(2);
-  document.getElementById('s-52l').textContent  = '$' + d3.min(data, d => d.low).toFixed(2);
+  const yearAgo  = new Date(+last.date - 365 * 864e5);
+  const lastYear = data.filter(d => d.date >= yearAgo);
+  document.getElementById('s-52h').textContent  = '$' + d3.max(lastYear, d => d.high).toFixed(2);
+  document.getElementById('s-52l').textContent  = '$' + d3.min(lastYear, d => d.low).toFixed(2);
 
   // ── TimeSeries ─────────────────────────────
   const mainChart = new RareCharts.TimeSeries('#timeseriesChart', {

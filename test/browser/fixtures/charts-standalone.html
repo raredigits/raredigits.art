@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RareCharts on a bare page</title>
+  <!-- The bundle only: no Rare Styles, no host CSS variables, no fonts.
+       Checked by test/browser/charts-standalone.test.js (C-13, C-14, K-01,
+       B-03). The one page rule restyles one chart's tooltip the documented
+       way: a selector that outranks .rc-tooltip. -->
+  <style>
+    #tip-restyled.rc-chart .rc-tooltip { font-size: 15px; background: rgb(255, 255, 0); }
+  </style>
+</head>
+<body>
+  <div id="line"></div>
+  <div id="timeseries"></div>
+  <div id="graph"></div>
+  <div id="multi"></div>
+  <div id="tip-dark"></div>
+  <div id="tip-restyled"></div>
+  <div id="tip-band"></div>
+  <div id="tip-long" style="width: 900px"></div>
+
+  <script src="/assets/charts/rare-charts.js"></script>
+  <script>
+    const DAY = 864e5;
+    const days = (n, from = Date.UTC(2025, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+      date: new Date(from + i * DAY),
+      value: 100 + 10 * Math.sin(i / 9) + i / 20,
+    }));
+
+    window.charts = {
+      line: new RareCharts.Line('#line', {
+        height: 320,
+        animate: false,
+        title: 'Line',
+        subtitle: 'A subtitle',
+        legend: [{ label: 'Dots', type: 'dot' }, { label: 'Range', type: 'band' }],
+        source: 'Source: fixture',
+        note: 'A note under the source.',
+        annotations: [{ date: '2025-03-01', label: 'Event' }],
+      }).setData(days(120)),
+
+      timeseries: new RareCharts.TimeSeries('#timeseries', {
+        height: 320,
+        animate: false,
+        title: 'TimeSeries',
+        timeframes: ['1M', '3M', 'ALL'],
+      }).setData(days(400)),
+
+      graph: new RareCharts.Graph('#graph', {
+        height: 320,
+        duration: 0,
+        title: 'Graph',
+        source: 'Source: fixture',
+      }).setData({ links: [
+        { source: 'a', target: 'b' },
+        { source: 'b', target: 'c' },
+        { source: 'a', target: 'c' },
+      ] }),
+
+      multi: new RareCharts.MultiChart('#multi', {
+        animate: false,
+        title: 'MultiChart',
+        charts: [
+          { type: 'Line', title: 'Left', data: days(30) },
+          { type: 'Line', title: 'Right', data: days(30) },
+        ],
+      }),
+
+      // B-03: the tooltip in the dark preset, restyled by the page, with a
+      // header band; C-29: a node name longer than the tooltip's cap
+      tipDark: new RareCharts.Line('#tip-dark', { height: 200, animate: false, theme: RareCharts.darkTheme }).setData(days(30)),
+      tipRestyled: new RareCharts.Line('#tip-restyled', { height: 200, animate: false }).setData(days(30)),
+      tipBand: new RareCharts.Line('#tip-band', {
+        height: 200,
+        animate: false,
+        theme: { tooltip: { header: { bg: '#eeeeee', text: '#ff0000' } } },
+      }).setData(days(30)),
+      tipLong: new RareCharts.Graph('#tip-long', { height: 320, duration: 0 }).setData({
+        nodes: [{ id: 'a', label: 'A very very long node label that keeps going and going beyond the box' }, { id: 'b', label: 'B' }],
+        links: [{ source: 'a', target: 'b' }],
+      }),
+    };
+  </script>
+</body>
+</html>

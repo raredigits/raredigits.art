@@ -16,12 +16,14 @@ The default circular chart. A ring with a center area — the center gives you
 
 <div class="air-md"></div>
 
-<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+<pre class="text-content-caption"><code>const d3 = RareCharts.d3;   <span class="code-comment">// the bundled D3</span>
+
+new RareCharts.Donut('#chart', {
   title:       'Revenue by Product',
   source:      'Source: Internal accounting',
   legend:      segments.map(d => ({ label: d.label, type: 'bar' })),
   height:      300,
-  centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)) + 'K',
+  centerText:  data => '$' + d3.format(',.0f')(d3.sum(data, d => d.value)),
   centerLabel: 'Revenue',
 }).setData(segments);</code></pre>
 
@@ -39,15 +41,17 @@ Pass `legendPosition: 'right'` to place the legend in a vertical column beside t
   height:         340,
 }).setData(segments);</code></pre>
 
+Either way the legend items need no `color`: the chart paints each dot, line or band in the color of the slice with the same `label` — or the same `id`, when the item has one — so the items may come in any order. An item whose slice is not in the ring (a zero value, a level you drilled away from) keeps the theme accent, and an item with its own `color` keeps that.
+
 ### Drill-down (hierarchy mode)
 
-Hand Donut a **tree** — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.
+Hand Donut a **tree** — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up — once you are in, the center is a button, so Tab and Enter take you up as well. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.
 
 <div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
 
 <div class="air-md"></div>
 
-Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a **remainder** — the undisclosed gap — which draws as a muted slice once you surface it with `showRemainder: true` or a per-node `remainderLabel`. And a **named-but-undisclosed** item (`value: null`) has no magnitude, so it cannot be a slice; the ring notes it as “*N not disclosed*” beneath the chart instead. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.
+Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a **remainder** — the undisclosed gap — which draws as a muted slice once you surface it with `showRemainder: true` or a per-node `remainderLabel`. And a **named-but-undisclosed** item (`value: null`) has no magnitude, so it cannot be a slice; the ring notes it as “*N not disclosed*” beneath the chart instead. A parent with no `value` of its own whose children are all undisclosed is undisclosed too — noted the same way, never drawn as an empty slice. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.
 
 <pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
   showRemainder: true,
@@ -63,9 +67,11 @@ Two composition details carry over from the tree contract. A parent whose childr
   ],
 });</code></pre>
 
+From code: `chart.drillUp()` goes one level up, and `chart.drillToDepth(i)` jumps to the i-th crumb of the breadcrumb (0 is the root). Both return the chart and do nothing at the root or on flat data. `chart.drillTo(child)` is the step a click on a slice takes: it descends into a child of the level shown — pass the object you gave `setData`, its `id`, or its `label` — and draws that level as a click does, remainder and undisclosed items included. A child without disclosed children (a leaf, a remainder), or one not in the level shown, is ignored. It returns the chart too.
+
 ## Pie
 
-A pie is a donut with `innerRadius: 0`. The class name is `Donut` — `Pie` is an alias. Same API, same options, same behavior.
+A pie is a donut with `innerRadius: 0`, and that is what `Pie` draws by default: no hole, no center text, slightly tighter slice gaps. Every other Donut option and method works the same, drill-down included — a pie has no center to click, so you go back up through the breadcrumb; an explicit `innerRadius` still makes a hole.
 
 <div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
 
@@ -97,7 +103,7 @@ Control what appears with `labelContent`:
 
 An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is "how far along are we?"
 
-<div class="card-row-bordered card-caption">
+<div class="grid grid-cols-3 mobile:grid-cols-1 gap-none bordered rounded-xs card-caption">
   <div class="card-row-bordered-item">
     <div id="chart-gauge-progress"></div>
   </div>
@@ -109,23 +115,27 @@ An arc-based progress chart. Shows a value relative to a maximum along a partial
   </div>
 </div>
 
-`setData()` accepts a plain number, or an object to override `max` and `min` per render:
+`setData()` accepts a plain number, or an object to override `max` and `min` for that call only — the next `setData` starts again from the `max` and `min` options:
 
 <pre class="text-content-caption"><code><span class="code-comment">// 73 out of 100 (default max)</span>
-new RareCharts.Gauge('#chart', {
+const gauge = new RareCharts.Gauge('#gauge-progress', {
   centerLabel: 'Complete',
 }).setData(73);
 
 <span class="code-comment">// 50 achieved out of 80 plan — fills to 62.5%</span>
-new RareCharts.Gauge('#chart', {
+new RareCharts.Gauge('#gauge-target', {
   max:         80,
   color:       '#00c97a',
   centerText:  (value, max) => `${value}/${max}`,
   centerLabel: 'Achieved',
 }).setData(50);
 
-<span class="code-comment">// Override max at render time</span>
-gauge.setData({ value: 50, max: 80 });</code></pre>
+<span class="code-comment">// Override max for this call — 50 of 80</span>
+gauge.setData({ value: 50, max: 80 });
+<span class="code-comment">// Back to the options — 40 of 100</span>
+gauge.setData(40);</code></pre>
+
+A value outside `min`…`max` fills the arc to its end (or leaves it empty); the tooltip and `centerText` still receive the raw value.
 
 The arc geometry is fully configurable:
 
@@ -145,7 +155,7 @@ Two ingredients make the automotive-indicator look:
 - **Sweep.** `startAngle` / `endAngle` set the arc in radians, clockwise from 12 o'clock. The default `±Math.PI * 0.75` is a 270° horseshoe; `-Math.PI / 2 … Math.PI / 2` is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.
 - **Needle.** `needle: true` draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with `needleColor` (default: theme text).
 
-<div class="card-row-bordered card-caption margin-y-md">
+<div class="grid grid-cols-2 gap-none bordered rounded-xs card-caption margin-y-md">
   <div class="card-row-bordered-item">
     <div id="chart-gauge-speed"></div>
   </div>
@@ -165,7 +175,7 @@ Two ingredients make the automotive-indicator look:
 
 ## Data format
 
-All three types use the same segment data structure:
+Donut and Pie use the same segment data structure (Gauge takes a number — see Gauge above):
 
 <pre class="text-content-caption"><code>[
   { label: 'Subscriptions', value: 42000, color: '#00c97a' },
@@ -174,6 +184,8 @@ All three types use the same segment data structure:
 ]</code></pre>
 
 Only positive finite values are rendered. Zero and negative values are filtered out.
+
+Slices are matched across updates by `id`, else by `label`; slices that share a label are matched in order, so each keeps its own slice — give them an `id` when their order can change. Every update repaints the ring: a new `color` in `setData` shows, and a palette color moves with its slice’s position.
 
 Passing a single root **object** instead of a flat array switches Donut into drill-down mode, where the data is a tree — see the Drill-down section above.
 
@@ -185,13 +197,19 @@ Colors can be provided per item. If omitted, the chart uses the active theme pal
 
 Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:
 
-<pre class="text-content-caption"><code>tooltipFormat: ({ label, value, percent, color }) => `
-  &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
-  &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
-  &lt;div style="color:#888"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
-`</code></pre>
+<pre class="text-content-caption"><code>const d3 = RareCharts.d3;
+
+new RareCharts.Donut('#chart', {
+  tooltipFormat: ({ label, value, percent, color }) => `
+    &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
+    &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
+    &lt;div class="rc-tooltip-muted"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
+  `,
+}).setData(segments);</code></pre>
 
 ## Circular charts options
+
+Common options shared by all chart types (`title`, `subtitle`, `source`, `note`, `controls`, `theme`) are documented on the [Settings](/charts/settings/) page.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -213,17 +231,17 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         </tr>
         <tr>
             <td><code>innerRadius</code></td>
-            <td><code>0.58</code></td>
+            <td><code>0.58</code> (donut) / <code>0</code> (pie)</td>
             <td>Hole size as fraction of outer radius; <code>0</code> = Pie</td>
         </tr>
         <tr>
             <td><code>padAngle</code></td>
-            <td><code>0.018</code></td>
+            <td><code>0.018</code> (donut) / <code>0.008</code> (pie)</td>
             <td>Gap between slices (radians)</td>
         </tr>
         <tr>
             <td><code>cornerRadius</code></td>
-            <td><code>3</code></td>
+            <td><code>3</code> (donut) / <code>1</code> (pie)</td>
             <td>Rounded slice corners px</td>
         </tr>
         <tr>
@@ -248,28 +266,28 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         </tr>
         <tr>
             <td><code>showCenter</code></td>
-            <td><code>true</code> (donut)</td>
+            <td><code>true</code> (donut) / <code>false</code> (pie)</td>
             <td>Show center text hole</td>
         </tr>
         <tr>
             <td><code>centerText</code></td>
             <td>formatted total</td>
-            <td>String or <code>function(data) =&gt; string</code></td>
+            <td>String or <code>function(data, info) =&gt; string</code> — <code>data</code>: the drawn items, <code>info</code>: <code>{ label, value }</code>, the center label and the total. Flat data only — in drill-down the center shows the focused node’s value through <code>valueFormat</code></td>
         </tr>
         <tr>
             <td><code>centerLabel</code></td>
             <td><code>'Total'</code></td>
-            <td>Secondary line below center text</td>
+            <td>Secondary line below center text; in drill-down, the levels below the root show the focused node’s label</td>
         </tr>
         <tr>
             <td><code>valueFormat</code></td>
-            <td>locale number</td>
-            <td><code>function(value) =&gt; string</code> — center total and default tooltip value</td>
+            <td><code>d3.format(',')</code> (e.g. <code>1,234.5678</code>)</td>
+            <td><code>function(value, info) =&gt; string</code> — center total (in drill-down, the focused node’s value) and default tooltip value; <code>info</code> is the slice’s <code>{ label, value, percent, color }</code>, or <code>{ label, value }</code> for the center</td>
         </tr>
         <tr>
             <td><code>percentFormat</code></td>
             <td><code>.1%</code></td>
-            <td><code>function(pct) =&gt; string</code> — outer-label and tooltip percents</td>
+            <td><code>function(pct, info) =&gt; string</code> — outer-label and tooltip percents; <code>info</code> is the slice’s <code>{ label, value, percent, color }</code></td>
         </tr>
         <tr>
             <td><code>animate</code></td>
@@ -289,7 +307,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         <tr>
             <td><code>tooltipFormat</code></td>
             <td>built-in</td>
-            <td><code>function({label, value, percent, color}) =&gt; html</code></td>
+            <td><code>function({label, value, percent, color}) =&gt; html</code> — the role fields themselves (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>)</td>
         </tr>
         <tr>
             <td><code>showRemainder</code></td>
@@ -317,12 +335,12 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         <tr>
             <td><code>min</code></td>
             <td><code>0</code></td>
-            <td>Minimum value</td>
+            <td>Minimum value. <code>setData({ value, min })</code> overrides it for that call only</td>
         </tr>
         <tr>
             <td><code>max</code></td>
             <td><code>100</code></td>
-            <td>Maximum value</td>
+            <td>Maximum value. <code>setData({ value, max })</code> overrides it for that call only</td>
         </tr>
         <tr>
             <td><code>startAngle</code></td>
@@ -371,8 +389,8 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         </tr>
         <tr>
             <td><code>centerText</code></td>
-            <td><code>'63%'</code></td>
-            <td>String or <code>function(value, max, min) =&gt; string</code></td>
+            <td>share of the range, <code>.0%</code> (e.g. <code>63%</code>)</td>
+            <td>String or <code>function(value, max, min, info) =&gt; string</code>; <code>info</code> is <code>{ value, max, min, percent, color }</code>, after the arguments it always had</td>
         </tr>
         <tr>
             <td><code>centerLabel</code></td>
@@ -397,7 +415,7 @@ Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip
         <tr>
             <td><code>tooltipFormat</code></td>
             <td>built-in</td>
-            <td><code>function({value, max, min, percent}) =&gt; html</code></td>
+            <td><code>function({value, max, min, percent, color}) =&gt; html</code> — <code>color</code> is the fill arc’s (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>)</td>
         </tr>
     </tbody>
 </table>

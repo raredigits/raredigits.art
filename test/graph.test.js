@@ -1,256 +1,15 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { GraphModel } from '../assets/charts/src/graph/model.js';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import * as d3 from 'd3';
+import { takeChartErrors } from './helpers.js';
 import { memorySource } from '../assets/charts/src/graph/source.js';
-import { egoLayout, egoCapacity } from '../assets/charts/src/graph/layouts/ego.js';
-import { pathLayout } from '../assets/charts/src/graph/layouts/path.js';
-import { clusterLayout } from '../assets/charts/src/graph/layouts/cluster.js';
 import { Graph } from '../assets/charts/src/charts/Graph.js';
+import { defaultTheme } from '../assets/charts/src/core/theme.js';
+import { fixture } from './fixtures/graph.js';
 
-// Fixture: a small two-community graph.
-//
-//   a ─ b ─ c ─ d        left chain into right triangle
-//   a ─ e                e hangs off the root
-//   c ─ f, d ─ f         f closes the triangle
-//
-const fixture = {
-  nodes: [
-    { id: 'a', label: 'A', group: 'g1' },
-    { id: 'b', label: 'B', group: 'g1' },
-    { id: 'c', label: 'C', group: 'g2' },
-    { id: 'd', label: 'D', group: 'g2' },
-    { id: 'e', label: 'E', group: 'g1' },
-    { id: 'f', label: 'F', group: 'g2' },
-  ],
-  links: [
-    { source: 'a', target: 'b', type: 'professional', weight: 0.9 },
-    { source: 'b', target: 'c', type: 'investment',   weight: 0.5 },
-    { source: 'c', target: 'd', type: 'investment',   weight: 0.7 },
-    { source: 'a', target: 'e', type: 'family',       weight: 0.8 },
-    { source: 'c', target: 'f', type: 'professional', weight: 0.4 },
-    { source: 'd', target: 'f', type: 'professional', weight: 0.6 },
-  ],
-};
-
-// ─── GraphModel ────────────────────────────────────────────────────────────────
-
-describe('GraphModel', () => {
-  it('merges payloads idempotently and accumulates new ones', () => {
-    const m = new GraphModel(fixture);
-    expect(m.order).toBe(6);
-    m.merge(fixture);                       // re-merge: no duplicates, no throw
-    expect(m.order).toBe(6);
-    m.merge({ nodes: [{ id: 'z', label: 'Z' }], links: [{ source: 'z', target: 'a' }] });
-    expect(m.order).toBe(7);
-    expect(m.link('z', 'a')).not.toBeNull();
-  });
-
-  it('neighborhood returns BFS depths and induced links only', () => {
-    const m = new GraphModel(fixture);
-    const sub = m.neighborhood('a', 2);
-    const depths = Object.fromEntries(sub.nodes.map(n => [n.id, n.depth]));
-    expect(depths).toEqual({ a: 0, b: 1, e: 1, c: 2 });
-    // induced: only links among {a,b,e,c}
-    expect(sub.links).toHaveLength(3);
-    expect(sub.links.every(l => depths[l.source] != null && depths[l.target] != null)).toBe(true);
-  });
-
-  it('neighborhood type filter drops off-type induced links and keeps untyped as default', () => {
-    // Triangle with mixed types: both b and c are family-reachable from a,
-    // but the b–c tie is work — a family filter must not display it.
-    const m = new GraphModel({
-      nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
-      links: [
-        { source: 'a', target: 'b', type: 'family' },
-        { source: 'a', target: 'c', type: 'family' },
-        { source: 'b', target: 'c', type: 'work' },
-      ],
-    });
-    const sub = m.neighborhood('a', 1, { types: ['family'] });
-    expect(sub.nodes.map(n => n.id).sort()).toEqual(['a', 'b', 'c']);
-    expect(sub.links.map(l => l.type)).toEqual(['family', 'family']);
-
-    // Untyped links belong to the 'default' type the legend names them by
-    const untyped = new GraphModel({
-      nodes: [{ id: 'a' }, { id: 'b' }],
-      links: [{ source: 'a', target: 'b' }],
-    });
-    expect(untyped.neighborhood('a', 1, { types: ['default'] }).links).toHaveLength(1);
-    expect(untyped.neighborhood('a', 1, { types: ['family'] }).links).toHaveLength(0);
-  });
-
-  it('centrality finds the broker: b sits on every left↔right path', () => {
-    const m = new GraphModel(fixture);
-    const { betweenness, degree } = m.centrality();
-    const others = ['a', 'e', 'f'].map(id => betweenness[id]);
-    expect(others.every(v => betweenness.b > v)).toBe(true);
-    expect(degree.a).toBeGreaterThan(0);
-  });
-
-  it('communitySummary is deterministic and covers all nodes', () => {
-    const m = new GraphModel(fixture);
-    const s1 = m.communitySummary();
-    const s2 = m.communitySummary();
-    expect(s1.communities.map(c => c.members.sort())).toEqual(
-      s2.communities.map(c => c.members.sort()));
-    const total = s1.communities.reduce((n, c) => n + c.size, 0);
-    expect(total).toBe(6);
-  });
-});
-
-// ─── memorySource ──────────────────────────────────────────────────────────────
-
-describe('memorySource', () => {
-  it('neighbors answers the ego query', async () => {
-    const src = memorySource(fixture);
-    const sub = await src.neighbors('a', { depth: 1 });
-    expect(sub.nodes.map(n => n.id).sort()).toEqual(['a', 'b', 'e']);
-  });
-
-  it('paths finds edge-disjoint routes a→f', async () => {
-    const src = memorySource(fixture);
-    const res = await src.paths('a', 'f', { k: 3 });
-    expect(res.paths.length).toBeGreaterThanOrEqual(1);
-    expect(res.paths[0][0]).toBe('a');
-    expect(res.paths[0].at(-1)).toBe('f');
-    // shortest route first: a-b-c-f (4 nodes)
-    expect(res.paths[0]).toHaveLength(4);
-    // payload nodes carry attributes from the model
-    expect(res.nodes.find(n => n.id === 'f').label).toBe('F');
-  });
-
-  it('paths between unconnected nodes returns empty, not throws', async () => {
-    const src = memorySource({
-      nodes: [{ id: 'x' }, { id: 'y' }],
-      links: [],
-    });
-    const res = await src.paths('x', 'y');
-    expect(res.paths).toEqual([]);
-    const missing = await src.paths('x', 'nope');
-    expect(missing.paths).toEqual([]);
-  });
-
-  it('aggregates returns communities and inter-community links', async () => {
-    const src = memorySource(fixture);
-    const agg = await src.aggregates();
-    expect(agg.communities.length).toBeGreaterThanOrEqual(1);
-    agg.links.forEach(l => {
-      expect(l.source).toMatch(/^c/);
-      expect(l.weight).toBeGreaterThan(0);
-    });
-  });
-});
-
-// ─── Layouts ───────────────────────────────────────────────────────────────────
-
-describe('egoLayout', () => {
-  const dims = { rootId: 'a', width: 800, height: 600 };
-
-  it('pins the root near the center of the grid', () => {
-    const m = new GraphModel(fixture);
-    const sub = m.neighborhood('a', 2);
-    const { positions: pos } = egoLayout(sub, dims);
-
-    const root = pos.get('a');
-    // center cell of the grid — within one cell of the exact center
-    expect(Math.abs(root.x - 400)).toBeLessThan(120);
-    expect(Math.abs(root.y - 300)).toBeLessThan(110);
-  });
-
-  it('gives each node its own cell and each category its own corner', () => {
-    const m = new GraphModel(fixture);
-    const sub = m.neighborhood('a', 2);
-    const { positions: pos, sectors } = egoLayout(sub, dims);
-
-    // no two nodes share a cell
-    const seen = new Set();
-    pos.forEach(p => {
-      const cell = `${Math.round(p.x)},${Math.round(p.y)}`;
-      expect(seen.has(cell)).toBe(false);
-      seen.add(cell);
-    });
-
-    // fixture groups among placed non-root nodes: b,e → g1, c → g2
-    expect(sectors.map(s => s.key).sort()).toEqual(['g1', 'g2']);
-    // same-category nodes cluster: b and e sit closer to each other than to c
-    const dist = (x, y) => Math.hypot(pos.get(x).x - pos.get(y).x, pos.get(x).y - pos.get(y).y);
-    expect(dist('b', 'e')).toBeLessThan(dist('b', 'c'));
-    expect(dist('b', 'e')).toBeLessThan(dist('e', 'c'));
-  });
-
-  it('is deterministic and places every node', () => {
-    const m = new GraphModel(fixture);
-    const sub = m.neighborhood('a', 2);
-    const { positions: p1 } = egoLayout(sub, dims);
-    const { positions: p2 } = egoLayout(sub, dims);
-    expect(p1.size).toBe(sub.nodes.length);
-    sub.nodes.forEach(n => {
-      expect(p1.get(n.id)).toEqual(p2.get(n.id));
-    });
-  });
-});
-
-describe('pathLayout', () => {
-  it('lays hops out left→right with centered endpoints and row captions', () => {
-    const { positions: pos, rows } = pathLayout(
-      { paths: [['a', 'b', 'c', 'f'], ['a', 'e', 'f']] },
-      { width: 800, height: 600 });
-
-    expect(pos.get('a').x).toBeLessThan(pos.get('b').x);
-    expect(pos.get('b').x).toBeLessThan(pos.get('c').x);
-    expect(pos.get('c').x).toBeLessThan(pos.get('f').x);
-    // endpoints vertically centered
-    expect(pos.get('a').y).toBe(300);
-    expect(pos.get('f').y).toBe(300);
-    // rows separated
-    expect(pos.get('b').y).not.toBe(pos.get('e').y);
-    // first row is the shortest route
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toMatchObject({ hops: 3, shortest: true });
-    // captions sit on the route (over the first intermediate node), not at
-    // the left edge where the endpoint's context fan lives
-    expect(rows[0].x).toBe(pos.get('b').x);
-    expect(rows[1]).toMatchObject({ hops: 2, shortest: false });
-  });
-
-  it('fans endpoint context behind the endpoints', () => {
-    const { positions: pos } = pathLayout(
-      { paths: [['a', 'b', 'f']], context: { a: ['x1', 'x2'], f: ['y1'] } },
-      { width: 800, height: 600 });
-
-    // context sits outward of its endpoint and is flagged
-    expect(pos.get('x1').x).toBeLessThan(pos.get('a').x + 1);
-    expect(pos.get('y1').x).toBeGreaterThan(pos.get('f').x - 1);
-    expect(pos.get('x1').context).toBe(true);
-  });
-});
-
-describe('clusterLayout', () => {
-  it('places meta-nodes on a grid from the centre out, single community centered', () => {
-    const two = clusterLayout(
-      { nodes: [{ id: 'c0' }, { id: 'c1' }] },
-      { width: 800, height: 600 });
-    expect(two.size).toBe(2);
-    const d0 = Math.hypot(two.get('c0').x - 400, two.get('c0').y - 300);
-    const d1 = Math.hypot(two.get('c1').x - 400, two.get('c1').y - 300);
-    expect(d0).toBeCloseTo(d1, 6);
-
-    const one = clusterLayout({ nodes: [{ id: 'c0' }] }, { width: 800, height: 600 });
-    expect(one.get('c0')).toEqual({ x: 400, y: 300 });
-  });
-
-  it('never overlaps meta-nodes and puts the first (largest) nearest the centre', () => {
-    const nodes = Array.from({ length: 9 }, (_, i) => ({ id: `c${i}` }));
-    const pos = clusterLayout({ nodes }, { width: 800, height: 520 });
-    const pts = nodes.map(n => pos.get(n.id));
-    const seen = new Set(pts.map(p => `${Math.round(p.x)},${Math.round(p.y)}`));
-    expect(seen.size).toBe(9);
-    const d = p => Math.hypot(p.x - 400, p.y - 260);
-    expect(d(pts[0])).toBeLessThanOrEqual(Math.min(...pts.slice(1).map(d)) + 1e-9);
-    // grid: every x and y comes from a small set of column/row centres
-    expect(new Set(pts.map(p => Math.round(p.x))).size).toBeLessThanOrEqual(4);
-    expect(new Set(pts.map(p => Math.round(p.y))).size).toBeLessThanOrEqual(3);
-  });
-});
+// The Graph chart in the DOM: the ego / path / cluster views, their ties,
+// chrome and details panel, and the setData() → view chain with its queue.
+// The model and the layouts without a DOM are in graph-model.test.js; the
+// flow view in graph-flow.test.js.
 
 // ─── Graph viewport (smoke + interaction contract) ─────────────────────────────
 
@@ -443,6 +202,27 @@ describe('Graph viewport', () => {
     expect(labels.every(l => / · \d+$/.test(l))).toBe(true);
   });
 
+  it('zooming out of the ego view switches to the cluster overview (semantic zoom)', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData(fixture);
+    await g.whenReady();
+    // The −/+ buttons animate the same d3 zoom; drive it directly.
+    g.svg.call(g._zoom.transform, d3.zoomIdentity.scale(0.4));
+    await g.whenReady();
+    const labels = [...host.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent);
+    expect(labels.length).toBeGreaterThan(0);
+    expect(labels.every(l => / · \d+$/.test(l))).toBe(true);
+  });
+
+  it('a view task that throws is logged as a library error, which fails the test unless expected', async () => {
+    const down = () => Promise.reject(new Error('source down'));
+    const g = new Graph('#chart', { dataSource: { neighbors: down, paths: down, aggregates: down }, duration: 0 });
+    await g.focus('a').whenReady();
+    // test/setup.js would fail this test on the logged error; take it here.
+    const errors = takeChartErrors();
+    expect(errors).toHaveLength(1);
+    expect(String(errors[0][1])).toContain('source down');
+  });
+
   it('renders group icons inside nodes; nodeIcons:false disables them', async () => {
     const data = {
       nodes: [
@@ -561,14 +341,17 @@ describe('Graph viewport', () => {
   });
 
   it('renders zoom controls, and omits them with zoom: false', async () => {
-    new Graph('#chart', { duration: 0 }).setData(fixture);
+    const g = new Graph('#chart', { duration: 0 }).setData(fixture);
+    await g.whenReady();
     expect(host.querySelectorAll('.rc-graph-zoom-controls button').length).toBe(3);
+    g.destroy();
 
     document.body.innerHTML = '';
     host = document.createElement('div');
     host.id = 'chart';
     document.body.appendChild(host);
-    new Graph('#chart', { duration: 0, zoom: false }).setData(fixture);
+    const plain = new Graph('#chart', { duration: 0, zoom: false }).setData(fixture);
+    await plain.whenReady();
     expect(host.querySelectorAll('.rc-graph-zoom-controls').length).toBe(0);
   });
 
@@ -597,71 +380,6 @@ describe('Graph viewport', () => {
     const g = new Graph('#chart', { duration: 0 }).setData(fixture);
     await g.whenReady();
     expect(() => g.destroy()).not.toThrow();
-  });
-});
-
-// ─── GraphModel — multigraph storage (A2, 0.9.8_3) ─────────────────────────────
-
-describe('GraphModel — multigraph storage', () => {
-  const multi = {
-    nodes: [{ id: 'trump' }, { id: 'kushner' }, { id: 'x' }],
-    links: [
-      { source: 'trump', target: 'kushner', type: 'family' },
-      { source: 'trump', target: 'kushner', type: 'investment' },
-      { source: 'kushner', target: 'trump', type: 'employment' },
-      { source: 'kushner', target: 'x', type: 'investment' },
-    ],
-  };
-
-  it('keeps every typed tie of a pair, in both directions', () => {
-    const m = new GraphModel(multi);
-    const ties = m.links('trump', 'kushner');
-    expect(ties.map(l => l.type).sort()).toEqual(['employment', 'family', 'investment']);
-    expect(ties.every(l => typeof l.id === 'string')).toBe(true);
-    expect(m.link('trump', 'kushner')).not.toBeNull();   // compat accessor
-  });
-
-  it('re-merging is idempotent; same pair + type updates in place', () => {
-    const m = new GraphModel(multi);
-    m.merge(multi);
-    expect(m.links('trump', 'kushner')).toHaveLength(3);
-    m.merge({ links: [{ source: 'trump', target: 'kushner', type: 'family', label: 'son-in-law' }] });
-    const fam = m.links('trump', 'kushner').find(l => l.type === 'family');
-    expect(fam.label).toBe('son-in-law');
-    expect(m.links('trump', 'kushner')).toHaveLength(3);
-  });
-
-  it('caller ids are the identity; from/to aliases are accepted', () => {
-    const m = new GraphModel({ links: [
-      { id: 'tx1', from: 'a', to: 'b', type: 'swap' },
-      { id: 'tx2', from: 'a', to: 'b', type: 'swap' },
-    ] });
-    expect(m.links('a', 'b').map(l => l.id).sort()).toEqual(['tx1', 'tx2']);
-    expect(m.links('a', 'b')[0]).not.toHaveProperty('from');
-  });
-
-  it('analytics see one tie per pair: degree is not inflated by parallel ties', () => {
-    const m = new GraphModel(multi);
-    expect(m.degree('trump')).toBe(1);
-    expect(m.degree('kushner')).toBe(2);
-  });
-
-  it('the type filter applies per tie: isolating a type keeps only that tie of the pair', () => {
-    const m = new GraphModel(multi);
-    const sub = m.neighborhood('trump', 1, { types: ['investment'] });
-    expect(sub.links.map(l => l.type)).toEqual(['investment']);
-    expect(sub.nodes.map(n => n.id).sort()).toEqual(['kushner', 'trump']);
-  });
-
-  it('memorySource paths ignore direction and return every tie along the route', async () => {
-    const src = memorySource({ links: [
-      { source: 'b', target: 'a', type: 'family' },
-      { source: 'a', target: 'b', type: 'deal' },
-      { source: 'c', target: 'b' },
-    ] });
-    const res = await src.paths('a', 'c', { k: 1 });
-    expect(res.paths[0]).toEqual(['a', 'b', 'c']);
-    expect(res.links.map(l => l.type ?? 'default').sort()).toEqual(['deal', 'default', 'family']);
   });
 });
 
@@ -778,59 +496,6 @@ describe('Graph viewport — focus + context fade', () => {
   });
 });
 
-describe('egoLayout — one dominant category (A4)', () => {
-  // 60 nodes of a single group: 12 first-ring, 48 second-ring.
-  const nodes = [{ id: 'ego', depth: 0, group: 'person' }];
-  const links = [];
-  for (let i = 0; i < 12; i++) {
-    nodes.push({ id: `r1-${i}`, depth: 1, group: 'person' });
-    links.push({ source: 'ego', target: `r1-${i}` });
-    for (let j = 0; j < 4; j++) {
-      nodes.push({ id: `r2-${i}-${j}`, depth: 2, group: 'person' });
-      links.push({ source: `r1-${i}`, target: `r2-${i}-${j}` });
-    }
-  }
-  const W = 900, H = 600;
-  const { positions: p, sectors } = egoLayout({ nodes, links }, { rootId: 'ego', width: W, height: H });
-
-  it('centres the ego and spreads every node around it — not into one corner', () => {
-    expect(Math.abs(p.get('ego').x - W / 2)).toBeLessThan(W / 6);
-    expect(Math.abs(p.get('ego').y - H / 2)).toBeLessThan(H / 6);
-    const pts = nodes.slice(1).map(n => p.get(n.id));
-    const quadrant = pt => `${pt.x < W / 2 ? 'L' : 'R'}${pt.y < H / 2 ? 'T' : 'B'}`;
-    const counts = {};
-    pts.forEach(pt => { counts[quadrant(pt)] = (counts[quadrant(pt)] ?? 0) + 1; });
-    expect(Object.keys(counts).sort()).toEqual(['LB', 'LT', 'RB', 'RT']);
-    Object.values(counts).forEach(c => expect(c).toBeGreaterThan(8));
-  });
-
-  it('keeps depth readable as distance, on the grid, inside the canvas', () => {
-    const e = p.get('ego');
-    const d = id => Math.hypot(p.get(id).x - e.x, p.get(id).y - e.y);
-    const first = Math.max(...nodes.filter(n => n.depth === 1).map(n => d(n.id)));
-    const second = Math.min(...nodes.filter(n => n.depth === 2).map(n => d(n.id)));
-    expect(second).toBeGreaterThanOrEqual(first - 1e-9);
-    // on the grid: shared column/row centres, not free angles
-    const xs = new Set(nodes.map(n => Math.round(p.get(n.id).x)));
-    expect(xs.size).toBeLessThan(nodes.length / 3);
-    nodes.forEach(n => {
-      const pt = p.get(n.id);
-      expect(pt.x).toBeGreaterThan(0); expect(pt.x).toBeLessThan(W);
-      expect(pt.y).toBeGreaterThan(0); expect(pt.y).toBeLessThan(H);
-    });
-    expect(sectors).toHaveLength(1);
-  });
-
-  it('no two nodes share a spot', () => {
-    const seen = new Set();
-    nodes.forEach(n => {
-      const key = `${Math.round(p.get(n.id).x)},${Math.round(p.get(n.id).y)}`;
-      expect(seen.has(key)).toBe(false);
-      seen.add(key);
-    });
-  });
-});
-
 describe('Graph viewport — chrome', () => {
   beforeEach(() => { document.body.innerHTML = '<div id="chart"></div>'; });
 
@@ -872,49 +537,6 @@ describe('Graph viewport — chrome', () => {
   it('creates a footer row for the controls when there is no source or note', () => {
     new Graph('#chart', { duration: 0 });
     expect(document.querySelector('#chart .rc-chart-footer .rc-graph-zoom-controls')).not.toBeNull();
-  });
-});
-
-describe('layouts — vertical fit', () => {
-  it('ego: the used rows run from just under the top to just above the bottom', () => {
-    const m = new GraphModel(fixture);
-    const sub = m.neighborhood('c', 2);
-    const { positions } = egoLayout(sub, { rootId: 'c', width: 800, height: 520, nodeRadius: 22 });
-    const ys = [...positions.values()].map(p => p.y);
-    expect(Math.min(...ys)).toBeCloseTo(28, 0);            // radius + 6
-    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
-  });
-
-  it('cluster: the top row sits under the edge by its largest node radius', () => {
-    const nodes = Array.from({ length: 6 }, (_, i) => ({ id: `c${i}`, size: i === 0 ? 3 : 1 }));
-    const pos = clusterLayout({ nodes }, { width: 800, height: 520, nodeRadius: 22 });
-    const ys = [...pos.values()].map(p => p.y);
-    expect(Math.min(...ys)).toBeGreaterThanOrEqual(22 + 6 - 1e-6);
-    expect(Math.max(...ys)).toBeLessThanOrEqual(520 - 22 - 22 + 1e-6);
-  });
-});
-
-describe('egoLayout — wide canvas, one dominant category', () => {
-  it('spreads across the width on cells at least ~96 px wide', () => {
-    const nodes = [{ id: 'ego', depth: 0, group: 'fund' }];
-    for (let i = 0; i < 33; i++) nodes.push({ id: `f${i}`, depth: i < 8 ? 1 : 2, group: 'fund' });
-    const W = 740, H = 387;
-    const { positions, cellW } = egoLayout({ nodes, links: [] }, { rootId: 'ego', width: W, height: H });
-    expect(cellW).toBeGreaterThanOrEqual(96 - 1e-9);
-    const xs = [...positions.values()].map(p => p.x);
-    expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(W * 0.7);
-    const ys = [...positions.values()].map(p => p.y);
-    expect(Math.max(...ys)).toBeLessThan(H);
-  });
-});
-
-describe('egoCapacity', () => {
-  it('fits a 63-node neighbourhood on a 1150 × 410 drawing (the FF Portfolio case)', () => {
-    expect(egoCapacity(1150, 410)).toBeGreaterThanOrEqual(63);
-  });
-  it('grows with the canvas and never drops below one', () => {
-    expect(egoCapacity(1600, 900)).toBeGreaterThan(egoCapacity(800, 520));
-    expect(egoCapacity(10, 10)).toBe(1);
   });
 });
 
@@ -977,5 +599,241 @@ describe('Graph viewport — details panel', () => {
     const mine = document.getElementById('mine');
     expect(mine.parentElement.id).toBe('chart');
     expect(mine.textContent).toBe('page content');
+  });
+});
+
+describe('Graph — numeric ids, categories, markers (R-19, R-01, R-02)', () => {
+  let host;
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="chart"></div>';
+    host = document.getElementById('chart');
+  });
+  const nodeG = id => [...host.querySelectorAll('.rc-graph-node')].find(n => n.__data__.id === id);
+  const numeric = {
+    nodes: [{ id: 1, label: 'One' }, { id: 2, label: 'Two' }, { id: 3, label: 'Three' }],
+    links: [{ source: 1, target: 2 }, { source: 1, target: 3 }],
+  };
+
+  it('setData with numeric ids places its auto-focused root like string ids do', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData(numeric);
+    await g.whenReady();
+    expect(nodeG('1').getAttribute('transform')).toMatch(/translate/);
+    await g.focus(2).whenReady();
+    expect(nodeG('2').getAttribute('transform')).toMatch(/translate/);
+    g.destroy();
+  });
+
+  it('hide(3) and hiddenNodes: [3] hide the node with id "3"', async () => {
+    const labels = () => [...host.querySelectorAll('.rc-graph-node-label')].map(t => t.textContent);
+    const g = new Graph('#chart', { duration: 0 }).setData(numeric);
+    await g.whenReady();
+    g.hide(3);
+    expect(labels()).not.toContain('Three');
+    g.destroy();
+    const h = new Graph('#chart', { duration: 0, hiddenNodes: [3] }).setData(numeric);
+    await h.whenReady();
+    expect(labels()).not.toContain('Three');
+    h.destroy();
+  });
+
+  it('an undescribed type takes a palette colour no described type uses; untyped stays muted', async () => {
+    const g = new Graph('#chart', { duration: 0, linkTypes: { a: { color: defaultTheme.colors[0], label: 'A' } } }).setData({
+      nodes: [{ id: 'h' }, { id: 'x' }, { id: 'y' }, { id: 'z' }],
+      links: [{ source: 'h', target: 'x', type: 'a' }, { source: 'h', target: 'y', type: 'b' }, { source: 'h', target: 'z' }],
+    });
+    await g.focus('h').whenReady();
+    const stroke = target => [...host.querySelectorAll('.rc-graph-link')].find(p => p.__data__.target === target || p.__data__.source === target).getAttribute('stroke');
+    expect(stroke('x')).toBe(defaultTheme.colors[0]);
+    expect(stroke('y')).toBe(defaultTheme.colors[1]);
+    expect(stroke('z')).toBe(defaultTheme.muted);
+    g.destroy();
+  });
+
+  it('two Cyrillic types get two arrow markers in the ego view (R-02)', async () => {
+    const g = new Graph('#chart', { duration: 0, linkTypes: { друг: { color: '#aa0000' }, брат: { color: '#00aa00' } } }).setData({
+      nodes: [{ id: 'h' }, { id: 'x' }, { id: 'y' }],
+      links: [{ source: 'h', target: 'x', type: 'друг' }, { source: 'h', target: 'y', type: 'брат' }],
+    });
+    await g.focus('h').whenReady();
+    const ids = [...host.querySelectorAll('.rc-graph-link')].map(p => p.getAttribute('marker-end'));
+    expect(new Set(ids).size).toBe(2);
+    const colours = ids.map(u => host.querySelector(u.slice(4, -1) + ' path').getAttribute('stroke')).sort();
+    expect(colours).toEqual(['#00aa00', '#aa0000']);
+    g.destroy();
+  });
+
+  it('path view: context ties of a new type keep one colour across renders, matching the legend', async () => {
+    const data = {
+      nodes: ['a', 'b', 'c', 'x', 'y'].map(id => ({ id })),
+      links: [{ source: 'a', target: 'b', type: 'k' }, { source: 'b', target: 'c', type: 'k' },
+        { source: 'a', target: 'x', type: 'zzz' }, { source: 'c', target: 'y', type: 'zzz' }],
+    };
+    const g = new Graph('#chart', { duration: 0, linkTypes: { k: { color: '#123456' } }, dataSource: memorySource(data) });
+    await g.connect('a', 'c').whenReady();
+    const ctx = () => [...host.querySelectorAll('.rc-graph-link')].find(p => p.__data__.type === 'zzz').getAttribute('stroke');
+    const first = ctx();
+    g.render();
+    expect(ctx()).toBe(first);
+    g.destroy();
+  });
+});
+
+// ─── setData() and the view queue ─────────────────────────────────────────────
+
+// A1 (0.9.8_3): a synchronous `setData(d); focus(id)` chain must draw the ego
+// view around `id` without a manual whenReady() in between, and must not
+// first build the default (best-connected) ego only to discard it.
+describe('Graph — setData() → view chain (A1)', () => {
+  const data = {
+    nodes: [
+      { id: 'hub', label: 'Hub' },
+      { id: 'x', label: 'X' },
+      { id: 'y', label: 'Y' },
+      { id: 'z', label: 'Z' },
+    ],
+    links: [
+      { source: 'hub', target: 'x' },
+      { source: 'hub', target: 'y' },
+      { source: 'hub', target: 'z' },
+      { source: 'x', target: 'y' },
+    ],
+  };
+
+  let host;
+  const mount = () => {
+    document.body.innerHTML = '';
+    host = document.createElement('div');
+    host.id = 'chart';
+    document.body.appendChild(host);
+  };
+  beforeEach(mount);
+
+  it('draws the requested ego on a synchronous setData(); focus() chain — the only view it builds', async () => {
+    const g = new Graph('#chart', { duration: 0 });
+    g.setData(data);
+    g.focus('z');
+    await g.whenReady();
+    expect(g._root).toBe('z');
+    expect(host.querySelectorAll('.rc-graph-node').length).toBeGreaterThan(0);
+    // one view in the history: no default (hub) ego was built and then replaced
+    expect(g._history.map(h => [h.view, h.root])).toEqual([['ego', 'z']]);
+  });
+
+  it('skips the default ego when a view is requested in the same tick', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData(data);
+    const neighbors = vi.spyOn(g._source, 'neighbors');
+    g.focus('z');
+    await g.whenReady();
+    expect(neighbors).toHaveBeenCalledTimes(1);
+    expect(neighbors.mock.calls[0][0]).toBe('z');
+  });
+
+  it('still auto-focuses the best-connected node when nothing else is requested', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData(data);
+    await g.whenReady();
+    expect(g._root).toBe('hub');
+    expect(host.querySelectorAll('.rc-graph-node').length).toBeGreaterThan(0);
+  });
+
+  it('skips the default ego for connect() and overview() too', async () => {
+    const g1 = new Graph('#chart', { duration: 0 }).setData(data);
+    g1.connect('x', 'z');
+    await g1.whenReady();
+    expect(g1._view).toBe('path');
+
+    mount();
+    const g2 = new Graph('#chart', { duration: 0 }).setData(data);
+    g2.overview();
+    await g2.whenReady();
+    expect(g2._view).toBe('cluster');
+    expect(g2._history.map(h => h.view)).toEqual(['cluster']);
+  });
+
+  it('a later view change after whenReady() still recenters', async () => {
+    const g = new Graph('#chart', { duration: 0 }).setData(data);
+    await g.whenReady();
+    await g.focus('y').whenReady();
+    expect(g._root).toBe('y');
+  });
+});
+
+// R-21: a view task still waiting on the old source when setData() replaces
+// the data must not merge its late answer into the new model or view.
+describe('Graph — a late answer from the replaced source (R-21)', () => {
+  // A source whose answers wait until released, one at a time, in order.
+  const slowSource = () => {
+    const pending = [];
+    const later = value => new Promise(resolve => pending.push(() => resolve(value)));
+    return {
+      pending,
+      neighbors: id => later({ nodes: [{ id }, { id: 'old', label: 'Old' }], links: [{ source: id, target: 'old' }] }),
+      paths: (a, b) => later({ nodes: [{ id: a }, { id: 'old', label: 'Old' }, { id: b }],
+        links: [{ source: a, target: 'old' }, { source: 'old', target: b }], paths: [[a, 'old', b]] }),
+      aggregates: () => later({ communities: [{ id: 'c', label: 'Old', size: 2, top: 'old' }], links: [] }),
+    };
+  };
+  const fresh = { nodes: [{ id: 'a', label: 'A' }, { id: 'new', label: 'New' }], links: [{ source: 'a', target: 'new' }] };
+  const labels = () => [...document.querySelectorAll('.rc-graph-node-label')].map(el => el.textContent);
+  const tick = () => new Promise(r => setTimeout(r, 0));
+  let host;
+  beforeEach(() => {
+    document.body.innerHTML = '<div id="chart"></div>';
+    host = document.getElementById('chart');
+  });
+
+  it.each([
+    ['focus()', g => g.focus('a')],
+    ['connect()', g => g.connect('a', 'b')],
+    ['overview()', g => g.overview()],
+  ])('%s: the late answer is dropped instead of reaching the new data', async (_n, start) => {
+    const src = slowSource();
+    const g = new Graph(host, { dataSource: src, duration: 0, pathContext: false });
+    start(g);
+    await tick();
+    g.setData(fresh);
+    src.pending.forEach(release => release());
+    await g.whenReady();
+    expect(labels()).toContain('New');
+    expect(labels().some(l => l.startsWith('Old'))).toBe(false);
+    g.destroy();
+  });
+
+  it('a task still waiting when the chart is destroyed renders nothing', async () => {
+    const src = slowSource();
+    const g = new Graph(host, { dataSource: src, duration: 0 });
+    g.focus('a');
+    await tick();
+    g.destroy();
+    src.pending.forEach(release => release());
+    await g.whenReady();
+    expect(host.children.length).toBe(0);
+  });
+
+  it('a back() retired by setData does not cost the new data its first history entry', async () => {
+    const answers = { x: ['y'], y: ['x'] };
+    let hold = null;
+    const src = {
+      neighbors: id => {
+        const sub = { nodes: [{ id }, ...answers[id].map(n => ({ id: n }))], links: answers[id].map(n => ({ source: id, target: n })) };
+        return hold ? new Promise(resolve => { hold = () => resolve(sub); }) : Promise.resolve(sub);
+      },
+      paths: async () => ({ nodes: [], links: [], paths: [] }),
+      aggregates: async () => ({ communities: [], links: [] }),
+    };
+    const g = new Graph(host, { dataSource: src, duration: 0 });
+    await g.focus('x').whenReady();
+    await g.focus('y').whenReady();
+    hold = true;
+    g.back();                                   // restores x — waits on the source
+    await tick();
+    g.setData({ nodes: [{ id: 'p', label: 'P' }, { id: 'q', label: 'Q' }], links: [{ source: 'p', target: 'q' }] });
+    hold();
+    await g.whenReady();
+    // setData starts a new history (R-17): a second view shows the trail,
+    // which begins with the new data's first view — recorded, not skipped
+    await g.focus('q').whenReady();
+    const crumbs = [...host.querySelectorAll('.rc-graph-breadcrumbs button, .rc-graph-breadcrumbs span')].map(b => b.textContent);
+    expect(crumbs).toEqual(['P', 'Q']);
+    g.destroy();
   });
 });

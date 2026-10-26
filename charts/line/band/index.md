@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/line/band/'
 ---
 
-<spn class="meta-info">/examples/line/line-chart-band.js</spn>
+<span class="meta-info">/assets/charts/examples/line/line-chart-band.js</span>
 
 A band is a filled ribbon between a lower and an upper value at each point on the X axis. Where an ordinary line answers “what is the number”, a band answers “how sure are we about it”. That makes it the natural shape for confidence intervals, forecast cones, min/max envelopes, and error ranges — anywhere a single line would overstate precision.
 
@@ -20,7 +20,9 @@ In RareCharts a band is just another series in a `Line` chart. You mark a 
 
 A band series carries `{ date, lower, upper }` points. It mixes freely with ordinary line series in the same `setData` call — order matters only for layering, and bands are always drawn behind lines regardless.
 
-<pre class="text-content-caption"><code>chart.setData([
+<pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
+
+chart.setData([
     {
         name: 'Confidence range',
         type: 'band',
@@ -44,19 +46,19 @@ A band series carries `{ date, lower, upper }` points. It mixes freely with or
 ]);</code>
 </pre>
 
-A series is treated as a band when it has `type: 'band'`, or when its first point contains both `lower` and `upper`. Dates are parsed via `parseDate (…)`, so strings, timestamps, and Date objects are all accepted.
+A series is treated as a band when it has `type: 'band'`, or when its first point contains both `lower` and `upper`. Dates are parsed via `parseDate(…)`, so strings, timestamps, and Date objects are all accepted.
 
 ### How bands behave
 
 A band sits behind the lines but stays part of the readout:
 
 - drawn behind every line and area, above the grid
-- **reported on hover as a range** — the crosshair tooltip shows `lower – upper` at the cursor date (e.g. `P10–P90: $1.95M – $3.65M`), so you can read the interval without estimating it by eye
+- **reported on hover as a range** — the crosshair tooltip shows `lower – upper` at the cursor date (e.g. `P10–P90 range: $1.9M – $3.6M` at Jan 2025 in the forecast below — both ends go through `yTickFormat`, or by default the three-significant-digit format of the end labels), so you can read the interval without estimating it by eye
 - no crosshair dot — a band has two edges and no single point, so a dot would be ambiguous; markers and end labels skip it for the same reason
 - a series is only reported where its data actually exists, so a forecast band stays silent over the historical region instead of snapping to its first point
 - both `lower` and `upper` participate in the Y scale, so the axis always grows to contain the full range
 
-The fill uses the series `color` at `fillOpacity` (default `0.16`). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.
+The fill uses the series `color` at `fillOpacity` (default: the chart’s `areaOpacity`, `0.12`). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.
 
 ### Forecasts
 
@@ -109,7 +111,7 @@ Stacking several bands — for example P10–P90 around an inner P25–P75 — 
 
 ## Band series options
 
-A band is configured entirely through fields on its series object. It shares the common chart options (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `theme`) documented on the [Settings](/charts/settings/) page, and lives inside a standard [Line](/charts/line/) chart, so all of that chart’s axis and layout options apply too.
+A band is configured entirely through fields on its series object. It shares the common chart options (`title`, `subtitle`, `legend`, `legendPosition`, `source`, `note`, `controls`, `theme`) documented on the [Settings](/charts/settings/) page, and lives inside a standard [Line](/charts/line/) chart, so all of that chart’s axis and layout options apply too.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -146,8 +148,8 @@ A band is configured entirely through fields on its series object. It shares
         <tr>
             <td><code>fillOpacity</code></td>
             <td>number</td>
-            <td><code>0.16</code></td>
-            <td>Opacity of the fill. Falls back to <code>areaOpacity</code> if set, then to the chart default.</td>
+            <td><code>0.12</code></td>
+            <td>Opacity of the fill. Falls back to the series’ <code>areaOpacity</code>, then the chart’s <code>areaOpacity</code> (<code>0.12</code>).</td>
         </tr>
         <tr>
             <td><code>curve</code></td>

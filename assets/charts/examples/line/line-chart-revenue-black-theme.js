@@ -6,18 +6,18 @@
       name: 'Revenue',
       color: RareCharts.darkTheme.accent,
       values: [
-        { date: '2023-02-01', value: 1.2 },
-        { date: '2023-03-01', value: 1.35 },
-        { date: '2023-04-01', value: 0.7 },
-        { date: '2023-05-01', value: 0.75 },
-        { date: '2023-06-01', value: 0.95 },
-        { date: '2023-07-01', value: 1.0 },
-        { date: '2023-08-01', value: 1.2 },
-        { date: '2023-09-01', value: 1.4 },
-        { date: '2023-10-01', value: 2.0 },
-        { date: '2023-11-01', value: 2.5 },
-        { date: '2023-12-01', value: 2.7 },
-        { date: '2024-01-01', value: 2.8 },
+        { date: '2024-01-01', value: 1.2 },
+        { date: '2024-02-01', value: 1.35 },
+        { date: '2024-03-01', value: 0.7 },
+        { date: '2024-04-01', value: 0.75 },
+        { date: '2024-05-01', value: 0.95 },
+        { date: '2024-06-01', value: 1.0 },
+        { date: '2024-07-01', value: 1.2 },
+        { date: '2024-08-01', value: 1.4 },
+        { date: '2024-09-01', value: 2.0 },
+        { date: '2024-10-01', value: 2.5 },
+        { date: '2024-11-01', value: 2.7 },
+        { date: '2024-12-01', value: 2.8 },
       ],
     }
   ];
@@ -41,6 +41,6 @@
     },
     xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
-    curve: 'linear', // см. ниже
+    curve: 'linear',
   }).setData(series);
 })();

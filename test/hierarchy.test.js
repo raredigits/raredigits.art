@@ -117,7 +117,6 @@ describe('normalizeHierarchy — overflow policy (children exceed parent)', () =
     expect(root.overflow).toBe(true);
     expect(root.children.some(c => c.isRemainder)).toBe(false);
     expect(warn).toHaveBeenCalled();
-    warn.mockRestore();
   });
 
   it('throws under strict mode instead of flagging', () => {

@@ -7,7 +7,7 @@ permalink: '/charts/'
 ---
 
 <div class="meta-info">
-  /charts/rare-charts.js
+  /assets/charts/rare-charts.js
   <p>
       {{ versions.charts }} Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@{{ versions.charts }}/rare-charts.min.js">CDN</a> |
       <a href="/assets/charts/rare-charts.js">Download</a> <span class="rd-icon-download"></span>
@@ -41,10 +41,11 @@ If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and
     <p>The library includes:</p>
     <ul>
       <li>Line and time-series charts</li>
-      <li>Bars and dual-axis combinations</li>
+      <li>Bars — stacked and hierarchical too — and dual-axis combinations</li>
       <li>Circulars: donut, pie, gauge</li>
       <li>Geographic maps</li>
-      <li>Network graphs</li>
+      <li>Grids of two to four charts in one card</li>
+      <li>Experimental: network graphs and money-trail flows, Sankey diagrams, flows on a map</li>
     </ul>
   </div>
 </div>
@@ -55,7 +56,7 @@ This reduces friction for developers. You learn the logic once and reuse it eve
 
 <h2>Standard Structure</h2>
 
-Every chart follows a consistent composition: title, subtitle, legend, chart area and data source. These elements are configurable. They can be provided, extended, overridden or omitted entirely.
+Every chart follows a consistent composition: title, subtitle, legend, chart area, data source and an optional note, with room for your own controls inside the card. These elements are configurable. They can be provided, extended, overridden or omitted entirely.
 
 The structure is there to support professional reporting standards. It keeps charts from turning into isolated visual fragments and instead makes them part of a coherent document.
 

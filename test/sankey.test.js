@@ -50,7 +50,6 @@ describe('Sankey', () => {
     });
     expect(host.querySelectorAll('.rc-sankey-link')).toHaveLength(2);
     expect(warn).toHaveBeenCalledTimes(4);
-    warn.mockRestore();
   });
 
   it('throws on a cycle', () => {
@@ -63,8 +62,15 @@ describe('Sankey', () => {
   it("orientation 'auto' switches to vertical on a narrow container", () => {
     const narrow = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');
     Object.defineProperty(host, 'clientWidth', { configurable: true, get: () => 360 });
-    const s = new Sankey('#chart', { animate: false }).setData(budget);
-    expect(s._vertical).toBe(true);
+    new Sankey('#chart', { animate: false }).setData(budget);
+    // Read the drawing, not the private flag (S-04): the flow runs top to
+    // bottom, so the sources share one row above every target, side by side.
+    const rect = name => host.querySelector(`rect.rc-sankey-node[aria-label^="${name}:"]`);
+    const y = name => +rect(name).getAttribute('y');
+    const x = name => +rect(name).getAttribute('x');
+    expect(y('Taxes')).toBe(y('Borrowing'));
+    expect(x('Taxes')).not.toBe(x('Borrowing'));
+    ['Health', 'Schools', 'Roads'].forEach(t => expect(y(t)).toBeGreaterThan(y('Taxes')));
     // two columns × rowHeight 140 → the container grows to fit
     expect(parseFloat(host.style.height)).toBeGreaterThanOrEqual(280);
     Object.defineProperty(host, 'clientWidth', narrow);
@@ -108,5 +114,41 @@ describe('Sankey', () => {
       linkTypes: { grant: { color: '#0a0', label: 'Grant' } },
     }).setData(budget);
     expect(host.querySelector('.rc-legend').textContent).toContain('Grant');
+  });
+});
+
+describe('Sankey — a rejected payload (K-02)', () => {
+  it('a cycle throws at setData and the chart keeps its previous data', () => {
+    document.body.innerHTML = '<div id="chart"></div>';
+    const s = new Sankey('#chart', { animate: false }).setData(budget);
+    const bands = () => document.querySelectorAll('#chart .rc-sankey-link').length;
+    const before = bands();
+    expect(() => s.setData({ links: [{ source: 'a', target: 'b', value: 1 }, { source: 'b', target: 'a', value: 1 }] })).toThrow();
+    expect(() => s.render()).not.toThrow();       // a resize after the error
+    expect(bands()).toBe(before);
+    s.destroy();
+  });
+});
+
+describe('Sankey — keys and colours', () => {
+  it('ids with separators do not merge different pairs (R-20)', () => {
+    document.body.innerHTML = '<div id="chart"></div>';
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const s = new Sankey('#chart', { animate: false }).setData({
+      links: [{ source: 'a→b', target: 'c', value: 1 }, { source: 'a', target: 'b→c', value: 2 }],
+    });
+    expect(document.querySelectorAll('#chart .rc-sankey-link')).toHaveLength(2);
+    expect(warn).not.toHaveBeenCalled();
+    s.destroy();
+  });
+
+  it("linkColor: 'type' keeps an undescribed type muted — the legend lists described types only", () => {
+    document.body.innerHTML = '<div id="chart"></div>';
+    const s = new Sankey('#chart', { animate: false, linkColor: 'type', linkTypes: { grant: { color: '#123456', label: 'Grant' } } })
+      .setData({ links: [{ source: 'a', target: 'b', value: 1, type: 'grant' }, { source: 'a', target: 'c', value: 1, type: 'loan' }] });
+    const fills = [...document.querySelectorAll('#chart .rc-sankey-link')].map(p => [p.__data__.data.type, p.getAttribute('stroke') ?? p.getAttribute('fill')]);
+    expect(Object.fromEntries(fills)).toMatchObject({ grant: '#123456' });
+    expect(Object.fromEntries(fills).loan).not.toBe('#123456');
+    s.destroy();
   });
 });
