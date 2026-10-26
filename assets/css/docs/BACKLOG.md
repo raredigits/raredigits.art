@@ -73,6 +73,9 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
 | `CSS-342` | chore | **Review the sibling consumers and adapt `0.7.X`.** (1) Test the data project and Gutenberg on the gated library — page mode and islands; (2) settle `rem` sizing in islands and across the library (`Q-14` sub-question 3, moved here 2026-10-02); (3) triage the Gutenberg proposal ([`gutenberg-test.md`](./gutenberg-test.md): forms, fluid/display type, hero, container units, breakpoints, real-world hostile-host fixture `GUT-006`) and the data project's equivalent findings — note the proposal predates `Q-14` and was written against the `rare.embed.css` / `rd-` plan; (4) fold the accepted items into the main backlog under `CSS-NNN` ids and re-plan `v0.7.3`+ accordingly; (5) add both projects to the live-consumer set the `CSS-340` migration table is verified against. | P0 | M |
+| `CSS-371` | chore | **Harvest `assets/css/rare-website.css` into the library** (maintainer, 2026-10-26). The site layer grew during the RareCharts `v0.9.8_6` release: walk it rule by rule and sort each one — (a) a general pattern → a library module with docs (candidate: `.grid.bordered` dividers between `.card-row-bordered-item` cells, stacked top to bottom on a phone, used on `/charts/circular/`); (b) a site- or demo-only rule → stays, with a one-line reason (the RareCharts docs demos `.rc-demo-*` and `.price-chart-*`, moved out of the chart bundle by RareCharts X-05; `.icon-grid button`); (c) a stop-gap the library now covers → deleted. The file ends with a header comment that says what may live there. | P1 | S |
+| `CSS-372` | bug | **`.sidenote-wrapper :not(:first-child, .sidenote)` reaches every element inside the wrapper** (`typography/_notes.scss`; found 2026-10-26 by RareCharts). A descendant combinator where a child one (`>`) is meant: each nested element gets `grid-column: 1 / span 5`. A chart card in a sidenote had its header grid opened to five columns, gaps and all, and its title cut to an ellipsis (RareCharts `v0.9.8_6` now guards its header against such rules). Fix: `.sidenote-wrapper > :not(:first-child, .sidenote)`; a fixture with a nested grid inside a sidenote. | P1 | XS |
+| `CSS-373` | bug | **`code { overflow-wrap: anywhere }` (`CSS-354`) breaks option tables at 375 px** (RareCharts audit `O-11`). Every `code` cell may shrink, so a wrapped table never outgrows its `.table-scroll` box and option names break mid-word. Fix in `typography/_tables.scss`: `.table-scroll :is(th, td) code { overflow-wrap: normal }` — inside the scrolling wrapper a token keeps its shape, the table grows and the wrapper scrolls. A site stop-gap with this rule was dropped from `rare-website.css` before the charts release (maintainer, 2026-10-26: styles fixes ride a styles release), so the charts docs tables wrap mid-word until this ships. | P1 | XS |
 
 ## Exit criteria
 
@@ -80,6 +83,7 @@ Rule of thumb: if you change a module's code in `0.7.X` or `0.8.0`, you also wri
 - [ ] `rem` sizing decided (`Q-14` sub-question 3)
 - [ ] The Gutenberg proposal is triaged — every `GUT-NNN` item accepted (renumbered into `CSS-NNN`), rejected or parked, with the reason
 - [ ] The rest of `0.7.X` is re-planned against the findings; both projects are in the live-consumer set
+- [ ] `rare-website.css` harvested (`CSS-371`): every rule moved to the library, kept with a reason, or deleted; `CSS-372` and `CSS-373` fixed with fixtures
 
 ---
 
