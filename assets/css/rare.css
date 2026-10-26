@@ -1,5 +1,5 @@
 @charset "UTF-8";
-/*! Rare Styles v0.7.1 | Since v0.7.0 every rule applies only under the .rd class: <html class="rd"> styles the whole page, class="rd" on an element styles just that block, a page without .rd is untouched. Upgrading from 0.6: add class="rd" to <html>. Migration: https://github.com/raredigits/rare-styles/blob/main/docs/MIGRATION.md | Docs: https://raredigits.art/styles/getting-started/ */
+/*! Rare Styles v0.7.2 | Since v0.7.0 every rule applies only under the .rd class: <html class="rd"> styles the whole page, class="rd" on an element styles just that block, a page without .rd is untouched. Upgrading from 0.6: add class="rd" to <html>. Migration: https://github.com/raredigits/rare-styles/blob/main/docs/MIGRATION.md | Docs: https://raredigits.art/styles/getting-started/ */
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
@@ -17355,7 +17355,7 @@ article .meta-info:where(.rd, .rd *) {
   margin-top: var(--space-sm);
 }
 
-article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *), :where(article) > section > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *) {
+article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *), :where(article) > section > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *) {
   margin-top: var(--space-md);
 }
 
@@ -18619,6 +18619,7 @@ th:first-child:where(.rd, .rd *) {
   --border-color: var(--gray-mid-dark);
   --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
   --border-color-dark: var(--gray-light);
+  --border-code: 1px solid var(--border-color);
   --surface-current: var(--gray-dark);
   --chart-bg: var(--surface-current);
   --chart-text-color: var(--primary-text-color);
@@ -18653,6 +18654,7 @@ th:first-child:where(.rd, .rd *) {
   --border-color: var(--gray);
   --border-color-light: var(--gray-mid-light);
   --border-color-dark: var(--gray-dark);
+  --border-code: 1px solid var(--border-color);
   --chart-bg: var(--surface-current);
   --chart-text-color: var(--primary-text-color);
   --chart-label-color: var(--text-color-light);

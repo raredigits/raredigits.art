@@ -102,7 +102,7 @@ article .meta-info {
 // margin-bottom on the first block does not shrink it — the two collapse,
 // and the larger wins. A `.table-scroll` box contains its table's bottom
 // margin, so it only takes a gap, never gives one.
-$flow-blocks: ".card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
+$flow-blocks: ".card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
 
 article > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll),
 :where(article) > section > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll) {

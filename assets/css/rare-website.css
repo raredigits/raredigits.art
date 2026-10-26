@@ -118,8 +118,8 @@
 .price-chart-change.down { color: var(--red); }
 
 /* /charts/line/time-series/ — the KPI row under the chart, on `.panel__row`.
-   Site-only until the library's `.stat` (CSS-184) ships and the docs move to
-   it (RareCharts RC-058). */
+   Site-only until the docs move to the library's `.stat`, which ships in
+   v0.7.2 (RareCharts RC-058). */
 .price-chart-stats {
     width: calc(100% - 56px);
     margin-left: -8px;

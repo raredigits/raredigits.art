@@ -49,6 +49,8 @@
     --border-color: var(--gray-mid-dark);
     --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
     --border-color-dark: var(--gray-light);
+    // Derived on :root from --border-color, so restated here to follow it.
+    --border-code: 1px solid var(--border-color);
 
     // The surface, and the chart tokens resolved again against the roles
     // above (charts/_roles.scss). The active control mirrors the light one:
@@ -98,6 +100,7 @@
     --border-color: var(--gray);
     --border-color-light: var(--gray-mid-light);
     --border-color-dark: var(--gray-dark);
+    --border-code: 1px solid var(--border-color);
 
     @include chart.role-tokens;
 

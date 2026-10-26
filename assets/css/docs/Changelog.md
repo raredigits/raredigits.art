@@ -72,9 +72,9 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
 - **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px. Paragraph gaps, sidenote rows and the `.air-*` spacers are unchanged.
 - **The prose measure stops at data components** (`CSS-374`, `CSS-384`): data tables, panels, stats and charts. This covers `p`, lists, `dl`, `blockquote` and `figure`.
 - **The `cite` look is scoped** to a blockquote's closing `cite` and `.attribution` (`CSS-379`).
-- **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground. A `.card` nested in it restores the light roles (`CSS-380`).
+- **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground. A `.card` nested in it restores the light roles (`CSS-380`). RareCharts up to 0.9.8_6 reads `--border-color` directly, so on a dark card its range buttons have faint frames until 0.9.8_7.
 - **The bordered panel pads 16px on a phone** (`CSS-376`).
-- **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there.
+- **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there. The API snapshot lists `.rc-chart` as a recognised host hook, not as a library class.
 - **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
 - **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory. The output is unchanged.
 

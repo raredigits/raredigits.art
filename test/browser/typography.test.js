@@ -291,6 +291,8 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
         sectionRowRow: g('r-sec-row1', 'r-sec-row2'), sectionRowRowText: g('r-sec-row1-p', 'r-sec-row2-p'),
         // the panel family and the legend are blocks too (integration of the two streams)
         panelRowPre: g('r-prow', 'r-pre8'), preGrid: g('r-pre8', 'r-pgrid'), gridLegend: g('r-pgrid', 'r-legend'), legendPre: g('r-legend', 'r-pre9'),
+        // phase-2 blocks: KPI figures, a button group, a fieldset
+        preStat: g('r-pre9', 'r-stat'), statGroup: g('r-stat', 'r-bgroup'), groupFieldset: g('r-bgroup', 'r-fs'), fieldsetPre: g('r-fs', 'r-pre10'),
       };
     });
     expect(gap).toEqual({
@@ -305,6 +307,7 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
       rowRow: 0, rowRowText: gap.rowRowText, paragraphText: 8,
       sectionRowRow: 0, sectionRowRowText: gap.sectionRowRowText,
       panelRowPre: 16, preGrid: 16, gridLegend: 16, legendPre: 16,
+      preStat: 16, statGroup: 16, groupFieldset: 16, fieldsetPre: 16,
     });
     // side by side, the text of the next row sits a paragraph gap below (on a
     // phone the note stacks between the two paragraphs)

@@ -3,62 +3,174 @@
     "category": "Layouts",
     "url": "/styles/layout/",
     "topics": [
-      { "title": "Grid", "url": "/styles/layout/#grid-architecture" },
-      { "title": "Template Structure", "url": "/styles/layout/#template-structure" },
-      { "title": "Responsive Design", "url": "/styles/layout/#responsive-behavior" },
-      { "title": "Full-Width Layout", "url": "/styles/layout/#full-width-layout-option" },
-      { "title": "Themes", "url": "/styles/themes/" }
+      {
+        "title": "Grid",
+        "url": "/styles/layout/#grid-architecture"
+      },
+      {
+        "title": "Template Structure",
+        "url": "/styles/layout/#template-structure"
+      },
+      {
+        "title": "Responsive Design",
+        "url": "/styles/layout/#responsive-behavior"
+      },
+      {
+        "title": "Full-Width Layout",
+        "url": "/styles/layout/#full-width-layout-option"
+      },
+      {
+        "title": "Themes",
+        "url": "/styles/themes/"
+      }
     ]
   },
   {
     "category": "Typography",
-        "url": "/styles/typography/",
-        "topics": [
-        { "title": "Font Families", "url": "/styles/typography/#typeface-selection" },
-        { "title": "Copy Hierarchy", "url": "/styles/typography/#copy-hierarchy" },
-        { "title": "Headings", "url": "/styles/typography/#heading-levels" },
-        { "title": "Body Text", "url": "/styles/typography/text-content/#body-text" },
-        { "title": "Blockquotes", "url": "/styles/typography/text-content/#blockquote" },
-        { "title": "Code", "url": "/styles/typography/text-content/#raw-code" },
-        { "title": "Notes", "url": "/styles/typography/notes/" }
-        ]
+    "url": "/styles/typography/",
+    "topics": [
+      {
+        "title": "Font Families",
+        "url": "/styles/typography/#typeface-selection"
+      },
+      {
+        "title": "Copy Hierarchy",
+        "url": "/styles/typography/#copy-hierarchy"
+      },
+      {
+        "title": "Headings",
+        "url": "/styles/typography/#heading-levels"
+      },
+      {
+        "title": "Body Text",
+        "url": "/styles/typography/text-content/#body-text"
+      },
+      {
+        "title": "Blockquotes",
+        "url": "/styles/typography/text-content/#blockquote"
+      },
+      {
+        "title": "Code",
+        "url": "/styles/typography/text-content/#raw-code"
+      },
+      {
+        "title": "Callouts",
+        "url": "/styles/typography/text-content/#callouts"
+      },
+      {
+        "title": "Notes",
+        "url": "/styles/typography/notes/"
+      }
+    ]
   },
   {
     "category": "Interactive Elements",
     "url": "/styles/typography/interactive/",
     "topics": [
-      { "title": "Links", "url": "/styles/typography/interactive/#links" },
-      { "title": "Buttons", "url": "/styles/elements/buttons/" },
-      { "title": "Forms", "url": "/styles/elements/forms/" }
+      {
+        "title": "Links",
+        "url": "/styles/typography/interactive/#links"
+      },
+      {
+        "title": "Buttons",
+        "url": "/styles/elements/buttons/"
+      },
+      {
+        "title": "Forms",
+        "url": "/styles/elements/forms/"
+      }
     ]
   },
   {
     "category": "Lists & Columns",
     "url": "/styles/typography/lists/",
     "topics": [
-      { "title": "Lists", "url": "/styles/typography/lists/#lists" },
-      { "title": "Columns", "url": "/styles/typography/lists/#multi-column-list-layouts" },
-      { "title": "Multigroup & Fixed Rows", "url": "/styles/typography/lists/#list-group-pack" },
-      { "title": "Feed List", "url": "/styles/typography/lists/#feed-lists" },
-      { "title": "Catalog List", "url": "/styles/typography/lists/#catalog-lists" }
+      {
+        "title": "Lists",
+        "url": "/styles/typography/lists/#lists"
+      },
+      {
+        "title": "Columns",
+        "url": "/styles/typography/lists/#multi-column-list-layouts"
+      },
+      {
+        "title": "Multigroup & Fixed Rows",
+        "url": "/styles/typography/lists/#list-group-pack"
+      },
+      {
+        "title": "Feed List",
+        "url": "/styles/typography/lists/#feed-lists"
+      },
+      {
+        "title": "Catalog List",
+        "url": "/styles/typography/lists/#catalog-lists"
+      }
     ]
   },
   {
     "category": "Tables",
     "url": "/styles/typography/tables/",
     "topics": [
-      { "title": "Preset Tables", "url": "/styles/typography/tables/#preset-tables" }
+      {
+        "title": "Preset Tables",
+        "url": "/styles/typography/tables/#preset-tables"
+      }
+    ]
+  },
+  {
+    "category": "Bricks",
+    "url": "/styles/bricks/",
+    "topics": [
+      {
+        "title": "Cards",
+        "url": "/styles/bricks/"
+      },
+      {
+        "title": "Card vs Panel",
+        "url": "/styles/bricks/#card-vs-panel"
+      },
+      {
+        "title": "Panels",
+        "url": "/styles/bricks/panels/"
+      },
+      {
+        "title": "Legend",
+        "url": "/styles/bricks/legend/"
+      },
+      {
+        "title": "Stats",
+        "url": "/styles/bricks/stats/"
+      }
     ]
   },
   {
     "category": "Colors",
     "url": "/styles/colors/",
     "topics": [
-      { "title": "Grayscale Palette", "url": "/styles/colors/#grayscale-palette" },
-      { "title": "Brand Color", "url": "/styles/colors/#brand-color" },
-      { "title": "Technical Colors", "url": "/styles/colors/#technical-colors" },
-      { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" },
-      { "title": "Supporting Colors", "url": "/styles/colors/#supporting-colors" }
+      {
+        "title": "Grayscale Palette",
+        "url": "/styles/colors/#grayscale-palette"
+      },
+      {
+        "title": "Brand Color",
+        "url": "/styles/colors/#brand-color"
+      },
+      {
+        "title": "Technical Colors",
+        "url": "/styles/colors/#technical-colors"
+      },
+      {
+        "title": "Semantic Colors",
+        "url": "/styles/colors/#semantic-colors"
+      },
+      {
+        "title": "Chart Tokens",
+        "url": "/styles/colors/chart-tokens/"
+      },
+      {
+        "title": "Supporting Colors",
+        "url": "/styles/colors/#supporting-colors"
+      }
     ]
   }
 ]
