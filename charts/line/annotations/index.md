@@ -99,6 +99,16 @@ Annotations whose date(s) fall outside the visible X extent are skipped automati
 
 Horizontal annotations follow the same rule on the value axis: a level outside the visible Y range is skipped, and a band that runs past the top or bottom of the plot is cut there, with only its real edges drawn. Annotations never widen the axis, so a level far from the data stays hidden — on `Line` widen the axis with `yTickValues`, on `DualAxes` with `y1Domain` / `y2Domain`. On a chart with bars (`DualAxes`, a dated `Bar`) the time scale is inset by half a bar so the first and last bars are drawn whole: ranges and horizontal lines and bands still reach the edges of the plot, so a range that starts half a period before the first bar shades it whole.
 
+### When to use them
+
+Annotations are content, not decoration. A good annotation answers a question the chart raises:
+
+- “Why did hashrate drop in April 2024?” → halving annotation.
+- “Why did revenue plateau in Q3?” → range covering the marketing freeze.
+- “When did the new pricing roll out?” → point on launch day.
+
+Avoid annotating every minor event. The chart starts to look like a footnote index, and the reader stops reading them. Three or four well-chosen markers are usually enough — the rest belongs in the article body.
+
 ### Styling
 
 Annotations inherit the muted theme color by default so they don’t compete with the data. Per-annotation overrides:
@@ -338,16 +348,6 @@ Annotations inherit the muted theme color by default so they don’t compete wit
     </tbody>
 </table>
 </div>
-
-### When to use them
-
-Annotations are content, not decoration. A good annotation answers a question the chart raises:
-
-- “Why did hashrate drop in April 2024?” → halving annotation.
-- “Why did revenue plateau in Q3?” → range covering the marketing freeze.
-- “When did the new pricing roll out?” → point on launch day.
-
-Avoid annotating every minor event. The chart starts to look like a footnote index, and the reader stops reading them. Three or four well-chosen markers are usually enough — the rest belongs in the article body.
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/btc-price-chart.js"></script>

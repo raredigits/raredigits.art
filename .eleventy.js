@@ -27,6 +27,8 @@ module.exports = function(eleventyConfig) {
     return `${month} ${day}, ${year}`;
   });
 
+  eleventyConfig.addGlobalData("buildDate", () => new Date());
+
   eleventyConfig.addPassthroughCopy("assets/img");
   eleventyConfig.addPassthroughCopy("assets/js");
   eleventyConfig.addPassthroughCopy("assets/css/rare.css");
