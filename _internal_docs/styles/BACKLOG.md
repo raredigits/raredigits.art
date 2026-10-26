@@ -123,6 +123,14 @@ The sibling consumers review (`CSS-342`) moved to `v0.7.3`.
 | `CSS-382` | bug | **One long `h1` word overflows at 320 px** (`/charts/bar/hierarchical-bar/`, `/charts/line/annotations/`). Ship a minimal fix now: `overflow-wrap` on the page-title `h1`, or a `clamp()`. The fluid scale stays `CSS-164` (`0.8.1`). | P2 | S |
 | `CSS-383` | bug | **The print module prints URLs after links inside `article p` / `li`**, including a chart's note or details panel placed in an article. Exclude `.rc-chart` descendants, or scope the rule to prose. Hiding chart controls in print is RareCharts' side (RC-019). | P2 | S |
 
+**Found in phase 1 (2026-10-26).** They go into phase 2 unless the row says otherwise.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-384` | bug | **`dl`, `blockquote` and `figure` still take the prose measure inside components.** `CSS-374` freed `p`/`ul`/`ol` inside data tables, panels, stats and charts, but these three cap themselves everywhere. For example, the RareCharts Graph details `<dl>` stops at 561 px inside a 960 px panel. Extend the same exclusion. | P2 | S |
+| `CSS-385` | bug | **In print, `.card-caption` keeps its −32 px outdent.** It is missing from the print module's fold-back list, so on `/charts/map/` the option tables hang 32 px left of the paper column. | P2 | S |
+| `CSS-386` | feat | **Minimum table width on phones.** Since `CSS-373`, code cells keep their shape, so data tables sit at their minimum width and description columns are narrow at 375 px. `/charts/installation/`'s table grew from 1215 to 1904 px tall. Consider a phone min-width for `.table-scroll` tables. **Deferred to `v0.7.3`**: it needs a design choice per table type. | P2 | S |
+
 ### Part B — Chart dependencies moved in from later milestones (maintainer, 2026-10-26)
 
 These are the debt-register items that RareCharts or its docs actually depend on, plus their prerequisites (`CSS-121`, `CSS-124`). The original rows keep a pointer here.
@@ -210,7 +218,7 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 | Fluid `h1` | `CSS-164` (`0.8.1`) — **not moved:** `CSS-382` covers the charts pages | — |
 | Colour utility vs `.card` cascade order | `CSS-130` (`0.8.1`) — **not moved:** the one charts use (`black-bg`) is dropped | — |
 | Dark theme by system preference | `Q-07`, `CSS-169` (`0.8.1`) — **not moved:** RareCharts' dark theme comes from `darkTheme`, not from the page | — |
-| Content-starter demo pins `rare-charts@v0.9.8_5` | RareCharts `O-12` — left as is (maintainer, 2026-10-23) | — |
+| Content-starter demo pins `rare-charts@v0.9.8_5` | RareCharts `O-12` — left as is (maintainer, 2026-10-23). **Note (`CSS-379`):** when the starter's rare-styles pin moves to ≥ `v0.7.2`, move its rare-charts pin to ≥ `v0.9.8_6` in the same change. Older RareCharts relied on the bare `cite` block for its source line. | — |
 | `Q-14` sub-question 4 (no opt-out until a real case) | `Q-14` — the note was added there | RareCharts is the real case. |
 
 ## Exit criteria
