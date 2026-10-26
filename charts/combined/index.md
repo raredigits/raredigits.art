@@ -10,7 +10,7 @@ Combined charts in RareCharts do not require a separate class. They are built
 
 To create a combined chart, you only need to specify the `type` for a particular series. All other series remain lines by default.
 
-<pre class="text-content-caption card-dashboard-bordered"><code>{
+<pre class="text-content-caption"><code>{
     name: 'Spread',
     axis: 'y2',
     type: 'bar',            <span class="code-comment">// switch this series to bar</span>
@@ -20,15 +20,13 @@ To create a combined chart, you only need to specify the `type` for a partic
 
 The result is a combined chart where lines and bars coexist on the same timeline:
 
-<div class="card text-content-caption card-dashboard-bordered">
-    <div id="dual-chart-ltcm-treasuries-combined"></div>
-</div>
+<div id="dual-chart-ltcm-treasuries-combined" class="panel panel--bordered text-content-caption"></div>
 
 Each series explicitly declares two things: which axis it belongs to (`y1` or `y2`) and how it should be rendered (`line` or `bar`). By design, Y1 is the right axis and Y2 is the left. You can mix any number of series in any configuration — multiple lines on one axis, multiple bars on the other, or both combined.
 
 Per-series visual overrides continue to work exactly as in `DualAxes`. For example:
 
-<pre class="text-content-caption card-dashboard-bordered"><code>{
+<pre class="text-content-caption"><code>{
     name:        'Forecast',
     axis:        'y1',
     type:        'line',
@@ -47,7 +45,7 @@ If you only need bars and do not require a second scale, assign all series to
 
 Bars take their width from `barWidthRatio`, a share of the smallest gap between bar dates, or in px from `barWidth`: on the chart for every bar series, or on one series for that series alone. With `barGrouping: 'cluster'`, `barWidth` is the width of each bar, and the cluster is their sum, centred on the date:
 
-<pre class="text-content-caption card-dashboard-bordered"><code>new RareCharts.DualAxes('#chart', {
+<pre class="text-content-caption"><code>new RareCharts.DualAxes('#chart', {
     barGrouping: 'cluster',
     barWidth:    6,                   <span class="code-comment">// each bar of the cluster</span>
 }).setData([
@@ -64,9 +62,7 @@ Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) o
 
 `scaleToggle` adds a Lin/Log button pinned to the top right of the chart header, above the Y-axis labels — level with the timeframe buttons, which keep their place; it names the current scale and flips it on click. `true` drives Y1 — the right axis, usually the level or index — `'y2'` the left one, `'both'` both together (the button then reads Log while either axis is log). From code, `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'` (the default), and `onScaleChange(fn)` reports every switch as `{ scale, axis }` — except a `setYScale(…, { silent: true })`. In the demo the button drives Y1 only; the yearly change on Y2 stays linear.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="combined-chart-log-scale"></div>
-</div>
+<div id="combined-chart-log-scale" class="panel panel--bordered text-content-caption"></div>
 <br>
 <pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
     y1Scale: 'log',

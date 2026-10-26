@@ -2,7 +2,8 @@
 // site, in page mode, at 375 / 768 / 769 / 1024 / 1440px, at fractional
 // widths, and at 200% zoom (720 / 640 CSS px = 1440 / 1280 windows zoomed).
 // Checks: no horizontal page overflow, no keyboard focus hidden under the
-// cookie notice or invisible, anchor targets clear of the fixed header.
+// cookie notice or invisible, anchor targets clear of the fixed header, and
+// (v0.7.2) chart text readable on whatever shows through its frame.
 // Needs a built site: `npm run test:browser` runs Eleventy first.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { existsSync, readdirSync } from 'node:fs';
@@ -17,10 +18,14 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 const PAGES = [
   '/', '/styles/', '/styles/getting-started/', '/styles/typography/', '/styles/typography/lists/',
   '/styles/typography/tables/', '/styles/typography/notes/', '/styles/layout/spacing/', '/styles/utilities/',
+  '/styles/bricks/panels/', '/styles/bricks/legend/', '/charts/circular/',
   '/charts/line/', '/charts/sankey/', '/scripts/carousel/', '/kb/taming-lesspregreater/', '/examples/styles/hetke/landing/',
 ];
 const WIDTHS = [375, 640, 720, 768, 769, 1024, 1440];
 const TAB_WIDTHS = [375, 768, 1440];
+// Chart pages with a frame that once had a `.card` surface or a colour
+// utility (CSS-183a).
+const CHART_PAGES = ['/charts/', '/charts/styles/', '/charts/line/', '/charts/bar/', '/charts/multi/', '/charts/combined/', '/charts/sankey/'];
 const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#main-content', '/charts/line/dual-axes/#options-reference'];
 
 let server;
@@ -167,6 +172,47 @@ describe('anchor targets clear the fixed header', () => {
       if (r.gap < 0 || (r.gap > 16 && !r.atEnd)) bad.push(`${a} gap=${Math.round(r.gap)}`);
       await page.close();
     }
+    expect(bad).toEqual([]);
+  });
+});
+
+describe('chart text is readable on its frame (CSS-183a)', () => {
+  // The chart frames moved from `.card` to the transparent `.panel`. A colour
+  // utility that the card's background used to hide (`black-bg` on the
+  // /charts/ hero) came alive under a light-theme chart: its title, subtitle
+  // and source were black on black. Each chart's own text has to keep at
+  // least 3:1 against the first background behind it.
+  it.each([1440, 375])('at %ipx', async (width) => {
+    const bad = [];
+    let checked = 0;
+    for (const p of CHART_PAGES) {
+      const page = await open(p, width);
+      await page.waitForSelector('.rc-chart-title');
+      const r = await page.evaluate(() => {
+        const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+        const lum = ([r, g, b]) => {
+          const ch = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+          return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+        };
+        const behind = (el) => {
+          for (let n = el; n; n = n.parentElement) {
+            const c = rgb(getComputedStyle(n).backgroundColor);
+            if (c.length === 3 || c[3] > 0) return c.slice(0, 3);
+          }
+          return [255, 255, 255];
+        };
+        return [...document.querySelectorAll('.rc-chart-title, .rc-chart-subtitle, .rc-chart-source')]
+          .filter((el) => el.textContent.trim() && el.getBoundingClientRect().height)
+          .map((el) => {
+            const [a, b] = [lum(rgb(getComputedStyle(el).color).slice(0, 3)), lum(behind(el))];
+            return { text: `${el.closest('.rc-chart')?.id} ${el.className}`, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
+          });
+      });
+      checked += r.length;
+      for (const x of r) if (x.ratio < 3) bad.push(`${p} ${x.text} ${x.ratio.toFixed(2)}`);
+      await page.close();
+    }
+    expect(checked).toBeGreaterThan(20);
     expect(bad).toEqual([]);
   });
 });

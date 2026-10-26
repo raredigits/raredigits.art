@@ -121,9 +121,7 @@ Two themes ship with the library.
 
 The result:
 
-<div class="text-content-caption card-dashboard-bordered black-bg">
-    <div id="line-chart-demo-revenue"></div>
-</div>
+<div id="line-chart-demo-revenue" class="panel panel--bordered text-content-caption black-bg"></div>
 
 ## Creating a custom theme
 

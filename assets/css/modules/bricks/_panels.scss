@@ -1,0 +1,172 @@
+@use "../utilities/breakpoints" as bp;
+@use "contain-outdents" as co;
+
+// PANELS (CSS-180…CSS-183, v0.7.2) — the data surface.
+// A card carries narrative content; a panel carries data and system content:
+// a KPI, a chart, a status, settings (the rule: docs/STYLEGUIDE.md, "Card vs
+// panel").
+//   <div class="panel panel--bordered">
+//     <div class="panel__header"><h4>Revenue</h4><span>Q3</span></div>
+//     <div class="panel__body">…</div>
+//     <div class="panel__footer">Source: …</div>
+//   </div>
+// Theme-agnostic: a panel paints no background and sets no text colour. Its
+// lines use the border and text roles, which an inverted surface or a theme
+// re-maps, and whatever surface is behind it shows through.
+// A panel is a block box with padding, so content moves over from
+// `.card-dashboard-bordered` as it was: inline runs stay on one line and
+// paragraph margins collapse. A panel with parts becomes a flex column, so the
+// body takes the free height and footers line up across a row of panels.
+// A chart frame is a panel on the chart element itself:
+//   <div id="chart" class="panel panel--bordered text-content-caption"></div>
+// RareCharts draws into that element as its card: it counts the padding and
+// border into the chart's `height`, and its axis and slice labels may run
+// into the padding (in a frame around an unpadded chart they are clipped).
+// It makes the element `.rc-chart`, a flex column that owns its header,
+// footer, gaps and clipping. So a panel sets no `gap`, `overflow` or
+// `position`, and its layout sits in `:where()`, at zero specificity: the
+// chart's own layout (`.rc-chart--legend-right` is a grid) and a layout
+// utility on the element (`.grid`) win whatever the load order.
+
+:where(.panel) {
+    min-width: 0;
+}
+
+:where(.panel:has(> .panel__header, > .panel__body, > .panel__footer)) {
+    display: flex;
+    flex-direction: column;
+}
+
+// The padding cannot sit at zero specificity: the reset at the end of
+// rare.scss (`* { padding: 0 }`) is zero-specificity too, and comes last.
+.panel {
+    padding: var(--space-md) var(--space-lg);
+
+    // Phone step (CSS-376): at 375px the 16px 32px padding left a line chart
+    // 293px of a 359px frame.
+    @include bp.mobile {
+        padding: var(--space-md);
+    }
+
+    // A panel has no page margins for outdents to hang into.
+    @include co.contain-outdents;
+}
+
+// The bordered data surface (was `.card-dashboard-bordered`, CSS-181).
+.panel--bordered {
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-xs);
+}
+
+// Docks the panel flush against its parent — nested in another panel or in a
+// grid cell that has its own padding (CSS-183).
+.panel--flush {
+    padding: 0;
+}
+
+.panel__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-md);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border-color-light);
+
+    // The title sits on the header's baseline, not on the heading rhythm.
+    > :is(h1, h2, h3, h4, h5, h6) {
+        margin: 0;
+    }
+}
+
+// Takes the free height, so footers line up across a row of panels.
+.panel__body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.panel__footer {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--border-color-light);
+    font-size: var(--font-size-sm);
+    color: var(--text-color-light);
+}
+
+// PANEL GRID — arranges panels: as many columns of at least `--panel-grid-min`
+// as fit, one on a phone; the panels of a row share its height. Flat, not
+// `.panel__grid` (hybrid BEM): it lays panels out rather than being one.
+:where(.panel-grid) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--panel-grid-min, 14rem)), 1fr));
+    gap: var(--space-md);
+}
+
+// A chart draws its svg at a fixed width: a cell that cannot shrink below it
+// overflows the grid instead of letting the chart redraw narrower.
+.panel-grid > * {
+    min-width: 0;
+}
+
+// PANEL ROW — a bordered strip of cells side by side: KPI figures, gauges.
+// Was `.card-row-bordered` / `.card-row-bordered-item` (CSS-181). It works
+// inside a panel or on its own.
+.panel__row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-xs);
+
+    // A long row (six stats) cannot shrink below its content on a phone;
+    // scroll it inside its own border instead of widening the page (CSS-354).
+    @include bp.mobile {
+        overflow-x: auto;
+        scrollbar-width: thin;
+    }
+}
+
+.panel__row-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--space-md);
+    text-align: center;
+}
+
+.panel__row > .panel__row-item:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+// Neutral alignment: cells centre their text (KPI figures); a chart or prose
+// in a cell reads from the start instead (CSS-371).
+.panel__row--text-start > .panel__row-item {
+    text-align: start;
+}
+
+// Stacking mode (CSS-371, harvested from rare-website.css): cells side by
+// side from tablet up, one under another on a phone, the dividers turning
+// with them. For cells that must not shrink into a scrolling strip — charts,
+// gauges. The cells share the width equally and may shrink below their
+// content, so a chart in one redraws narrower.
+.panel__row--stack > .panel__row-item {
+    min-width: 0;
+}
+
+@include bp.mobile {
+    .panel__row--stack {
+        flex-direction: column;
+        overflow-x: visible;
+    }
+
+    .panel__row--stack > .panel__row-item {
+        flex: none;
+    }
+
+    .panel__row--stack > .panel__row-item:not(:last-child) {
+        border-right: 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+}

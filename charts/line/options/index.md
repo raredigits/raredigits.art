@@ -10,7 +10,7 @@ Line charts are not only about data. They are also about how that data is read. 
 
 This demo exposes the core visual options available in Line. Instead of listing them abstractly, it allows you to toggle them and see how the chart reacts in real time.
 
-<div id="rc-demo-root"></div>
+<div id="rc-demo-root" class="panel panel--bordered full-width-caption"></div>
 
 ### Curve
 

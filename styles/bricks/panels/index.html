@@ -1,0 +1,132 @@
+---
+layout: page.njk
+title: "Bricks / Panels"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/bricks/panels/'
+---
+
+<div class="meta-info">
+    css/modules/bricks/_panels.scss
+</div>
+
+<section>
+    <p>The panel is the data surface: a KPI, a chart, a status, settings — content a system produced and a reader scans. A card is for narrative content; the rule for choosing between them is on the <a href="/styles/bricks/#card-vs-panel">Building Blocks</a> page.</p>
+    <p>A panel is a block with inner padding — <code>16px 32px</code>, <code>16px</code> on a phone. It paints no background and sets no text colour, so it works on any surface: the page, a card, a dark band. Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside it. Directly inside a <a href="/scripts/collapsible/">collapsible</a>'s content, a panel takes an even <code>16px</code>.</p>
+    <div class="panel panel--bordered text-content-caption">
+        <code>.panel.panel--bordered</code>
+    </div>
+</section>
+
+<section>
+    <h2 id="modifiers">Modifiers</h2>
+    <dl>
+        <dt><code>.panel--bordered</code></dt>
+        <dd>The frame: a 1px border in <code>--border-color</code> with small rounded corners.</dd>
+
+        <dt><code>.panel--flush</code></dt>
+        <dd>No inner padding. For a panel docked inside another panel or a grid cell that already has its own.</dd>
+    </dl>
+    <div class="panel panel--bordered text-content-caption">
+        <div class="panel__header"><h5>Outer panel</h5></div>
+        <div class="panel panel--bordered panel--flush">
+            <div class="skeleton-row"></div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="header-body-footer">Header, body, footer</h2>
+    <p>Three optional parts give the panel a predictable frame. <code>.panel__header</code> lays out a title and its meta on one baseline, with a divider below; a heading inside it drops its own margins. <code>.panel__body</code> takes the free height, so the footers of panels in one row line up. <code>.panel__footer</code> holds the source or a timestamp in small muted text, with a divider above. A panel with any of the three becomes a flex column; put loose text in the body, or it splits into one line per run.</p>
+    <div class="panel panel--bordered text-content-caption">
+        <div class="panel__header"><h4>Revenue</h4><span class="note">Q3 2026</span></div>
+        <div class="panel__body"><p class="font-size-xl">$2.84M</p></div>
+        <div class="panel__footer">Source: internal accounting</div>
+    </div>
+<pre class="text-content-caption"><code>&lt;div class="panel panel--bordered"&gt;
+    &lt;div class="panel__header"&gt;&lt;h4&gt;Revenue&lt;/h4&gt;&lt;span class="note"&gt;Q3 2026&lt;/span&gt;&lt;/div&gt;
+    &lt;div class="panel__body"&gt;…&lt;/div&gt;
+    &lt;div class="panel__footer"&gt;Source: internal accounting&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="panel-grid">Panel grid</h2>
+    <p><code>.panel-grid</code> arranges panels in as many columns as fit, each at least <code>--panel-grid-min</code> wide (<code>14rem</code> by default), and one column on a narrow screen. The panels of a row share its height. A cell may shrink below its content, so a chart in it redraws narrower instead of overflowing the grid.</p>
+    <div class="panel-grid text-content-caption">
+        <div class="panel panel--bordered">
+            <div class="panel__header"><h5>Orders</h5></div>
+            <div class="panel__body"><p class="font-size-lg">1,284</p></div>
+            <div class="panel__footer">Today</div>
+        </div>
+        <div class="panel panel--bordered">
+            <div class="panel__header"><h5>Returns</h5></div>
+            <div class="panel__body"><p class="font-size-lg">37</p><p class="note">Two over the weekly average.</p></div>
+            <div class="panel__footer">Today</div>
+        </div>
+        <div class="panel panel--bordered">
+            <div class="panel__header"><h5>Uptime</h5></div>
+            <div class="panel__body"><p class="font-size-lg">99.98%</p></div>
+            <div class="panel__footer">30 days</div>
+        </div>
+    </div>
+<pre class="text-content-caption"><code>&lt;div class="panel-grid" style="--panel-grid-min: 12rem"&gt;
+    &lt;div class="panel panel--bordered"&gt;…&lt;/div&gt;
+    &lt;div class="panel panel--bordered"&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="panel-row">Panel row</h2>
+    <p><code>.panel__row</code> is a bordered strip of cells side by side, divided by lines: KPI figures under a chart, a row of gauges. Each <code>.panel__row-item</code> takes an equal share and centres its text. It works inside a panel or on its own. On a phone a long row scrolls sideways inside its own border instead of widening the page.</p>
+    <div class="panel__row text-content-caption">
+        <div class="panel__row-item"><span class="note">OPEN</span>184.62</div>
+        <div class="panel__row-item"><span class="note">HIGH</span>188.13</div>
+        <div class="panel__row-item"><span class="note">LOW</span>185.23</div>
+        <div class="panel__row-item"><span class="note">VOLUME</span>95M</div>
+    </div>
+
+    <h3 id="stacking-mode">Stacking mode</h3>
+    <p><code>.panel__row--stack</code> keeps the cells side by side from tablet width up and puts them one under another on a phone; the dividers turn with them. Use it for cells that must not shrink into a scrolling strip, such as charts. <code>.panel__row--text-start</code> aligns the cells' text to the start instead of the centre, so a chart's title in a cell reads like every other chart's.</p>
+    <div class="panel__row panel__row--stack panel__row--text-start text-content-caption">
+        <div class="panel__row-item"><h5>Goal progress</h5><div class="skeleton-row"></div></div>
+        <div class="panel__row-item"><h5>Budget</h5><div class="skeleton-row"></div></div>
+        <div class="panel__row-item"><h5>Disk usage</h5><div class="skeleton-row"></div></div>
+    </div>
+<pre class="text-content-caption"><code>&lt;div class="panel__row panel__row--stack panel__row--text-start"&gt;
+    &lt;div class="panel__row-item"&gt;&lt;div id="gauge-1"&gt;&lt;/div&gt;&lt;/div&gt;
+    &lt;div class="panel__row-item"&gt;&lt;div id="gauge-2"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="chart-frames">Chart frames</h2>
+    <p>A chart's frame is a panel on the chart element itself — <a href="/charts/">RareCharts</a> draws into the element you give it and calls it the card. The chart keeps its own layout, clipping and spacing; the panel adds the padding and the frame, and the chart's <code>height</code> includes them. When a page composes more around a chart — a quote header, a row of figures — the panel wraps them all and the chart inside takes no frame of its own. Two places take no frame at all: a chart in a sidenote, which illustrates the text from the margin, and a chart in a <a href="#panel-row">panel row</a> cell, which the row already frames.</p>
+    <div id="panels-chart-demo" class="panel panel--bordered text-content-caption"></div>
+<pre class="text-content-caption"><code>&lt;div id="chart" class="panel panel--bordered text-content-caption"&gt;&lt;/div&gt;
+
+new RareCharts.Line('#chart', { title: 'Weekly active users' }).setData(data);</code></pre>
+    <p>The panel's layout has zero specificity, so a layout utility on the same element (<code>.grid</code>) and the chart's own layout win whatever order the stylesheets load in. Its padding does not: like every component's, it wins over a spacing utility on the same element — use <code>.panel--flush</code>, or wrap the content, for other padding.</p>
+</section>
+
+<section>
+    <h2 id="renamed">Renamed in v0.7.2</h2>
+    <p>Before v0.7.2 the bordered panel and the panel row were misfiled under the card as <code>.card-dashboard-bordered</code> and <code>.card-row-bordered</code> / <code>.card-row-bordered-item</code>. Those names were removed with no alias: <code>.card-dashboard-bordered</code> is now <code>.panel .panel--bordered</code> (both classes: the padding is the panel's, the frame the modifier's), and the row is <code>.panel__row</code> / <code>.panel__row-item</code>. The <a href="https://github.com/raredigits/rare-styles/blob/main/docs/MIGRATION.md">migration table</a> has the details.</p>
+</section>
+
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+    (() => {
+        const start = Date.UTC(2026, 0, 5);
+        const data = Array.from({ length: 26 }, (_, i) => ({
+            date: new Date(start + i * 7 * 864e5),
+            value: Math.round(4200 + i * 95 + 260 * Math.sin(i / 2.5)),
+        }));
+        new RareCharts.Line('#panels-chart-demo', {
+            title: 'Weekly active users',
+            subtitle: 'A chart element that is also a bordered panel',
+            source: 'Source: demo data',
+            height: 300,
+        }).setData(data);
+    })();
+</script>

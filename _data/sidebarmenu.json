@@ -41,7 +41,14 @@
           ]
       },
       { "title": "Colors", "url": "/styles/colors/" },
-      { "title": "Bricks", "url": "/styles/bricks/" },
+      {
+          "title": "Bricks",
+          "url": "/styles/bricks/",
+          "subitems": [
+            { "title": "Panels", "url": "/styles/bricks/panels/" },
+            { "title": "Legend", "url": "/styles/bricks/legend/" }
+          ]
+      },
       { "title": "Alignment", "url": "/styles/alignment/" },
       { "title": "Navigation", "url": "/styles/navigation/" },
       { "title": "Decorations", "url": "/styles/decorations/" },

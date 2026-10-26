@@ -263,6 +263,8 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
         // sidenote rows are prose: row after row reads as paragraph after paragraph
         rowRow: g('r-row1', 'r-row2'), rowRowText: g('r-row1-p', 'r-row2-p'), paragraphText: g('r-pp1', 'r-pp2'),
         sectionRowRow: g('r-sec-row1', 'r-sec-row2'), sectionRowRowText: g('r-sec-row1-p', 'r-sec-row2-p'),
+        // the panel family and the legend are blocks too (integration of the two streams)
+        panelRowPre: g('r-prow', 'r-pre8'), preGrid: g('r-pre8', 'r-pgrid'), gridLegend: g('r-pgrid', 'r-legend'), legendPre: g('r-legend', 'r-pre9'),
       };
     });
     expect(gap).toEqual({
@@ -276,6 +278,7 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
       marginTopSecond: 0, // a margin-top utility on the second block decides
       rowRow: 0, rowRowText: gap.rowRowText, paragraphText: 8,
       sectionRowRow: 0, sectionRowRowText: gap.sectionRowRowText,
+      panelRowPre: 16, preGrid: 16, gridLegend: 16, legendPre: 16,
     });
     // side by side, the text of the next row sits a paragraph gap below (on a
     // phone the note stacks between the two paragraphs)

@@ -74,6 +74,27 @@ State MAY also be styled via ARIA attributes the scripts maintain (`[aria-expand
 
 **Migration note:** prefixing the existing component/utility surface is deliberately deferred — `CSS-133` (`0.8.0`) audits each class and decides prefix / alias / leave per case. Do not preemptively rename shipped classes.
 
+## Card vs panel (`CSS-182`, v0.7.2)
+
+Two surfaces, chosen by what the content is, never by how it should look:
+
+- **`.card` — narrative content.** A person wrote it and it reads as content: an article preview, an author or a project, a pricing block, a briefing list in a post. A soft surface (`--gray-lightest`) with no fixed inner structure.
+- **`.panel` — data and system content.** A system produced it and it reads as data: a KPI, a chart, a status, settings, a log. No surface of its own (theme-agnostic), an optional frame (`.panel--bordered`), a fixed structure when it needs one (`.panel__header` / `__body` / `__footer`), rows of figures (`.panel__row`), a grid of panels (`.panel-grid`).
+
+When unsure, ask where the block would feel at home: in an article (card) or on a dashboard (panel). A block that mixes both splits along the same line: the chart is the panel, and the prose that explains it stays text around it.
+
+| Block | Markup | Why |
+|---|---|---|
+| Blog teaser, author box, project tile | `.card` | authored narrative |
+| A briefing checklist in a post | `.card` | authored narrative, even when it is a list |
+| A chart frame | `.panel .panel--bordered` on the chart element itself | data; RareCharts' container is the card it draws in: its `height` includes the padding, and its labels may run into it |
+| A quote header, a chart and a row of figures | a `.panel .panel--bordered` around them, the chart unframed | one data block |
+| A chart in a sidenote, or in a panel row cell | no frame of its own | a margin illustration to the text; the row is the frame |
+| KPI figures under a chart, a row of gauges | `.panel__row` (`--stack` when the cells are charts) | data |
+| Three KPI tiles | `.panel-grid` of `.panel`s with header / body / footer | data |
+
+For maintainers: a panel is a block, so content moves over from `.card-dashboard-bordered` as it was; it becomes a flex column only with parts (`__header` / `__body` / `__footer`). Its layout sits at zero specificity (`:where()`), so a chart's own layout wins on the same element whatever the load order; its padding has class specificity, because the reset at the end of `rare.scss` would erase it. A panel never sets `gap`, `overflow`, `position` or `container` (`test/panels.test.js`, `test/browser/panels.test.js`).
+
 ## Icon policy
 
 - Icons are **not a font**. Since `v0.6.18` (`CSS-095`/`CSS-096`) the library ships its own SVG icon set — static cuts of Material Symbols Outlined (Apache-2.0) under `assets/css/images/icons/` — drawn via `mask-image` + `background-color: currentColor`, so icons recolor through the normal `color`/token cascade. Never re-introduce an icon-font `@import` or the vendor `.material-symbols-outlined` class (removed in `v0.6.18`).

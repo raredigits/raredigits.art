@@ -10,9 +10,7 @@ The Map chart renders geographic data as a choropleth or region-highlight ma
 
 Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number. To draw flows between places — capital, goods, influence — use [Map Flows](/charts/map/flow/).
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="map-europe-visited"></div>
-</div>
+<div id="map-europe-visited" class="panel panel--bordered text-content-caption"></div>
 
 Map charts combine two ingredients:
 

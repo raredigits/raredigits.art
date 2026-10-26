@@ -20,13 +20,13 @@ permalink: '/styles/bricks/'
         <dd>A narrative surface — authorial, human, story-like content that wants to stand slightly apart from the page.</dd>
 
         <dt><code>.panel</code></dt>
-        <dd>The data surface — the stricter sibling for system-facing, structured, metric-heavy content. (Ships in a later release; the distinction is described below so you know which one a given block wants.)</dd>
+        <dd>The data surface — the stricter sibling for system-facing, structured, metric-heavy content. See <a href="/styles/bricks/panels/">Panels</a>; its companion, the <a href="/styles/bricks/legend/">Legend</a>, keys colour-coded data.</dd>
     </dl>
     <p>The important idea is what is <em>not</em> here. There is no grid component, no deck component, no positioning component. Those jobs belong to the utility layers — <a href="/styles/layout/">layout &amp; grid</a>, <a href="/styles/alignment/">alignment</a>, spacing, and positioning. A handful of surfaces plus the utilities compose any screen, so reaching for a brand-new class should be rare and deliberate.</p>
 </section>
 
 <section>
-    <h2>Card vs Panel</h2>
+    <h2 id="card-vs-panel">Card vs Panel</h2>
     <p>Both are surfaces, but they answer different questions, and keeping them separate keeps the intent of a screen legible.</p>
     <div class="grid grid-cols-2 gap-md mobile:grid-cols-1">
         <div class="card bordered padding-lg column gap-sm">
@@ -40,7 +40,7 @@ permalink: '/styles/bricks/'
             <p class="note">Explicit internal structure (header / body / footer) for content that benefits from a predictable frame.</p>
         </div>
     </div>
-    <p><strong>The rule.</strong> If a human authored it and it reads as content, it is a <code>.card</code>. If a system produced it and it reads as data, it is a <code>.panel</code>. When unsure, ask whether the block would feel at home in an article (card) or on a dashboard (panel).</p>
+    <p><strong>The rule.</strong> If a human authored it and it reads as content, it is a <code>.card</code>. If a system produced it and it reads as data, it is a <code>.panel</code>. When unsure, ask whether the block would feel at home in an article (card) or on a dashboard (panel). A chart is data: its frame is a <a href="/styles/bricks/panels/#chart-frames">panel</a>, and the prose that explains it stays text around it.</p>
 </section>
 
 <section>

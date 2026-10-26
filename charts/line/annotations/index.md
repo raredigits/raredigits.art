@@ -17,9 +17,7 @@ RareCharts supports four kinds of annotations within a single `annotations` arra
 
 Annotations are supported on `Line`, `DualAxes`, and `TimeSeries` charts, and on a vertical `Bar` fed `{ date, value }` rows (see [Bar](/charts/bar/) → Annotations). The kind is inferred from which fields are present — `date`, `from/to`, `value`, or `yFrom/yTo`.
 
-<div class="card-dashboard-bordered text-content-caption">
-    <div id="btc-price-chart"></div>
-</div>
+<div id="btc-price-chart" class="panel panel--bordered text-content-caption"></div>
 
 The chart above combines all three common cases: a point annotation on the 4th BTC halving (2024-04-19), a range annotation for the post-election rally window, and a horizontal line at the $100k psychological level. All three are out-of-the-box visuals — no custom SVG, no overlays. The chart automatically reserves vertical space above the plot for the date labels.
 

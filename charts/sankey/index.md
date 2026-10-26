@@ -8,15 +8,13 @@ permalink: '/charts/sankey/'
 
 A Sankey diagram shows how a quantity flows between stages: nodes stand in columns, bands connect them, and the width of each band is the value it carries. It answers "where did it come from and where did it go" — budgets and their spending, money trails, funnels, energy balances.
 
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
   <p><strong>⚠️ Experimental.</strong> <code>Sankey</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump.</p>
 </div>
 
 The simplest case first: a city budget in two columns — where the money comes from on the left, where it goes on the right. Hover a band or a node to follow its flows; the tooltip gives each flow's share of its source.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="sankey-budget"></div>
-</div>
+<div id="sankey-budget" class="panel panel--bordered text-content-caption"></div>
 
 ## Data
 
@@ -48,9 +46,7 @@ Up to **4–5 columns and about 30 nodes**. Past that, bands get too thin to rea
 
 Color bands by `type` with `linkColor: 'type'` and a `linkTypes` map, and the legend lists the described types (a type not in `linkTypes` stays muted). Hover a band to highlight it with its two nodes; **click it to pin the tooltip**, so a long label — or links you add with `linkTooltipFormat` — can be read. A click elsewhere or Escape releases it.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="sankey-trail"></div>
-</div>
+<div id="sankey-trail" class="panel panel--bordered text-content-caption"></div>
 
 The setup: `linkColor: 'type'` and a `linkTypes` map; a link's `label` shows up in its tooltip — other fields reach your `linkTooltipFormat`.
 
@@ -70,9 +66,7 @@ The setup: `linkColor: 'type'` and a `linkTypes` map; a link's `label` shows up 
 
 The recommended upper bound: an energy balance from primary sources to useful and lost energy, bands shaded from source to target color with `linkColor: 'gradient'`.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="sankey-energy"></div>
-</div>
+<div id="sankey-energy" class="panel panel--bordered text-content-caption"></div>
 
 ## Mobile
 

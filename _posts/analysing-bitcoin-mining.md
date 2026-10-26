@@ -12,7 +12,7 @@ There’s a theory that mining Bitcoin is <em>cleverer</em> than buying it. I
 
 We had almost a year of real data to find out: a JSON feed from a mining pool with daily hashrate, revenue, and BTC output — the kind of file that is technically complete and completely unreadable — plus eleven months of actual electricity bills. No model, no projections. Just receipts.
 
-<div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+<div id="mining-hashrate-profit" class="panel panel--bordered card-caption"></div>
 
 Four charts later, the answer is: <strong>sometimes</strong>. The window is real, the discount exists, and then the network difficulty catches up and the window closes. Exactly when, by how much, and what it costs while you wait — <em>that’s what the charts show</em>.
 

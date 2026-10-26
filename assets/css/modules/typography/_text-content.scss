@@ -98,7 +98,7 @@ article .meta-info {
 // margin-bottom on the first block does not shrink it — the two collapse,
 // and the larger wins. A `.table-scroll` box contains its table's bottom
 // margin, so it only takes a gap, never gives one.
-$flow-blocks: ".card, .card-inverted, .panel, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
+$flow-blocks: ".card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
 
 article > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll),
 :where(article) > section > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll) {
@@ -127,7 +127,9 @@ article > :where(.sidenote-wrapper + .sidenote-wrapper),
     position: relative;
 }
 
-article .text-content-caption:first-child {
+// A panel keeps its own padding: at (0,2,1) this rule beat `.panel`, and a
+// chart frame opening an article lost its padding (v0.7.2).
+article .text-content-caption:first-child:not(.panel) {
     padding: 0 0 var(--space-sm);
 }
 

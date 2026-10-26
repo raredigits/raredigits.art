@@ -14,9 +14,7 @@ In RareCharts, `DualAxes` is exactly that: a time-based chart with two vertic
 
 To illustrate a real-world use case, this example uses a finance-native story: a convergence (arbitrage) strategy based on the idea that two similar instruments that temporarily diverged in price will later converge again.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="dual-chart-ltcm-treasuries"></div>
-</div>
+<div id="dual-chart-ltcm-treasuries" class="panel panel--bordered text-content-caption"></div>
 
 One concrete version of this story exists in government bonds, where a newly issued “on-the-run” Treasury can trade slightly richer than the previous “off-the-run” issue for a period of time. Traders may position for convergence by going long the cheaper issue and hedging the richer one, expecting the price gap to compress as the market normalizes.
 

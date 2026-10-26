@@ -16846,11 +16846,11 @@ body:where(.rd, html.rd > *) {
   --font-size-xl: 1.5rem;
   --font-size-xxl: 2.2rem;
   --font-size-xxxl: 3.5rem;
-  --line-height: 1.5em;
-  --line-height-xs: 1em;
-  --line-height-sm: 1.2em;
-  --line-height-md: 1.7em;
-  --line-height-lg: 2em;
+  --line-height: 1.5;
+  --line-height-xs: 1;
+  --line-height-sm: 1.2;
+  --line-height-md: 1.7;
+  --line-height-lg: 2;
   --font-weight-thin: 100;
   --font-weight-light: 200;
   --font-weight-normal: 400;
@@ -16920,11 +16920,19 @@ body:where(.rd, html.rd > *) {
 
 h1:where(.rd, .rd *), h2:where(.rd, .rd *), h3:where(.rd, .rd *), h4:where(.rd, .rd *) {
   font-family: var(--heading-font);
+  line-height: var(--line-height-sm);
 }
 
 h1:where(.rd, .rd *) {
   font-size: var(--font-size-xxxl);
-  line-height: var(--line-height-sm);
+}
+
+:where(.page-title) h1:where(.rd, .rd *) {
+  font-size: min(var(--font-size-xxxl), 14vw);
+}
+
+.page-title h1:where(.rd, .rd *) {
+  overflow-wrap: anywhere;
 }
 
 h2:where(.rd, .rd *) {
@@ -17167,7 +17175,7 @@ ol:where(.rd, .rd *) {
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
 }
 
 sup > a:where(.rd, .rd *) {
@@ -17186,7 +17194,7 @@ sup > a:where(.rd, .rd *) {
   font-size: var(--font-size-sm);
   color: var(--text-color-light);
   margin-right: calc(var(--global-fr) + var(--base-unit));
-  line-height: 1.2em;
+  line-height: 1.2;
 }
 
 .footnote-inside-text a:where(.rd, .rd *) {
@@ -17204,26 +17212,25 @@ sup > a:where(.rd, .rd *) {
   margin-top: 0;
   grid-column: 1/span 5;
 }
-.sidenote-wrapper .sidenote:where(.rd, .rd *) {
+.sidenote-wrapper > .sidenote:where(.rd, .rd *) {
   grid-column: 7/span 2;
   grid-row: 1/span 2;
   align-self: start;
   width: 100%;
   max-width: calc(2 * var(--global-fr));
   font-size: var(--font-size-sm);
-  line-height: 1.4em;
+  line-height: 1.4;
   color: var(--text-color-light);
   padding-top: var(--space-xs);
   position: relative;
 }
-.sidenote-wrapper .sidenote a:where(.rd, .rd *) {
+.sidenote-wrapper > .sidenote a:not(:where(.rc-chart *)):where(.rd, .rd *) {
   color: var(--text-color-light);
 }
-.sidenote-wrapper .sidenote p:first-child:where(.rd, .rd *),
-.sidenote-wrapper .sidenote > :is(h5, h6):first-child:where(.rd, .rd *) {
+.sidenote-wrapper > .sidenote > :is(p, h5, h6):first-child:where(.rd, .rd *) {
   margin-top: 0;
 }
-.sidenote-wrapper :not(:first-child, .sidenote):where(.rd, .rd *) {
+.sidenote-wrapper > :not(:first-child, .sidenote):where(.rd, .rd *) {
   grid-column: 1/span 5;
 }
 .sidenote-wrapper > .highlight:where(.rd, .rd *),
@@ -17235,11 +17242,11 @@ sup > a:where(.rd, .rd *) {
     display: flex;
     flex-direction: column;
   }
-  .sidenote-wrapper .sidenote:where(.rd, .rd *) {
+  .sidenote-wrapper > .sidenote:where(.rd, .rd *) {
     max-width: 100%;
     padding: var(--space-sm);
   }
-  .sidenote-wrapper .sidenote p:first-child:where(.rd, .rd *) {
+  .sidenote-wrapper > .sidenote > p:first-child:where(.rd, .rd *) {
     margin-top: var(--space-md);
   }
 }
@@ -17248,7 +17255,7 @@ sup > a:where(.rd, .rd *) {
 .sidenote.handwritten p:where(.rd, .rd *) {
   font-family: var(--script-font);
   font-size: var(--font-size-lg);
-  line-height: 1em;
+  line-height: 1;
 }
 
 .sidenote-bookmark:where(.rd, .rd *)::before,
@@ -17335,21 +17342,26 @@ sup > a:where(.rd, .rd *) {
   min-width: 0;
 }
 
-article p:where(.rd, .rd *),
-article ul:where(.rd, .rd *),
-article ol:where(.rd, .rd *) {
+article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 @media screen and (width < 769px) {
-  article p:where(.rd, .rd *),
-  article ul:where(.rd, .rd *),
-  article ol:where(.rd, .rd *) {
+  article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
     max-width: 100%;
   }
 }
 
 article .meta-info:where(.rd, .rd *) {
   margin-top: var(--space-sm);
+}
+
+article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *), :where(article) > section > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details) + :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details, .table-scroll):where(.rd, .rd *) {
+  margin-top: var(--space-md);
+}
+
+article > :where(.sidenote-wrapper + .sidenote-wrapper):where(.rd, .rd *),
+:where(article) > section > :where(.sidenote-wrapper + .sidenote-wrapper):where(.rd, .rd *) {
+  margin-top: 0;
 }
 
 .nobr:where(.rd, .rd *) {
@@ -17381,7 +17393,7 @@ article .meta-info:where(.rd, .rd *) {
   position: relative;
 }
 
-article .text-content-caption:first-child:where(.rd, .rd *) {
+article .text-content-caption:first-child:not(.panel):where(.rd, .rd *) {
   padding: 0 0 var(--space-sm);
 }
 
@@ -17465,7 +17477,7 @@ mark:where(.rd, .rd *) {
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
 }
 
 .meta-info:where(.rd, .rd *) {
@@ -17473,7 +17485,7 @@ mark:where(.rd, .rd *) {
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
 }
 
 .callout:where(.rd, .rd *) {
@@ -17482,12 +17494,40 @@ mark:where(.rd, .rd *) {
   color: var(--text-color-light);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
   border: 1px solid var(--border-color);
   border-radius: var(--space-xs);
 }
 
-cite:where(.rd, .rd *) {
+.callout-info:where(.rd, .rd *),
+.callout-success:where(.rd, .rd *),
+.callout-warning:where(.rd, .rd *),
+.callout-error:where(.rd, .rd *) {
+  text-align: left;
+  color: var(--text-color-dark);
+  font-weight: var(--font-weight-normal);
+  border-left: var(--space-xs) solid var(--callout-color);
+  background-color: color-mix(in srgb, var(--callout-color) 12%, transparent);
+}
+
+.callout-info:where(.rd, .rd *) {
+  --callout-color: var(--color-info);
+}
+
+.callout-success:where(.rd, .rd *) {
+  --callout-color: var(--color-success);
+}
+
+.callout-warning:where(.rd, .rd *) {
+  --callout-color: var(--color-warning);
+}
+
+.callout-error:where(.rd, .rd *) {
+  --callout-color: var(--color-danger);
+}
+
+:where(blockquote) > cite:where(.rd, .rd *),
+.attribution:where(.rd, .rd *) {
   display: block;
   width: 100%;
   margin: var(--space-sm) 0;
@@ -17495,7 +17535,7 @@ cite:where(.rd, .rd *) {
   color: var(--text-color-dark);
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
 }
 
 blockquote:where(.rd, .rd *) {
@@ -17610,7 +17650,7 @@ pre code:where(.rd, .rd *) {
 .handwritten:where(.rd, .rd *) {
   font-family: var(--script-font);
   font-size: var(--font-size-lg);
-  line-height: 1em;
+  line-height: 1;
 }
 
 .bold:where(.rd, .rd *) {
@@ -17830,6 +17870,10 @@ table:where(.rd, .rd *) {
 
 .table-scroll:where(.rd, .rd *) {
   overflow-x: auto;
+}
+
+.table-scroll :is(th, td) code:where(.rd, .rd *) {
+  overflow-wrap: normal;
 }
 
 th:where(.rd, .rd *) {
@@ -18426,6 +18470,13 @@ th:first-child:where(.rd, .rd *) {
   background-image: linear-gradient(to top, color-mix(in srgb, var(--blue-dark) 20%, transparent) 0 100%);
 }
 
+:root {
+  --color-success: var(--green);
+  --color-danger: var(--red);
+  --color-warning: var(--yellow);
+  --color-info: var(--blue);
+}
+
 :where(html.rd, body.rd) section {
   width: 100%;
   position: relative;
@@ -18543,39 +18594,6 @@ th:first-child:where(.rd, .rd *) {
   color: var(--gray-light);
 }
 
-.card-dashboard-bordered:where(.rd, .rd *) {
-  padding: var(--space-md) var(--space-lg);
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
-}
-
-.card-row-bordered:where(.rd, .rd *) {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  border: 1px solid var(--border-color);
-  border-radius: var(--space-xs);
-}
-@media screen and (width < 769px) {
-  .card-row-bordered:where(.rd, .rd *) {
-    overflow-x: auto;
-    scrollbar-width: thin;
-  }
-}
-
-.card-row-bordered-item:where(.rd, .rd *) {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: var(--space-md);
-  text-align: center;
-}
-
-.card-row-bordered > .card-row-bordered-item:not(:last-child):where(.rd, .rd *) {
-  border-right: 1px solid var(--border-color);
-}
-
 .card-caption:where(.rd, .rd *) {
   margin-left: calc(var(--space-lg) * -1);
   width: calc(100% + var(--space-lg));
@@ -18685,6 +18703,202 @@ th:first-child:where(.rd, .rd *) {
     --card-grid-cols: 2;
   }
 }
+:where(.panel):where(.rd, .rd *) {
+  min-width: 0;
+}
+
+:where(.panel:has(> .panel__header, > .panel__body, > .panel__footer)):where(.rd, .rd *) {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel:where(.rd, .rd *) {
+  padding: var(--space-md) var(--space-lg);
+}
+@media screen and (width < 769px) {
+  .panel:where(.rd, .rd *) {
+    padding: var(--space-md);
+  }
+}
+.panel .lead:where(.rd, .rd *),
+.panel .caption:where(.rd, .rd *),
+.panel .highlight:where(.rd, .rd *),
+.panel pre:where(.rd, .rd *),
+.panel blockquote:where(.rd, .rd *),
+.panel .text-content-caption:where(.rd, .rd *),
+.panel .full-width-caption:where(.rd, .rd *),
+.panel .card-caption:where(.rd, .rd *),
+.panel .collapsible-container:where(.rd, .rd *),
+.panel .teaser-bottom:where(.rd, .rd *) {
+  width: auto;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.panel--bordered:where(.rd, .rd *) {
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+
+.panel--flush:where(.rd, .rd *) {
+  padding: 0;
+}
+
+.panel__header:where(.rd, .rd *) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-xs) var(--space-md);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--border-color-light);
+}
+.panel__header > :is(h1, h2, h3, h4, h5, h6):where(.rd, .rd *) {
+  margin: 0;
+}
+
+.panel__body:where(.rd, .rd *) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.panel__footer:where(.rd, .rd *) {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--border-color-light);
+  font-size: var(--font-size-sm);
+  color: var(--text-color-light);
+}
+
+:where(.panel-grid):where(.rd, .rd *) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--panel-grid-min, 14rem)), 1fr));
+  gap: var(--space-md);
+}
+
+.panel-grid > *:where(.rd, .rd *) {
+  min-width: 0;
+}
+
+.panel__row:where(.rd, .rd *) {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  border: 1px solid var(--border-color);
+  border-radius: var(--space-xs);
+}
+@media screen and (width < 769px) {
+  .panel__row:where(.rd, .rd *) {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+}
+
+.panel__row-item:where(.rd, .rd *) {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.panel__row > .panel__row-item:not(:last-child):where(.rd, .rd *) {
+  border-right: 1px solid var(--border-color);
+}
+
+.panel__row--text-start > .panel__row-item:where(.rd, .rd *) {
+  text-align: start;
+}
+
+.panel__row--stack > .panel__row-item:where(.rd, .rd *) {
+  min-width: 0;
+}
+
+@media screen and (width < 769px) {
+  .panel__row--stack:where(.rd, .rd *) {
+    flex-direction: column;
+    overflow-x: visible;
+  }
+  .panel__row--stack > .panel__row-item:where(.rd, .rd *) {
+    flex: none;
+  }
+  .panel__row--stack > .panel__row-item:not(:last-child):where(.rd, .rd *) {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+}
+.legend:where(.rd, .rd *) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px var(--space-md);
+  padding-left: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.3;
+  list-style: none;
+}
+
+.legend__item:where(.rd, .rd *) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+button.legend__item:where(.rd, .rd *),
+button.legend__item:hover:where(.rd, .rd *) {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+}
+
+button.legend__item:where(.rd, .rd *) {
+  cursor: pointer;
+}
+
+button.legend__item:disabled:where(.rd, .rd *) {
+  cursor: default;
+}
+
+.legend__item[aria-pressed=false]:where(.rd, .rd *) {
+  opacity: 0.35;
+}
+
+.legend__swatch:where(.rd, .rd *) {
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--space-sm);
+  height: var(--space-sm);
+  background: var(--swatch-color, currentcolor);
+}
+
+.legend__swatch--line:where(.rd, .rd *) {
+  width: var(--space-md);
+  height: 2px;
+  border-radius: 1px;
+}
+
+.legend__swatch--dashed:where(.rd, .rd *) {
+  width: var(--space-md);
+  height: 2px;
+  background: repeating-linear-gradient(90deg, var(--swatch-color, currentcolor) 0 5px, transparent 5px 8px);
+}
+
+.legend__swatch--dot:where(.rd, .rd *) {
+  border-radius: 50%;
+}
+
+.legend__swatch--band:where(.rd, .rd *) {
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
 .relative:where(.rd, .rd *) {
   position: relative;
 }
@@ -19278,7 +19492,7 @@ h5.sidebar-header a:hover:where(.rd, .rd *) {
 
 .sidebar-meta:where(.rd, .rd *) {
   font-size: var(--font-size-sm);
-  line-height: 1.3em;
+  line-height: 1.3;
   color: var(--text-color-light);
   width: 75%;
   margin-bottom: var(--space-md);
@@ -19346,7 +19560,7 @@ h5.sidebar-header a:hover:where(.rd, .rd *) {
   color: var(--text-color-light);
   padding: 1px 4px;
   font-size: var(--font-size-sm);
-  line-height: 1em;
+  line-height: 1;
   cursor: pointer;
 }
 .tag:hover:where(.rd, .rd *) {
@@ -21157,13 +21371,14 @@ html:has(.cookie-notice:not(.rd-is-hidden)):where(.rd, .rd *) {
 .cookie-notice__content h3:where(.rd, .rd *) {
   position: absolute;
   margin: 0;
-  top: -50px;
+  top: -66px;
   font-size: 3.5em;
+  line-height: var(--line-height-xs);
 }
 @media screen and (width < 769px) {
   .cookie-notice__content h3:where(.rd, .rd *) {
     font-size: 2.5em;
-    top: -60px;
+    top: -68px;
   }
 }
 
@@ -21267,7 +21482,7 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   display: none;
   padding-top: var(--space-lg);
 }
-.collapsible-content > .card-dashboard-bordered:where(.rd, .rd *) {
+.collapsible-content > .panel:not(.panel--flush):where(.rd, .rd *) {
   padding: var(--space-md);
 }
 
@@ -21562,10 +21777,13 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   .table-scroll:where(.rd, .rd *) {
     overflow: visible;
   }
+  .table-scroll :is(th, td) code:where(.rd, .rd *) {
+    overflow-wrap: anywhere;
+  }
   th:where(.rd, .rd *) {
     white-space: normal;
   }
-  article :is(p, li) a[href^=http]:where(.rd, .rd *)::after {
+  article :is(p, li) a[href^=http]:not(:where(.rc-chart *)):where(.rd, .rd *)::after {
     content: " (" attr(href) ")";
     font-size: var(--font-size-xs);
     color: var(--text-color-light);

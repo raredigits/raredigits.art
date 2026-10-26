@@ -1,4 +1,5 @@
 @use "../utilities/breakpoints" as bp;
+@use "contain-outdents" as co;
 
 .card {
     display: flex;
@@ -6,27 +7,8 @@
     background: var(--gray-lightest);
     position: relative;
 
-    // Outdents (`pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the
-    // caption-width blocks, `.card-caption`) hang into the page margins beside
-    // the text column. A card has no such margins: with padding smaller than
-    // the outdent they poked out of the card and, on phones, widened the page.
-    // Reset the family to the card's content width, as `.collapsible-content`
-    // does (CSS-345 sweep, 2026-10-16).
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    blockquote,
-    .text-content-caption,
-    .full-width-caption,
-    .card-caption,
-    .collapsible-container,
-    .teaser-bottom {
-        width: auto;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
+    // A card has no page margins for outdents to hang into (CSS-345 sweep).
+    @include co.contain-outdents;
 }
 
 .card-hover:hover {
@@ -62,39 +44,10 @@
     color: var(--gray-light);
 }
 
-.card-dashboard-bordered {
-    padding: var(--space-md) var(--space-lg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
-}
-
-.card-row-bordered {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
-
-    // A long row (six stats) cannot shrink below its content on a phone;
-    // scroll it inside its own border instead of widening the page (CSS-354).
-    @include bp.mobile {
-        overflow-x: auto;
-        scrollbar-width: thin;
-    }
-}
-
-.card-row-bordered-item {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: var(--space-md);
-    text-align: center;
-}
-
-.card-row-bordered > .card-row-bordered-item:not(:last-child) {
-    border-right: 1px solid var(--border-color);
-}
+// The bordered data surface and the bordered row moved to the panel family
+// in v0.7.2 (CSS-181, no alias): `.card-dashboard-bordered` → `.panel
+// .panel--bordered`, `.card-row-bordered(-item)` → `.panel__row(-item)`.
+// See bricks/_panels.scss.
 
 .card-caption {
     margin-left: calc(var(--space-lg) * -1);

@@ -70,7 +70,9 @@ button.collapsible-trigger {
     display: none;
     padding-top: var(--space-lg);
 
-    > .card-dashboard-bordered {
+    // A panel in the content gets an even, tighter padding (was the
+    // `.card-dashboard-bordered` rule; CSS-181). A flush panel stays flush.
+    > .panel:not(.panel--flush) {
         padding: var(--space-md);
     }
 }
