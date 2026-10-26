@@ -223,17 +223,17 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 
 ## Exit criteria
 
-- [ ] **Part A:** `rare-website.css` harvested (`CSS-371`): every rule moved to the library, kept with a reason, or deleted.
-- [ ] **Part A:** `CSS-372` … `CSS-383` closed, each with a fixture or a recorded visual check. The `CSS-375` and `CSS-379` rows are in the migration table.
-- [ ] **Part B:** the moved tasks closed, with first-pass docs pages for the new modules (panels, stats, callouts, chart tokens). The `CSS-181` renames are in the migration table, and the site is migrated in lockstep (`CSS-183a`), the charts docs included.
-- [ ] **Part B:** the `Q-15` names are decided and recorded.
-- [ ] **Part C1:** Buttons and forms ship with their first-pass docs pages (`CSS-086`/`CSS-091`); `Q-04` closed; changed defaults recorded in the migration table
-- [ ] **Part C1:** Buttons and forms consume the semantic tokens and `--signal`, from Part B (`CSS-121`/`CSS-124`); the `--focus-ring-color` default from `v0.7.0` is repointed to `--signal` without breaking overrides; every new interactive surface inside `.rd` has a visible focus state
-- [ ] **Part C1:** The `CSS-338` fixture stays green: forms, buttons and the focus ring never reach host elements outside `.rd`
-- [ ] The live consumers render clean against the release (the data project, Gutenberg, raredigits.io, schnellreich.ru, and the RareCharts pages through `CSS-381`)
-- [ ] `npm run lint:css` clean; tests green; bundle measured against the `CSS-330` budget
-- [ ] **Part C:** every request the maintainer brought is shipped, or moved with a reason.
-- [ ] The charts pages were checked after the bump: the `/charts/` sidenote demo at 1440 and 375 px, and every option table at 375 px. RareCharts can start its section H.
+- [x] **Part A:** `rare-website.css` harvested (`CSS-371`): every rule moved to the library, kept with a reason, or deleted. ✅ 2026-10-27 (`8ece20f`)
+- [x] **Part A:** `CSS-372` … `CSS-383` closed, each with a fixture or a recorded visual check. The `CSS-375` and `CSS-379` rows are in the migration table. ✅ 2026-10-27 (`CSS-384`, `CSS-385` too; `CSS-386` deferred to `v0.7.3`)
+- [x] **Part B:** the moved tasks closed, with first-pass docs pages for the new modules (panels, stats, callouts, chart tokens). The `CSS-181` renames are in the migration table, and the site is migrated in lockstep (`CSS-183a`), the charts docs included. ✅ 2026-10-27
+- [x] **Part B:** the `Q-15` names are decided and recorded. ✅ 2026-10-27 (`8988b0b`)
+- [x] **Part C1:** Buttons and forms ship with their first-pass docs pages (`CSS-086`/`CSS-091`); `Q-04` closed; changed defaults recorded in the migration table ✅ 2026-10-27
+- [x] **Part C1:** Buttons and forms consume the semantic tokens and `--signal`, from Part B (`CSS-121`/`CSS-124`); the `--focus-ring-color` default from `v0.7.0` is repointed to `--signal` without breaking overrides; every new interactive surface inside `.rd` has a visible focus state ✅ 2026-10-27
+- [x] **Part C1:** The `CSS-338` fixture stays green: forms, buttons and the focus ring never reach host elements outside `.rd` ✅ 2026-10-27
+- [ ] The live consumers render clean against the release (the data project, Gutenberg, raredigits.io, schnellreich.ru, and the RareCharts pages through `CSS-381`) — ⚠️ **2026-10-27:** schnellreich.ru and raredigits.io verified, intended changes only, upgrade checklists in `MIGRATION.md`. Churchbook checked from 17 templates with stub data: no `.rd` since `v0.7.0`, so it is unstyled; not caused by this release. Gutenberg not available locally. **The maintainer decides whether this criterion is met.**
+- [x] `npm run lint:css` clean; tests green; bundle measured against the `CSS-330` budget ✅ 2026-10-27 (1226 unit, 206 browser, 90 pages 0 broken links; `SIZE-BASELINE` row `b8cde21`)
+- [ ] **Part C:** every request the maintainer brought is shipped, or moved with a reason. — open: C2 is empty so far; it closes when the maintainer says the list is final.
+- [x] The charts pages were checked after the bump: the `/charts/` sidenote demo at 1440 and 375 px, and every option table at 375 px. RareCharts can start its section H. ✅ 2026-10-27
 
 ---
 

@@ -77,6 +77,7 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
 - **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there. The API snapshot lists `.rc-chart` as a recognised host hook, not as a library class.
 - **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
 - **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory. The output is unchanged.
+- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 421,076 → **447,443 B** raw (+6.3%), gzip 35,544 → **39,345 B** (+10.7%), Brotli 23,045 → **25,980 B** (+12.7%); `rare.css` 497,303 → 526,516 B raw, gzip 37,918 → 41,835, Brotli 24,386 → 27,396. About half of it is the button system and forms.
 
 ### Fixed
 
