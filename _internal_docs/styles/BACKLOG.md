@@ -194,10 +194,11 @@ The enablers `CSS-121` (semantic colours) and `CSS-124` (`--signal`, focus-ring 
 
 #### C2 — Further requests
 
-The maintainer brings these as they arrive.
+The maintainer brings these as they arrive. **Closed 2026-11-06 (maintainer):** C2 is the maintainer's hand review of the release draft. It holds the consumers' requests he brought, among them the sidenote and layout patterns taken from schnellreich.ru.
 
 | ID | Type | Task | Priority | Estimate |
 |---|---|---|---|---|
+| `CSS-388` | feat | ✅ **Done 2026-11-06** (`dbf02a10`, notes in `manual_updates_0_7_2.md`, sections 1–44). **The maintainer's hand review of the release draft:**<br>• **Headings:** a tighter rhythm; h5/h6 set in the text face.<br>• **Sidenotes:** `.sidenote-banner`; tablet and phone forms on the new `below-desktop` mixin, column tokens, an offset next to a wide block.<br>• **Outdents:** `--text-content-caption` for any outdented block.<br>• **Tables and lists:** `.table-terminal` with gap columns; `.list-title`; `.list-group-pack` without a fixed height; menu and `.index-list` leading.<br>• **Colours:** semantic role aliases (positive/negative/neutral, fail/success) with `-bg` at 25%; blue folded into `_base`; callouts on the roles; `--brand-color-dark` #3a8000; `--brand-color-link`; `--chart-series-1` = `--signal`.<br>• **Panels:** base padding `--space-md` and alignment in outdented blocks; `.stat` on panels.<br>• **Buttons:** capsules with no own tokens; `.button-primary` on the brand colour.<br>• **Forms:** a growing field in `.form-row`, submit at the right edge, fieldset gap, range/colour/file sizing.<br>• **Docs:** cards and legend get their own pages; `/styles/interactive/` replaces `/styles/elements/`. | P1 | L |
 
 ### RareCharts debt register
 
@@ -232,7 +233,7 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 - [x] **Part C1:** The `CSS-338` fixture stays green: forms, buttons and the focus ring never reach host elements outside `.rd` ✅ 2026-10-27
 - [ ] The live consumers render clean against the release (the data project, Gutenberg, raredigits.io, schnellreich.ru, and the RareCharts pages through `CSS-381`) — ⚠️ **2026-10-27:** schnellreich.ru and raredigits.io verified, intended changes only, upgrade checklists in `MIGRATION.md`. Churchbook checked from 17 templates with stub data: no `.rd` since `v0.7.0`, so it is unstyled; not caused by this release. Gutenberg not available locally. **The maintainer decides whether this criterion is met.**
 - [x] `npm run lint:css` clean; tests green; bundle measured against the `CSS-330` budget ✅ 2026-10-27 (1226 unit, 206 browser, 90 pages 0 broken links; `SIZE-BASELINE` row `b8cde21`)
-- [ ] **Part C:** every request the maintainer brought is shipped, or moved with a reason. — open: C2 is empty so far; it closes when the maintainer says the list is final.
+- [x] **Part C:** every request the maintainer brought is shipped, or moved with a reason. ✅ 2026-11-06: C2 closed with the maintainer's hand review (`CSS-388`, `dbf02a10`).
 - [x] The charts pages were checked after the bump: the `/charts/` sidenote demo at 1440 and 375 px, and every option table at 375 px. RareCharts can start its section H. ✅ 2026-10-27
 
 ---
