@@ -54,6 +54,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
     </div>
     <div class="sidenote">
         <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile:width-75</code>, etc., or create custom classes.</p>
+        <p>A table wider than its column — a note on a tablet is often one — goes in a <code>.table-scroll</code> wrapper: it scrolls inside the box instead of widening the page.</p>
     </div>
 </div>
 
@@ -110,32 +111,34 @@ Tabular data forms a crucial part of business information presentation. Tables a
         <p>
             .table-terminal example:
         </p>
-        <table class="table-terminal">
-            <tr>
-                <td>Visitors:</td>
-                <td>1,234</td>
-            </tr>
-            <tr>
-                <td>Clicks:</td>
-                <td>345</td>
-            </tr>
-            <tr>
-                <td>Leads:</td>
-                <td>123</td>
-            </tr>
-            <tr>
-                <td>Sales:</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>Revenue:</td>
-                <td>$1,234</td>
-            </tr>
-            <tr>
-                <td>Conversion:</td>
-                <td>1%</td>
-            </tr>
-        </table>
+        <div class="table-scroll">
+            <table class="table-terminal">
+                <tr>
+                    <td>Visitors:</td>
+                    <td>1,234</td>
+                </tr>
+                <tr>
+                    <td>Clicks:</td>
+                    <td>345</td>
+                </tr>
+                <tr>
+                    <td>Leads:</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td>Sales:</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>Revenue:</td>
+                    <td>$1,234</td>
+                </tr>
+                <tr>
+                    <td>Conversion:</td>
+                    <td>1%</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -243,11 +246,11 @@ A long reference table — the options of a chart, the fields of an API — read
 
 The example is the reference-table recipe the chart docs use: `.table-bordered` with group rows, inside `.table-scroll`. In the scroll box an option name in `code` never breaks mid-word: on a phone the table keeps its columns and the box scrolls. There is no separate preset class for it — the three pieces are the preset. A Markdown table cannot take a class: write a reference table as HTML.
 
-<div class="caption">
-    <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>
-</div>
+### Table or <code>.dl-grid</code>?
+
+Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.
 
 <div class="teaser-bottom">
     <p>Next:</p>
-    <h3><a href="/styles/typography/interactive/">Interactive Elements</a></h3>
+    <h3><a href="/styles/interactive/">Interactive Elements</a></h3>
 </div>

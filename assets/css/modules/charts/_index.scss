@@ -14,12 +14,14 @@
 :root {
     // Series, in the order a multi-series chart uses them. Six, the size of
     // RareCharts' palette (maintainer, 2026-10-26); a 7th and an 8th can be
-    // added later without breaking anything. The hues are RareCharts' own
-    // (`defaultTheme.colors`, assets/charts/src/core/theme.js), so a chart
-    // that reads them looks the same; where the palette has the hue it is the
-    // palette token, the other four have none.
-    --chart-series-1: var(--orange); // #fa8c16
-    --chart-series-2: #0af;
+    // added later without breaking anything. The first is `--signal`, the main
+    // chart colour (maintainer, 2026-11-06); it takes the place of RareCharts'
+    // light blue #0af, too close to it to sit beside it, and RareCharts'
+    // orange moves to second. The rest are RareCharts' own hues
+    // (`defaultTheme.colors`, assets/charts/src/core/theme.js); where the
+    // palette has the hue it is the palette token, the other three have none.
+    --chart-series-1: var(--signal); // #1677ff
+    --chart-series-2: var(--orange); // #fa8c16
     --chart-series-3: #00c97a;
     --chart-series-4: #fc0;
     --chart-series-5: #c4f;

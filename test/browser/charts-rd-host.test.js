@@ -160,7 +160,7 @@ describe('CSS-381: RareCharts controls under the gated library', () => {
     expect(check.appearance).toBe('none');
     expect(select.appearance).toBe('none');
     expect(select['background-image']).toMatch(/linear-gradient/);
-    expect(button).toEqual({ 'border-top-color': 'rgb(204, 204, 204)', 'border-top-left-radius': '4px', 'background-color': 'rgb(255, 255, 255)' });
+    expect(button).toEqual({ 'border-top-color': 'rgb(204, 204, 204)', 'border-top-left-radius': '32px', 'background-color': 'rgb(250, 250, 250)' });
     await page.close();
   });
 });

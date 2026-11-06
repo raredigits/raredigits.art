@@ -65,19 +65,23 @@
   },
   {
     "category": "Interactive Elements",
-    "url": "/styles/typography/interactive/",
+    "url": "/styles/interactive/",
     "topics": [
       {
         "title": "Links",
-        "url": "/styles/typography/interactive/#links"
+        "url": "/styles/interactive/#links"
+      },
+      {
+        "title": "Keyboard focus",
+        "url": "/styles/interactive/#keyboard-focus"
       },
       {
         "title": "Buttons",
-        "url": "/styles/elements/buttons/"
+        "url": "/styles/interactive/buttons/"
       },
       {
         "title": "Forms",
-        "url": "/styles/elements/forms/"
+        "url": "/styles/interactive/forms/"
       }
     ]
   },
@@ -123,7 +127,7 @@
     "topics": [
       {
         "title": "Cards",
-        "url": "/styles/bricks/"
+        "url": "/styles/bricks/cards/"
       },
       {
         "title": "Card vs Panel",
@@ -134,12 +138,8 @@
         "url": "/styles/bricks/panels/"
       },
       {
-        "title": "Legend",
-        "url": "/styles/bricks/legend/"
-      },
-      {
         "title": "Stats",
-        "url": "/styles/bricks/stats/"
+        "url": "/styles/bricks/panels/#stats"
       }
     ]
   },
@@ -166,6 +166,10 @@
       {
         "title": "Chart Tokens",
         "url": "/styles/colors/chart-tokens/"
+      },
+      {
+        "title": "Legend",
+        "url": "/styles/colors/legend/"
       },
       {
         "title": "Supporting Colors",

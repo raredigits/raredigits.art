@@ -26,12 +26,16 @@
 // element defaults stop at it, as the prose measure and the print URLs do.
 // `.button` still works there, because it is asked for by name.
 
-// Colours are slots, set per variant and read by the one base rule, so a
-// variant re-colours with custom properties on the class or the element:
-//   --button-bg, --button-text, --button-border-color (the default look,
-//   on :root), --button-bg-hover (default: --button-bg),
-//   --button-border-color-hover (--primary-color), --button-bg-active
-//   (--bg-color)
+// No button tokens on :root: the look is written with the library's own
+// tokens (spacing, type, colour). A variant and a size set slots on their
+// class, which the one base rule reads, each with the default look as its
+// fallback:
+//   colours: --button-bg (--white), --button-text (--primary-color),
+//   --button-border-color (--border-color), --button-bg-hover
+//   (--button-bg), --button-border-color-hover (--primary-color),
+//   --button-bg-active (--bg-color)
+//   size: --button-padding-x (--space-md), --button-padding-y (--space-sm),
+//   --button-font-size (--font-size-md)
 
 $-outside-chart: ":not(:where(.rc-chart *))";
 $-button: "button#{$-outside-chart}";
@@ -40,23 +44,6 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
 // The bare selectors with a state appended to each of them.
 @function bare($state, $of: $-bare) {
     @return selector.append($of, $state);
-}
-
-:root {
-    --button-radius: var(--space-xs);
-    --button-padding-x: var(--space-md);
-    --button-padding-y: var(--space-sm);
-    --button-font-size: var(--font-size-md);
-    --button-font-weight: var(--font-weight-normal);
-
-    // The default look's colour slots. The text is --primary-color, which
-    // `.card-inverted` keeps dark, so the white button stays readable there.
-    --button-bg: var(--white);
-    --button-text: var(--primary-color);
-    --button-border-color: var(--border-color);
-
-    // Colour changes only: a label colour never fades, and nothing moves.
-    --button-transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
 // The default look: a white control with a light frame that darkens on
@@ -68,23 +55,28 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
     // As wide as the label: a flex column (`.card`, `.panel`, `.form-group`)
     // would stretch it otherwise. `.button-block` takes the full width.
     width: fit-content;
-    padding: var(--button-padding-y) var(--button-padding-x);
-    border: 1px solid var(--button-border-color);
-    border-radius: var(--button-radius);
+
+    // 1px more above, 1px less below: the label's line box carries the
+    // descender space, so an even padding leaves the label optically high.
+    // The total stays, so a button is as tall as a field.
+    padding: calc(var(--button-padding-y, var(--space-sm)) + 1px) var(--button-padding-x, var(--space-md)) calc(var(--button-padding-y, var(--space-sm)) - 1px);
+    border: 1px solid var(--button-border-color, var(--border-color));
+    border-radius: var(--space-lg);
 
     // The shorthand also drops a link's hover fill (navigation/_links.scss).
-    background: var(--button-bg);
-    color: var(--button-text);
+    background: var(--button-bg, var(--gray-lightest));
+    color: var(--button-text, var(--gray-dark));
     font-family: inherit;
-    font-size: var(--button-font-size);
-    font-weight: var(--button-font-weight);
+    font-size: var(--button-font-size, var(--font-size-md));
+    font-weight: var(--font-weight-normal);
     line-height: var(--line-height-sm);
     text-align: center;
     text-decoration: none;
     cursor: pointer;
 
+    // Colour changes only: a label colour never fades, and nothing moves.
     @include bp.motion-safe {
-        transition: var(--button-transition);
+        transition: background-color 0.15s ease, border-color 0.15s ease;
     }
 }
 
@@ -93,15 +85,15 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
 #{bare(":where(:hover:not(:disabled, [aria-disabled=\"true\"], [aria-busy=\"true\"]))")},
 .button:hover:where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
     border: 1px solid var(--button-border-color-hover, var(--primary-color));
-    background: var(--button-bg-hover, var(--button-bg));
-    color: var(--button-text);
+    background: var(--button-bg-hover, var(--button-bg, var(--white)));
+    color: var(--button-text, var(--primary-color));
 }
 
 #{bare(":where(:active:not(:disabled, [aria-disabled=\"true\"], [aria-busy=\"true\"]))")},
 .button:active:where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
     border: 1px solid var(--button-border-color-hover, var(--primary-color));
     background: var(--button-bg-active, var(--bg-color));
-    color: var(--button-text);
+    color: var(--button-text, var(--primary-color));
 }
 
 // :focus-visible is the library ring (utilities/_a11y.scss).
@@ -135,7 +127,7 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
         width: 1em;
         height: 1em;
         margin: auto;
-        border: 2px solid var(--button-text);
+        border: 2px solid var(--button-text, var(--primary-color));
         border-inline-end-color: transparent;
         border-radius: 50%;
 
@@ -153,39 +145,37 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
 
 // VARIANTS (CSS-040). A variant only sets the colour slots.
 
-// The default look by name: for a link (`.button .button-secondary`) or to
-// restore it inside a container that re-colours its buttons.
-.button-secondary {
-    --button-bg: var(--white);
-    --button-text: var(--primary-color);
-    --button-border-color: var(--border-color);
-    --button-bg-hover: var(--white);
-    --button-border-color-hover: var(--primary-color);
-    --button-bg-active: var(--bg-color);
-}
-
-// The one action that matters on the screen, on the --signal accent
-// (CSS-124). The fill is the signal shaded by 15%: white on the default blue
-// measures 5.4:1, where the pure blue gives 4.1 (WCAG AA wants 4.5). The
-// border is transparent, so the fill shows through it.
+// The one action that matters on the screen, in the brand colour: the fill
+// is --brand-color, --brand-color-dark under the pointer, and darker still
+// while pressed. The label is --primary-color at rest, black on the brand
+// green at about 15:1, and --white under the pointer and while pressed:
+// --brand-color-dark carries white text at 4.9:1, the darker pressed fill
+// more. The border is transparent, so the fill shows through it.
 .button-primary {
-    --button-bg: color-mix(in srgb, var(--signal) 85%, black);
-    --button-text: var(--white);
+    --button-bg: var(--brand-color);
+    --button-text: var(--primary-color);
     --button-border-color: transparent;
-    --button-bg-hover: color-mix(in srgb, var(--signal) 70%, black);
+    --button-bg-hover: var(--brand-color-dark);
     --button-border-color-hover: transparent;
-    --button-bg-active: color-mix(in srgb, var(--signal) 60%, black);
+    --button-bg-active: color-mix(in srgb, var(--brand-color-dark) 85%, black);
 }
 
-// A destructive action, on --color-danger (CSS-121), shaded the same way:
-// white on the default red measures 5.3:1.
+// On the dark fills (under the pointer, pressed, a pressed toggle) the label
+// turns white. Not on a disabled button, which keeps the light fill, nor on a
+// busy one, whose label is hidden.
+.button-primary:is(:hover, :active, [aria-pressed="true"]):where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
+    color: var(--white);
+}
+
+// A destructive action, on --danger (CSS-121), shaded by 15%: white on the
+// default red measures 5.3:1, where the pure red gives 4.0 (WCAG AA wants 4.5).
 .button-danger {
-    --button-bg: color-mix(in srgb, var(--color-danger) 85%, black);
+    --button-bg: color-mix(in srgb, var(--danger) 85%, black);
     --button-text: var(--white);
     --button-border-color: transparent;
-    --button-bg-hover: color-mix(in srgb, var(--color-danger) 70%, black);
+    --button-bg-hover: color-mix(in srgb, var(--danger) 70%, black);
     --button-border-color-hover: transparent;
-    --button-bg-active: color-mix(in srgb, var(--color-danger) 60%, black);
+    --button-bg-active: color-mix(in srgb, var(--danger) 60%, black);
 }
 
 // No frame until the pointer is on it: toolbars, secondary actions in a row.
@@ -215,7 +205,7 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
     --button-bg-active: transparent;
 
     text-decoration: underline;
-    text-decoration-color: var(--brand-color-dark);
+    text-decoration-color: var(--brand-color-link);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
 
@@ -279,9 +269,12 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
     justify-content: center;
 
     // line box + padding + the 1px border on each side
-    inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y) + 2px);
-    block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y) + 2px);
-    padding: 0;
+    inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--space-sm)) + 2px);
+    block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--space-sm)) + 2px);
+
+    // The glyph sits 1px below the centre, as a text button's label does, so
+    // the two stand on one baseline.
+    padding: 2px 0 0;
 }
 
 // GROUP (CSS-044): a segmented row; neighbours share one border. A pressed
@@ -300,13 +293,13 @@ $-bare: "#{$-button}, input#{$-outside-chart}:where([type=\"submit\"], [type=\"b
     }
 
     > :is(button, .button):first-child {
-        border-start-start-radius: var(--button-radius);
-        border-end-start-radius: var(--button-radius);
+        border-start-start-radius: var(--space-lg);
+        border-end-start-radius: var(--space-lg);
     }
 
     > :is(button, .button):last-child {
-        border-start-end-radius: var(--button-radius);
-        border-end-end-radius: var(--button-radius);
+        border-start-end-radius: var(--space-lg);
+        border-end-end-radius: var(--space-lg);
     }
 
     > :is(button, .button) + :is(button, .button) {

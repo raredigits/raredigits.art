@@ -28,15 +28,16 @@ Rare Styles takes the opposite stance. It encodes [Rareism](/manifesto/) — th
   <div>
     <p>Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a>. Its tokens, components and defaults carry the same philosophy: signal over noise, certainty over feature count, function over ornament.</p>
   </div>
-  <div class="sidenote">
+  <div class="sidenote sidenote-banner">
     <h5>Built on 20 years of business-tooling expertise</h5>
     <p>Rare Styles is authored by <a href="https://raredigits.io">Rare Digits Production</a>, a team that has spent two decades building instruments for businesses and decision-makers.</p>
   </div>
   <div>
     <p>Most CSS frameworks ship a box of primitives and let the frontend assemble the answer. <strong>Rare Styles ships the answer.</strong> Visual decisions — typography, spacing, contrast, density, hierarchy — are already made and encoded in the defaults. Dark text on light background. Calm <a href="/kb/choosing-the-right-font/">typography</a>. Sufficient contrast. Deliberate density. The page you are reading uses these defaults with no overrides.</p>
-    <p>This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
   </div>
 </div>
+
+This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
 
 <div class="highlight">Clarity is the default, not the goal.</div>
 

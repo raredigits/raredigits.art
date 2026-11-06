@@ -9,12 +9,12 @@
 a {
     color: var(--link-color);
     text-decoration: underline;
-    text-decoration-color: var(--brand-color-dark);
+    text-decoration-color: var(--brand-color-link);
     text-decoration-thickness: 1px;
     text-underline-offset: 0.2em;
     background-image: linear-gradient(
       to top,
-      color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%
+      color-mix(in srgb, var(--brand-color-link) 20%, transparent) 0 100%
     );
 
     // At rest the fill has zero height, pinned to the bottom of the box. It

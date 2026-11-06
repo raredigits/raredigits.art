@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 // Rare Styles icon set (v0.6.18, CSS-095/CSS-096) — self-hosted SVG cuts of
 // Material Symbols Outlined under images/icons/ (Apache-2.0; LICENSE ships in
 // that directory), drawn via mask-image + background-color: currentcolor so
@@ -240,7 +242,7 @@ $icons: (
         }
     }
 
-    @media (width < 769px) {
+    @include bp.mobile {
         .section-icon {
             margin-left: 0;
         }

@@ -23,13 +23,14 @@ import { serve } from './serve.js';
 
 const FIXTURE = '/test/browser/fixtures/tokens.html';
 
-// RareCharts' palette, pinned: `defaultTheme.colors` in
-// assets/charts/src/core/theme.js (0.9.8_6) — #fa8c16, #00aaff, #00c97a,
-// #ffcc00, #cc44ff, #ff0000. Not imported: RareCharts is a separate library,
-// and its RC-014 turns theme values into var() chains, which must not turn
-// this suite red.
-const RARECHARTS_SERIES = [
-  'rgb(250, 140, 22)', 'rgb(0, 170, 255)', 'rgb(0, 201, 122)',
+// The series, pinned: `--signal` (#1677ff) first, the main chart colour; then
+// RareCharts' palette (`defaultTheme.colors` in assets/charts/src/core/theme.js,
+// 0.9.8_6) without its light blue #00aaff — #fa8c16, #00c97a, #ffcc00,
+// #cc44ff, #ff0000. Not imported: RareCharts is a separate library, and its
+// RC-014 turns theme values into var() chains, which must not turn this suite
+// red.
+const SERIES = [
+  'rgb(22, 119, 255)', 'rgb(250, 140, 22)', 'rgb(0, 201, 122)',
   'rgb(255, 204, 0)', 'rgb(204, 68, 255)', 'rgb(255, 0, 0)',
 ];
 
@@ -77,10 +78,10 @@ async function open(width = 1440) {
 }
 
 describe('CSS-380 / CSS-240 / CSS-176: chart tokens', () => {
-  it('six series, the hues of RareCharts\' palette in its order', async () => {
+  it('six series: --signal first, then RareCharts\' hues in its order', async () => {
     const page = await open();
     const series = await page.evaluate(() => [1, 2, 3, 4, 5, 6, 7].map((n) => window.resolve('#tok-page', `--chart-series-${n}`)));
-    expect(series.slice(0, 6)).toEqual(RARECHARTS_SERIES);
+    expect(series.slice(0, 6)).toEqual(SERIES);
     expect(series[6]).toBe('rgb(0, 0, 0)'); // no 7th: the probe keeps the inherited text colour
     await page.close();
   });

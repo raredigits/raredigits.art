@@ -496,6 +496,7 @@ Cheap, high-impact completeness for the longread core and the utility system. Al
 | `CSS-144` | feat | Flex `justify-content`/`align-items` utility family — today grid-semantic `.items-*` is borrowed instead (`align/_flex.scss`, `layout/_grid.scss:210-218`). | S |
 | `CSS-145` | feat | Expose the breakpoint values to consumers — **not as CSS custom properties in `@media`**: custom properties are invalid in media-query conditions (corrected 2026-07-21). Ship instead: documented canonical values, Sass exports for SCSS consumers, and evaluate build-time `@custom-media` for the compiled CSS. Today Sass-only vars (`utilities/_breakpoints.scss:1-4`). | S |
 | `CSS-146` | feat | `aspect-ratio` utility — used raw in 4+ component files (`bricks/_cards.scss:72`), never exposed. P2. | S |
+| `CSS-387` | feat | **Rotation utilities.** A small set of `rotate-*` classes for decorative tilts — a stamp, a sticker, a badge, a card in a pile: e.g. `rotate-1`/`-2`/`-3`/`-6`/`-12`/`-45`/`-90`/`-180` and the negative tilts (`-rotate-*`). Use the individual `rotate` property, not `transform`, so a tilt composes with any `translate`/`scale` already on the element. Decide whether the set needs `mobile:`/`tablet:` variants; document that rotation is decoration (no meaning in it, no motion). Found while building the Helper Selectors poster on `/styles/bricks/` (2026-11-06): the stamp wanted a tilt and the utilities had none. | S |
 
 ## Library boundary (P1) — decisions `Q-09`/`Q-10` from the 2026-07-13 audit
 

@@ -89,9 +89,9 @@ permalink: '/styles/layout/spacing/'
 
 <pre><code>:root {
   --space-md: 20px;            /* tighten or expand the base step */
-  --space-xxxxl: 32rem;        /* taller list-group-pack columns */
+  --space-xxxxl: 32rem;        /* the tallest step of the scale */
 }</code></pre>
 
 <p>Components that consume tokens via custom properties accept inline overrides too:</p>
 
-<pre><code>&lt;div class="list-group-pack" style="height: var(--space-xxxxl);"&gt;</code></pre>
+<pre><code>&lt;div class="list-group-pack" style="--list-group-pack-min: 11rem;"&gt;</code></pre>

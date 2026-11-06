@@ -41,7 +41,6 @@
     padding-top: var(--header-height);
     background-color: var(--gray-lightest);
     font-size: var(--font-size-sm);
-    line-height: var(--line-height-sm);
 
     // Closed = off-screen AND out of the tab order / accessibility tree
     // (CSS-360): without `visibility` its 13 links took keyboard focus while

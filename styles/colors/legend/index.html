@@ -1,0 +1,69 @@
+---
+layout: page.njk
+title: "Colors / Legend"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/colors/legend/'
+---
+
+<div class="meta-info">
+    css/modules/bricks/_legend.scss
+</div>
+
+<section>
+    <p>A legend is the key to a chart or to any colour-coded view — a status map, a coloured table, a timeline. <code>.legend</code> is a wrapping row of <code>.legend__item</code>s; each item is a swatch and a label. The swatches have the shapes and sizes of the legend <a href="/charts/">RareCharts</a> draws inside a chart, so a legend on the page and a legend in a chart read as one.</p>
+    <ul class="legend text-content-width padding-y-md">
+        <li class="legend__item"><span class="legend__swatch legend__swatch--line" style="--swatch-color: var(--blue)"></span>Revenue</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dashed" style="--swatch-color: var(--blue)"></span>Forecast</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--orange)"></span>Orders</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--band" style="--swatch-color: var(--gray)"></span>Plan range</li>
+    </ul>
+<pre class="text-content-caption"><code>&lt;ul class="legend"&gt;
+    &lt;li class="legend__item"&gt;
+        &lt;span class="legend__swatch legend__swatch--line" style="--swatch-color: #1677ff"&gt;&lt;/span&gt;
+        Revenue
+    &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="swatches">Swatches</h2>
+    <p>The colour comes from <code>--swatch-color</code>, set on the swatch, on the item or on the whole legend; without it a swatch takes the text colour. The bare <code>.legend__swatch</code> is a small square; a modifier gives it the shape of the series it names.</p>
+    <dl>
+        <dt><code>.legend__swatch--line</code></dt>
+        <dd>A short rule, for a line series.</dd>
+
+        <dt><code>.legend__swatch--dashed</code></dt>
+        <dd>A dashed rule, for a forecast or a projected series.</dd>
+
+        <dt><code>.legend__swatch--dot</code></dt>
+        <dd>A dot, for bars, slices and points.</dd>
+
+        <dt><code>.legend__swatch--band</code></dt>
+        <dd>A softened square, for a shaded range: a confidence interval, an envelope.</dd>
+    </dl>
+</section>
+
+<section>
+    <h2 id="toggles">Toggles</h2>
+    <p>When the legend switches series on and off, each item is a <code>&lt;button&gt;</code> with <code>aria-pressed</code>. The legend drops the button's chrome, so the item still reads as a label, and <code>aria-pressed="false"</code> dims it as the off state. The page's script toggles the attribute and hides the series; keyboard focus keeps the library's focus ring.</p>
+    <div id="legend-toggle-demo" class="legend text-content-width padding-y-md">
+        <button class="legend__item" type="button" aria-pressed="true"><span class="legend__swatch legend__swatch--line" style="--swatch-color: var(--blue)"></span>Europe</button>
+        <button class="legend__item" type="button" aria-pressed="true"><span class="legend__swatch legend__swatch--line" style="--swatch-color: var(--orange)"></span>Americas</button>
+        <button class="legend__item" type="button" aria-pressed="false"><span class="legend__swatch legend__swatch--line" style="--swatch-color: var(--green)"></span>Asia Pacific</button>
+    </div>
+<pre class="text-content-caption"><code>&lt;div class="legend"&gt;
+    &lt;button class="legend__item" type="button" aria-pressed="true"&gt;
+        &lt;span class="legend__swatch legend__swatch--line" style="--swatch-color: #1677ff"&gt;&lt;/span&gt;
+        Europe
+    &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<script>
+    document.querySelectorAll('#legend-toggle-demo .legend__item').forEach((button) => {
+        button.addEventListener('click', () => {
+            button.setAttribute('aria-pressed', String(button.getAttribute('aria-pressed') !== 'true'));
+        });
+    });
+</script>

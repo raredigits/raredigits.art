@@ -33,11 +33,11 @@
     <article>
       <h2>Callouts (CSS-156)</h2>
       <p class="callout" id="callout-plain">A plain callout.</p>
-      <p class="callout callout-info" id="callout-info"><strong>Info.</strong> A notice.</p>
+      <p class="callout callout-signal" id="callout-signal"><strong>Info.</strong> A notice.</p>
       <p class="callout callout-success" id="callout-success"><strong>Done.</strong> A notice.</p>
       <p class="callout callout-warning" id="callout-warning"><strong>Experimental.</strong> A notice.</p>
-      <p class="callout callout-error" id="callout-error"><strong>Error.</strong> A notice.</p>
-      <div style="--color-warning: rgb(250, 140, 22)">
+      <p class="callout callout-danger" id="callout-danger"><strong>Error.</strong> A notice.</p>
+      <div style="--warning: rgb(250, 140, 22)">
         <p class="callout callout-warning" id="callout-remapped"><strong>Warning.</strong> The role re-mapped on a surface.</p>
       </div>
 
@@ -166,6 +166,8 @@ const d = 4;</code></pre>
       <p id="r-pp2">A paragraph after a paragraph.</p>
       <div class="sidenote-wrapper" id="r-row1"><p id="r-row1-p">A paragraph in a sidenote row.</p><div class="sidenote">note</div></div>
       <div class="sidenote-wrapper" id="r-row2"><p id="r-row2-p">The next row reads as the next paragraph.</p><div class="sidenote">note</div></div>
+      <div class="sidenote-wrapper" id="r-row3"><p>Short text.</p><div class="sidenote" id="r-row3-note"><p>A note taller than its text, over several lines in the narrow note column.</p><p>And a second paragraph.</p></div></div>
+      <div class="sidenote-wrapper" id="r-row4"><p>The row after a tall note.</p><div class="sidenote">note</div></div>
       <section>
         <div class="sidenote-wrapper" id="r-sec-row1"><p id="r-sec-row1-p">A row in a section.</p><div class="sidenote">note</div></div>
         <div class="sidenote-wrapper" id="r-sec-row2"><p id="r-sec-row2-p">The next row in the section.</p><div class="sidenote">note</div></div>

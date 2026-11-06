@@ -23,6 +23,14 @@ $desktop-min: 1024px;
   }
 }
 
+// Below the desktop grid: tablet and mobile together, one media block
+// (`multi-breakpoint("tablet", "mobile")` emits two with the same content).
+@mixin below-desktop {
+  @media screen and (width < $desktop-min) {
+    @content;
+  }
+}
+
 @mixin multi-breakpoint($breakpoints...) {
   @each $breakpoint in $breakpoints {
     @if $breakpoint == "mobile" {

@@ -4,9 +4,9 @@
     border: 1px solid var(--border-color);
     border-radius: var(--space-sm);
     color: var(--text-color-light);
-    padding: 1px 4px;
+    padding: 2px var(--space-sm);
     font-size: var(--font-size-sm);
-    line-height: 1;
+    line-height: 1.6;
     cursor: pointer;
     
     &:hover {

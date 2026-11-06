@@ -36,7 +36,6 @@
             { "title": "Text Content", "url": "/styles/typography/text-content/" },
             { "title": "Lists & Columns", "url": "/styles/typography/lists/" },
             { "title": "Tables", "url": "/styles/typography/tables/" },
-            { "title": "Interactive Elements", "url": "/styles/typography/interactive/" },
             { "title": "Notes", "url": "/styles/typography/notes/" }
           ]
       },
@@ -44,24 +43,24 @@
           "title": "Colors",
           "url": "/styles/colors/",
           "subitems": [
-            { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" }
+            { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" },
+            { "title": "Legend", "url": "/styles/colors/legend/" }
           ]
       },
       {
           "title": "Bricks",
           "url": "/styles/bricks/",
           "subitems": [
-            { "title": "Panels", "url": "/styles/bricks/panels/" },
-            { "title": "Legend", "url": "/styles/bricks/legend/" },
-            { "title": "Stats", "url": "/styles/bricks/stats/" }
+            { "title": "Cards", "url": "/styles/bricks/cards/" },
+            { "title": "Panels", "url": "/styles/bricks/panels/" }
           ]
       },
       {
-          "title": "Elements",
-          "url": "/styles/elements/",
+          "title": "Interactive Elements",
+          "url": "/styles/interactive/",
           "subitems": [
-            { "title": "Buttons", "url": "/styles/elements/buttons/" },
-            { "title": "Forms", "url": "/styles/elements/forms/" }
+            { "title": "Buttons", "url": "/styles/interactive/buttons/" },
+            { "title": "Forms", "url": "/styles/interactive/forms/" }
           ]
       },
       { "title": "Alignment", "url": "/styles/alignment/" },

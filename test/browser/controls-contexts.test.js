@@ -107,13 +107,13 @@ describe('CSS-040: the ghost label follows the surface', () => {
 });
 
 describe('CSS-040: a link-button keeps its label where text links are re-coloured', () => {
-  it('in a dark card: dark on the white default, white on the primary; text links stay light', async () => {
+  it('in a dark card: dark on the white default and on the brand primary; text links stay light', async () => {
     const page = await open();
     const a = await css(page, 'inv-a', ['color', 'background-color']);
-    expect(a).toEqual({ color: 'rgb(0, 0, 0)', 'background-color': 'rgb(255, 255, 255)' });
+    expect(a).toEqual({ color: 'rgb(51, 51, 51)', 'background-color': 'rgb(250, 250, 250)' });
     expect(contrast(a.color, a['background-color'])).toBeGreaterThanOrEqual(4.5);
     const primary = await css(page, 'inv-a-primary', ['color', 'background-color']);
-    expect(primary.color).toBe('rgb(255, 255, 255)');
+    expect(primary.color).toBe('rgb(0, 0, 0)'); // the primary's label is black on the brand green
     expect(contrast(primary.color, primary['background-color'])).toBeGreaterThanOrEqual(4.5);
     expect((await css(page, 'inv-text-link', ['color'])).color).toBe('rgb(240, 240, 240)');
     await page.close();
@@ -123,7 +123,7 @@ describe('CSS-040: a link-button keeps its label where text links are re-coloure
     const page = await open();
     for (const id of ['note-a', 'side-a']) {
       expect(await css(page, id, ['color', 'border-bottom-width', 'border-bottom-color']), id)
-        .toEqual({ color: 'rgb(0, 0, 0)', 'border-bottom-width': '1px', 'border-bottom-color': 'rgb(204, 204, 204)' });
+        .toEqual({ color: 'rgb(51, 51, 51)', 'border-bottom-width': '1px', 'border-bottom-color': 'rgb(204, 204, 204)' });
     }
     expect((await css(page, 'note-text-link', ['color'])).color).toBe('rgb(102, 102, 102)');
     expect((await css(page, 'side-text-link', ['color'])).color).toBe('rgb(102, 102, 102)');
@@ -152,22 +152,22 @@ describe('Q-04: a button is as wide as its label in a flex column', () => {
 });
 
 describe('CSS-044: a pressed toggle keeps its variant', () => {
-  it('a pressed primary or danger takes its own pressed fill under its white label', async () => {
+  it('a pressed primary or danger takes its own pressed fill under its own label', async () => {
     const page = await open();
     const fills = {
-      'g-primary': await computed(page, 'color-mix(in srgb, rgb(22, 119, 255) 60%, black)'),
-      'g-danger': await computed(page, 'color-mix(in srgb, rgb(255, 0, 0) 60%, black)'),
+      'g-primary': [await computed(page, 'color-mix(in srgb, rgb(58, 128, 0) 85%, black)'), 'rgb(255, 255, 255)'], // pressed: white, as under the pointer
+      'g-danger': [await computed(page, 'color-mix(in srgb, rgb(255, 0, 0) 60%, black)'), 'rgb(255, 255, 255)'],
     };
-    for (const [id, fill] of Object.entries(fills)) {
+    for (const [id, [fill, label]] of Object.entries(fills)) {
       const s = await css(page, id, ['color', 'background-color', 'border-top-color']);
-      expect(s, id).toEqual({ color: 'rgb(255, 255, 255)', 'background-color': fill, 'border-top-color': 'rgba(0, 0, 0, 0)' });
+      expect(s, id).toEqual({ color: label, 'background-color': fill, 'border-top-color': 'rgba(0, 0, 0, 0)' });
       expect(contrast(s.color, s['background-color']), `${id} label`).toBeGreaterThanOrEqual(4.5);
     }
     // the default pressed look is unchanged, and an unpressed primary keeps its rest fill
     expect(await css(page, 'g-default', ['background-color', 'border-top-color', 'color']))
-      .toEqual({ 'background-color': 'rgb(240, 240, 240)', 'border-top-color': 'rgb(0, 0, 0)', color: 'rgb(0, 0, 0)' });
+      .toEqual({ 'background-color': 'rgb(240, 240, 240)', 'border-top-color': 'rgb(0, 0, 0)', color: 'rgb(51, 51, 51)' });
     expect((await css(page, 'g-primary-off', ['background-color']))['background-color'])
-      .toBe(await computed(page, 'color-mix(in srgb, rgb(22, 119, 255) 85%, black)'));
+      .toBe('rgb(0, 255, 78)'); // --brand-color
     await page.close();
   });
 });
@@ -179,7 +179,7 @@ describe('CSS-043: states on a bare <button>', () => {
     await force(page, 'b-aria-disabled', 'hover');
     expect((await css(page, 'b-aria-disabled', ['border-top-color']))['border-top-color']).toBe('rgb(204, 204, 204)');
     await force(page, 'b-aria-disabled', 'active');
-    expect((await css(page, 'b-aria-disabled', ['background-color']))['background-color']).toBe('rgb(255, 255, 255)');
+    expect((await css(page, 'b-aria-disabled', ['background-color']))['background-color']).toBe('rgb(250, 250, 250)'); // the rest fill
     // a legend toggle stays a plain label, as with `disabled`
     expect(await css(page, 'lg-aria-disabled', ['opacity', 'cursor', 'border-top-width']))
       .toEqual({ opacity: '1', cursor: 'default', 'border-top-width': '0px' });

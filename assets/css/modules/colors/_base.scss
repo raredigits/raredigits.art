@@ -27,6 +27,9 @@
     --red: #f00;
     --green: #389e0d;
     --yellow: #ffe000;
+    --blue: #1677ff;
+    --blue-light: #bae0ff;
+    --blue-dark: #003eb3;
 }
 
 $base_colors:
@@ -46,6 +49,9 @@ bg-color,
 
 yellow,
 green,
-red;
+red,
+blue,
+blue-light,
+blue-dark;
 
 @include cc.color-classes($base_colors);

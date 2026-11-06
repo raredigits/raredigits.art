@@ -33,10 +33,10 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
 
 ## What an island gets
 
-<div class="table-scroll">
+<div class="table-scroll card-caption">
 <table class="table-comparison table-bordered">
     <thead>
-        <tr><th></th><th>Page mode <code>&lt;html class="rd"&gt;</code></th><th>Island <code>class="rd"</code></th></tr>
+        <tr><th></th><th>Page mode<br><code>&lt;html class="rd"&gt;</code></th><th>Island<br><code>class="rd"</code></th></tr>
     </thead>
     <tbody>
         <tr><td>Tag styles (<code>h1</code>–<code>h6</code>, <code>p</code>, lists, tables, <code>code</code>, links, forms…)</td><td>yes</td><td>yes</td></tr>

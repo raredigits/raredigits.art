@@ -13,13 +13,13 @@ permalink: '/styles/colors/chart-tokens/'
 <section>
     <p>The chart tokens name the colours and fonts a chart takes from the page: its series, its text, axes and gridlines, its range controls, its tooltip. Each has one <code>--chart-*</code> name, and each default points at a token the library already has, so a chart follows the page's palette, its surfaces and a project's overrides.</p>
     <p><a href="/charts/">RareCharts</a> reads these names first, from its 0.9.8_7, and keeps its own values as fallbacks: on a page without Rare Styles a chart looks as it did, and a chart's own theme (an explicit <code>theme</code>, or <code>darkTheme</code>) still wins over the page.</p>
-    <p>The library's own pieces beside a chart do not read these names; they use the roles the chart tokens are made from. A <a href="/styles/bricks/legend/">legend</a> swatch takes a series when you give it one, <code>--swatch-color: var(--chart-series-1)</code>. A row of <a href="/styles/bricks/stats/">stats</a> sets its labels in <code>--text-color-light</code>, which <code>--chart-label-color</code> points at by default. To change both, re-map the role; a re-mapped chart token changes only the chart.</p>
+    <p>The library's own pieces beside a chart do not read these names; they use the roles the chart tokens are made from. A <a href="/styles/colors/legend/">legend</a> swatch takes a series when you give it one, <code>--swatch-color: var(--chart-series-1)</code>. A row of <a href="/styles/bricks/panels/#stats">stats</a> sets its labels in <code>--text-color-light</code>, which <code>--chart-label-color</code> points at by default. To change both, re-map the role; a re-mapped chart token changes only the chart.</p>
     <p>Like every token they live on <code>:root</code>, outside the <code>.rd</code> gate: a chart in an island, or on a page without <code>.rd</code>, reads the same names. One of them names a colour the library cannot see there: see <a href="#host-surface">On a host's background</a>.</p>
 </section>
 
 <section>
     <h2 id="series">Series</h2>
-    <p>Six series colours, in the order a multi-series chart uses them. The hues are RareCharts' own palette, so a chart that reads them looks the same; where the library's palette has the hue, the token points at it.</p>
+    <p>Six series colours, in the order a multi-series chart uses them. The first is <code>--signal</code>, the main chart colour; the other five are RareCharts' own hues. Where the library's palette has the hue, the token points at it.</p>
     <ul class="legend padding-y-md">
         <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-1)"></span>1</li>
         <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-2)"></span>2</li>
@@ -31,8 +31,8 @@ permalink: '/styles/colors/chart-tokens/'
     <div class="table-scroll">
     <table class="table-small">
         <tr><th>Token</th><th>Default</th><th>Hue</th></tr>
-        <tr><td class="nobr"><code>--chart-series-1</code></td><td class="nobr"><code>var(--orange)</code></td><td>orange, #fa8c16</td></tr>
-        <tr><td class="nobr"><code>--chart-series-2</code></td><td class="nobr"><code>#0af</code></td><td>blue, #00aaff</td></tr>
+        <tr><td class="nobr"><code>--chart-series-1</code></td><td class="nobr"><code>var(--signal)</code></td><td>blue, #1677ff</td></tr>
+        <tr><td class="nobr"><code>--chart-series-2</code></td><td class="nobr"><code>var(--orange)</code></td><td>orange, #fa8c16</td></tr>
         <tr><td class="nobr"><code>--chart-series-3</code></td><td class="nobr"><code>#00c97a</code></td><td>green</td></tr>
         <tr><td class="nobr"><code>--chart-series-4</code></td><td class="nobr"><code>#fc0</code></td><td>yellow, #ffcc00</td></tr>
         <tr><td class="nobr"><code>--chart-series-5</code></td><td class="nobr"><code>#c4f</code></td><td>violet, #cc44ff</td></tr>
@@ -41,7 +41,7 @@ permalink: '/styles/colors/chart-tokens/'
     </div>
     <p>Re-map a series for every chart on <code>:root</code>, or for one chart on its container:</p>
 <pre class="text-content-caption"><code>:root {
-    --chart-series-1: var(--blue);   <span class="code-comment">/* every chart */</span>
+    --chart-series-1: var(--green);  <span class="code-comment">/* every chart */</span>
 }
 
 #revenue-chart {

@@ -84,15 +84,15 @@ function contrast(a, b) {
 }
 
 describe('Q-04: the default look of a bare <button> and of .button', () => {
-  it('a bare button is inline, white, framed, on the tokens; a link with .button matches it', async () => {
+  it('a bare button is inline, light grey, framed and rounded; a link with .button matches it', async () => {
     const page = await open();
     const props = ['display', 'background-color', 'border-top-color', 'border-top-width', 'border-top-left-radius',
       'padding-top', 'padding-left', 'font-size', 'line-height', 'color', 'text-decoration-line', 'cursor'];
     const look = await css(page, 'b-default', props);
     expect(look).toEqual({
-      display: 'inline-block', 'background-color': 'rgb(255, 255, 255)', 'border-top-color': 'rgb(204, 204, 204)',
-      'border-top-width': '1px', 'border-top-left-radius': '4px', 'padding-top': '8px', 'padding-left': '16px',
-      'font-size': '16px', 'line-height': '19.2px', color: 'rgb(0, 0, 0)', 'text-decoration-line': 'none', cursor: 'pointer',
+      display: 'inline-block', 'background-color': 'rgb(250, 250, 250)', 'border-top-color': 'rgb(204, 204, 204)', // --gray-lightest
+      'border-top-width': '1px', 'border-top-left-radius': '32px', 'padding-top': '9px', 'padding-left': '16px',
+      'font-size': '16px', 'line-height': '19.2px', color: 'rgb(51, 51, 51)', 'text-decoration-line': 'none', cursor: 'pointer', // --gray-dark
     });
     expect(await css(page, 'b-link-default', props)).toEqual(look);
     expect((await css(page, 'b-link-default', ['background-image']))['background-image']).toBe('none'); // no link fill
@@ -117,44 +117,42 @@ describe('Q-04: the default look of a bare <button> and of .button', () => {
     await page.close();
   });
 
-  it('on a dark card the default button keeps dark text on white', async () => {
+  it('on a dark card the default button keeps dark text on its light fill', async () => {
     const page = await open();
     expect(await css(page, 'b-inverted', ['color', 'background-color']))
-      .toEqual({ color: 'rgb(0, 0, 0)', 'background-color': 'rgb(255, 255, 255)' });
+      .toEqual({ color: 'rgb(51, 51, 51)', 'background-color': 'rgb(250, 250, 250)' });
     await page.close();
   });
 });
 
 describe('CSS-040: variants', () => {
-  it('primary and danger fill with the shaded role colour; white labels reach AA', async () => {
+  it('primary fills with the brand colour under a black label; danger with the shaded red under a white one; both reach AA', async () => {
     const page = await open();
-    for (const [id, hue] of [['b-primary', 'blue'], ['b-danger', 'red']]) {
-      const s = await css(page, id, ['background-color', 'color', 'border-top-color']);
-      expect(s.color).toBe('rgb(255, 255, 255)');
-      expect(s['border-top-color']).toBe('rgba(0, 0, 0, 0)');
-      expect(contrast(s['background-color'], s.color), `${id} label`).toBeGreaterThanOrEqual(4.5);
-      await force(page, id, 'hover');
-      const h = await css(page, id, ['background-color']);
-      expect(h['background-color'], `${id} (${hue}) hover`).not.toBe(s['background-color']);
-      await force(page, id, null);
-    }
-    // the primary follows --signal: re-mapped, it fills with the new signal, shaded the same way
-    const expected = await page.evaluate(() => {
-      document.documentElement.style.setProperty('--signal', 'rgb(0, 128, 0)');
-      const probe = document.createElement('div');
-      probe.style.backgroundColor = 'color-mix(in srgb, rgb(0, 128, 0) 85%, black)';
-      document.body.append(probe);
-      return getComputedStyle(probe).backgroundColor;
-    });
+    const p = await css(page, 'b-primary', ['background-color', 'color', 'border-top-color']);
+    expect(p).toEqual({ 'background-color': 'rgb(0, 255, 78)', color: 'rgb(0, 0, 0)', 'border-top-color': 'rgba(0, 0, 0, 0)' }); // --brand-color
+    expect(contrast(p['background-color'], p.color), 'primary label').toBeGreaterThanOrEqual(4.5);
+    await force(page, 'b-primary', 'hover');
+    const ph = await css(page, 'b-primary', ['background-color', 'color']);
+    // --brand-color-dark (#3a8000) under a white label: AA, about 4.9:1
+    expect(ph).toEqual({ 'background-color': 'rgb(58, 128, 0)', color: 'rgb(255, 255, 255)' });
+    expect(contrast(ph['background-color'], ph.color), 'primary hover label').toBeGreaterThanOrEqual(4.5);
+    await force(page, 'b-primary', null);
+    const d = await css(page, 'b-danger', ['background-color', 'color', 'border-top-color']);
+    expect(d.color).toBe('rgb(255, 255, 255)');
+    expect(d['border-top-color']).toBe('rgba(0, 0, 0, 0)');
+    expect(contrast(d['background-color'], d.color), 'danger label').toBeGreaterThanOrEqual(4.5);
+    await force(page, 'b-danger', 'hover');
+    expect((await css(page, 'b-danger', ['background-color']))['background-color']).not.toBe(d['background-color']);
+    await force(page, 'b-danger', null);
+    // the primary follows --brand-color: re-mapped, it fills with the new brand
+    await page.evaluate(() => document.documentElement.style.setProperty('--brand-color', 'rgb(0, 128, 0)'));
     await page.waitForTimeout(250); // the fill fades to the new colour
-    expect((await css(page, 'b-primary', ['background-color']))['background-color']).toBe(expected);
+    expect((await css(page, 'b-primary', ['background-color']))['background-color']).toBe('rgb(0, 128, 0)');
     await page.close();
   });
 
-  it('secondary is the default look; ghost has no frame until hover; link reads as a link', async () => {
+  it('ghost has no frame until hover; link reads as a link', async () => {
     const page = await open();
-    const look = ['background-color', 'border-top-color', 'color'];
-    expect(await css(page, 'b-secondary', look)).toEqual(await css(page, 'b-default', look));
     expect(await css(page, 'b-ghost', ['background-color', 'border-top-color']))
       .toEqual({ 'background-color': 'rgba(0, 0, 0, 0)', 'border-top-color': 'rgba(0, 0, 0, 0)' });
     await force(page, 'b-ghost', 'hover');
@@ -165,21 +163,19 @@ describe('CSS-040: variants', () => {
   });
 });
 
-describe('CSS-041 / CSS-046: sizes and tokens', () => {
-  it('sm < md = default < lg; the size classes set the tokens', async () => {
+describe('CSS-041 / CSS-046: sizes; no button tokens', () => {
+  it('sm < md = default < lg; no --button-* tokens on :root', async () => {
     const page = await open();
     const [sm, md, lg, def] = [await box(page, 'b-sm'), await box(page, 'b-md'), await box(page, 'b-lg'), await box(page, 'b-default')];
     expect(sm.h).toBeLessThan(md.h);
     expect(md.h).toBeCloseTo(def.h, 1);
     expect(lg.h).toBeGreaterThan(md.h);
-    expect(await css(page, 'b-sm', ['font-size', 'padding-top', 'padding-left'])).toEqual({ 'font-size': '14.4px', 'padding-top': '4px', 'padding-left': '8px' });
-    expect(await css(page, 'b-lg', ['font-size', 'padding-top', 'padding-left'])).toEqual({ 'font-size': '19.2px', 'padding-top': '12px', 'padding-left': '24px' });
-    // the token surface on :root
+    expect(await css(page, 'b-sm', ['font-size', 'padding-top', 'padding-left'])).toEqual({ 'font-size': '14.4px', 'padding-top': '5px', 'padding-left': '8px' });
+    expect(await css(page, 'b-lg', ['font-size', 'padding-top', 'padding-left'])).toEqual({ 'font-size': '19.2px', 'padding-top': '13px', 'padding-left': '24px' });
+    // the look is written with the library's tokens: nothing button-only on :root
     const tokens = await page.evaluate(() => ['--button-radius', '--button-padding-x', '--button-padding-y', '--button-font-size',
-      '--button-font-weight', '--button-transition'].map((t) => getComputedStyle(document.documentElement).getPropertyValue(t).trim()));
-    expect(tokens.every(Boolean)).toBe(true);
-    await page.evaluate(() => document.documentElement.style.setProperty('--button-radius', '999px'));
-    expect((await css(page, 'b-default', ['border-top-left-radius']))['border-top-left-radius']).toBe('999px');
+      '--button-font-weight', '--button-transition', '--button-bg'].map((t) => getComputedStyle(document.documentElement).getPropertyValue(t).trim()));
+    expect(tokens.every((t) => t === '')).toBe(true);
     await page.close();
   });
 });
@@ -198,7 +194,8 @@ describe('CSS-042: icons', () => {
         const el = document.getElementById(i); const r = el.getBoundingClientRect();
         return { mid: r.y + parseFloat(getComputedStyle(el, '::before').top) + 8 };
       }, glyph);
-      expect(g.mid, `${glyph} centred`).toBeCloseTo(b.y + b.h / 2, 0);
+      // 1px below the centre: the padding is 1px more above than below
+      expect(g.mid, `${glyph} centred`).toBeCloseTo(b.y + b.h / 2 + 1, 0);
     }
     // the trailing glyph sits after its label
     expect((await box(page, 'b-trail-icon')).x).toBeGreaterThan((await box(page, 'b-trail')).x + 20);
@@ -231,7 +228,8 @@ describe('CSS-043: states', () => {
     let page = await open();
     expect(await css(page, 'b-busy', ['color', 'cursor', 'position'])).toEqual({ color: 'rgba(0, 0, 0, 0)', cursor: 'progress', position: 'relative' });
     const ring = await css(page, 'b-busy', ['content', 'width', 'height', 'border-top-color', 'border-right-color', 'animation-name'], '::after');
-    expect(ring).toEqual({ content: '""', width: '16px', height: '16px', 'border-top-color': 'rgb(255, 255, 255)', 'border-right-color': 'rgba(0, 0, 0, 0)', 'animation-name': 'button-busy-spin' });
+    // the ring is the label colour: the primary's label is black
+    expect(ring).toEqual({ content: '""', width: '16px', height: '16px', 'border-top-color': 'rgb(0, 0, 0)', 'border-right-color': 'rgba(0, 0, 0, 0)', 'animation-name': 'button-busy-spin' });
     await page.close();
     page = await open({ reducedMotion: 'reduce' });
     expect(await css(page, 'b-busy', ['content', 'animation-name'], '::after')).toEqual({ content: '""', 'animation-name': 'none' });
@@ -247,9 +245,9 @@ describe('CSS-044 / CSS-045: group and full width', () => {
     expect(g2.x).toBeCloseTo(g1.right - 1, 1);
     expect(g3.x).toBeCloseTo(g2.right - 1, 1);
     const radii = ['border-top-left-radius', 'border-top-right-radius'];
-    expect(await css(page, 'g1', radii)).toEqual({ 'border-top-left-radius': '4px', 'border-top-right-radius': '0px' });
+    expect(await css(page, 'g1', radii)).toEqual({ 'border-top-left-radius': '32px', 'border-top-right-radius': '0px' });
     expect(await css(page, 'g2', radii)).toEqual({ 'border-top-left-radius': '0px', 'border-top-right-radius': '0px' });
-    expect(await css(page, 'g3', radii)).toEqual({ 'border-top-left-radius': '0px', 'border-top-right-radius': '4px' });
+    expect(await css(page, 'g3', radii)).toEqual({ 'border-top-left-radius': '0px', 'border-top-right-radius': '32px' });
     expect(await css(page, 'g2', ['background-color', 'border-top-color', 'z-index']))
       .toEqual({ 'background-color': 'rgb(240, 240, 240)', 'border-top-color': 'rgb(0, 0, 0)', 'z-index': '1' });
     await page.close();
@@ -322,7 +320,7 @@ describe('CSS-100…105: forms', () => {
     const text = await css(page, 'f-text', look);
     expect(text).toEqual({
       'border-top-color': 'rgb(136, 136, 136)', 'border-top-width': '1px', 'border-top-left-radius': '4px',
-      'padding-top': '8px', 'padding-left': '12px', 'font-size': '16px', 'background-color': 'rgb(255, 255, 255)',
+      'padding-top': '9px', 'padding-left': '12px', 'font-size': '16px', 'background-color': 'rgb(255, 255, 255)', // 1px more above than below
     });
     for (const id of ['f-notype', 'f-email', 'f-password', 'f-search', 'f-tel', 'f-url', 'f-number', 'f-area', 'f-select']) {
       expect(await css(page, id, look), id).toEqual(text);
@@ -365,7 +363,7 @@ describe('CSS-100…105: forms', () => {
     expect(await border('f-req')).toBe('rgb(255, 0, 0)');
     await page.fill('#f-req-valid', 'filled');
     await page.focus('#f-plain');
-    expect(await border('f-req-valid')).toBe('rgb(56, 158, 13)'); // --color-success
+    expect(await border('f-req-valid')).toBe('rgb(56, 158, 13)'); // --success
     await page.fill('#f-plain', 'no constraint');
     await page.focus('#f-text');
     expect(await border('f-plain')).toBe('rgb(136, 136, 136)'); // asked for nothing: no success colour
@@ -396,12 +394,37 @@ describe('CSS-100…105: forms', () => {
     await page.close();
   });
 
-  it('range, colour and file: accent, field height, a small default button', async () => {
+  it('range, colour and file: a 2px line and a round thumb, a --space-lg square well, a full-width frame', async () => {
     const page = await open();
-    expect((await css(page, 'f-range', ['accent-color']))['accent-color']).toBe('rgb(22, 119, 255)');
-    expect((await box(page, 'f-color')).h).toBeCloseTo((await box(page, 'f-text')).h, 1);
-    expect(await css(page, 'f-file', ['border-top-color', 'border-top-left-radius', 'background-color', 'padding-top'], '::file-selector-button'))
-      .toEqual({ 'border-top-color': 'rgb(204, 204, 204)', 'border-top-left-radius': '4px', 'background-color': 'rgb(255, 255, 255)', 'padding-top': '4px' });
+    // range: drawn by the library — no native look, a 2px line, a 1rem round thumb with a 2px frame
+    expect((await css(page, 'f-range', ['appearance']))['appearance']).toBe('none');
+    // getComputedStyle cannot read the engine parts, so read the rules that draw them
+    const parts = await page.evaluate(() => {
+      const out = {};
+      for (const sheet of document.styleSheets) {
+        for (const r of sheet.cssRules) {
+          for (const part of ['::-webkit-slider-runnable-track', '::-webkit-slider-thumb', '::-moz-range-track', '::-moz-range-thumb']) {
+            if (r.selectorText && r.selectorText.includes('[type="range"]') && r.selectorText.endsWith(part)) out[part] = r.style;
+          }
+        }
+      }
+      return Object.fromEntries(Object.entries(out).map(([k, st]) => [k, { h: st.blockSize, border: st.getPropertyValue('border'), radius: st.borderTopLeftRadius }]));
+    });
+    // Chrome keeps the WebKit parts; it drops the ::-moz- rules as unknown
+    expect(parts['::-webkit-slider-runnable-track'].h).toBe('2px');
+    expect(parts['::-webkit-slider-thumb']).toEqual({ h: '1rem', border: '2px solid var(--field-text)', radius: '50%' });
+    // range and colour: --space-lg tall, not tied to the field height; the colour well is a square
+    const [range, color, file, form] = [await box(page, 'f-range'), await box(page, 'f-color'), await box(page, 'f-file'),
+      await page.evaluate(() => document.getElementById('f-file').parentElement.getBoundingClientRect().width)];
+    expect(range.h).toBeCloseTo(32, 1);
+    expect(color.h).toBeCloseTo(32, 1);
+    expect(color.w).toBeCloseTo(32, 1);
+    // file: a frame across the container, no fill, radius --space-md, the small button on --gray-mid-light
+    expect(file.w).toBeCloseTo(form, 1);
+    expect(await css(page, 'f-file', ['border-top-width', 'border-top-left-radius', 'background-color']))
+      .toEqual({ 'border-top-width': '1px', 'border-top-left-radius': '16px', 'background-color': 'rgba(0, 0, 0, 0)' });
+    expect(await css(page, 'f-file', ['border-top-left-radius', 'background-color', 'font-size', 'padding-left'], '::file-selector-button'))
+      .toEqual({ 'border-top-left-radius': '32px', 'background-color': 'rgb(228, 228, 228)', 'font-size': '14.4px', 'padding-left': '8px' });
     await page.close();
   });
 
@@ -421,11 +444,19 @@ describe('CSS-100…105: forms', () => {
     if (width === 1440) {
       expect(b.y).toBeCloseTo(a.y, 1);
       expect(btn.bottom).toBeCloseTo(input.bottom, 1); // the button lines up with the fields
+      // a bare field in the row grows: field + gap + button fill the row
+      const [r1, f1, b1] = [await box(page, 'fr1'), await box(page, 'fr1-in'), await box(page, 'fr1-btn')];
+      expect(f1.y).toBeCloseTo(b1.y, 1);
+      expect(f1.w + 16 + b1.w).toBeCloseTo(r1.w, 0);
     } else {
       expect(b.y).toBeGreaterThan(a.bottom - 1);
       expect(a.h).toBeLessThan(80); // a stacked group is as tall as its content
       expect(btn.y).toBeGreaterThan(b.bottom - 1);
     }
+    // the submit button sits at the right edge: in a group's column and in a row, side by side or stacked
+    expect((await box(page, 'fg-btn')).right).toBeCloseTo((await box(page, 'fg')).right, 1);
+    expect(btn.right).toBeCloseTo((await box(page, 'fr')).right, 1);
+    expect(btn.w).toBeLessThan(200);
     expect(await css(page, 'fh', ['color', 'font-size'])).toEqual({ color: 'rgb(102, 102, 102)', 'font-size': '14.4px' });
     const err = await css(page, 'fe', ['content', 'background-color', 'mask-image'], '::before');
     expect(err.content).toBe('""');
@@ -448,7 +479,7 @@ describe('the gate: a host page', () => {
     // the glyph layout names the icon set inside :has(); it is gated all the same
     expect((await css(page, 'b-lead', ['display'])).display).toBe('inline-block');
     expect((await css(page, 'i-button', ['border-top-left-radius', 'background-color'])))
-      .toEqual({ 'border-top-left-radius': '4px', 'background-color': 'rgb(255, 255, 255)' });
+      .toEqual({ 'border-top-left-radius': '32px', 'background-color': 'rgb(250, 250, 250)' });
     expect((await css(page, 'i-check', ['appearance'])).appearance).toBe('none');
     await page.close();
   });

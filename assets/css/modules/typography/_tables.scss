@@ -47,9 +47,22 @@ th:first-child {
 .table-terminal {
     font-family: var(--code-font);
 
+    // Columns are set apart by a gap, not by cell padding: nothing on the
+    // table's outer edges, `--space-sm` between columns (a table has no
+    // `gap`, and `border-spacing` would pad the edges too). Value rows sit
+    // flush; the header keeps its vertical padding.
     th,
     td {
         text-align: center;
+        padding-inline: 0;
+    }
+
+    :is(th, td) + :is(th, td) {
+        padding-left: var(--space-sm);
+    }
+
+    td {
+        padding-block: 0;
     }
 
     th:first-child,
@@ -61,6 +74,22 @@ th:first-child {
     td:last-child {
         text-align: right;
     }
+}
+
+// A table in a box with an outdent (`.text-content-caption`,
+// `.full-width-caption`, `.card-caption`) hangs into the outdent with it: its
+// first column steps back in by the outdent, so the labels stay on the text
+// edge.
+$caption-boxes: ".text-content-caption, .full-width-caption, .card-caption";
+
+:is(:is(#{$caption-boxes}) table, table:is(#{$caption-boxes})) :is(th, td):first-child {
+    padding-left: var(--space-lg);
+}
+
+// A striped row is a band: its cells keep their vertical padding, also in a
+// terminal readout (after `.table-terminal`, which sets its rows flush).
+.table-striped td {
+    padding-block: var(--space-xs);
 }
 
 .table-terminal tbody tr:hover,

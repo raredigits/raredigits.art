@@ -59,32 +59,49 @@ describe('CSS-124: --signal, and the focus ring that follows it', () => {
   });
 });
 
-describe('CSS-121 / CSS-156: callout severity variants on the semantic tokens', () => {
-  it('each variant draws its role colour as a stripe, keeps the text in the body colour', async () => {
+describe('CSS-121 / CSS-156: callout variants on the semantic roles', () => {
+  const ROLES = ['signal', 'success', 'warning', 'danger'];
+  const ALIASES = { positive: 'success', negative: 'danger', neutral: 'warning', fail: 'danger' };
+
+  it('each variant draws a stripe (a state: its role colour over its -bg fill), keeps the text in the body colour', async () => {
     const page = await open();
-    const roles = await page.evaluate(() => {
+    const roles = await page.evaluate((names) => {
       const probe = document.createElement('div');
       document.body.append(probe);
       const resolve = (token) => { probe.style.color = `var(${token})`; return getComputedStyle(probe).color; };
-      return {
-        info: resolve('--color-info'), success: resolve('--color-success'),
-        warning: resolve('--color-warning'), error: resolve('--color-danger'),
-      };
-    });
-    expect(roles.info).toBe('rgb(22, 119, 255)'); // --blue
-    expect(roles.success).toBe('rgb(56, 158, 13)'); // --green
-    expect(roles.warning).toBe('rgb(255, 224, 0)'); // --yellow
-    expect(roles.error).toBe('rgb(255, 0, 0)'); // --red
-    for (const v of ['info', 'success', 'warning', 'error']) {
+      const fill = (token) => { probe.style.backgroundColor = `var(${token})`; return getComputedStyle(probe).backgroundColor; };
+      return Object.fromEntries(names.map((n) => [n, { color: resolve(`--${n}`), bg: fill(`--${n}-bg`) }]));
+    }, [...ROLES, ...Object.keys(ALIASES)]);
+    expect(roles.signal.color).toBe('rgb(22, 119, 255)'); // --blue
+    expect(roles.success.color).toBe('rgb(56, 158, 13)'); // --green
+    expect(roles.warning.color).toBe('rgb(255, 224, 0)'); // --yellow
+    expect(roles.danger.color).toBe('rgb(255, 0, 0)'); // --red
+    // the financial and outcome aliases are their role, fill included
+    for (const [alias, role] of Object.entries(ALIASES)) expect(roles[alias]).toEqual(roles[role]);
+    // the -bg twin is the role colour, translucent, at one alpha for every role
+    const alpha = (c) => Number((c.match(/\/ ([\d.]+)\)$/) || [])[1]);
+    const alphas = new Set(ROLES.map((v) => alpha(roles[v].bg)));
+    expect(alphas.size).toBe(1);
+    const [a] = alphas;
+    expect(a).toBeGreaterThan(0);
+    expect(a).toBeLessThan(1);
+    for (const v of ROLES) {
       const s = await css(page, `#callout-${v}`, ['border-left-color', 'border-left-width', 'color', 'text-align', 'background-color']);
-      expect(s['border-left-color']).toBe(roles[v]);
       expect(s['border-left-width']).toBe('4px');
       expect(s.color).toBe('rgb(51, 51, 51)'); // --text-color-dark
       expect(s['text-align']).toBe('left');
-      expect(s['background-color']).not.toBe('rgba(0, 0, 0, 0)');
+      if (v === 'signal') {
+        // plain information: a black stripe, no fill
+        expect(s['border-left-color']).toBe('rgb(0, 0, 0)');
+        expect(s['background-color']).toBe('rgba(0, 0, 0, 0)');
+      } else {
+        expect(s['border-left-color']).toBe(roles[v].color);
+        expect(s['background-color']).toBe(roles[v].bg);
+      }
     }
-    const plain = await css(page, '#callout-plain', ['border-left-width', 'text-align', 'color']);
-    expect(plain).toEqual({ 'border-left-width': '1px', 'text-align': 'center', color: 'rgb(102, 102, 102)' });
+    // the plain callout sits between two thin rules, no side frame
+    const plain = await css(page, '#callout-plain', ['border-top-width', 'border-left-width', 'text-align', 'color']);
+    expect(plain).toEqual({ 'border-top-width': '1px', 'border-left-width': '0px', 'text-align': 'center', color: 'rgb(102, 102, 102)' });
     await page.close();
   });
 
@@ -100,7 +117,7 @@ describe('CSS-372: a sidenote wrapper places its own children only', () => {
     const box = (id) => document.getElementById(id).getBoundingClientRect();
     const wrapper = document.getElementById('sn');
     const nested = [...wrapper.querySelectorAll(':scope > * *')]
-      .filter((el) => { const cs = getComputedStyle(el); return cs.gridColumnStart === '1' && cs.gridColumnEnd === 'span 5'; })
+      .filter((el) => { const cs = getComputedStyle(el); return cs.gridColumnStart === '1' && cs.gridColumnEnd === 'span 6'; })
       .map((el) => el.id || el.className);
     const col = (id) => { const cs = getComputedStyle(document.getElementById(id)); return `${cs.gridColumnStart} / ${cs.gridColumnEnd}`; };
     const title = document.getElementById('sn-title');
@@ -144,8 +161,8 @@ describe('CSS-372: a sidenote wrapper places its own children only', () => {
     // links in the note are muted; a link inside an embedded chart keeps its own colour
     expect(r.noteLink).toBe('rgb(102, 102, 102)');
     expect(r.chartLink).toBe('rgb(0, 0, 238)');
-    expect(r.chartNoteMargin).toBe('4px'); // not 0 (desktop) or 16px (phone) from the note's own first-paragraph rule
-    expect(r.nestedNote.col).not.toBe('7 / span 2');
+    expect(r.chartNoteMargin).toBe('4px'); // not 0 (desktop) or 8px (phone) from the note's own first-child rule
+    expect(r.nestedNote.col).not.toBe('8 / span 2');
     expect(r.nestedNote.fontSize).toBe(r.nestedNote.parentFontSize);
     await page.close();
   });
@@ -153,11 +170,11 @@ describe('CSS-372: a sidenote wrapper places its own children only', () => {
   it('the wrapper still places text and note side by side on desktop, stacked on a phone', async () => {
     const desk = await open(FIXTURE, { width: 1440 });
     expect(await layout(desk)).toMatchObject({
-      display: 'grid', first: '1 / span 5', second: '1 / span 5', note: '7 / span 2', noteFirstMargin: '0px',
+      display: 'grid', first: '1 / span 6', second: '1 / span 6', note: '8 / span 2', noteFirstMargin: '0px',
     });
     await desk.close();
     const phone = await open(FIXTURE, { width: 375 });
-    expect(await layout(phone)).toMatchObject({ display: 'flex', noteFirstMargin: '16px' });
+    expect(await layout(phone)).toMatchObject({ display: 'flex', noteFirstMargin: '8px' });
     await phone.close();
   });
 });
@@ -286,8 +303,10 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
         paragraphCard: g('r-p', 'r-card1'),
         spacer: g('r-card3', 'r-pre3'), tableBox: g('r-scroll', 'r-pre4'), utility: g('r-card4', 'r-pre5'),
         marginBottomFirst: g('r-card5', 'r-pre6'), marginTopSecond: g('r-card6', 'r-pre7'),
-        // sidenote rows are prose: row after row reads as paragraph after paragraph
+        // v0.7.2: the row owns its gap (the block gap), the last text block is
+        // flush, so the gap holds beside a note taller than its text too
         rowRow: g('r-row1', 'r-row2'), rowRowText: g('r-row1-p', 'r-row2-p'), paragraphText: g('r-pp1', 'r-pp2'),
+        tallNoteRow: g('r-row3-note', 'r-row4'),
         sectionRowRow: g('r-sec-row1', 'r-sec-row2'), sectionRowRowText: g('r-sec-row1-p', 'r-sec-row2-p'),
         // the panel family and the legend are blocks too (integration of the two streams)
         panelRowPre: g('r-prow', 'r-pre8'), preGrid: g('r-pre8', 'r-pgrid'), gridLegend: g('r-pgrid', 'r-legend'), legendPre: g('r-legend', 'r-pre9'),
@@ -304,16 +323,20 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
       utility: 32, // .margin-t-lg wins
       marginBottomFirst: 16, // collapses with the gap: a margin-bottom on the first block cannot shrink it
       marginTopSecond: 0, // a margin-top utility on the second block decides
-      rowRow: 0, rowRowText: gap.rowRowText, paragraphText: 8,
-      sectionRowRow: 0, sectionRowRowText: gap.sectionRowRowText,
+      rowRow: gap.rowRow, rowRowText: gap.rowRowText, paragraphText: 8, tallNoteRow: gap.tallNoteRow,
+      sectionRowRow: gap.sectionRowRow, sectionRowRowText: gap.sectionRowRowText,
       panelRowPre: 16, preGrid: 16, gridLegend: 16, legendPre: 16,
       preStat: 16, statGroup: 16, groupFieldset: 16, fieldsetPre: 16,
     });
-    // side by side, the text of the next row sits a paragraph gap below (on a
-    // phone the note stacks between the two paragraphs)
+    // side by side, row to row is the block gap, from the text and from a
+    // note taller than its text alike (on a phone the note stacks between the
+    // two rows and carries its own spacing)
     if (width === 1440) {
-      expect(gap.rowRowText).toBe(gap.paragraphText);
-      expect(gap.sectionRowRowText).toBe(gap.paragraphText);
+      expect(gap.rowRow).toBe(16);
+      expect(gap.rowRowText).toBe(16);
+      expect(gap.sectionRowRow).toBe(16);
+      expect(gap.sectionRowRowText).toBe(16);
+      expect(gap.tallNoteRow).toBe(16);
     }
     await page.close();
   });

@@ -81,7 +81,7 @@ permalink: '/styles/typography/text-content/'
     <p>An aside-style block with a soft gray background and a brand-color left rule. Used for editor's notes, observations, or short asides that comment on the prose without being part of it.</p>
 
     <div class="caption">
-        <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant.</p>
+        <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant. The reader decides in the first second whether the page is worth their attention, long before the first sentence is read — and a face chosen for decoration, not for reading, answers that question for them. The words stay the same; the trust does not.</p>
     </div>
 
     <h3><code>&lt;mark&gt;</code></h3>
@@ -116,22 +116,22 @@ permalink: '/styles/typography/text-content/'
 
     <h3 id="callouts"><code>.callout</code></h3>
 
-    <p>A short notice in a thin frame: small, muted and centered. Use it for a tip or a side remark the reader may skip.</p>
+    <p>A short notice between two thin rules: small, muted and centered. Use it for a tip or a side remark the reader may skip.</p>
 
     <p class="callout">Tip: the same shortcut works in every view.</p>
 
-    <p>When the reader must not skip it, add a severity. The notice then reads at full strength, left-aligned in the body text color, and the role color marks it with a stripe on the left and a faint fill:</p>
+    <p>When the reader must not skip it, add a variant. The notice then reads at full strength, left-aligned in the body text color, with a stripe on the left. An information notice takes a black stripe and no fill; a state takes the stripe in its role color and a fill in the role’s <code>-bg</code>:</p>
 
-    <p class="callout callout-info"><strong>Info.</strong> The table below is updated every Monday.</p>
+    <p class="callout callout-signal"><strong>Info.</strong> The table below is updated every Monday.</p>
     <p class="callout callout-success"><strong>Done.</strong> All 14 checks passed.</p>
     <p class="callout callout-warning"><strong>Experimental.</strong> This chart type is outside the 1.0 stability guarantee: its options may change.</p>
-    <p class="callout callout-error"><strong>Error.</strong> The data source did not respond; the figures are from yesterday.</p>
+    <p class="callout callout-danger"><strong>Error.</strong> The data source did not respond; the figures are from yesterday.</p>
 
 <pre><code>&lt;p class="callout callout-warning"&gt;
     &lt;strong&gt;Experimental.&lt;/strong&gt; Its options may change.
 &lt;/p&gt;</code></pre>
 
-    <p>The four variants — <code>.callout-info</code>, <code>.callout-success</code>, <code>.callout-warning</code> and <code>.callout-error</code> — go next to <code>.callout</code> and take their color from the <a href="/styles/colors/#semantic-colors">semantic color</a> tokens, so a project that re-maps <code>--color-warning</code> re-colors its warnings too. The color is never the only cue: name the state in the first words. A callout that must be announced as it appears, such as a form error, also needs <code>role="alert"</code> on the element; the class does not add it.</p>
+    <p>The four variants — <code>.callout-signal</code>, <code>-success</code>, <code>-warning</code> and <code>-danger</code> — go next to <code>.callout</code>. The three state variants take their color from the <a href="/styles/colors/#semantic-colors">semantic role</a> of the same name, so a project that re-maps <code>--warning</code> re-colors its warnings too. <code>.callout-signal</code> is plain information: it keeps to black and the page background, so it does not compete with the states. The aliases (<code>--positive</code>, <code>--negative</code>, <code>--neutral</code>, <code>--fail</code>) are the same colors as their roles and have no variants of their own. The color is never the only cue: name the state in the first words. A callout that must be announced as it appears, such as a form error, also needs <code>role="alert"</code> on the element; the class does not add it.</p>
 
     <h3>Definition Lists</h3>
 
@@ -165,8 +165,11 @@ permalink: '/styles/typography/text-content/'
 
     <p><code>dt &gt; code</code> inside <code>.dl-grid</code> is intentionally rendered at normal weight, so code-like keys do not become too heavy.</p>
 
-    <h3>Tags</h3>
-    <p><code>.tag</code></p>
+    <h3><code>.tag</code></h3>
+    <p>A topic label on an article, a feed entry or a tag cloud: muted text in a light outline that takes the primary colour on hover. The open background, the softer corners and the text face keep it apart from <code>&lt;code&gt;</code>, a gray box in the monospace face. Put it on the link to the tag’s page; the <code>#</code> is part of the text, if the site marks tags that way. The line height leaves room between rows when a cloud of tags wraps.</p>
+    <p><a class="tag" href="/styles/typography/lists/">#release</a> <a class="tag" href="/styles/typography/lists/">#typography</a> <a class="tag" href="/styles/typography/lists/">#audit</a></p>
+
+<pre><code>&lt;a class="tag" href="/tags/release/"&gt;#release&lt;/a&gt;</code></pre>
     
     <h3>Raw Code</h3>
     <p><code>&lt;code&gt;</code></p>

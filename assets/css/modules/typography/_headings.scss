@@ -27,12 +27,12 @@ h1 {
 }
 
 h2 {
-    margin: var(--space-lg) 0 var(--space-md);
+    margin: var(--space-md) 0 var(--space-sm);
     font-size: 1.8em;
 }
 
 h3 {
-    margin: var(--space-lg) 0 var(--space-md);
+    margin: var(--space-md) 0 var(--space-sm);
     font-size: 1.4em;
 }
 
@@ -46,6 +46,7 @@ h5, h6 {
     // zero, so an h5 followed by an h6 touched and neither separated itself
     // outside a margin-collapsing flow.
     margin: var(--space-sm) 0;
+    font-family: var(--primary-font);
     font-size: 1em;
     text-transform: uppercase;
 }
@@ -58,6 +59,9 @@ h6 {
     font-size: var(--font-size-lg);
 }
 
-article > :is(h2, h3):first-child {
+// A heading that opens the article has nothing above it to keep apart from.
+// A page built of sections opens with the first section's heading.
+article > :is(h2, h3, h4):first-child,
+article > section:first-child > :is(h2, h3, h4):first-child {
     margin-top: 0;
 }

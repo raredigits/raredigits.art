@@ -1,68 +1,18 @@
 ---
-layout: page.njk
-title: "Bricks / Stats"
-section: "Styles"
-displaySidebar: true
 permalink: '/styles/bricks/stats/'
+layout: false
+eleventyExcludeFromCollections: true
 ---
-
-<div class="meta-info">
-    css/modules/bricks/_stats.scss
-</div>
-
-<section>
-    <p>A stat is a KPI figure: a short label over a value, read at a glance and compared along a row. <code>.stat</code> sets the label small and muted, and gives the value tabular numerals: every digit takes the same width, so figures in a row line up digit by digit and a live value does not shift sideways as it updates.</p>
-    <div class="panel panel--bordered text-content-caption">
-        <div class="stat">
-            <div class="stat__label">Revenue, Q3</div>
-            <div class="stat__value">$2,840,112</div>
-        </div>
-    </div>
-<pre class="text-content-caption"><code>&lt;div class="stat"&gt;
-    &lt;div class="stat__label"&gt;Revenue, Q3&lt;/div&gt;
-    &lt;div class="stat__value"&gt;$2,840,112&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-    <p>The label and the value are direct children of the stat. A stat sets no surface, padding or alignment: it takes them from where it sits. In a <a href="/styles/bricks/panels/">panel</a> it reads from the start; as the cells of a <a href="/styles/bricks/panels/#panel-row">panel row</a> it is centred and padded by the row.</p>
-</section>
-
-<section>
-    <h2 id="panel-row">In a panel row</h2>
-    <p>Put <code>.stat</code> on the row's cells, or a stat inside a cell. On a phone a long row scrolls inside its own border, and each figure stays on one line. A value never wraps, not even at a space (<code>95.4 M</code>, <code>+1.23 (0.76%)</code>): in a box narrower than the figure, a row scrolls and a tile lets it overflow, rather than split it into what reads as two numbers.</p>
-    <div class="panel__row text-content-caption">
-        <div class="panel__row-item stat"><div class="stat__label">OPEN</div><div class="stat__value">$184.62</div></div>
-        <div class="panel__row-item stat"><div class="stat__label">HIGH</div><div class="stat__value">$188.13</div></div>
-        <div class="panel__row-item stat"><div class="stat__label">LOW</div><div class="stat__value">$185.23</div></div>
-        <div class="panel__row-item stat"><div class="stat__label">VOLUME</div><div class="stat__value">95.4M</div></div>
-    </div>
-<pre class="text-content-caption"><code>&lt;div class="panel__row"&gt;
-    &lt;div class="panel__row-item stat"&gt;
-        &lt;div class="stat__label"&gt;OPEN&lt;/div&gt;
-        &lt;div class="stat__value"&gt;$184.62&lt;/div&gt;
-    &lt;/div&gt;
-    …
-&lt;/div&gt;</code></pre>
-</section>
-
-<section>
-    <h2 id="delta">Direction</h2>
-    <p><code>.stat--delta-up</code> and <code>.stat--delta-down</code> mark a change. An arrow before the value takes the role colour, <code>--color-success</code> up and <code>--color-danger</code> down; the figure keeps the text colour, because the <a href="/styles/colors/#semantic-colors">semantic colours</a> are signal colours, not text colours. Screen readers do not announce the arrow, so write the sign in the figure: the direction is in the words too.</p>
-    <div class="panel__row text-content-caption">
-        <div class="panel__row-item stat stat--delta-up"><div class="stat__label">Orders, week on week</div><div class="stat__value">+12.4%</div></div>
-        <div class="panel__row-item stat stat--delta-down"><div class="stat__label">Returns, week on week</div><div class="stat__value">−3.1%</div></div>
-    </div>
-    <p>The arrow is drawn in <code>--stat-delta-color</code>. Where a rise is bad news, as with costs or errors, set it on the stat:</p>
-<pre class="text-content-caption"><code>&lt;div class="stat stat--delta-up"
-     style="--stat-delta-color: var(--color-danger)"&gt;
-    &lt;div class="stat__label"&gt;Support tickets&lt;/div&gt;
-    &lt;div class="stat__value"&gt;+18%&lt;/div&gt;
-&lt;/div&gt;</code></pre>
-</section>
-
-<section>
-    <h2 id="signal">Emphasis</h2>
-    <p><code>.stat--signal</code> sets the value in <a href="/styles/colors/#signal"><code>--signal</code></a>, bold: a figure that asks for attention, such as a threshold crossed. Let the label say why. Bold keeps the value large text, which the blue reads as on the light page and on a dark card.</p>
-    <div class="panel-grid text-content-caption">
-        <div class="panel panel--bordered stat stat--signal"><div class="stat__label">Error rate, over the 1% limit</div><div class="stat__value">1.8%</div></div>
-        <div class="card-inverted padding-md stat stat--signal"><div class="stat__label">Error rate, over the 1% limit</div><div class="stat__value">1.8%</div></div>
-    </div>
-</section>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Stats moved to Panels</title>
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="/styles/bricks/panels/#stats">
+    <meta http-equiv="refresh" content="0; url=/styles/bricks/panels/#stats">
+</head>
+<body>
+    <p>Stats now live on the Panels page: <a href="/styles/bricks/panels/#stats">Panels → Stats</a>.</p>
+</body>
+</html>

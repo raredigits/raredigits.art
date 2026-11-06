@@ -9,3 +9,4 @@ vitest.config.js
 .claude/
 _temp/
 examples/styles/content-starter/demo/
+manual_updates_*.md

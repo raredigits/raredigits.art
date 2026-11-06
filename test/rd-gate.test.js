@@ -65,8 +65,8 @@ describe('rd-gate: inventory guards', () => {
   });
 
   it('classifies whitespace-insensitively (expanded vs compressed)', () => {
-    expect(classify('article > :is(h2, h3):first-child')).toBe('island');
-    expect(classify('article>:is(h2,h3):first-child')).toBe('island');
+    expect(classify('article > :is(h2, h3, h4):first-child')).toBe('island');
+    expect(classify('article>:is(h2,h3,h4):first-child')).toBe('island');
     expect(classify('nav  a')).toBe('page');
   });
 

@@ -40,16 +40,36 @@
 // The padding cannot sit at zero specificity: the reset at the end of
 // rare.scss (`* { padding: 0 }`) is zero-specificity too, and comes last.
 .panel {
-    padding: var(--space-md) var(--space-lg);
-
-    // Phone step (CSS-376): at 375px the 16px 32px padding left a line chart
-    // 293px of a 359px frame.
-    @include bp.mobile {
-        padding: var(--space-md);
-    }
+    padding: var(--space-md);
 
     // A panel has no page margins for outdents to hang into.
     @include co.contain-outdents;
+}
+
+// A panel that hangs into the outdent (a caption width) steps its content back
+// in by the outdent, so the text in it stays on the text column's edges, as a
+// table in a caption box does. `.text-content-caption` hangs on both sides
+// (the right side only as far as the room there, `outdent` in
+// _text-content.scss); the other two on the left. On a phone the outdent is
+// `--space-sm`, below the panel's own padding, which then stays. Not where the
+// outdent is contained (in a card, a panel, a collapsible's content), and not
+// on a flush panel.
+.panel:not(.panel--flush, :where(.card, .panel, .collapsible-content) *) {
+    &.text-content-caption {
+        padding-left: var(--space-lg);
+        padding-right: min(var(--space-lg), var(--field-width) + var(--space-md));
+    }
+
+    &:is(.full-width-caption, .card-caption) {
+        padding-left: var(--space-lg);
+    }
+
+    @include bp.mobile {
+        &:is(.text-content-caption, .full-width-caption, .card-caption) {
+            padding-left: var(--space-md);
+            padding-right: var(--space-md);
+        }
+    }
 }
 
 // The bordered data surface (was `.card-dashboard-bordered`, CSS-181).
@@ -77,6 +97,13 @@
     // The title sits on the header's baseline, not on the heading rhythm.
     > :is(h1, h2, h3, h4, h5, h6) {
         margin: 0;
+    }
+
+    // A lone title spans the header, so the panel's text alignment reaches it
+    // (`.center` on the panel centres the title too); a title with its meta
+    // keeps them at the two ends.
+    > :only-child {
+        flex: 1 1 auto;
     }
 }
 

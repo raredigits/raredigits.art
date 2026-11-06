@@ -66,7 +66,8 @@ export const ISLAND = [
   'details', 'summary', 'template',
   // typography
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'article > :is(h2, h3):first-child',
+  'article > :is(h2, h3, h4):first-child',
+  'article > section:first-child > :is(h2, h3, h4):first-child',
   'p', 'ul', 'ol',
   // the prose measure, minus the components that set their own (CSS-374)
   'article :is(p, ul, ol)',

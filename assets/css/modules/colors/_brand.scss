@@ -6,7 +6,14 @@
     // drift without dragging --matrix along (CSS-115).
     --brand-color: #00ff4e;
     --brand-color-light: #d8f9d1;
-    --brand-color-dark: #00b300;
+
+    // A saturated dark yellow-green that carries white text: 4.9:1 (WCAG AA),
+    // so the primary button's white hover label reads (was #00b300, 2.8:1).
+    --brand-color-dark: #3a8000;
+
+    // The link underline and its hover fill: the green links had before
+    // --brand-color-dark darkened for the button.
+    --brand-color-link: #00b300;
     --brand-color-rgb: 0, 255, 78;
 }
 

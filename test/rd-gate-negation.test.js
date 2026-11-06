@@ -11,7 +11,7 @@ const none = { page: [], island: [] };
 
 describe('rd-gate: the inventory key drops the exclusions', () => {
   it('leaves a selector without :not() as it is (normalized)', () => {
-    expect(inventoryKey('article > :is(h2, h3):first-child')).toBe('article>:is(h2,h3):first-child');
+    expect(inventoryKey('article > :is(h2, h3, h4):first-child')).toBe('article>:is(h2,h3,h4):first-child');
     expect(inventoryKey('nav  a:hover')).toBe('nav a:hover');
   });
 

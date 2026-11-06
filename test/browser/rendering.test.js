@@ -203,14 +203,17 @@ describe('layout', () => {
     await page.close();
   });
 
-  it('sidenotes switch at the shared 1024px boundary (CSS-358)', async () => {
+  // v0.7.2: a tablet keeps the note in its right column; the row stacks on a
+  // phone only, at the shared mobile boundary.
+  it('sidenotes switch at the shared 769px boundary (CSS-358)', async () => {
     const at = async (width) => {
       const page = await open(FIXTURE, { width });
       const d = await page.evaluate(() => getComputedStyle(document.getElementById('sidenote-case')).display);
       await page.close();
       return d;
     };
-    expect(await at(1023)).toBe('flex');
+    expect(await at(768)).toBe('flex');
+    expect(await at(769)).toBe('grid');
     expect(await at(1024)).toBe('grid');
   });
 

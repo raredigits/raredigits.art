@@ -11,7 +11,7 @@
 //            inline runs stay on one line, paragraph margins collapse; a
 //            panel opening an article block keeps its padding; a panel in a
 //            collapsible's content takes an even 16px
-//   CSS-376  the phone padding step
+//   CSS-376  one padding on every width (the phone step dropped in v0.7.2)
 //   CSS-183  .panel--flush
 //   CSS-371  the panel row's stacking mode and neutral alignment
 //   CSS-178  the legend: swatch colour, shapes, button chrome, off state
@@ -75,6 +75,7 @@ describe('CSS-180: a panel on the chart element itself', () => {
       }));
       if (query) expect(sheets).toEqual({ injected: false, first: expect.stringMatching(/rare-charts\.css$/) });
       else expect(sheets.injected).toBe(true); // appended after rare.css
+      // a caption-width frame: its sides step in by the outdent (16px on a phone)
       const pad = width < 769 ? 16 : 32;
       const top = 16;
       const c = await chartBox(page, '#chart');
@@ -101,7 +102,7 @@ describe('CSS-180: a panel on the chart element itself', () => {
       return { utility: cs('utility').display, kpiPadding: cs('kpi').padding };
     });
     expect(r.utility).toBe('grid');
-    expect(r.kpiPadding).toBe('16px 32px');
+    expect(r.kpiPadding).toBe('16px');
     await page.close();
   });
 });
@@ -149,15 +150,16 @@ describe('CSS-181: a panel is a block, the drop-in for the old class', () => {
   });
 
   it.each([1280, 375])('a panel opening an article block keeps its padding at %ipx', async (width) => {
-    // `article .text-content-caption:first-child` (0,2,1) zeroes a caption's
-    // padding; it used to beat `.panel` (0,1,0) too.
+    // `article .text-content-caption:first-child` (0,2,1) used to zero a
+    // caption's padding and beat `.panel` (0,1,0); removed in v0.7.2, so a
+    // caption that opens a block keeps whatever padding it is given.
     const { page } = await open(width);
     const r = await page.evaluate(() => ({
       frame: getComputedStyle(document.getElementById('first-frame')).padding,
       caption: getComputedStyle(document.getElementById('first-caption')).padding,
     }));
     expect(r.frame).toBe(width < 769 ? '16px' : '16px 32px');
-    expect(r.caption).toBe('0px 0px 8px');
+    expect(r.caption).toBe('0px');
     await page.close();
   });
 
@@ -173,13 +175,13 @@ describe('CSS-181: a panel is a block, the drop-in for the old class', () => {
 });
 
 describe('panel parts', () => {
-  it.each([1280, 375])('phone step and flush at %ipx (CSS-376, CSS-183)', async (width) => {
+  it.each([1280, 375])('one padding on every width, and flush, at %ipx (CSS-376, CSS-183)', async (width) => {
     const { page } = await open(width);
     const r = await page.evaluate(() => {
       const cs = (id) => getComputedStyle(document.getElementById(id));
       return { kpi: cs('kpi').padding, flush: cs('flush').padding, border: cs('flush').borderTopWidth };
     });
-    expect(r.kpi).toBe(width < 769 ? '16px' : '16px 32px');
+    expect(r.kpi).toBe('16px');
     expect(r.flush).toBe('0px');
     expect(r.border).toBe('1px');
     await page.close();

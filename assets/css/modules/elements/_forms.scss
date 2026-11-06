@@ -31,16 +31,16 @@ $-check: "input#{$-outside-chart}:where([type=\"checkbox\"], [type=\"radio\"])";
     // --gray-trans: 3.5:1 on white, the 3:1 a field's outline needs to be
     // seen (WCAG 1.4.11); the lighter --border-color is 1.6:1.
     --field-border-color: var(--gray-trans);
-    --field-radius: var(--button-radius);
+    --field-radius: var(--space-xs);
     --field-padding-x: calc(var(--space-sm) * 1.5);
-    --field-padding-y: var(--button-padding-y);
+    --field-padding-y: var(--space-sm);
 
-    // Checked boxes, radios and the range thumb.
+    // Checked boxes and radios.
     --field-accent: var(--signal);
 
     // Validation (CSS-103), on the semantic roles (CSS-121).
-    --field-invalid-color: var(--color-danger);
-    --field-valid-color: var(--color-success);
+    --field-invalid-color: var(--fail);
+    --field-valid-color: var(--success);
 }
 
 // TEXT FIELDS, TEXTAREA, SELECT (CSS-100)
@@ -48,7 +48,11 @@ $-check: "input#{$-outside-chart}:where([type=\"checkbox\"], [type=\"radio\"])";
 textarea#{$-outside-chart},
 select#{$-outside-chart} {
     max-width: 100%;
-    padding: var(--field-padding-y) var(--field-padding-x);
+
+    // 1px more above, 1px less below, as on a button: the text is optically
+    // centred, the height unchanged, and a field and a button stand on one
+    // baseline.
+    padding: calc(var(--field-padding-y) + 1px) var(--field-padding-x) calc(var(--field-padding-y) - 1px);
     border: 1px solid var(--field-border-color);
     border-radius: var(--field-radius);
     background-color: var(--field-bg);
@@ -185,17 +189,61 @@ input#{$-outside-chart}:where([type="radio"]:checked) {
     border-color: var(--field-invalid-color);
 }
 
-// RANGE, COLOR, FILE (CSS-105): minimal.
+// RANGE, COLOR, FILE (CSS-105).
+
+// Range: a 2px line in the text colour and a round thumb with a frame of the
+// same colour, drawn by the library in every engine (each engine names its
+// parts differently, so each gets its own rule: one unknown selector would
+// drop a shared list). The focus ring goes round the whole control.
 input#{$-outside-chart}:where([type="range"]) {
+    appearance: none;
+    block-size: var(--space-lg);
+    background: transparent;
     vertical-align: middle;
-    accent-color: var(--field-accent);
     cursor: pointer;
+
+    &::-webkit-slider-runnable-track {
+        block-size: 2px;
+        border: 0;
+        background: var(--field-text);
+    }
+
+    &::-moz-range-track {
+        block-size: 2px;
+        border: 0;
+        background: var(--field-text);
+    }
+
+    &::-webkit-slider-thumb {
+        appearance: none;
+        box-sizing: border-box;
+        inline-size: 1rem;
+        block-size: 1rem;
+        margin-block-start: calc(1px - 0.5rem); // centred on the 2px track
+        border: 2px solid var(--field-text);
+        border-radius: 50%;
+        background: var(--field-bg);
+    }
+
+    &::-moz-range-thumb {
+        box-sizing: border-box;
+        inline-size: 1rem;
+        block-size: 1rem;
+        border: 2px solid var(--field-text);
+        border-radius: 50%;
+        background: var(--field-bg);
+    }
+
+    &:where(:disabled) {
+        opacity: 0.5;
+        cursor: default;
+    }
 }
 
-// As tall as a text field; the swatch fills the frame.
+// Colour: a --space-lg square; the swatch fills the frame.
 input#{$-outside-chart}:where([type="color"]) {
-    width: 3em;
-    height: calc(1rem * var(--line-height-sm) + 2 * var(--field-padding-y) + 2px);
+    inline-size: var(--space-lg);
+    block-size: var(--space-lg);
     padding: 2px;
     border: 1px solid var(--field-border-color);
     border-radius: var(--field-radius);
@@ -218,29 +266,49 @@ input#{$-outside-chart}:where([type="color"]) {
     }
 }
 
-// The file input's button takes the small default button.
+// File: a frame across the full width of its container, no fill, the small
+// button and the file name inside it.
 input#{$-outside-chart}:where([type="file"]) {
-    max-width: 100%;
+    display: block;
+    inline-size: 100%;
+    padding: var(--space-xs);
+    border: 1px solid var(--border-color);
+    border-radius: var(--space-md);
+    background: transparent;
+    color: var(--field-text);
+    font: inherit;
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-sm);
+    cursor: pointer;
 
+    // The small button (`.button-sm`), on --gray-mid-light.
     &::file-selector-button {
         margin-inline-end: var(--space-sm);
-        padding: var(--space-xs) var(--space-sm);
+        padding: calc(var(--space-xs) + 1px) var(--space-sm) calc(var(--space-xs) - 1px);
         border: 1px solid var(--border-color);
-        border-radius: var(--button-radius);
-        background: var(--white);
-        color: var(--primary-color);
+        border-radius: var(--space-lg);
+        background: var(--gray-mid-light);
+        color: var(--gray-dark);
         font: inherit;
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-sm);
         cursor: pointer;
     }
 
     &:where(:hover:not(:disabled))::file-selector-button {
         border-color: var(--primary-color);
+        background: var(--white);
+        color: var(--primary-color);
     }
 }
 
 // FIELDSET AND LEGEND (CSS-104). `min-inline-size: 0` lets a fieldset shrink
-// with its column instead of growing to its widest content.
+// with its column instead of growing to its widest content. A column: its
+// groups and rows carry no margins, the gap spaces them.
 fieldset#{$-outside-chart} {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
     min-inline-size: 0;
     padding: var(--space-sm) var(--space-md) var(--space-md);
     border: 1px solid var(--border-color);
@@ -271,33 +339,46 @@ label#{$-outside-chart}:where(:has(> :disabled)) {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
-    margin-bottom: var(--space-md);
 
     > :is([type="checkbox"], [type="radio"]) {
         align-self: flex-start;
     }
 }
 
+// The submit button of a form sits at the right edge: in a group's column, and
+// in a row whether it shares the line with the fields or wraps (or stacks on a
+// phone) onto its own. A <button> with no type submits too.
+:is(.form-group, .form-row) > :is([type="submit"], button:not([type])) {
+    align-self: flex-end;
+    margin-inline-start: auto;
+}
+
 // Groups (and a button) side by side, bottoms aligned so a button lines up
-// with the fields; stacked on a phone.
+// with the fields; stacked on a phone. A bare field in the row grows like a
+// group, so a one-line form (a field and its button) takes the full width:
+//   <form class="form-row"><input type="email" …><button>Subscribe</button></form>
 .form-row {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     gap: var(--space-md);
-    margin-bottom: var(--space-md);
 
     > .form-group {
         flex: 1 1 12rem;
-        margin-bottom: 0;
     }
 
-    // Stacked, the 12rem basis would be a height: each group takes its own.
+    > :is(#{$-text-field}, select#{$-outside-chart}, textarea#{$-outside-chart}) {
+        flex: 1 1 12rem;
+        min-width: 0;
+    }
+
+    // Stacked, the 12rem basis would be a height: each group and field takes
+    // its own.
     @include bp.mobile {
         flex-direction: column;
         align-items: stretch;
 
-        > .form-group {
+        > :is(.form-group, #{$-text-field}, select#{$-outside-chart}, textarea#{$-outside-chart}) {
             flex: none;
         }
     }

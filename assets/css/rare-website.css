@@ -27,16 +27,6 @@
     cursor: pointer;
 }
 
-/* /styles/elements/ — a row of live controls in the docs: wrapped lines
-   keep a gap instead of touching. Site-only: demo furniture; the library
-   keeps buttons inline (Q-04) and leaves rows to the page's layout. */
-.demo-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
 /* RareCharts docs demos — moved out of the library CSS (X-05), which the
    bundle injects into every consumer's page. The markup lives in the docs
    pages and the example scripts, outside any chart, so these rules use the

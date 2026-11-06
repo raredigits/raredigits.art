@@ -1,12 +1,16 @@
 @use "../utilities/breakpoints" as *;
 @use "../decorations/icons" as ico;
 
+// The outdent: a block hangs past the text column by `--space-lg` on each
+// side, `--space-sm` on a phone.
 @mixin outdent {
     margin-left: calc(-1 * var(--space-lg));
 
     // On the right the outdent may only use the room that is there: `main`'s
     // padding plus the field beside the centred page. At 769–1279px that is
-    // 16px, and the full 32px pushed the page sideways (CSS-367).
+    // 16px, and the full 32px pushed an auto-width block (`.caption`) past the
+    // page (CSS-367). A block with the caption width is sized by the measure
+    // and never reaches it.
     margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
 
     @include mobile {
@@ -15,28 +19,23 @@
     }
 }
 
-// The caption width: the reading measure plus the outdent on both sides —
-// `.text-content-caption`, `.lead`, `.highlight`, `.teaser-bottom`. Never wider
-// than the room the outdent has, so a narrow container is not overflowed; on a
-// phone the block is the column plus the outdent on each side. Explicit
-// widths, not `auto`, so it holds on tables, images and flex items too.
+// The caption width — `.text-content-caption`, `.lead`, `.highlight`,
+// `.teaser-bottom`: `--text-content-caption`, the reading measure plus the
+// outdent on each side. An explicit width, not `auto`, so it holds on tables,
+// images and flex items too.
 @mixin caption-width {
-    width: min(
-        var(--text-content-caption),
-        100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
-    );
+    width: var(--text-content-caption);
     max-width: none;
 
     @include outdent;
-
-    @include mobile {
-        width: calc(100% + 2 * var(--space-sm));
-    }
 }
 
 :root {
     --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
-    --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
+
+    // The width of every block with an outdent: the measure plus the outdent
+    // on each side (`outdent` above).
+    --text-content-caption: calc(var(--text-content-width) + 2 * var(--space-lg));
 }
 
 @include tablet {
@@ -48,7 +47,7 @@
 @include mobile {
     :root {
         --text-content-width: 100%;
-        --text-content-caption: calc(100vw - var(--space-md));
+        --text-content-caption: calc(100% + 2 * var(--space-sm));
     }
 }
 
@@ -109,14 +108,6 @@ article > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll),
     margin-top: var(--space-md);
 }
 
-// Sidenote rows are prose split in two columns: one row after another reads
-// as paragraph after paragraph. The last paragraph's margin, inside the
-// row's grid, is the gap; a block gap on top would triple it.
-article > :where(.sidenote-wrapper + .sidenote-wrapper),
-:where(article) > section > :where(.sidenote-wrapper + .sidenote-wrapper) {
-    margin-top: 0;
-}
-
 .nobr {
     white-space: nowrap;
 }
@@ -129,12 +120,6 @@ article > :where(.sidenote-wrapper + .sidenote-wrapper),
     @include caption-width;
 
     position: relative;
-}
-
-// A panel keeps its own padding: at (0,2,1) this rule beat `.panel`, and a
-// chart frame opening an article lost its padding (v0.7.2).
-article .text-content-caption:first-child:not(.panel) {
-    padding: 0 0 var(--space-sm);
 }
 
 .lead {
@@ -170,6 +155,12 @@ article .text-content-caption:first-child:not(.panel) {
     border-left: var(--space-sm) solid var(--primary-color);
 }
 
+// The caption is its own measure: its text runs the block's full width, not
+// the article's reading measure (0,1,1 over the measure's 0,0,2).
+.caption :is(p, ul, ol) {
+    max-width: none;
+}
+
 mark {
     background-color: var(--yellow);
     color: var(--primary-color);
@@ -199,29 +190,48 @@ mark {
     font-weight: var(--font-weight-light);
     font-size: var(--font-size-sm);
     line-height: 1.3;
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
-// Severity variants (CSS-156): `.callout .callout-warning`. A notice the
-// reader must not skip, so it reads at full strength — left-aligned, in the
-// body text colour — and the role colour marks it with a stripe and a faint
-// fill. The colour is never the only cue: the text names the state.
-.callout-info,
+// Variants (CSS-156): `.callout .callout-warning`. A notice the reader must
+// not skip, so it reads at full strength — left-aligned, in the body text
+// colour — with a stripe on the left. The state variants take the stripe in
+// their role's colour and a fill in its `-bg` (colors/_semantic.scss); the
+// aliases (`--positive`, `--fail`…) are the same colours and need none.
+// `.callout-signal` is plain information: a black stripe, no fill, so it does
+// not compete with the states. The colour is never the only cue: the text
+// names the state.
+.callout-signal,
 .callout-success,
 .callout-warning,
-.callout-error {
+.callout-danger {
     text-align: left;
     color: var(--text-color-dark);
     font-weight: var(--font-weight-normal);
     border-left: var(--space-xs) solid var(--callout-color);
-    background-color: color-mix(in srgb, var(--callout-color) 12%, transparent);
+    background-color: var(--callout-bg);
 }
 
-.callout-info { --callout-color: var(--color-info); }
-.callout-success { --callout-color: var(--color-success); }
-.callout-warning { --callout-color: var(--color-warning); }
-.callout-error { --callout-color: var(--color-danger); }
+.callout-signal {
+    --callout-color: var(--black);
+    --callout-bg: transparent;
+}
+
+.callout-success {
+    --callout-color: var(--success);
+    --callout-bg: var(--success-bg);
+}
+
+.callout-warning {
+    --callout-color: var(--warning);
+    --callout-bg: var(--warning-bg);
+}
+
+.callout-danger {
+    --callout-color: var(--danger);
+    --callout-bg: var(--danger-bg);
+}
 
 // The attribution: a quote's source on its own line, right-aligned and small.
 // `<cite>` marks the title of a work, so a bare one stays inline; the look

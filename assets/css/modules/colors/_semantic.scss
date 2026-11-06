@@ -1,3 +1,5 @@
+@use "color-classes" as cc;
+
 // SEMANTIC COLOURS (CSS-121, v0.7.2)
 // Roles on top of the palette: what a colour means, not which colour it is.
 // Components that signal a state (callouts, KPI deltas, buttons, form
@@ -9,19 +11,33 @@
 // reaches 4.5:1 as body text on the light surfaces (red and blue about 4:1 on
 // white, green 3.5:1, yellow 1.1:1), so components keep their text in the
 // text-role tokens.
+// Each role and alias has a `-bg` twin, the colour at 25%, for a fill behind
+// text (`color-bg`, _color-classes.scss). Aliases and twins are resolved here
+// on `:root`: re-map a role on `:root` and they follow; on a surface, restate
+// them too.
 
 :root {
-    --color-success: var(--green);
-    --color-danger: var(--red);
-    --color-warning: var(--yellow);
-    --color-info: var(--blue);
+    // The state roles, each on its own base colour.
+    --success: var(--green);
+    --warning: var(--yellow);
+    --danger: var(--red);
 
-    // SIGNAL (CSS-124, v0.7.2): the attention and action accent: primary
-    // buttons, critical-state marks, threshold violations, the keyboard focus
-    // ring. Kept apart from --brand-color, which is identity (link highlights,
-    // brand marks). Blue (maintainer, 2026-10-26): the focus ring was already
-    // blue, so pointing it here changes nothing on screen.
+    // SIGNAL (CSS-124, v0.7.2): technical information and the attention
+    // accent: an info notice, critical-state marks, the keyboard focus ring;
+    // the main colour of a chart. Kept apart from --brand-color, which is
+    // identity (link highlights, brand marks, the primary button).
     --signal: var(--blue);
+
+    // Aliases for financial figures: a change for the better, for the worse,
+    // or none. Pure aliases — they follow the role they point at.
+    --positive: var(--success);
+    --negative: var(--danger);
+    --neutral: var(--warning);
+
+    // The outcome of a check or an operation that did not go through.
+    --fail: var(--danger);
+
+    @include cc.color-bg((signal, success, warning, danger, positive, negative, neutral, fail));
 
     // SURFACE (CSS-380, v0.7.2): the background of the surface an element
     // sits on, for what paints with it — a chart's label plates and

@@ -49,6 +49,7 @@
     --border-color: var(--gray-mid-dark);
     --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
     --border-color-dark: var(--gray-light);
+
     // Derived on :root from --border-color, so restated here to follow it.
     --border-code: 1px solid var(--border-color);
 
@@ -158,6 +159,12 @@
 .card-grid--cols-2 { --card-grid-cols: 2; }
 .card-grid--cols-3 { --card-grid-cols: 3; }
 .card-grid--cols-4 { --card-grid-cols: 4; }
+
+// A tile's title link takes no brand fill: the tile shows the hover itself
+// (in the gallery, the title's background darkens).
+.card-grid__title a {
+    background-image: none;
+}
 
 .card-grid__item {
     display: flex;

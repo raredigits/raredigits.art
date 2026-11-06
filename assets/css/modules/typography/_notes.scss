@@ -30,6 +30,15 @@ sup > a {
     background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
 
+// A margin note on a phone (a sidenote, an inline footnote): under the text it
+// comments on, ruled off from it and set to the right edge.
+@mixin margin-note-stacked {
+    margin: var(--space-sm) 0;
+    padding: var(--space-xs) 0 var(--space-md);
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+}
+
 .aside-footer,
 .footnote-inside-text {
     float: right;
@@ -38,10 +47,32 @@ sup > a {
     color: var(--text-color-light);
     margin-right: calc(var(--global-fr) + var(--base-unit));
     line-height: 1.2;
+
+    @include mobile {
+        @include margin-note-stacked;
+
+        float: none;
+        width: auto;
+    }
 }
 
 .footnote-inside-text a {
     color: var(--text-color-light);
+}
+
+// The blocks set wider than the measure (`caption-width`, _text-content.scss):
+// an extra column and an outdent on the right. The other outdents (`pre`,
+// `blockquote`, `.caption`, `.full-width-caption`, `.card-caption`) hang left
+// only and stay in the text column.
+$sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
+
+// Where the sidenote row places its text, wide blocks and note on its
+// 9-column grid. A consumer moves them with these tokens, on `:root` or on one
+// wrapper, instead of rewriting the selectors.
+:root {
+    --sidenote-text-column: 1 / span 6;
+    --sidenote-wide-column: 1 / span 7;
+    --sidenote-column: 8 / span 2;
 }
 
 .sidenote-wrapper {
@@ -57,11 +88,11 @@ sup > a {
     // columns and cut a chart title to an ellipsis).
     & > :first-child {
         margin-top: 0;
-        grid-column: 1 / span 5;
+        grid-column: var(--sidenote-text-column);
     }
 
     > .sidenote {
-        grid-column: 7 / span 2;
+        grid-column: var(--sidenote-column);
         grid-row: 1 / span 2;
         align-self: start;
         width: 100%;
@@ -81,35 +112,86 @@ sup > a {
         color: var(--text-color-light);
     }
 
-    > .sidenote > :is(p, h5, h6):first-child {
+    // The note is set tighter than the prose: paragraphs a step apart, its
+    // h5/h6 labels flush with them, nothing hanging below the last block.
+    > .sidenote > p {
+        margin: var(--space-xs) 0;
+    }
+
+    > .sidenote > :is(h5, h6) {
+        margin: 0;
+    }
+
+    > .sidenote > :first-child {
         margin-top: 0;
     }
 
+    > .sidenote > :last-child {
+        margin-bottom: 0;
+    }
+
     > :not(:first-child, .sidenote) {
-        grid-column: 1 / span 5;
+        grid-column: var(--sidenote-text-column);
     }
 
-    // Highlights and content-captions get one extra column (still clear of
-    // the sidenote, which starts at column 7) so emphatic blocks read wider
-    // than ordinary body content.
-    > .highlight,
-    > .text-content-caption {
-        grid-column: 1 / span 6;
+    // The row owns its bottom edge: the gap to the next row is the wrapper's
+    // block gap (`--space-md`, _text-content.scss), so the last text block
+    // leaves no margin below it, however tall the note beside it is. In
+    // `:where()`: a margin utility on that block still decides.
+    > :where(:not(.sidenote, :has(~ :not(.sidenote)))),
+    > :where(:not(.sidenote, :has(~ :not(.sidenote)))) > :last-child {
+        margin-bottom: 0;
     }
 
-    @media (width < 1024px) {
+    // The caption-width blocks get one extra column, up to the note's, so
+    // emphatic blocks read wider than ordinary body content.
+    > :is(#{$sidenote-wide}) {
+        grid-column: var(--sidenote-wide-column);
+    }
+
+    // On a tablet the wide block's right outdent takes the column gap and
+    // meets the note: the note steps right, its marker with it.
+    @include tablet {
+        &:has(> :is(#{$sidenote-wide})) > .sidenote {
+            width: auto;
+            margin-left: var(--space-md);
+        }
+    }
+
+    // A tablet keeps the note in its right column. On a phone the row stacks
+    // and the note takes the stacked margin-note form; its marker moves to the
+    // top-left corner (below). The banner keeps its own left-rule form.
+    @include mobile {
         display: flex;
         flex-direction: column;
 
         > .sidenote {
             max-width: 100%;
-            padding: var(--space-sm);
         }
 
-        > .sidenote > p:first-child {
-            margin-top: var(--space-md);
+        > .sidenote:not(.sidenote-banner) {
+            @include margin-note-stacked;
+        }
+
+        > .sidenote:not(.sidenote-banner) > :first-child {
+            margin-top: var(--space-sm);
         }
     }
+}
+
+.sidenote.sidenote-banner {
+    margin: 4px 0 0 -4px;
+    padding: 0 0 0 var(--space-md);
+    border-left: 4px solid var(--border-color-light);
+
+    // On a tablet the note column is too narrow for a banner's heading: the
+    // banner takes one column more, to the row's edge.
+    @include tablet {
+        --sidenote-column: 7 / span 3;
+
+        max-width: none;
+    }
+
 }
 
 // A handwritten sidenote: the script face from `.handwritten`, on the sidenote
@@ -135,9 +217,12 @@ sup > a {
     left: -16px;
     color: var(--text-color-light);
 
-    @media (width < 1024px) {
-        top: 8px;
-        left: -8px;
+    // The right-aligned phone note leaves the top-left corner free.
+    @include mobile {
+        top: 4px;
+        left: 0;
+        opacity: 0.4;
+        font-size: var(--font-size-xl);
     }
 }
 

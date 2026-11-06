@@ -6,7 +6,7 @@
 // (v0.7.2) chart text readable on whatever shows through its frame.
 // Needs a built site: `npm run test:browser` runs Eleventy first.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
@@ -18,7 +18,7 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 const PAGES = [
   '/', '/styles/', '/styles/getting-started/', '/styles/typography/', '/styles/typography/lists/',
   '/styles/typography/tables/', '/styles/typography/notes/', '/styles/layout/spacing/', '/styles/utilities/',
-  '/styles/bricks/panels/', '/styles/bricks/legend/', '/charts/circular/',
+  '/styles/bricks/panels/', '/styles/colors/legend/', '/charts/circular/',
   '/charts/line/', '/charts/sankey/', '/scripts/carousel/', '/kb/taming-lesspregreater/', '/examples/styles/hetke/landing/',
 ];
 const WIDTHS = [375, 640, 720, 768, 769, 1024, 1440];
@@ -94,7 +94,8 @@ describe('every built page fits phone widths (not just the reference set)', () =
       for (const f of readdirSync(d, { withFileTypes: true })) {
         const p = join(d, f.name);
         if (f.isDirectory()) { if (f.name !== 'pagefind' && f.name !== 'old') walk(p); }
-        else if (f.name === 'index.html') out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
+        // A redirect stub (a moved page, `meta refresh`) has no layout to measure.
+        else if (f.name === 'index.html' && !/http-equiv="refresh"/.test(readFileSync(p, 'utf8'))) out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
       }
     };
     walk(SITE);

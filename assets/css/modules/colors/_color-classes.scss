@@ -21,3 +21,12 @@
         }
     }
 }
+
+// The `-bg` twin of a colour token (CSS-121): the colour at 25% over whatever
+// is behind it, a fill to set text on. Called inside a rule that declares
+// tokens (`:root`): `--<name>-bg` for each name.
+@mixin color-bg($names) {
+    @each $name in $names {
+        --#{$name}-bg: color-mix(in srgb, var(--#{$name}) 25%, transparent);
+    }
+}

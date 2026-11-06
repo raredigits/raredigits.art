@@ -21,17 +21,16 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
 - **The button system** (`CSS-040`…`CSS-046`, `Q-04`).
   - **Default look** for `<button>`, `<input type=submit|button|reset>` and `.button`.
   - **Variants:**
-    - `.button-primary` on `--signal`;
-    - `-secondary`;
+    - `.button-primary` on `--brand-color` (`--brand-color-dark` on hover), black label;
     - `-ghost`, whose label follows the surface;
-    - `-danger` on `--color-danger`;
+    - `-danger` on `--danger`;
     - `-link`.
   - **Sizes:** `.button-sm`, `-md` and `-lg`.
   - **Icons:** `rd-icon-*` glyph layout, and `.button-icon`.
   - **States:** hover, active, focus, disabled / `aria-disabled`, and `aria-busy` (a spinner that holds still under reduced motion).
   - **Layout:** `.button-group` (a pressed toggle keeps its variant's look) and `.button-block`.
-  - **Tokens:** `--button-*`.
-  - **Docs:** `/styles/elements/buttons/`.
+  - **No tokens of its own:** the look is written with the library's tokens, corners `--space-lg`; variants and sizes set slots on their class (`--button-bg`, `--button-padding-x`…).
+  - **Docs:** `/styles/interactive/buttons/`.
 - **Forms** (`CSS-100`…`CSS-105`).
   - **Fields:** text fields, the date and time types included; `textarea`; `select` with the library's arrow.
   - **Choices:** checkbox and radio drawn by the library.
@@ -39,7 +38,7 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
   - **Layout:** `.form-group`, `.form-row`, `.form-help`, `.form-error`.
   - **Validity:** shown only after interaction (`:user-invalid` / `:user-valid`, `[aria-invalid]`).
   - **Tokens:** `--field-*`.
-  - **Docs:** `/styles/elements/forms/`.
+  - **Docs:** `/styles/interactive/forms/`.
 - **The panel family** (`CSS-180`, `CSS-183`, `CSS-371`).
   - **Parts:** `.panel` with `__header`, `__body` and `__footer`.
   - **Modifiers:** `--bordered` and `--flush`.
@@ -47,8 +46,8 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
   - **Row:** `.panel__row` and `__row-item`, with the `--stack` and `--text-start` modes harvested from the site.
   - **Behaviour:** a panel is a data surface. It paints no background, and it is a block, or a flex column once it has parts.
   - **Docs:** `/styles/bricks/panels/`; the card vs panel rule is in `STYLEGUIDE.md` (`CSS-182`).
-- **KPI figures** (`CSS-184`). `.stat`, `__label` and `__value`: tabular, and the value never wraps. `.stat--delta-up/-down` (with `--stat-delta-color`) and `.stat--signal`. Docs: `/styles/bricks/stats/`.
-- **The legend** (`CSS-178`). `.legend`, `__item` and `__swatch` (`--line`, `--dashed`, `--dot`, `--band`), with colour from `--swatch-color` and the off state on `aria-pressed="false"`. Usable outside charts. Docs: `/styles/bricks/legend/`.
+- **KPI figures** (`CSS-184`). `.stat`, `__label` and `__value`: tabular, and the value never wraps. `.stat--delta-up/-down` (with `--stat-delta-color`) and `.stat--signal`. Docs: `/styles/bricks/panels/#stats`. The value is bold.
+- **The legend** (`CSS-178`). `.legend`, `__item` and `__swatch` (`--line`, `--dashed`, `--dot`, `--band`), with colour from `--swatch-color` and the off state on `aria-pressed="false"`. Usable outside charts. Docs: `/styles/colors/legend/`.
 - **Chart tokens** (`CSS-380`, `CSS-240`, `CSS-176`). 26 `--chart-*` names on `:root`:
   - six series in RareCharts' palette;
   - surface, text, label, axis and grid;
@@ -57,9 +56,9 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
   - fonts, and the focus ring.
 
   Also `--surface-current`: cards set and paint it, a panel passes it through, and it is white on paper. RareCharts reads these names first from its `0.9.8_7`. Docs: `/styles/colors/chart-tokens/`.
-- **Semantic colour roles** (`CSS-121`): `--color-success`, `-danger`, `-warning`, `-info`.
+- **Semantic colour roles** (`CSS-121`): `--success`, `--warning`, `--danger` next to `--signal`; aliases `--positive`, `--negative`, `--neutral` (financial figures) and `--fail` (a check that did not pass); each with a `-bg` twin at 25% (`color-bg` mixin). KPI deltas read `--positive`/`--negative`, form validation `--success`/`--fail`. The blue palette moved into `colors/_base.scss` (`_blue.scss` removed).
 - **`--signal`** (`CSS-124`): the action and attention accent. It is blue, and the focus ring follows it (no visual change).
-- **Callout variants** (`CSS-156`): `.callout-info`, `-success`, `-warning`, `-error`.
+- **Callout variants** (`CSS-156`): `.callout-signal` (plain information: a black stripe, no fill), `-success`, `-warning`, `-danger` (the stripe in the role's colour, the fill in its `-bg`).
 - **`.attribution`** (`CSS-379`): the credit look outside a blockquote.
 - **Docs:**
   - `.table-section` group rows and the reference-table recipe (`CSS-378`);
@@ -68,12 +67,13 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
 
 ### Changed
 
+- **`.list-group-pack` balances on a desktop too** and needs no height: as many columns as fit there, 2 on mobile, 3 on a tablet. A height utility on the pack is reset.
 - **Unitless line-heights** (`CSS-375`): the tokens and every em leading in the text components. Each element now computes its own leading. Headings and code blocks keep theirs (`--line-height-sm`).
-- **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px. Paragraph gaps, sidenote rows and the `.air-*` spacers are unchanged.
+- **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px, a sidenote row after a sidenote row too. Paragraph gaps and the `.air-*` spacers are unchanged.
 - **The prose measure stops at data components** (`CSS-374`, `CSS-384`): data tables, panels, stats and charts. This covers `p`, lists, `dl`, `blockquote` and `figure`.
 - **The `cite` look is scoped** to a blockquote's closing `cite` and `.attribution` (`CSS-379`).
 - **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground. A `.card` nested in it restores the light roles (`CSS-380`). RareCharts up to 0.9.8_6 reads `--border-color` directly, so on a dark card its range buttons have faint frames until 0.9.8_7.
-- **The bordered panel pads 16px on a phone** (`CSS-376`).
+- **A panel pads 16px on every width** (`CSS-376`); in a caption-width box (`.text-content-caption`, `.full-width-caption`, `.card-caption`) its sides match the outdent, so its text stays on the text column's edge.
 - **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there. The API snapshot lists `.rc-chart` as a recognised host hook, not as a library class.
 - **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
 - **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory. The output is unchanged.
@@ -130,7 +130,7 @@ Alongside, everything RareCharts and its docs needed from the library is in: cha
 - **Accessibility base.** A visible keyboard focus ring everywhere inside `.rd` (`:focus-visible`, `--focus-ring-color` / `-width` / `-offset`; `--blue` keeps ≥ 3:1 on every library surface, `CSS-110`). `.visually-hidden`, shown in place while it has focus inside (`CSS-111`); no `.sr-only` alias. A `.skip-to-content` link that appears above the header on the first Tab (`CSS-113`). The `bp.motion-safe` mixin: transitions run only without a reduced-motion preference (`CSS-112`).
 - **`--cookie-notice-reserve`** (16rem): while the cookie notice shows, focus and anchors stop above it and the page end can scroll clear of it (`CSS-361`).
 - **A CDN banner**: `rare.css` / `rare.min.css` open with a `/*!` comment stating the `.rd` rule and the migration link.
-- **Docs**: a new `/styles/getting-started/` page (page mode, islands, the caveats, the upgrade, `CSS-321`); a real `/styles/utilities/` page; `/styles/typography/interactive/` (focus, links, buttons, forms); heading ids site-wide and a working table of contents (`CSS-362`).
+- **Docs**: a new `/styles/getting-started/` page (page mode, islands, the caveats, the upgrade, `CSS-321`); a real `/styles/utilities/` page; `/styles/interactive/` (focus, links, buttons, forms); heading ids site-wide and a working table of contents (`CSS-362`).
 - **Release and regression tooling**: `.github/workflows/release-css.yml` publishes to `rare-styles` only for a new version tag. It verifies on Node 24 (lint, unit, browser, size, links), stages one artifact with a sha256 manifest, publishes and tags exactly that artifact, attaches it to the GitHub Release for self-hosting, and checks the pinned jsDelivr bytes (`CSS-348`). The test suites now cover the gate on a hostile host (`CSS-338`), committed artifacts that must equal a fresh build (`CSS-118`), and a real-browser suite (`npm run test:browser`, headless Chrome) for focus, motion, states, anchors and a 14-page × 7-width reference matrix with fractional widths and 200% zoom. Also new: a reproducible size table (`SIZE-BASELINE.md`, `CSS-339`), `npm run check:links` (`CSS-363`) and an API snapshot of `v0.6.19` (`docs/api/v0.6.19.json`, `CSS-340`).
 
 ### Changed

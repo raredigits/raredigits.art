@@ -11,15 +11,16 @@
 // The value has tabular numerals: figures in a row of stats line up digit by
 // digit, and a live value does not shift sideways as it updates.
 // Direction: `.stat--delta-up` / `.stat--delta-down` mark a change. An arrow
-// before the value takes the role colour (--color-success / --color-danger),
+// before the value takes the role colour (--positive / --negative),
 // and the figure keeps the text colour: the role colours are signal colours,
 // not text colours (colors/_semantic.scss). The arrow is decoration, not
 // announced: the sign in the figure says the direction in words. Where a rise
 // is bad news (costs, errors), re-map `--stat-delta-color` on the stat.
-// Emphasis: `.stat--signal` sets the value in --signal, bold — a figure that
-// asks for attention (a threshold crossed); the label says why. Bold keeps
-// it large text (WCAG: 3:1), which the blue meets on the light and the dark
-// card.
+// The value is bold: the figure is what the stat is for. Bold also keeps it
+// large text (WCAG: 3:1) when it takes a colour.
+// Emphasis: `.stat--signal` sets the value in --signal — a figure that asks
+// for attention (a threshold crossed); the label says why. Bold, it reads as
+// large text, which the blue meets on the light and the dark card.
 
 .stat {
     display: flex;
@@ -43,17 +44,18 @@
 .stat__value {
     margin-top: auto;
     font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
     line-height: var(--line-height-sm);
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
 
 .stat--delta-up {
-    --stat-delta-color: var(--color-success);
+    --stat-delta-color: var(--positive);
 }
 
 .stat--delta-down {
-    --stat-delta-color: var(--color-danger);
+    --stat-delta-color: var(--negative);
 }
 
 // The arrow is an empty inline box 1em wide, the glyph masked into it. Not an
@@ -76,5 +78,4 @@
 
 .stat--signal > .stat__value {
     color: var(--signal);
-    font-weight: var(--font-weight-bold);
 }

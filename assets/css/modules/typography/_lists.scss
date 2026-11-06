@@ -5,11 +5,12 @@
     padding: 0;
 }
 
-// A bold uppercase label for a list group. Pure label utility: it carries
-// no margins of its own — vertical rhythm belongs to the host context
-// (e.g. `.index-list`). A plain `<span>` is enough as the element; the
-// `font-size: 1em` and `font-family` declarations keep the label stable
-// even if it lands on a heading element.
+// The label of a list group, declared on an `<h5>`: bold and uppercase, with
+// no margin or padding of its own: the list under it follows directly, and all
+// other rhythm belongs to the host context (e.g. `.index-list`). The look stays
+// on the class, so it holds on another element too.
+// A link in it reads as the label: no underline, no highlight, the label's
+// colour; the pointer alone says it is a link.
 
 .list-title {
     display: block;
@@ -18,7 +19,14 @@
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
     margin: 0;
-    padding-bottom: var(--space-sm);
+    padding: 0;
+
+    a {
+        color: inherit;
+        text-decoration: none;
+        background-image: none;
+        cursor: pointer;
+    }
 }
 
 // INDEX LIST — a compact section index: a `.list-title` label over a flat
@@ -44,7 +52,7 @@
     }
 
     > ul > li {
-        margin: 0 0 var(--space-sm);
+        margin: 0;
     }
 }
 
@@ -202,61 +210,41 @@
     }
 }
 
-// List group-pack — sequential CSS multi-column flow for several grouped
-// sublists with their own subheadings, where a group must never be split
-// across a column edge. The canonical child is an `.index-list` (label +
-// flat list + bottom rhythm), but any direct child is kept intact. Short
-// groups pack together inside a column; tall groups naturally claim a
-// column on their own. Built on `column-fill: auto`
-// so columns fill in source order without the height-balancing "holes" that
-// `column-fill: balance` produces with `break-inside: avoid`.
-// Requires a column height — `column-fill: auto` only engages when the
-// container is height-constrained. Set the height with any height utility
-// from the spacing scale (e.g. `.height-xxxl`, `.height-xxxxl`) or via
-// inline `style`. The minimum column width is configurable via
-// `--list-group-pack-min` (default 12rem).
-// On narrow viewports the utility falls back to a balanced fixed-count
-// layout so column widths stay readable: 2 columns on mobile, 3 on tablet;
-// any explicit height utility is reset to auto. The host markup should give
-// the section title its own row on mobile (e.g. `mobile:col-span-full`) so
-// the lists get the full container width.
+// List group-pack — CSS multi-column flow for several grouped sublists with
+// their own subheadings, where a group must never be split across a column
+// edge. The canonical child is an `.index-list` (label + flat list + bottom
+// rhythm), but any direct child is kept intact. The browser balances the
+// groups across the columns, so the pack needs no height: as many columns of
+// `--list-group-pack-min` (default 12rem) as fit on a desktop, 2 on mobile, 3
+// on a tablet. `column-fill` is what makes this work: with `auto` and no height
+// every group falls into one tall column, and with a height the columns spill
+// sideways once the content outgrows it. The fixed counts stay: at the minimum
+// width a phone would get one column. A height utility on the pack is reset.
+// The host markup should give the section title its own row on mobile (e.g.
+// `mobile:col-span-full`) so the lists get the full container width.
 
 .list-group-pack {
     column-width: var(--list-group-pack-min, 12rem);
-    column-fill: auto;
+    column-fill: balance;
     column-gap: var(--grid-gap);
+    height: auto;
 
+    // The gap between groups is padding, not margin. When a `break-inside:
+    // avoid` group moves to the next column, WebKit carries the previous
+    // group's bottom margin to the top of that column, so the second column
+    // starts ~16px low (Safari, CSS-366). Padding stays inside the box.
     > * {
         break-inside: avoid;
+        margin-bottom: 0;
+        padding-bottom: var(--space-md);
     }
 
     @include bp.mobile {
         columns: auto 2;
-        column-fill: balance;
-        height: auto;
     }
 
     @include bp.tablet {
         columns: auto 3;
-        column-fill: balance;
-        height: auto;
-    }
-
-    // Balanced mode: the gap between groups is padding, not margin. When a
-    // `break-inside: avoid` group moves to the next column, WebKit carries the
-    // previous group's bottom margin to the top of that column, so the second
-    // column starts ~16px low (Safari, CSS-366). Padding stays inside the box.
-    // The last item's own margin is zeroed so it no longer collapses into the
-    // group's margin, which keeps the total gap at --space-md.
-    @include bp.multi-breakpoint("mobile", "tablet") {
-        > * {
-            margin-bottom: 0;
-            padding-bottom: var(--space-md);
-        }
-
-        > .index-list > ul > li:last-child {
-            margin-bottom: 0;
-        }
     }
 }
 

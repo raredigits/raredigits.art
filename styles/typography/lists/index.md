@@ -30,14 +30,16 @@ Use it for navigation blocks, groups of links, table-of-contents lists, and any 
 
 ### `.list-title`
 
-An uppercase, bold label for a list group. It works above unstyled lists, inside `.list-group-pack` columns, and as the title of an `.index-list`. It is a pure label utility: it carries no margins of its own — vertical rhythm belongs to the surrounding context. A plain `<span>` is the right element for it — the label is a visual marker, not a document heading; the utility pins `font-family` and `font-size: 1em` so it stays stable even if it lands on a heading element.
+The label of a list group, declared on an `<h5>`: uppercase and bold, above an unstyled list, inside `.list-group-pack` columns, or as the title of an `.index-list`. It has no margin or padding of its own: the list follows directly under it, and all other spacing belongs to the surrounding context. A link inside it reads as the label, with no underline or highlight and the label's color; only the pointer shows it is a link.
 
-<span class="list-title">Reference</span>
+<h5 class="list-title">Reference</h5>
 <ul class="list-unstyled">
     <li>Specification</li>
     <li>Changelog</li>
     <li>Migration Notes</li>
 </ul>
+
+<pre><code>&lt;h5 class="list-title"&gt;&lt;a href="/reference/"&gt;Reference&lt;/a&gt;&lt;/h5&gt;</code></pre>
 
 ## Index lists
 
@@ -45,10 +47,10 @@ An uppercase, bold label for a list group. It works above unstyled lists, inside
 
 `index-list` is the compact "section title + short link list" pattern used for table-of-contents style navigation. The title is the thing you scan first; the items underneath stay tight and quiet.
 
-The markup is deliberately plain: a `.list-title` label on a `<span>`, then a bare `<ul>` — the component styles its own `ul`/`li` (resets markers, sets item rhythm), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (`margin-bottom`), so stacked or packed index lists separate cleanly — it is also the canonical content unit inside `.list-group-pack` columns.
+The markup is deliberately plain: a `.list-title` label on an `<h5>`, then a bare `<ul>` — the component styles its own `ul`/`li` (resets markers, sets item rhythm), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (`margin-bottom`), so stacked or packed index lists separate cleanly — it is also the canonical content unit inside `.list-group-pack` columns.
 
 <div class="index-list">
-    <span class="list-title"><a href="">Typography</a></span>
+    <h5 class="list-title"><a href="">Typography</a></h5>
     <ul>
         <li><a href="">Body Text</a></li>
         <li><a href="">Lists &amp; Columns</a></li>
@@ -67,7 +69,7 @@ All three utilities below solve the same problem in different ways: a list is to
 | Utility | Mechanism | You control | Best for |
 |---|---|---|---|
 | `.list-columns` | CSS columns | column count | One long flat list |
-| `.list-group-pack` | CSS columns + `column-fill: auto` | min column width + container height | Several grouped sublists that must stay intact |
+| `.list-group-pack` | CSS columns, balanced | min column width | Several grouped sublists that must stay intact |
 | `.list-fixed-rows` | CSS grid | row count | Exact number of rows, usually TOCs |
 
 </div>
@@ -114,15 +116,15 @@ In short: `.list-columns` controls columns, `.list-group-pack` protects groups, 
 
 ### `.list-group-pack`
 
-For grouped sublists with subheadings. This utility packs the groups into columns sequentially and keeps each child block intact with `break-inside: avoid`, so a label and its items travel together. The canonical child is an `.index-list` — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.
+For grouped sublists with subheadings. This utility balances the groups across the columns and keeps each child block intact with `break-inside: avoid`, so a label and its items travel together. The canonical child is an `.index-list` — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.
 
-Important: `column-fill: auto` only does useful work when the container has a height. Add a height utility such as `.height-xxxxl`, or set a custom height inline, tall enough for the groups at the narrowest desktop width; otherwise the extra columns spill out to the right. You can also tune the minimum column width with `--list-group-pack-min`.
+The pack needs no height: on a desktop it fits as many columns as the container allows, and you can tune their minimum width with `--list-group-pack-min`.
 
-On narrow viewports the utility ignores the height-driven packing and falls back to a balanced fixed-count layout: 2 columns on mobile, 3 on tablet.
+On narrow viewports the number of columns is fixed: 2 on mobile, 3 on tablet.
 
-<div class="list-group-pack height-xxxxl" style="--list-group-pack-min: 11rem;">
+<div class="list-group-pack" style="--list-group-pack-min: 11rem;">
     <div class="index-list">
-        <span class="list-title">Foundations</span>
+        <h5 class="list-title">Foundations</h5>
         <ul>
             <li>Tokens</li>
             <li>Typography</li>
@@ -131,7 +133,7 @@ On narrow viewports the utility ignores the height-driven packing and falls back
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Components</span>
+        <h5 class="list-title">Components</h5>
         <ul>
             <li>Buttons</li>
             <li>Cards</li>
@@ -141,7 +143,7 @@ On narrow viewports the utility ignores the height-driven packing and falls back
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Navigation</span>
+        <h5 class="list-title">Navigation</h5>
         <ul>
             <li>Header</li>
             <li>Sidebar</li>
@@ -149,7 +151,7 @@ On narrow viewports the utility ignores the height-driven packing and falls back
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Decorations</span>
+        <h5 class="list-title">Decorations</h5>
         <ul>
             <li>Highlights</li>
             <li>Frames</li>
@@ -175,22 +177,22 @@ On mobile the fixed-row contract is dropped: the list reflows into two equal col
     <li>Link the next typography page</li>
 </ol>
 
-#### Two equal columns (tables of contents)
+### Two equal columns (tables of contents)
 
-A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and `--list-rows: 4`, the grid fills four rows and wraps into two equal-width columns — `.list-fixed-rows` sizes its implicit columns with `minmax(0, 1fr)`, so they stay equal without any extra class.
-
-<div class="note">Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</div>
-
-<ol class="list-fixed-rows" style="--list-rows: 4;">
-    <li>What the library is for</li>
-    <li>Installation</li>
-    <li>Tokens</li>
-    <li>Typography</li>
-    <li>Layout</li>
-    <li>Components</li>
-    <li>Navigation</li>
-    <li>Decorations</li>
-</ol>
+<div class="sidenote-wrapper">
+    <p>A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and <code>--list-rows: 4</code>, the grid fills four rows and wraps into two equal-width columns — <code>.list-fixed-rows</code> sizes its implicit columns with <code>minmax(0, 1fr)</code>, so they stay equal without any extra class.</p>
+        <div class="sidenote"><p>Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</p></div>
+    <ol class="list-fixed-rows" style="--list-rows: 4;">
+        <li>What the library is for</li>
+        <li>Installation</li>
+        <li>Tokens</li>
+        <li>Typography</li>
+        <li>Layout</li>
+        <li>Components</li>
+        <li>Navigation</li>
+        <li>Decorations</li>
+    </ol>
+</div>
 
 ## Feed lists
 
@@ -198,7 +200,7 @@ A two-column table of contents is just a fixed-rows list whose row count is half
 
 A feed is a chronological vertical stream — and a navigation surface, not body copy. Authors put content into a feed precisely because it deserves the reader's attention, so the pattern spends visual budget on it: full-size titles and generous vertical whitespace between line-separated items signal that the entries are valuable. Each item gets a top rule, a title, and a quiet meta line that keeps dates and tags from competing with the title. The pattern is intentionally narrow: it is for updates, logs, changelogs, or knowledge-base streams where sequence matters more than per-item detail.
 
-<div class="feed-list">
+<div class="text-content-width feed-list">
     <div class="feed-list__item">
         <span class="feed-list__meta">10.06.2026</span>
         <h4 class="feed-list__title"><a href="">Lists module harvested and normalized</a></h4>

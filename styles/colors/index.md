@@ -139,7 +139,8 @@ The most prominent color in the system is defined by the <code>--brand-color<
     
 --brand-color: #00ff4e; <span class="code-comment">// Primary brand color</span>
 --brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant for hover states</span>
---brand-color-dark: #00b300; <span class="code-comment">// Darker variant for active states</span>
+--brand-color-dark: #3a8000; <span class="code-comment">// Darker variant: the primary button's hover; white text on it reads at 4.9:1</span>
+--brand-color-link: #00b300; <span class="code-comment">// Link underlines and their hover fill</span>
 </code></pre>
 
 ### Technical Colors
@@ -169,6 +170,13 @@ Technical colors are used to highlight important info: statuses, warnings, and 
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
+        <div class="flex stretched blue-bg white width-100 padding-md copy-data-icon--light">
+            <div>blue — the signal</div>
+            <div>
+                <span data-copy>#1677ff</span>
+                <span class="copy-data-icon rd-js-copy"></span>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -178,55 +186,101 @@ Technical colors should be used strictly for their intended purpose — a desi
 
 <div class="meta-info">css/modules/colors/_semantic.scss</div>
 
-Components that signal a state read a role, not a hue. Four tokens name the roles and point at the technical colors above:
+Components that signal a state read a role, not a hue. Four roles point at the technical colors above:
 
 <div class="table-scroll">
 <table class="table-small">
     <tr>
-        <th>Token</th>
+        <th>Role</th>
         <th>Default</th>
         <th>Meaning</th>
     </tr>
     <tr>
-        <td><code>--color-success</code></td>
-        <td><code>var(--green)</code></td>
-        <td>Done, passed, a change for the better</td>
+        <td class="nobr"><code>--signal</code></td>
+        <td class="nobr"><code>var(--blue)</code></td>
+        <td>Technical information, the main chart color</td>
     </tr>
     <tr>
-        <td><code>--color-danger</code></td>
-        <td><code>var(--red)</code></td>
-        <td>Error, failure, a destructive action</td>
+        <td class="nobr"><code>--success</code></td>
+        <td class="nobr"><code>var(--green)</code></td>
+        <td>Done, passed</td>
     </tr>
     <tr>
-        <td><code>--color-warning</code></td>
-        <td><code>var(--yellow)</code></td>
+        <td class="nobr"><code>--warning</code></td>
+        <td class="nobr"><code>var(--yellow)</code></td>
         <td>Caution: read before you go on</td>
     </tr>
     <tr>
-        <td><code>--color-info</code></td>
-        <td><code>var(--blue)</code></td>
-        <td>A neutral notice</td>
+        <td class="nobr"><code>--danger</code></td>
+        <td class="nobr"><code>var(--red)</code></td>
+        <td>An error, a destructive action</td>
     </tr>
 </table>
 </div>
 
-The <a href="/styles/typography/text-content/#callouts">callout variants</a> are built on them. To change what a meaning looks like, re-map the role once, not every component:
+Four aliases name the same colors where the meaning is different. They follow the role they point at:
+
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Alias</th>
+        <th>Points at</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--positive</code></td>
+        <td class="nobr"><code>var(--success)</code></td>
+        <td>A financial figure that changed for the better</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--negative</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A financial figure that changed for the worse</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--neutral</code></td>
+        <td class="nobr"><code>var(--warning)</code></td>
+        <td>A financial figure that did not change</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--fail</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A check or an operation that did not go through</td>
+    </tr>
+</table>
+</div>
+
+Each role and each alias has its own `-bg` twin: the color at 25%, a fill to set text on. Every swatch below is the token as a stripe on its own `-bg`:
+
+<div class="card text-content-caption padding-lg">
+    <div class="column gap-xs">
+        <div class="padding-sm" style="background: var(--signal-bg); border-left: var(--space-xs) solid var(--signal)"><code>--signal</code> on <code>--signal-bg</code></div>
+        <div class="padding-sm" style="background: var(--success-bg); border-left: var(--space-xs) solid var(--success)"><code>--success</code> on <code>--success-bg</code></div>
+        <div class="padding-sm" style="background: var(--warning-bg); border-left: var(--space-xs) solid var(--warning)"><code>--warning</code> on <code>--warning-bg</code></div>
+        <div class="padding-sm" style="background: var(--danger-bg); border-left: var(--space-xs) solid var(--danger)"><code>--danger</code> on <code>--danger-bg</code></div>
+        <div class="padding-sm" style="background: var(--positive-bg); border-left: var(--space-xs) solid var(--positive)"><code>--positive</code> on <code>--positive-bg</code></div>
+        <div class="padding-sm" style="background: var(--negative-bg); border-left: var(--space-xs) solid var(--negative)"><code>--negative</code> on <code>--negative-bg</code></div>
+        <div class="padding-sm" style="background: var(--neutral-bg); border-left: var(--space-xs) solid var(--neutral)"><code>--neutral</code> on <code>--neutral-bg</code></div>
+        <div class="padding-sm" style="background: var(--fail-bg); border-left: var(--space-xs) solid var(--fail)"><code>--fail</code> on <code>--fail-bg</code></div>
+    </div>
+</div>
+
+Where they are used: the <a href="/styles/typography/text-content/#callouts">callout variants</a> (`.callout-success`, `-warning`, `-danger`; `.callout-signal` stays black, with no fill), a [KPI delta](/styles/bricks/panels/#stats) (`--positive` up, `--negative` down), a [form field](/styles/interactive/forms/) (`--success` when right, `--fail` when invalid), the [danger button](/styles/interactive/buttons/) (`--danger`) and the keyboard focus ring (`--focus-ring-color: var(--signal)`; an own `--focus-ring-color` on `:root` still wins).
+
+To change what a meaning looks like, re-map the role once, not every component. Re-map it on `:root`: the aliases and the `-bg` twins are resolved there and follow. On a single surface, restate them too:
 
 <pre class="text-content-caption"><code>:root {
-    --color-warning: var(--orange);
+    --warning: var(--orange); /* --neutral and both -bg follow */
+}
+
+.report {
+    --danger: var(--cherry);
+    --danger-bg: color-mix(in srgb, var(--danger) 25%, transparent);
 }</code></pre>
 
 They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.
 
-#### Signal
-
-One more role, `--signal`, is the accent for attention and action: a primary button, a critical mark, the keyboard focus ring. It is kept apart from `--brand-color`, which is identity. The default is `var(--blue)`, and the focus ring follows it (`--focus-ring-color: var(--signal)`):
-
-<pre class="text-content-caption"><code>:root {
-    --signal: var(--purple); /* the focus ring follows */
-}</code></pre>
-
-An own `--focus-ring-color` on `:root` still wins over the signal.
+`--signal` is kept apart from `--brand-color`, which is identity: link highlights, brand marks.
 
 #### Surface
 
