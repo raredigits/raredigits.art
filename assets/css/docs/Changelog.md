@@ -112,7 +112,7 @@ Alongside, everything RareCharts and its docs need from the library is in: chart
 - **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
 - **The `.blue*` colour classes** come before the brand and supporting classes in the stylesheet: on an element with two colour classes, the other one wins.
 - **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory, and an icon name inside a pseudo-class no longer ungates a rule, so the new icon-button rules stay inside `.rd`.
-- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 421,076 → **463,979 B** raw (+10.2%), gzip 35,544 → **41,132 B** (+15.7%), Brotli 23,045 → **27,144 B** (+17.8%); `rare.css` 497,303 → 544,757 B raw, gzip 37,918 → 43,741, Brotli 24,386 → 28,896. Most of it is the button system and forms.
+- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 421,076 → **464,137 B** raw (+10.2%), gzip 35,544 → **41,123 B** (+15.7%), Brotli 23,045 → **27,163 B** (+17.9%); `rare.css` 497,303 → 544,942 B raw, gzip 37,918 → 43,721, Brotli 24,386 → 28,696. Most of it is the button system and forms.
 
 ### Fixed
 
