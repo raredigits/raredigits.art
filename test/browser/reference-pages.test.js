@@ -84,7 +84,7 @@ describe('no horizontal page overflow', () => {
   });
 });
 
-describe('every built page fits phone widths (not just the reference set)', () => {
+describe('every built page fits its width (not just the reference set)', () => {
   // The 14 reference pages missed rendered READMEs and the RareCharts
   // changelog (release audit 2026-10-17). 320px is excluded on purpose: single
   // long h1 words are deferred to fluid type, CSS-164.
@@ -102,8 +102,11 @@ describe('every built page fits phone widths (not just the reference set)', () =
     return out;
   };
 
-  // ~77 pages per width: one context, one tab, own timeout.
-  it.each([375, 414])('at %ipx', async (width) => {
+  // ~77 pages per width: one context, one tab, own timeout. 800 and 1150:
+  // a tablet and the narrow desktop, where `.content` is narrower than the
+  // site width — a `.caption` there hung past the page by up to 15px (the
+  // right outdent counted `main`'s padding twice).
+  it.each([375, 414, 800, 1150])('at %ipx', async (width) => {
     const pages = allPages();
     expect(pages.length).toBeGreaterThan(60);
     const ctx = await browser.newContext({ viewport: { width, height: 800 } });
@@ -117,6 +120,31 @@ describe('every built page fits phone widths (not just the reference set)', () =
     await ctx.close();
     expect(bad).toEqual([]);
   }, 300000);
+});
+
+// `.wide-background` (/styles/bricks/): the band runs from edge to edge of
+// the viewport and its wrapper puts the text back on the article's line, at
+// every width. It started 8px off on a tablet and up to 14px off at
+// 1024–1180px, where `.content` is narrower than the site width.
+describe('the full-bleed band', () => {
+  it('meets both viewport edges and keeps its text on the column, 320–1920px', async () => {
+    const page = await open('/styles/bricks/', 1440);
+    const bad = [];
+    for (let w = 320; w <= 1920; w += 20) {
+      await page.setViewportSize({ width: w, height: 800 });
+      const r = await page.evaluate(() => {
+        const band = document.querySelector('.wide-background');
+        const b = band.getBoundingClientRect();
+        const cw = document.documentElement.clientWidth;
+        const inner = band.querySelector('.wide-background-text-content-wrapper p').getBoundingClientRect().left;
+        const text = band.closest('section').querySelector('p').getBoundingClientRect().left;
+        return { left: b.left, right: cw - b.right, text: inner - text };
+      });
+      if (Math.abs(r.left) > 0.5 || Math.abs(r.right) > 0.5 || Math.abs(r.text) > 0.5) bad.push(`${w}: ${JSON.stringify(r)}`);
+    }
+    await page.close();
+    expect(bad).toEqual([]);
+  });
 });
 
 describe('keyboard focus is visible and not covered (cookie notice shown)', () => {

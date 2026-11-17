@@ -1,0 +1,23 @@
+// SMALL PRINT (v0.7.2): the type of secondary text — notes, captions of a
+// figure's role, help under a field, a legend, a KPI label. Sass only: this
+// file emits no CSS.
+
+// The leading of small text: between the scale's 1.2 and 1.5
+// (typography/_fonts.scss), the step the 14.4px size reads at. A Sass value,
+// not a token, so a project's change to the scale does not move it.
+$leading: 1.3;
+
+// The size and leading of small text.
+@mixin small-type {
+    font-size: var(--font-size-sm);
+    line-height: $leading;
+}
+
+// Muted small text: the size and leading, the light weight, the light colour
+// (or a role given, e.g. `--text-color-dark` for an attribution).
+@mixin small-print($color: var(--text-color-light)) {
+    color: $color;
+    font-weight: var(--font-weight-light);
+
+    @include small-type;
+}

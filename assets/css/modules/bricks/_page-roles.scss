@@ -1,0 +1,31 @@
+@use "../charts/roles" as chart;
+
+// THE PAGE'S ROLES (v0.7.2): the roles a dark surface re-maps, and how a
+// surface takes the page's own values back. Sass only: this file emits no
+// CSS. Used by bricks/_cards.scss (a light card in a dark one) and
+// utilities/_print.scss (a dark card on paper).
+
+// The page's values are kept on `:root` under internal names (`--_page-*`),
+// resolved there, before any surface re-maps a role: a role a project
+// re-maps on `:root` comes back as the project set it, not as the library's
+// default. The list is everything `.card-inverted` re-maps except its
+// surface and the chart tokens derived from the roles;
+// test/tokens-contracts.test.js keeps the two in step.
+$page-roles: primary-text-color, text-color-dark, text-color-light, text-color-lightest, link-color, link-color-secondary, link-color-light, border-color, border-color-light, border-color-dark, border-code, chart-control-active-bg, chart-control-fill;
+
+// On `:root`: the snapshot.
+@mixin keep-page-roles {
+    @each $role in $page-roles {
+        --_page-#{$role}: var(--#{$role});
+    }
+}
+
+// On a surface: the page's roles back, and the chart tokens resolved again
+// against them (CSS-380).
+@mixin take-page-roles {
+    @each $role in $page-roles {
+        --#{$role}: var(--_page-#{$role});
+    }
+
+    @include chart.role-tokens;
+}

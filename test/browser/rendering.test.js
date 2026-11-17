@@ -144,6 +144,21 @@ describe('keyboard and contrast regressions (2026-10-16 sweep)', () => {
     await page.close();
   });
 
+  it.each([1440, 375])('the cookie badge straddles the notice\'s top edge and clears its text at %ipx', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const r = await page.evaluate(() => {
+      const notice = document.getElementById('cookie');
+      const content = notice.querySelector('.cookie-notice__content');
+      const h = document.createElement('h3'); h.textContent = 'C'; content.prepend(h);
+      const n = notice.getBoundingClientRect(); const b = h.getBoundingClientRect(); const t = content.querySelector('p').getBoundingClientRect();
+      return { top: b.top - n.top, bottom: b.bottom - n.top, text: t.top - n.top };
+    });
+    expect(r.top).toBeLessThan(0); // above the edge…
+    expect(r.bottom).toBeGreaterThan(0); // …and over it: on a phone it floated 13px above the notice
+    expect(r.bottom).toBeLessThanOrEqual(r.text + 0.5); // clear of the text under it
+    await page.close();
+  });
+
   it.each([1440, 768, 375])('focus is never hidden under the cookie notice at %ipx (CSS-361)', async (width) => {
     const page = await open(FIXTURE, { width, height: 700 });
     // No spacer after the footer while the notice shows (v0.7.1): it read as a hole.
@@ -233,9 +248,17 @@ describe('layout', () => {
         return { width: visualViewport.width, layers: [...layers], active: [...layers].filter((q) => matchMedia(q).matches) };
       });
       await b.close();
-      expect(r.layers.length).toBe(3);
+      // three exclusive layers; `below-desktop` (tablet and phone in one
+      // block) and the sidenote chart row's article threshold lie over them
+      const BELOW = 'screen and (width < 1024px)';
+      const CHART_ROW = 'screen and (width < 1226px)';
+      expect(r.layers.length).toBe(5);
+      expect(r.layers).toContain(BELOW);
+      expect(r.layers).toContain(CHART_ROW);
       expect(Number.isInteger(r.width)).toBe(false); // really fractional
-      expect(r.active.length).toBe(1);
+      const exclusive = r.active.filter((q) => q !== BELOW && q !== CHART_ROW);
+      expect(exclusive.length).toBe(1);
+      expect(r.active.includes(BELOW)).toBe(!/width >= 1024px/.test(exclusive[0]));
     },
   );
 });

@@ -1,3 +1,5 @@
+@use "../typography/small-print" as sp;
+
 // STATS (CSS-184, v0.7.2) — a KPI figure: a label over a value, read at a
 // glance and compared along a row.
 //   <div class="stat">
@@ -29,8 +31,8 @@
 }
 
 .stat__label {
-    font-size: var(--font-size-sm);
-    line-height: 1.3;
+    @include sp.small-type;
+
     color: var(--text-color-light);
 }
 

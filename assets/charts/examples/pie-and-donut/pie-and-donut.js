@@ -63,7 +63,7 @@
   // ── Gauge: value vs target ────────────────────────────────────────────────
   // Plan: 80, Achieved: 50 — arc fills to 50/80 = 62.5%
   new Gauge('#chart-gauge-target', {
-    title:       'Budget Execution',
+    title:       'Budget Spent',
     subtitle:    'Achieved vs Plan',
     height:      220,
     max:         80,

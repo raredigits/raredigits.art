@@ -103,7 +103,8 @@ Here's a simple example of brand-specific customization in `my-beautiful-styles.
   /* Library tokens: override these, the library reads them */
   --primary-color: #1a1a2e;              /* body text and headings */
   --brand-color: #ff6b00;                /* brand accents */
-  --brand-color-link: #c25100;           /* link underline and hover fill */
+  --brand-color-dark: #c25100;           /* link underline and hover fill */
+  --brand-color-deep: #a84600;           /* primary button hover, under a white label */
   --heading-font: 'Montserrat', sans-serif;
 
   /* Your own tokens: any name, read only by your rules below */
@@ -124,7 +125,7 @@ Here's a simple example of brand-specific customization in `my-beautiful-styles.
 }
 ```
 
-Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline and the heading font, and adds two variants of existing library components without modifying the original stylesheet. `--primary-font` and `--code-font` work the same way as `--heading-font`.
+Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline, the primary button’s hover and the heading font, and adds two variants of existing library components without modifying the original stylesheet. `--primary-font` and `--code-font` work the same way as `--heading-font`.
 
 ## Learning from Examples
 Check out the [examples section](/examples) to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.

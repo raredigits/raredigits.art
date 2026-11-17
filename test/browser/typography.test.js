@@ -105,9 +105,24 @@ describe('CSS-121 / CSS-156: callout variants on the semantic roles', () => {
     await page.close();
   });
 
+  it('the signal stripe is the text colour: black on the page, light on a dark card', async () => {
+    const page = await open();
+    expect((await css(page, '#callout-signal', ['border-left-color']))['border-left-color']).toBe('rgb(0, 0, 0)');
+    const card = (await css(page, '#callout-dark-card', ['color', 'background-color']));
+    const stripe = (await css(page, '#callout-signal-dark', ['border-left-color']))['border-left-color'];
+    expect(stripe).toBe(card.color);
+    expect(stripe).not.toBe(card['background-color']);
+    await page.close();
+  });
+
   it('re-mapping the role on a surface re-colours the variant', async () => {
     const page = await open();
     expect((await css(page, '#callout-remapped', ['border-left-color']))['border-left-color']).toBe('rgb(250, 140, 22)');
+    // the fill follows too: the role at 25%, mixed on the callout (was the page's yellow)
+    const fill = (await css(page, '#callout-remapped', ['background-color']))['background-color'];
+    const page2 = (await css(page, '#callout-warning', ['background-color']))['background-color'];
+    expect(fill).not.toBe(page2);
+    expect(fill).toMatch(/0\.98|250|0\.25/);
     await page.close();
   });
 });
@@ -148,7 +163,7 @@ describe('CSS-372: a sidenote wrapper places its own children only', () => {
     };
   });
 
-  it.each([1440, 375])('nested grids keep their own layout at %ipx', async (width) => {
+  it.each([1440, 800, 375])('nested grids keep their own layout at %ipx', async (width) => {
     const page = await open(FIXTURE, { width });
     const r = await layout(page);
     expect(r.nested).toEqual([]);
@@ -176,6 +191,247 @@ describe('CSS-372: a sidenote wrapper places its own children only', () => {
     const phone = await open(FIXTURE, { width: 375 });
     expect(await layout(phone)).toMatchObject({ display: 'flex', noteFirstMargin: '8px' });
     await phone.close();
+    // a RareCharts chart in the note: the row stacks on a tablet too, in its
+    // grid: every child across the row
+    const tablet = await open(FIXTURE, { width: 800 });
+    expect(await layout(tablet)).toMatchObject({ display: 'grid', note: '1 / -1', noteFirstMargin: '8px' });
+    await tablet.close();
+  });
+});
+
+describe('Sidenote rows: a chart in a note, the note width, wide blocks, the banner, the bottom edge', () => {
+  const read = (page) => page.evaluate(() => {
+    const el = (id) => document.getElementById(id);
+    const box = (id) => el(id).getBoundingClientRect();
+    const cs = (id) => getComputedStyle(el(id));
+    const col = (id) => `${cs(id).gridColumnStart} / ${cs(id).gridColumnEnd}`;
+    return {
+      // the chart row stacked: the note under the text, from the same edge
+      chartStacked: box('snc-note').top >= box('snc-first').bottom - 0.5 && Math.abs(box('snc-note').left - box('snc-first').left) < 0.5,
+      plainRow: cs('snp').display,
+      // a second note in a row goes under the first
+      notesApart: box('sn2-n2').top >= box('sn2-n1').bottom - 0.5,
+      // a wide block nested in a text block ends at its column
+      nestedGap: box('snn-note').left - box('snn-wide').right,
+      // on a phone a long first line of a marked note starts after the marker
+      firstLineClear: (() => {
+        const note = el('snl-note'); const m = getComputedStyle(note, '::before');
+        const markerRight = note.getBoundingClientRect().left + parseFloat(m.left) + parseFloat(m.width);
+        const r = document.createRange(); r.selectNodeContents(el('snl-p'));
+        return r.getClientRects()[0].left >= markerRight - 0.5;
+      })(),
+      // the stacked note is as wide as the text above it (the measure; the whole row on a phone)
+      noteAsText: Math.abs(box('snc-note').left - box('snc-first').left) < 0.5 && Math.abs(box('snc-note').right - box('snc-first').right) < 0.5,
+      // a chart that opens a marked note starts under the marker
+      markerClear: (() => {
+        const note = el('snm-note'); const m = getComputedStyle(note, '::before');
+        const bottom = note.getBoundingClientRect().top + parseFloat(getComputedStyle(note).borderTopWidth) + parseFloat(m.top) + parseFloat(m.height);
+        return box('snm-chart').top >= bottom - 0.5;
+      })(),
+      noteText: cs('snc-note-p').textAlign, chartAlign: cs('snc-chart').textAlign, chartTitle: cs('snc-chart-title').textAlign,
+      chartMarker: getComputedStyle(el('snc-note'), '::before').top, plainMarker: getComputedStyle(el('snp-note'), '::before').top,
+      noteToEdge: Math.abs(box('snp-note').right - box('snp').right) < 0.5,
+      noteWidth: box('snw-note').width,
+      wideGap: box('snw-note').left - box('snw-wide').right,
+      wideWidth: box('snw-wide').width, aloneWidth: box('hl-alone').width,
+      banner: col('snb-note'), bannerWide: col('snbw-note'),
+      bannerWideBeside: box('snbw-wide').top < box('snbw-note').bottom && box('snbw-wide').right <= box('snbw-note').left,
+      leadLast: cs('sne-lead-last').marginBottom, utilLast: cs('sne-util-last').marginBottom, outLast: cs('sne-out-last').marginBottom,
+      pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    };
+  });
+
+  it('desktop: side by side; the note fills its columns; a wide block keeps the caption width', async () => {
+    const page = await open(FIXTURE, { width: 1440 });
+    const r = await read(page);
+    expect(r).toMatchObject({
+      chartStacked: false, plainRow: 'grid', chartAlign: 'start', chartMarker: '-8px', plainMarker: '-8px',
+      noteToEdge: true, banner: '8 / span 2', bannerWide: '8 / span 2', pageOverflow: false,
+      notesApart: true,
+    });
+    expect(r.nestedGap).toBeGreaterThanOrEqual(16 - 0.5);
+    expect(r.wideWidth).toBeCloseTo(r.aloneWidth, 1);
+    expect(r.wideGap).toBeGreaterThanOrEqual(16 - 0.5);
+    await page.close();
+  });
+
+  it.each([800, 900, 1100])('tablet and narrow desktop at %ipx: a chart row stacks, other rows keep the note column', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const r = await read(page);
+    expect(r).toMatchObject({
+      chartStacked: true, noteAsText: true, markerClear: true, plainRow: 'grid', notesApart: true,
+      // the note's text to the right edge, the chart keeps its own alignment
+      noteText: 'right', chartAlign: 'start', chartTitle: 'start',
+      chartMarker: '4px', plainMarker: '-8px', noteToEdge: true,
+      pageOverflow: false,
+    });
+    // a banner takes a column more on a tablet, unless a wide block holds it
+    if (width < 1024) expect(r).toMatchObject({ banner: '7 / span 3', bannerWide: '8 / span 2', bannerWideBeside: true });
+    // a wide block ends at its columns, a nested one too: the column gap stays, the note keeps its two columns
+    expect(r.wideGap).toBeGreaterThanOrEqual(16 - 0.5);
+    expect(r.nestedGap).toBeGreaterThanOrEqual(16 - 0.5);
+    expect(r.noteWidth).toBeGreaterThan(100);
+    await page.close();
+  });
+
+  it('phone: every row stacks; the chart keeps its own alignment in the right-aligned note', async () => {
+    const page = await open(FIXTURE, { width: 375 });
+    const r = await read(page);
+    expect(r).toMatchObject({
+      chartStacked: true, plainRow: 'flex', noteAsText: true, markerClear: true, noteText: 'right', chartAlign: 'start', chartTitle: 'start',
+      chartMarker: '4px', plainMarker: '4px', pageOverflow: false, firstLineClear: true,
+    });
+    expect(r.wideWidth).toBeCloseTo(r.aloneWidth, 1);
+    await page.close();
+  });
+
+  it('on paper a wide block in a row fills its columns again (the print reset decides)', async () => {
+    const page = await open(FIXTURE, { width: 800 });
+    await page.emulateMedia({ media: 'print' });
+    const gap = await page.evaluate(() => document.getElementById('snw-note').getBoundingClientRect().left - document.getElementById('snw-wide').getBoundingClientRect().right);
+    expect(gap).toBeCloseTo(16, 0);
+    await page.close();
+  });
+
+  it.each([800, 1440])('on paper a row with a chart in its note stacks at %ipx; other rows keep the grid', async (width) => {
+    const page = await open(FIXTURE, { width });
+    await page.emulateMedia({ media: 'print' });
+    const r = await read(page);
+    expect(r).toMatchObject({ chartStacked: true, noteAsText: true, plainRow: 'grid', chartAlign: 'start' });
+    await page.close();
+  });
+
+  it.each([1440, 375])('the bottom edge at %ipx: flush in the article flow, whatever the block; the margin stays elsewhere', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const r = await read(page);
+    expect(r.leadLast).toBe('0px'); // .lead's own margin-bottom does not win
+    expect(r.utilLast).toBe('0px'); // nor does a margin utility
+    expect(r.outLast).not.toBe('0px'); // a row outside the article flow has no block gap: the margin stays
+    await page.close();
+  });
+});
+
+describe('surfaces, presets and a project measure', () => {
+  it('a quote in a dark card or a collapsible keeps the measure of the paragraph beside it', async () => {
+    const page = await open(FIXTURE, { width: 1300 });
+    const r = await page.evaluate(() => Object.fromEntries(['inv-p', 'inv-bq', 'coll-p', 'coll-bq'].map((id) => [id, getComputedStyle(document.getElementById(id)).maxWidth])));
+    expect(r['inv-bq']).toBe(r['inv-p']); // was 100%: the surface's reset beat the quote's measure
+    expect(r['coll-bq']).toBe(r['coll-p']);
+    expect(r['inv-p']).toMatch(/px$/);
+    await page.close();
+  });
+
+  it('a striped terminal table keeps the padding of a preset on it', async () => {
+    const page = await open(FIXTURE, { width: 1300 });
+    const pad = (id) => page.evaluate((i) => { const cs = getComputedStyle(document.getElementById(i)); return `${cs.paddingTop} ${cs.paddingBottom}`; }, id);
+    expect(await pad('tt-sb-td')).toBe(await pad('tt-b-td'));
+    await page.close();
+  });
+
+  it('on a phone a project measure set on :root does not widen the page through the wide blocks', async () => {
+    const page = await open(FIXTURE, { width: 375 });
+    const r = await page.evaluate(() => {
+      document.documentElement.style.setProperty('--text-content-width', '36rem');
+      const hl = document.getElementById('hl-alone').getBoundingClientRect();
+      return { over: document.documentElement.scrollWidth - document.documentElement.clientWidth, hlRight: hl.right, cw: document.documentElement.clientWidth };
+    });
+    expect(r.hlRight).toBeLessThanOrEqual(r.cw + 0.5);
+    expect(r.over).toBeLessThanOrEqual(0);
+    await page.close();
+  });
+});
+
+describe('the caption width stops at a narrow container', () => {
+  // In an article a caption-width block is the measure plus the outdents; in
+  // a container narrower than that (a grid cell, a half-width block) it is
+  // the container plus `--outdent` on the left and `--outdent-end` on the
+  // right, the room there is (CSS-367), as in v0.7.1. Without the cap a box
+  // in a half-width block passed it by up to 300px, a highlight took most of
+  // its grid, and a lead in a grid's left cell scrolled the page at 800–900px.
+  it.each([1440, 1100, 900, 800, 375])('hangs by the outdent and no further at %ipx', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const r = await page.evaluate(() => {
+      const box = (id) => document.getElementById(id).getBoundingClientRect();
+      const probe = document.createElement('div');
+      document.getElementById('hl-alone').before(probe);
+      const px = (v) => { probe.style.width = v; return probe.getBoundingClientRect().width; };
+      const caption = px('var(--text-content-caption)');
+      const od = px('var(--outdent)');
+      const odEnd = px('var(--outdent-end)');
+      probe.remove();
+      const cap = box('cw-cap'), half = box('cw-half');
+      return {
+        past: [half.left - cap.left, cap.right - half.right], od, odEnd,
+        cells: [...document.getElementById('cw-grid').children].map((c) => c.getBoundingClientRect().width),
+        alone: [box('hl-alone').width, caption],
+        over: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      };
+    });
+    expect(r.past[0]).toBeLessThanOrEqual(r.od + 0.5); // the outdent, not 184–303px
+    expect(r.past[1]).toBeLessThanOrEqual(r.odEnd + 0.5); // on the right only the room there is
+    // equal tracks; on a phone a third of the screen is narrower than the
+    // highlight's longest word, and the track grows to it (as in v0.7.1)
+    if (width > 768) expect(Math.max(...r.cells) - Math.min(...r.cells)).toBeLessThanOrEqual(1);
+    expect(Math.abs(r.alone[0] - r.alone[1])).toBeLessThanOrEqual(0.5); // in the article: the caption width
+    expect(r.over).toBeLessThanOrEqual(0);
+    await page.close();
+  });
+});
+
+describe('callouts, floats, notes and a shrink-to-fit parent', () => {
+  it('a state callout in an information notice keeps its fill', async () => {
+    const page = await open(FIXTURE, { width: 1300 });
+    const [nested, alone] = [(await css(page, '#callout-nested', ['background-color']))['background-color'], (await css(page, '#callout-warning', ['background-color']))['background-color']];
+    expect(nested).toBe(alone); // was transparent: the signal's slot reached it
+    await page.close();
+  });
+
+  it.each([1024, 1100, 1440])('an inline note floats clear of the measure at %ipx', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const r = await page.evaluate(() => {
+      const probe = document.createElement('div'); probe.style.width = 'var(--text-content-width)';
+      document.querySelector('article').append(probe);
+      return document.getElementById('float-note').getBoundingClientRect().left - probe.getBoundingClientRect().right;
+    });
+    expect(r).toBeGreaterThanOrEqual(0); // was 77px over the text at 1024
+    await page.close();
+  });
+
+  it('a link in a note heading is muted with the note', async () => {
+    const page = await open(FIXTURE, { width: 1300 });
+    expect((await css(page, '#sn-head-a', ['color'])).color).toBe((await css(page, '#sn-p-a', ['color'])).color);
+    await page.close();
+  });
+
+  it.each([375, 1300])('a chart row in a flex item that sizes to its content keeps its width at %ipx', async (width) => {
+    const page = await open(FIXTURE, { width });
+    const w = await page.evaluate(() => document.getElementById('shrink-row').getBoundingClientRect().width);
+    expect(w).toBeGreaterThan(150); // a query container collapsed it to 0–128px
+    await page.close();
+  });
+});
+
+describe('the caption-width aliases and the small utilities', () => {
+  it('.card-caption is .full-width-caption under its older name', async () => {
+    const page = await open(FIXTURE, { width: 1300 });
+    const w = (id) => page.evaluate((i) => document.getElementById(i).getBoundingClientRect().width, id);
+    expect(await w('cc-p')).toBeCloseTo(await w('fwc-p'), 0); // was 505px, on the measure
+    await page.close();
+  });
+
+  it.each([[1300, '19.2px'], [375, '14.4px']])('a breakpoint size and an opacity step at %ipx', async (width, size) => {
+    const page = await open(FIXTURE, { width });
+    expect(await css(page, '#util-p', ['font-size', 'opacity'])).toEqual({ 'font-size': size, opacity: '0.5' });
+    await page.close();
+  });
+});
+
+describe('the measure stops at a caption', () => {
+  it('a paragraph, a definition list and a quote in .caption run its full width', async () => {
+    const page = await open(FIXTURE, { width: 1440 });
+    const r = await page.evaluate(() => ['cap-p', 'cap-dl', 'cap-bq'].map((id) => getComputedStyle(document.getElementById(id)).maxWidth));
+    expect(r).toEqual(['none', 'none', 'none']); // the list and the quote kept the 505px measure
+    await page.close();
   });
 });
 
@@ -207,10 +463,48 @@ describe('CSS-373: code in a scrolling table keeps its shape', () => {
     const r = await page.evaluate(() => {
       const box = document.getElementById('opt-scroll').getBoundingClientRect();
       const table = document.getElementById('opt-table').getBoundingClientRect();
-      return { over: table.right - box.right, wrap: getComputedStyle(document.querySelector('#opt-table td code')).overflowWrap };
+      const keys = [...document.querySelectorAll('#opt-table td:first-child > code')];
+      return {
+        over: table.right - box.right,
+        wrap: getComputedStyle(document.querySelector('#opt-table td:nth-child(2) code')).overflowWrap,
+        keyWhiteSpace: getComputedStyle(keys[0]).whiteSpace,
+        // a name without a hyphen stays whole on paper (`cont` / `rols` on A4)
+        keysBroken: keys.filter((c) => !c.textContent.includes('-') && c.getClientRects().length > 1).map((c) => c.textContent),
+        keys: keys.length,
+      };
     });
     expect(r.wrap).toBe('anywhere');
+    expect(r.keyWhiteSpace).toBe('normal');
+    expect(r.keys).toBeGreaterThan(3);
+    expect(r.keysBroken).toEqual([]);
     expect(r.over).toBeLessThanOrEqual(0.5);
+    await page.close();
+  });
+});
+
+describe('Hand review, second pass: pre on a tablet, the footnote list', () => {
+  it.each([[1440, 32, 0], [900, 32, 0], [375, 16, 8]])('at %ipx pre has %ipx side padding; its code starts %ipx in from the text edge', async (width, padding, inset) => {
+    const page = await open(FIXTURE, { width });
+    const r = await page.evaluate(() => {
+      const pre = document.getElementById('lh-pre');
+      const cs = getComputedStyle(pre);
+      const text = document.getElementById('m-prose').getBoundingClientRect().left;
+      return { left: parseFloat(cs.paddingLeft), right: parseFloat(cs.paddingRight), inset: pre.getBoundingClientRect().left + parseFloat(cs.paddingLeft) - text };
+    });
+    expect(r).toEqual({ left: padding, right: padding, inset });
+    await page.close();
+  });
+
+  it('the list in a footnote starts on the block\'s text edge', async () => {
+    const page = await open(FIXTURE);
+    const r = await page.evaluate(() => {
+      const box = document.getElementById('fn-box');
+      return {
+        padding: getComputedStyle(document.getElementById('fn-list')).paddingLeft,
+        inset: document.getElementById('fn-li').getBoundingClientRect().left - box.getBoundingClientRect().left - parseFloat(getComputedStyle(box).paddingLeft),
+      };
+    });
+    expect(r).toEqual({ padding: '0px', inset: 0 });
     await page.close();
   });
 });
@@ -230,12 +524,15 @@ describe('CSS-374: the prose measure stops at a data component', () => {
         prose: ['m-prose', 'm-list', 'm-section', 'm-card'].map((id) => [id, Math.abs(w(id) - measure) < 1]),
         // a plain table setting prose in columns keeps the measure on its cells
         layoutCapped: Math.abs(parseFloat(getComputedStyle(document.getElementById('m-layout-td')).maxWidth) - measure) < 1,
-        free: ['m-chart-subtitle', 'm-chart-list', 'm-panel', 'm-table-section', 'm-td', 'm-bordered-td'].map((id) => [id, w(id) > measure + 50]),
+        // free of the measure: no max-width at all (a capped block carries the
+        // measure); its width is then its own box's, which on a tablet (the
+        // measure is 8 of the article's 9 columns) can be the narrower one
+        free: ['m-chart-subtitle', 'm-chart-list', 'm-panel', 'm-table-section', 'm-td', 'm-bordered-td'].map((id) => [id, getComputedStyle(document.getElementById(id)).maxWidth === 'none']),
         // a prose table's label column is not squeezed to its longest word
         labelOneLine: (() => { const p = document.querySelector('#m-layout-label p'); return Math.round(p.getBoundingClientRect().height) <= Math.round(parseFloat(getComputedStyle(p).lineHeight)); })(),
       };
     });
-    expect(r.article).toBeGreaterThan(r.measure + 50);
+    expect(r.article).toBeGreaterThan(r.measure + 20);
     expect(r.prose).toEqual(r.prose.map(([id]) => [id, true]));
     expect(r.free).toEqual(r.free.map(([id]) => [id, true]));
     expect(r.layoutCapped).toBe(true);
@@ -343,7 +640,7 @@ describe('CSS-377: a block that follows a block keeps a gap', () => {
 });
 
 describe('CSS-379: the attribution look is scoped', () => {
-  it('a bare cite stays inline; the cite closing a blockquote and .attribution get the look', async () => {
+  it('a bare cite stays inline; only the cite closing a blockquote gets the look', async () => {
     const page = await open(FIXTURE);
     const r = await page.evaluate(() => {
       const look = (el) => { const cs = getComputedStyle(el); return [cs.display, cs.textAlign, cs.fontSize]; };
@@ -352,7 +649,6 @@ describe('CSS-379: the attribution look is scoped', () => {
         bareStyle: getComputedStyle(document.getElementById('c-bare')).fontStyle,
         chartSource: getComputedStyle(document.querySelector('#sn-chart cite')).display,
         quote: look(document.getElementById('c-quote')),
-        cls: look(document.getElementById('c-class')),
         // titles of works: inside the quoted prose, in a caption, in a quote's figcaption
         inQuote: look(document.getElementById('c-inquote')),
         caption: look(document.getElementById('c-fig')),
@@ -364,7 +660,7 @@ describe('CSS-379: the attribution look is scoped', () => {
     expect(r.bare).toEqual(['inline', 'start', '16px']);
     expect(r.bareStyle).toBe('italic'); // the browser's own title style
     expect(r.chartSource).toBe('inline'); // an embedded chart's <cite> source line is left alone
-    for (const k of ['quote', 'cls']) expect(r[k]).toEqual(['block', 'right', '14.4px']);
+    expect(r.quote).toEqual(['block', 'right', '14.4px']);
     for (const k of ['inQuote', 'caption', 'figWork']) expect(r[k][0]).toBe('inline');
     expect(r.figWorkColor).toBe(r.figcapColor); // the title keeps its caption's colour
     await page.close();

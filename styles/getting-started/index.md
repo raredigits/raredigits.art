@@ -44,7 +44,7 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
         <tr><td>Icons <code>rd-icon-*</code></td><td>yes</td><td>yes, and also outside <code>.rd</code></td></tr>
         <tr><td>Page shell: fixed <code>header</code>, <code>main</code> padding, <code>article</code> placement, <code>section</code>, <code>footer</code>, <code>nav</code> chrome</td><td>yes</td><td><strong>no</strong></td></tr>
         <tr><td>Base typography of <code>body</code> (font, size, colour, line height)</td><td>yes</td><td><strong>no</strong>: the island inherits the host's text settings</td></tr>
-        <tr><td>Reset (<code>margin: 0; padding: 0; box-sizing: border-box</code>)</td><td>yes</td><td>yes, on the island root and inside it</td></tr>
+        <tr><td>Reset: <code>margin</code> and <code>padding</code> to 0, <code>box-sizing: border-box</code></td><td>yes</td><td>yes, on the island root and inside it</td></tr>
     </tbody>
 </table>
 </div>

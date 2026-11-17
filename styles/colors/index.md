@@ -132,16 +132,18 @@ While the grayscale palette forms the foundation, strategic use of color helps 
 
 ### Brand Color
 
-The most prominent color in the system is defined by the <code>--brand-color</code> variable. This color is primarily used for links and supporting elements, ensuring brand recognition and consistency throughout the interface.
+The most prominent color in the system is defined by the <code>--brand-color</code> variable. It marks the brand: it fills the <a href="/styles/interactive/buttons/#variants">primary button</a> and frames a <code>.highlight</code>. Links are underlined in the darker <code>--brand-color-dark</code>.
 
 <pre class="text-content-caption">
 <code><span class="code-comment">// css/modules/colors/_brand.scss</span>
     
 --brand-color: #00ff4e; <span class="code-comment">// Primary brand color</span>
---brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant for hover states</span>
---brand-color-dark: #3a8000; <span class="code-comment">// Darker variant: the primary button's hover; white text on it reads at 4.9:1</span>
---brand-color-link: #00b300; <span class="code-comment">// Link underlines and their hover fill</span>
+--brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant: only its color utilities read it (.brand-color-light, -bg, -link)</span>
+--brand-color-dark: #00b300; <span class="code-comment">// Darker variant: link underlines and their hover fill</span>
+--brand-color-deep: #3a8000; <span class="code-comment">// Deeper still: the primary button's hover; white text on it reads at 4.9:1</span>
 </code></pre>
+
+A project that re-maps <code>--brand-color</code> sets <code>--brand-color-deep</code> too, to a shade that carries white text at 4.5:1 or more: under the pointer the primary button turns to it, with a white label.
 
 ### Technical Colors
 
@@ -265,9 +267,9 @@ Each role and each alias has its own `-bg` twin: the color at 25%, a fill to set
     </div>
 </div>
 
-Where they are used: the <a href="/styles/typography/text-content/#callouts">callout variants</a> (`.callout-success`, `-warning`, `-danger`; `.callout-signal` stays black, with no fill), a [KPI delta](/styles/bricks/panels/#stats) (`--positive` up, `--negative` down), a [form field](/styles/interactive/forms/) (`--success` when right, `--fail` when invalid), the [danger button](/styles/interactive/buttons/) (`--danger`) and the keyboard focus ring (`--focus-ring-color: var(--signal)`; an own `--focus-ring-color` on `:root` still wins).
+Where they are used: the <a href="/styles/typography/text-content/#callouts">callout variants</a> (`.callout-success`, `-warning`, `-danger`; `.callout-signal` takes the text color, `--primary-text-color`, with no fill), a [KPI delta](/styles/bricks/panels/#stats) (`--positive` up, `--negative` down), a [form field](/styles/interactive/forms/) (`--success` when right, `--fail` when invalid), the [danger button](/styles/interactive/buttons/) (`--danger`) and the keyboard focus ring (`--focus-ring-color: var(--signal)`; an own `--focus-ring-color` on `:root` still wins). `--signal` also colors checked boxes and the focused field (`--field-accent`), an emphasized [stat](/styles/bricks/panels/#stat-signal) (`.stat--signal`) and a chart's first series (`--chart-series-1`).
 
-To change what a meaning looks like, re-map the role once, not every component. Re-map it on `:root`: the aliases and the `-bg` twins are resolved there and follow. On a single surface, restate them too:
+To change what a meaning looks like, re-map the role once, not every component. Re-map it on `:root`: the aliases and the `-bg` twins are resolved there and follow. On a single surface, restate them too (the callouts mix their fill from the role where they are, so theirs follows by itself; the `-bg` twins are for your own fills, the library reads none of them):
 
 <pre class="text-content-caption"><code>:root {
     --warning: var(--orange); /* --neutral and both -bg follow */
@@ -280,7 +282,7 @@ To change what a meaning looks like, re-map the role once, not every component. 
 
 They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.
 
-`--signal` is kept apart from `--brand-color`, which is identity: link highlights, brand marks.
+`--signal` is kept apart from the brand colors, which are identity: brand marks, the primary button, link highlights (`--brand-color-dark`).
 
 #### Surface
 
@@ -290,7 +292,7 @@ They are signal colors for stripes, borders and fills, not for text: none of the
 
 <div class="meta-info">css/modules/charts/_index.scss</div>
 
-The colours a chart takes from the page (its series, text, axes and gridlines, range controls and tooltip) have names of their own, `--chart-*`, each pointing at a token on this page. RareCharts reads them first, from its 0.9.8_7. The full list is on [Chart Tokens](/styles/colors/chart-tokens/).
+The colours a chart takes from the page (its series, text, axes and gridlines, range controls and tooltip) have names of their own, `--chart-*`; most point at a token on this page, and three series keep RareCharts' own hues. RareCharts reads them first, from its 0.9.8_7. The full list is on [Chart Tokens](/styles/colors/chart-tokens/).
 
 ### Supporting Colors
 

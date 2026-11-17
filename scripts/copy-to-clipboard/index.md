@@ -231,7 +231,7 @@ Make it feel clickable, not decorative:
 {%- capture cssSnippet -%}
 .copy-data-icon {
     display: inline-block;
-    line-height: inherit;
+    font: inherit;
     background: none;
     color: var(--copy-icon-color, var(--text-color-light));
     border: none;
@@ -292,7 +292,7 @@ Make it feel clickable, not decorative:
   <button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button>
 </div>
 
-There are two success channels and{N}the script writes both. `data-icon="check"` is{N}the older one{N}and{N}is{N}read by{N}exactly one{N}rule, `.copy-data-icon`’s — it{N}is{N}an{N}internal channel, never something you{N}author. `rd-is-copied` is{N}the general one: it{N}lands on{N}whatever was clicked, so{N}it{N}is{N}what a{N}block or{N}a{N}bare glyph should style. A{N}control with no{N}success state copies silently, which reads as{N}broken — give every carrier one.
+There are two success channels and the script writes both. `data-icon="check"` is the older one and is read by exactly one rule, `.copy-data-icon`’s — it is an internal channel, never something you author. `rd-is-copied` is the general one: it lands on whatever was clicked, so it is what a block or a bare glyph should style. A control with no success state copies silently, which reads as broken — give every carrier one.
 
 ### Recoloring
 

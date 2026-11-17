@@ -95,6 +95,7 @@ The script expects the following **mandatory hook classes**. If they are missin
 
 Be sure to include **the mandatory hook classes** on your HTML elements:
 
+<div class="table-scroll">
 <table class="table-small">
     <tr>
         <th>Hook class</th>
@@ -109,6 +110,7 @@ Be sure to include **the mandatory hook classes** on your HTML elements:
         <td>Button (inside the container) that dismisses the notice</td>
     </tr>
 </table>
+</div>
 
 Hook classes are <strong>read by the JavaScript and never styled</strong> — presentational styling belongs to separate classes (<code>cookie-notice</code>, <code>cookie-notice__button</code>) which you are free to rename or replace.
 </details>
@@ -137,19 +139,17 @@ Hook classes are <strong>read by the JavaScript and never styled</strong> — p
     }
 }
 
-.cookie-notice__content {
-    position: relative;
-}
-
 .cookie-notice__content h3 {
     position: absolute;
+    top: 0;
+    translate: 0 -55%;
     margin: 0;
-    top: -50px;
     font-size: 3.5em;
+    line-height: 1;
 
     @include bp.mobile {
         font-size: 2.5em;
-        top: -60px;
+        translate: 0 -65%;
     }
 }
 

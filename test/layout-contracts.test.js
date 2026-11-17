@@ -32,7 +32,8 @@ const ALLOWED_MEDIA = new Set([
   'screen and (width < 769px)',
   'screen and (769px <= width < 1024px)',
   'screen and (width >= 1024px)',
-  '(width < 1024px)',
+  'screen and (width < 1024px)', // below-desktop: tablet and phone together
+  'screen and (width < 1226px)', // a sidenote row with a chart in the article flow: the article is under 870px (typography/_notes.scss), not a layout layer
   '(width < 769px)',
   '(prefers-reduced-motion: no-preference)',
   'print', // article print hygiene (CSS-167), not a layout boundary
@@ -45,8 +46,8 @@ beforeAll(() => {
   site = postcss.parse(readFileSync(resolve(process.cwd(), 'assets/css/rare-website.css'), 'utf8'));
 });
 
-describe('CSS-357: outdents are contained inside .card and .panel', () => {
-  it.each(['card', 'panel'])('every outdent selector is reset in .%s or exempt', (surface) => {
+describe('CSS-357: outdents are contained inside every surface', () => {
+  it.each(['card', 'card-inverted', 'panel', 'collapsible-container', 'collapsible-content'])('every outdent selector is reset in .%s or exempt', (surface) => {
     const outdents = new Set();
     root.walkDecls('margin-left', (d) => {
       if (!/^(-|calc\(\s*-|calc\(.*\*\s*-1\s*\))/.test(d.value.trim())) return;

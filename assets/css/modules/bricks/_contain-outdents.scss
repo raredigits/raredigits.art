@@ -1,19 +1,38 @@
 // Outdents (`pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the
 // caption-width blocks, `.card-caption`) hang into the page margins beside
-// the text column. A surface — `.card`, `.panel` — has no such margins: with
-// padding smaller than the outdent they poked out of it and, on phones,
-// widened the page. Reset the family to the surface's content width, as
-// `.collapsible-content` does (CSS-345 sweep, 2026-10-16; shared with the
-// panel in v0.7.2). Guarded by test/layout-contracts.test.js.
-// Paper has no page margins either: the print module folds the same family
-// back to the column (utilities/_print.scss, CSS-385).
-$outdents: ".lead, .caption, .highlight, pre, blockquote, .text-content-caption, .full-width-caption, .card-caption, .collapsible-container, .teaser-bottom";
+// the text column, by `--outdent` (typography/_text-content.scss); a
+// `blockquote` by its own `--space-md`. A surface
+// has no such margins: with padding smaller than the outdent they poked out
+// of it and, on phones, widened the page. Each surface on `$outdent-surfaces`
+// resets the family to its content width (CSS-345 sweep, 2026-10-16; one list
+// since v0.7.2), and the rules that step content back in by the outdent (a
+// panel's padding, a table's first column) skip what such a surface holds.
+// Guarded by test/layout-contracts.test.js. Paper has no page margins either:
+// the print module zeroes the outdent and folds the family back to the column
+// (utilities/_print.scss, CSS-385).
+// The family; the blocks a surface also caps at its width, and the
+// `blockquote`, which keeps its measure (below).
+$-capped: ".lead, .caption, .highlight, pre, .text-content-caption, .full-width-caption, .card-caption, .collapsible-container, .teaser-bottom";
+$outdents: "#{$-capped}, blockquote";
+$outdent-surfaces: ".card, .card-inverted, .panel, .collapsible-container, .collapsible-content";
 
+// The caption-width boxes: the measure plus the outdent on both sides
+// (`.text-content-caption`), or the column plus the left outdent
+// (`.full-width-caption`, and its alias `.card-caption`, layout/_spacing.scss).
+$caption-boxes: ".text-content-caption, .full-width-caption, .card-caption";
+
+// A `blockquote` keeps its reading measure (`reading-measure`,
+// typography/_text-content.scss): it is as wide as its content allows and
+// the measure only caps it, so it cannot pass the surface; only its hanging
+// margin goes.
 @mixin contain-outdents {
     #{$outdents} {
         width: auto;
-        max-width: 100%;
         margin-left: 0;
         margin-right: 0;
+    }
+
+    #{$-capped} {
+        max-width: 100%;
     }
 }

@@ -11,7 +11,7 @@ permalink: '/styles/interactive/forms/'
 </div>
 
 <section>
-    <p>Form fields need no class. Inside <code>.rd</code>, on a page or in an island, the plain elements take the library's look; a host form outside <code>.rd</code> never does. The library adds a frame, inner spacing, a 1rem text size and the states below. A field and a <a href="/styles/interactive/buttons/">button</a> of the default size are equally tall, so they line up in a row.</p>
+    <p>Form fields need no class. Inside <code>.rd</code>, on a page or in an island, the plain elements take the library's look; a host form outside <code>.rd</code> never does. The library adds a frame, inner spacing, a 1rem text size and the states below. A field and a <a href="/styles/interactive/buttons/">button</a> of the default size are equally tall, so they line up in a row. The field keeps small corners (<code>--field-radius</code>, 4px) next to the button’s capsule on purpose: the field is a surface to type into, the button an action.</p>
     <form class="form-row text-content-width padding-t-sm" onsubmit="return false">
         <input type="email" aria-label="Email" placeholder="you@example.com">
         <button type="submit">Subscribe</button>
@@ -21,7 +21,7 @@ permalink: '/styles/interactive/forms/'
 <section>
     <h2 id="text-fields">Text fields, textarea, select</h2>
     <p>The text fields are <code>input</code> without a type and the types <code>text</code>, <code>email</code>, <code>password</code>, <code>search</code>, <code>tel</code>, <code>url</code> and <code>number</code>. The date and time types (<code>date</code>, <code>time</code>, <code>datetime-local</code>, <code>month</code>, <code>week</code>) take the same frame and height; the browser draws their segments and picker inside it. The types <code>submit</code>, <code>button</code> and <code>reset</code> are <a href="/styles/interactive/buttons/">buttons</a>. A placeholder is <code>--text-color-light</code> (5.7:1 on white; the browser's own grey is 2.3:1). A textarea grows downwards only. A select draws its own arrow in the text colour; a list box (<code>multiple</code> or <code>size</code>) keeps the browser's. The arrow is a background image under <code>appearance: none</code>: a page rule that sets the <code>background</code> shorthand on a select clears the arrow and leaves no affordance. Set <code>background-color</code> only, or add <code>appearance: auto</code> to keep the native control.</p>
-    <form class="panel text-content-caption panel--bordered padding-y-sm margin-t-md" onsubmit="return false">
+    <form class="panel text-content-caption panel--bordered margin-t-md" onsubmit="return false">
         <div class="form-row">
             <div class="form-group"><label for="d-name">Name</label><input id="d-name" type="text" placeholder="Ada Lovelace"></div>
             <div class="form-group"><label for="d-topic">Topic</label><select id="d-topic"><option>Styles</option><option>Charts</option><option>Scripts</option></select></div>
@@ -72,7 +72,7 @@ permalink: '/styles/interactive/forms/'
         <dd>Groups and a button side by side, their bottoms aligned so the button lines up with the fields. A bare field in the row grows too, so a one-line form, a field and its button, takes the full width: <code>&lt;form class="form-row"&gt;&lt;input …&gt;&lt;button&gt;…&lt;/button&gt;&lt;/form&gt;</code>. Stacked on a phone.</dd>
 
         <dt>The submit button</dt>
-        <dd>A <code>type="submit"</code> button (or a <code>&lt;button&gt;</code> with no type) in a <code>.form-group</code> or a <code>.form-row</code> sits at the right edge: on the fields' line, on a line of its own when the row wraps, and when the row stacks on a phone.</dd>
+        <dd>A <code>type="submit"</code> button (or a <code>&lt;button&gt;</code> with no type) in a <code>.form-group</code> or a <code>.form-row</code> sits at the right edge: on the fields' line, on a line of its own when the row wraps, and when the row stacks on a phone. To put it elsewhere, add <code>.margin-l-0</code> and <code>.self-start</code> (or <code>-center</code>, <code>-stretch</code>).</dd>
 
         <dt><code>.form-help</code>, <code>.form-error</code></dt>
         <dd>Small lines under a control. An error is in the body text colour and marked with the <code>error</code> glyph in <code>--field-invalid-color</code>: red text would read at 4:1, short of AA. Tie both to the control with <code>aria-describedby</code>.</dd>
@@ -140,7 +140,7 @@ permalink: '/styles/interactive/forms/'
                 <tr><td><code>--field-bg</code> / <code>--field-text</code></td><td><code>var(--white)</code> / <code>var(--primary-color)</code></td><td>Fill and text of a field.</td></tr>
                 <tr><td><code>--field-border-color</code></td><td><code>var(--gray-trans)</code></td><td>The frame: 3.5:1 on white, the 3:1 a field's outline needs (WCAG 1.4.11).</td></tr>
                 <tr><td><code>--field-radius</code></td><td><code>var(--space-xs)</code></td><td>Corner radius; a checkbox takes half.</td></tr>
-                <tr><td><code>--field-padding-x</code> / <code>-y</code></td><td><code>12px</code> / <code>var(--space-sm)</code></td><td>Inner spacing; <code>-y</code> follows the button so the heights match.</td></tr>
+                <tr><td><code>--field-padding-x</code> / <code>-y</code></td><td><code>calc(var(--space-sm) * 1.5)</code> (12px) / <code>var(--space-sm)</code></td><td>Inner spacing; the default button takes <code>-y</code> too, so a field and a button stay equally tall when you change it.</td></tr>
                 <tr><td><code>--field-accent</code></td><td><code>var(--signal)</code></td><td>Checked boxes and radios, the focused frame.</td></tr>
                 <tr><td><code>--field-invalid-color</code></td><td><code>var(--fail)</code></td><td>The frame of an invalid field and the error glyph.</td></tr>
                 <tr><td><code>--field-valid-color</code></td><td><code>var(--success)</code></td><td>The frame of a required field once it is right.</td></tr>

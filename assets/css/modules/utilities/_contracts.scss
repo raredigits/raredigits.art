@@ -1,0 +1,15 @@
+// THE LIBRARY'S EXCLUSIONS (v0.7.2): two promises the rules keep, written
+// once. Sass only: this file emits no CSS. Each goes in `:where()`, so a rule
+// that uses it keeps its own weight.
+
+// An embedded RareCharts card (`.rc-chart`) owns its subtree (RareCharts
+// C-13): the element defaults (buttons, form fields) and the print URLs stop
+// at it, as the reading measure does (`$measure-free`,
+// typography/_text-content.scss).
+$embedded: ".rc-chart";
+$outside-embedded: ":not(:where(#{$embedded} *))";
+
+// A link-button (`.button`) keeps its own label and box: a rule that
+// restyles text links in a context (the sidebar, a dark card, a notice)
+// leaves it alone.
+$not-button: ":not(:where(.button))";

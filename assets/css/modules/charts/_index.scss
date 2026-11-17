@@ -3,9 +3,8 @@
 // CHART TOKENS (CSS-380 + CSS-240 + CSS-176, v0.7.2) — the colours and fonts
 // a chart takes from the page, under one `--chart-*` name each. RareCharts
 // reads these names first from its 0.9.8_7 (RC-014) and keeps its own values
-// as fallbacks, so a chart on a page without Rare Styles looks as before, and
-// on a Rare Styles page it follows the page: its surface, its roles, a
-// project's overrides. A page's own chart-like chrome (a legend, a KPI row)
+// as fallbacks for a page without Rare Styles; on a Rare Styles page it
+// follows the page: its surface, its roles, a project's overrides. A page's own chart-like chrome (a legend, a KPI row)
 // can read them too. Docs: /styles/colors/chart-tokens/.
 // Global tokens, like every `:root` token: the `.rd` gate leaves `:root`
 // ungated (scripts/rd-gate.config.mjs), so a chart in an island and a chart

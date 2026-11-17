@@ -7,11 +7,24 @@ section {
 }
 
 // Full-bleed section surface that breaks out of the text/content column while
-// letting inner prose return to the canonical reading line.
+// letting inner prose return to the canonical reading line. It sits in the
+// article of the page grid, after the sidebar's three columns.
+// `--_bleed-start` is where that column starts in the viewport: the centred
+// `.content` (as wide as the site, at most the viewport less `main`'s
+// padding), then three columns and three gaps of its 12-column grid. Worked
+// out from the real width of `.content`, not from `--sidebar-width`: that one
+// assumes the full site width, which `.content` does not have on a tablet and
+// below 1148px (the viewport less `main`'s padding, under the 1116px floor of
+// `--site-max-width`). The band started 8px past the edge on a tablet, up to
+// 15px past it at 1024px, and at 1085–1147px up to 8px short of it, widening
+// the page.
 .wide-background {
+    --_bleed-content: min(var(--site-max-width), 100vw - 2 * var(--space-md));
+    --_bleed-start: calc((100vw - var(--_bleed-content)) / 2 + (var(--_bleed-content) - 11 * var(--grid-gap-global)) / 4 + 3 * var(--grid-gap-global));
+
     width: 100vw;
     position: relative;
-    margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--field-width));
+    margin-left: calc(-1 * var(--_bleed-start));
 
     img {
         width: 100%;
@@ -19,12 +32,9 @@ section {
         display: block;
     }
 
-    @include bp.tablet {
-        margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--base-unit));
-    }
-
+    // A phone has no sidebar: the column starts at `main`'s padding.
     @include bp.mobile {
-        margin-left: calc(-1 * var(--base-unit));
+        --_bleed-start: var(--space-md);
     }
 }
 
@@ -35,15 +45,7 @@ section {
 
 // Re-enter the normal content track inside a `.wide-background`.
 .wide-background-text-content-wrapper {
-    padding-left: calc(var(--field-width) + var(--sidebar-width) + var(--grid-gap-global));
-
-    @include bp.tablet {
-        padding-left: calc(var(--base-unit) + var(--sidebar-width) + var(--grid-gap-global));
-    }
-
-    @include bp.mobile {
-        padding-left: var(--base-unit);
-    }
+    padding-left: var(--_bleed-start);
 }
 
 // FEATURE ROW

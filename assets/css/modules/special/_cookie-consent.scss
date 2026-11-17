@@ -1,4 +1,5 @@
 @use "../utilities/breakpoints" as bp;
+@use "../utilities/contracts" as ct;
 
 // State written by cookie-consent.js (contract: SCRIPTS_CONTRACT.md, v0.6.17):
 // the script toggles `.rd-is-hidden` on this element to dismiss the notice —
@@ -40,28 +41,31 @@ html:has(.cookie-notice:not(.rd-is-hidden)) {
     }
 }
 
-.cookie-notice__content {
-    position: relative;
-}
-
-// The emoji badge over the top edge. Its line box is the glyph (line-height
-// 1), not the heading leading, so `top` places the glyph itself; the values
-// keep it where it sat while the inherited line-height was a fixed 24px
-// (CSS-375).
+// The emoji badge straddles the notice's top edge: placed from the notice's
+// own edge (`top: 0`, the fixed notice is its containing block) and lifted
+// by a share of its own height, so it holds at any size and padding. Its
+// line box is the glyph (line-height 1), not the heading leading. It used to
+// be set in pixels from the text (-66px, -68px on a phone, CSS-375): on a
+// phone it floated 13px above the notice.
 .cookie-notice__content h3 {
     position: absolute;
+    top: 0;
+    translate: 0 -55%;
     margin: 0;
-    top: -66px;
     font-size: 3.5em;
     line-height: var(--line-height-xs);
 
+    // On a phone the notice's top padding is 15px: lifted a little more, the
+    // glyph clears the heading under it.
     @include bp.mobile {
         font-size: 2.5em;
-        top: -68px;
+        translate: 0 -65%;
     }
 }
 
-.cookie-notice__content a {
+// Text links in the notice; a link-button keeps its own look
+// (utilities/_contracts.scss).
+.cookie-notice__content a#{ct.$not-button} {
     color: #000;
     text-decoration: none;
     border-bottom: 1px solid var(--brand-color);

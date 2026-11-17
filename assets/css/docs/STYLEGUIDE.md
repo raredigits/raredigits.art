@@ -38,10 +38,10 @@ Both apply only inside `.rd`: `vendor/normalize.css` (v8.0.1, kept **whole and u
 A bare `<button>`, `<input>`, `<select>`, `<textarea>`, `<fieldset>` and `<legend>` inside `.rd` get the library's look (`elements/_buttons.scss`, `elements/_forms.scss`). Three rules keep them from fighting the components that style their own controls:
 
 - **Type weight in every state.** The element rules stay at `(0,0,1)`, hover, active, disabled, busy and validation included: the state goes in `:where()` (`button:where(:hover:not(:disabled))`), so any class beats the defaults in every state and a component never repeats its look for `:hover`. `.button` keeps the `(0,2,0)` its states always had, so a link-button outranks `nav a:hover` and a page's `.button.my-variant` loaded later still wins.
-- **They stop at a RareCharts card.** Every element selector carries `:not(:where(.rc-chart *))` (zero weight), as the prose measure and the print URLs do: the chart owns its controls (RareCharts C-13), the page controls it moves into its `controls:` row included. `test/browser/charts-rd-host.test.js` (`CSS-381`) compares each chart control with the same page without the library. The exclusion does not take the rules out of the inventory: they are listed as `ISLAND` in `rd-gate.config.mjs` by their keys (`button`, `button:where(:hover)`, `select::placeholder`, …). A rule scoped by an attribute (`input:where([type="text"])`) is class context, as before.
+- **They stop at a RareCharts card.** Every element selector carries `:not(:where(.rc-chart *))` (zero weight; written once, as `$outside-embedded` in `utilities/_contracts.scss`, beside `$not-button`), as the prose measure and the print URLs do: the chart owns its controls (RareCharts C-13), the page controls it moves into its `controls:` row included. `test/browser/charts-rd-host.test.js` (`CSS-381`) compares each chart control with the same page without the library. The exclusion does not take the rules out of the inventory: they are listed as `ISLAND` in `rd-gate.config.mjs` by their keys (`button`, `button:where(:hover)`, `select::placeholder`, …). A rule scoped by an attribute (`input:where([type="text"])`) is class context, as before.
 - **A component that resets a button names the states it resets** (see `button.legend__item` in `bricks/_legend.scss`): a disabled toggle must not fade, a busy one must not spin.
 
-A variant only sets colour slots (`--button-bg`, `--button-text`, `--button-border-color`, `--button-bg-hover`, `--button-border-color-hover`, `--button-bg-active`); the base rule reads them. A selector that names the icon set inside a pseudo-class argument (`button:has(> [class*=rd-icon-])`) is gated like any other: only a self-contained `rd-icon-*` compound stays ungated (`classify()` in `scripts/rd-gate.mjs`).
+A variant sets colour slots (`--button-bg`, `--button-text`, `--button-border-color`, `--button-bg-hover`, `--button-border-color-hover`, `--button-bg-active`) and a size sets size slots (`--button-padding-x`, `--button-padding-y`, `--button-font-size`); the base rule in `elements/_buttons.scss` reads them, each with the default look as its fallback (the colours are in `elements/_control-face.scss`). `.button-link` also takes the link look (`navigation/_link-look.scss`). A selector that names the icon set inside a pseudo-class argument (`button:has(> [class*=rd-icon-])`) is gated like any other: only a self-contained `rd-icon-*` compound stays ungated (`classify()` in `scripts/rd-gate.mjs`).
 
 ## Day-to-day editing flow
 
@@ -97,6 +97,7 @@ When unsure, ask where the block would feel at home: in an article (card) or on 
 |---|---|---|
 | Blog teaser, author box, project tile | `.card` | authored narrative |
 | A briefing checklist in a post | `.card` | authored narrative, even when it is a list |
+| A card with a header | a block with `.border-bottom` and a padding utility (`.border-top` over a footer) | a card has no parts of its own (`.card-header` is gone since v0.7.2); a fixed header, body and footer are the panel's, for data |
 | A chart frame | `.panel .panel--bordered` on the chart element itself | data; RareCharts' container is the card it draws in: its `height` includes the padding, and its labels may run into it |
 | A quote header, a chart and a row of figures | a `.panel .panel--bordered` around them, the chart unframed | one data block |
 | A chart in a sidenote, or in a panel row cell | no frame of its own | a margin illustration to the text; the row is the frame |
@@ -111,7 +112,7 @@ A custom property is resolved where it is declared and inherited as the result. 
 
 - a rule that sets `--surface-current` also restates `--chart-bg` and paints its background from `--surface-current` (`.card`, `.card-inverted`); a `.panel` sets neither;
 - a surface that re-maps text or border roles includes `role-tokens` from `modules/charts/_roles.scss` after the re-mapping (`.card-inverted`), which resolves the chart tokens again against it;
-- a light surface nested in a dark one restores every role the dark one re-maps to its `:root` value and includes `role-tokens` again (`:where(.card-inverted .card)`), at zero specificity: it only has to beat inheritance.
+- a light surface nested in a dark one restores every role the dark one re-maps to its `:root` value (the `--_page-*` snapshot in `bricks/_page-roles.scss`, which the print module also uses for a dark card on paper) and includes `role-tokens` again (`:where(.card-inverted .card)`), at zero specificity: it only has to beat inheritance.
 
 `test/tokens-contracts.test.js` fails when a surface re-maps a role and does not restate a chart token made from it, and when the nested light card misses a role or a value the dark card re-maps.
 

@@ -1,3 +1,5 @@
+@use "../utilities/breakpoints" as bp;
+
 // The four text families are self-hosted — the @font-face blocks live in
 // `_font-faces.scss` (forwarded from the typography index). Icons are no
 // longer a font at all (v0.6.18: self-hosted SVG set, decorations/_icons.scss).
@@ -40,12 +42,32 @@
     --text-color-dark: var(--gray-dark);
 }
 
-.font-size-xs {font-size: var(--font-size-xs);}
-.font-size-sm {font-size: var(--font-size-sm);}
-.font-size-md {font-size: var(--font-size-md);}
-.font-size-lg {font-size: var(--font-size-lg);}
-.font-size-xl {font-size: var(--font-size-xl);}
-.font-size-xxl {font-size: var(--font-size-xxl);}
+// The type sizes as classes, and per breakpoint (`mobile:font-size-sm`), as
+// the grid columns and the spacing are: a size that steps down on a phone
+// without a one-off rule.
+$font-sizes: xs, sm, md, lg, xl, xxl;
+
+@mixin font-size-classes($prefix: "") {
+    @each $size in $font-sizes {
+        .#{$prefix}font-size-#{$size} {
+            font-size: var(--font-size-#{$size});
+        }
+    }
+}
+
+@include font-size-classes;
+
+@include bp.mobile {
+    @include font-size-classes("mobile\\:");
+}
+
+@include bp.tablet {
+    @include font-size-classes("tablet\\:");
+}
+
+@include bp.desktop {
+    @include font-size-classes("desktop\\:");
+}
 
 .line-height {line-height: var(--line-height);}
 .line-height-sm {line-height: var(--line-height-sm);}

@@ -1,4 +1,6 @@
 @use "../utilities/breakpoints" as bp;
+@use "link-look" as ll;
+@use "../utilities/contracts" as ct;
 
 :root {
     --link-color: var(--primary-text-color);
@@ -6,33 +8,16 @@
     --link-color-light: var(--text-color-light);
 }
 
+// The link look (navigation/_link-look.scss): an underline, and a fill that
+// rises under the pointer.
 a {
     color: var(--link-color);
-    text-decoration: underline;
-    text-decoration-color: var(--brand-color-link);
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
-    background-image: linear-gradient(
-      to top,
-      color-mix(in srgb, var(--brand-color-link) 20%, transparent) 0 100%
-    );
 
-    // At rest the fill has zero height, pinned to the bottom of the box. It
-    // used to be a 1px line at 1.2em, just below the inline box: clipped in
-    // Chrome, but visible as a second, lighter underline wherever the engine
-    // or font makes the box a pixel taller, e.g. Safari (CSS-365).
-    background-size: 100% 0;
-    background-position: 0 100%;
-    background-repeat: no-repeat;
-
-    @include bp.motion-safe {
-        transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
-    }
+    @include ll.link-look;
 }
 
 a:hover {
-    background-size: 100% 1.3em;
-    background-position: 0 0;
+    @include ll.link-look-hover;
 }
 
 a img {
@@ -50,9 +35,9 @@ h1 a, h2 a, h3 a, h4 a {
 }
 
 // Text links only in the sidebar: a link-button (`.button`) keeps its box
-// and label (elements/_buttons.scss). The exclusion has zero weight.
+// and label (utilities/_contracts.scss).
 nav a,
-.sidebar a:not(:where(.button)) {
+.sidebar a#{ct.$not-button} {
     color: var(--text-color-light);
     background-image: none;
     position: relative;
@@ -75,7 +60,7 @@ nav a.current {
     border-bottom: 2px solid var(--gray-trans);
 }
 
-.sidebar a:not(:where(.button)):hover {
+.sidebar a#{ct.$not-button}:hover {
     border-bottom: none;
     display: block;
 }

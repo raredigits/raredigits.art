@@ -47,7 +47,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
 
 <div class="sidenote-wrapper">
     <div>
-        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself. Inside the box, <code>code</code> in a cell keeps its shape: an option name never breaks mid-word on a phone — the table grows and the box scrolls. On paper, which does not scroll, the code breaks again so the table fits the page.</p>
+        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself. Inside the box, <code>code</code> in a cell keeps its shape: an option name never breaks mid-word on a phone — the table grows and the box scrolls. In the first column, which holds the keys, a class or token name does not break at a hyphen either. On paper, which does not scroll, the code breaks again so the table fits the page.</p>
         <p>For small tables and table-style data presentation, the <code>.table-small</code> selector is available with left-aligned content.</p>
         <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don't overload tables with unnecessary information or use them for content better presented as text or graphics.
         </p>
@@ -58,12 +58,15 @@ Tabular data forms a crucial part of business information presentation. Tables a
     </div>
 </div>
 
+A table that hangs into the outdent, with `.text-content-caption`, `.full-width-caption` or `.card-caption` on it or on its box, steps its first column back in by the outdent (32px, 8px on a phone), so the row labels stay on the text edge. In a card, a panel or a collapsible nothing hangs, and the column stays as it is.
+
 ### Preset Tables
 
 <div class="sidenote-wrapper">
     <div>
         <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
         </p>
+        <div class="table-scroll">
         <table class="table-small">
             <tr>
                 <th>Selector</th>
@@ -75,7 +78,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
             </tr>
             <tr>
                 <td><code>.table-terminal</code></td>
-                <td>Monospace metrics readout, centered values, last column right-aligned</td>
+                <td>Monospace metrics readout: columns 8px apart, no padding on the outer edges, value rows flush (4px above and below in a <code>.table-striped</code> table); centered values, last column right-aligned</td>
             </tr>
             <tr>
                 <td><code>.table-comparison</code></td>
@@ -106,6 +109,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
                 <td>Wrapper (not a table class) — lets a wide table scroll horizontally</td>
             </tr>
         </table>
+        </div>
     </div>
     <div class="sidenote">
         <p>
@@ -144,7 +148,7 @@ Tabular data forms a crucial part of business information presentation. Tables a
 
 ### Comparison tables
 
-`.table-comparison` left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for `.table-terminal` instead when the values are numeric and benefit from a monospace, right-aligned readout.
+`.table-comparison` left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for `.table-terminal` instead when the values are numeric and benefit from a monospace readout.
 
 <div class="table-scroll">
 <table class="table-comparison table-horizontal-borders">

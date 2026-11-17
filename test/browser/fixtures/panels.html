@@ -81,6 +81,24 @@
         <p class="lead">A lead paragraph inside a panel.</p>
         <div class="full-width-caption">A wide block inside a panel.</div>
       </div>
+      <div id="outdents-inv" class="card-inverted padding-md">
+        <pre><code>const x = 1; // a long line of code inside a dark card that must scroll, not poke out</code></pre>
+        <p class="highlight">A highlight inside a dark card.</p>
+        <p class="lead">A lead paragraph inside a dark card.</p>
+        <div class="full-width-caption">A wide block inside a dark card.</div>
+      </div>
+      <div id="outdents-coll" class="collapsible-container">
+        <blockquote><p>A quotation inside a collapsible box.</p></blockquote>
+        <div class="full-width-caption">A wide block inside a collapsible box.</div>
+        <p class="teaser-bottom">A teaser inside a collapsible box.</p>
+      </div>
+
+      <div class="panel-grid full-width-caption" id="hang-grid"><div class="panel panel--bordered" id="hang-first"><p>A panel in a hanging grid.</p></div><div class="panel panel--bordered"><p>Another.</p></div></div>
+
+      <h2>A table in a box with an outdent</h2>
+      <div class="text-content-caption" id="tbl-box"><table><tr><td id="tbl-box-td">Label</td><td>Value</td></tr></table></div>
+      <div class="panel panel--bordered text-content-caption" id="tbl-panel"><table><tr><td id="tbl-panel-td">Label</td><td>Value</td></tr></table></div>
+      <div class="card padding-md" id="tbl-card"><div class="text-content-caption"><table><tr><td id="tbl-card-td">Label</td><td>Value</td></tr></table></div></div>
 
       <h2>Rows</h2>
       <div id="row-stack" class="panel__row panel__row--stack panel__row--text-start card-caption">

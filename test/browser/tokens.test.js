@@ -196,7 +196,8 @@ describe('CSS-380 / CSS-240 / CSS-176: chart tokens', () => {
         frame: window.contrast(cs('tok-inv-panel').borderTopColor, bg),
         divider: window.contrast(cs('tok-inv-panel-header').borderBottomColor, bg),
         footerDivider: cs('tok-inv-panel-footer').borderTopColor === cs('tok-inv-panel-header').borderBottomColor,
-        cardHeader: cs('tok-inv-card-header').borderBottomColor === cs('tok-inv-panel-header').borderBottomColor,
+        // a card's header line, `.border-bottom`, in the dark card's role
+        cardHeader: cs('tok-inv-card-header').borderBottomColor,
         strongLine: window.contrast(t('--border-color-dark'), bg),
         // the same tokens on the page are untouched by the dark card
         pageAxis: window.resolve('#tok-page', '--chart-axis-color'),
@@ -217,7 +218,7 @@ describe('CSS-380 / CSS-240 / CSS-176: chart tokens', () => {
     expect(r.divider).toBeGreaterThan(1.2);
     expect(r.divider).toBeLessThan(r.frame);
     expect(r.footerDivider).toBe(true);
-    expect(r.cardHeader).toBe(true);
+    expect(r.cardHeader).toBe('rgb(102, 102, 102)'); // --gray-mid-dark #666; the page's line is #ccc
     expect(r.strongLine).toBeGreaterThanOrEqual(4.5); // was #333 on #333
     expect(r.tooltipBg).toBe('rgb(255, 255, 255)'); // the popover stays light
     expect(r.pageAxis).toBe('rgb(204, 204, 204)');
@@ -258,6 +259,39 @@ describe('CSS-380 / CSS-240 / CSS-176: chart tokens', () => {
     expect(r.textContrast).toBeGreaterThanOrEqual(4.5);
     expect(r.labelContrast).toBeGreaterThanOrEqual(4.5);
     expect(r.outer).toEqual({ text: 'rgb(240, 240, 240)', link: 'rgb(240, 240, 240)', border: 'rgb(102, 102, 102)' });
+
+    // a project that re-maps a role on :root gets its own value back in the
+    // nested light card, not the library default (and the chart token that
+    // derives from it follows); the dark card keeps its own
+    const remapped = await page.evaluate(() => {
+      document.documentElement.style.setProperty('--border-color', 'rgb(1, 2, 3)');
+      document.documentElement.style.setProperty('--text-color-light', 'rgb(4, 5, 6)');
+      const out = {
+        border: window.resolve('#tok-inv-card-probe', '--border-color'),
+        axis: window.resolve('#tok-inv-card-probe', '--chart-axis-color'),
+        label: window.resolve('#tok-inv-card-probe', '--text-color-light'),
+        frame: getComputedStyle(document.querySelector('#tok-inv-card-panel')).borderTopColor,
+        outer: window.resolve('#tok-inv-probe', '--border-color'),
+      };
+      document.documentElement.style.removeProperty('--border-color');
+      document.documentElement.style.removeProperty('--text-color-light');
+      return out;
+    });
+    expect(remapped).toEqual({ border: 'rgb(1, 2, 3)', axis: 'rgb(1, 2, 3)', label: 'rgb(4, 5, 6)', frame: 'rgb(1, 2, 3)', outer: 'rgb(102, 102, 102)' });
+    await page.close();
+  });
+
+  it('on paper a dark card prints as a light one: no light text on the white sheet', async () => {
+    const page = await open();
+    await page.emulateMedia({ media: 'print' });
+    const r = await page.evaluate(() => {
+      const card = document.getElementById('tok-inv');
+      const cs = getComputedStyle(card);
+      return { bg: cs.backgroundColor, color: cs.color, border: cs.borderTopWidth };
+    });
+    expect(r.bg).toBe('rgb(255, 255, 255)');
+    expect(r.color).toBe('rgb(0, 0, 0)'); // was #f0f0f0 on white
+    expect(r.border).toBe('1px');
     await page.close();
   });
 
@@ -429,12 +463,14 @@ describe('CSS-384: dl, blockquote and figure leave the measure inside data compo
         article: document.querySelector('article').getBoundingClientRect().width,
         prose: ['ms-dl', 'ms-bq', 'ms-fig'].map((id) => [id, Math.abs(parseFloat(maxW(id)) - measure) < 1]),
         // free of the measure (a quote in a panel is also reset by the
-        // panel's outdent containment, to 100%), and as wide as its box
+        // panel's outdent containment, to 100%); its width is then its own
+        // box's, which on a tablet (the measure is 8 of the article's 9
+        // columns) can be the narrower one
         free: ['ms-panel-dl', 'ms-panel-bq', 'ms-panel-fig', 'ms-chart-dl', 'ms-chart-fig', 'ms-scroll-dl', 'ms-bordered-bq', 'ms-stat-fig']
-          .map((id) => [id, ['none', '100%'].includes(maxW(id)) && w(id) > measure + 50]),
+          .map((id) => [id, ['none', '100%'].includes(maxW(id))]),
       };
     });
-    expect(r.article).toBeGreaterThan(r.measure + 50);
+    expect(r.article).toBeGreaterThan(r.measure + 20);
     expect(r.prose).toEqual(r.prose.map(([id]) => [id, true]));
     expect(r.free).toEqual(r.free.map(([id]) => [id, true]));
     await page.close();

@@ -1,3 +1,5 @@
+@use "../bricks/contain-outdents" as co;
+
 table {
     min-width: 100%;
     font-size: var(--font-size-sm);
@@ -20,6 +22,13 @@ table {
 // table grows instead, and the box scrolls.
 .table-scroll :is(th, td) code {
     overflow-wrap: normal;
+}
+
+// The first column holds the keys (a class, a token, an option): its code
+// does not break at a hyphen either (`.table-horizontal-borders` broke into
+// three lines). On paper it wraps again (utilities/_print.scss).
+.table-scroll :is(th, td):first-child code {
+    white-space: nowrap;
 }
 
 th {
@@ -65,6 +74,13 @@ th:first-child {
         padding-block: 0;
     }
 
+    // A striped table is set in bands: every cell keeps its vertical padding,
+    // shaded or not. At the terminal's own weight, so a preset after it
+    // (`.table-small`, `.table-bordered`) still sets its padding.
+    &:where(.table-striped) td {
+        padding-block: var(--space-xs);
+    }
+
     th:first-child,
     td:first-child {
         text-align: left;
@@ -79,17 +95,13 @@ th:first-child {
 // A table in a box with an outdent (`.text-content-caption`,
 // `.full-width-caption`, `.card-caption`) hangs into the outdent with it: its
 // first column steps back in by the outdent, so the labels stay on the text
-// edge.
-$caption-boxes: ".text-content-caption, .full-width-caption, .card-caption";
+// edge. Not where a surface holds the outdent (`$outdent-surfaces`: the box
+// does not hang there), and not in a panel that steps its own content back
+// (bricks/_panels.scss): the table would step back twice.
+$-hanging: ":not(:where(#{co.$outdent-surfaces}) *)";
 
-:is(:is(#{$caption-boxes}) table, table:is(#{$caption-boxes})) :is(th, td):first-child {
-    padding-left: var(--space-lg);
-}
-
-// A striped row is a band: its cells keep their vertical padding, also in a
-// terminal readout (after `.table-terminal`, which sets its rows flush).
-.table-striped td {
-    padding-block: var(--space-xs);
+:is(:is(#{co.$caption-boxes})#{$-hanging}:not(:where(.panel:not(.panel--flush))) table, table:is(#{co.$caption-boxes})#{$-hanging}) :is(th, td):first-child {
+    padding-left: var(--outdent);
 }
 
 .table-terminal tbody tr:hover,

@@ -7,6 +7,7 @@
 :root {
     --brand-color: #fa8c16;
     --brand-color-dark: #86241a;
+    --brand-color-deep: #86241a;
     --primary-font: 'Fira Sans', sans-serif;
     --heading-font: 'Playfair Display', serif;
 }

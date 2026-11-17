@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/styles/utilities/'
 ---
 
-Small single-purpose classes that adjust one thing on one element. They live in `modules/utilities/` and, like everything in the library, apply only inside `.rd`.
+Small single-purpose classes that adjust one thing on one element. Like everything in the library, they apply only inside `.rd`. Most live in `modules/utilities/`.
 
 ## Display and visibility
 
@@ -31,6 +31,10 @@ Small single-purpose classes that adjust one thing on one element. They live in 
 
 </div>
 
+## Alignment
+
+These live in `layout/_grid.scss`. `.self-start`, `-center`, `-end` and `-stretch` set `align-self` on one item of a flex or grid container. On the container, `.items-*` (the same four) sets `align-items` and `.justify-items-*` sets `justify-items`; `.grid-center` sets `place-items: center`, and `.grid-flow-row`, `-col` and `-dense` set `grid-auto-flow`.
+
 ## Overflow and scrolling
 
 <div class="table-scroll">
@@ -48,6 +52,8 @@ Small single-purpose classes that adjust one thing on one element. They live in 
 
 `.z-index-0` … `.z-index-5` set `z-index` from 0 to 5. Library chrome sits above them (header 100, skip link 1000).
 
+`.opacity-0`, `-25`, `-50`, `-75` and `-100` set `opacity` in quarter steps, for a decoration set back: a shape, a watermark. A disabled control fades on its own.
+
 ## Resets
 
 <div class="table-scroll">
@@ -62,7 +68,7 @@ Small single-purpose classes that adjust one thing on one element. They live in 
 
 ## Responsive prefixes
 
-Spacing, sizing, position and grid utilities come in breakpoint variants: `mobile:`, `tablet:` and `desktop:`, as in `mobile:padding-sm` or `desktop:grid-cols-3`. The breakpoints have no gaps between them, so a fractional viewport such as 768.5px always lands in exactly one:
+Spacing, sizing, position, grid and type-size utilities come in breakpoint variants: `mobile:`, `tablet:` and `desktop:`, as in `mobile:padding-sm`, `desktop:grid-cols-3` or `mobile:font-size-sm`. The breakpoints have no gaps between them, so a fractional viewport such as 768.5px always lands in exactly one:
 
 <div class="table-scroll">
 
@@ -84,7 +90,7 @@ Every focusable element inside `.rd` shows a ring on keyboard focus (`:focus-vis
 
 ```css
 :root {
-  --focus-ring-color: var(--blue);  /* ≥ 3:1 on every library surface */
+  --focus-ring-color: var(--signal);  /* blue by default: ≥ 3:1 on every library surface */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }
@@ -119,6 +125,8 @@ The target scrolls clear of the fixed header on its own: `html` carries `scroll-
 
 <div class="meta-info">css/modules/utilities/_print.scss</div>
 
-An article prints, or saves as PDF, without the page chrome: the header, the footer, the sidebar, the search and the menu, the cookie notice and the carousel and copy controls are left off the paper. The prose runs at the full width of the page, outdented blocks fold back into the column (code blocks, quotes, the lead, highlights and captions, every caption width including `.card-caption`, teasers and collapsible containers), and a heading stays with the text that follows it. A figure, a quote, a code block or a table row is never split across two pages, and a table in a `.table-scroll` box prints whole, wrapped to the page: the code in its cells breaks again where it must.
+An article prints, or saves as PDF, without the page chrome: the header, the footer, the sidebar, the search and the menu, the cookie notice and the carousel and copy controls are left off the paper. The article runs at the full width of the page; the prose keeps its reading measure (550px on an A4 or Letter page). Outdented blocks fold back into the column (code blocks, quotes, the lead, highlights and captions, every caption width including `.card-caption`, teasers and collapsible containers), and a heading stays with the text that follows it. A figure, a quote, a code block or a table row is never split across two pages, and a table in a `.table-scroll` box prints whole, wrapped to the page: the code in its cells breaks again where it must.
+
+A `.card-inverted` prints as a light card in a thin frame: the page’s text, link and border colours on white paper, so nothing light is left on the sheet and no dark ground costs ink. A colour you set light yourself inside it (`.white`, `.gray-light`) stays light: give it a print colour.
 
 An external link in the prose prints its address after the text, in small type: `(https://…)`. Links to places on the same page and note marks do not, and neither do links inside an embedded chart (`.rc-chart`): its source line and notes are not prose. Hiding the chart's own controls on paper is the chart library's job.

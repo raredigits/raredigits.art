@@ -320,6 +320,26 @@ template:where(.rd, .rd *) {
   overflow: auto;
 }
 
+.opacity-0:where(.rd, .rd *) {
+  opacity: 0;
+}
+
+.opacity-25:where(.rd, .rd *) {
+  opacity: 0.25;
+}
+
+.opacity-50:where(.rd, .rd *) {
+  opacity: 0.5;
+}
+
+.opacity-75:where(.rd, .rd *) {
+  opacity: 0.75;
+}
+
+.opacity-100:where(.rd, .rd *) {
+  opacity: 1;
+}
+
 .z-index-0:where(.rd, .rd *) {
   z-index: 0;
 }
@@ -1600,6 +1620,22 @@ body:where(.rd, html.rd > *) {
   align-items: stretch;
 }
 
+.self-start:where(.rd, .rd *) {
+  align-self: start;
+}
+
+.self-center:where(.rd, .rd *) {
+  align-self: center;
+}
+
+.self-end:where(.rd, .rd *) {
+  align-self: end;
+}
+
+.self-stretch:where(.rd, .rd *) {
+  align-self: stretch;
+}
+
 .justify-items-start:where(.rd, .rd *) {
   justify-items: start;
 }
@@ -1718,16 +1754,11 @@ body:where(.rd, html.rd > *) {
   width: 100%;
 }
 
-.full-width-caption:where(.rd, .rd *) {
-  width: calc(100% + var(--space-lg));
+.full-width-caption:where(.rd, .rd *),
+.card-caption:where(.rd, .rd *) {
+  width: calc(100% + var(--outdent));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-}
-@media screen and (width < 769px) {
-  .full-width-caption:where(.rd, .rd *) {
-    width: calc(100% + var(--space-sm));
-    margin-left: calc(-1 * var(--space-sm));
-  }
+  margin-left: calc(-1 * var(--outdent));
 }
 
 .width-px:where(.rd, .rd *) {
@@ -16886,6 +16917,66 @@ body:where(.rd, html.rd > *) {
   font-size: var(--font-size-xxl);
 }
 
+@media screen and (width < 769px) {
+  .mobile\:font-size-xs:where(.rd, .rd *) {
+    font-size: var(--font-size-xs);
+  }
+  .mobile\:font-size-sm:where(.rd, .rd *) {
+    font-size: var(--font-size-sm);
+  }
+  .mobile\:font-size-md:where(.rd, .rd *) {
+    font-size: var(--font-size-md);
+  }
+  .mobile\:font-size-lg:where(.rd, .rd *) {
+    font-size: var(--font-size-lg);
+  }
+  .mobile\:font-size-xl:where(.rd, .rd *) {
+    font-size: var(--font-size-xl);
+  }
+  .mobile\:font-size-xxl:where(.rd, .rd *) {
+    font-size: var(--font-size-xxl);
+  }
+}
+@media screen and (769px <= width < 1024px) {
+  .tablet\:font-size-xs:where(.rd, .rd *) {
+    font-size: var(--font-size-xs);
+  }
+  .tablet\:font-size-sm:where(.rd, .rd *) {
+    font-size: var(--font-size-sm);
+  }
+  .tablet\:font-size-md:where(.rd, .rd *) {
+    font-size: var(--font-size-md);
+  }
+  .tablet\:font-size-lg:where(.rd, .rd *) {
+    font-size: var(--font-size-lg);
+  }
+  .tablet\:font-size-xl:where(.rd, .rd *) {
+    font-size: var(--font-size-xl);
+  }
+  .tablet\:font-size-xxl:where(.rd, .rd *) {
+    font-size: var(--font-size-xxl);
+  }
+}
+@media screen and (width >= 1024px) {
+  .desktop\:font-size-xs:where(.rd, .rd *) {
+    font-size: var(--font-size-xs);
+  }
+  .desktop\:font-size-sm:where(.rd, .rd *) {
+    font-size: var(--font-size-sm);
+  }
+  .desktop\:font-size-md:where(.rd, .rd *) {
+    font-size: var(--font-size-md);
+  }
+  .desktop\:font-size-lg:where(.rd, .rd *) {
+    font-size: var(--font-size-lg);
+  }
+  .desktop\:font-size-xl:where(.rd, .rd *) {
+    font-size: var(--font-size-xl);
+  }
+  .desktop\:font-size-xxl:where(.rd, .rd *) {
+    font-size: var(--font-size-xxl);
+  }
+}
 .line-height:where(.rd, .rd *) {
   line-height: var(--line-height);
 }
@@ -17171,6 +17262,10 @@ sup > a:where(.rd, .rd *) {
   text-decoration: none;
 }
 
+.footnote > :is(ol, ul):where(.rd, .rd *) {
+  padding-left: 0;
+}
+
 .footnote :target:where(.rd, .rd *) {
   background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
@@ -17181,7 +17276,7 @@ sup > a:where(.rd, .rd *) {
   width: calc(var(--global-fr) * 2 + var(--base-unit));
   font-size: var(--font-size-sm);
   color: var(--text-color-light);
-  margin-right: calc(var(--global-fr) + var(--base-unit));
+  margin-right: 0;
   line-height: 1.2;
 }
 @media screen and (width < 769px) {
@@ -17196,41 +17291,35 @@ sup > a:where(.rd, .rd *) {
   }
 }
 
-.footnote-inside-text a:where(.rd, .rd *) {
-  color: var(--text-color-light);
-}
-
-:root {
-  --sidenote-text-column: 1 / span 6;
-  --sidenote-wide-column: 1 / span 7;
-  --sidenote-column: 8 / span 2;
+.footnote-inside-text:where(.rd, .rd *) {
+  --link-color: var(--text-color-light);
 }
 
 .sidenote-wrapper:where(.rd, .rd *) {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(9, minmax(0, 1fr));
   column-gap: var(--base-unit);
   grid-auto-flow: row dense;
 }
 .sidenote-wrapper > :first-child:where(.rd, .rd *) {
   margin-top: 0;
-  grid-column: var(--sidenote-text-column);
+  grid-column: 1/span 6;
+}
+.sidenote-wrapper > .sidenote ~ .sidenote:where(.rd, .rd *) {
+  grid-row: auto;
 }
 .sidenote-wrapper > .sidenote:where(.rd, .rd *) {
-  grid-column: var(--sidenote-column);
+  grid-column: 8/span 2;
   grid-row: 1/span 2;
   align-self: start;
   width: 100%;
-  max-width: calc(2 * var(--global-fr));
   font-size: var(--font-size-sm);
   line-height: 1.4;
   color: var(--text-color-light);
   padding-top: var(--space-xs);
   position: relative;
-}
-.sidenote-wrapper > .sidenote a:not(:where(.rc-chart *, .button)):where(.rd, .rd *) {
-  color: var(--text-color-light);
+  --link-color: var(--text-color-light);
 }
 .sidenote-wrapper > .sidenote > p:where(.rd, .rd *) {
   margin: var(--space-xs) 0;
@@ -17245,19 +17334,17 @@ sup > a:where(.rd, .rd *) {
   margin-bottom: 0;
 }
 .sidenote-wrapper > :not(:first-child, .sidenote):where(.rd, .rd *) {
-  grid-column: var(--sidenote-text-column);
+  grid-column: 1/span 6;
 }
-.sidenote-wrapper > :where(:not(.sidenote, :has(~ :not(.sidenote)))):where(.rd, .rd *), .sidenote-wrapper > :where(:not(.sidenote, :has(~ :not(.sidenote)))) > :last-child:where(.rd, .rd *) {
+:where(article, article > section) > .sidenote-wrapper > :not(.sidenote, :has(~ :not(.sidenote))):where(.rd, .rd *), :where(article, article > section) > .sidenote-wrapper > :not(.sidenote, :has(~ :not(.sidenote))) > :last-child:where(.rd, .rd *) {
   margin-bottom: 0;
 }
 .sidenote-wrapper > :is(.highlight, .text-content-caption, .lead, .teaser-bottom):where(.rd, .rd *) {
-  grid-column: var(--sidenote-wide-column);
+  grid-column: 1/span 7;
+  width: min(var(--text-content-caption), 100% + var(--space-lg));
 }
-@media screen and (769px <= width < 1024px) {
-  .sidenote-wrapper:has(> :is(.highlight, .text-content-caption, .lead, .teaser-bottom)) > .sidenote:where(.rd, .rd *) {
-    width: auto;
-    margin-left: var(--space-md);
-  }
+.sidenote-wrapper > :not(.sidenote) :is(.highlight, .text-content-caption, .lead, .teaser-bottom):where(.rd, .rd *) {
+  width: min(var(--text-content-caption), 100% + var(--space-lg));
 }
 @media screen and (width < 769px) {
   .sidenote-wrapper:where(.rd, .rd *) {
@@ -17265,7 +17352,7 @@ sup > a:where(.rd, .rd *) {
     flex-direction: column;
   }
   .sidenote-wrapper > .sidenote:where(.rd, .rd *) {
-    max-width: 100%;
+    max-width: var(--text-content-width);
   }
   .sidenote-wrapper > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
     margin: var(--space-sm) 0;
@@ -17276,6 +17363,110 @@ sup > a:where(.rd, .rd *) {
   .sidenote-wrapper > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
     margin-top: var(--space-sm);
   }
+  .sidenote-wrapper > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
+    margin-top: var(--font-size-xl);
+  }
+  .sidenote-wrapper > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
+    text-indent: calc(var(--font-size-xl) + var(--space-xs));
+  }
+}
+
+@media screen and (width < 1024px) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > *:where(.rd, .rd *) {
+    grid-column: 1/-1;
+    grid-row: auto;
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:where(.rd, .rd *) {
+    max-width: var(--text-content-width);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
+    margin: var(--space-sm) 0;
+    padding: var(--space-xs) 0 var(--space-md);
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
+    margin-top: var(--space-sm);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
+    margin-top: var(--font-size-xl);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
+    text-indent: calc(var(--font-size-xl) + var(--space-xs));
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > :is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):where(.rd, .rd *)::before {
+    top: 4px;
+    left: 0;
+    opacity: 0.4;
+    font-size: var(--font-size-xl);
+  }
+}
+@media screen and (width < 1226px) {
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > *:where(.rd, .rd *) {
+    grid-column: 1/-1;
+    grid-row: auto;
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:where(.rd, .rd *) {
+    max-width: var(--text-content-width);
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
+    margin: var(--space-sm) 0;
+    padding: var(--space-xs) 0 var(--space-md);
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
+    margin-top: var(--space-sm);
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
+    margin-top: var(--font-size-xl);
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
+    text-indent: calc(var(--font-size-xl) + var(--space-xs));
+  }
+  :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > :is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):where(.rd, .rd *)::before {
+    top: 4px;
+    left: 0;
+    opacity: 0.4;
+    font-size: var(--font-size-xl);
+  }
+}
+@media print {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > *:where(.rd, .rd *) {
+    grid-column: 1/-1;
+    grid-row: auto;
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:where(.rd, .rd *) {
+    max-width: var(--text-content-width);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
+    margin: var(--space-sm) 0;
+    padding: var(--space-xs) 0 var(--space-md);
+    border-top: 1px solid var(--border-color);
+    text-align: right;
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
+    margin-top: var(--space-sm);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
+    margin-top: var(--font-size-xl);
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
+    text-indent: calc(var(--font-size-xl) + var(--space-xs));
+  }
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > :is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):where(.rd, .rd *)::before {
+    top: 4px;
+    left: 0;
+    opacity: 0.4;
+    font-size: var(--font-size-xl);
+  }
+}
+.sidenote-wrapper > .sidenote :is(h1, h2, h3, h4) a:not(:where(.button)):not(:where(.rc-chart *)):where(.rd, .rd *) {
+  color: var(--link-color);
+}
+
+:where(.sidenote-wrapper > .sidenote) :where(.chart, .rc-chart):where(.rd, .rd *) {
+  text-align: start;
 }
 
 .sidenote.sidenote-banner:where(.rd, .rd *) {
@@ -17283,13 +17474,19 @@ sup > a:where(.rd, .rd *) {
   padding: 0 0 0 var(--space-md);
   border-left: 4px solid var(--border-color-light);
 }
+
 @media screen and (769px <= width < 1024px) {
-  .sidenote.sidenote-banner:where(.rd, .rd *) {
-    --sidenote-column: 7 / span 3;
-    max-width: none;
+  :where(.sidenote-wrapper:not(:has(> :is(.highlight, .text-content-caption, .lead, .teaser-bottom)))) > .sidenote.sidenote-banner:where(.rd, .rd *) {
+    grid-column: 7/span 3;
   }
 }
-
+@supports not selector(:has(a)) {
+  @media screen and (769px <= width < 1024px) {
+    :where(.sidenote-wrapper) > .sidenote.sidenote-banner:where(.rd, .rd *) {
+      grid-column: 7/span 3;
+    }
+  }
+}
 .sidenote.handwritten:where(.rd, .rd *),
 .sidenote.handwritten p:where(.rd, .rd *) {
   font-family: var(--script-font);
@@ -17297,11 +17494,7 @@ sup > a:where(.rd, .rd *) {
   line-height: 1;
 }
 
-.sidenote-bookmark:where(.rd, .rd *)::before,
-.sidenote-attach:where(.rd, .rd *)::before,
-.sidenote-link:where(.rd, .rd *)::before,
-.sidenote-bulb:where(.rd, .rd *)::before,
-.sidenote-memory:where(.rd, .rd *)::before {
+.sidenote-bookmark:where(.rd, .rd *)::before, .sidenote-attach:where(.rd, .rd *)::before, .sidenote-link:where(.rd, .rd *)::before, .sidenote-bulb:where(.rd, .rd *)::before, .sidenote-memory:where(.rd, .rd *)::before {
   font-size: var(--font-size-lg);
   position: absolute;
   top: -8px;
@@ -17309,11 +17502,7 @@ sup > a:where(.rd, .rd *) {
   color: var(--text-color-light);
 }
 @media screen and (width < 769px) {
-  .sidenote-bookmark:where(.rd, .rd *)::before,
-  .sidenote-attach:where(.rd, .rd *)::before,
-  .sidenote-link:where(.rd, .rd *)::before,
-  .sidenote-bulb:where(.rd, .rd *)::before,
-  .sidenote-memory:where(.rd, .rd *)::before {
+  .sidenote-bookmark:where(.rd, .rd *)::before, .sidenote-attach:where(.rd, .rd *)::before, .sidenote-link:where(.rd, .rd *)::before, .sidenote-bulb:where(.rd, .rd *)::before, .sidenote-memory:where(.rd, .rd *)::before {
     top: 4px;
     left: 0;
     opacity: 0.4;
@@ -17362,19 +17551,23 @@ sup > a:where(.rd, .rd *) {
 }
 
 :root {
-  --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
-  --text-content-caption: calc(var(--text-content-width) + 2 * var(--space-lg));
+  --text-content-width: calc((var(--global-fr) * 6) + (var(--grid-gap) * 5));
+  --outdent: var(--space-lg);
+  --outdent-end: min(var(--space-lg), max(var(--field-width), var(--space-md)));
+  --text-content-caption: calc(var(--text-content-width) + 2 * var(--outdent));
 }
 
 @media screen and (769px <= width < 1024px) {
   :root {
-    --text-content-width: calc((var(--global-fr) * 7) + var(--grid-gap-global) * 6);
+    --text-content-width: calc((var(--global-fr) * 8) + var(--grid-gap-global) * 7);
   }
 }
 @media screen and (width < 769px) {
   :root {
     --text-content-width: 100%;
-    --text-content-caption: calc(100% + 2 * var(--space-sm));
+    --text-content-caption: calc(100% + 2 * var(--outdent));
+    --outdent: var(--space-sm);
+    --outdent-end: var(--space-sm);
   }
 }
 :where(html.rd, body.rd) article {
@@ -17383,11 +17576,11 @@ sup > a:where(.rd, .rd *) {
   min-width: 0;
 }
 
-article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 @media screen and (width < 769px) {
-  article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+  article :is(p, ul, ol):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
     max-width: 100%;
   }
 }
@@ -17409,34 +17602,18 @@ article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legen
 }
 
 .text-content-caption:where(.rd, .rd *) {
-  width: var(--text-content-caption);
+  width: min(var(--text-content-caption), 100% + var(--outdent) + var(--outdent-end));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-}
-@media screen and (width < 769px) {
-  .text-content-caption:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
-  }
-}
-.text-content-caption:where(.rd, .rd *) {
+  margin-left: calc(-1 * var(--outdent));
+  margin-right: calc(-1 * var(--outdent-end));
   position: relative;
 }
 
 .lead:where(.rd, .rd *) {
-  width: var(--text-content-caption);
+  width: min(var(--text-content-caption), 100% + var(--outdent) + var(--outdent-end));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-}
-@media screen and (width < 769px) {
-  .lead:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
-  }
-}
-.lead:where(.rd, .rd *) {
+  margin-left: calc(-1 * var(--outdent));
+  margin-right: calc(-1 * var(--outdent-end));
   margin-top: var(--space-sm);
   margin-bottom: var(--space-md);
   font-size: var(--font-size-xl);
@@ -17445,18 +17622,10 @@ article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legen
 }
 
 .highlight:where(.rd, .rd *) {
-  width: var(--text-content-caption);
+  width: min(var(--text-content-caption), 100% + var(--outdent) + var(--outdent-end));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-}
-@media screen and (width < 769px) {
-  .highlight:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
-  }
-}
-.highlight:where(.rd, .rd *) {
+  margin-left: calc(-1 * var(--outdent));
+  margin-right: calc(-1 * var(--outdent-end));
   margin-bottom: var(--space-md);
   padding: var(--space-lg);
   text-align: center;
@@ -17467,26 +17636,14 @@ article > :where(.card, .card-inverted, .panel, .panel__row, .panel-grid, .legen
 }
 
 .caption:where(.rd, .rd *) {
-  margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-}
-@media screen and (width < 769px) {
-  .caption:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
-  }
-}
-.caption:where(.rd, .rd *) {
+  margin-left: calc(-1 * var(--outdent));
+  margin-right: calc(-1 * var(--outdent-end));
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-light);
   line-height: var(--line-height);
   padding: var(--space-md) calc(var(--space-lg) - var(--space-sm));
   background-color: var(--gray-light);
   border-left: var(--space-sm) solid var(--primary-color);
-}
-
-.caption :is(p, ul, ol):where(.rd, .rd *) {
-  max-width: none;
 }
 
 mark:where(.rd, .rd *) {
@@ -17532,27 +17689,29 @@ mark:where(.rd, .rd *) {
 }
 
 .callout-signal:where(.rd, .rd *) {
-  --callout-color: var(--black);
+  --callout-color: var(--primary-text-color);
   --callout-bg: transparent;
+}
+
+.callout-success:where(.rd, .rd *),
+.callout-warning:where(.rd, .rd *),
+.callout-danger:where(.rd, .rd *) {
+  --callout-bg: color-mix(in srgb, var(--callout-color) 25%, transparent);
 }
 
 .callout-success:where(.rd, .rd *) {
   --callout-color: var(--success);
-  --callout-bg: var(--success-bg);
 }
 
 .callout-warning:where(.rd, .rd *) {
   --callout-color: var(--warning);
-  --callout-bg: var(--warning-bg);
 }
 
 .callout-danger:where(.rd, .rd *) {
   --callout-color: var(--danger);
-  --callout-bg: var(--danger-bg);
 }
 
-:where(blockquote) > cite:where(.rd, .rd *),
-.attribution:where(.rd, .rd *) {
+:where(blockquote) > cite:where(.rd, .rd *) {
   display: block;
   width: 100%;
   margin: var(--space-sm) 0;
@@ -17563,7 +17722,7 @@ mark:where(.rd, .rd *) {
   line-height: 1.3;
 }
 
-blockquote:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+blockquote:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 
@@ -17584,7 +17743,7 @@ dl:where(.rd, .rd *) {
   margin: var(--space-md) 0;
 }
 
-dl:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+dl:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 
@@ -17633,20 +17792,14 @@ pre:where(.rd, .rd *) {
   border-radius: var(--space-sm);
   overflow-x: auto;
   margin-bottom: 1em;
-  margin-left: calc(-1 * var(--space-lg));
+  margin-left: calc(-1 * var(--outdent));
   box-shadow: var(--inner-shadow-sm);
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-@media screen and (769px <= width < 1024px) {
-  pre:where(.rd, .rd *) {
-    padding: var(--space-md);
-  }
-}
 @media screen and (width < 769px) {
   pre:where(.rd, .rd *) {
     padding: var(--space-md);
-    margin-left: calc(-1 * var(--space-sm));
   }
 }
 
@@ -17787,18 +17940,10 @@ pre code:where(.rd, .rd *) {
 }
 
 .teaser-bottom:where(.rd, .rd *) {
-  width: var(--text-content-caption);
+  width: min(var(--text-content-caption), 100% + var(--outdent) + var(--outdent-end));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-  margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-}
-@media screen and (width < 769px) {
-  .teaser-bottom:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
-  }
-}
-.teaser-bottom:where(.rd, .rd *) {
+  margin-left: calc(-1 * var(--outdent));
+  margin-right: calc(-1 * var(--outdent-end));
   margin-top: var(--space-lg);
   border-top: var(--space-sm) solid var(--border-color);
   border-left: var(--space-sm) solid var(--border-color);
@@ -17841,11 +17986,11 @@ article figure:not(:where(.carousel-slide, .epigraph)) > img:where(.rd, .rd *), 
   width: 100%;
 }
 
-article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 @media screen and (width < 769px) {
-  article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart) *):where(.rd, .rd *) {
+  article figure:not(:where(.carousel-slide, .epigraph)):not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *), .figure:not(:where(.table-scroll, .table-bordered, .panel, .stat, .rc-chart, .caption) *):where(.rd, .rd *) {
     max-width: 100%;
   }
 }
@@ -17864,7 +18009,7 @@ article figcaption:where(:not(.carousel-caption)):where(.rd, .rd *),
   overflow-wrap: anywhere;
 }
 
-figure:is(.full-width, .text-content-caption, .full-width-caption) figcaption:where(.rd, .rd *) {
+figure:is(.full-width, .text-content-caption, .full-width-caption, .card-caption) figcaption:where(.rd, .rd *) {
   max-width: var(--text-content-width);
 }
 
@@ -17905,6 +18050,10 @@ table:where(.rd, .rd *) {
   overflow-wrap: normal;
 }
 
+.table-scroll :is(th, td):first-child code:where(.rd, .rd *) {
+  white-space: nowrap;
+}
+
 th:where(.rd, .rd *) {
   text-align: left;
   vertical-align: bottom;
@@ -17941,6 +18090,9 @@ th:first-child:where(.rd, .rd *) {
 .table-terminal td:where(.rd, .rd *) {
   padding-block: 0;
 }
+.table-terminal:where(.table-striped) td:where(.rd, .rd *) {
+  padding-block: var(--space-xs);
+}
 .table-terminal th:first-child:where(.rd, .rd *),
 .table-terminal td:first-child:where(.rd, .rd *) {
   text-align: left;
@@ -17950,12 +18102,8 @@ th:first-child:where(.rd, .rd *) {
   text-align: right;
 }
 
-:is(:is(.text-content-caption, .full-width-caption, .card-caption) table, table:is(.text-content-caption, .full-width-caption, .card-caption)) :is(th, td):first-child:where(.rd, .rd *) {
-  padding-left: var(--space-lg);
-}
-
-.table-striped td:where(.rd, .rd *) {
-  padding-block: var(--space-xs);
+:is(:is(.text-content-caption, .full-width-caption, .card-caption):not(:where(.card, .card-inverted, .panel, .collapsible-container, .collapsible-content) *):not(:where(.panel:not(.panel--flush))) table, table:is(.text-content-caption, .full-width-caption, .card-caption):not(:where(.card, .card-inverted, .panel, .collapsible-container, .collapsible-content) *)) :is(th, td):first-child:where(.rd, .rd *) {
+  padding-left: var(--outdent);
 }
 
 .table-terminal tbody tr:hover:where(.rd, .rd *),
@@ -18283,8 +18431,8 @@ th:first-child:where(.rd, .rd *) {
 :root {
   --brand-color: #00ff4e;
   --brand-color-light: #d8f9d1;
-  --brand-color-dark: #3a8000;
-  --brand-color-link: #00b300;
+  --brand-color-dark: #00b300;
+  --brand-color-deep: #3a8000;
   --brand-color-rgb: 0, 255, 78;
 }
 
@@ -18325,6 +18473,19 @@ th:first-child:where(.rd, .rd *) {
 .brand-color-dark-link:where(.rd, .rd *) {
   text-decoration-color: var(--brand-color-dark);
   background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%);
+}
+
+.brand-color-deep:where(.rd, .rd *) {
+  color: var(--brand-color-deep);
+}
+
+.brand-color-deep-bg:where(.rd, .rd *) {
+  background-color: var(--brand-color-deep);
+}
+
+.brand-color-deep-link:where(.rd, .rd *) {
+  text-decoration-color: var(--brand-color-deep);
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-deep) 20%, transparent) 0 100%);
 }
 
 :root {
@@ -18568,23 +18729,20 @@ th:first-child:where(.rd, .rd *) {
 }
 
 .wide-background:where(.rd, .rd *) {
+  --_bleed-content: min(var(--site-max-width), 100vw - 2 * var(--space-md));
+  --_bleed-start: calc((100vw - var(--_bleed-content)) / 2 + (var(--_bleed-content) - 11 * var(--grid-gap-global)) / 4 + 3 * var(--grid-gap-global));
   width: 100vw;
   position: relative;
-  margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--field-width));
+  margin-left: calc(-1 * var(--_bleed-start));
 }
 .wide-background img:where(.rd, .rd *) {
   width: 100%;
   height: auto;
   display: block;
 }
-@media screen and (769px <= width < 1024px) {
-  .wide-background:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--sidebar-width) - var(--grid-gap-global) - var(--base-unit));
-  }
-}
 @media screen and (width < 769px) {
   .wide-background:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--base-unit));
+    --_bleed-start: var(--space-md);
   }
 }
 
@@ -18593,17 +18751,7 @@ th:first-child:where(.rd, .rd *) {
 }
 
 .wide-background-text-content-wrapper:where(.rd, .rd *) {
-  padding-left: calc(var(--field-width) + var(--sidebar-width) + var(--grid-gap-global));
-}
-@media screen and (769px <= width < 1024px) {
-  .wide-background-text-content-wrapper:where(.rd, .rd *) {
-    padding-left: calc(var(--base-unit) + var(--sidebar-width) + var(--grid-gap-global));
-  }
-}
-@media screen and (width < 769px) {
-  .wide-background-text-content-wrapper:where(.rd, .rd *) {
-    padding-left: var(--base-unit);
-  }
+  padding-left: var(--_bleed-start);
 }
 
 .feature-row:where(.rd, .rd *) {
@@ -18635,21 +18783,19 @@ th:first-child:where(.rd, .rd *) {
   background: var(--surface-current);
   position: relative;
 }
-.card .lead:where(.rd, .rd *), .card .caption:where(.rd, .rd *), .card .highlight:where(.rd, .rd *), .card pre:where(.rd, .rd *), .card blockquote:where(.rd, .rd *), .card .text-content-caption:where(.rd, .rd *), .card .full-width-caption:where(.rd, .rd *), .card .card-caption:where(.rd, .rd *), .card .collapsible-container:where(.rd, .rd *), .card .teaser-bottom:where(.rd, .rd *) {
+.card .lead:where(.rd, .rd *), .card .caption:where(.rd, .rd *), .card .highlight:where(.rd, .rd *), .card pre:where(.rd, .rd *), .card .text-content-caption:where(.rd, .rd *), .card .full-width-caption:where(.rd, .rd *), .card .card-caption:where(.rd, .rd *), .card .collapsible-container:where(.rd, .rd *), .card .teaser-bottom:where(.rd, .rd *), .card blockquote:where(.rd, .rd *) {
   width: auto;
-  max-width: 100%;
   margin-left: 0;
   margin-right: 0;
+}
+.card .lead:where(.rd, .rd *), .card .caption:where(.rd, .rd *), .card .highlight:where(.rd, .rd *), .card pre:where(.rd, .rd *), .card .text-content-caption:where(.rd, .rd *), .card .full-width-caption:where(.rd, .rd *), .card .card-caption:where(.rd, .rd *), .card .collapsible-container:where(.rd, .rd *), .card .teaser-bottom:where(.rd, .rd *) {
+  max-width: 100%;
 }
 
 .card-hover:hover:where(.rd, .rd *) {
   background: var(--gray-lightest);
   border-bottom: 1px solid var(--border-color-light);
   box-shadow: var(--shadow-sm);
-}
-
-.card-header:where(.rd, .rd *) {
-  border-bottom: 1px solid var(--border-color-light);
 }
 
 .card-inverted:where(.rd, .rd *) {
@@ -18682,23 +18828,49 @@ th:first-child:where(.rd, .rd *) {
   color: var(--gray-light);
   position: relative;
 }
+.card-inverted .lead:where(.rd, .rd *), .card-inverted .caption:where(.rd, .rd *), .card-inverted .highlight:where(.rd, .rd *), .card-inverted pre:where(.rd, .rd *), .card-inverted .text-content-caption:where(.rd, .rd *), .card-inverted .full-width-caption:where(.rd, .rd *), .card-inverted .card-caption:where(.rd, .rd *), .card-inverted .collapsible-container:where(.rd, .rd *), .card-inverted .teaser-bottom:where(.rd, .rd *), .card-inverted blockquote:where(.rd, .rd *) {
+  width: auto;
+  margin-left: 0;
+  margin-right: 0;
+}
+.card-inverted .lead:where(.rd, .rd *), .card-inverted .caption:where(.rd, .rd *), .card-inverted .highlight:where(.rd, .rd *), .card-inverted pre:where(.rd, .rd *), .card-inverted .text-content-caption:where(.rd, .rd *), .card-inverted .full-width-caption:where(.rd, .rd *), .card-inverted .card-caption:where(.rd, .rd *), .card-inverted .collapsible-container:where(.rd, .rd *), .card-inverted .teaser-bottom:where(.rd, .rd *) {
+  max-width: 100%;
+}
 
-.card-inverted a:not(:where(.card-inverted .card *, .button)):where(.rd, .rd *) {
-  color: var(--gray-light);
+.card-inverted a:not(:where(.card-inverted .card *)):not(:where(.button)):where(.rd, .rd *) {
+  color: var(--link-color);
+}
+
+:root {
+  --_page-primary-text-color: var(--primary-text-color);
+  --_page-text-color-dark: var(--text-color-dark);
+  --_page-text-color-light: var(--text-color-light);
+  --_page-text-color-lightest: var(--text-color-lightest);
+  --_page-link-color: var(--link-color);
+  --_page-link-color-secondary: var(--link-color-secondary);
+  --_page-link-color-light: var(--link-color-light);
+  --_page-border-color: var(--border-color);
+  --_page-border-color-light: var(--border-color-light);
+  --_page-border-color-dark: var(--border-color-dark);
+  --_page-border-code: var(--border-code);
+  --_page-chart-control-active-bg: var(--chart-control-active-bg);
+  --_page-chart-control-fill: var(--chart-control-fill);
 }
 
 :where(.card-inverted .card):where(.rd, .rd *) {
-  --primary-text-color: var(--primary-color);
-  --text-color-dark: var(--gray-dark);
-  --text-color-light: var(--gray-mid-dark);
-  --text-color-lightest: var(--gray);
-  --link-color: var(--primary-text-color);
-  --link-color-secondary: var(--text-color-dark);
-  --link-color-light: var(--text-color-light);
-  --border-color: var(--gray);
-  --border-color-light: var(--gray-mid-light);
-  --border-color-dark: var(--gray-dark);
-  --border-code: 1px solid var(--border-color);
+  --primary-text-color: var(--_page-primary-text-color);
+  --text-color-dark: var(--_page-text-color-dark);
+  --text-color-light: var(--_page-text-color-light);
+  --text-color-lightest: var(--_page-text-color-lightest);
+  --link-color: var(--_page-link-color);
+  --link-color-secondary: var(--_page-link-color-secondary);
+  --link-color-light: var(--_page-link-color-light);
+  --border-color: var(--_page-border-color);
+  --border-color-light: var(--_page-border-color-light);
+  --border-color-dark: var(--_page-border-color-dark);
+  --border-code: var(--_page-border-code);
+  --chart-control-active-bg: var(--_page-chart-control-active-bg);
+  --chart-control-fill: var(--_page-chart-control-fill);
   --chart-bg: var(--surface-current);
   --chart-text-color: var(--primary-text-color);
   --chart-label-color: var(--text-color-light);
@@ -18708,20 +18880,7 @@ th:first-child:where(.rd, .rd *) {
   --chart-control-border: var(--border-color);
   --chart-control-hover-border: var(--primary-text-color);
   --chart-control-active-text: var(--primary-text-color);
-  --chart-control-active-bg: var(--white);
-  --chart-control-fill: var(--gray);
   color: var(--primary-text-color);
-}
-
-.card-caption:where(.rd, .rd *) {
-  margin-left: calc(var(--space-lg) * -1);
-  width: calc(100% + var(--space-lg));
-}
-@media screen and (width < 769px) {
-  .card-caption:where(.rd, .rd *) {
-    margin-left: calc(var(--space-sm) * -1);
-    width: calc(100% + var(--space-sm));
-  }
 }
 
 .paper-sheet:where(.rd, .rd *) {
@@ -18816,12 +18975,7 @@ th:first-child:where(.rd, .rd *) {
   border-bottom: none;
 }
 
-@media screen and (width < 769px) {
-  .card-grid:where(.rd, .rd *) {
-    --card-grid-cols: 2;
-  }
-}
-@media screen and (769px <= width < 1024px) {
+@media screen and (width < 1024px) {
   .card-grid:where(.rd, .rd *) {
     --card-grid-cols: 2;
   }
@@ -18838,25 +18992,20 @@ th:first-child:where(.rd, .rd *) {
 .panel:where(.rd, .rd *) {
   padding: var(--space-md);
 }
-.panel .lead:where(.rd, .rd *), .panel .caption:where(.rd, .rd *), .panel .highlight:where(.rd, .rd *), .panel pre:where(.rd, .rd *), .panel blockquote:where(.rd, .rd *), .panel .text-content-caption:where(.rd, .rd *), .panel .full-width-caption:where(.rd, .rd *), .panel .card-caption:where(.rd, .rd *), .panel .collapsible-container:where(.rd, .rd *), .panel .teaser-bottom:where(.rd, .rd *) {
+.panel .lead:where(.rd, .rd *), .panel .caption:where(.rd, .rd *), .panel .highlight:where(.rd, .rd *), .panel pre:where(.rd, .rd *), .panel .text-content-caption:where(.rd, .rd *), .panel .full-width-caption:where(.rd, .rd *), .panel .card-caption:where(.rd, .rd *), .panel .collapsible-container:where(.rd, .rd *), .panel .teaser-bottom:where(.rd, .rd *), .panel blockquote:where(.rd, .rd *) {
   width: auto;
-  max-width: 100%;
   margin-left: 0;
   margin-right: 0;
 }
+.panel .lead:where(.rd, .rd *), .panel .caption:where(.rd, .rd *), .panel .highlight:where(.rd, .rd *), .panel pre:where(.rd, .rd *), .panel .text-content-caption:where(.rd, .rd *), .panel .full-width-caption:where(.rd, .rd *), .panel .card-caption:where(.rd, .rd *), .panel .collapsible-container:where(.rd, .rd *), .panel .teaser-bottom:where(.rd, .rd *) {
+  max-width: 100%;
+}
 
-.panel:not(.panel--flush, :where(.card, .panel, .collapsible-content) *).text-content-caption:where(.rd, .rd *) {
-  padding-left: var(--space-lg);
-  padding-right: min(var(--space-lg), var(--field-width) + var(--space-md));
+.panel:not(.panel--flush, :where(.card, .card-inverted, .panel, .collapsible-container, .collapsible-content) *):is(.text-content-caption, .full-width-caption, .card-caption):where(.rd, .rd *) {
+  padding-left: max(var(--space-md), var(--outdent));
 }
-.panel:not(.panel--flush, :where(.card, .panel, .collapsible-content) *):is(.full-width-caption, .card-caption):where(.rd, .rd *) {
-  padding-left: var(--space-lg);
-}
-@media screen and (width < 769px) {
-  .panel:not(.panel--flush, :where(.card, .panel, .collapsible-content) *):is(.text-content-caption, .full-width-caption, .card-caption):where(.rd, .rd *) {
-    padding-left: var(--space-md);
-    padding-right: var(--space-md);
-  }
+.panel:not(.panel--flush, :where(.card, .card-inverted, .panel, .collapsible-container, .collapsible-content) *).text-content-caption:where(.rd, .rd *) {
+  padding-right: max(var(--space-md), var(--outdent));
 }
 
 .panel--bordered:where(.rd, .rd *) {
@@ -18931,6 +19080,11 @@ th:first-child:where(.rd, .rd *) {
   text-align: center;
 }
 
+:is(.panel-grid, .panel__row):is(.text-content-caption, .full-width-caption, .card-caption):not(:where(.card, .card-inverted, .panel, .collapsible-container, .collapsible-content) *) > :is(.panel:not(.panel--flush), .panel__row-item, .card, .card-inverted):where(.rd, .rd *) {
+  padding-left: max(var(--space-md), var(--outdent));
+  padding-right: max(var(--space-md), var(--outdent));
+}
+
 .panel__row > .panel__row-item:not(:last-child):where(.rd, .rd *) {
   border-right: 1px solid var(--border-color);
 }
@@ -18962,9 +19116,9 @@ th:first-child:where(.rd, .rd *) {
   align-items: center;
   gap: 2px var(--space-md);
   padding-left: 0;
+  list-style: none;
   font-size: var(--font-size-sm);
   line-height: 1.3;
-  list-style: none;
 }
 
 .legend__item:where(.rd, .rd *) {
@@ -18974,17 +19128,13 @@ th:first-child:where(.rd, .rd *) {
   white-space: nowrap;
 }
 
-button.legend__item:where(.rd, .rd *),
-button.legend__item:is(:hover, :active, :disabled, [aria-busy=true]):where(.rd, .rd *) {
+button.legend__item:where(.rd, .rd *) {
   padding: 0;
-  background: none;
   border: 0;
+  background: none;
+  font: inherit;
   border-radius: 0;
   color: inherit;
-  font: inherit;
-}
-
-button.legend__item:where(.rd, .rd *) {
   cursor: pointer;
 }
 
@@ -19243,15 +19393,15 @@ button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
 }
 
 .header-icons button:where(.rd, .rd *) {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   display: inline;
   appearance: none;
-  background: none;
-  border: none;
   color: var(--primary-text-color);
-  font: inherit;
   line-height: 1.15;
   -webkit-tap-highlight-color: transparent;
-  padding: 0;
   margin-left: var(--base-unit);
   height: 100%;
   align-items: center;
@@ -19447,10 +19597,10 @@ button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
 a:where(.rd, .rd *) {
   color: var(--link-color);
   text-decoration: underline;
-  text-decoration-color: var(--brand-color-link);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
-  background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-link) 20%, transparent) 0 100%);
+  text-decoration-color: var(--brand-color-dark);
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%);
   background-size: 100% 0;
   background-position: 0 100%;
   background-repeat: no-repeat;
@@ -19756,14 +19906,14 @@ h5.sidebar-header a:hover:where(.rd, .rd *) {
 button:not(:where(.rc-chart *)):where(.rd, .rd *), input:not(:where(.rc-chart *)):where([type=submit], [type=button], [type=reset]):where(.rd, .rd *), .button:where(.rd, .rd *) {
   display: inline-block;
   width: fit-content;
-  padding: calc(var(--button-padding-y, var(--space-sm)) + 1px) var(--button-padding-x, var(--space-md)) calc(var(--button-padding-y, var(--space-sm)) - 1px);
+  font-family: inherit;
+  font-weight: var(--font-weight-normal);
+  padding: calc(var(--button-padding-y, var(--field-padding-y)) + 1px) var(--button-padding-x, var(--space-md)) calc(var(--button-padding-y, var(--field-padding-y)) - 1px);
   border: 1px solid var(--button-border-color, var(--border-color));
   border-radius: var(--space-lg);
   background: var(--button-bg, var(--gray-lightest));
   color: var(--button-text, var(--gray-dark));
-  font-family: inherit;
   font-size: var(--button-font-size, var(--font-size-md));
-  font-weight: var(--font-weight-normal);
   line-height: var(--line-height-sm);
   text-align: center;
   text-decoration: none;
@@ -19827,13 +19977,17 @@ button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *)::after
   --button-bg: var(--brand-color);
   --button-text: var(--primary-color);
   --button-border-color: transparent;
-  --button-bg-hover: var(--brand-color-dark);
+  --button-bg-hover: var(--brand-color-deep);
   --button-border-color-hover: transparent;
-  --button-bg-active: color-mix(in srgb, var(--brand-color-dark) 85%, black);
+  --button-bg-active: color-mix(in srgb, var(--brand-color-deep) 85%, black);
 }
 
-.button-primary:is(:hover, :active, [aria-pressed=true]):where(:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *) {
+.button-primary:where(.button, :not(:where(.rc-chart *))):is(:hover, :active):where(:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *) {
   color: var(--white);
+}
+
+:where(.button-group) > .button-primary[aria-pressed=true]:where(.rd, .rd *) {
+  --button-text: var(--white);
 }
 
 .button-danger:where(.rd, .rd *) {
@@ -19862,12 +20016,38 @@ button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *)::after
   --button-border-color-hover: transparent;
   --button-bg-active: transparent;
   text-decoration: underline;
-  text-decoration-color: var(--brand-color-link);
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
+  text-decoration-color: var(--brand-color-dark);
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%);
+  background-size: 100% 0;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
 }
-.button-link:hover:where(.rd, .rd *) {
-  text-decoration-thickness: 2px;
+@media (prefers-reduced-motion: no-preference) {
+  .button-link:where(.rd, .rd *) {
+    transition: background-size 0.23s cubic-bezier(0.7, 0.2, 0.2, 1), background-position 0.23s cubic-bezier(0.7, 0.2, 0.2, 1);
+  }
+}
+.button-link:where(.rd, .rd *) {
+  background-origin: content-box;
+  background-clip: content-box;
+}
+.button-link:hover:where(:not(:disabled, [aria-disabled=true], [aria-busy=true])):where(.rd, .rd *) {
+  text-decoration-color: var(--brand-color-dark);
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--brand-color-dark) 20%, transparent) 0 100%);
+  background-origin: content-box;
+  background-clip: content-box;
+  background-repeat: no-repeat;
+  background-size: 100% 1.3em;
+  background-position: 0 0;
+}
+.button-link:is(:disabled, [aria-disabled=true], [aria-busy=true]):where(.rd, .rd *) {
+  background-size: 100% 0;
+  background-position: 0 100%;
+}
+.button-link.button-block:where(.rd, .rd *) {
+  background-image: none;
 }
 .button-link[aria-busy=true]:where(.rd, .rd *) {
   text-decoration-color: transparent;
@@ -19881,7 +20061,7 @@ button:not(:where(.rc-chart *)):where([aria-busy=true]):where(.rd, .rd *)::after
 
 .button-md:where(.rd, .rd *) {
   --button-padding-x: var(--space-md);
-  --button-padding-y: var(--space-sm);
+  --button-padding-y: var(--field-padding-y);
   --button-font-size: var(--font-size-md);
 }
 
@@ -19908,9 +20088,9 @@ button:not(:where(.rc-chart *)):where(:has(> [class*=rd-icon-])):where(.rd, .rd 
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--space-sm)) + 2px);
-  block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--space-sm)) + 2px);
-  padding: 2px 0 0;
+  inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--field-padding-y)) + 2px);
+  block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--field-padding-y)) + 2px);
+  padding: calc(1px + 1px) 0 calc(1px - 1px);
 }
 
 .button-group:where(.rd, .rd *) {
@@ -20024,7 +20204,7 @@ input:not(:where(.rc-chart *)):where([type=radio]):where(.rd, .rd *) {
   border-color: var(--field-accent);
 }
 
-input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:checked, :indeterminate):where(.rd, .rd *) {
+input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:checked, [type=checkbox]:indeterminate):where(.rd, .rd *) {
   border-color: var(--field-accent);
   background-color: var(--field-accent);
 }
@@ -20049,7 +20229,7 @@ input:not(:where(.rc-chart *)):where([type=radio]:checked):where(.rd, .rd *) {
   cursor: default;
 }
 
-input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:disabled:checked, :disabled:indeterminate):where(.rd, .rd *) {
+input:not(:where(.rc-chart *)):where([type=checkbox], [type=radio]):where(:disabled:checked, [type=checkbox]:disabled:indeterminate):where(.rd, .rd *) {
   border-color: var(--gray-trans);
   background-color: var(--gray-trans);
 }
@@ -20139,12 +20319,12 @@ input:not(:where(.rc-chart *)):where([type=file]):where(.rd, .rd *) {
 }
 input:not(:where(.rc-chart *)):where([type=file]):where(.rd, .rd *)::file-selector-button {
   margin-inline-end: var(--space-sm);
+  font: inherit;
   padding: calc(var(--space-xs) + 1px) var(--space-sm) calc(var(--space-xs) - 1px);
   border: 1px solid var(--border-color);
   border-radius: var(--space-lg);
   background: var(--gray-mid-light);
   color: var(--gray-dark);
-  font: inherit;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-sm);
   cursor: pointer;
@@ -20188,7 +20368,7 @@ label:not(:where(.rc-chart *)):where(:has(> :disabled)):where(.rd, .rd *) {
   align-self: flex-start;
 }
 
-:is(.form-group, .form-row) > :is([type=submit], button:not([type])):where(.rd, .rd *) {
+:where(.form-group, .form-row) > :is(button, input):where([type=submit], button:not([type])):where(.rd, .rd *) {
   align-self: flex-end;
   margin-inline-start: auto;
 }
@@ -20515,11 +20695,11 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/content_copy-400.svg");
 }
 .copy-data-icon:where(.rd, .rd *) {
-  font: inherit;
-  background: none;
-  color: var(--copy-icon-color, var(--text-color-light));
-  border: none;
   padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--copy-icon-color, var(--text-color-light));
   cursor: pointer;
 }
 
@@ -22019,25 +22199,22 @@ html:has(.cookie-notice:not(.rd-is-hidden)):where(.rd, .rd *) {
   }
 }
 
-.cookie-notice__content:where(.rd, .rd *) {
-  position: relative;
-}
-
 .cookie-notice__content h3:where(.rd, .rd *) {
   position: absolute;
+  top: 0;
+  translate: 0 -55%;
   margin: 0;
-  top: -66px;
   font-size: 3.5em;
   line-height: var(--line-height-xs);
 }
 @media screen and (width < 769px) {
   .cookie-notice__content h3:where(.rd, .rd *) {
     font-size: 2.5em;
-    top: -68px;
+    translate: 0 -65%;
   }
 }
 
-.cookie-notice__content a:where(.rd, .rd *) {
+.cookie-notice__content a:not(:where(.button)):where(.rd, .rd *) {
   color: #000;
   text-decoration: none;
   border-bottom: 1px solid var(--brand-color);
@@ -22062,13 +22239,12 @@ html:has(.cookie-notice:not(.rd-is-hidden)):where(.rd, .rd *) {
 
 .collapsible-container:where(.rd, .rd *) {
   padding: var(--space-md) var(--space-lg);
-  margin-left: calc(-1 * var(--space-lg));
+  margin-left: calc(-1 * var(--outdent));
   border-radius: var(--space-sm);
 }
 @media screen and (width < 769px) {
   .collapsible-container:where(.rd, .rd *) {
-    margin-left: calc(-1 * var(--space-sm));
-    margin-right: calc(-1 * var(--space-sm));
+    margin-right: calc(-1 * var(--outdent));
     padding: var(--space-md);
   }
 }
@@ -22084,24 +22260,15 @@ details summary:where(.rd, .rd *) {
 }
 
 button.collapsible-trigger:where(.rd, .rd *) {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   display: inline;
   width: auto;
-  background: none;
   color: inherit;
-  border: none;
   border-radius: 0;
-  padding: 0;
-  font: inherit;
   text-align: left;
-  text-decoration: underline;
-  text-decoration-style: dashed;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 0.2em;
-  text-decoration-color: var(--text-color-light);
-}
-button.collapsible-trigger:hover:where(.rd, .rd *) {
-  background: none;
-  border: none;
 }
 
 .collapsible-icon:where(.rd, .rd *) {
@@ -22137,26 +22304,14 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   display: none;
   padding-top: var(--space-lg);
 }
-.collapsible-content > .panel:not(.panel--flush):where(.rd, .rd *) {
-  padding: var(--space-md);
-}
 
-.collapsible-container .lead:where(.rd, .rd *),
-.collapsible-container .caption:where(.rd, .rd *),
-.collapsible-container .highlight:where(.rd, .rd *),
-.collapsible-container pre:where(.rd, .rd *),
-.collapsible-container .text-content-caption:where(.rd, .rd *),
-.collapsible-container .card-caption:where(.rd, .rd *),
-.collapsible-content .lead:where(.rd, .rd *),
-.collapsible-content .caption:where(.rd, .rd *),
-.collapsible-content .highlight:where(.rd, .rd *),
-.collapsible-content pre:where(.rd, .rd *),
-.collapsible-content .text-content-caption:where(.rd, .rd *),
-.collapsible-content .card-caption:where(.rd, .rd *) {
+.collapsible-container .lead:where(.rd, .rd *), .collapsible-container .caption:where(.rd, .rd *), .collapsible-container .highlight:where(.rd, .rd *), .collapsible-container pre:where(.rd, .rd *), .collapsible-container .text-content-caption:where(.rd, .rd *), .collapsible-container .full-width-caption:where(.rd, .rd *), .collapsible-container .card-caption:where(.rd, .rd *), .collapsible-container .collapsible-container:where(.rd, .rd *), .collapsible-container .teaser-bottom:where(.rd, .rd *), .collapsible-container blockquote:where(.rd, .rd *), .collapsible-content .lead:where(.rd, .rd *), .collapsible-content .caption:where(.rd, .rd *), .collapsible-content .highlight:where(.rd, .rd *), .collapsible-content pre:where(.rd, .rd *), .collapsible-content .text-content-caption:where(.rd, .rd *), .collapsible-content .full-width-caption:where(.rd, .rd *), .collapsible-content .card-caption:where(.rd, .rd *), .collapsible-content .collapsible-container:where(.rd, .rd *), .collapsible-content .teaser-bottom:where(.rd, .rd *), .collapsible-content blockquote:where(.rd, .rd *) {
   width: auto;
-  max-width: 100%;
   margin-left: 0;
   margin-right: 0;
+}
+.collapsible-container .lead:where(.rd, .rd *), .collapsible-container .caption:where(.rd, .rd *), .collapsible-container .highlight:where(.rd, .rd *), .collapsible-container pre:where(.rd, .rd *), .collapsible-container .text-content-caption:where(.rd, .rd *), .collapsible-container .full-width-caption:where(.rd, .rd *), .collapsible-container .card-caption:where(.rd, .rd *), .collapsible-container .collapsible-container:where(.rd, .rd *), .collapsible-container .teaser-bottom:where(.rd, .rd *), .collapsible-content .lead:where(.rd, .rd *), .collapsible-content .caption:where(.rd, .rd *), .collapsible-content .highlight:where(.rd, .rd *), .collapsible-content pre:where(.rd, .rd *), .collapsible-content .text-content-caption:where(.rd, .rd *), .collapsible-content .full-width-caption:where(.rd, .rd *), .collapsible-content .card-caption:where(.rd, .rd *), .collapsible-content .collapsible-container:where(.rd, .rd *), .collapsible-content .teaser-bottom:where(.rd, .rd *) {
+  max-width: 100%;
 }
 
 .collapsible-content.rd-is-open:where(.rd, .rd *) {
@@ -22396,6 +22551,8 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   }
   :root {
     --surface-current: var(--white);
+    --outdent: 0px;
+    --outdent-end: 0px;
   }
   :where(html.rd, body.rd) main {
     padding: 0;
@@ -22407,11 +22564,46 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   :where(html.rd, body.rd) article {
     width: auto;
   }
-  .lead:where(.rd, .rd *), .caption:where(.rd, .rd *), .highlight:where(.rd, .rd *), pre:where(.rd, .rd *), blockquote:where(.rd, .rd *), .text-content-caption:where(.rd, .rd *), .full-width-caption:where(.rd, .rd *), .card-caption:where(.rd, .rd *), .collapsible-container:where(.rd, .rd *), .teaser-bottom:where(.rd, .rd *) {
+  .lead:where(.rd, .rd *), .caption:where(.rd, .rd *), .highlight:where(.rd, .rd *), pre:where(.rd, .rd *), .text-content-caption:where(.rd, .rd *), .full-width-caption:where(.rd, .rd *), .card-caption:where(.rd, .rd *), .collapsible-container:where(.rd, .rd *), .teaser-bottom:where(.rd, .rd *), blockquote:where(.rd, .rd *) {
     width: auto;
-    max-width: 100%;
     margin-left: 0;
     margin-right: 0;
+  }
+  .lead:where(.rd, .rd *), .caption:where(.rd, .rd *), .highlight:where(.rd, .rd *), pre:where(.rd, .rd *), .text-content-caption:where(.rd, .rd *), .full-width-caption:where(.rd, .rd *), .card-caption:where(.rd, .rd *), .collapsible-container:where(.rd, .rd *), .teaser-bottom:where(.rd, .rd *) {
+    max-width: 100%;
+  }
+  .card-inverted:where(.rd, .rd *) {
+    --primary-text-color: var(--_page-primary-text-color);
+    --text-color-dark: var(--_page-text-color-dark);
+    --text-color-light: var(--_page-text-color-light);
+    --text-color-lightest: var(--_page-text-color-lightest);
+    --link-color: var(--_page-link-color);
+    --link-color-secondary: var(--_page-link-color-secondary);
+    --link-color-light: var(--_page-link-color-light);
+    --border-color: var(--_page-border-color);
+    --border-color-light: var(--_page-border-color-light);
+    --border-color-dark: var(--_page-border-color-dark);
+    --border-code: var(--_page-border-code);
+    --chart-control-active-bg: var(--_page-chart-control-active-bg);
+    --chart-control-fill: var(--_page-chart-control-fill);
+    --chart-bg: var(--surface-current);
+    --chart-text-color: var(--primary-text-color);
+    --chart-label-color: var(--text-color-light);
+    --chart-axis-color: var(--border-color);
+    --chart-grid-color: var(--border-color-light);
+    --chart-control-text: var(--text-color-light);
+    --chart-control-border: var(--border-color);
+    --chart-control-hover-border: var(--primary-text-color);
+    --chart-control-active-text: var(--primary-text-color);
+    --surface-current: var(--white);
+    color: var(--primary-text-color);
+    border: 1px solid var(--border-color);
+  }
+  .card-inverted a:not(:where(.button)):where(.rd, .rd *) {
+    color: var(--link-color);
+  }
+  .sidenote-wrapper > :is(.lead, .caption, .highlight, pre, .text-content-caption, .full-width-caption, .card-caption, .collapsible-container, .teaser-bottom, blockquote):where(.rd, .rd *), .sidenote-wrapper > :not(.sidenote) :is(.lead, .caption, .highlight, pre, .text-content-caption, .full-width-caption, .card-caption, .collapsible-container, .teaser-bottom, blockquote):where(.rd, .rd *) {
+    width: auto;
   }
   h1:where(.rd, .rd *), h2:where(.rd, .rd *), h3:where(.rd, .rd *), h4:where(.rd, .rd *) {
     break-after: avoid;
@@ -22433,6 +22625,10 @@ button.collapsible-trigger:hover:where(.rd, .rd *) {
   }
   .table-scroll :is(th, td) code:where(.rd, .rd *) {
     overflow-wrap: anywhere;
+  }
+  .table-scroll :is(th, td):first-child code:where(.rd, .rd *) {
+    white-space: normal;
+    overflow-wrap: normal;
   }
   th:where(.rd, .rd *) {
     white-space: normal;

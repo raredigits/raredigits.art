@@ -12,7 +12,7 @@ permalink: '/styles/bricks/panels/'
 
 <section>
     <p>The panel is the data surface: a KPI, a chart, a status, settings — content a system produced and a reader scans. A card is for narrative content; the rule for choosing between them is on the <a href="/styles/bricks/#card-vs-panel">Building Blocks</a> page.</p>
-    <p>A panel is a block with inner padding — <code>16px</code> on every width. It paints no background and sets no text colour, so it works on any surface: the page, a card, a dark band. For the same reason it sets no <code>--surface-current</code>: the surface behind it passes through, and a chart in it (RareCharts 0.9.8_7 and later) paints its label plates with that surface (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside it. Directly inside a <a href="/scripts/collapsible/">collapsible</a>'s content, a panel takes an even <code>16px</code>.</p>
+    <p>A panel is a block with inner padding — <code>16px</code> on every width. It paints no background and sets no text colour, so it works on any surface: the page, a card, a dark band. For the same reason it sets no <code>--surface-current</code>: the surface behind it passes through, and a chart in it (RareCharts 0.9.8_7 and later) paints its label plates with that surface (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside it.</p>
     <div class="panel panel--bordered">
         <code>.panel.panel--bordered</code>
     </div>
@@ -33,12 +33,12 @@ permalink: '/styles/bricks/panels/'
             <div class="skeleton-row"></div>
         </div>
     </div>
-    <p>A panel that hangs into the page margin — with <code>.text-content-caption</code>, <code>.full-width-caption</code> or <code>.card-caption</code>, as the outer panel above — steps its content back in by the same outdent: <code>32px</code> on the side it hangs, so its text stays on the edge of the text column. No modifier is needed; the caption class is the cue. On a phone, and where the outdent is contained (in a card, a panel, a collapsible), the panel keeps its own <code>16px</code>; a <code>.panel--flush</code> panel stays flush.</p>
+    <p>A panel that hangs into the page margin — with <code>.text-content-caption</code>, <code>.full-width-caption</code> or <code>.card-caption</code>, as the outer panel above — steps its content back in by the same outdent: <code>32px</code> on the side it hangs, so its text stays on the edge of the text column. No modifier is needed; the caption class is the cue. A <a href="#panel-grid">panel grid</a> or a <a href="#panel-row">panel row</a> with a caption width steps in every cell the same way, on both sides: a panel, a card or a row cell takes <code>32px</code> each side, so the first cell's text starts on the edge of the text column and the other cells match it. On a phone and on paper every such cell takes <code>16px</code> each side, a card cell included; where the outdent is contained (in a card, a panel, a collapsible) a cell keeps its own padding; a <code>.panel--flush</code> panel stays flush.</p>
 </section>
 
 <section>
     <h2 id="header-body-footer">Header, body, footer</h2>
-    <p>Three optional parts give the panel a predictable frame. <code>.panel__header</code> lays out a title and its meta on one baseline, with a divider below; a heading inside it drops its own margins. <code>.panel__body</code> takes the free height, so the footers of panels in one row line up. <code>.panel__footer</code> holds the source or a timestamp in small muted text, with a divider above. A panel with any of the three becomes a flex column; put loose text in the body, or it splits into one line per run.</p>
+    <p>Three optional parts give the panel a predictable frame. <code>.panel__header</code> lays out a title and its meta on one baseline, with a divider below; a heading inside it drops its own margins. A lone title spans the header, so <code>.center</code> on the panel centres it too. <code>.panel__body</code> takes the free height, so the footers of panels in one row line up. <code>.panel__footer</code> holds the source or a timestamp in small muted text, with a divider above. A panel with any of the three becomes a flex column; put loose text in the body, or it splits into one line per run.</p>
     <div class="panel panel--bordered text-content-caption">
         <div class="panel__header"><h5>Revenue</h5><span class="note">Q3 2026</span></div>
         <div class="panel__body"><p class="font-size-xl">$2.84M</p></div>
@@ -153,6 +153,7 @@ permalink: '/styles/bricks/panels/'
 <section>
     <h2 id="chart-frames">Chart frames</h2>
     <p>A chart's frame is a panel on the chart element itself — <a href="/charts/">RareCharts</a> draws into the element you give it and calls it the card. The chart keeps its own layout, clipping and spacing; the panel adds the padding and the frame, and the chart's <code>height</code> includes them. When a page composes more around a chart — a quote header, a row of figures — the panel wraps them all and the chart inside takes no frame of its own. Two places take no frame at all: a chart in a sidenote, which illustrates the text from the margin, and a chart in a <a href="#panel-row">panel row</a> cell, which the row already frames.</p>
+    <p class="callout callout-signal"><strong>Until RareCharts 0.9.8_7.</strong> A chart with no padding of its own — in a sidenote, a panel row cell or a panel body — can lose up to about 24px of its outermost axis and slice labels: the chart clips its drawing at the element’s edge. Give such a chart a little padding until then.</p>
     <div id="panels-chart-demo" class="panel panel--bordered text-content-caption"></div>
 <pre class="text-content-caption"><code>&lt;div id="chart" class="panel panel--bordered text-content-caption"&gt;&lt;/div&gt;
 

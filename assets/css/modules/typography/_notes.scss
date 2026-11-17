@@ -1,15 +1,16 @@
 @use "../utilities/breakpoints" as *;
+@use "sass:selector";
 @use "../decorations/icons" as ico;
+@use "../utilities/contracts" as ct;
+@use "small-print" as sp;
 
 .footnote {
     max-width: var(--text-content-width); // the rule stays on the prose width
     margin-top: var(--space-lg);
     padding: var(--space-md);
     border-top: 1px solid var(--border-color-light);
-    color: var(--text-color-light);
-    font-weight: var(--font-weight-light);
-    font-size: var(--font-size-sm);
-    line-height: 1.3;
+
+    @include sp.small-print;
 }
 
 // REFERENCES AND NOTES (CSS-128, v0.7.1)
@@ -24,19 +25,75 @@ sup > a {
     text-decoration: none;
 }
 
+// The list of notes starts on the block's text edge; the numbers hang in its
+// padding.
+.footnote > :is(ol, ul) {
+    padding-left: 0;
+}
+
 // The note the reader jumped to is marked while it is the target, so the eye
 // finds it among the others.
 .footnote :target {
     background-color: color-mix(in srgb, var(--yellow) 40%, transparent);
 }
 
-// A margin note on a phone (a sidenote, an inline footnote): under the text it
-// comments on, ruled off from it and set to the right edge.
+// A margin note stacked under the text it comments on (a sidenote on a phone
+// or in a chart row on a tablet, an inline footnote on a phone): ruled off
+// from it and set to the right edge.
 @mixin margin-note-stacked {
     margin: var(--space-sm) 0;
     padding: var(--space-xs) 0 var(--space-md);
     border-top: 1px solid var(--border-color);
     text-align: right;
+}
+
+// A chart in a note: `.chart` on the block that holds it; a RareCharts chart
+// (`.rc-chart`) counts without it. The note column is too narrow for a
+// chart's title, legend and source.
+$sidenote-chart: ".chart, .rc-chart";
+
+// The note markers (below): beside the note, and in the top-left corner of a
+// stacked note. A new marker class goes on this list.
+$sidenote-markers: ".sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory";
+
+// A note stacked under the text it comments on: as wide as the text (the
+// measure; the whole row on a phone), in the margin-note form. The banner
+// keeps its own left-rule form. Included in the row: on a phone for every
+// row (a flex column), and in a row whose note holds a chart where the note
+// column is too narrow (the grid, below).
+@mixin sidenote-note-stacked {
+    > .sidenote {
+        max-width: var(--text-content-width);
+    }
+
+    > .sidenote:not(.sidenote-banner) {
+        @include margin-note-stacked;
+    }
+
+    > .sidenote:not(.sidenote-banner) > :first-child {
+        margin-top: var(--space-sm);
+    }
+
+    // The marker takes the top-left corner (below). A chart that opens the
+    // note would set its title there: the chart starts under the marker. A
+    // first line of text runs under it when it is long (the note is set to
+    // the right): it starts after the marker.
+    > .sidenote:is(#{$sidenote-markers}):not(.sidenote-banner) > :first-child:is(#{$sidenote-chart}) {
+        margin-top: var(--font-size-xl);
+    }
+
+    > .sidenote:is(#{$sidenote-markers}):not(.sidenote-banner) > :first-child:is(p, h5, h6) {
+        text-indent: calc(var(--font-size-xl) + var(--space-xs));
+    }
+}
+
+// The marker of a stacked note: the right-aligned note leaves the top-left
+// corner free.
+@mixin sidenote-marker-stacked {
+    top: 4px;
+    left: 0;
+    opacity: 0.4;
+    font-size: var(--font-size-xl);
 }
 
 .aside-footer,
@@ -45,7 +102,11 @@ sup > a {
     width: calc(var(--global-fr) * 2 + var(--base-unit));
     font-size: var(--font-size-sm);
     color: var(--text-color-light);
-    margin-right: calc(var(--global-fr) + var(--base-unit));
+
+    // At the article's right edge, where a sidenote row puts its note: clear
+    // of the six-column measure (it sat one column in, over the text since the
+    // measure grew).
+    margin-right: 0;
     line-height: 1.2;
 
     @include mobile {
@@ -56,8 +117,11 @@ sup > a {
     }
 }
 
-.footnote-inside-text a {
-    color: var(--text-color-light);
+// Links in the note are muted with it: the link colour is re-mapped, so a
+// link-button keeps its own label (a `.button-link` reads the link colour
+// and is muted with the note's links).
+.footnote-inside-text {
+    --link-color: var(--text-color-light);
 }
 
 // The blocks set wider than the measure (`caption-width`, _text-content.scss):
@@ -66,19 +130,15 @@ sup > a {
 // only and stay in the text column.
 $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
 
-// Where the sidenote row places its text, wide blocks and note on its
-// 9-column grid. A consumer moves them with these tokens, on `:root` or on one
-// wrapper, instead of rewriting the selectors.
-:root {
-    --sidenote-text-column: 1 / span 6;
-    --sidenote-wide-column: 1 / span 7;
-    --sidenote-column: 8 / span 2;
-}
-
+// The row is a 9-column grid: the text in columns 1–6, the wide blocks in
+// 1–7, the note in 8–9, at the article's right edge.
 .sidenote-wrapper {
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(9, 1fr);
+
+    // Equal tracks: with `1fr` a block's own width (a wide block's caption
+    // width) widened its columns and squeezed the note.
+    grid-template-columns: repeat(9, minmax(0, 1fr));
     column-gap: var(--base-unit);
     grid-auto-flow: row dense;
 
@@ -88,28 +148,32 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
     // columns and cut a chart title to an ellipsis).
     & > :first-child {
         margin-top: 0;
-        grid-column: var(--sidenote-text-column);
+        grid-column: 1 / span 6;
+    }
+
+    // A second note in the row goes under the first, in the note column: the
+    // first one spans the first two rows, and both took them.
+    > .sidenote ~ .sidenote {
+        grid-row: auto;
     }
 
     > .sidenote {
-        grid-column: var(--sidenote-column);
+        grid-column: 8 / span 2;
         grid-row: 1 / span 2;
         align-self: start;
         width: 100%;
-        max-width: calc(2 * var(--global-fr));
         font-size: var(--font-size-sm);
         line-height: 1.4;
         color: var(--text-color-light);
         padding-top: var(--space-xs);
         position: relative;
-    }
 
-    // Links in the note are muted with it. Not inside an embedded component
-    // (a chart's source line, `.rc-chart`): it colours its own links. Not a
-    // link-button (`.button`), which keeps its label colour. Not
-    // child-scoped, because an ordinary link sits inside a <p>.
-    > .sidenote a:not(:where(.rc-chart *, .button)) {
-        color: var(--text-color-light);
+        // Links in the note are muted with it: the link colour is re-mapped,
+        // so a link-button keeps its own label (a `.button-link` reads the
+        // link colour and is muted with the note's links), and an embedded
+        // component that colours its own links (a chart's source line,
+        // `.rc-chart`) keeps them.
+        --link-color: var(--text-color-light);
     }
 
     // The note is set tighter than the prose: paragraphs a step apart, its
@@ -131,67 +195,126 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
     }
 
     > :not(:first-child, .sidenote) {
-        grid-column: var(--sidenote-text-column);
+        grid-column: 1 / span 6;
     }
 
-    // The row owns its bottom edge: the gap to the next row is the wrapper's
-    // block gap (`--space-md`, _text-content.scss), so the last text block
-    // leaves no margin below it, however tall the note beside it is. In
-    // `:where()`: a margin utility on that block still decides.
-    > :where(:not(.sidenote, :has(~ :not(.sidenote)))),
-    > :where(:not(.sidenote, :has(~ :not(.sidenote)))) > :last-child {
+    // In the article flow the row owns its bottom edge: the gap to the next
+    // row is the block gap there (`--space-md`, _text-content.scss), so the
+    // last text block leaves no margin below it, however tall the note beside
+    // it is. This outweighs the block's own margin (`.lead`, `.highlight`) and
+    // a margin utility alike. Outside the article flow there is no block gap,
+    // and the margin stays.
+    :where(article, article > section) > & > :not(.sidenote, :has(~ :not(.sidenote))),
+    :where(article, article > section) > & > :not(.sidenote, :has(~ :not(.sidenote))) > :last-child {
         margin-bottom: 0;
     }
 
-    // The caption-width blocks get one extra column, up to the note's, so
-    // emphatic blocks read wider than ordinary body content.
+    // The caption-width blocks are placed over one extra column, up to the
+    // note's, so emphatic blocks read wider than ordinary body content. They
+    // keep the caption width and the left outdent but never pass their
+    // columns: on a tablet the caption width is wider, and the block ends at
+    // its last column; on a desktop it is narrower. On paper the print
+    // module folds it back to its columns (_print.scss).
     > :is(#{$sidenote-wide}) {
-        grid-column: var(--sidenote-wide-column);
+        grid-column: 1 / span 7;
+        width: min(var(--text-content-caption), 100% + var(--space-lg));
     }
 
-    // On a tablet the wide block's right outdent takes the column gap and
-    // meets the note: the note steps right, its marker with it.
-    @include tablet {
-        &:has(> :is(#{$sidenote-wide})) > .sidenote {
-            width: auto;
-            margin-left: var(--space-md);
-        }
+    // One nested in a text block (a `<div>` of the text column) ends at the
+    // edge of that block, so it cannot run into the note.
+    > :not(.sidenote) :is(#{$sidenote-wide}) {
+        width: min(var(--text-content-caption), 100% + var(--space-lg));
     }
 
-    // A tablet keeps the note in its right column. On a phone the row stacks
-    // and the note takes the stacked margin-note form; its marker moves to the
-    // top-left corner (below). The banner keeps its own left-rule form.
+    // On a phone every row stacks: a flex column, the note in the stacked
+    // form, its marker in the top-left corner (below).
     @include mobile {
         display: flex;
         flex-direction: column;
 
-        > .sidenote {
-            max-width: 100%;
-        }
-
-        > .sidenote:not(.sidenote-banner) {
-            @include margin-note-stacked;
-        }
-
-        > .sidenote:not(.sidenote-banner) > :first-child {
-            margin-top: var(--space-sm);
-        }
+        @include sidenote-note-stacked;
     }
+}
+
+// A row whose note holds a chart stacks as on a phone where its note column
+// is too narrow for the chart's title, legend and source (under ~180px: a row
+// under 870px). In the grid: every child across the row, in order, the note
+// in the stacked form and its marker in the corner.
+@mixin sidenote-chart-row-stacked {
+    > * {
+        grid-column: 1 / -1;
+        grid-row: auto;
+    }
+
+    @include sidenote-note-stacked;
+
+    > :is(#{$sidenote-markers})::before {
+        @include sidenote-marker-stacked;
+    }
+}
+
+// Anywhere below the desktop.
+@include below-desktop {
+    .sidenote-wrapper:has(> .sidenote :is(#{$sidenote-chart})) {
+        @include sidenote-chart-row-stacked;
+    }
+}
+
+// In the article flow also on the narrow desktop: the article (the page
+// grid's nine columns) is under 870px below a 1226px viewport. A viewport
+// query, not a container one: a query container ran the transitions inside
+// the row on load in Chrome, and collapsed the row in a shrink-to-fit parent.
+@media screen and (width < 1226px) {
+    :where(article, article > section) > .sidenote-wrapper:has(> .sidenote :is(#{$sidenote-chart})) {
+        @include sidenote-chart-row-stacked;
+    }
+}
+
+// On paper too: a sheet's text column is under 870px, so the chart would sit
+// in a note column of about 150px with its title cut.
+@media print {
+    .sidenote-wrapper:has(> .sidenote :is(#{$sidenote-chart})) {
+        @include sidenote-chart-row-stacked;
+    }
+}
+
+// A link in a heading of the note is muted with the note's other links (the
+// heading-link rule sets the text colour, `typography/_text-content.scss`).
+.sidenote-wrapper > .sidenote :is(h1, h2, h3, h4) a#{ct.$not-button}#{ct.$outside-embedded} {
+    color: var(--link-color);
+}
+
+// A chart keeps its own alignment in the right-aligned stacked note. Zero
+// weight: an alignment class on the chart still decides.
+:where(.sidenote-wrapper > .sidenote) :where(#{$sidenote-chart}) {
+    text-align: start;
 }
 
 .sidenote.sidenote-banner {
     margin: 4px 0 0 -4px;
     padding: 0 0 0 var(--space-md);
     border-left: 4px solid var(--border-color-light);
+}
 
-    // On a tablet the note column is too narrow for a banner's heading: the
-    // banner takes one column more, to the row's edge.
-    @include tablet {
-        --sidenote-column: 7 / span 3;
-
-        max-width: none;
+// On a tablet the note column is too narrow for a banner's heading: the
+// banner takes one column more, unless a wide block in the row holds that
+// column. At the weight of the note's own rule, so a row with a chart in its
+// note still stacks (that rule weighs more).
+@include tablet {
+    :where(.sidenote-wrapper:not(:has(> :is(#{$sidenote-wide})))) > .sidenote.sidenote-banner {
+        grid-column: 7 / span 3;
     }
+}
 
+// Without `:has()` (Firefox before 121) the rule above matches nothing: there
+// the banner takes the extra column whatever its row holds, and a wide
+// block in its row goes under it.
+@supports not selector(:has(a)) {
+    @include tablet {
+        :where(.sidenote-wrapper) > .sidenote.sidenote-banner {
+            grid-column: 7 / span 3;
+        }
+    }
 }
 
 // A handwritten sidenote: the script face from `.handwritten`, on the sidenote
@@ -203,11 +326,7 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
     line-height: 1;
 }
 
-.sidenote-bookmark::before,
-.sidenote-attach::before,
-.sidenote-link::before,
-.sidenote-bulb::before,
-.sidenote-memory::before {
+#{selector.append($sidenote-markers, "::before")} {
     // Thin note markers: drawn from the wght-200 SVG cuts (decorations/
     // _icons.scss) — the light weight the markers were designed around,
     // restored after the v0.6.17_1 static-font revert flattened them to 400.
@@ -217,12 +336,8 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
     left: -16px;
     color: var(--text-color-light);
 
-    // The right-aligned phone note leaves the top-left corner free.
     @include mobile {
-        top: 4px;
-        left: 0;
-        opacity: 0.4;
-        font-size: var(--font-size-xl);
+        @include sidenote-marker-stacked;
     }
 }
 

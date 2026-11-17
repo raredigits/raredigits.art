@@ -1,12 +1,17 @@
 @use "../utilities/breakpoints" as bp;
 @use "../decorations/icons" as ico;
+@use "control-face" as cf;
+@use "../utilities/contracts" as ct;
+@use "../typography/small-print" as sp;
 
 // FORMS (CSS-100…105, v0.7.2)
 
 // Plain element selectors: no per-field class and no wrapper class. The `.rd`
 // gate scopes them — a form inside `.rd` (page or island) gets them, a host
-// form outside never does. Every rule stays at type specificity (states in
-// `:where()`), so any class of the page's beats it.
+// form outside never does. The rules for the elements stay at type
+// specificity (states and contexts in `:where()`), so any class of the
+// page's beats them; the layout classes (`.form-row`, `.form-group`…) weigh
+// one class.
 
 // A RareCharts card (`.rc-chart`) owns its controls (RareCharts C-13): the
 // page controls a chart moves into its `controls:` row keep the chart's
@@ -15,7 +20,7 @@
 // Field and button share their height at the default size: the same
 // padding-y, line-height and 1px border.
 
-$-outside-chart: ":not(:where(.rc-chart *))";
+$-outside-chart: ct.$outside-embedded;
 
 // The date and time types take the same frame: the browser draws their
 // segments and picker inside it. The button types (submit, button, reset)
@@ -35,7 +40,7 @@ $-check: "input#{$-outside-chart}:where([type=\"checkbox\"], [type=\"radio\"])";
     --field-padding-x: calc(var(--space-sm) * 1.5);
     --field-padding-y: var(--space-sm);
 
-    // Checked boxes and radios.
+    // Checked boxes and radios, and the frame of a focused field.
     --field-accent: var(--signal);
 
     // Validation (CSS-103), on the semantic roles (CSS-121).
@@ -49,10 +54,11 @@ textarea#{$-outside-chart},
 select#{$-outside-chart} {
     max-width: 100%;
 
-    // 1px more above, 1px less below, as on a button: the text is optically
-    // centred, the height unchanged, and a field and a button stand on one
-    // baseline.
-    padding: calc(var(--field-padding-y) + 1px) var(--field-padding-x) calc(var(--field-padding-y) - 1px);
+    // The text 1px below the centre, as a button's label: optically centred,
+    // the height unchanged, and a field and a button stand on one baseline
+    // (elements/_control-face.scss).
+    @include cf.control-padding(var(--field-padding-y), var(--field-padding-x));
+
     border: 1px solid var(--field-border-color);
     border-radius: var(--field-radius);
     background-color: var(--field-bg);
@@ -142,7 +148,9 @@ input#{$-outside-chart}:where([type="radio"]) {
     border-color: var(--field-accent);
 }
 
-#{$-check}:where(:checked, :indeterminate) {
+// `:indeterminate` is a checkbox's mixed state. A radio matches it too, in a
+// group with nothing checked, so it is named for the checkbox only.
+#{$-check}:where(:checked, [type="checkbox"]:indeterminate) {
     border-color: var(--field-accent);
     background-color: var(--field-accent);
 }
@@ -170,7 +178,7 @@ input#{$-outside-chart}:where([type="radio"]:checked) {
     cursor: default;
 }
 
-#{$-check}:where(:disabled:checked, :disabled:indeterminate) {
+#{$-check}:where(:disabled:checked, [type="checkbox"]:disabled:indeterminate) {
     border-color: var(--gray-trans);
     background-color: var(--gray-trans);
 }
@@ -281,24 +289,22 @@ input#{$-outside-chart}:where([type="file"]) {
     line-height: var(--line-height-sm);
     cursor: pointer;
 
-    // The small button (`.button-sm`), on --gray-mid-light.
+    // The small button's face: the values of `.button-sm`, repeated (a
+    // pseudo-element cannot take a class), on --gray-mid-light: a shade
+    // darker than the default button's rest, to stand out in the field.
     &::file-selector-button {
         margin-inline-end: var(--space-sm);
-        padding: calc(var(--space-xs) + 1px) var(--space-sm) calc(var(--space-xs) - 1px);
-        border: 1px solid var(--border-color);
-        border-radius: var(--space-lg);
-        background: var(--gray-mid-light);
-        color: var(--gray-dark);
         font: inherit;
-        font-size: var(--font-size-sm);
-        line-height: var(--line-height-sm);
+
+        @include cf.button-face(var(--space-xs), var(--space-sm), var(--font-size-sm), var(--gray-mid-light), cf.$rest-text, var(--border-color));
+
         cursor: pointer;
     }
 
     &:where(:hover:not(:disabled))::file-selector-button {
-        border-color: var(--primary-color);
-        background: var(--white);
-        color: var(--primary-color);
+        border-color: cf.$ink;
+        background: cf.$hover-bg;
+        color: cf.$ink;
     }
 }
 
@@ -347,8 +353,9 @@ label#{$-outside-chart}:where(:has(> :disabled)) {
 
 // The submit button of a form sits at the right edge: in a group's column, and
 // in a row whether it shares the line with the fields or wraps (or stacks on a
-// phone) onto its own. A <button> with no type submits too.
-:is(.form-group, .form-row) > :is([type="submit"], button:not([type])) {
+// phone) onto its own. A <button> with no type submits too. At type weight,
+// so a page puts it elsewhere with utilities (`.margin-l-0`, `.self-start`).
+:where(.form-group, .form-row) > :is(button, input):where([type="submit"], button:not([type])) {
     align-self: flex-end;
     margin-inline-start: auto;
 }
@@ -386,8 +393,7 @@ label#{$-outside-chart}:where(:has(> :disabled)) {
 
 .form-help,
 .form-error {
-    font-size: var(--font-size-sm);
-    line-height: 1.3;
+    @include sp.small-type;
 }
 
 .form-help {

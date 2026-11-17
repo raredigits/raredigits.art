@@ -223,23 +223,101 @@ describe('panel parts', () => {
     await page.close();
   });
 
-  it.each([1280, 375])('outdents stay inside a panel at %ipx', async (width) => {
+  it.each([900, 1100, 1300, 1440])('a panel with the caption width puts its content on the measure at %ipx', async (width) => {
     const { page } = await open(width);
     const r = await page.evaluate(() => {
-      // Against the content box: the padding (32px, 16px on a phone) is as
-      // wide as every outdent, so an outdent that is not contained only
-      // shifts into the padding and never crosses the outer box.
-      const panel = document.getElementById('outdents');
+      const probe = document.createElement('div');
+      probe.style.width = 'var(--text-content-width)';
+      document.querySelector('article').appendChild(probe);
+      const measure = probe.getBoundingClientRect();
+      const panel = document.getElementById('frame-wrapped');
       const cs = getComputedStyle(panel);
-      const box = panel.getBoundingClientRect();
-      const left = box.left + parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft);
-      const right = box.right - parseFloat(cs.borderRightWidth) - parseFloat(cs.paddingRight);
+      const b = panel.getBoundingClientRect();
+      // how far the content box sits inside the measure on each side: the
+      // panel's 1px frame, the same on both
       return {
-        poking: [...document.querySelectorAll('#outdents > *')].filter((el) => {
-          const b = el.getBoundingClientRect(); return b.left < left - 0.5 || b.right > right + 0.5;
-        }).map((el) => el.tagName + '.' + el.className),
-        overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        frame: parseFloat(cs.borderLeftWidth),
+        left: b.left + parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft) - measure.left,
+        right: measure.right - (b.right - parseFloat(cs.borderRightWidth) - parseFloat(cs.paddingRight)),
       };
+    });
+    expect(r.left).toBeCloseTo(r.frame, 1);
+    expect(r.right).toBeCloseTo(r.frame, 1); // was 15px past the measure at 769–1279px
+    await page.close();
+  });
+
+  it.each([1300, 800, 375])('a table in a box with an outdent puts its labels on the text edge, once, at %ipx', async (width) => {
+    const { page } = await open(width);
+    const r = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.width = 'var(--text-content-width)';
+      document.querySelector('article').appendChild(probe);
+      const measure = probe.getBoundingClientRect().left;
+      const label = (id) => { const td = document.getElementById(id); return td.getBoundingClientRect().left + parseFloat(getComputedStyle(td).paddingLeft); };
+      const card = document.getElementById('tbl-card');
+      const cardContent = card.getBoundingClientRect().left + parseFloat(getComputedStyle(card).paddingLeft);
+      return {
+        box: label('tbl-box-td') - measure, // was 24px inside the text on a phone
+        panel: label('tbl-panel-td') - measure, // the panel's 1px frame; was +32 (stepped back twice)
+        card: label('tbl-card-td') - cardContent, // a card holds the outdent; was +32
+      };
+    });
+    expect(r.box).toBeCloseTo(0, 0);
+    // on a phone the outdent (8px) is below the panel's own padding, which stays
+    expect(r.panel).toBeCloseTo(width < 769 ? 1 + 16 - 8 : 1, 0);
+    expect(r.card).toBeCloseTo(0, 0);
+    await page.close();
+  });
+
+  it('the cells of a hanging grid are padded alike on both sides', async () => {
+    const { page } = await open(1300);
+    const pad = await page.evaluate(() => { const cs = getComputedStyle(document.getElementById('hang-first')); return [cs.paddingLeft, cs.paddingRight]; });
+    expect(pad[0]).toBe(pad[1]); // was 32/16: a centred figure sat 8px off
+    await page.close();
+  });
+
+  it.each([1300, 375])('the panels of a hanging grid put their text on the text edge at %ipx', async (width) => {
+    const { page } = await open(width);
+    const r = await page.evaluate(() => {
+      const probe = document.createElement('div');
+      probe.style.width = 'var(--text-content-width)';
+      document.querySelector('article').appendChild(probe);
+      const p = document.getElementById('hang-first');
+      const cs = getComputedStyle(p);
+      return { text: p.getBoundingClientRect().left + parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft), measure: probe.getBoundingClientRect().left, frame: parseFloat(cs.borderLeftWidth) };
+    });
+    // on a phone the outdent (8px) is below the panel's own padding, which stays
+    expect(r.text - r.measure).toBeCloseTo(width < 769 ? r.frame + 16 - 8 : r.frame, 0); // was 16px left of the text edge
+    await page.close();
+  });
+
+  it('on paper a panel with the caption width takes its own padding: there is no outdent', async () => {
+    const { page } = await open(1100);
+    await page.emulateMedia({ media: 'print' });
+    const pad = await page.evaluate(() => { const cs = getComputedStyle(document.getElementById('frame-wrapped')); return [cs.paddingLeft, cs.paddingRight]; });
+    expect(pad).toEqual(['16px', '16px']);
+    await page.close();
+  });
+
+  it.each([1280, 375])('outdents stay inside a panel, a dark card and a collapsible box at %ipx', async (width) => {
+    const { page } = await open(width);
+    const r = await page.evaluate(() => {
+      // Against the content box: an outdent that is not contained hangs into
+      // the padding or past the frame (the dark card held none: its `pre`
+      // and `.highlight` poked out by 16px).
+      const poking = [];
+      for (const id of ['outdents', 'outdents-inv', 'outdents-coll']) {
+        const surface = document.getElementById(id);
+        const cs = getComputedStyle(surface);
+        const box = surface.getBoundingClientRect();
+        const left = box.left + parseFloat(cs.borderLeftWidth) + parseFloat(cs.paddingLeft);
+        const right = box.right - parseFloat(cs.borderRightWidth) - parseFloat(cs.paddingRight);
+        for (const el of surface.children) {
+          const b = el.getBoundingClientRect();
+          if (b.left < left - 0.5 || b.right > right + 0.5) poking.push(`#${id} > ${el.tagName}.${el.className}`);
+        }
+      }
+      return { poking, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth };
     });
     expect(r.poking).toEqual([]);
     expect(r.overflow).toBeLessThanOrEqual(0);

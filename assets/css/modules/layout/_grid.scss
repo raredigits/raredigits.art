@@ -205,6 +205,13 @@
 .items-end { align-items: end; }
 .items-stretch { align-items: stretch; }
 
+// One item of a flex or grid container on its own line of the cross axis
+// (a submit button moved off the form's right edge, elements/_forms.scss).
+.self-start { align-self: start; }
+.self-center { align-self: center; }
+.self-end { align-self: end; }
+.self-stretch { align-self: stretch; }
+
 .justify-items-start { justify-items: start; }
 .justify-items-center { justify-items: center; }
 .justify-items-end { justify-items: end; }

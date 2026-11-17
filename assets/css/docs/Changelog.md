@@ -7,91 +7,137 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ---
 
-## [v0.7.2] — 2026-10-27 — Charts Dependencies, Site Harvest & Consumer Requests
+## [v0.7.2] — 2026-11-17 — Charts Dependencies, Site Harvest & Consumer Requests
 
-**Breaking: buttons and forms come into the library, and data surfaces get their own family.**
-- A bare `<button>` inside `.rd` is now an inline button with the library look.
-- Form fields, checkboxes and radios inside `.rd` are styled. Host forms outside `.rd` stay untouched.
-- `.card-dashboard-bordered` and `.card-row-bordered(-item)` give way to the `.panel` family, with no alias.
+**Breaking: buttons and forms come into the library, data surfaces get their own family, a bare `<cite>` loses the credit look, and the reading column is one grid column wider.**
+- A bare `<button>`, an `<input type=submit|button|reset>` and `.button` inside `.rd` are inline buttons with the library look. Form fields, checkboxes, radios, range, colour and file inputs, `fieldset`, `legend` and `label` are styled too. Host forms outside `.rd` and controls inside a RareCharts chart (`.rc-chart`) stay untouched.
+- `.card-dashboard-bordered` and `.card-row-bordered(-item)` give way to the `.panel` family, with no alias. `.card-header` goes too: a card's header is a block with `.border-bottom`.
+- A bare `<cite>` loses the credit look: only a blockquote's own `cite` keeps it. A credit under an image goes in a `<figcaption>`.
+- The reading measure is six grid columns on a desktop and eight on a tablet (five and seven before). Sidenote rows follow it: the text takes six columns, and the note sits at the article's right edge.
 
-Alongside, everything RareCharts and its docs needed from the library is in: chart tokens, a surface token, the legend, KPI figures, and a set of fixes for defects the charts pages had to work around. The steps a site has to take are in [`MIGRATION.md`](https://github.com/raredigits/rare-styles/blob/v0.7.2/docs/MIGRATION.md).
+Alongside, everything RareCharts and its docs need from the library is in: chart tokens, a surface token, the legend, KPI figures, and fixes for defects the charts pages had to work around. A few new rules need `:has()`: in Firefox 113–120 a sidenote row with a chart does not stack, a row's last block keeps its margin, a panel with parts stays a block, and a glyph in a button stays inline. The steps a site has to take are in [`MIGRATION.md`](https://github.com/raredigits/rare-styles/blob/v0.7.2/docs/MIGRATION.md).
 
 ### Added
 
 - **The button system** (`CSS-040`…`CSS-046`, `Q-04`).
-  - **Default look** for `<button>`, `<input type=submit|button|reset>` and `.button`.
+  - **Default look** for `<button>`, `<input type=submit|button|reset>` and `.button`: an inline-block capsule (32px corners) on `--gray-lightest` with a `--gray-dark` label and a 1px `--border-color` frame. Under the pointer it turns white with a black frame and label; pressed, it fills `--bg-color`. A 0.15s fade, none under reduced motion. Padding 9px 16px 7px, 1rem in any context: as tall as a form field. `.button` sets its type and alignment after the utilities, so `.font-size-*`, `.bold`, `.left` and `.block` no longer act on an `a.button`.
   - **Variants:**
-    - `.button-primary` on `--brand-color` (`--brand-color-dark` on hover), black label;
-    - `-ghost`, whose label follows the surface;
-    - `-danger` on `--danger`;
-    - `-link`.
-  - **Sizes:** `.button-sm`, `-md` and `-lg`.
-  - **Icons:** `rd-icon-*` glyph layout, and `.button-icon`.
-  - **States:** hover, active, focus, disabled / `aria-disabled`, and `aria-busy` (a spinner that holds still under reduced motion).
-  - **Layout:** `.button-group` (a pressed toggle keeps its variant's look) and `.button-block`.
-  - **No tokens of its own:** the look is written with the library's tokens, corners `--space-lg`; variants and sizes set slots on their class (`--button-bg`, `--button-padding-x`…).
+    - `.button-primary` on `--brand-color` with a black label; under the pointer and pressed, a white label on `--brand-color-deep` and on a darker mix of it;
+    - `-ghost`: no fill and no frame, the label in the surface's text colour, a light tint under the pointer;
+    - `-danger`: `--danger` shaded by 15%, a white label;
+    - `-link`: a button box with the text-link look, the same underline and the same fill rising under the pointer.
+  - **Sizes:** `.button-sm`, `-md` (the default; it restores the default inside a container that resizes buttons) and `-lg`.
+  - **Icons:** a button with a direct `rd-icon-*` glyph is an `inline-flex` row with a 0.5em gap; `.button-icon` is an icon-only square.
+  - **States:** disabled and `aria-disabled` (50% opacity, no hover); `aria-busy` (a spinner that holds still under reduced motion). The bare-element rules weigh (0,0,1) in every state, so any class beats them.
+  - **Layout:** `.button-group` (a pressed `aria-pressed` toggle keeps its variant's pressed look) and `.button-block`.
+  - **No tokens of its own:** the look is written with the library's tokens. Variants and sizes set slots on their class (`--button-bg`, `--button-text`, `--button-padding-y`…). The default vertical padding follows `--field-padding-y`, so a button and a field stay level.
   - **Docs:** `/styles/interactive/buttons/`.
 - **Forms** (`CSS-100`…`CSS-105`).
-  - **Fields:** text fields, the date and time types included; `textarea`; `select` with the library's arrow.
-  - **Choices:** checkbox and radio drawn by the library.
-  - **Other inputs:** range, color and file; `fieldset`, `legend` and `label`.
-  - **Layout:** `.form-group`, `.form-row`, `.form-help`, `.form-error`.
-  - **Validity:** shown only after interaction (`:user-invalid` / `:user-valid`, `[aria-invalid]`).
-  - **Tokens:** `--field-*`.
+  - **Fields:** text fields, the date and time types included; `textarea`; `select` with the library's arrow. A 1px `--field-border-color` frame, 4px corners, padding 9px 12px 7px, 1rem; hover, focus and disabled states.
+  - **Choices:** checkbox and radio drawn by the library, checked in `--field-accent`.
+  - **Other inputs:** range (a 2px track and a round thumb in the text colour), colour (a 32px square), file (a full-width frame with a small button); `fieldset` (a flex column with a 16px gap), a bold `legend`; a `label` around a checkbox or radio takes the pointer, and one around a disabled control dims.
+  - **Layout:** `.form-group`; `.form-row`, where groups sit side by side, a bare field grows and the row stacks on a phone; the submit button sits at the right edge of a group or row, at element weight, so a utility moves it; `.form-help` and `.form-error`, with an error glyph.
+  - **Validity:** red and green only after the user has edited the field or sent the form (`:user-invalid`, `:user-valid` with `required` or `pattern`), and at once on `[aria-invalid="true"]`; in `--fail` and `--success`.
+  - **Tokens:** nine `--field-*` on `:root`.
   - **Docs:** `/styles/interactive/forms/`.
 - **The panel family** (`CSS-180`, `CSS-183`, `CSS-371`).
-  - **Parts:** `.panel` with `__header`, `__body` and `__footer`.
+  - **Parts:** `.panel` with `__header`, `__body` and `__footer`; a lone title spans the header.
   - **Modifiers:** `--bordered` and `--flush`.
-  - **Layout:** `.panel-grid` (`--panel-grid-min`).
-  - **Row:** `.panel__row` and `__row-item`, with the `--stack` and `--text-start` modes harvested from the site.
-  - **Behaviour:** a panel is a data surface. It paints no background, and it is a block, or a flex column once it has parts.
+  - **Layout:** `.panel-grid` (`--panel-grid-min`, 14rem by default).
+  - **Row:** `.panel__row` and `__row-item`, with the `--stack` mode harvested from the site and a `--text-start` mode for cells that read from the start.
+  - **Behaviour:** a panel is a data surface. It paints no background and sets no text colour, pads 16px, keeps outdented blocks inside it, and the prose measure stops at it. It is a block, or a flex column once it has parts; its layout weighs nothing, so `.grid` or a chart's layout on the same element wins.
+  - **In a caption-width box** (`.text-content-caption`, `.full-width-caption`, `.card-caption`) a panel pads the outdent, so its text stays on the text column's edge: on the left for all three, on the right too for `.text-content-caption`. The cells of such a `.panel-grid` or `.panel__row` pad it on both sides, `.card` cells included.
   - **Docs:** `/styles/bricks/panels/`; the card vs panel rule is in `STYLEGUIDE.md` (`CSS-182`).
-- **KPI figures** (`CSS-184`). `.stat`, `__label` and `__value`: tabular, and the value never wraps. `.stat--delta-up/-down` (with `--stat-delta-color`) and `.stat--signal`. Docs: `/styles/bricks/panels/#stats`. The value is bold.
-- **The legend** (`CSS-178`). `.legend`, `__item` and `__swatch` (`--line`, `--dashed`, `--dot`, `--band`), with colour from `--swatch-color` and the off state on `aria-pressed="false"`. Usable outside charts. Docs: `/styles/colors/legend/`.
+- **KPI figures** (`CSS-184`). `.stat`, `__label` and `__value`: the value is bold and tabular, never wraps, and sits at the bottom of a taller stat. `.stat--delta-up/-down` draw an arrow in `--positive` / `--negative` (through `--stat-delta-color`, set on the modifier); `.stat--signal` colours the value. A stat can be a panel, a panel body or a row cell. Docs: `/styles/bricks/panels/#stats`.
+- **The legend** (`CSS-178`). `.legend`, `__item` and `__swatch` (`--line`, `--dashed`, `--dot`, `--band`), with colour from `--swatch-color` and the off state on `aria-pressed="false"`. A `button.legend__item` drops the button look and keeps the focus ring. Usable outside charts. Docs: `/styles/colors/legend/`.
 - **Chart tokens** (`CSS-380`, `CSS-240`, `CSS-176`). 26 `--chart-*` names on `:root`:
-  - six series in RareCharts' palette;
+  - six series: `--signal`, `--orange`, then RareCharts' green, yellow, violet and red. Series 1 and 2 differ from RareCharts' own palette until its `0.9.8_7`;
   - surface, text, label, axis and grid;
   - range controls;
   - the tooltip, its size a fixed 13px;
   - fonts, and the focus ring.
 
-  Also `--surface-current`: cards set and paint it, a panel passes it through, and it is white on paper. RareCharts reads these names first from its `0.9.8_7`. Docs: `/styles/colors/chart-tokens/`.
-- **Semantic colour roles** (`CSS-121`): `--success`, `--warning`, `--danger` next to `--signal`; aliases `--positive`, `--negative`, `--neutral` (financial figures) and `--fail` (a check that did not pass); each with a `-bg` twin at 25% (`color-bg` mixin). KPI deltas read `--positive`/`--negative`, form validation `--success`/`--fail`. The blue palette moved into `colors/_base.scss` (`_blue.scss` removed).
-- **`--signal`** (`CSS-124`): the action and attention accent. It is blue, and the focus ring follows it (no visual change).
-- **Callout variants** (`CSS-156`): `.callout-signal` (plain information: a black stripe, no fill), `-success`, `-warning`, `-danger` (the stripe in the role's colour, the fill in its `-bg`).
-- **`.attribution`** (`CSS-379`): the credit look outside a blockquote.
+  `.card-inverted` resolves them again for the dark ground, and a light card inside it for the page, so a chart token set on `:root` stops at a card: set it on the card too. Also `--surface-current`: cards set and paint it, a panel passes it through, and it is white on paper. RareCharts reads these names first from its `0.9.8_7`; up to `0.9.8_6` it reads none. Docs: `/styles/colors/chart-tokens/`.
+- **Semantic colour roles** (`CSS-121`): `--success`, `--warning` and `--danger` next to `--signal`; the aliases `--positive`, `--negative`, `--neutral` (financial figures) and `--fail` (a check that did not pass); each with a `-bg` twin at 25% (`color-bg` mixin). KPI deltas read `--positive` / `--negative`, form validation `--success` / `--fail`, `.button-danger` reads `--danger`.
+- **`--signal`** (`CSS-124`): technical information and the attention accent, blue. It is the main chart colour (`--chart-series-1`), the focus ring (no visual change), the field accent and `.stat--signal`.
+- **`--brand-color-deep`** (#3a8000), with `.brand-color-deep`, `-bg` and `-link`: the primary button's fill under the pointer and the base of its pressed fill; it carries the white label at 4.9:1. A project that re-maps `--brand-color` sets `--brand-color-deep` too.
+- **Callout variants** (`CSS-156`): `.callout-signal` (plain information: a stripe in the text colour, no fill), `-success`, `-warning` and `-danger` (a stripe in the role's colour and a 25% fill of it, worked out on the callout, so it follows a role re-mapped on a surface). All four are left-aligned in `--text-color-dark`. To change a fill, set `--callout-bg` on the callout.
+- **Sidenotes:**
+  - `.sidenote-banner`: a note with a 4px stripe on its left instead of the margin-note look. On a tablet it takes columns 7–9, unless a wide block in its row holds column 7; on a phone the whole row;
+  - `.chart`, for the block that holds a chart in a note. Such a row stacks below 1024px, below 1226px when it sits directly in `article` or `article > section`, and on paper, so the chart gets the row's width. `.rc-chart` counts without the class; the class lets the row lay out before the chart script runs.
+- **Utilities:** `.self-start`, `-center`, `-end`, `-stretch`; `.opacity-0`, `-25`, `-50`, `-75`, `-100`; `mobile:`, `tablet:` and `desktop:font-size-xs`…`-xxl`.
+- **Sass:** the `below-desktop` mixin, one query for a tablet and a phone. `multi-breakpoint` is deprecated.
+- **Internal properties on `:root`:** `--outdent`, `--outdent-end` and thirteen `--_page-*`. They show in the API snapshot; do not set them.
 - **Docs:**
   - `.table-section` group rows and the reference-table recipe (`CSS-378`);
   - "Line height" on `/styles/typography/`;
-  - "Print" on `/styles/utilities/`.
+  - "Print" on `/styles/utilities/`;
+  - cards and the legend get pages of their own;
+  - `/styles/interactive/` replaces `/styles/typography/interactive/`, which redirects to it.
 
 ### Changed
 
-- **`.list-group-pack` balances on a desktop too** and needs no height: as many columns as fit there, 2 on mobile, 3 on a tablet. A height utility on the pack is reset.
-- **Unitless line-heights** (`CSS-375`): the tokens and every em leading in the text components. Each element now computes its own leading. Headings and code blocks keep theirs (`--line-height-sm`).
+- **The reading measure is one column wider:** six columns and five gaps on a desktop (505 → 610px at 1300px), eight and seven on a tablet (460 → 528px at 800px); a phone keeps the full width. Paragraphs, lists, `dl`, quotes, figures and `.text-content-width` follow it.
+- **`--text-content-caption`** is the measure plus the outdent on each side (it was the measure plus a column and 48px). Caption-width blocks are 32px wider than in v0.7.1 and hang evenly: 674px at 1300px. A site with its own `--text-content-width` gets them narrower, by one column less 16px. In a narrower container (a grid cell, a flex item) they are still the container plus the outdents.
+- **The prose measure stops at data components** (`CSS-374`, `CSS-384`): data tables, panels, stats, charts, and `.caption`, whose text now runs the block's full width. This covers `p`, lists, `dl`, `blockquote` and `figure`. A blockquote keeps the measure inside cards and collapsibles, and on paper.
+- **Every surface keeps outdented blocks inside it.** `.card-inverted` and the collapsible boxes now hold the whole family, as `.card` and `.panel` do: `pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the caption widths and `.teaser-bottom` no longer hang past them.
+- **A table in a caption-width box** puts its first column on the text edge.
+- **`.card-caption` is an alias of `.full-width-caption`** (`CSS-395`). On a paragraph or a figure it now reaches past the measure (505 → 954px at 1300px), and a margin or width utility on it wins.
+- **Sidenote rows** (`CSS-388`, `CSS-400`):
+  - **Desktop:** the text in columns 1–6, the note in 8–9 at the article's right edge, with no width cap (176 → 192px at 1300px). `.highlight`, `.text-content-caption`, `.lead` and `.teaser-bottom` take columns 1–7, and a wide block nested in the text ends at the text's edge: none reaches the note.
+  - **Tablet:** the row keeps its grid instead of stacking, so the note stands beside the text in a narrow column (131px at 900px). A table in a note needs `.table-scroll` there, or it widens the page.
+  - **Phone:** the stacked note gets a top rule, right alignment and its marker in the corner; a marked first line steps clear of the marker. `.footnote-inside-text` and `.aside-footer` take the same form.
+  - **Rhythm:** 16px between rows in the article flow, and the row's last block has no bottom margin. Inside a note, paragraphs and headings sit closer.
+  - **Links** in a note and in `.footnote-inside-text` are muted through `--link-color`, so link-buttons, colour classes and a chart's own link colour keep their look; `.button-link` turns muted with the links.
+  - **`.footnote-inside-text` and `.aside-footer`** float at the article's right edge, where the note column ends; they sat one column in.
+  - **On paper** the row keeps its grid; it stacked on any sheet narrower than 1024px. A row with a chart in its note still stacks, and a wide block fills columns 1–7.
+- **Headings:** h2 and h3 margins `16px 0 8px` (were `32px 0 16px`); h5 and h6 in `--primary-font`; the first heading of an article or of its first section, h4 included, has no top margin.
+- **Unitless line-heights** (`CSS-375`): the tokens and every em leading in the text components. Each element now computes its own leading: a `.font-size-xl` paragraph leads 36px (24px before), a `dt` 28.8px. h2–h4 take `--line-height-sm` (1.2) instead of the body's 24px; h1 keeps it. Code in a code block leads at 1.2 of its own size, about 1px a line less.
 - **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px, a sidenote row after a sidenote row too. Paragraph gaps and the `.air-*` spacers are unchanged.
-- **The prose measure stops at data components** (`CSS-374`, `CSS-384`): data tables, panels, stats and charts. This covers `p`, lists, `dl`, `blockquote` and `figure`.
-- **The `cite` look is scoped** to a blockquote's closing `cite` and `.attribution` (`CSS-379`).
-- **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground. A `.card` nested in it restores the light roles (`CSS-380`). RareCharts up to 0.9.8_6 reads `--border-color` directly, so on a dark card its range buttons have faint frames until 0.9.8_7.
-- **A panel pads 16px on every width** (`CSS-376`); in a caption-width box (`.text-content-caption`, `.full-width-caption`, `.card-caption`) its sides match the outdent, so its text stays on the text column's edge.
+- **Lists and tags:**
+  - `.list-group-pack` balances on a desktop too and needs no height: as many columns as fit there, 2 on mobile, 3 on a tablet. A height utility on the pack is reset;
+  - `.index-list` items lose their 8px gap, and the menu takes the body's leading;
+  - `.list-title` has no bottom padding, and a link in it reads as the label;
+  - `.tag` pads `2px 8px` at line-height 1.6.
+- **`.table-terminal`** sets its columns 8px apart, with flush outer edges and dense value rows; with `.table-striped`, rows keep 4px.
+- **`pre` on a tablet** keeps the desktop side padding (32px), so its code starts on the text edge, as on a desktop. Only a phone has 16px.
+- **The list in `.footnote`** starts on the block's text edge, with its numbers in the block's padding. It was 32px in.
+- **The `cite` look is scoped** to a `<cite>` directly in a `<blockquote>` (`CSS-379`); a credit under an image goes in a `<figcaption>`. RareCharts before 0.9.8_6 (0.9.8_5_1 and older) relied on the bare `cite` for its source line: use 0.9.8_6 or later. Up to 0.9.8_6 its source line and tooltip rows take the body's 1.5 leading.
+- **`.callout`** sits between two lines, above and below, instead of a frame with rounded corners.
+- **`.card-inverted`** re-maps its border roles and its chart tokens for the dark ground, and every library line inside it follows (`CSS-380`). Its links read `--link-color` and spare link-buttons. A light `.card` nested in it takes the page's roles back, including those a project re-maps on `:root`. RareCharts up to 0.9.8_6 reads `--border-color` directly, so on a dark card its range buttons have faint frames until 0.9.8_7.
+- **`.card-grid` title links** lose the brand fill under the pointer.
+- **The cookie notice** (`CSS-393`): its button takes the default look; its badge is placed from the notice's own edge and, on a phone, now sits on that edge.
+- **The phone mock-up** centres in its container.
 - **Element defaults stop at a RareCharts chart** (`.rc-chart`). `.button` still applies there. The API snapshot lists `.rc-chart` as a recognised host hook, not as a library class.
 - **The page-title `h1` shrinks on narrow phones** before it breaks a word (`CSS-382`).
-- **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory. The output is unchanged.
-- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 421,076 → **447,443 B** raw (+6.3%), gzip 35,544 → **39,345 B** (+10.7%), Brotli 23,045 → **25,980 B** (+12.7%); `rare.css` 497,303 → 526,516 B raw, gzip 37,918 → 41,835, Brotli 24,386 → 27,396. About half of it is the button system and forms.
+- **The `.blue*` colour classes** come before the brand and supporting classes in the stylesheet: on an element with two colour classes, the other one wins.
+- **Build:** the rd-gate classifier keeps a selector with a `:not()` exclusion in the reviewed inventory, and an icon name inside a pseudo-class no longer ungates a rule, so the new icon-button rules stay inside `.rd`.
+- **Bundle** (`SIZE-BASELINE.md`): `rare.min.css` 421,076 → **463,979 B** raw (+10.2%), gzip 35,544 → **41,132 B** (+15.7%), Brotli 23,045 → **27,144 B** (+17.8%); `rare.css` 497,303 → 544,757 B raw, gzip 37,918 → 43,741, Brotli 24,386 → 28,896. Most of it is the button system and forms.
 
 ### Fixed
 
-- **Sidenote rules** reached every nested element (`CSS-372`). A chart in a sidenote had its header opened to five grid columns and its title cut.
-- **Option-table code broke mid-word** at 375px (`CSS-373`). On paper it wraps again.
-- **Link-buttons kept the text-link colour** in `.card-inverted`, sidenotes and the sidebar.
+- **Sidenotes:**
+  - their rules reached every nested element (`CSS-372`): a chart in a note had its header opened to five grid columns and its title cut, and a nested `.sidenote` became a note;
+  - two notes in one row overlapped; the second now sits under the first;
+  - a chart in a note was squeezed into the note column at 1024–1225px in the article flow.
+- **`.caption` pushed the page sideways** by up to 16px at 1117–1260px.
+- **`.wide-background`** ran 8px off the edges on a tablet and up to 15px at 1024–1147px, with a horizontal scroll near 1100px. It now runs edge to edge at every width; `.wide-background-text-content-wrapper` takes its padding from the band (none outside one).
+- **A light card nested in `.card-inverted`** inherited the light text of the dark one.
+- **Option-table code broke mid-word** at 375px (`CSS-373`). On screen, in the first column of a `.table-scroll` table, `code` does not break at a hyphen either (`.table-horizontal-borders` broke into three lines). On paper it wraps again, a first-column name only at its hyphens.
+- **Link-buttons kept the text-link colour** in `.card-inverted`, sidenotes, inline footnotes, the sidebar and the cookie notice (`CSS-392`).
+- **`button:hover` leaked** a black frame onto components that style their own buttons: carousel arrows and dots, the search box's clear button, header icons.
+- **A `.text-content-caption` that was the first child of any block in an article** had its padding set to `0 0 8px`: a bordered data block lost its 16px 32px. It now keeps its own padding.
 - **Print:**
   - links inside charts printed their URL (`CSS-383`);
-  - caption outdents hung off the paper column (`CSS-385`).
-- **A panel that is an article's first child** lost its padding.
+  - caption outdents hung off the paper column (`CSS-385`);
+  - a dark card printed light text on white paper; it now prints light, in a thin frame (`CSS-401`);
+  - `.section-icon` lost its hang on a narrow sheet.
 
 ### Removed
 
-- **`.card-dashboard-bordered`**, **`.card-row-bordered`**, **`.card-row-bordered-item`**. Use `.panel .panel--bordered`, `.panel__row` and `.panel__row-item` (`CSS-181`). The site migrated in the same change (`CSS-183a`).
+- **`.card-dashboard-bordered`**, **`.card-row-bordered`**, **`.card-row-bordered-item`**. Use `.panel .panel--bordered`, `.panel__row` and `.panel__row-item` (`CSS-181`). A panel pads 16px, not 16px 32px, keeps outdented blocks inside it and lets paragraphs run its width. The site migrated in the same change (`CSS-183a`).
+- **`.card-header`** (`CSS-388`). A card has no parts of its own: put `.border-bottom` on the header block. Its line is `--border-color`, a step darker than the old `--border-color-light` (#ccc rather than #e4e4e4 on a light card). A fixed header, body and footer are the panel's, for data.
+- **`colors/_blue.scss`**: its tokens and `.blue*` classes are in `colors/_base.scss`. A build from the SCSS source that loads `colors/blue` loads `colors/base` instead.
 
 ## [v0.7.1] — 2026-10-20 — Content Starter
 

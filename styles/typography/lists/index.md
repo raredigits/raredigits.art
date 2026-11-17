@@ -47,7 +47,7 @@ The label of a list group, declared on an `<h5>`: uppercase and bold, above an u
 
 `index-list` is the compact "section title + short link list" pattern used for table-of-contents style navigation. The title is the thing you scan first; the items underneath stay tight and quiet.
 
-The markup is deliberately plain: a `.list-title` label on an `<h5>`, then a bare `<ul>` — the component styles its own `ul`/`li` (resets markers, sets item rhythm), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (`margin-bottom`), so stacked or packed index lists separate cleanly — it is also the canonical content unit inside `.list-group-pack` columns.
+The markup is deliberately plain: a `.list-title` label on an `<h5>`, then a bare `<ul>` — the component styles its own `ul`/`li` (no markers, no indent, no margin between entries), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (`margin-bottom`), so stacked index lists separate cleanly — it is also the canonical content unit inside `.list-group-pack` columns.
 
 <div class="index-list">
     <h5 class="list-title"><a href="">Typography</a></h5>
@@ -116,9 +116,9 @@ In short: `.list-columns` controls columns, `.list-group-pack` protects groups, 
 
 ### `.list-group-pack`
 
-For grouped sublists with subheadings. This utility balances the groups across the columns and keeps each child block intact with `break-inside: avoid`, so a label and its items travel together. The canonical child is an `.index-list` — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.
+For grouped sublists with subheadings. This utility balances the groups across the columns and keeps each child block intact with `break-inside: avoid`, so a label and its items travel together. The canonical child is an `.index-list` — the packer arranges the columns and sets the 16px gap under each group, the index lists carry the content.
 
-The pack needs no height: on a desktop it fits as many columns as the container allows, and you can tune their minimum width with `--list-group-pack-min`.
+The pack needs no height: on a desktop it fits as many columns as the container allows, and you can tune their minimum width with `--list-group-pack-min`. A height utility on it has no effect.
 
 On narrow viewports the number of columns is fixed: 2 on mobile, 3 on tablet.
 

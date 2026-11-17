@@ -21,19 +21,22 @@ permalink: '/styles/bricks/cards/'
        .card
     </div>
     <p>A card is a versatile connector piece — it takes on any visual style through utilities: sizes, colors, margins, paddings, alignment, borders. Content-wise it can be a simple container or develop its own hierarchy, holding any content type, blocks, or interactive elements.</p>
+    <p>A card has no parts of its own: a fixed header, body and footer belong to the <a href="/styles/bricks/panels/">panel</a>, which is for data. A card’s header is a block with <code>.border-bottom</code> and a padding utility, a footer one with <code>.border-top</code>.</p>
     <div class="card text-content-width stretched">
-        <div class="card-header padding-md">.card-header</div>
+        <div class="border-bottom padding-md">.border-bottom</div>
         <div class="column gap-sm padding-md">
             <div class="width-50 skeleton-row"></div>
             <div class="skeleton-row width-100"></div>
         </div>
+        <div class="border-top padding-md">.border-top</div>
     </div>
-    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>. Each is a surface: it paints its background from <code>--surface-current</code>, and a chart on it (RareCharts 0.9.8_7 and later) paints its label plates with the same colour. <code>.card-inverted</code> also re-maps the text, border and chart roles for its dark ground, so a panel divider or a chart on it reads (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). A <code>.card</code> nested in a <code>.card-inverted</code> is a light surface again: it restores those roles.</p>
+    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>. Each is a surface: it paints its background from <code>--surface-current</code>, and a chart on it (RareCharts 0.9.8_7 and later) paints its label plates with the same colour. <code>.card-inverted</code> also re-maps the text, border and chart roles for its dark ground, so a panel divider or a chart on it reads (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). A <code>.card</code> nested in a <code>.card-inverted</code> is a light surface again: it takes back the page's values of those roles, a project's own on <code>:root</code> included.</p>
+    <p>Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside both cards, as in a panel. On paper a <code>.card-inverted</code> prints as a light card in a thin frame (<a href="/styles/utilities/#print">Print</a>).</p>
 </section>
 
 <section>
     <h2>Card Grid</h2>
-    <p>When one card is not enough and the cards form a regular, repeated set, <code>.card-grid</code> is the special case that arranges <code>.card-grid__item</code> tiles into a responsive grid. It is the one place where the card surface owns its own layout, because the tiles are uniform by design. Column count defaults to five via the <code>--cols-2</code> / <code>--cols-3</code> / <code>--cols-4</code> modifiers (or the <code>--card-grid-cols</code> custom property); below desktop every variant collapses to two so tiles stay legible.</p>
+    <p>When one card is not enough and the cards form a regular, repeated set, <code>.card-grid</code> is the special case that arranges <code>.card-grid__item</code> tiles into a responsive grid. It is the one place where the card surface owns its own layout, because the tiles are uniform by design. Column count defaults to five; the <code>--cols-2</code> / <code>--cols-3</code> / <code>--cols-4</code> modifiers (or the <code>--card-grid-cols</code> custom property) set it; below desktop every variant collapses to two so tiles stay legible.</p>
 
     <p>The grid ships two tile treatments. <code>.card-grid--cards</code> turns items into square card surfaces:</p>
 
@@ -68,10 +71,10 @@ permalink: '/styles/bricks/cards/'
         <div>
             <img src="/assets/img/illustrations/poker.jpg" alt="">
         </div>
-        <div class="card-header padding-md">
-            <h4>A “deck” is just composition</h4>
-        </div>
-        <div class="padding-x-md">
+        <div class="padding-md">
+            <div class="border-bottom padding-b-md">
+                <h3>A “deck” is just composition</h3>
+            </div>
             <p>This block is a <code>.card-inverted</code> wrapping an image, a header, prose, and a nested card — no special deck class involved.</p>
             <div class="card center-center padding-lg black">
               .card.center-center.padding-lg
@@ -79,7 +82,7 @@ permalink: '/styles/bricks/cards/'
             <div class="divider-lg"></div>
             <p>Cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
         </div>
-        <cite class="attribution absolute right-md bottom-md">.card-inverted</cite>
+        <code class="absolute right-md bottom-md">.card-inverted</code>
     </div>
     <p>The takeaway: any positioning a card layout needs is reachable through the existing utilities. Before adding a new class, check whether alignment and positioning already cover it — they almost always do.</p>
 </section>
@@ -141,7 +144,7 @@ permalink: '/styles/bricks/cards/'
                     <span class="font-size-xs gray-mid-dark">Valid until the heat death of the universe. One universe per customer.</span>
                 </div>
             </div>
-            <cite class="attribution absolute right-md bottom-md">.bordered</cite>
+            <code class="absolute right-md bottom-md">.bordered</code>
         </div>
     </div>
     <p>Not a single new style went into this section. The confetti, the stamp and the poster itself are cards plus the existing decoration, color, spacing, positioning and typography utilities, with stock components on top: <code>.button-primary</code>, <code>.tag</code>, <code>.callout</code>, and plain <code>&lt;mark&gt;</code> and <code>&lt;s&gt;</code>. No inline styles, no one-off classes: open the markup and every class in it is documented in the library.</p>

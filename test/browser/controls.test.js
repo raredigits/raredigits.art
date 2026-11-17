@@ -133,7 +133,7 @@ describe('CSS-040: variants', () => {
     expect(contrast(p['background-color'], p.color), 'primary label').toBeGreaterThanOrEqual(4.5);
     await force(page, 'b-primary', 'hover');
     const ph = await css(page, 'b-primary', ['background-color', 'color']);
-    // --brand-color-dark (#3a8000) under a white label: AA, about 4.9:1
+    // --brand-color-deep (#3a8000) under a white label: AA, about 4.9:1
     expect(ph).toEqual({ 'background-color': 'rgb(58, 128, 0)', color: 'rgb(255, 255, 255)' });
     expect(contrast(ph['background-color'], ph.color), 'primary hover label').toBeGreaterThanOrEqual(4.5);
     await force(page, 'b-primary', null);
@@ -159,6 +159,30 @@ describe('CSS-040: variants', () => {
     expect((await css(page, 'b-ghost', ['background-color']))['background-color']).not.toBe('rgba(0, 0, 0, 0)');
     expect(await css(page, 'b-link', ['background-color', 'text-decoration-line', 'text-decoration-color']))
       .toEqual({ 'background-color': 'rgba(0, 0, 0, 0)', 'text-decoration-line': 'underline', 'text-decoration-color': 'rgb(0, 179, 0)' });
+    await page.close();
+  });
+});
+
+describe('a link-button reads as a text link, under the pointer too', () => {
+  it('the same underline and the same rising fill as a text link, behind the label', async () => {
+    const page = await open();
+    const LOOK = ['text-decoration-line', 'text-decoration-color', 'text-decoration-thickness', 'background-image', 'background-size'];
+    const text = await css(page, 'a-text', LOOK);
+    expect(text['background-size']).toBe('100% 0px');
+    for (const id of ['b-link', 'b-link-a']) {
+      expect(await css(page, id, LOOK), `${id} at rest`).toEqual(text);
+      expect(await css(page, id, ['background-origin', 'background-clip'])).toEqual({ 'background-origin': 'content-box', 'background-clip': 'content-box' });
+    }
+    await force(page, 'a-text', 'hover');
+    const textHover = await css(page, 'a-text', LOOK);
+    expect(textHover['background-size']).not.toBe('100% 0px');
+    await force(page, 'a-text', null);
+    for (const id of ['b-link', 'b-link-a']) {
+      await force(page, id, 'hover');
+      // was: no fill, the underline thickened to 2px
+      expect(await css(page, id, LOOK), `${id} under the pointer`).toEqual(textHover);
+      await force(page, id, null);
+    }
     await page.close();
   });
 });
@@ -250,6 +274,56 @@ describe('CSS-044 / CSS-045: group and full width', () => {
     expect(await css(page, 'g3', radii)).toEqual({ 'border-top-left-radius': '0px', 'border-top-right-radius': '32px' });
     expect(await css(page, 'g2', ['background-color', 'border-top-color', 'z-index']))
       .toEqual({ 'background-color': 'rgb(240, 240, 240)', 'border-top-color': 'rgb(0, 0, 0)', 'z-index': '1' });
+    await page.close();
+  });
+
+  it('a pressed primary toggle: white on the pressed fill in a group, black on the brand fill alone', async () => {
+    const page = await open();
+    const inGroup = await css(page, 'gp2', ['background-color', 'color']);
+    expect(inGroup.color).toBe('rgb(255, 255, 255)');
+    expect(contrast(inGroup['background-color'], inGroup.color), 'pressed in a group').toBeGreaterThanOrEqual(4.5);
+    const alone = await css(page, 'b-primary-pressed', ['background-color', 'color']);
+    expect(alone).toEqual({ 'background-color': 'rgb(0, 255, 78)', color: 'rgb(0, 0, 0)' }); // was white on the bright green, 1.3:1
+    expect(contrast(alone['background-color'], alone.color), 'pressed alone').toBeGreaterThanOrEqual(4.5);
+    await force(page, 'b-primary-pressed', 'hover');
+    expect(await css(page, 'b-primary-pressed', ['background-color', 'color'])).toEqual({ 'background-color': 'rgb(58, 128, 0)', color: 'rgb(255, 255, 255)' });
+    await page.close();
+  });
+
+  it('a pressed primary in a group reads in every state; a bare primary in a chart keeps the browser look', async () => {
+    const page = await open();
+    const look = (id) => css(page, id, ['background-color', 'color']);
+    const dis = await look('gp3');
+    expect(dis.color).toBe('rgb(255, 255, 255)'); // was black on the dark pressed fill, 3.3:1
+    const ring = await page.evaluate(() => getComputedStyle(document.getElementById('gp4'), '::after').borderTopColor);
+    expect(ring).toBe('rgb(255, 255, 255)'); // the busy ring on the dark fill
+    await force(page, 'b-chart-primary', 'hover');
+    expect((await look('b-chart-primary')).color).not.toBe('rgb(255, 255, 255)'); // was white on the browser's grey
+    await page.close();
+  });
+
+  it('a disabled link-button keeps its fill down; a block one has none; .button-md follows the field', async () => {
+    const page = await open();
+    await force(page, 'b-link-dis', 'hover');
+    expect((await css(page, 'b-link-dis', ['background-size']))['background-size']).toBe('100% 0px');
+    await force(page, 'b-link-block', 'hover');
+    expect((await css(page, 'b-link-block', ['background-image']))['background-image']).toBe('none');
+    await page.evaluate(() => document.documentElement.style.setProperty('--field-padding-y', '14px'));
+    expect((await box(page, 'b-md')).h).toBeCloseTo((await box(page, 'h-field')).h, 0);
+    await page.close();
+  });
+
+  it('a submit button moves to the left with utilities; a button follows the field height', async () => {
+    const page = await open();
+    const [field, submit] = [await box(page, 'f-left-field'), await box(page, 'f-left-submit')];
+    expect(submit.x).toBeLessThan(field.right + 40); // next to the field, not at the row's right edge
+    const h = async () => [(await box(page, 'h-field')).h, (await box(page, 'h-button')).h];
+    const [f0, b0] = await h();
+    expect(b0).toBeCloseTo(f0, 0);
+    await page.evaluate(() => document.documentElement.style.setProperty('--field-padding-y', '14px'));
+    const [f1, b1] = await h();
+    expect(f1).toBeGreaterThan(f0 + 5);
+    expect(b1).toBeCloseTo(f1, 0); // one height, also after a project changes the field's
     await page.close();
   });
 
@@ -381,6 +455,8 @@ describe('CSS-100…105: forms', () => {
     expect(await css(page, 'f-check-dis', ['background-color', 'cursor'])).toEqual({ 'background-color': 'rgb(136, 136, 136)', cursor: 'default' });
     expect((await css(page, 'f-radio', ['border-top-left-radius']))['border-top-left-radius']).toBe('50%');
     expect((await css(page, 'f-radio-on', ['box-shadow']))['box-shadow']).toMatch(/inset/);
+    // a radio in a group with nothing picked matches :indeterminate: it stays empty, not filled
+    expect(await css(page, 'f-radio-none', ['background-color', 'border-top-color'])).toEqual({ 'background-color': 'rgb(255, 255, 255)', 'border-top-color': 'rgb(136, 136, 136)' });
     expect((await css(page, 'lbl-check', ['cursor'])).cursor).toBe('pointer');
     expect(await css(page, 'lbl-dis', ['color', 'cursor'])).toEqual({ color: 'rgb(136, 136, 136)', cursor: 'default' });
     // on the text line: the box centre near the label's x-height middle

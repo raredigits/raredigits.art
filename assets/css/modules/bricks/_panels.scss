@@ -48,27 +48,22 @@
 
 // A panel that hangs into the outdent (a caption width) steps its content back
 // in by the outdent, so the text in it stays on the text column's edges, as a
-// table in a caption box does. `.text-content-caption` hangs on both sides
-// (the right side only as far as the room there, `outdent` in
-// _text-content.scss); the other two on the left. On a phone the outdent is
-// `--space-sm`, below the panel's own padding, which then stays. Not where the
-// outdent is contained (in a card, a panel, a collapsible's content), and not
-// on a flush panel.
-.panel:not(.panel--flush, :where(.card, .panel, .collapsible-content) *) {
+// table in a caption box does. `.text-content-caption` hangs on both sides,
+// the other two on the left. In an article it hangs by the full outdent; in a
+// narrower container its width is capped at the container plus `--outdent`
+// and `--outdent-end` (`caption-width`, typography/_text-content.scss), so
+// below ~1270px the right side hangs by `--outdent-end` only and the text
+// there stops up to 16px short of the container's edge. Where the
+// outdent is below the panel's own padding (`--space-sm` on a phone, 0 on
+// paper) the padding stays. Not where a surface holds the outdent
+// (`$outdent-surfaces`), and not on a flush panel.
+.panel:not(.panel--flush, :where(#{co.$outdent-surfaces}) *) {
+    &:is(#{co.$caption-boxes}) {
+        padding-left: max(var(--space-md), var(--outdent));
+    }
+
     &.text-content-caption {
-        padding-left: var(--space-lg);
-        padding-right: min(var(--space-lg), var(--field-width) + var(--space-md));
-    }
-
-    &:is(.full-width-caption, .card-caption) {
-        padding-left: var(--space-lg);
-    }
-
-    @include bp.mobile {
-        &:is(.text-content-caption, .full-width-caption, .card-caption) {
-            padding-left: var(--space-md);
-            padding-right: var(--space-md);
-        }
+        padding-right: max(var(--space-md), var(--outdent));
     }
 }
 
@@ -161,6 +156,19 @@
     flex: 1;
     padding: var(--space-md);
     text-align: center;
+}
+
+// A grid of panels or a row of cells that hangs into the outdent (a caption
+// width) steps every cell's content in by the outdent, on both sides, as a
+// panel with the caption width does (above): the outer cells put their text
+// on the text column's edge (in an article; in a narrower container the
+// right cell's stops up to 16px short, as above), the inner ones match them,
+// and a centred cell
+// stays centred. Where the outdent is below the cell's own padding (a phone,
+// paper) the padding stays; not where a surface holds the outdent.
+:is(.panel-grid, .panel__row):is(#{co.$caption-boxes}):not(:where(#{co.$outdent-surfaces}) *) > :is(.panel:not(.panel--flush), .panel__row-item, .card, .card-inverted) {
+    padding-left: max(var(--space-md), var(--outdent));
+    padding-right: max(var(--space-md), var(--outdent));
 }
 
 .panel__row > .panel__row-item:not(:last-child) {

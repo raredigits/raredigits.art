@@ -18,7 +18,7 @@ permalink: '/styles/interactive/buttons/'
     </div>
 <pre class="text-content-caption"><code>&lt;button type="button"&gt;Button element&lt;/button&gt;
 &lt;a class="button" href="/styles/interactive/"&gt;Link as a button&lt;/a&gt;</code></pre>
-    <p>The default is a light grey control (<code>--gray-lightest</code>, its label <code>--gray-dark</code>) with rounded corners (<code>--space-lg</code>) and a light frame; under the pointer it turns white with a black frame and label, and grey while pressed. Its text stays black on a dark surface such as <code>.card-inverted</code>, on a button and on a link alike: the card's link colour is for text links.</p>
+    <p>The default is a light grey control (<code>--gray-lightest</code>, its label <code>--gray-dark</code>) with rounded corners (<code>--space-lg</code>) and a light frame; under the pointer it turns white with a black frame and label, and grey while pressed. Its label stays dark on a dark surface such as <code>.card-inverted</code>, on a button and on a link alike: the card's link colour is for text links.</p>
     <p>Until <code>v0.7.2</code> a bare button was a block-level grey pill; it is inline now. To give one a line of its own, put it in a block (a <code>&lt;p&gt;</code>, a <code>&lt;div&gt;</code>), or take the full width with <a href="#block"><code>.button-block</code></a>. The <code>.block</code> utility works on a <code>&lt;button&gt;</code> but not on <code>a.button</code>: <code>.button</code> comes after the utilities in the stylesheet and has the same weight.</p>
 </section>
 
@@ -32,7 +32,7 @@ permalink: '/styles/interactive/buttons/'
     </div>
     <dl>
         <dt><code>.button-primary</code></dt>
-        <dd>The one action that matters on the screen, in the brand colour: <code>--brand-color</code>, <code>--brand-color-dark</code> under the pointer and darker still while pressed. The label is black (<code>--primary-color</code>) at rest, about 15:1 on the brand green, and turns white under the pointer and while pressed.</dd>
+        <dd>The one action that matters on the screen, in the brand colour: <code>--brand-color</code>, <code>--brand-color-deep</code> under the pointer and darker still while pressed. The label is black (<code>--primary-color</code>) at rest, about 15:1 on the brand green, and turns white on the dark fills: under the pointer, while pressed, and on a pressed toggle in a group. A pressed toggle on its own keeps the brand fill and the black label. A project that re-maps <code>--brand-color</code> sets <code>--brand-color-deep</code> too, to a shade that carries white text at 4.5:1 or more; otherwise the button turns the library green under the pointer.</dd>
 
         <dt><code>.button-ghost</code></dt>
         <dd>No frame until the pointer is on it. For toolbars and secondary actions in a row. Its label is the text colour of the surface it sits on (<code>--primary-text-color</code>) and its hover tint a share of that colour, so it reads on a light page and on <code>.card-inverted</code> alike.</dd>
@@ -41,7 +41,7 @@ permalink: '/styles/interactive/buttons/'
         <dd>A destructive action, on <code>--danger</code> shaded by 15%, so the white label reads at 5.3:1.</dd>
 
         <dt><code>.button-link</code></dt>
-        <dd>Reads as a text link, keeps the button's box, so it lines up with the buttons next to it.</dd>
+        <dd>Reads as a text link: the link's underline, and under the pointer its fill rising behind the label. It keeps the button's box, so it lines up with the buttons next to it.</dd>
     </dl>
 <pre class="text-content-caption"><code>&lt;button class="button-primary" type="submit"&gt;Save&lt;/button&gt;
 &lt;a class="button button-ghost" href="…"&gt;Details&lt;/a&gt;</code></pre>
@@ -95,7 +95,7 @@ permalink: '/styles/interactive/buttons/'
     <h2 id="states">States</h2>
     <dl>
         <dt>Hover, pressed</dt>
-        <dd>Each variant darkens its frame or its fill. The change is a 0.15s colour fade; nothing moves. With reduced motion it is instant.</dd>
+        <dd>Each variant darkens its frame or its fill. The change is a 0.15s colour fade; nothing moves. <code>.button-link</code> raises its link fill instead, as a text link does, in 0.23s. With reduced motion it is instant.</dd>
 
         <dt>Keyboard focus</dt>
         <dd>The library's <a href="/styles/interactive/#keyboard-focus">focus ring</a>, in <code>--signal</code>.</dd>
@@ -140,7 +140,18 @@ permalink: '/styles/interactive/buttons/'
 
 <section>
     <h2 id="recolour">Re-colouring a button</h2>
-    <p>Buttons have no tokens of their own: the look is written with the library's spacing, type and colour tokens, and the corners are <code>--space-lg</code>. A variant re-colours a button through six slots on its class, which the default look reads, each with the default as its fallback: <code>--button-bg</code> (<code>--white</code>), <code>--button-text</code> (<code>--primary-color</code>), <code>--button-border-color</code> (<code>--border-color</code>), <code>--button-bg-hover</code> (the same fill), <code>--button-border-color-hover</code> (<code>--primary-color</code>) and <code>--button-bg-active</code> (<code>--bg-color</code>). Set them on a class or an element for a colour the library does not ship:</p>
+    <p>Buttons have no tokens of their own: the look is written with the library's spacing, type and colour tokens, and the corners are <code>--space-lg</code>. A variant re-colours a button through six slots on its class. The default look reads them, each with the default as its fallback:</p>
+    <div class="table-scroll card-caption">
+        <table class="table-bordered">
+            <thead><tr><th></th><th>At rest</th><th>Under the pointer</th></tr></thead>
+            <tbody>
+                <tr><td>Fill</td><td><code>--button-bg</code> (<code>--gray-lightest</code>)</td><td><code>--button-bg-hover</code> (the <code>--button-bg</code> a variant sets, else <code>--white</code>)</td></tr>
+                <tr><td>Label</td><td><code>--button-text</code> (<code>--gray-dark</code>)</td><td><code>--button-text</code> (<code>--primary-color</code>)</td></tr>
+                <tr><td>Frame</td><td><code>--button-border-color</code> (<code>--border-color</code>)</td><td><code>--button-border-color-hover</code> (<code>--primary-color</code>)</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>While pressed the fill is <code>--button-bg-active</code> (<code>--bg-color</code>); the label and the frame stay as under the pointer. Set the slots on a class or an element for a colour the library does not ship:</p>
 <pre class="text-content-caption"><code>.button-signal {
     --button-bg: var(--signal);
     --button-text: var(--white);
@@ -148,7 +159,7 @@ permalink: '/styles/interactive/buttons/'
     --button-bg-hover: var(--blue-dark);
     --button-border-color-hover: transparent;
 }</code></pre>
-    <p>The sizes work the same way, with <code>--button-padding-x</code>, <code>--button-padding-y</code> and <code>--button-font-size</code>.</p>
+    <p>The sizes work the same way: <code>--button-padding-x</code> (<code>--space-md</code>), <code>--button-padding-y</code> (<code>--field-padding-y</code>) and <code>--button-font-size</code> (<code>--font-size-md</code>). So a default button stays as tall as a field when a project changes the field's padding. The label sits 1px below the centre: 9px above and 7px below at the default.</p>
 </section>
 
 <section>

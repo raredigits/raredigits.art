@@ -1,5 +1,6 @@
 @use "../utilities/breakpoints" as *;
 @use "text-content" as tc; // forwarded before this file: no change in output order
+@use "../bricks/contain-outdents" as co; // the lists only, no CSS
 
 // ARTICLE FIGURES (CSS-127, v0.7.1)
 // An image (or table, or chart) with its caption and source, set in the prose
@@ -25,13 +26,10 @@ article figure:not(:where(.carousel-slide, .epigraph)),
     }
 }
 
-// On the reading measure — except inside a data component, which lays out
-// its own content (CSS-384; the list is the prose measure's, CSS-374). The
-// exclusion adds no weight: (0,0,2) and (0,1,0), as before.
-article figure:not(:where(.carousel-slide, .epigraph)):not(:where(#{tc.$measure-free}) *),
-.figure:not(:where(#{tc.$measure-free}) *) {
-    max-width: var(--text-content-width);
-
+// On the reading measure, stopping where the prose measure stops
+// (`reading-measure`, _text-content.scss). The exclusion adds no weight:
+// (0,0,2) and (0,1,0), as before.
+@include tc.reading-measure("article figure:not(:where(.carousel-slide, .epigraph)), .figure") {
     @include mobile {
         max-width: 100%;
     }
@@ -39,8 +37,9 @@ article figure:not(:where(.carousel-slide, .epigraph)):not(:where(#{tc.$measure-
 
 // Widths. A figure takes the library's generic width classes like any other
 // block: `.full-width` (the content column), `.text-content-caption` (the
-// measure plus the outdent on both sides), `.full-width-caption` (the outdent
-// on the left, the column edge on the right). `.full-width` sets no max-width,
+// measure plus the outdent on both sides), `.full-width-caption` and its alias
+// `.card-caption` (the outdent on the left, the column edge on the right).
+// `.full-width` sets no max-width,
 // so it lifts the figure's reading-measure cap here.
 figure.full-width {
     max-width: none;
@@ -60,7 +59,7 @@ article figcaption:where(:not(.carousel-caption)),
 
 // A wider figure's caption stays on the reading measure; it starts at the
 // image edge, so it reads the same inside a card, where nothing outdents.
-figure:is(.full-width, .text-content-caption, .full-width-caption) figcaption {
+figure:is(.full-width, #{co.$caption-boxes}) figcaption {
     max-width: var(--text-content-width);
 }
 

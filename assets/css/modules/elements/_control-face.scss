@@ -1,0 +1,51 @@
+// THE CONTROL FACE (v0.7.2): what the default button, a text field and the
+// file button share, and how a component that is a <button> drops the
+// button's look. Sass only: this file emits no CSS, and nothing goes on
+// :root (no button tokens, CSS-040). Used by elements/_buttons.scss,
+// elements/_forms.scss and the components that reset a button.
+
+// A button's corners: a capsule.
+$radius: var(--space-lg);
+
+// The default button's colours. A variant overrides them through the
+// `--button-*` slots (elements/_buttons.scss); these are the slots'
+// fallbacks. `$ink` is the strong one: the label and the frame under the
+// pointer and while pressed, and the busy ring.
+$rest-bg: var(--gray-lightest);
+$rest-text: var(--gray-dark);
+$hover-bg: var(--white);
+$active-bg: var(--bg-color);
+$ink: var(--primary-color);
+
+// 1px more above, 1px less below: the label's line box carries the descender
+// space, so an even padding leaves it optically high. The total stays, so a
+// button is as tall as a field with the same padding, and the two stand on
+// one baseline.
+@mixin control-padding($y, $x) {
+    padding: calc(#{$y} + 1px) $x calc(#{$y} - 1px);
+}
+
+// The button's face at one size, on one rest fill: the padding, the 1px
+// frame, the capsule, the colours, the type size. The caller sets the font
+// family (or the `font` shorthand) before it, and anything else after it.
+@mixin button-face($padding-y, $padding-x, $font-size, $bg, $text, $border-color) {
+    @include control-padding($padding-y, $padding-x);
+
+    border: 1px solid $border-color;
+    border-radius: $radius;
+    background: $bg;
+    color: $text;
+    font-size: $font-size;
+    line-height: var(--line-height-sm);
+}
+
+// A component that is a <button> but should not read as one (a legend
+// toggle, a disclosure trigger, an icon): no padding, frame, fill or type
+// of the default button. The corners stay, so a component's focus ring keeps
+// its own shape; the component sets its colour after the include.
+@mixin unbutton {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+}

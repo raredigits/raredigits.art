@@ -81,7 +81,7 @@ permalink: '/styles/layout/'
     gap: var(--grid-gap-global);
 
     @include bp.mobile {
-        grid-template-columns: var(--global-grid-columns-mobile);
+        grid-template-columns: var(--grid-columns-global-mobile);
         gap: var(--space-xs);
     }
 }
@@ -162,11 +162,14 @@ permalink: '/styles/layout/'
         Text content in articles is limited to a maximum width on larger screens. This isn’t just about aesthetics—it’s about readability. Too-long lines significantly reduce reading speed and comprehension.
     </p>
     <pre><code><span class="code-comment">// css/modules/typography/_text-content.scss</span>
---text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
+--text-content-width: calc((var(--global-fr) * 6) + (var(--grid-gap) * 5));
 
 article p {
     max-width: var(--text-content-width);
 }</code></pre>
+    <p>
+        The measure is six columns of the page grid on a desktop (676 px at 1,440 px), eight on a tablet, and the full column on a phone.
+    </p>
     <p>
         For visitors who need to quickly scan and understand information, this thoughtful constraint makes your content immediately more accessible.
     </p>
@@ -175,7 +178,7 @@ article p {
 <section>
     <h2>Responsive Behavior</h2>
     <div class="meta-info">
-        css/modules/_breakpoints.scss<br>
+        css/modules/utilities/_breakpoints.scss<br>
     </div>
     <p>
         The style system adapts to three key device categories for optimal data presentation.
@@ -191,6 +194,9 @@ article p {
             <strong>Desktop</strong> (1,024 px and above): Utilizes available space for a rich, detailed presentation of information.
         </li>
     </ul>
+    <p>
+        In SCSS each range is a mixin from <code>utilities/_breakpoints.scss</code>: <code>mobile</code>, <code>tablet</code> and <code>desktop</code>, and <code>below-desktop</code> for a tablet and a phone together in one media block (<code>width &lt; 1024px</code>). <code>multi-breakpoint</code> is deprecated.
+    </p>
    <p>
         To maintain readability of business data on widescreen displays, content width is capped at 1,600 px.
     </p>

@@ -75,7 +75,7 @@ There are no hidden layout “surprises”. Control remains with the developer.
 <div class="sidenote-wrapper">
   <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
   <div class="sidenote">
-    <div id="bar-chart-understanding"></div>
+    <div id="bar-chart-understanding" class="chart"></div>
   </div>
   <div>
     <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>

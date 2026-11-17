@@ -102,7 +102,7 @@ describe('CSS-380: chart tokens', () => {
     });
   });
 
-  it('a `.card` nested in `.card-inverted` restores every token the dark card re-maps, to its `:root` value', () => {
+  it('a `.card` nested in `.card-inverted` takes back every token the dark card re-maps: the page\'s own value, kept on :root', () => {
     const tokens = rootTokens();
     const rule = (sel) => {
       let found;
@@ -112,12 +112,22 @@ describe('CSS-380: chart tokens', () => {
     const inv = rule('.card-inverted');
     const nested = rule(':where(.card-inverted .card)');
     expect(nested, 'the nested light card rule').toBeTruthy();
-    // its own surface is the card's (`.card` sets it); everything else the
-    // dark card re-maps comes back with the value it has on :root
+    // its own surface is the card's (`.card` sets it); a chart token derived
+    // from the roles is resolved again (the :root expression); every other
+    // token comes back from its :root snapshot, `--_page-<name>`, which :root
+    // resolves from the token itself — so a project's re-map on :root holds
     const restored = Object.keys(inv).filter((p) => p.startsWith('--') && p !== '--surface-current');
     expect(restored.length).toBeGreaterThan(15);
-    const wrong = restored.filter((p) => nested[p] !== tokens[p]).map((p) => `${p}: ${nested[p]} (root: ${tokens[p]})`);
+    const wrong = restored.filter((p) => {
+      const snap = `--_page-${p.slice(2)}`;
+      if (nested[p] === `var(${snap})`) return tokens[snap] !== `var(${p})`;
+      return !(p.startsWith('--chart-') && nested[p] === tokens[p]);
+    }).map((p) => `${p}: ${nested[p]} (root: ${tokens[p]})`);
     expect(wrong).toEqual([]);
+    // no snapshot without a token the dark card re-maps
+    const snaps = Object.keys(tokens).filter((p) => p.startsWith('--_page-')).map((p) => `--${p.slice('--_page-'.length)}`);
+    expect(snaps.filter((p) => !restored.includes(p))).toEqual([]);
+    expect(snaps.length).toBe(13);
     expect(nested.color).toBe('var(--primary-text-color)');
   });
 });

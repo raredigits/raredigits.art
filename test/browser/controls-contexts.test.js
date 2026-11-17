@@ -121,12 +121,15 @@ describe('CSS-040: a link-button keeps its label where text links are re-coloure
 
   it('in a sidenote and in the sidebar: the button label and frame; text links stay muted', async () => {
     const page = await open();
-    for (const id of ['note-a', 'side-a']) {
+    for (const id of ['note-a', 'side-a', 'fit-a']) {
       expect(await css(page, id, ['color', 'border-bottom-width', 'border-bottom-color']), id)
         .toEqual({ color: 'rgb(51, 51, 51)', 'border-bottom-width': '1px', 'border-bottom-color': 'rgb(204, 204, 204)' });
     }
     expect((await css(page, 'note-text-link', ['color'])).color).toBe('rgb(102, 102, 102)');
     expect((await css(page, 'side-text-link', ['color'])).color).toBe('rgb(102, 102, 102)');
+    expect((await css(page, 'fit-text-link', ['color'])).color).toBe('rgb(102, 102, 102)');
+    // in a dark card the note's link is muted with the note (#ccc), not the card's #f0f0f0
+    expect((await css(page, 'inv-note-link', ['color'])).color).toBe('rgb(204, 204, 204)');
     await page.close();
   });
 });
