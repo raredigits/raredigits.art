@@ -28,6 +28,15 @@ const TAB_WIDTHS = [375, 768, 1440];
 const CHART_PAGES = ['/charts/', '/charts/styles/', '/charts/line/', '/charts/bar/', '/charts/multi/', '/charts/combined/', '/charts/sankey/'];
 const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#main-content', '/charts/line/dual-axes/#options-reference'];
 
+// The built pages ask the network for the cookie notice script (jsDelivr). A
+// stalled request held a page past the 30s load timeout about once in a few
+// hundred loads and failed a random test. Nothing outside this machine
+// resolves: the request fails at once, the notice stays as the markup has it
+// (shown), and a load takes a tenth of the time. It also keeps the runs out
+// of the live analytics, whatever the page's own host check says
+// (_includes/head.njk).
+const OFFLINE = '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1';
+
 let server;
 let origin;
 let browser;
@@ -44,7 +53,7 @@ beforeAll(async () => {
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   origin = `http://127.0.0.1:${server.address().port}`;
-  browser = await chromium.launch({ channel: 'chrome', headless: true });
+  browser = await chromium.launch({ channel: 'chrome', headless: true, args: [OFFLINE] });
 });
 afterAll(async () => { await browser?.close(); server?.close(); });
 
@@ -68,7 +77,7 @@ describe('no horizontal page overflow', () => {
   });
 
   it.each([[768, 1.1], [1023, 1.1]])('at a fractional viewport (window %ipx × %f scale)', async (win, scale) => {
-    const b = await chromium.launch({ channel: 'chrome', headless: true, args: [`--force-device-scale-factor=${scale}`, `--window-size=${win},900`] });
+    const b = await chromium.launch({ channel: 'chrome', headless: true, args: [OFFLINE, `--force-device-scale-factor=${scale}`, `--window-size=${win},900`] });
     const ctx = await b.newContext({ viewport: null });
     const bad = [];
     for (const p of PAGES) {
