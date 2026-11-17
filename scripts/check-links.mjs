@@ -15,7 +15,6 @@ const SITE = resolve('_site');
 
 // Known, tracked exceptions. Each one names the task that removes it.
 const EXCEPTIONS = [
-  { from: '/old/', reason: 'legacy page kept for reference; not linked from the site' },
 ];
 
 function pages(dir) {

@@ -93,7 +93,7 @@ describe('every built page fits its width (not just the reference set)', () => {
     const walk = (d) => {
       for (const f of readdirSync(d, { withFileTypes: true })) {
         const p = join(d, f.name);
-        if (f.isDirectory()) { if (f.name !== 'pagefind' && f.name !== 'old') walk(p); }
+        if (f.isDirectory()) { if (f.name !== 'pagefind') walk(p); }
         // A redirect stub (a moved page, `meta refresh`) has no layout to measure.
         else if (f.name === 'index.html' && !/http-equiv="refresh"/.test(readFileSync(p, 'utf8'))) out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
       }
