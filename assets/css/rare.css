@@ -17432,29 +17432,29 @@ sup > a:where(.rd, .rd *) {
   }
 }
 @media print {
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > *:where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > *:where(.rd, .rd *) {
     grid-column: 1/-1;
     grid-row: auto;
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > .sidenote:where(.rd, .rd *) {
     max-width: var(--text-content-width);
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > .sidenote:not(.sidenote-banner):where(.rd, .rd *) {
     margin: var(--space-sm) 0;
     padding: var(--space-xs) 0 var(--space-md);
     border-top: 1px solid var(--border-color);
     text-align: right;
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > .sidenote:not(.sidenote-banner) > :first-child:where(.rd, .rd *) {
     margin-top: var(--space-sm);
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(.chart, .rc-chart):where(.rd, .rd *) {
     margin-top: var(--font-size-xl);
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > .sidenote:is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):not(.sidenote-banner) > :first-child:is(p, h5, h6):where(.rd, .rd *) {
     text-indent: calc(var(--font-size-xl) + var(--space-xs));
   }
-  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart)) > :is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):where(.rd, .rd *)::before {
+  .sidenote-wrapper:has(> .sidenote :is(.chart, .rc-chart, table)) > :is(.sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory):where(.rd, .rd *)::before {
     top: 4px;
     left: 0;
     opacity: 0.4;

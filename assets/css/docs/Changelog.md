@@ -90,7 +90,7 @@ Alongside, everything RareCharts and its docs need from the library is in: chart
   - **Rhythm:** 16px between rows in the article flow, and the row's last block has no bottom margin. Inside a note, paragraphs and headings sit closer.
   - **Links** in a note and in `.footnote-inside-text` are muted through `--link-color`, so link-buttons, colour classes and a chart's own link colour keep their look; `.button-link` turns muted with the links.
   - **`.footnote-inside-text` and `.aside-footer`** float at the article's right edge, where the note column ends; they sat one column in.
-  - **On paper** the row keeps its grid; it stacked on any sheet narrower than 1024px. A row with a chart in its note still stacks, and a wide block fills columns 1–7.
+  - **On paper** the row keeps its grid; it stacked on any sheet narrower than 1024px. A row with a chart or a table in its note still stacks (paper does not scroll a table), and a wide block fills columns 1–7.
 - **Headings:** h2 and h3 margins `16px 0 8px` (were `32px 0 16px`); h5 and h6 in `--primary-font`; the first heading of an article or of its first section, h4 included, has no top margin.
 - **Unitless line-heights** (`CSS-375`): the tokens and every em leading in the text components. Each element now computes its own leading: a `.font-size-xl` paragraph leads 36px (24px before), a `dt` 28.8px. h2–h4 take `--line-height-sm` (1.2) instead of the body's 24px; h1 keeps it. Code in a code block leads at 1.2 of its own size, about 1px a line less.
 - **Block rhythm in the article flow** (`CSS-377`). A block directly after a block gets 16px, a sidenote row after a sidenote row too. Paragraph gaps and the `.air-*` spacers are unchanged.

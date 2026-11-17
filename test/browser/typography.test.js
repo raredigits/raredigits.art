@@ -301,6 +301,36 @@ describe('Sidenote rows: a chart in a note, the note width, wide blocks, the ban
     await page.close();
   });
 
+  // CSS-404: on a screen the table scrolls in its box; paper does not scroll,
+  // and the note column of a sheet is narrower than the table.
+  it.each([720, 560])('on paper a row with a table in its note stacks at %ipx: the table stays on the sheet', async (width) => {
+    const page = await open(FIXTURE, { width });
+    await page.emulateMedia({ media: 'print' });
+    const r = await page.evaluate(() => {
+      const box = (id) => document.getElementById(id).getBoundingClientRect();
+      const text = document.querySelector('#snt > p').getBoundingClientRect();
+      return {
+        noteBelow: box('snt-note').top >= text.bottom - 1,
+        pastRow: box('snt-table').right - box('snt').right,
+        pageOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+      };
+    });
+    expect(r.noteBelow).toBe(true);
+    expect(r.pastRow).toBeLessThanOrEqual(0.5);
+    expect(r.pageOverflow).toBe(false);
+    await page.close();
+  });
+
+  it('on a screen a row with a table in its note keeps the grid: the table scrolls in its box', async () => {
+    const page = await open(FIXTURE, { width: 1440 });
+    const r = await page.evaluate(() => ({
+      row: getComputedStyle(document.getElementById('snt')).display,
+      beside: document.getElementById('snt-note').getBoundingClientRect().left > document.querySelector('#snt > p').getBoundingClientRect().right,
+    }));
+    expect(r).toEqual({ row: 'grid', beside: true });
+    await page.close();
+  });
+
   it.each([1440, 375])('the bottom edge at %ipx: flush in the article flow, whatever the block; the margin stays elsewhere', async (width) => {
     const page = await open(FIXTURE, { width });
     const r = await read(page);

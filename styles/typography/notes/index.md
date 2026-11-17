@@ -59,7 +59,7 @@ permalink: '/styles/typography/notes/'
 
 <p>On a tablet the note stays beside the text. On a phone every row stacks: the note follows the text under a thin rule, set to the right.</p>
 
-<p>A chart in a note goes in a <code>.chart</code> block; a RareCharts chart counts without the class. Such a row stacks as on a phone below 1024px, below 1226px when it sits directly in the article or one of its sections, and on paper. The chart keeps its own alignment.</p>
+<p>A chart in a note goes in a <code>.chart</code> block; a RareCharts chart counts without the class. Such a row stacks as on a phone below 1024px, below 1226px when it sits directly in the article or one of its sections, and on paper. The chart keeps its own alignment. A row with a table in its note stacks on paper too: a sheet does not scroll.</p>
 
 <div class="sidenote-wrapper">
     <p>A <code>.sidenote-banner</code> is a note set off by a 4px rule on its left, for an aside with a heading of its own, like this one. On a tablet it takes one column more, unless a wide block in the row holds it; on a phone it spans the row under the text.</p>

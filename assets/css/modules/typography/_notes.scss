@@ -275,9 +275,12 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
 }
 
 // On paper too: a sheet's text column is under 870px, so the chart would sit
-// in a note column of about 150px with its title cut.
+// in a note column of about 150px with its title cut. So does a row whose
+// note holds a table: on a screen the table scrolls in its box
+// (`.table-scroll`), on paper nothing scrolls, and a table wider than the
+// note column ran past the sheet (CSS-404).
 @media print {
-    .sidenote-wrapper:has(> .sidenote :is(#{$sidenote-chart})) {
+    .sidenote-wrapper:has(> .sidenote :is(#{$sidenote-chart}, table)) {
         @include sidenote-chart-row-stacked;
     }
 }
