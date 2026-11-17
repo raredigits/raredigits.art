@@ -129,9 +129,11 @@ A custom property is resolved where it is declared and inherited as the result. 
 
 - Canonical public asset folder for externally reusable Rare Styles images: `assets/css/images/**`
 - Current canonical reusable assets include:
-  - `assets/css/images/wa.svg`
-  - `assets/css/images/github.svg`
-  - `assets/css/images/rare-digits/rare-logo-black.svg`
+  - `assets/css/images/vendors/whatsapp/wa-stripe.svg`
+  - `assets/css/images/vendors/github/github-stripe.svg`
+  - `assets/css/images/vendors/github/mark/github-mark.svg` and `github-mark-white.svg` (with `.png` copies)
+  - `assets/css/images/vendors/rare-digits/rare-logo-black.svg`
+  - `assets/css/images/common/mark-quote.svg`
 - These files are deployed with the site and can be referenced through versioned jsDelivr URLs after release tagging
 - Before a release tag exists, library code may still point at local project paths
 - After tagging a release, library-facing asset references should be updated to canonical versioned CDN URLs rather than old project-internal image paths

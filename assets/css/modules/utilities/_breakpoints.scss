@@ -1,8 +1,6 @@
 // Gap-free range syntax (CSS-355): with `max-width: 768px` / `min-width:
 // 769px` a fractional viewport (768.18px at 110% scaling) matched no layer.
-$mobile-max: 768px;
 $tablet-min: 769px;
-$tablet-max: 1023px;
 $desktop-min: 1024px;
 
 @mixin mobile {

@@ -163,9 +163,9 @@
 // panel with the caption width does (above): the outer cells put their text
 // on the text column's edge (in an article; in a narrower container the
 // right cell's stops up to 16px short, as above), the inner ones match them,
-// and a centred cell
-// stays centred. Where the outdent is below the cell's own padding (a phone,
-// paper) the padding stays; not where a surface holds the outdent.
+// and a centred cell stays centred. Where the outdent is below the cell's own
+// padding (a phone, paper) the padding stays; not where a surface holds the
+// outdent.
 :is(.panel-grid, .panel__row):is(#{co.$caption-boxes}):not(:where(#{co.$outdent-surfaces}) *) > :is(.panel:not(.panel--flush), .panel__row-item, .card, .card-inverted) {
     padding-left: max(var(--space-md), var(--outdent));
     padding-right: max(var(--space-md), var(--outdent));
