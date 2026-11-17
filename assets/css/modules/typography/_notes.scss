@@ -214,7 +214,11 @@ $sidenote-wide: ".highlight, .text-content-caption, .lead, .teaser-bottom";
     // keep the caption width and the left outdent but never pass their
     // columns: on a tablet the caption width is wider, and the block ends at
     // its last column; on a desktop it is narrower. On paper the print
-    // module folds it back to its columns (_print.scss).
+    // module folds it back to its columns (_print.scss). The bound is
+    // `--space-lg`, not `--outdent`: the same 32px on a tablet and a
+    // desktop, and on a phone, where `--outdent` is 8px, it leaves the
+    // caption width in force, so the block hangs 8px on both sides as
+    // everywhere else (with `--outdent` it would end on the right edge).
     > :is(#{$sidenote-wide}) {
         grid-column: 1 / span 7;
         width: min(var(--text-content-caption), 100% + var(--space-lg));
