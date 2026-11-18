@@ -7,7 +7,7 @@ Roadmap and milestones: [`BACKLOG.md`](https://github.com/raredigits/raredigits.
 
 ---
 
-## [v0.7.2] — 2026-11-17 — Charts Dependencies, Site Harvest & Consumer Requests
+## [v0.7.2] — 2026-11-18 — Charts Dependencies, Site Harvest & Consumer Requests
 
 **Breaking: buttons and forms come into the library, data surfaces get their own family, a bare `<cite>` loses the credit look, and the reading column is one grid column wider.**
 - A bare `<button>`, an `<input type=submit|button|reset>` and `.button` inside `.rd` are inline buttons with the library look. Form fields, checkboxes, radios, range, colour and file inputs, `fieldset`, `legend` and `label` are styled too. Host forms outside `.rd` and controls inside a RareCharts chart (`.rc-chart`) stay untouched.
