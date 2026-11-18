@@ -272,6 +272,8 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 
 **Re-plan input (2026-10-20):** dashboards are needed very soon (maintainer). The re-plan should weigh pulling the dashboard work — `rd-layout-dashboard` (`v0.7.4`) and the Data-View Primitives (`v0.7.11`) — forward, and decide the width-class names for longreads and dashboards together (`Q-15`).
 
+**Decided 2026-11-18 (maintainer):** the dashboard work is pulled into this release — the Dashboard set below. The dashboard layout comes from `v0.7.4`, the remaining primitives from `v0.7.11`, and nine tasks are new (`CSS-407`…`CSS-415`). The longread mode stays in `v0.7.4`.
+
 **Re-cut 2026-10-07:** moved behind `v0.7.0`/`v0.7.1`. The data project no longer waits for this review — it launches on the content starter (`v0.7.1`) and enters here as a live consumer: its launch findings and remaining pages are reviewed next to Gutenberg. Still ahead of the harvest, the layouts and the interactive core.
 
 | ID | Type | Task | Priority | Estimate |
@@ -293,6 +295,36 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 
 > **Added 2026-07-20 (from the harvest build):** the worked example is built — the live landing at `/examples/styles/hetke/landing/` and the story page at `/examples/styles/hetke/` (`CSS-317`). Building it surfaced two patterns that stayed site-specific in the site stylesheet and should be promoted — `CSS-331` (header CTA pill) and `CSS-332` (price-list) — plus the follow-up to re-lay the example onto them once they exist (`CSS-333`). These extend `CSS-316`'s harvest scope; they do not replace it. The header/price CSS was consciously left in the site stylesheet as the reject-list-for-now, pending these promotions. A second, lighter batch of utility promotions the example leaned on is filed the same way: `CSS-334` (document `.scroll-container`, which already ships), `CSS-335` (a purpose-named map container instead of overloading `.iframe-video`), and `CSS-336` (`.inline-icons`, generalising the `img { display: block }` override).
 
+## Dashboard set (P0–P2) — pulled forward and extended (maintainer, 2026-11-18)
+
+**Why here:** dashboards are needed now (maintainer, 2026-10-20 and 2026-11-18), and `v0.7.2` already shipped the base: `.panel`, `.stat`, the legend, the chart tokens, the semantic colours. The review of 2026-11-18 looked at the library as an operations director reading an ERP view: it shows a figure and a chart, but not **what is on fire and whose it is**. This section answers that. It gathers the dashboard tasks that sat in `v0.7.4` (the layout) and `v0.7.11` (the primitives) and adds what was planned nowhere (`CSS-407`…`CSS-415`).
+
+**Order:** the first five make the screen "the state of things today" — statuses (`CSS-186`), the plan bar (`CSS-174`), panel states (`CSS-407`), the fuller stat (`CSS-408`), table totals and marked rows (`CSS-410`). The filter row, the drawer and the process steps serve the second screen, where the reader looks for causes. P2 rows move down without ceremony if the release grows too large.
+
+**Rules:** every primitive works with no layout class (a KPI panel inside a longread); each one ships with its `/styles/` page (the documentation-driven audit policy); the release is additive — no rename, no removal.
+
+| ID | Type | Task | Priority | Estimate |
+|---|---|---|---|---|
+| `CSS-186` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** Status indicators in `modules/decorations/`: `.status-dot`, `.badge-success/warning/danger/info`. Uses semantic tokens from `CSS-121`. | P0 | S |
+| `CSS-174` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** **Meter / progress bar.** The "fill toward a target" element — none exists in the library. Semantic-token driven (`--signal` for threshold breach); `role="meter"` / `role="progressbar"` guidance in the docs page. **Added 2026-11-18:** it is the "actual against plan" bar of an operations view (plan fulfilment, warehouse load, deadlines), so it also takes a **target mark** on the track and a state past the target. | P0 | M |
+| `CSS-407` | feat | **Panel states: no data, error, stale.** `.skeleton-row` / `.skeleton-column` cover loading; nothing covers the rest. "Zero shipments" and "the warehouse sent nothing" have to look different. One state block for a `.panel__body` (a line of text, an optional action), a stale mark for a panel whose data is old, and a freshness caption in the header or footer ("updated 5 minutes ago"). Uses the semantic tokens; `aria-busy` and `role="status"` guidance on the docs page. | P0 | M |
+| `CSS-408` | feat | **A fuller `.stat`.** Today: label, value, delta up or down, `--signal`. Add: a comparison caption ("against last week"), a target line ("plan 1,200"), a slot for a sparkline (`CSS-175`), and the direction of a delta apart from its meaning — costs going up point up and are bad. The existing `.stat--delta-up` / `.stat--delta-down` keep their look; the new names are additive. | P0 | M |
+| `CSS-410` | feat | **The rows a working table needs** (with `CSS-185`, in `typography/_tables.scss`): a totals row and subtotal rows; a whole row marked by state (overdue, at risk) with the semantic tokens; a sticky first column inside `.table-scroll`; a row that opens a detail row; a fill bar in a cell; a cell that cuts long text with an ellipsis. | P0 | L |
+| `CSS-185` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** Dense table styles in `modules/typography/_tables.scss`: `.table-dense`, zebra rows, sticky header, sortable indicator. **Added 2026-11-18:** the rows a working table needs come with it in `CSS-410`. | P0 | M |
+| `CSS-187` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** `modules/elements/_toolbar.scss`: `.toolbar`, `.toolbar__section`, `.toolbar__spacer` (BEM per hybrid policy). Used for filter rows, dashboard headers, panel actions. | P1 | S |
+| `CSS-411` | feat | **Filter row pieces** (they sit in the `.toolbar` of `CSS-187`): a period switch (day / week / month) — check first whether `.button-group` with a pressed state already is one, and document it if so; a filter chip with a remove button on top of `.tag`; pagination. Tabs stay in `0.8.0` with the components harvest. | P1 | M |
+| `CSS-409` | feat | **Attention list.** The "needs a decision" feed of an operations view: one row holds a severity (the status of `CSS-186`), what happened, when, who owns it, and an action. The callouts are made for prose, not for twenty rows in a column. Built on `.panel__row`; no script. | P1 | M |
+| `CSS-177` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** **Delta chip** — "▲ +3.2%" as a standalone atom usable in tables and prose, not only inside `stat` (`CSS-184`). Consumes the ▲/▼ triangle icons added to the `v0.6.18` SVG set (`CSS-096`) and the semantic/`--signal` tokens. | P1 | S |
+| `CSS-175` | feat | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** **Sparkline container.** Inline-trend slot for `stat` and dense-table cells — a sized, baseline-aligned container contract that `rare-charts` (or plain SVG) renders into; today an inline trend requires the full charts bundle. | P1 | S |
+| `CSS-415` | feat | **The dashboard span scheme** (`Q-15`: dashboards get their own grid-span names, apart from the longread width names). How many columns a panel takes in `.panel-grid` at each width, equal heights in a row, and a panel whose body scrolls inside a fixed height. Decide the names before `CSS-159` is laid out. | P1 | M |
+| `CSS-160` | feat | **Moved here from `v0.7.4` (maintainer, 2026-11-18).** **Harvest & normalize the ready dashboard layout.** `modules/layouts/_dashboard.scss`, gated via `<html class="rd rd-layout-dashboard">` — same root contract as `CSS-150`. Also practically done on a client project; same normalization and acceptance checks. **Added 2026-11-18:** it lands with its own forward from `modules/_index.scss`; `CSS-170` (`v0.7.4`) folds it into `modules/layouts/_index.scss` when the longread mode arrives. | P1 | M |
+| `CSS-161` | feat | **Moved here from `v0.7.4` (maintainer, 2026-11-18).** Sidebar removal: nullify `.sidebar` layout slot, expand main content to full grid width. | P1 | S |
+| `CSS-162` | feat | **Moved here from `v0.7.4` (maintainer, 2026-11-18).** Dashboard widens by **token/shell delta only**: full-width content via the layout shell and a wide (or unset) `--text-content-width` — **not** by un-overriding foreign selectors like `article p/ul/ol` (re-scoped 2026-07-21: with the measure bound to the prose surface in `CSS-151`, there is nothing to cancel). | P1 | S |
+| `CSS-414` | feat | **A dashboard on paper and on a wall.** Print: a panel does not break across sheets, and a class starts a new sheet before a panel group (the Monday meeting is a printout or a PDF). Screen: a dense mode and a large mode for a screen on the shop floor — as token overrides on a container, not new components. | P2 | M |
+| `CSS-412` | feat | **From a figure to its detail.** A side drawer for the detail of a row or a panel, and a hint that says how a metric is counted (a reader does not trust a figure without it). Both need behaviour: decide with Rare Scripts whether they ride `<dialog>` / the `popover` attribute with no script, and record the hooks in the scripts contract if not. | P2 | L |
+| `CSS-413` | feat | **Process steps.** Order → payment → picking → shipping, with the done, current and stuck steps told apart (the stuck one in the status colours of `CSS-186`). An ordered list underneath, `aria-current="step"`. | P2 | M |
+| `CSS-159` | docs | **Moved here from `v0.7.11` (maintainer, 2026-11-18).** **Shipped dashboard/data-view example** built from the new primitives (panel/stat/table-dense/toolbar) — `assets/css/examples/` currently holds one stale homepage-specific file (Oct 2025). Complements `CSS-202`. **Added 2026-11-18:** the example is one operations screen, "the state of things today": a KPI row, a plan bar, an attention list and a working table. | P1 | M |
+
 ## Exit criteria
 
 - [ ] Both sibling projects tested on the gated library; findings recorded.
@@ -302,6 +334,8 @@ Every Rare Styles item that RareCharts or its docs touch, and where it ships. Ra
 - [x] The docs carry an end-to-end auto-shop example built from real markup and content (`CSS-317`, shipped in `v0.6.19`): `/examples/styles/hetke/` story + `/examples/styles/hetke/landing/` live
 - [ ] **The reusable slice is promoted *into* the library (`CSS-316`) — not done.** The example rode existing primitives (`.feature-row` / `.grid` / `.iframe-video` / `.scroll-container`); no new pattern was harvested. Reject list = the site stylesheet; promotable patterns filed `CSS-331..336`
 - [ ] The header CTA pill (`CSS-331`) and price-list (`CSS-332`) are promoted to library classes, and the example re-laid onto them (`CSS-333`) on the gated library, with the matching site CSS removed
+- [ ] **The dashboard set:** the first five (`CSS-186`, `CSS-174`, `CSS-407`, `CSS-408`, `CSS-410`) ship with their `/styles/` pages; the rest of the section ships or moves down with a dated note
+- [ ] The dashboard example (`CSS-159`) is built from the new primitives only, with no site-specific CSS
 - [ ] `npm run lint:css` clean; `rare.css` / `rare.min.css` rebuilt from `assets/css/rare.scss`; bundle delta recorded in `Changelog.md`
 
 ---
@@ -330,13 +364,15 @@ For prose-heavy pages: scaled-up serif typography, adjusted heading treatment, g
 
 ### `rd-layout-dashboard` — relaxed shell for decision surfaces
 
+**Moved to `v0.7.3` (2026-11-18)** with the dashboard set; the description stays here for the layout docs (`CSS-093`).
+
 **Minimal delta from the defaults:** no left sidebar; a wide (or unset) prose measure so panels and grids fill the canvas — a token/shell delta, not a cancellation of other rules. Everything else (typography, spacing scale, colors, components) is identical to the library default. The purpose of Dashboard is not endless monitoring or generic admin CRUD, but focused display of decision-driving metrics, statuses, comparisons, and charts. Components like `panel`, `stat`, `table-dense`, `toolbar` are NOT layout-gated — they work without any layout class too (e.g. a KPI panel embedded inside a longread, or in plain documentation).
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-160` | feat | **Harvest & normalize the ready dashboard layout.** `modules/layouts/_dashboard.scss`, gated via `<html class="rd rd-layout-dashboard">` — same root contract as `CSS-150`. Also practically done on a client project; same normalization and acceptance checks. | M |
-| `CSS-161` | feat | Sidebar removal: nullify `.sidebar` layout slot, expand main content to full grid width. | S |
-| `CSS-162` | feat | Dashboard widens by **token/shell delta only**: full-width content via the layout shell and a wide (or unset) `--text-content-width` — **not** by un-overriding foreign selectors like `article p/ul/ol` (re-scoped 2026-07-21: with the measure bound to the prose surface in `CSS-151`, there is nothing to cancel). | S |
+| `CSS-160` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | M |
+| `CSS-161` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
+| `CSS-162` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
 
 ### Layout infrastructure
 
@@ -570,7 +606,9 @@ Per the **Documentation-driven audit policy** (see top of this doc). The corresp
 
 **Goal:** make the "decision-first data views" half of the positioning real. The minimal data-view core ships on the semantic tokens of `v0.7.2` — pulled forward from `0.8.0` (2026-07-13): these primitives are layout-agnostic, harvest-ready on client projects, and should not wait for the layout modes. Was `v0.7.1` until 2026-10-02; the final namespace slice it used to carry is gone with the migration (`Q-14`). `v0.7.12` packages the stabilized API.
 
-**Minimal core (this release):** panel family, stat/KPI, status indicators + badges, dense table, toolbar, alert severity variants — plus the dashboard example as the proof artifact.
+**Emptied 2026-11-18 (maintainer):** the panel family, stat and alert variants shipped in `v0.7.2`; the rest — status indicators and badges, dense table, toolbar, the dashboard example and three of the extended candidates (meter, sparkline slot, delta chip) — moved to the Dashboard set of `v0.7.3`. The number stays as a placeholder for what that release moves down.
+
+**Minimal core (as planned before 2026-11-18):** panel family, stat/KPI, status indicators + badges, dense table, toolbar, alert severity variants — plus the dashboard example as the proof artifact.
 
 **Extended set (added 2026-07-13):** all five discussion candidates are included as P2 tasks so they don't get lost — see the extended-set table at the bottom of this milestone; triage on the spot when the release is being cut.
 
@@ -600,16 +638,16 @@ Currently `.card` is overloaded for both narrative content (article preview, per
 | ID | Type | Task | Estimate |
 |---|---|---|---|
 | `CSS-184` | feat | **Moved to `v0.7.2` (2026-10-26, a RareCharts dependency).** | M |
-| `CSS-185` | feat | Dense table styles in `modules/typography/_tables.scss`: `.table-dense`, zebra rows, sticky header, sortable indicator. | M |
-| `CSS-186` | feat | Status indicators in `modules/decorations/`: `.status-dot`, `.badge-success/warning/danger/info`. Uses semantic tokens from `CSS-121`. | S |
-| `CSS-187` | feat | `modules/elements/_toolbar.scss`: `.toolbar`, `.toolbar__section`, `.toolbar__spacer` (BEM per hybrid policy). Used for filter rows, dashboard headers, panel actions. | S |
+| `CSS-185` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | M |
+| `CSS-186` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
+| `CSS-187` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
 
 ## Audit additions routed here (2026-07-13)
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
 | `CSS-156` | feat | **Moved to `v0.7.2` (2026-10-26, a RareCharts dependency).** | S |
-| `CSS-159` | docs | **Shipped dashboard/data-view example** built from the new primitives (panel/stat/table-dense/toolbar) — `assets/css/examples/` currently holds one stale homepage-specific file (Oct 2025). Complements `CSS-202`. | M |
+| `CSS-159` | docs | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | M |
 
 ## Extended set — candidates included so they don't get lost (P2, triage at release cut)
 
@@ -617,15 +655,15 @@ Added 2026-07-13 by maintainer decision. Each is optional for this release: pull
 
 | ID | Type | Task | Estimate |
 |---|---|---|---|
-| `CSS-174` | feat | **Meter / progress bar.** The "fill toward a target" element — none exists in the library. Semantic-token driven (`--signal` for threshold breach); `role="meter"` / `role="progressbar"` guidance in the docs page. | M |
-| `CSS-175` | feat | **Sparkline container.** Inline-trend slot for `stat` and dense-table cells — a sized, baseline-aligned container contract that `rare-charts` (or plain SVG) renders into; today an inline trend requires the full charts bundle. | S |
+| `CSS-174` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | M |
+| `CSS-175` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
 | `CSS-176` | feat | **Moved to `v0.7.2` (2026-10-26, a RareCharts dependency).** | S |
-| `CSS-177` | feat | **Delta chip** — "▲ +3.2%" as a standalone atom usable in tables and prose, not only inside `stat` (`CSS-184`). Consumes the ▲/▼ triangle icons added to the `v0.6.18` SVG set (`CSS-096`) and the semantic/`--signal` tokens. | S |
+| `CSS-177` | feat | **Moved to `v0.7.3` (2026-11-18, the dashboard set).** | S |
 | `CSS-178` | feat | **Moved to `v0.7.2` (2026-10-26, a RareCharts dependency).** | S |
 
 ## Exit criteria
 
-- [ ] The rest of the minimal data-view core (dense table, status/badges, toolbar; the panel family, stat and alert variants shipped in `v0.7.2`) ships, with the dashboard example (`CSS-159`) as proof
+- [x] ~~The rest of the minimal data-view core (dense table, status/badges, toolbar) ships, with the dashboard example (`CSS-159`) as proof~~ — moved to `v0.7.3` (2026-11-18)
 - [x] ~~The `.card-*` data-row renames~~ — moved to `v0.7.2` with `CSS-181`/`CSS-183a` (2026-10-26)
 - [ ] The live consumers are verified against the release
 - [ ] `npm run lint:css` clean; tests green; bundle measured against the `CSS-330` budget
@@ -1027,15 +1065,15 @@ Parking lot for questions that need a maintainer decision before they become (or
 | `v0.7.0` | Scope Gate & Bug Closure | **Breaking — the `0.7` entry.** Every style applies only under `.rd` (`Q-14`): `<html class="rd">` = today's page rendering, `class="rd"` on any element = island, no `.rd` = untouched. PostCSS `rd-gate` step (`CSS-343`) configured by the global-rule inventory (`CSS-337`); hostile-host fixture (`CSS-338`); reset stance (`CSS-078`); in-repo migration (`CSS-344`) and docs (`CSS-321`); transition gate `CSS-340` (API snapshot, migration table). Replaces the old `v0.6.21` Embed Build — no `rare.embed.css`. **Plus (merged 2026-10-16 from the former `v0.7.1`):** dated bug ledger and closure sweep (`CSS-345`), invalid generated padding (`CSS-346`), quick-start API (`CSS-347`), validated version-triggered CSS publication (`CSS-348`), compiled-CSS + browser checks (`CSS-118`), h5/h6 rhythm + anchor offset (`CSS-126`/`CSS-129`), a11y base (`CSS-110..114`), size baseline (`CSS-339`); sweep additions (2026-10-16): outdents in cards (`CSS-357`), 1024 px boundary (`CSS-358`), dependency refresh (`CSS-356`), fractional-breakpoint hypothesis (`CSS-355`) |
 | `v0.7.1` | _current_ — Content Starter | **Mostly additive** (five unused classes removed, see `MIGRATION.md`). Portable two-page starter for the data project — article index + article with images, tables and charts (`CSS-349..353`, `CSS-127`/`CSS-128`/`CSS-167`); launch gate for the new site. New 2026-10-07 (drafted 2026-09-07 as `v0.6.21`) |
 | `v0.7.2` | Charts Dependencies, Site Harvest & Consumer Requests | **Breaking** (`CSS-181` renames). Before RareCharts `0.9.8_7`: Part A closes the Rare Styles defects that RareCharts and its docs work around and harvests `rare-website.css` (`CSS-371`…`CSS-383`). Part B ships the chart dependencies pulled in from later milestones: chart tokens, legend primitive, panel family with the site migration, stat, callout variants, semantic tokens and `--signal`, and the `Q-15` decision. Part C carries the urgent consumer requests, the first being the button system and forms (moved from `v0.7.9`). Part D does the findings of the release review in this release (`CSS-389`…`CSS-401`, maintainer, 2026-11-13). The sibling review moved to `v0.7.3`. |
-| `v0.7.3` | Sibling Consumers Review, Auto-Shop Harvest & Examples | Test the data project and Gutenberg on the gated library, settle `rem` sizing, triage `gutenberg-test.md`, re-plan the rest of `0.7.X` (`CSS-342`, moved from `v0.7.2` on 2026-10-26). Promote the auto-shop's reusable patterns into the library (`CSS-316`, `CSS-331..336`) and re-lay the example on them (`CSS-333`). Was `v0.6.20` (opened, never shipped) |
-| `v0.7.4` | Page Layouts | `rd-layout-longread` / `rd-layout-dashboard` on `<html class="rd rd-layout-…">` (`CSS-150`/`151`/`155`, `CSS-160..162`, `CSS-170..172`), docs + one real example per mode (`CSS-093`/`CSS-341`). Was `v0.6.22` |
+| `v0.7.3` | Sibling Consumers Review, Auto-Shop Harvest & Examples | Test the data project and Gutenberg on the gated library, settle `rem` sizing, triage `gutenberg-test.md`, re-plan the rest of `0.7.X` (`CSS-342`, moved from `v0.7.2` on 2026-10-26). Promote the auto-shop's reusable patterns into the library (`CSS-316`, `CSS-331..336`) and re-lay the example on them (`CSS-333`). **Dashboard set (added 2026-11-18):** statuses, plan bar, panel states, fuller stat, working table, toolbar and filter pieces, attention list, the dashboard layout and span scheme, the dashboard example (`CSS-186`/`174`/`185`/`187`/`177`/`175`/`159`, `CSS-160..162`, new `CSS-407..415`). Was `v0.6.20` (opened, never shipped) |
+| `v0.7.4` | Page Layouts | `rd-layout-longread` on `<html class="rd rd-layout-…">` (`CSS-150`/`151`/`155`, `CSS-170..172`), docs + one real example per mode (`CSS-093`/`CSS-341`). `rd-layout-dashboard` (`CSS-160..162`) moved to `v0.7.3` on 2026-11-18. Was `v0.6.22` |
 | `v0.7.5` | Lean Delivery | **Additive** — size baseline (`CSS-339`), consumer coverage (`CSS-097`), purge path + safelist (`CSS-210`), utility and icon cut lists (`CSS-079`/`CSS-324`), transferred-size budget as no-regression ceiling (`CSS-330`), compiled-CSS smoke test (`CSS-118`). Was `v0.6.23` |
 | `v0.7.6` | Prune | **Breaking, narrow** — execute the icon and utility cut lists (`CSS-324`/`CSS-079`), arm the hard transferred-size budget (`CSS-330`). New 2026-10-02 |
 | `v0.7.7` | CDN Migration & Pages Sunset Prep | Docs/examples/consumers onto versioned jsDelivr targets (`CSS-T00`); asset-URL contract (`CSS-T00.1`); deprecate + freeze Pages. Was `v0.6.24` |
 | `v0.7.8` | Docs Site Restructure | `/styles/` IA (`CSS-280`/`CSS-322`/`CSS-323`) before the interactive core fills it. Was `v0.6.25` |
 | `v0.7.9` | Interactive Core | **Moved into `v0.7.2` (2026-10-26).** The button system, forms, semantic tokens and `--signal` ship there; the number stays as a placeholder. |
 | `v0.7.10` | Stabilization & Core Polish | Quality infra, search overhaul, bounded list/utility API, library-boundary pass, `CSS-141` naming cleanup. Was `v0.7.0` minus the slice |
-| `v0.7.11` | Data-View Primitives | Panel family, stat, dense table, status/badges, toolbar, alerts, dashboard example; extended-set candidates P2. Was `v0.7.1` minus the slice |
+| `v0.7.11` | Data-View Primitives | **Emptied 2026-11-18:** panel family, stat and alerts shipped in `v0.7.2`; dense table, status/badges, toolbar, the dashboard example and the meter, sparkline slot and delta chip moved to `v0.7.3`. A placeholder for what `v0.7.3` moves down. Was `v0.7.1` minus the slice |
 | `v0.7.12` | npm Delivery | **Finalizes `0.7.X`.** `@raredigits/rare-styles@0.7.13` from one release-gated artifact (`CSS-T01`); Pages unpublish after verification (`CSS-T00.4`/`.5`). Was `v0.7.2` |
 | `0.8.0` | Components Harvest | Harvest the remaining components (tabs, TOC, card variants, skeleton, app-shell, narrative text set — `CSS-149`/`CSS-152..154`/`CSS-157`/`CSS-158`/`CSS-163`/`CSS-188`) from client projects, under plain names behind the `.rd` gate |
 | `0.8.1` | Completeness: A11y & Architecture | A11y batch, surface/motion tokens, `@layer`, logical properties; audit additions (2026-07-13): fluid type, footnotes, table completeness, print, contrast modes, dark-ready tokens (`CSS-164..169`); forms moved to `v0.7.9`; namespace work dropped (`Q-14`) |
