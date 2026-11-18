@@ -76,12 +76,16 @@ permalink: '/styles/icons/'
         Hover any icon for its name, <strong>click it to copy its markup</strong> — the glyph turns
         into a check when the snippet is on your clipboard.
     </p>
-    <form id="icon-finder" class="form-row text-content-width padding-b-md rd-is-hidden" role="search" onsubmit="return false">
-        <label class="self-center" for="icon-search">Find a glyph</label>
-        <input id="icon-search" type="search" placeholder="arrow, reload, user…" autocomplete="off" spellcheck="false">
-        <div class="button-group" role="group" aria-label="Weight">
-            <button type="button" aria-pressed="true" data-icon-weight="400">Regular</button>
-            <button type="button" aria-pressed="false" data-icon-weight="200">Thin</button>
+    <!-- The field and the weight switch keep one line; on a narrow screen the
+         label wraps above them and starts at the left. -->
+    <form id="icon-finder" class="flex wrap items-center gap-md text-content-width padding-b-md rd-is-hidden" role="search" onsubmit="return false">
+        <label for="icon-search">Find a glyph</label>
+        <div class="flex items-center gap-md" style="flex: 1 1 18rem; min-width: 0;">
+            <input id="icon-search" type="search" placeholder="arrow, reload, user…" autocomplete="off" spellcheck="false" style="flex: 1 1 auto; min-width: 0;">
+            <div class="button-group" role="group" aria-label="Weight" style="flex: none;">
+                <button type="button" aria-pressed="true" data-icon-weight="400">Regular</button>
+                <button type="button" aria-pressed="false" data-icon-weight="200">Thin</button>
+            </div>
         </div>
     </form>
     <p id="icon-none" class="rd-is-hidden" role="status">
