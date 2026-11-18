@@ -6,44 +6,44 @@ displaySidebar: true
 permalink: /legal/privacy/
 ---
 
-## Yes, We Use Cookies
+## Yes, There Are Cookies
 
-This is where we’re legally obligated to tell you about those little digital breadcrumbs called “cookies” that follow you around the internet. But instead of drowning you in legalese that nobody reads, let’s have an honest conversation.
+This is the page where Rare Digits is legally obligated to describe the little digital breadcrumbs called “cookies” that follow people around the internet. Instead of legalese that nobody reads, here is an honest account.
 
-## What’s Really Going On Here
+## What’s Really Going On Here
 
-We use Google Analytics on our website. There, we said it! These third-party scripts help us understand how you interact with our site, including which pages you visit, how long you stay, and what kind of device you’re using. The data is anonymized and used only in aggregate form.
+The website uses Google Analytics. There, it has been said. These third-party scripts show how visitors interact with the site: which pages they open, how long they stay, and what kind of device they use. The data is anonymized and used only in aggregate form.
 
 ## Why This Actually Matters
 
-Without these analytics tools, we’d be like blind kittens stumbling around the internet—cute, but completely clueless. These cookies are the flashlights that help us see:
+Without analytics, Rare Digits would be a blind kitten stumbling around the internet — cute, but completely clueless. Cookies are the flashlight that shows:
 
-- Which parts of our website you actually care about
-- Where you get confused and leave
-- How we can make your experience better
+- Which parts of the website visitors actually care about
+- Where they get confused and leave
+- How the experience can be made better
 
-The entire online business ecosystem runs on this information. When we know what works and what doesn’t, we can build better products, create more relevant content, and stop wasting your time with things you don’t care about.
+The entire online business ecosystem runs on this information. Knowing what works and what does not lets Rare Digits build better products, publish more relevant content, and stop wasting visitors’ time on things they do not care about.
 
-## Your Options
+## The Visitor’s Options
 
-Because we legally have to give you some:
+Because the law requires that there be some:
 
-1. **Accept the cookies:** Continue using our site normally, and help us improve it.
-2. **Decline the cookies:** You can adjust your browser settings to reject cookies, though this might affect your experience.
-3. **Clear cookies periodically** (withdraw your consent): You can always clear your browsing data if you’re feeling digital-crumb-phobic.
+1. **Accept the cookies:** The visitor keeps using the site as usual and helps improve it.
+2. **Decline the cookies:** Browser settings can be adjusted to reject cookies, though this may affect how the site works.
+3. **Clear cookies periodically** (withdraw consent): Browsing data can be cleared at any time by anyone feeling digital-crumb-phobic.
 
 ## The Serious Legal Bit
 
-This Privacy Policy is an integral part of our [Terms of Use](/legal/terms/) and applies to all visitors of this website. It explains what data is collected, how it is used, and what that means for you.
+This Privacy Policy is an integral part of the [Terms of Use](/legal/terms/) and applies to all visitors of this website. It explains what data is collected, how it is used, and what that means for a visitor.
 
-We use Google Analytics as an analytics tool to better understand how our website is used. We only receive aggregated and anonymized usage statistics, such as page views, session duration, and general device or browser categories. We do not receive data that directly identifies individual users.
+Rare Digits uses Google Analytics to understand how the website is used. It receives only aggregated and anonymized usage statistics, such as page views, session duration, and general device or browser categories. It does not receive data that directly identifies individual users.
 
-Google Analytics may collect additional information as part of its standard operation. Details of what Google collects and how it processes data are governed by Google’s own [Privacy Policy](https://policies.google.com/privacy). Google is expected to comply with applicable data protection regulations, including GDPR, ePrivacy Directive, CCPA, CPRA, and similar frameworks. At the very least, from a legal standpoint.
+Google Analytics may collect additional information as part of its standard operation. Details of what Google collects and how it processes data are governed by Google’s own [Privacy Policy](https://policies.google.com/privacy). Google is expected to comply with applicable data protection regulations, including GDPR, ePrivacy Directive, CCPA, CPRA, and similar frameworks. At the very least, from a legal standpoint.
 
-If you are not confident that using this website complies with GDPR, the ePrivacy Directive, CCPA, CPRA, or any other local privacy regulations applicable to you, you should immediately discontinue use of this website.
+A visitor who is not confident that using this website complies with GDPR, the ePrivacy Directive, CCPA, CPRA, or any other local privacy regulation that applies to them should immediately discontinue use of this website.
 
-We do not sell your personal information, because honestly, we don’t collect enough of it to make it worth selling.
+Rare Digits does not sell personal information because, honestly, it does not collect enough of it to be worth selling.
 
 ## Questions?
 
-If you have any questions about our privacy practices that weren’t answered by this refreshingly straightforward policy, please contact us at [legal@raredigits.io](mailto:legal@raredigits.io).
+Questions about privacy practices that this refreshingly straightforward policy left unanswered can be sent to [legal@raredigits.io](mailto:legal@raredigits.io).
