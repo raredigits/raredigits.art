@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -350,12 +350,6 @@
                   
                     <li>
                       
-                        <a href="/styles/typography/interactive/">Interactive Elements</a>
-                      
-                    </li>
-                  
-                    <li>
-                      
                         <a href="/styles/typography/notes/">Notes</a>
                       
                     </li>
@@ -377,6 +371,15 @@
             <li>
               
                 <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
               
               
               
@@ -495,20 +498,23 @@
 </div>
 <div class="sidenote-wrapper">
     <div>
-        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself.</p>
+        <p>Tables default to <code>min-width: 100%</code>, occupying the full width of their parent element. When a table is wider than its column, wrap it in <code>.table-scroll</code> so it scrolls horizontally instead of breaking the layout grid — <code>overflow-x</code> has no effect on the table element itself. Inside the box, <code>code</code> in a cell keeps its shape: an option name never breaks mid-word on a phone — the table grows and the box scrolls. In the first column, which holds the keys, a class or token name does not break at a hyphen either. On paper, which does not scroll, the code breaks again so the table fits the page.</p>
         <p>For small tables and table-style data presentation, the <code>.table-small</code> selector is available with left-aligned content.</p>
         <p>Always remember the primary purpose of tables: presenting data for quick analysis and comparison. Don't overload tables with unnecessary information or use them for content better presented as text or graphics.
         </p>
     </div>
     <div class="sidenote">
         <p>To limit table width, use either parent elements or preset spacing selectors like <code>.width-50</code>, <code>.mobile:width-75</code>, etc., or create custom classes.</p>
+        <p>A table wider than its column — a note on a tablet is often one — goes in a <code>.table-scroll</code> wrapper: it scrolls inside the box instead of widening the page.</p>
     </div>
 </div>
+<p>A table that hangs into the outdent, with <code>.text-content-caption</code>, <code>.full-width-caption</code> or <code>.card-caption</code> on it or on its box, steps its first column back in by the outdent (32px, 8px on a phone), so the row labels stay on the text edge. In a card, a panel or a collapsible nothing hangs, and the column stays as it is.</p>
 <h3 id="preset-tables">Preset Tables</h3>
 <div class="sidenote-wrapper">
     <div>
         <p>For dashboards and other data-heavy pages, the library includes preset selectors. These allow you to quickly create readable tables with minimal code—like specialized table templates in your construction kit.
         </p>
+        <div class="table-scroll">
         <table class="table-small">
             <tr>
                 <th>Selector</th>
@@ -520,7 +526,7 @@
             </tr>
             <tr>
                 <td><code>.table-terminal</code></td>
-                <td>Monospace metrics readout, centered values, last column right-aligned</td>
+                <td>Monospace metrics readout: columns 8px apart, no padding on the outer edges, value rows flush (4px above and below in a <code>.table-striped</code> table); centered values, last column right-aligned</td>
             </tr>
             <tr>
                 <td><code>.table-comparison</code></td>
@@ -543,45 +549,52 @@
                 <td>Full grid with outer frame and header band</td>
             </tr>
             <tr>
+                <td><code>.table-section</code></td>
+                <td>A group row inside <code>.table-bordered</code> (on the <code>&lt;tr&gt;</code>)</td>
+            </tr>
+            <tr>
                 <td><code>.table-scroll</code></td>
                 <td>Wrapper (not a table class) — lets a wide table scroll horizontally</td>
             </tr>
         </table>
+        </div>
     </div>
     <div class="sidenote">
         <p>
             .table-terminal example:
         </p>
-        <table class="table-terminal">
-            <tr>
-                <td>Visitors:</td>
-                <td>1,234</td>
-            </tr>
-            <tr>
-                <td>Clicks:</td>
-                <td>345</td>
-            </tr>
-            <tr>
-                <td>Leads:</td>
-                <td>123</td>
-            </tr>
-            <tr>
-                <td>Sales:</td>
-                <td>12</td>
-            </tr>
-            <tr>
-                <td>Revenue:</td>
-                <td>$1,234</td>
-            </tr>
-            <tr>
-                <td>Conversion:</td>
-                <td>1%</td>
-            </tr>
-        </table>
+        <div class="table-scroll">
+            <table class="table-terminal">
+                <tr>
+                    <td>Visitors:</td>
+                    <td>1,234</td>
+                </tr>
+                <tr>
+                    <td>Clicks:</td>
+                    <td>345</td>
+                </tr>
+                <tr>
+                    <td>Leads:</td>
+                    <td>123</td>
+                </tr>
+                <tr>
+                    <td>Sales:</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>Revenue:</td>
+                    <td>$1,234</td>
+                </tr>
+                <tr>
+                    <td>Conversion:</td>
+                    <td>1%</td>
+                </tr>
+            </table>
+        </div>
     </div>
 </div>
 <h3 id="comparison-tables">Comparison tables</h3>
-<p><code>.table-comparison</code> left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for <code>.table-terminal</code> instead when the values are numeric and benefit from a monospace, right-aligned readout.</p>
+<p><code>.table-comparison</code> left-aligns the first column (the row label) and centers every value column under its header, so the reader scans straight down each option. Use it for feature or option comparisons in normal body type — reach for <code>.table-terminal</code> instead when the values are numeric and benefit from a monospace readout.</p>
 <div class="table-scroll">
 <table class="table-comparison table-horizontal-borders">
     <tr>
@@ -641,12 +654,42 @@
     </tr>
 </table>
 </div>
-<div class="caption">
-    <p><strong>Table or <code>.dl-grid</code>?</strong> Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>
+<h3 id="group-rows">Group rows</h3>
+<p>A long reference table — the options of a chart, the fields of an API — reads faster in groups. Inside a <code>.table-bordered</code>, a row with <code>.table-section</code> is a group heading: one cell across every column with an <code>h5</code> (or <code>h6</code>) and, if the group needs it, a line of text. The row drops its bottom rule, so the heading belongs to the rows under it, and the heading and the text lose their margins inside the cell. The text runs the full width of the row: a data table is outside the prose measure.</p>
+<div class="table-scroll">
+<table class="table-bordered">
+    <thead>
+        <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+        <tr class="table-section">
+            <td colspan="4"><h5 id="layout">Layout</h5></td>
+        </tr>
+        <tr><td><code>height</code></td><td>number</td><td><code>240</code></td><td>Chart height in px. Width is always 100% of the container.</td></tr>
+        <tr><td><code>yAxisPosition</code></td><td><code>'left'</code> | <code>'right'</code></td><td><code>'right'</code></td><td>The side the Y axis sits on.</td></tr>
+        <tr class="table-section">
+            <td colspan="4">
+                <h5 id="legend">Legend</h5>
+                <p>Every legend option is optional; without them the chart draws no legend.</p>
+            </td>
+        </tr>
+        <tr><td><code>legend</code></td><td>array</td><td>—</td><td>Items with a <code>label</code> and a <code>type</code>.</td></tr>
+        <tr><td><code>legendPosition</code></td><td><code>'top'</code> | <code>'right'</code></td><td><code>'top'</code></td><td>Above the chart, or in a column beside it.</td></tr>
+    </tbody>
+</table>
 </div>
+<pre><code>&lt;tr class="table-section"&gt;
+    &lt;td colspan="4"&gt;
+        &lt;h5&gt;Legend&lt;/h5&gt;
+        &lt;p&gt;Every legend option is optional.&lt;/p&gt;
+    &lt;/td&gt;
+&lt;/tr&gt;</code></pre>
+<p>The example is the reference-table recipe the chart docs use: <code>.table-bordered</code> with group rows, inside <code>.table-scroll</code>. In the scroll box an option name in <code>code</code> never breaks mid-word: on a phone the table keeps its columns and the box scrolls. There is no separate preset class for it — the three pieces are the preset. A Markdown table cannot take a class: write a reference table as HTML.</p>
+<h3 id="table-or-dl-grid">Table or <code>.dl-grid</code>?</h3>
+<p>Two columns of <code>key: value</code> metadata — version, status, owner — read better as a <a href="/styles/typography/text-content/"><code>.dl-grid</code></a> definition list. Reach for a table once there are three or more columns, or when rows are meant to be compared against each other rather than read as individual facts.</p>
 <div class="teaser-bottom">
     <p>Next:</p>
-    <h3 id="interactive-elements"><a href="/styles/typography/interactive/">Interactive Elements</a></h3>
+    <h3 id="interactive-elements"><a href="/styles/interactive/">Interactive Elements</a></h3>
 </div>
 
     </article>
@@ -658,7 +701,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

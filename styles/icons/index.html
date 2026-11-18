@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -351,6 +351,15 @@
           
             <li>
               
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/styles/alignment/">Alignment</a>
               
               
@@ -447,7 +456,7 @@
 </section>
 
 <section>
-    <h3 id="usage">Usage</h3>
+    <h3 id="usage-2">Usage</h3>
     <p>One class per icon — the glyph name is the class. Nothing else to add:</p>
     <pre>
 <code>&lt;span class="rd-icon-download"&gt;&lt;/span&gt;</code>
@@ -487,308 +496,345 @@
 </section>
 
 <section>
-    <h3 id="the-set">The set</h3>
+    <h3 id="set">The set</h3>
     <p>
-        143 glyphs, each in both weights: the library-core names consumed by Rare
-        Styles' own components and docs, maintainer-selected extras, and every glyph the known
-        consumer sites render — promoted into the one shared collection. Hover any icon for
-        its name, <strong>click it to copy its markup</strong> — the glyph turns into a check
-        when the snippet is on your clipboard.
+        189 glyphs, each in both weights: the library-core names consumed by Rare
+        Styles' own components and docs, the plain interface marks a data view needs, and every
+        glyph the known consumer sites render — one shared collection, sorted into groups below.
+        Hover any icon for its name, <strong>click it to copy its markup</strong> — the glyph turns
+        into a check when the snippet is on your clipboard.
     </p>
-    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
-        <button class="rd-icon-account_balance rd-js-copy" title="account_balance" aria-label="Copy markup for account_balance" data-copy-text="<span class=&quot;rd-icon-account_balance&quot;></span>"></button>
-        <button class="rd-icon-account_circle rd-js-copy" title="account_circle" aria-label="Copy markup for account_circle" data-copy-text="<span class=&quot;rd-icon-account_circle&quot;></span>"></button>
-        <button class="rd-icon-account_tree rd-js-copy" title="account_tree" aria-label="Copy markup for account_tree" data-copy-text="<span class=&quot;rd-icon-account_tree&quot;></span>"></button>
-        <button class="rd-icon-arrow_drop_down rd-js-copy" title="arrow_drop_down" aria-label="Copy markup for arrow_drop_down" data-copy-text="<span class=&quot;rd-icon-arrow_drop_down&quot;></span>"></button>
-        <button class="rd-icon-arrow_drop_up rd-js-copy" title="arrow_drop_up" aria-label="Copy markup for arrow_drop_up" data-copy-text="<span class=&quot;rd-icon-arrow_drop_up&quot;></span>"></button>
-        <button class="rd-icon-arrow_forward rd-js-copy" title="arrow_forward" aria-label="Copy markup for arrow_forward" data-copy-text="<span class=&quot;rd-icon-arrow_forward&quot;></span>"></button>
-        <button class="rd-icon-arrow_outward rd-js-copy" title="arrow_outward" aria-label="Copy markup for arrow_outward" data-copy-text="<span class=&quot;rd-icon-arrow_outward&quot;></span>"></button>
-        <button class="rd-icon-arrow_right_alt rd-js-copy" title="arrow_right_alt" aria-label="Copy markup for arrow_right_alt" data-copy-text="<span class=&quot;rd-icon-arrow_right_alt&quot;></span>"></button>
-        <button class="rd-icon-attach_file rd-js-copy" title="attach_file" aria-label="Copy markup for attach_file" data-copy-text="<span class=&quot;rd-icon-attach_file&quot;></span>"></button>
-        <button class="rd-icon-attach_money rd-js-copy" title="attach_money" aria-label="Copy markup for attach_money" data-copy-text="<span class=&quot;rd-icon-attach_money&quot;></span>"></button>
-        <button class="rd-icon-auto_awesome rd-js-copy" title="auto_awesome" aria-label="Copy markup for auto_awesome" data-copy-text="<span class=&quot;rd-icon-auto_awesome&quot;></span>"></button>
-        <button class="rd-icon-auto_awesome_mosaic rd-js-copy" title="auto_awesome_mosaic" aria-label="Copy markup for auto_awesome_mosaic" data-copy-text="<span class=&quot;rd-icon-auto_awesome_mosaic&quot;></span>"></button>
-        <button class="rd-icon-balance rd-js-copy" title="balance" aria-label="Copy markup for balance" data-copy-text="<span class=&quot;rd-icon-balance&quot;></span>"></button>
-        <button class="rd-icon-bar_chart rd-js-copy" title="bar_chart" aria-label="Copy markup for bar_chart" data-copy-text="<span class=&quot;rd-icon-bar_chart&quot;></span>"></button>
-        <button class="rd-icon-bedtime rd-js-copy" title="bedtime" aria-label="Copy markup for bedtime" data-copy-text="<span class=&quot;rd-icon-bedtime&quot;></span>"></button>
-        <button class="rd-icon-bolt rd-js-copy" title="bolt" aria-label="Copy markup for bolt" data-copy-text="<span class=&quot;rd-icon-bolt&quot;></span>"></button>
-        <button class="rd-icon-bookmark rd-js-copy" title="bookmark" aria-label="Copy markup for bookmark" data-copy-text="<span class=&quot;rd-icon-bookmark&quot;></span>"></button>
-        <button class="rd-icon-bookmark_star rd-js-copy" title="bookmark_star" aria-label="Copy markup for bookmark_star" data-copy-text="<span class=&quot;rd-icon-bookmark_star&quot;></span>"></button>
-        <button class="rd-icon-brush rd-js-copy" title="brush" aria-label="Copy markup for brush" data-copy-text="<span class=&quot;rd-icon-brush&quot;></span>"></button>
-        <button class="rd-icon-business_center rd-js-copy" title="business_center" aria-label="Copy markup for business_center" data-copy-text="<span class=&quot;rd-icon-business_center&quot;></span>"></button>
-        <button class="rd-icon-campaign rd-js-copy" title="campaign" aria-label="Copy markup for campaign" data-copy-text="<span class=&quot;rd-icon-campaign&quot;></span>"></button>
-        <button class="rd-icon-chat rd-js-copy" title="chat" aria-label="Copy markup for chat" data-copy-text="<span class=&quot;rd-icon-chat&quot;></span>"></button>
-        <button class="rd-icon-check rd-js-copy" title="check" aria-label="Copy markup for check" data-copy-text="<span class=&quot;rd-icon-check&quot;></span>"></button>
-        <button class="rd-icon-check_circle rd-js-copy" title="check_circle" aria-label="Copy markup for check_circle" data-copy-text="<span class=&quot;rd-icon-check_circle&quot;></span>"></button>
-        <button class="rd-icon-chess_knight rd-js-copy" title="chess_knight" aria-label="Copy markup for chess_knight" data-copy-text="<span class=&quot;rd-icon-chess_knight&quot;></span>"></button>
-        <button class="rd-icon-chevron_left rd-js-copy" title="chevron_left" aria-label="Copy markup for chevron_left" data-copy-text="<span class=&quot;rd-icon-chevron_left&quot;></span>"></button>
-        <button class="rd-icon-chevron_right rd-js-copy" title="chevron_right" aria-label="Copy markup for chevron_right" data-copy-text="<span class=&quot;rd-icon-chevron_right&quot;></span>"></button>
-        <button class="rd-icon-close rd-js-copy" title="close" aria-label="Copy markup for close" data-copy-text="<span class=&quot;rd-icon-close&quot;></span>"></button>
-        <button class="rd-icon-code rd-js-copy" title="code" aria-label="Copy markup for code" data-copy-text="<span class=&quot;rd-icon-code&quot;></span>"></button>
-        <button class="rd-icon-cognition rd-js-copy" title="cognition" aria-label="Copy markup for cognition" data-copy-text="<span class=&quot;rd-icon-cognition&quot;></span>"></button>
-        <button class="rd-icon-construction rd-js-copy" title="construction" aria-label="Copy markup for construction" data-copy-text="<span class=&quot;rd-icon-construction&quot;></span>"></button>
-        <button class="rd-icon-content_copy rd-js-copy" title="content_copy" aria-label="Copy markup for content_copy" data-copy-text="<span class=&quot;rd-icon-content_copy&quot;></span>"></button>
-        <button class="rd-icon-corporate_fare rd-js-copy" title="corporate_fare" aria-label="Copy markup for corporate_fare" data-copy-text="<span class=&quot;rd-icon-corporate_fare&quot;></span>"></button>
-        <button class="rd-icon-credit_card rd-js-copy" title="credit_card" aria-label="Copy markup for credit_card" data-copy-text="<span class=&quot;rd-icon-credit_card&quot;></span>"></button>
-        <button class="rd-icon-currency_exchange rd-js-copy" title="currency_exchange" aria-label="Copy markup for currency_exchange" data-copy-text="<span class=&quot;rd-icon-currency_exchange&quot;></span>"></button>
-        <button class="rd-icon-dashboard rd-js-copy" title="dashboard" aria-label="Copy markup for dashboard" data-copy-text="<span class=&quot;rd-icon-dashboard&quot;></span>"></button>
-        <button class="rd-icon-delete rd-js-copy" title="delete" aria-label="Copy markup for delete" data-copy-text="<span class=&quot;rd-icon-delete&quot;></span>"></button>
-        <button class="rd-icon-description rd-js-copy" title="description" aria-label="Copy markup for description" data-copy-text="<span class=&quot;rd-icon-description&quot;></span>"></button>
-        <button class="rd-icon-diamond rd-js-copy" title="diamond" aria-label="Copy markup for diamond" data-copy-text="<span class=&quot;rd-icon-diamond&quot;></span>"></button>
-        <button class="rd-icon-directions_car rd-js-copy" title="directions_car" aria-label="Copy markup for directions_car" data-copy-text="<span class=&quot;rd-icon-directions_car&quot;></span>"></button>
-        <button class="rd-icon-download rd-js-copy" title="download" aria-label="Copy markup for download" data-copy-text="<span class=&quot;rd-icon-download&quot;></span>"></button>
-        <button class="rd-icon-draft rd-js-copy" title="draft" aria-label="Copy markup for draft" data-copy-text="<span class=&quot;rd-icon-draft&quot;></span>"></button>
-        <button class="rd-icon-drafts rd-js-copy" title="drafts" aria-label="Copy markup for drafts" data-copy-text="<span class=&quot;rd-icon-drafts&quot;></span>"></button>
-        <button class="rd-icon-edit_document rd-js-copy" title="edit_document" aria-label="Copy markup for edit_document" data-copy-text="<span class=&quot;rd-icon-edit_document&quot;></span>"></button>
-        <button class="rd-icon-error rd-js-copy" title="error" aria-label="Copy markup for error" data-copy-text="<span class=&quot;rd-icon-error&quot;></span>"></button>
-        <button class="rd-icon-error_outline rd-js-copy" title="error_outline" aria-label="Copy markup for error_outline" data-copy-text="<span class=&quot;rd-icon-error_outline&quot;></span>"></button>
-        <button class="rd-icon-event rd-js-copy" title="event" aria-label="Copy markup for event" data-copy-text="<span class=&quot;rd-icon-event&quot;></span>"></button>
-        <button class="rd-icon-event_available rd-js-copy" title="event_available" aria-label="Copy markup for event_available" data-copy-text="<span class=&quot;rd-icon-event_available&quot;></span>"></button>
-        <button class="rd-icon-event_repeat rd-js-copy" title="event_repeat" aria-label="Copy markup for event_repeat" data-copy-text="<span class=&quot;rd-icon-event_repeat&quot;></span>"></button>
-        <button class="rd-icon-explore rd-js-copy" title="explore" aria-label="Copy markup for explore" data-copy-text="<span class=&quot;rd-icon-explore&quot;></span>"></button>
-        <button class="rd-icon-family_group rd-js-copy" title="family_group" aria-label="Copy markup for family_group" data-copy-text="<span class=&quot;rd-icon-family_group&quot;></span>"></button>
-        <button class="rd-icon-family_restroom rd-js-copy" title="family_restroom" aria-label="Copy markup for family_restroom" data-copy-text="<span class=&quot;rd-icon-family_restroom&quot;></span>"></button>
-        <button class="rd-icon-favorite rd-js-copy" title="favorite" aria-label="Copy markup for favorite" data-copy-text="<span class=&quot;rd-icon-favorite&quot;></span>"></button>
-        <button class="rd-icon-festival rd-js-copy" title="festival" aria-label="Copy markup for festival" data-copy-text="<span class=&quot;rd-icon-festival&quot;></span>"></button>
-        <button class="rd-icon-filter_alt rd-js-copy" title="filter_alt" aria-label="Copy markup for filter_alt" data-copy-text="<span class=&quot;rd-icon-filter_alt&quot;></span>"></button>
-        <button class="rd-icon-flag rd-js-copy" title="flag" aria-label="Copy markup for flag" data-copy-text="<span class=&quot;rd-icon-flag&quot;></span>"></button>
-        <button class="rd-icon-flag_2 rd-js-copy" title="flag_2" aria-label="Copy markup for flag_2" data-copy-text="<span class=&quot;rd-icon-flag_2&quot;></span>"></button>
-        <button class="rd-icon-flight rd-js-copy" title="flight" aria-label="Copy markup for flight" data-copy-text="<span class=&quot;rd-icon-flight&quot;></span>"></button>
-        <button class="rd-icon-folder rd-js-copy" title="folder" aria-label="Copy markup for folder" data-copy-text="<span class=&quot;rd-icon-folder&quot;></span>"></button>
-        <button class="rd-icon-folder_open rd-js-copy" title="folder_open" aria-label="Copy markup for folder_open" data-copy-text="<span class=&quot;rd-icon-folder_open&quot;></span>"></button>
-        <button class="rd-icon-format_paint rd-js-copy" title="format_paint" aria-label="Copy markup for format_paint" data-copy-text="<span class=&quot;rd-icon-format_paint&quot;></span>"></button>
-        <button class="rd-icon-forum rd-js-copy" title="forum" aria-label="Copy markup for forum" data-copy-text="<span class=&quot;rd-icon-forum&quot;></span>"></button>
-        <button class="rd-icon-function rd-js-copy" title="function" aria-label="Copy markup for function" data-copy-text="<span class=&quot;rd-icon-function&quot;></span>"></button>
-        <button class="rd-icon-grid_view rd-js-copy" title="grid_view" aria-label="Copy markup for grid_view" data-copy-text="<span class=&quot;rd-icon-grid_view&quot;></span>"></button>
-        <button class="rd-icon-group rd-js-copy" title="group" aria-label="Copy markup for group" data-copy-text="<span class=&quot;rd-icon-group&quot;></span>"></button>
-        <button class="rd-icon-group_add rd-js-copy" title="group_add" aria-label="Copy markup for group_add" data-copy-text="<span class=&quot;rd-icon-group_add&quot;></span>"></button>
-        <button class="rd-icon-groups rd-js-copy" title="groups" aria-label="Copy markup for groups" data-copy-text="<span class=&quot;rd-icon-groups&quot;></span>"></button>
-        <button class="rd-icon-handshake rd-js-copy" title="handshake" aria-label="Copy markup for handshake" data-copy-text="<span class=&quot;rd-icon-handshake&quot;></span>"></button>
-        <button class="rd-icon-home_work rd-js-copy" title="home_work" aria-label="Copy markup for home_work" data-copy-text="<span class=&quot;rd-icon-home_work&quot;></span>"></button>
-        <button class="rd-icon-hub rd-js-copy" title="hub" aria-label="Copy markup for hub" data-copy-text="<span class=&quot;rd-icon-hub&quot;></span>"></button>
-        <button class="rd-icon-inbox rd-js-copy" title="inbox" aria-label="Copy markup for inbox" data-copy-text="<span class=&quot;rd-icon-inbox&quot;></span>"></button>
-        <button class="rd-icon-info rd-js-copy" title="info" aria-label="Copy markup for info" data-copy-text="<span class=&quot;rd-icon-info&quot;></span>"></button>
-        <button class="rd-icon-insert_drive_file rd-js-copy" title="insert_drive_file" aria-label="Copy markup for insert_drive_file" data-copy-text="<span class=&quot;rd-icon-insert_drive_file&quot;></span>"></button>
-        <button class="rd-icon-insights rd-js-copy" title="insights" aria-label="Copy markup for insights" data-copy-text="<span class=&quot;rd-icon-insights&quot;></span>"></button>
-        <button class="rd-icon-inventory_2 rd-js-copy" title="inventory_2" aria-label="Copy markup for inventory_2" data-copy-text="<span class=&quot;rd-icon-inventory_2&quot;></span>"></button>
-        <button class="rd-icon-keep rd-js-copy" title="keep" aria-label="Copy markup for keep" data-copy-text="<span class=&quot;rd-icon-keep&quot;></span>"></button>
-        <button class="rd-icon-key rd-js-copy" title="key" aria-label="Copy markup for key" data-copy-text="<span class=&quot;rd-icon-key&quot;></span>"></button>
-        <button class="rd-icon-key_vertical rd-js-copy" title="key_vertical" aria-label="Copy markup for key_vertical" data-copy-text="<span class=&quot;rd-icon-key_vertical&quot;></span>"></button>
-        <button class="rd-icon-keyboard_arrow_down rd-js-copy" title="keyboard_arrow_down" aria-label="Copy markup for keyboard_arrow_down" data-copy-text="<span class=&quot;rd-icon-keyboard_arrow_down&quot;></span>"></button>
-        <button class="rd-icon-lightbulb rd-js-copy" title="lightbulb" aria-label="Copy markup for lightbulb" data-copy-text="<span class=&quot;rd-icon-lightbulb&quot;></span>"></button>
-        <button class="rd-icon-lightbulb_2 rd-js-copy" title="lightbulb_2" aria-label="Copy markup for lightbulb_2" data-copy-text="<span class=&quot;rd-icon-lightbulb_2&quot;></span>"></button>
-        <button class="rd-icon-local_shipping rd-js-copy" title="local_shipping" aria-label="Copy markup for local_shipping" data-copy-text="<span class=&quot;rd-icon-local_shipping&quot;></span>"></button>
-        <button class="rd-icon-login rd-js-copy" title="login" aria-label="Copy markup for login" data-copy-text="<span class=&quot;rd-icon-login&quot;></span>"></button>
-        <button class="rd-icon-logout rd-js-copy" title="logout" aria-label="Copy markup for logout" data-copy-text="<span class=&quot;rd-icon-logout&quot;></span>"></button>
-        <button class="rd-icon-mail rd-js-copy" title="mail" aria-label="Copy markup for mail" data-copy-text="<span class=&quot;rd-icon-mail&quot;></span>"></button>
-        <button class="rd-icon-menu rd-js-copy" title="menu" aria-label="Copy markup for menu" data-copy-text="<span class=&quot;rd-icon-menu&quot;></span>"></button>
-        <button class="rd-icon-movie rd-js-copy" title="movie" aria-label="Copy markup for movie" data-copy-text="<span class=&quot;rd-icon-movie&quot;></span>"></button>
-        <button class="rd-icon-music_note rd-js-copy" title="music_note" aria-label="Copy markup for music_note" data-copy-text="<span class=&quot;rd-icon-music_note&quot;></span>"></button>
-        <button class="rd-icon-new_releases rd-js-copy" title="new_releases" aria-label="Copy markup for new_releases" data-copy-text="<span class=&quot;rd-icon-new_releases&quot;></span>"></button>
-        <button class="rd-icon-north_east rd-js-copy" title="north_east" aria-label="Copy markup for north_east" data-copy-text="<span class=&quot;rd-icon-north_east&quot;></span>"></button>
-        <button class="rd-icon-notifications rd-js-copy" title="notifications" aria-label="Copy markup for notifications" data-copy-text="<span class=&quot;rd-icon-notifications&quot;></span>"></button>
-        <button class="rd-icon-open_in_new rd-js-copy" title="open_in_new" aria-label="Copy markup for open_in_new" data-copy-text="<span class=&quot;rd-icon-open_in_new&quot;></span>"></button>
-        <button class="rd-icon-pause_circle rd-js-copy" title="pause_circle" aria-label="Copy markup for pause_circle" data-copy-text="<span class=&quot;rd-icon-pause_circle&quot;></span>"></button>
-        <button class="rd-icon-payments rd-js-copy" title="payments" aria-label="Copy markup for payments" data-copy-text="<span class=&quot;rd-icon-payments&quot;></span>"></button>
-        <button class="rd-icon-people_alt rd-js-copy" title="people_alt" aria-label="Copy markup for people_alt" data-copy-text="<span class=&quot;rd-icon-people_alt&quot;></span>"></button>
-        <button class="rd-icon-person_add rd-js-copy" title="person_add" aria-label="Copy markup for person_add" data-copy-text="<span class=&quot;rd-icon-person_add&quot;></span>"></button>
-        <button class="rd-icon-pets rd-js-copy" title="pets" aria-label="Copy markup for pets" data-copy-text="<span class=&quot;rd-icon-pets&quot;></span>"></button>
-        <button class="rd-icon-priority_high rd-js-copy" title="priority_high" aria-label="Copy markup for priority_high" data-copy-text="<span class=&quot;rd-icon-priority_high&quot;></span>"></button>
-        <button class="rd-icon-psychology rd-js-copy" title="psychology" aria-label="Copy markup for psychology" data-copy-text="<span class=&quot;rd-icon-psychology&quot;></span>"></button>
-        <button class="rd-icon-query_stats rd-js-copy" title="query_stats" aria-label="Copy markup for query_stats" data-copy-text="<span class=&quot;rd-icon-query_stats&quot;></span>"></button>
-        <button class="rd-icon-radio_button_checked rd-js-copy" title="radio_button_checked" aria-label="Copy markup for radio_button_checked" data-copy-text="<span class=&quot;rd-icon-radio_button_checked&quot;></span>"></button>
-        <button class="rd-icon-radio_button_unchecked rd-js-copy" title="radio_button_unchecked" aria-label="Copy markup for radio_button_unchecked" data-copy-text="<span class=&quot;rd-icon-radio_button_unchecked&quot;></span>"></button>
-        <button class="rd-icon-read_more rd-js-copy" title="read_more" aria-label="Copy markup for read_more" data-copy-text="<span class=&quot;rd-icon-read_more&quot;></span>"></button>
-        <button class="rd-icon-real_estate_agent rd-js-copy" title="real_estate_agent" aria-label="Copy markup for real_estate_agent" data-copy-text="<span class=&quot;rd-icon-real_estate_agent&quot;></span>"></button>
-        <button class="rd-icon-receipt rd-js-copy" title="receipt" aria-label="Copy markup for receipt" data-copy-text="<span class=&quot;rd-icon-receipt&quot;></span>"></button>
-        <button class="rd-icon-receipt_long rd-js-copy" title="receipt_long" aria-label="Copy markup for receipt_long" data-copy-text="<span class=&quot;rd-icon-receipt_long&quot;></span>"></button>
-        <button class="rd-icon-record_voice_over rd-js-copy" title="record_voice_over" aria-label="Copy markup for record_voice_over" data-copy-text="<span class=&quot;rd-icon-record_voice_over&quot;></span>"></button>
-        <button class="rd-icon-recycling rd-js-copy" title="recycling" aria-label="Copy markup for recycling" data-copy-text="<span class=&quot;rd-icon-recycling&quot;></span>"></button>
-        <button class="rd-icon-remove_circle rd-js-copy" title="remove_circle" aria-label="Copy markup for remove_circle" data-copy-text="<span class=&quot;rd-icon-remove_circle&quot;></span>"></button>
-        <button class="rd-icon-restart_alt rd-js-copy" title="restart_alt" aria-label="Copy markup for restart_alt" data-copy-text="<span class=&quot;rd-icon-restart_alt&quot;></span>"></button>
-        <button class="rd-icon-restaurant rd-js-copy" title="restaurant" aria-label="Copy markup for restaurant" data-copy-text="<span class=&quot;rd-icon-restaurant&quot;></span>"></button>
-        <button class="rd-icon-rocket_launch rd-js-copy" title="rocket_launch" aria-label="Copy markup for rocket_launch" data-copy-text="<span class=&quot;rd-icon-rocket_launch&quot;></span>"></button>
-        <button class="rd-icon-rss_feed rd-js-copy" title="rss_feed" aria-label="Copy markup for rss_feed" data-copy-text="<span class=&quot;rd-icon-rss_feed&quot;></span>"></button>
-        <button class="rd-icon-savings rd-js-copy" title="savings" aria-label="Copy markup for savings" data-copy-text="<span class=&quot;rd-icon-savings&quot;></span>"></button>
-        <button class="rd-icon-schedule rd-js-copy" title="schedule" aria-label="Copy markup for schedule" data-copy-text="<span class=&quot;rd-icon-schedule&quot;></span>"></button>
-        <button class="rd-icon-search rd-js-copy" title="search" aria-label="Copy markup for search" data-copy-text="<span class=&quot;rd-icon-search&quot;></span>"></button>
-        <button class="rd-icon-send rd-js-copy" title="send" aria-label="Copy markup for send" data-copy-text="<span class=&quot;rd-icon-send&quot;></span>"></button>
-        <button class="rd-icon-settings rd-js-copy" title="settings" aria-label="Copy markup for settings" data-copy-text="<span class=&quot;rd-icon-settings&quot;></span>"></button>
-        <button class="rd-icon-show_chart rd-js-copy" title="show_chart" aria-label="Copy markup for show_chart" data-copy-text="<span class=&quot;rd-icon-show_chart&quot;></span>"></button>
-        <button class="rd-icon-smart_toy rd-js-copy" title="smart_toy" aria-label="Copy markup for smart_toy" data-copy-text="<span class=&quot;rd-icon-smart_toy&quot;></span>"></button>
-        <button class="rd-icon-sms rd-js-copy" title="sms" aria-label="Copy markup for sms" data-copy-text="<span class=&quot;rd-icon-sms&quot;></span>"></button>
-        <button class="rd-icon-south_west rd-js-copy" title="south_west" aria-label="Copy markup for south_west" data-copy-text="<span class=&quot;rd-icon-south_west&quot;></span>"></button>
-        <button class="rd-icon-speaker rd-js-copy" title="speaker" aria-label="Copy markup for speaker" data-copy-text="<span class=&quot;rd-icon-speaker&quot;></span>"></button>
-        <button class="rd-icon-speed rd-js-copy" title="speed" aria-label="Copy markup for speed" data-copy-text="<span class=&quot;rd-icon-speed&quot;></span>"></button>
-        <button class="rd-icon-star rd-js-copy" title="star" aria-label="Copy markup for star" data-copy-text="<span class=&quot;rd-icon-star&quot;></span>"></button>
-        <button class="rd-icon-star_fill rd-js-copy" title="star_fill" aria-label="Copy markup for star_fill" data-copy-text="<span class=&quot;rd-icon-star_fill&quot;></span>"></button>
-        <button class="rd-icon-star_half rd-js-copy" title="star_half" aria-label="Copy markup for star_half" data-copy-text="<span class=&quot;rd-icon-star_half&quot;></span>"></button>
-        <button class="rd-icon-storefront rd-js-copy" title="storefront" aria-label="Copy markup for storefront" data-copy-text="<span class=&quot;rd-icon-storefront&quot;></span>"></button>
-        <button class="rd-icon-subdirectory_arrow_right rd-js-copy" title="subdirectory_arrow_right" aria-label="Copy markup for subdirectory_arrow_right" data-copy-text="<span class=&quot;rd-icon-subdirectory_arrow_right&quot;></span>"></button>
-        <button class="rd-icon-swap_horiz rd-js-copy" title="swap_horiz" aria-label="Copy markup for swap_horiz" data-copy-text="<span class=&quot;rd-icon-swap_horiz&quot;></span>"></button>
-        <button class="rd-icon-target rd-js-copy" title="target" aria-label="Copy markup for target" data-copy-text="<span class=&quot;rd-icon-target&quot;></span>"></button>
-        <button class="rd-icon-task_alt rd-js-copy" title="task_alt" aria-label="Copy markup for task_alt" data-copy-text="<span class=&quot;rd-icon-task_alt&quot;></span>"></button>
-        <button class="rd-icon-toggle_off rd-js-copy" title="toggle_off" aria-label="Copy markup for toggle_off" data-copy-text="<span class=&quot;rd-icon-toggle_off&quot;></span>"></button>
-        <button class="rd-icon-toggle_on rd-js-copy" title="toggle_on" aria-label="Copy markup for toggle_on" data-copy-text="<span class=&quot;rd-icon-toggle_on&quot;></span>"></button>
-        <button class="rd-icon-trending_down rd-js-copy" title="trending_down" aria-label="Copy markup for trending_down" data-copy-text="<span class=&quot;rd-icon-trending_down&quot;></span>"></button>
-        <button class="rd-icon-trending_up rd-js-copy" title="trending_up" aria-label="Copy markup for trending_up" data-copy-text="<span class=&quot;rd-icon-trending_up&quot;></span>"></button>
-        <button class="rd-icon-trip_origin rd-js-copy" title="trip_origin" aria-label="Copy markup for trip_origin" data-copy-text="<span class=&quot;rd-icon-trip_origin&quot;></span>"></button>
-        <button class="rd-icon-tune rd-js-copy" title="tune" aria-label="Copy markup for tune" data-copy-text="<span class=&quot;rd-icon-tune&quot;></span>"></button>
-        <button class="rd-icon-visibility rd-js-copy" title="visibility" aria-label="Copy markup for visibility" data-copy-text="<span class=&quot;rd-icon-visibility&quot;></span>"></button>
-        <button class="rd-icon-warehouse rd-js-copy" title="warehouse" aria-label="Copy markup for warehouse" data-copy-text="<span class=&quot;rd-icon-warehouse&quot;></span>"></button>
-        <button class="rd-icon-warning rd-js-copy" title="warning" aria-label="Copy markup for warning" data-copy-text="<span class=&quot;rd-icon-warning&quot;></span>"></button>
-        <button class="rd-icon-waving_hand rd-js-copy" title="waving_hand" aria-label="Copy markup for waving_hand" data-copy-text="<span class=&quot;rd-icon-waving_hand&quot;></span>"></button>
-        <button class="rd-icon-work rd-js-copy" title="work" aria-label="Copy markup for work" data-copy-text="<span class=&quot;rd-icon-work&quot;></span>"></button>
-        
+    <!-- The field and the weight switch keep one line; on a narrow screen the
+         label wraps above them and starts at the left. -->
+    <form id="icon-finder" class="flex wrap items-center gap-md text-content-width padding-b-md rd-is-hidden" role="search" onsubmit="return false">
+        <label for="icon-search">Find a glyph</label>
+        <div class="flex items-center gap-md" style="flex: 1 1 18rem; min-width: 0;">
+            <input id="icon-search" type="search" placeholder="arrow, reload, user…" autocomplete="off" spellcheck="false" style="flex: 1 1 auto; min-width: 0;">
+            <div class="button-group" role="group" aria-label="Weight" style="flex: none;">
+                <button type="button" aria-pressed="true" data-icon-weight="400">Regular</button>
+                <button type="button" aria-pressed="false" data-icon-weight="200">Thin</button>
+            </div>
+        </div>
+    </form>
+    <p id="icon-none" class="rd-is-hidden" role="status">
+        No glyph matches. Try another word, or see <a href="#missing">what to do when a glyph is not in the set</a>.
+    </p>
+    <noscript>
+        <p>The grids show the regular cut. Every glyph also has the thin one: add <code>-thin</code> to its class.</p>
+    </noscript>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-arrows">Arrows and navigation</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-arrow_back rd-js-copy" title="arrow_back" aria-label="Copy markup for arrow_back" data-icon-name="arrow_back" data-icon-words="left previous" data-copy-text="<span class=&quot;rd-icon-arrow_back&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_forward rd-js-copy" title="arrow_forward" aria-label="Copy markup for arrow_forward" data-icon-name="arrow_forward" data-icon-words="right next" data-copy-text="<span class=&quot;rd-icon-arrow_forward&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_right_alt rd-js-copy" title="arrow_right_alt" aria-label="Copy markup for arrow_right_alt" data-icon-name="arrow_right_alt" data-icon-words="right next" data-copy-text="<span class=&quot;rd-icon-arrow_right_alt&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_upward rd-js-copy" title="arrow_upward" aria-label="Copy markup for arrow_upward" data-icon-name="arrow_upward" data-icon-words="up sort" data-copy-text="<span class=&quot;rd-icon-arrow_upward&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_downward rd-js-copy" title="arrow_downward" aria-label="Copy markup for arrow_downward" data-icon-name="arrow_downward" data-icon-words="down sort" data-copy-text="<span class=&quot;rd-icon-arrow_downward&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_outward rd-js-copy" title="arrow_outward" aria-label="Copy markup for arrow_outward" data-icon-name="arrow_outward" data-icon-words="up right external" data-copy-text="<span class=&quot;rd-icon-arrow_outward&quot;></span>"></button>
+            <button type="button" class="rd-icon-north_east rd-js-copy" title="north_east" aria-label="Copy markup for north_east" data-icon-name="north_east" data-icon-words="arrow up right" data-copy-text="<span class=&quot;rd-icon-north_east&quot;></span>"></button>
+            <button type="button" class="rd-icon-south_west rd-js-copy" title="south_west" aria-label="Copy markup for south_west" data-icon-name="south_west" data-icon-words="arrow down left" data-copy-text="<span class=&quot;rd-icon-south_west&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_drop_down rd-js-copy" title="arrow_drop_down" aria-label="Copy markup for arrow_drop_down" data-icon-name="arrow_drop_down" data-icon-words="triangle caret delta down" data-copy-text="<span class=&quot;rd-icon-arrow_drop_down&quot;></span>"></button>
+            <button type="button" class="rd-icon-arrow_drop_up rd-js-copy" title="arrow_drop_up" aria-label="Copy markup for arrow_drop_up" data-icon-name="arrow_drop_up" data-icon-words="triangle caret delta up" data-copy-text="<span class=&quot;rd-icon-arrow_drop_up&quot;></span>"></button>
+            <button type="button" class="rd-icon-keyboard_arrow_down rd-js-copy" title="keyboard_arrow_down" aria-label="Copy markup for keyboard_arrow_down" data-icon-name="keyboard_arrow_down" data-icon-words="chevron caret expand" data-copy-text="<span class=&quot;rd-icon-keyboard_arrow_down&quot;></span>"></button>
+            <button type="button" class="rd-icon-keyboard_arrow_up rd-js-copy" title="keyboard_arrow_up" aria-label="Copy markup for keyboard_arrow_up" data-icon-name="keyboard_arrow_up" data-icon-words="chevron caret collapse" data-copy-text="<span class=&quot;rd-icon-keyboard_arrow_up&quot;></span>"></button>
+            <button type="button" class="rd-icon-chevron_left rd-js-copy" title="chevron_left" aria-label="Copy markup for chevron_left" data-icon-name="chevron_left" data-icon-words="arrow previous back" data-copy-text="<span class=&quot;rd-icon-chevron_left&quot;></span>"></button>
+            <button type="button" class="rd-icon-chevron_right rd-js-copy" title="chevron_right" aria-label="Copy markup for chevron_right" data-icon-name="chevron_right" data-icon-words="arrow next forward" data-copy-text="<span class=&quot;rd-icon-chevron_right&quot;></span>"></button>
+            <button type="button" class="rd-icon-first_page rd-js-copy" title="first_page" aria-label="Copy markup for first_page" data-icon-name="first_page" data-icon-words="arrow pagination start" data-copy-text="<span class=&quot;rd-icon-first_page&quot;></span>"></button>
+            <button type="button" class="rd-icon-last_page rd-js-copy" title="last_page" aria-label="Copy markup for last_page" data-icon-name="last_page" data-icon-words="arrow pagination end" data-copy-text="<span class=&quot;rd-icon-last_page&quot;></span>"></button>
+            <button type="button" class="rd-icon-subdirectory_arrow_right rd-js-copy" title="subdirectory_arrow_right" aria-label="Copy markup for subdirectory_arrow_right" data-icon-name="subdirectory_arrow_right" data-icon-words="nested reply" data-copy-text="<span class=&quot;rd-icon-subdirectory_arrow_right&quot;></span>"></button>
+            <button type="button" class="rd-icon-swap_horiz rd-js-copy" title="swap_horiz" aria-label="Copy markup for swap_horiz" data-icon-name="swap_horiz" data-icon-words="arrow exchange switch" data-copy-text="<span class=&quot;rd-icon-swap_horiz&quot;></span>"></button>
+            <button type="button" class="rd-icon-read_more rd-js-copy" title="read_more" aria-label="Copy markup for read_more" data-icon-name="read_more" data-icon-words="arrow continue" data-copy-text="<span class=&quot;rd-icon-read_more&quot;></span>"></button>
+            <button type="button" class="rd-icon-open_in_new rd-js-copy" title="open_in_new" aria-label="Copy markup for open_in_new" data-icon-name="open_in_new" data-icon-words="arrow external link window" data-copy-text="<span class=&quot;rd-icon-open_in_new&quot;></span>"></button>
+            <button type="button" class="rd-icon-login rd-js-copy" title="login" aria-label="Copy markup for login" data-icon-name="login" data-icon-words="arrow sign in enter" data-copy-text="<span class=&quot;rd-icon-login&quot;></span>"></button>
+            <button type="button" class="rd-icon-logout rd-js-copy" title="logout" aria-label="Copy markup for logout" data-icon-name="logout" data-icon-words="arrow sign out exit" data-copy-text="<span class=&quot;rd-icon-logout&quot;></span>"></button>
+            <button type="button" class="rd-icon-menu rd-js-copy" title="menu" aria-label="Copy markup for menu" data-icon-name="menu" data-icon-words="hamburger" data-copy-text="<span class=&quot;rd-icon-menu&quot;></span>"></button>
+            <button type="button" class="rd-icon-more_horiz rd-js-copy" title="more_horiz" aria-label="Copy markup for more_horiz" data-icon-name="more_horiz" data-icon-words="dots ellipsis menu" data-copy-text="<span class=&quot;rd-icon-more_horiz&quot;></span>"></button>
+            <button type="button" class="rd-icon-more_vert rd-js-copy" title="more_vert" aria-label="Copy markup for more_vert" data-icon-name="more_vert" data-icon-words="dots kebab menu" data-copy-text="<span class=&quot;rd-icon-more_vert&quot;></span>"></button>
+            <button type="button" class="rd-icon-fullscreen rd-js-copy" title="fullscreen" aria-label="Copy markup for fullscreen" data-icon-name="fullscreen" data-icon-words="expand maximize" data-copy-text="<span class=&quot;rd-icon-fullscreen&quot;></span>"></button>
+            <button type="button" class="rd-icon-fullscreen_exit rd-js-copy" title="fullscreen_exit" aria-label="Copy markup for fullscreen_exit" data-icon-name="fullscreen_exit" data-icon-words="collapse minimize" data-copy-text="<span class=&quot;rd-icon-fullscreen_exit&quot;></span>"></button>
+            <button type="button" class="rd-icon-explore rd-js-copy" title="explore" aria-label="Copy markup for explore" data-icon-name="explore" data-icon-words="compass" data-copy-text="<span class=&quot;rd-icon-explore&quot;></span>"></button>
+            
+        </div>
     </div>
-    <p>The same set in the thin cut:</p>
-    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
-        <button class="rd-icon-account_balance-thin rd-js-copy" title="account_balance" aria-label="Copy markup for account_balance, thin cut" data-copy-text="<span class=&quot;rd-icon-account_balance-thin&quot;></span>"></button>
-        <button class="rd-icon-account_circle-thin rd-js-copy" title="account_circle" aria-label="Copy markup for account_circle, thin cut" data-copy-text="<span class=&quot;rd-icon-account_circle-thin&quot;></span>"></button>
-        <button class="rd-icon-account_tree-thin rd-js-copy" title="account_tree" aria-label="Copy markup for account_tree, thin cut" data-copy-text="<span class=&quot;rd-icon-account_tree-thin&quot;></span>"></button>
-        <button class="rd-icon-arrow_drop_down-thin rd-js-copy" title="arrow_drop_down" aria-label="Copy markup for arrow_drop_down, thin cut" data-copy-text="<span class=&quot;rd-icon-arrow_drop_down-thin&quot;></span>"></button>
-        <button class="rd-icon-arrow_drop_up-thin rd-js-copy" title="arrow_drop_up" aria-label="Copy markup for arrow_drop_up, thin cut" data-copy-text="<span class=&quot;rd-icon-arrow_drop_up-thin&quot;></span>"></button>
-        <button class="rd-icon-arrow_forward-thin rd-js-copy" title="arrow_forward" aria-label="Copy markup for arrow_forward, thin cut" data-copy-text="<span class=&quot;rd-icon-arrow_forward-thin&quot;></span>"></button>
-        <button class="rd-icon-arrow_outward-thin rd-js-copy" title="arrow_outward" aria-label="Copy markup for arrow_outward, thin cut" data-copy-text="<span class=&quot;rd-icon-arrow_outward-thin&quot;></span>"></button>
-        <button class="rd-icon-arrow_right_alt-thin rd-js-copy" title="arrow_right_alt" aria-label="Copy markup for arrow_right_alt, thin cut" data-copy-text="<span class=&quot;rd-icon-arrow_right_alt-thin&quot;></span>"></button>
-        <button class="rd-icon-attach_file-thin rd-js-copy" title="attach_file" aria-label="Copy markup for attach_file, thin cut" data-copy-text="<span class=&quot;rd-icon-attach_file-thin&quot;></span>"></button>
-        <button class="rd-icon-attach_money-thin rd-js-copy" title="attach_money" aria-label="Copy markup for attach_money, thin cut" data-copy-text="<span class=&quot;rd-icon-attach_money-thin&quot;></span>"></button>
-        <button class="rd-icon-auto_awesome-thin rd-js-copy" title="auto_awesome" aria-label="Copy markup for auto_awesome, thin cut" data-copy-text="<span class=&quot;rd-icon-auto_awesome-thin&quot;></span>"></button>
-        <button class="rd-icon-auto_awesome_mosaic-thin rd-js-copy" title="auto_awesome_mosaic" aria-label="Copy markup for auto_awesome_mosaic, thin cut" data-copy-text="<span class=&quot;rd-icon-auto_awesome_mosaic-thin&quot;></span>"></button>
-        <button class="rd-icon-balance-thin rd-js-copy" title="balance" aria-label="Copy markup for balance, thin cut" data-copy-text="<span class=&quot;rd-icon-balance-thin&quot;></span>"></button>
-        <button class="rd-icon-bar_chart-thin rd-js-copy" title="bar_chart" aria-label="Copy markup for bar_chart, thin cut" data-copy-text="<span class=&quot;rd-icon-bar_chart-thin&quot;></span>"></button>
-        <button class="rd-icon-bedtime-thin rd-js-copy" title="bedtime" aria-label="Copy markup for bedtime, thin cut" data-copy-text="<span class=&quot;rd-icon-bedtime-thin&quot;></span>"></button>
-        <button class="rd-icon-bolt-thin rd-js-copy" title="bolt" aria-label="Copy markup for bolt, thin cut" data-copy-text="<span class=&quot;rd-icon-bolt-thin&quot;></span>"></button>
-        <button class="rd-icon-bookmark-thin rd-js-copy" title="bookmark" aria-label="Copy markup for bookmark, thin cut" data-copy-text="<span class=&quot;rd-icon-bookmark-thin&quot;></span>"></button>
-        <button class="rd-icon-bookmark_star-thin rd-js-copy" title="bookmark_star" aria-label="Copy markup for bookmark_star, thin cut" data-copy-text="<span class=&quot;rd-icon-bookmark_star-thin&quot;></span>"></button>
-        <button class="rd-icon-brush-thin rd-js-copy" title="brush" aria-label="Copy markup for brush, thin cut" data-copy-text="<span class=&quot;rd-icon-brush-thin&quot;></span>"></button>
-        <button class="rd-icon-business_center-thin rd-js-copy" title="business_center" aria-label="Copy markup for business_center, thin cut" data-copy-text="<span class=&quot;rd-icon-business_center-thin&quot;></span>"></button>
-        <button class="rd-icon-campaign-thin rd-js-copy" title="campaign" aria-label="Copy markup for campaign, thin cut" data-copy-text="<span class=&quot;rd-icon-campaign-thin&quot;></span>"></button>
-        <button class="rd-icon-chat-thin rd-js-copy" title="chat" aria-label="Copy markup for chat, thin cut" data-copy-text="<span class=&quot;rd-icon-chat-thin&quot;></span>"></button>
-        <button class="rd-icon-check-thin rd-js-copy" title="check" aria-label="Copy markup for check, thin cut" data-copy-text="<span class=&quot;rd-icon-check-thin&quot;></span>"></button>
-        <button class="rd-icon-check_circle-thin rd-js-copy" title="check_circle" aria-label="Copy markup for check_circle, thin cut" data-copy-text="<span class=&quot;rd-icon-check_circle-thin&quot;></span>"></button>
-        <button class="rd-icon-chess_knight-thin rd-js-copy" title="chess_knight" aria-label="Copy markup for chess_knight, thin cut" data-copy-text="<span class=&quot;rd-icon-chess_knight-thin&quot;></span>"></button>
-        <button class="rd-icon-chevron_left-thin rd-js-copy" title="chevron_left" aria-label="Copy markup for chevron_left, thin cut" data-copy-text="<span class=&quot;rd-icon-chevron_left-thin&quot;></span>"></button>
-        <button class="rd-icon-chevron_right-thin rd-js-copy" title="chevron_right" aria-label="Copy markup for chevron_right, thin cut" data-copy-text="<span class=&quot;rd-icon-chevron_right-thin&quot;></span>"></button>
-        <button class="rd-icon-close-thin rd-js-copy" title="close" aria-label="Copy markup for close, thin cut" data-copy-text="<span class=&quot;rd-icon-close-thin&quot;></span>"></button>
-        <button class="rd-icon-code-thin rd-js-copy" title="code" aria-label="Copy markup for code, thin cut" data-copy-text="<span class=&quot;rd-icon-code-thin&quot;></span>"></button>
-        <button class="rd-icon-cognition-thin rd-js-copy" title="cognition" aria-label="Copy markup for cognition, thin cut" data-copy-text="<span class=&quot;rd-icon-cognition-thin&quot;></span>"></button>
-        <button class="rd-icon-construction-thin rd-js-copy" title="construction" aria-label="Copy markup for construction, thin cut" data-copy-text="<span class=&quot;rd-icon-construction-thin&quot;></span>"></button>
-        <button class="rd-icon-content_copy-thin rd-js-copy" title="content_copy" aria-label="Copy markup for content_copy, thin cut" data-copy-text="<span class=&quot;rd-icon-content_copy-thin&quot;></span>"></button>
-        <button class="rd-icon-corporate_fare-thin rd-js-copy" title="corporate_fare" aria-label="Copy markup for corporate_fare, thin cut" data-copy-text="<span class=&quot;rd-icon-corporate_fare-thin&quot;></span>"></button>
-        <button class="rd-icon-credit_card-thin rd-js-copy" title="credit_card" aria-label="Copy markup for credit_card, thin cut" data-copy-text="<span class=&quot;rd-icon-credit_card-thin&quot;></span>"></button>
-        <button class="rd-icon-currency_exchange-thin rd-js-copy" title="currency_exchange" aria-label="Copy markup for currency_exchange, thin cut" data-copy-text="<span class=&quot;rd-icon-currency_exchange-thin&quot;></span>"></button>
-        <button class="rd-icon-dashboard-thin rd-js-copy" title="dashboard" aria-label="Copy markup for dashboard, thin cut" data-copy-text="<span class=&quot;rd-icon-dashboard-thin&quot;></span>"></button>
-        <button class="rd-icon-delete-thin rd-js-copy" title="delete" aria-label="Copy markup for delete, thin cut" data-copy-text="<span class=&quot;rd-icon-delete-thin&quot;></span>"></button>
-        <button class="rd-icon-description-thin rd-js-copy" title="description" aria-label="Copy markup for description, thin cut" data-copy-text="<span class=&quot;rd-icon-description-thin&quot;></span>"></button>
-        <button class="rd-icon-diamond-thin rd-js-copy" title="diamond" aria-label="Copy markup for diamond, thin cut" data-copy-text="<span class=&quot;rd-icon-diamond-thin&quot;></span>"></button>
-        <button class="rd-icon-directions_car-thin rd-js-copy" title="directions_car" aria-label="Copy markup for directions_car, thin cut" data-copy-text="<span class=&quot;rd-icon-directions_car-thin&quot;></span>"></button>
-        <button class="rd-icon-download-thin rd-js-copy" title="download" aria-label="Copy markup for download, thin cut" data-copy-text="<span class=&quot;rd-icon-download-thin&quot;></span>"></button>
-        <button class="rd-icon-draft-thin rd-js-copy" title="draft" aria-label="Copy markup for draft, thin cut" data-copy-text="<span class=&quot;rd-icon-draft-thin&quot;></span>"></button>
-        <button class="rd-icon-drafts-thin rd-js-copy" title="drafts" aria-label="Copy markup for drafts, thin cut" data-copy-text="<span class=&quot;rd-icon-drafts-thin&quot;></span>"></button>
-        <button class="rd-icon-edit_document-thin rd-js-copy" title="edit_document" aria-label="Copy markup for edit_document, thin cut" data-copy-text="<span class=&quot;rd-icon-edit_document-thin&quot;></span>"></button>
-        <button class="rd-icon-error-thin rd-js-copy" title="error" aria-label="Copy markup for error, thin cut" data-copy-text="<span class=&quot;rd-icon-error-thin&quot;></span>"></button>
-        <button class="rd-icon-error_outline-thin rd-js-copy" title="error_outline" aria-label="Copy markup for error_outline, thin cut" data-copy-text="<span class=&quot;rd-icon-error_outline-thin&quot;></span>"></button>
-        <button class="rd-icon-event-thin rd-js-copy" title="event" aria-label="Copy markup for event, thin cut" data-copy-text="<span class=&quot;rd-icon-event-thin&quot;></span>"></button>
-        <button class="rd-icon-event_available-thin rd-js-copy" title="event_available" aria-label="Copy markup for event_available, thin cut" data-copy-text="<span class=&quot;rd-icon-event_available-thin&quot;></span>"></button>
-        <button class="rd-icon-event_repeat-thin rd-js-copy" title="event_repeat" aria-label="Copy markup for event_repeat, thin cut" data-copy-text="<span class=&quot;rd-icon-event_repeat-thin&quot;></span>"></button>
-        <button class="rd-icon-explore-thin rd-js-copy" title="explore" aria-label="Copy markup for explore, thin cut" data-copy-text="<span class=&quot;rd-icon-explore-thin&quot;></span>"></button>
-        <button class="rd-icon-family_group-thin rd-js-copy" title="family_group" aria-label="Copy markup for family_group, thin cut" data-copy-text="<span class=&quot;rd-icon-family_group-thin&quot;></span>"></button>
-        <button class="rd-icon-family_restroom-thin rd-js-copy" title="family_restroom" aria-label="Copy markup for family_restroom, thin cut" data-copy-text="<span class=&quot;rd-icon-family_restroom-thin&quot;></span>"></button>
-        <button class="rd-icon-favorite-thin rd-js-copy" title="favorite" aria-label="Copy markup for favorite, thin cut" data-copy-text="<span class=&quot;rd-icon-favorite-thin&quot;></span>"></button>
-        <button class="rd-icon-festival-thin rd-js-copy" title="festival" aria-label="Copy markup for festival, thin cut" data-copy-text="<span class=&quot;rd-icon-festival-thin&quot;></span>"></button>
-        <button class="rd-icon-filter_alt-thin rd-js-copy" title="filter_alt" aria-label="Copy markup for filter_alt, thin cut" data-copy-text="<span class=&quot;rd-icon-filter_alt-thin&quot;></span>"></button>
-        <button class="rd-icon-flag-thin rd-js-copy" title="flag" aria-label="Copy markup for flag, thin cut" data-copy-text="<span class=&quot;rd-icon-flag-thin&quot;></span>"></button>
-        <button class="rd-icon-flag_2-thin rd-js-copy" title="flag_2" aria-label="Copy markup for flag_2, thin cut" data-copy-text="<span class=&quot;rd-icon-flag_2-thin&quot;></span>"></button>
-        <button class="rd-icon-flight-thin rd-js-copy" title="flight" aria-label="Copy markup for flight, thin cut" data-copy-text="<span class=&quot;rd-icon-flight-thin&quot;></span>"></button>
-        <button class="rd-icon-folder-thin rd-js-copy" title="folder" aria-label="Copy markup for folder, thin cut" data-copy-text="<span class=&quot;rd-icon-folder-thin&quot;></span>"></button>
-        <button class="rd-icon-folder_open-thin rd-js-copy" title="folder_open" aria-label="Copy markup for folder_open, thin cut" data-copy-text="<span class=&quot;rd-icon-folder_open-thin&quot;></span>"></button>
-        <button class="rd-icon-format_paint-thin rd-js-copy" title="format_paint" aria-label="Copy markup for format_paint, thin cut" data-copy-text="<span class=&quot;rd-icon-format_paint-thin&quot;></span>"></button>
-        <button class="rd-icon-forum-thin rd-js-copy" title="forum" aria-label="Copy markup for forum, thin cut" data-copy-text="<span class=&quot;rd-icon-forum-thin&quot;></span>"></button>
-        <button class="rd-icon-function-thin rd-js-copy" title="function" aria-label="Copy markup for function, thin cut" data-copy-text="<span class=&quot;rd-icon-function-thin&quot;></span>"></button>
-        <button class="rd-icon-grid_view-thin rd-js-copy" title="grid_view" aria-label="Copy markup for grid_view, thin cut" data-copy-text="<span class=&quot;rd-icon-grid_view-thin&quot;></span>"></button>
-        <button class="rd-icon-group-thin rd-js-copy" title="group" aria-label="Copy markup for group, thin cut" data-copy-text="<span class=&quot;rd-icon-group-thin&quot;></span>"></button>
-        <button class="rd-icon-group_add-thin rd-js-copy" title="group_add" aria-label="Copy markup for group_add, thin cut" data-copy-text="<span class=&quot;rd-icon-group_add-thin&quot;></span>"></button>
-        <button class="rd-icon-groups-thin rd-js-copy" title="groups" aria-label="Copy markup for groups, thin cut" data-copy-text="<span class=&quot;rd-icon-groups-thin&quot;></span>"></button>
-        <button class="rd-icon-handshake-thin rd-js-copy" title="handshake" aria-label="Copy markup for handshake, thin cut" data-copy-text="<span class=&quot;rd-icon-handshake-thin&quot;></span>"></button>
-        <button class="rd-icon-home_work-thin rd-js-copy" title="home_work" aria-label="Copy markup for home_work, thin cut" data-copy-text="<span class=&quot;rd-icon-home_work-thin&quot;></span>"></button>
-        <button class="rd-icon-hub-thin rd-js-copy" title="hub" aria-label="Copy markup for hub, thin cut" data-copy-text="<span class=&quot;rd-icon-hub-thin&quot;></span>"></button>
-        <button class="rd-icon-inbox-thin rd-js-copy" title="inbox" aria-label="Copy markup for inbox, thin cut" data-copy-text="<span class=&quot;rd-icon-inbox-thin&quot;></span>"></button>
-        <button class="rd-icon-info-thin rd-js-copy" title="info" aria-label="Copy markup for info, thin cut" data-copy-text="<span class=&quot;rd-icon-info-thin&quot;></span>"></button>
-        <button class="rd-icon-insert_drive_file-thin rd-js-copy" title="insert_drive_file" aria-label="Copy markup for insert_drive_file, thin cut" data-copy-text="<span class=&quot;rd-icon-insert_drive_file-thin&quot;></span>"></button>
-        <button class="rd-icon-insights-thin rd-js-copy" title="insights" aria-label="Copy markup for insights, thin cut" data-copy-text="<span class=&quot;rd-icon-insights-thin&quot;></span>"></button>
-        <button class="rd-icon-inventory_2-thin rd-js-copy" title="inventory_2" aria-label="Copy markup for inventory_2, thin cut" data-copy-text="<span class=&quot;rd-icon-inventory_2-thin&quot;></span>"></button>
-        <button class="rd-icon-keep-thin rd-js-copy" title="keep" aria-label="Copy markup for keep, thin cut" data-copy-text="<span class=&quot;rd-icon-keep-thin&quot;></span>"></button>
-        <button class="rd-icon-key-thin rd-js-copy" title="key" aria-label="Copy markup for key, thin cut" data-copy-text="<span class=&quot;rd-icon-key-thin&quot;></span>"></button>
-        <button class="rd-icon-key_vertical-thin rd-js-copy" title="key_vertical" aria-label="Copy markup for key_vertical, thin cut" data-copy-text="<span class=&quot;rd-icon-key_vertical-thin&quot;></span>"></button>
-        <button class="rd-icon-keyboard_arrow_down-thin rd-js-copy" title="keyboard_arrow_down" aria-label="Copy markup for keyboard_arrow_down, thin cut" data-copy-text="<span class=&quot;rd-icon-keyboard_arrow_down-thin&quot;></span>"></button>
-        <button class="rd-icon-lightbulb-thin rd-js-copy" title="lightbulb" aria-label="Copy markup for lightbulb, thin cut" data-copy-text="<span class=&quot;rd-icon-lightbulb-thin&quot;></span>"></button>
-        <button class="rd-icon-lightbulb_2-thin rd-js-copy" title="lightbulb_2" aria-label="Copy markup for lightbulb_2, thin cut" data-copy-text="<span class=&quot;rd-icon-lightbulb_2-thin&quot;></span>"></button>
-        <button class="rd-icon-local_shipping-thin rd-js-copy" title="local_shipping" aria-label="Copy markup for local_shipping, thin cut" data-copy-text="<span class=&quot;rd-icon-local_shipping-thin&quot;></span>"></button>
-        <button class="rd-icon-login-thin rd-js-copy" title="login" aria-label="Copy markup for login, thin cut" data-copy-text="<span class=&quot;rd-icon-login-thin&quot;></span>"></button>
-        <button class="rd-icon-logout-thin rd-js-copy" title="logout" aria-label="Copy markup for logout, thin cut" data-copy-text="<span class=&quot;rd-icon-logout-thin&quot;></span>"></button>
-        <button class="rd-icon-mail-thin rd-js-copy" title="mail" aria-label="Copy markup for mail, thin cut" data-copy-text="<span class=&quot;rd-icon-mail-thin&quot;></span>"></button>
-        <button class="rd-icon-menu-thin rd-js-copy" title="menu" aria-label="Copy markup for menu, thin cut" data-copy-text="<span class=&quot;rd-icon-menu-thin&quot;></span>"></button>
-        <button class="rd-icon-movie-thin rd-js-copy" title="movie" aria-label="Copy markup for movie, thin cut" data-copy-text="<span class=&quot;rd-icon-movie-thin&quot;></span>"></button>
-        <button class="rd-icon-music_note-thin rd-js-copy" title="music_note" aria-label="Copy markup for music_note, thin cut" data-copy-text="<span class=&quot;rd-icon-music_note-thin&quot;></span>"></button>
-        <button class="rd-icon-new_releases-thin rd-js-copy" title="new_releases" aria-label="Copy markup for new_releases, thin cut" data-copy-text="<span class=&quot;rd-icon-new_releases-thin&quot;></span>"></button>
-        <button class="rd-icon-north_east-thin rd-js-copy" title="north_east" aria-label="Copy markup for north_east, thin cut" data-copy-text="<span class=&quot;rd-icon-north_east-thin&quot;></span>"></button>
-        <button class="rd-icon-notifications-thin rd-js-copy" title="notifications" aria-label="Copy markup for notifications, thin cut" data-copy-text="<span class=&quot;rd-icon-notifications-thin&quot;></span>"></button>
-        <button class="rd-icon-open_in_new-thin rd-js-copy" title="open_in_new" aria-label="Copy markup for open_in_new, thin cut" data-copy-text="<span class=&quot;rd-icon-open_in_new-thin&quot;></span>"></button>
-        <button class="rd-icon-pause_circle-thin rd-js-copy" title="pause_circle" aria-label="Copy markup for pause_circle, thin cut" data-copy-text="<span class=&quot;rd-icon-pause_circle-thin&quot;></span>"></button>
-        <button class="rd-icon-payments-thin rd-js-copy" title="payments" aria-label="Copy markup for payments, thin cut" data-copy-text="<span class=&quot;rd-icon-payments-thin&quot;></span>"></button>
-        <button class="rd-icon-people_alt-thin rd-js-copy" title="people_alt" aria-label="Copy markup for people_alt, thin cut" data-copy-text="<span class=&quot;rd-icon-people_alt-thin&quot;></span>"></button>
-        <button class="rd-icon-person_add-thin rd-js-copy" title="person_add" aria-label="Copy markup for person_add, thin cut" data-copy-text="<span class=&quot;rd-icon-person_add-thin&quot;></span>"></button>
-        <button class="rd-icon-pets-thin rd-js-copy" title="pets" aria-label="Copy markup for pets, thin cut" data-copy-text="<span class=&quot;rd-icon-pets-thin&quot;></span>"></button>
-        <button class="rd-icon-priority_high-thin rd-js-copy" title="priority_high" aria-label="Copy markup for priority_high, thin cut" data-copy-text="<span class=&quot;rd-icon-priority_high-thin&quot;></span>"></button>
-        <button class="rd-icon-psychology-thin rd-js-copy" title="psychology" aria-label="Copy markup for psychology, thin cut" data-copy-text="<span class=&quot;rd-icon-psychology-thin&quot;></span>"></button>
-        <button class="rd-icon-query_stats-thin rd-js-copy" title="query_stats" aria-label="Copy markup for query_stats, thin cut" data-copy-text="<span class=&quot;rd-icon-query_stats-thin&quot;></span>"></button>
-        <button class="rd-icon-radio_button_checked-thin rd-js-copy" title="radio_button_checked" aria-label="Copy markup for radio_button_checked, thin cut" data-copy-text="<span class=&quot;rd-icon-radio_button_checked-thin&quot;></span>"></button>
-        <button class="rd-icon-radio_button_unchecked-thin rd-js-copy" title="radio_button_unchecked" aria-label="Copy markup for radio_button_unchecked, thin cut" data-copy-text="<span class=&quot;rd-icon-radio_button_unchecked-thin&quot;></span>"></button>
-        <button class="rd-icon-read_more-thin rd-js-copy" title="read_more" aria-label="Copy markup for read_more, thin cut" data-copy-text="<span class=&quot;rd-icon-read_more-thin&quot;></span>"></button>
-        <button class="rd-icon-real_estate_agent-thin rd-js-copy" title="real_estate_agent" aria-label="Copy markup for real_estate_agent, thin cut" data-copy-text="<span class=&quot;rd-icon-real_estate_agent-thin&quot;></span>"></button>
-        <button class="rd-icon-receipt-thin rd-js-copy" title="receipt" aria-label="Copy markup for receipt, thin cut" data-copy-text="<span class=&quot;rd-icon-receipt-thin&quot;></span>"></button>
-        <button class="rd-icon-receipt_long-thin rd-js-copy" title="receipt_long" aria-label="Copy markup for receipt_long, thin cut" data-copy-text="<span class=&quot;rd-icon-receipt_long-thin&quot;></span>"></button>
-        <button class="rd-icon-record_voice_over-thin rd-js-copy" title="record_voice_over" aria-label="Copy markup for record_voice_over, thin cut" data-copy-text="<span class=&quot;rd-icon-record_voice_over-thin&quot;></span>"></button>
-        <button class="rd-icon-recycling-thin rd-js-copy" title="recycling" aria-label="Copy markup for recycling, thin cut" data-copy-text="<span class=&quot;rd-icon-recycling-thin&quot;></span>"></button>
-        <button class="rd-icon-remove_circle-thin rd-js-copy" title="remove_circle" aria-label="Copy markup for remove_circle, thin cut" data-copy-text="<span class=&quot;rd-icon-remove_circle-thin&quot;></span>"></button>
-        <button class="rd-icon-restart_alt-thin rd-js-copy" title="restart_alt" aria-label="Copy markup for restart_alt, thin cut" data-copy-text="<span class=&quot;rd-icon-restart_alt-thin&quot;></span>"></button>
-        <button class="rd-icon-restaurant-thin rd-js-copy" title="restaurant" aria-label="Copy markup for restaurant, thin cut" data-copy-text="<span class=&quot;rd-icon-restaurant-thin&quot;></span>"></button>
-        <button class="rd-icon-rocket_launch-thin rd-js-copy" title="rocket_launch" aria-label="Copy markup for rocket_launch, thin cut" data-copy-text="<span class=&quot;rd-icon-rocket_launch-thin&quot;></span>"></button>
-        <button class="rd-icon-rss_feed-thin rd-js-copy" title="rss_feed" aria-label="Copy markup for rss_feed, thin cut" data-copy-text="<span class=&quot;rd-icon-rss_feed-thin&quot;></span>"></button>
-        <button class="rd-icon-savings-thin rd-js-copy" title="savings" aria-label="Copy markup for savings, thin cut" data-copy-text="<span class=&quot;rd-icon-savings-thin&quot;></span>"></button>
-        <button class="rd-icon-schedule-thin rd-js-copy" title="schedule" aria-label="Copy markup for schedule, thin cut" data-copy-text="<span class=&quot;rd-icon-schedule-thin&quot;></span>"></button>
-        <button class="rd-icon-search-thin rd-js-copy" title="search" aria-label="Copy markup for search, thin cut" data-copy-text="<span class=&quot;rd-icon-search-thin&quot;></span>"></button>
-        <button class="rd-icon-send-thin rd-js-copy" title="send" aria-label="Copy markup for send, thin cut" data-copy-text="<span class=&quot;rd-icon-send-thin&quot;></span>"></button>
-        <button class="rd-icon-settings-thin rd-js-copy" title="settings" aria-label="Copy markup for settings, thin cut" data-copy-text="<span class=&quot;rd-icon-settings-thin&quot;></span>"></button>
-        <button class="rd-icon-show_chart-thin rd-js-copy" title="show_chart" aria-label="Copy markup for show_chart, thin cut" data-copy-text="<span class=&quot;rd-icon-show_chart-thin&quot;></span>"></button>
-        <button class="rd-icon-smart_toy-thin rd-js-copy" title="smart_toy" aria-label="Copy markup for smart_toy, thin cut" data-copy-text="<span class=&quot;rd-icon-smart_toy-thin&quot;></span>"></button>
-        <button class="rd-icon-sms-thin rd-js-copy" title="sms" aria-label="Copy markup for sms, thin cut" data-copy-text="<span class=&quot;rd-icon-sms-thin&quot;></span>"></button>
-        <button class="rd-icon-south_west-thin rd-js-copy" title="south_west" aria-label="Copy markup for south_west, thin cut" data-copy-text="<span class=&quot;rd-icon-south_west-thin&quot;></span>"></button>
-        <button class="rd-icon-speaker-thin rd-js-copy" title="speaker" aria-label="Copy markup for speaker, thin cut" data-copy-text="<span class=&quot;rd-icon-speaker-thin&quot;></span>"></button>
-        <button class="rd-icon-speed-thin rd-js-copy" title="speed" aria-label="Copy markup for speed, thin cut" data-copy-text="<span class=&quot;rd-icon-speed-thin&quot;></span>"></button>
-        <button class="rd-icon-star-thin rd-js-copy" title="star" aria-label="Copy markup for star, thin cut" data-copy-text="<span class=&quot;rd-icon-star-thin&quot;></span>"></button>
-        <button class="rd-icon-star_fill-thin rd-js-copy" title="star_fill" aria-label="Copy markup for star_fill, thin cut" data-copy-text="<span class=&quot;rd-icon-star_fill-thin&quot;></span>"></button>
-        <button class="rd-icon-star_half-thin rd-js-copy" title="star_half" aria-label="Copy markup for star_half, thin cut" data-copy-text="<span class=&quot;rd-icon-star_half-thin&quot;></span>"></button>
-        <button class="rd-icon-storefront-thin rd-js-copy" title="storefront" aria-label="Copy markup for storefront, thin cut" data-copy-text="<span class=&quot;rd-icon-storefront-thin&quot;></span>"></button>
-        <button class="rd-icon-subdirectory_arrow_right-thin rd-js-copy" title="subdirectory_arrow_right" aria-label="Copy markup for subdirectory_arrow_right, thin cut" data-copy-text="<span class=&quot;rd-icon-subdirectory_arrow_right-thin&quot;></span>"></button>
-        <button class="rd-icon-swap_horiz-thin rd-js-copy" title="swap_horiz" aria-label="Copy markup for swap_horiz, thin cut" data-copy-text="<span class=&quot;rd-icon-swap_horiz-thin&quot;></span>"></button>
-        <button class="rd-icon-target-thin rd-js-copy" title="target" aria-label="Copy markup for target, thin cut" data-copy-text="<span class=&quot;rd-icon-target-thin&quot;></span>"></button>
-        <button class="rd-icon-task_alt-thin rd-js-copy" title="task_alt" aria-label="Copy markup for task_alt, thin cut" data-copy-text="<span class=&quot;rd-icon-task_alt-thin&quot;></span>"></button>
-        <button class="rd-icon-toggle_off-thin rd-js-copy" title="toggle_off" aria-label="Copy markup for toggle_off, thin cut" data-copy-text="<span class=&quot;rd-icon-toggle_off-thin&quot;></span>"></button>
-        <button class="rd-icon-toggle_on-thin rd-js-copy" title="toggle_on" aria-label="Copy markup for toggle_on, thin cut" data-copy-text="<span class=&quot;rd-icon-toggle_on-thin&quot;></span>"></button>
-        <button class="rd-icon-trending_down-thin rd-js-copy" title="trending_down" aria-label="Copy markup for trending_down, thin cut" data-copy-text="<span class=&quot;rd-icon-trending_down-thin&quot;></span>"></button>
-        <button class="rd-icon-trending_up-thin rd-js-copy" title="trending_up" aria-label="Copy markup for trending_up, thin cut" data-copy-text="<span class=&quot;rd-icon-trending_up-thin&quot;></span>"></button>
-        <button class="rd-icon-trip_origin-thin rd-js-copy" title="trip_origin" aria-label="Copy markup for trip_origin, thin cut" data-copy-text="<span class=&quot;rd-icon-trip_origin-thin&quot;></span>"></button>
-        <button class="rd-icon-tune-thin rd-js-copy" title="tune" aria-label="Copy markup for tune, thin cut" data-copy-text="<span class=&quot;rd-icon-tune-thin&quot;></span>"></button>
-        <button class="rd-icon-visibility-thin rd-js-copy" title="visibility" aria-label="Copy markup for visibility, thin cut" data-copy-text="<span class=&quot;rd-icon-visibility-thin&quot;></span>"></button>
-        <button class="rd-icon-warehouse-thin rd-js-copy" title="warehouse" aria-label="Copy markup for warehouse, thin cut" data-copy-text="<span class=&quot;rd-icon-warehouse-thin&quot;></span>"></button>
-        <button class="rd-icon-warning-thin rd-js-copy" title="warning" aria-label="Copy markup for warning, thin cut" data-copy-text="<span class=&quot;rd-icon-warning-thin&quot;></span>"></button>
-        <button class="rd-icon-waving_hand-thin rd-js-copy" title="waving_hand" aria-label="Copy markup for waving_hand, thin cut" data-copy-text="<span class=&quot;rd-icon-waving_hand-thin&quot;></span>"></button>
-        <button class="rd-icon-work-thin rd-js-copy" title="work" aria-label="Copy markup for work, thin cut" data-copy-text="<span class=&quot;rd-icon-work-thin&quot;></span>"></button>
-        
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-actions">Actions</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-add rd-js-copy" title="add" aria-label="Copy markup for add" data-icon-name="add" data-icon-words="plus new create" data-copy-text="<span class=&quot;rd-icon-add&quot;></span>"></button>
+            <button type="button" class="rd-icon-remove rd-js-copy" title="remove" aria-label="Copy markup for remove" data-icon-name="remove" data-icon-words="minus" data-copy-text="<span class=&quot;rd-icon-remove&quot;></span>"></button>
+            <button type="button" class="rd-icon-edit rd-js-copy" title="edit" aria-label="Copy markup for edit" data-icon-name="edit" data-icon-words="pencil change" data-copy-text="<span class=&quot;rd-icon-edit&quot;></span>"></button>
+            <button type="button" class="rd-icon-save rd-js-copy" title="save" aria-label="Copy markup for save" data-icon-name="save" data-icon-words="disk floppy" data-copy-text="<span class=&quot;rd-icon-save&quot;></span>"></button>
+            <button type="button" class="rd-icon-undo rd-js-copy" title="undo" aria-label="Copy markup for undo" data-icon-name="undo" data-icon-words="back revert" data-copy-text="<span class=&quot;rd-icon-undo&quot;></span>"></button>
+            <button type="button" class="rd-icon-delete rd-js-copy" title="delete" aria-label="Copy markup for delete" data-icon-name="delete" data-icon-words="trash bin remove" data-copy-text="<span class=&quot;rd-icon-delete&quot;></span>"></button>
+            <button type="button" class="rd-icon-download rd-js-copy" title="download" aria-label="Copy markup for download" data-icon-name="download" data-icon-words="save export" data-copy-text="<span class=&quot;rd-icon-download&quot;></span>"></button>
+            <button type="button" class="rd-icon-upload rd-js-copy" title="upload" aria-label="Copy markup for upload" data-icon-name="upload" data-icon-words="import" data-copy-text="<span class=&quot;rd-icon-upload&quot;></span>"></button>
+            <button type="button" class="rd-icon-print rd-js-copy" title="print" aria-label="Copy markup for print" data-icon-name="print" data-icon-words="printer paper" data-copy-text="<span class=&quot;rd-icon-print&quot;></span>"></button>
+            <button type="button" class="rd-icon-share rd-js-copy" title="share" aria-label="Copy markup for share" data-icon-name="share" data-icon-words="" data-copy-text="<span class=&quot;rd-icon-share&quot;></span>"></button>
+            <button type="button" class="rd-icon-link rd-js-copy" title="link" aria-label="Copy markup for link" data-icon-name="link" data-icon-words="url chain" data-copy-text="<span class=&quot;rd-icon-link&quot;></span>"></button>
+            <button type="button" class="rd-icon-content_copy rd-js-copy" title="content_copy" aria-label="Copy markup for content_copy" data-icon-name="content_copy" data-icon-words="duplicate clipboard" data-copy-text="<span class=&quot;rd-icon-content_copy&quot;></span>"></button>
+            <button type="button" class="rd-icon-attach_file rd-js-copy" title="attach_file" aria-label="Copy markup for attach_file" data-icon-name="attach_file" data-icon-words="paperclip attachment" data-copy-text="<span class=&quot;rd-icon-attach_file&quot;></span>"></button>
+            <button type="button" class="rd-icon-search rd-js-copy" title="search" aria-label="Copy markup for search" data-icon-name="search" data-icon-words="magnifier find" data-copy-text="<span class=&quot;rd-icon-search&quot;></span>"></button>
+            <button type="button" class="rd-icon-filter_alt rd-js-copy" title="filter_alt" aria-label="Copy markup for filter_alt" data-icon-name="filter_alt" data-icon-words="funnel" data-copy-text="<span class=&quot;rd-icon-filter_alt&quot;></span>"></button>
+            <button type="button" class="rd-icon-filter_list rd-js-copy" title="filter_list" aria-label="Copy markup for filter_list" data-icon-name="filter_list" data-icon-words="funnel lines" data-copy-text="<span class=&quot;rd-icon-filter_list&quot;></span>"></button>
+            <button type="button" class="rd-icon-sort rd-js-copy" title="sort" aria-label="Copy markup for sort" data-icon-name="sort" data-icon-words="order lines" data-copy-text="<span class=&quot;rd-icon-sort&quot;></span>"></button>
+            <button type="button" class="rd-icon-unfold_more rd-js-copy" title="unfold_more" aria-label="Copy markup for unfold_more" data-icon-name="unfold_more" data-icon-words="sort order arrows column" data-copy-text="<span class=&quot;rd-icon-unfold_more&quot;></span>"></button>
+            <button type="button" class="rd-icon-filter_alt_off rd-js-copy" title="filter_alt_off" aria-label="Copy markup for filter_alt_off" data-icon-name="filter_alt_off" data-icon-words="funnel clear reset" data-copy-text="<span class=&quot;rd-icon-filter_alt_off&quot;></span>"></button>
+            <button type="button" class="rd-icon-filter_list_off rd-js-copy" title="filter_list_off" aria-label="Copy markup for filter_list_off" data-icon-name="filter_list_off" data-icon-words="funnel clear reset" data-copy-text="<span class=&quot;rd-icon-filter_list_off&quot;></span>"></button>
+            <button type="button" class="rd-icon-tune rd-js-copy" title="tune" aria-label="Copy markup for tune" data-icon-name="tune" data-icon-words="filter sliders options" data-copy-text="<span class=&quot;rd-icon-tune&quot;></span>"></button>
+            <button type="button" class="rd-icon-view_column rd-js-copy" title="view_column" aria-label="Copy markup for view_column" data-icon-name="view_column" data-icon-words="columns table layout" data-copy-text="<span class=&quot;rd-icon-view_column&quot;></span>"></button>
+            <button type="button" class="rd-icon-table_rows rd-js-copy" title="table_rows" aria-label="Copy markup for table_rows" data-icon-name="table_rows" data-icon-words="table density list" data-copy-text="<span class=&quot;rd-icon-table_rows&quot;></span>"></button>
+            <button type="button" class="rd-icon-drag_indicator rd-js-copy" title="drag_indicator" aria-label="Copy markup for drag_indicator" data-icon-name="drag_indicator" data-icon-words="handle reorder move grip" data-copy-text="<span class=&quot;rd-icon-drag_indicator&quot;></span>"></button>
+            <button type="button" class="rd-icon-settings rd-js-copy" title="settings" aria-label="Copy markup for settings" data-icon-name="settings" data-icon-words="gear cog options" data-copy-text="<span class=&quot;rd-icon-settings&quot;></span>"></button>
+            <button type="button" class="rd-icon-refresh rd-js-copy" title="refresh" aria-label="Copy markup for refresh" data-icon-name="refresh" data-icon-words="reload update" data-copy-text="<span class=&quot;rd-icon-refresh&quot;></span>"></button>
+            <button type="button" class="rd-icon-sync rd-js-copy" title="sync" aria-label="Copy markup for sync" data-icon-name="sync" data-icon-words="reload refresh update" data-copy-text="<span class=&quot;rd-icon-sync&quot;></span>"></button>
+            <button type="button" class="rd-icon-restart_alt rd-js-copy" title="restart_alt" aria-label="Copy markup for restart_alt" data-icon-name="restart_alt" data-icon-words="reload refresh reset" data-copy-text="<span class=&quot;rd-icon-restart_alt&quot;></span>"></button>
+            <button type="button" class="rd-icon-send rd-js-copy" title="send" aria-label="Copy markup for send" data-icon-name="send" data-icon-words="" data-copy-text="<span class=&quot;rd-icon-send&quot;></span>"></button>
+            <button type="button" class="rd-icon-close rd-js-copy" title="close" aria-label="Copy markup for close" data-icon-name="close" data-icon-words="x cancel cross" data-copy-text="<span class=&quot;rd-icon-close&quot;></span>"></button>
+            <button type="button" class="rd-icon-check rd-js-copy" title="check" aria-label="Copy markup for check" data-icon-name="check" data-icon-words="tick done ok" data-copy-text="<span class=&quot;rd-icon-check&quot;></span>"></button>
+            <button type="button" class="rd-icon-visibility rd-js-copy" title="visibility" aria-label="Copy markup for visibility" data-icon-name="visibility" data-icon-words="eye show view" data-copy-text="<span class=&quot;rd-icon-visibility&quot;></span>"></button>
+            <button type="button" class="rd-icon-visibility_off rd-js-copy" title="visibility_off" aria-label="Copy markup for visibility_off" data-icon-name="visibility_off" data-icon-words="eye hide hidden" data-copy-text="<span class=&quot;rd-icon-visibility_off&quot;></span>"></button>
+            <button type="button" class="rd-icon-lock rd-js-copy" title="lock" aria-label="Copy markup for lock" data-icon-name="lock" data-icon-words="secure private closed" data-copy-text="<span class=&quot;rd-icon-lock&quot;></span>"></button>
+            <button type="button" class="rd-icon-key rd-js-copy" title="key" aria-label="Copy markup for key" data-icon-name="key" data-icon-words="password access" data-copy-text="<span class=&quot;rd-icon-key&quot;></span>"></button>
+            <button type="button" class="rd-icon-key_vertical rd-js-copy" title="key_vertical" aria-label="Copy markup for key_vertical" data-icon-name="key_vertical" data-icon-words="password access" data-copy-text="<span class=&quot;rd-icon-key_vertical&quot;></span>"></button>
+            <button type="button" class="rd-icon-bookmark rd-js-copy" title="bookmark" aria-label="Copy markup for bookmark" data-icon-name="bookmark" data-icon-words="" data-copy-text="<span class=&quot;rd-icon-bookmark&quot;></span>"></button>
+            <button type="button" class="rd-icon-bookmark_star rd-js-copy" title="bookmark_star" aria-label="Copy markup for bookmark_star" data-icon-name="bookmark_star" data-icon-words="favorite" data-copy-text="<span class=&quot;rd-icon-bookmark_star&quot;></span>"></button>
+            <button type="button" class="rd-icon-keep rd-js-copy" title="keep" aria-label="Copy markup for keep" data-icon-name="keep" data-icon-words="pin" data-copy-text="<span class=&quot;rd-icon-keep&quot;></span>"></button>
+            <button type="button" class="rd-icon-toggle_on rd-js-copy" title="toggle_on" aria-label="Copy markup for toggle_on" data-icon-name="toggle_on" data-icon-words="switch" data-copy-text="<span class=&quot;rd-icon-toggle_on&quot;></span>"></button>
+            <button type="button" class="rd-icon-toggle_off rd-js-copy" title="toggle_off" aria-label="Copy markup for toggle_off" data-icon-name="toggle_off" data-icon-words="switch" data-copy-text="<span class=&quot;rd-icon-toggle_off&quot;></span>"></button>
+            <button type="button" class="rd-icon-radio_button_checked rd-js-copy" title="radio_button_checked" aria-label="Copy markup for radio_button_checked" data-icon-name="radio_button_checked" data-icon-words="circle option" data-copy-text="<span class=&quot;rd-icon-radio_button_checked&quot;></span>"></button>
+            <button type="button" class="rd-icon-radio_button_unchecked rd-js-copy" title="radio_button_unchecked" aria-label="Copy markup for radio_button_unchecked" data-icon-name="radio_button_unchecked" data-icon-words="circle option empty" data-copy-text="<span class=&quot;rd-icon-radio_button_unchecked&quot;></span>"></button>
+            <button type="button" class="rd-icon-format_paint rd-js-copy" title="format_paint" aria-label="Copy markup for format_paint" data-icon-name="format_paint" data-icon-words="roller style" data-copy-text="<span class=&quot;rd-icon-format_paint&quot;></span>"></button>
+            <button type="button" class="rd-icon-brush rd-js-copy" title="brush" aria-label="Copy markup for brush" data-icon-name="brush" data-icon-words="paint style" data-copy-text="<span class=&quot;rd-icon-brush&quot;></span>"></button>
+            
+        </div>
     </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-files">Files and documents</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-description rd-js-copy" title="description" aria-label="Copy markup for description" data-icon-name="description" data-icon-words="file document text" data-copy-text="<span class=&quot;rd-icon-description&quot;></span>"></button>
+            <button type="button" class="rd-icon-draft rd-js-copy" title="draft" aria-label="Copy markup for draft" data-icon-name="draft" data-icon-words="file document blank" data-copy-text="<span class=&quot;rd-icon-draft&quot;></span>"></button>
+            <button type="button" class="rd-icon-edit_document rd-js-copy" title="edit_document" aria-label="Copy markup for edit_document" data-icon-name="edit_document" data-icon-words="file pencil" data-copy-text="<span class=&quot;rd-icon-edit_document&quot;></span>"></button>
+            <button type="button" class="rd-icon-folder rd-js-copy" title="folder" aria-label="Copy markup for folder" data-icon-name="folder" data-icon-words="" data-copy-text="<span class=&quot;rd-icon-folder&quot;></span>"></button>
+            <button type="button" class="rd-icon-folder_open rd-js-copy" title="folder_open" aria-label="Copy markup for folder_open" data-icon-name="folder_open" data-icon-words="" data-copy-text="<span class=&quot;rd-icon-folder_open&quot;></span>"></button>
+            <button type="button" class="rd-icon-inbox rd-js-copy" title="inbox" aria-label="Copy markup for inbox" data-icon-name="inbox" data-icon-words="tray" data-copy-text="<span class=&quot;rd-icon-inbox&quot;></span>"></button>
+            <button type="button" class="rd-icon-inventory_2 rd-js-copy" title="inventory_2" aria-label="Copy markup for inventory_2" data-icon-name="inventory_2" data-icon-words="box archive stock" data-copy-text="<span class=&quot;rd-icon-inventory_2&quot;></span>"></button>
+            <button type="button" class="rd-icon-receipt rd-js-copy" title="receipt" aria-label="Copy markup for receipt" data-icon-name="receipt" data-icon-words="bill invoice" data-copy-text="<span class=&quot;rd-icon-receipt&quot;></span>"></button>
+            <button type="button" class="rd-icon-receipt_long rd-js-copy" title="receipt_long" aria-label="Copy markup for receipt_long" data-icon-name="receipt_long" data-icon-words="bill invoice" data-copy-text="<span class=&quot;rd-icon-receipt_long&quot;></span>"></button>
+            <button type="button" class="rd-icon-code rd-js-copy" title="code" aria-label="Copy markup for code" data-icon-name="code" data-icon-words="brackets developer" data-copy-text="<span class=&quot;rd-icon-code&quot;></span>"></button>
+            <button type="button" class="rd-icon-function rd-js-copy" title="function" aria-label="Copy markup for function" data-icon-name="function" data-icon-words="fx formula" data-copy-text="<span class=&quot;rd-icon-function&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-people">People</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-person rd-js-copy" title="person" aria-label="Copy markup for person" data-icon-name="person" data-icon-words="user account" data-copy-text="<span class=&quot;rd-icon-person&quot;></span>"></button>
+            <button type="button" class="rd-icon-person_add rd-js-copy" title="person_add" aria-label="Copy markup for person_add" data-icon-name="person_add" data-icon-words="user invite" data-copy-text="<span class=&quot;rd-icon-person_add&quot;></span>"></button>
+            <button type="button" class="rd-icon-account_circle rd-js-copy" title="account_circle" aria-label="Copy markup for account_circle" data-icon-name="account_circle" data-icon-words="user avatar profile" data-copy-text="<span class=&quot;rd-icon-account_circle&quot;></span>"></button>
+            <button type="button" class="rd-icon-group rd-js-copy" title="group" aria-label="Copy markup for group" data-icon-name="group" data-icon-words="people users team" data-copy-text="<span class=&quot;rd-icon-group&quot;></span>"></button>
+            <button type="button" class="rd-icon-group_add rd-js-copy" title="group_add" aria-label="Copy markup for group_add" data-icon-name="group_add" data-icon-words="people users invite" data-copy-text="<span class=&quot;rd-icon-group_add&quot;></span>"></button>
+            <button type="button" class="rd-icon-groups rd-js-copy" title="groups" aria-label="Copy markup for groups" data-icon-name="groups" data-icon-words="people users team" data-copy-text="<span class=&quot;rd-icon-groups&quot;></span>"></button>
+            <button type="button" class="rd-icon-family_group rd-js-copy" title="family_group" aria-label="Copy markup for family_group" data-icon-name="family_group" data-icon-words="people" data-copy-text="<span class=&quot;rd-icon-family_group&quot;></span>"></button>
+            <button type="button" class="rd-icon-family_restroom rd-js-copy" title="family_restroom" aria-label="Copy markup for family_restroom" data-icon-name="family_restroom" data-icon-words="people" data-copy-text="<span class=&quot;rd-icon-family_restroom&quot;></span>"></button>
+            <button type="button" class="rd-icon-handshake rd-js-copy" title="handshake" aria-label="Copy markup for handshake" data-icon-name="handshake" data-icon-words="deal partner" data-copy-text="<span class=&quot;rd-icon-handshake&quot;></span>"></button>
+            <button type="button" class="rd-icon-waving_hand rd-js-copy" title="waving_hand" aria-label="Copy markup for waving_hand" data-icon-name="waving_hand" data-icon-words="hello greeting" data-copy-text="<span class=&quot;rd-icon-waving_hand&quot;></span>"></button>
+            <button type="button" class="rd-icon-record_voice_over rd-js-copy" title="record_voice_over" aria-label="Copy markup for record_voice_over" data-icon-name="record_voice_over" data-icon-words="speak voice" data-copy-text="<span class=&quot;rd-icon-record_voice_over&quot;></span>"></button>
+            <button type="button" class="rd-icon-psychology rd-js-copy" title="psychology" aria-label="Copy markup for psychology" data-icon-name="psychology" data-icon-words="brain mind" data-copy-text="<span class=&quot;rd-icon-psychology&quot;></span>"></button>
+            <button type="button" class="rd-icon-cognition rd-js-copy" title="cognition" aria-label="Copy markup for cognition" data-icon-name="cognition" data-icon-words="brain mind" data-copy-text="<span class=&quot;rd-icon-cognition&quot;></span>"></button>
+            <button type="button" class="rd-icon-smart_toy rd-js-copy" title="smart_toy" aria-label="Copy markup for smart_toy" data-icon-name="smart_toy" data-icon-words="robot bot ai" data-copy-text="<span class=&quot;rd-icon-smart_toy&quot;></span>"></button>
+            <button type="button" class="rd-icon-pets rd-js-copy" title="pets" aria-label="Copy markup for pets" data-icon-name="pets" data-icon-words="paw animal" data-copy-text="<span class=&quot;rd-icon-pets&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-communication">Communication</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-mail rd-js-copy" title="mail" aria-label="Copy markup for mail" data-icon-name="mail" data-icon-words="email letter envelope" data-copy-text="<span class=&quot;rd-icon-mail&quot;></span>"></button>
+            <button type="button" class="rd-icon-mark_email_unread rd-js-copy" title="mark_email_unread" aria-label="Copy markup for mark_email_unread" data-icon-name="mark_email_unread" data-icon-words="email letter new message" data-copy-text="<span class=&quot;rd-icon-mark_email_unread&quot;></span>"></button>
+            <button type="button" class="rd-icon-drafts rd-js-copy" title="drafts" aria-label="Copy markup for drafts" data-icon-name="drafts" data-icon-words="email letter open" data-copy-text="<span class=&quot;rd-icon-drafts&quot;></span>"></button>
+            <button type="button" class="rd-icon-chat rd-js-copy" title="chat" aria-label="Copy markup for chat" data-icon-name="chat" data-icon-words="message bubble" data-copy-text="<span class=&quot;rd-icon-chat&quot;></span>"></button>
+            <button type="button" class="rd-icon-mark_chat_unread rd-js-copy" title="mark_chat_unread" aria-label="Copy markup for mark_chat_unread" data-icon-name="mark_chat_unread" data-icon-words="message bubble new" data-copy-text="<span class=&quot;rd-icon-mark_chat_unread&quot;></span>"></button>
+            <button type="button" class="rd-icon-comment rd-js-copy" title="comment" aria-label="Copy markup for comment" data-icon-name="comment" data-icon-words="message bubble note" data-copy-text="<span class=&quot;rd-icon-comment&quot;></span>"></button>
+            <button type="button" class="rd-icon-sms rd-js-copy" title="sms" aria-label="Copy markup for sms" data-icon-name="sms" data-icon-words="message bubble" data-copy-text="<span class=&quot;rd-icon-sms&quot;></span>"></button>
+            <button type="button" class="rd-icon-forum rd-js-copy" title="forum" aria-label="Copy markup for forum" data-icon-name="forum" data-icon-words="message bubbles discussion" data-copy-text="<span class=&quot;rd-icon-forum&quot;></span>"></button>
+            <button type="button" class="rd-icon-campaign rd-js-copy" title="campaign" aria-label="Copy markup for campaign" data-icon-name="campaign" data-icon-words="megaphone announce" data-copy-text="<span class=&quot;rd-icon-campaign&quot;></span>"></button>
+            <button type="button" class="rd-icon-notifications rd-js-copy" title="notifications" aria-label="Copy markup for notifications" data-icon-name="notifications" data-icon-words="bell alert" data-copy-text="<span class=&quot;rd-icon-notifications&quot;></span>"></button>
+            <button type="button" class="rd-icon-notifications_active rd-js-copy" title="notifications_active" aria-label="Copy markup for notifications_active" data-icon-name="notifications_active" data-icon-words="bell alert ringing new" data-copy-text="<span class=&quot;rd-icon-notifications_active&quot;></span>"></button>
+            <button type="button" class="rd-icon-rss_feed rd-js-copy" title="rss_feed" aria-label="Copy markup for rss_feed" data-icon-name="rss_feed" data-icon-words="subscribe" data-copy-text="<span class=&quot;rd-icon-rss_feed&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-money">Money and business</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-attach_money rd-js-copy" title="attach_money" aria-label="Copy markup for attach_money" data-icon-name="attach_money" data-icon-words="dollar price" data-copy-text="<span class=&quot;rd-icon-attach_money&quot;></span>"></button>
+            <button type="button" class="rd-icon-payments rd-js-copy" title="payments" aria-label="Copy markup for payments" data-icon-name="payments" data-icon-words="cash money" data-copy-text="<span class=&quot;rd-icon-payments&quot;></span>"></button>
+            <button type="button" class="rd-icon-credit_card rd-js-copy" title="credit_card" aria-label="Copy markup for credit_card" data-icon-name="credit_card" data-icon-words="payment bank" data-copy-text="<span class=&quot;rd-icon-credit_card&quot;></span>"></button>
+            <button type="button" class="rd-icon-currency_exchange rd-js-copy" title="currency_exchange" aria-label="Copy markup for currency_exchange" data-icon-name="currency_exchange" data-icon-words="money rate" data-copy-text="<span class=&quot;rd-icon-currency_exchange&quot;></span>"></button>
+            <button type="button" class="rd-icon-savings rd-js-copy" title="savings" aria-label="Copy markup for savings" data-icon-name="savings" data-icon-words="piggy bank money" data-copy-text="<span class=&quot;rd-icon-savings&quot;></span>"></button>
+            <button type="button" class="rd-icon-account_balance rd-js-copy" title="account_balance" aria-label="Copy markup for account_balance" data-icon-name="account_balance" data-icon-words="bank institution" data-copy-text="<span class=&quot;rd-icon-account_balance&quot;></span>"></button>
+            <button type="button" class="rd-icon-balance rd-js-copy" title="balance" aria-label="Copy markup for balance" data-icon-name="balance" data-icon-words="scales law" data-copy-text="<span class=&quot;rd-icon-balance&quot;></span>"></button>
+            <button type="button" class="rd-icon-business_center rd-js-copy" title="business_center" aria-label="Copy markup for business_center" data-icon-name="business_center" data-icon-words="briefcase" data-copy-text="<span class=&quot;rd-icon-business_center&quot;></span>"></button>
+            <button type="button" class="rd-icon-work rd-js-copy" title="work" aria-label="Copy markup for work" data-icon-name="work" data-icon-words="briefcase job" data-copy-text="<span class=&quot;rd-icon-work&quot;></span>"></button>
+            <button type="button" class="rd-icon-corporate_fare rd-js-copy" title="corporate_fare" aria-label="Copy markup for corporate_fare" data-icon-name="corporate_fare" data-icon-words="office building company" data-copy-text="<span class=&quot;rd-icon-corporate_fare&quot;></span>"></button>
+            <button type="button" class="rd-icon-home_work rd-js-copy" title="home_work" aria-label="Copy markup for home_work" data-icon-name="home_work" data-icon-words="office building house" data-copy-text="<span class=&quot;rd-icon-home_work&quot;></span>"></button>
+            <button type="button" class="rd-icon-storefront rd-js-copy" title="storefront" aria-label="Copy markup for storefront" data-icon-name="storefront" data-icon-words="shop store" data-copy-text="<span class=&quot;rd-icon-storefront&quot;></span>"></button>
+            <button type="button" class="rd-icon-real_estate_agent rd-js-copy" title="real_estate_agent" aria-label="Copy markup for real_estate_agent" data-icon-name="real_estate_agent" data-icon-words="house property" data-copy-text="<span class=&quot;rd-icon-real_estate_agent&quot;></span>"></button>
+            <button type="button" class="rd-icon-warehouse rd-js-copy" title="warehouse" aria-label="Copy markup for warehouse" data-icon-name="warehouse" data-icon-words="stock storage" data-copy-text="<span class=&quot;rd-icon-warehouse&quot;></span>"></button>
+            <button type="button" class="rd-icon-local_shipping rd-js-copy" title="local_shipping" aria-label="Copy markup for local_shipping" data-icon-name="local_shipping" data-icon-words="truck delivery" data-copy-text="<span class=&quot;rd-icon-local_shipping&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-data">Charts and data</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-bar_chart rd-js-copy" title="bar_chart" aria-label="Copy markup for bar_chart" data-icon-name="bar_chart" data-icon-words="graph columns" data-copy-text="<span class=&quot;rd-icon-bar_chart&quot;></span>"></button>
+            <button type="button" class="rd-icon-show_chart rd-js-copy" title="show_chart" aria-label="Copy markup for show_chart" data-icon-name="show_chart" data-icon-words="graph line" data-copy-text="<span class=&quot;rd-icon-show_chart&quot;></span>"></button>
+            <button type="button" class="rd-icon-insights rd-js-copy" title="insights" aria-label="Copy markup for insights" data-icon-name="insights" data-icon-words="graph analytics" data-copy-text="<span class=&quot;rd-icon-insights&quot;></span>"></button>
+            <button type="button" class="rd-icon-query_stats rd-js-copy" title="query_stats" aria-label="Copy markup for query_stats" data-icon-name="query_stats" data-icon-words="graph analytics search" data-copy-text="<span class=&quot;rd-icon-query_stats&quot;></span>"></button>
+            <button type="button" class="rd-icon-trending_up rd-js-copy" title="trending_up" aria-label="Copy markup for trending_up" data-icon-name="trending_up" data-icon-words="arrow growth rise" data-copy-text="<span class=&quot;rd-icon-trending_up&quot;></span>"></button>
+            <button type="button" class="rd-icon-trending_flat rd-js-copy" title="trending_flat" aria-label="Copy markup for trending_flat" data-icon-name="trending_flat" data-icon-words="arrow same steady no change" data-copy-text="<span class=&quot;rd-icon-trending_flat&quot;></span>"></button>
+            <button type="button" class="rd-icon-trending_down rd-js-copy" title="trending_down" aria-label="Copy markup for trending_down" data-icon-name="trending_down" data-icon-words="arrow fall decline" data-copy-text="<span class=&quot;rd-icon-trending_down&quot;></span>"></button>
+            <button type="button" class="rd-icon-dashboard rd-js-copy" title="dashboard" aria-label="Copy markup for dashboard" data-icon-name="dashboard" data-icon-words="layout panels" data-copy-text="<span class=&quot;rd-icon-dashboard&quot;></span>"></button>
+            <button type="button" class="rd-icon-grid_view rd-js-copy" title="grid_view" aria-label="Copy markup for grid_view" data-icon-name="grid_view" data-icon-words="tiles layout" data-copy-text="<span class=&quot;rd-icon-grid_view&quot;></span>"></button>
+            <button type="button" class="rd-icon-auto_awesome_mosaic rd-js-copy" title="auto_awesome_mosaic" aria-label="Copy markup for auto_awesome_mosaic" data-icon-name="auto_awesome_mosaic" data-icon-words="tiles layout" data-copy-text="<span class=&quot;rd-icon-auto_awesome_mosaic&quot;></span>"></button>
+            <button type="button" class="rd-icon-account_tree rd-js-copy" title="account_tree" aria-label="Copy markup for account_tree" data-icon-name="account_tree" data-icon-words="structure hierarchy" data-copy-text="<span class=&quot;rd-icon-account_tree&quot;></span>"></button>
+            <button type="button" class="rd-icon-hub rd-js-copy" title="hub" aria-label="Copy markup for hub" data-icon-name="hub" data-icon-words="network nodes" data-copy-text="<span class=&quot;rd-icon-hub&quot;></span>"></button>
+            <button type="button" class="rd-icon-speed rd-js-copy" title="speed" aria-label="Copy markup for speed" data-icon-name="speed" data-icon-words="gauge meter" data-copy-text="<span class=&quot;rd-icon-speed&quot;></span>"></button>
+            <button type="button" class="rd-icon-target rd-js-copy" title="target" aria-label="Copy markup for target" data-icon-name="target" data-icon-words="goal aim" data-copy-text="<span class=&quot;rd-icon-target&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-status">Status</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-check_circle rd-js-copy" title="check_circle" aria-label="Copy markup for check_circle" data-icon-name="check_circle" data-icon-words="ok done success" data-copy-text="<span class=&quot;rd-icon-check_circle&quot;></span>"></button>
+            <button type="button" class="rd-icon-task_alt rd-js-copy" title="task_alt" aria-label="Copy markup for task_alt" data-icon-name="task_alt" data-icon-words="ok done success" data-copy-text="<span class=&quot;rd-icon-task_alt&quot;></span>"></button>
+            <button type="button" class="rd-icon-error rd-js-copy" title="error" aria-label="Copy markup for error" data-icon-name="error" data-icon-words="alert exclamation danger" data-copy-text="<span class=&quot;rd-icon-error&quot;></span>"></button>
+            <button type="button" class="rd-icon-warning rd-js-copy" title="warning" aria-label="Copy markup for warning" data-icon-name="warning" data-icon-words="alert triangle caution" data-copy-text="<span class=&quot;rd-icon-warning&quot;></span>"></button>
+            <button type="button" class="rd-icon-info rd-js-copy" title="info" aria-label="Copy markup for info" data-icon-name="info" data-icon-words="about note" data-copy-text="<span class=&quot;rd-icon-info&quot;></span>"></button>
+            <button type="button" class="rd-icon-help rd-js-copy" title="help" aria-label="Copy markup for help" data-icon-name="help" data-icon-words="question" data-copy-text="<span class=&quot;rd-icon-help&quot;></span>"></button>
+            <button type="button" class="rd-icon-priority_high rd-js-copy" title="priority_high" aria-label="Copy markup for priority_high" data-icon-name="priority_high" data-icon-words="exclamation urgent" data-copy-text="<span class=&quot;rd-icon-priority_high&quot;></span>"></button>
+            <button type="button" class="rd-icon-report rd-js-copy" title="report" aria-label="Copy markup for report" data-icon-name="report" data-icon-words="alert exclamation octagon critical" data-copy-text="<span class=&quot;rd-icon-report&quot;></span>"></button>
+            <button type="button" class="rd-icon-new_releases rd-js-copy" title="new_releases" aria-label="Copy markup for new_releases" data-icon-name="new_releases" data-icon-words="badge new verified" data-copy-text="<span class=&quot;rd-icon-new_releases&quot;></span>"></button>
+            <button type="button" class="rd-icon-cancel rd-js-copy" title="cancel" aria-label="Copy markup for cancel" data-icon-name="cancel" data-icon-words="x cross failed error circle" data-copy-text="<span class=&quot;rd-icon-cancel&quot;></span>"></button>
+            <button type="button" class="rd-icon-block rd-js-copy" title="block" aria-label="Copy markup for block" data-icon-name="block" data-icon-words="forbidden ban stop" data-copy-text="<span class=&quot;rd-icon-block&quot;></span>"></button>
+            <button type="button" class="rd-icon-remove_circle rd-js-copy" title="remove_circle" aria-label="Copy markup for remove_circle" data-icon-name="remove_circle" data-icon-words="minus stop" data-copy-text="<span class=&quot;rd-icon-remove_circle&quot;></span>"></button>
+            <button type="button" class="rd-icon-pause_circle rd-js-copy" title="pause_circle" aria-label="Copy markup for pause_circle" data-icon-name="pause_circle" data-icon-words="hold wait" data-copy-text="<span class=&quot;rd-icon-pause_circle&quot;></span>"></button>
+            <button type="button" class="rd-icon-pending rd-js-copy" title="pending" aria-label="Copy markup for pending" data-icon-name="pending" data-icon-words="dots wait progress circle" data-copy-text="<span class=&quot;rd-icon-pending&quot;></span>"></button>
+            <button type="button" class="rd-icon-hourglass_empty rd-js-copy" title="hourglass_empty" aria-label="Copy markup for hourglass_empty" data-icon-name="hourglass_empty" data-icon-words="wait pending loading" data-copy-text="<span class=&quot;rd-icon-hourglass_empty&quot;></span>"></button>
+            <button type="button" class="rd-icon-cloud_off rd-js-copy" title="cloud_off" aria-label="Copy markup for cloud_off" data-icon-name="cloud_off" data-icon-words="offline no connection data" data-copy-text="<span class=&quot;rd-icon-cloud_off&quot;></span>"></button>
+            <button type="button" class="rd-icon-sync_problem rd-js-copy" title="sync_problem" aria-label="Copy markup for sync_problem" data-icon-name="sync_problem" data-icon-words="reload stale failed alert" data-copy-text="<span class=&quot;rd-icon-sync_problem&quot;></span>"></button>
+            <button type="button" class="rd-icon-flag rd-js-copy" title="flag" aria-label="Copy markup for flag" data-icon-name="flag" data-icon-words="mark report" data-copy-text="<span class=&quot;rd-icon-flag&quot;></span>"></button>
+            <button type="button" class="rd-icon-flag_2 rd-js-copy" title="flag_2" aria-label="Copy markup for flag_2" data-icon-name="flag_2" data-icon-words="mark report" data-copy-text="<span class=&quot;rd-icon-flag_2&quot;></span>"></button>
+            <button type="button" class="rd-icon-star rd-js-copy" title="star" aria-label="Copy markup for star" data-icon-name="star" data-icon-words="rating favorite" data-copy-text="<span class=&quot;rd-icon-star&quot;></span>"></button>
+            <button type="button" class="rd-icon-star_half rd-js-copy" title="star_half" aria-label="Copy markup for star_half" data-icon-name="star_half" data-icon-words="rating" data-copy-text="<span class=&quot;rd-icon-star_half&quot;></span>"></button>
+            <button type="button" class="rd-icon-star_fill rd-js-copy" title="star_fill" aria-label="Copy markup for star_fill" data-icon-name="star_fill" data-icon-words="rating solid favorite" data-copy-text="<span class=&quot;rd-icon-star_fill&quot;></span>"></button>
+            <button type="button" class="rd-icon-favorite rd-js-copy" title="favorite" aria-label="Copy markup for favorite" data-icon-name="favorite" data-icon-words="heart like" data-copy-text="<span class=&quot;rd-icon-favorite&quot;></span>"></button>
+            <button type="button" class="rd-icon-trip_origin rd-js-copy" title="trip_origin" aria-label="Copy markup for trip_origin" data-icon-name="trip_origin" data-icon-words="circle dot ring" data-copy-text="<span class=&quot;rd-icon-trip_origin&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-time">Time</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-schedule rd-js-copy" title="schedule" aria-label="Copy markup for schedule" data-icon-name="schedule" data-icon-words="clock time" data-copy-text="<span class=&quot;rd-icon-schedule&quot;></span>"></button>
+            <button type="button" class="rd-icon-history rd-js-copy" title="history" aria-label="Copy markup for history" data-icon-name="history" data-icon-words="clock back past" data-copy-text="<span class=&quot;rd-icon-history&quot;></span>"></button>
+            <button type="button" class="rd-icon-update rd-js-copy" title="update" aria-label="Copy markup for update" data-icon-name="update" data-icon-words="clock fresh refreshed time" data-copy-text="<span class=&quot;rd-icon-update&quot;></span>"></button>
+            <button type="button" class="rd-icon-event rd-js-copy" title="event" aria-label="Copy markup for event" data-icon-name="event" data-icon-words="calendar date" data-copy-text="<span class=&quot;rd-icon-event&quot;></span>"></button>
+            <button type="button" class="rd-icon-event_available rd-js-copy" title="event_available" aria-label="Copy markup for event_available" data-icon-name="event_available" data-icon-words="calendar date done" data-copy-text="<span class=&quot;rd-icon-event_available&quot;></span>"></button>
+            <button type="button" class="rd-icon-event_repeat rd-js-copy" title="event_repeat" aria-label="Copy markup for event_repeat" data-icon-name="event_repeat" data-icon-words="calendar date recurring" data-copy-text="<span class=&quot;rd-icon-event_repeat&quot;></span>"></button>
+            <button type="button" class="rd-icon-calendar_today rd-js-copy" title="calendar_today" aria-label="Copy markup for calendar_today" data-icon-name="calendar_today" data-icon-words="date day" data-copy-text="<span class=&quot;rd-icon-calendar_today&quot;></span>"></button>
+            <button type="button" class="rd-icon-date_range rd-js-copy" title="date_range" aria-label="Copy markup for date_range" data-icon-name="date_range" data-icon-words="calendar period" data-copy-text="<span class=&quot;rd-icon-date_range&quot;></span>"></button>
+            <button type="button" class="rd-icon-bedtime rd-js-copy" title="bedtime" aria-label="Copy markup for bedtime" data-icon-name="bedtime" data-icon-words="moon night dark" data-copy-text="<span class=&quot;rd-icon-bedtime&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
+    <div class="padding-b-sm" data-icon-group="">
+        <h5 id="icons-objects">Objects</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            <button type="button" class="rd-icon-bolt rd-js-copy" title="bolt" aria-label="Copy markup for bolt" data-icon-name="bolt" data-icon-words="lightning flash fast" data-copy-text="<span class=&quot;rd-icon-bolt&quot;></span>"></button>
+            <button type="button" class="rd-icon-lightbulb rd-js-copy" title="lightbulb" aria-label="Copy markup for lightbulb" data-icon-name="lightbulb" data-icon-words="idea" data-copy-text="<span class=&quot;rd-icon-lightbulb&quot;></span>"></button>
+            <button type="button" class="rd-icon-lightbulb_2 rd-js-copy" title="lightbulb_2" aria-label="Copy markup for lightbulb_2" data-icon-name="lightbulb_2" data-icon-words="idea" data-copy-text="<span class=&quot;rd-icon-lightbulb_2&quot;></span>"></button>
+            <button type="button" class="rd-icon-diamond rd-js-copy" title="diamond" aria-label="Copy markup for diamond" data-icon-name="diamond" data-icon-words="gem value" data-copy-text="<span class=&quot;rd-icon-diamond&quot;></span>"></button>
+            <button type="button" class="rd-icon-chess_knight rd-js-copy" title="chess_knight" aria-label="Copy markup for chess_knight" data-icon-name="chess_knight" data-icon-words="strategy horse" data-copy-text="<span class=&quot;rd-icon-chess_knight&quot;></span>"></button>
+            <button type="button" class="rd-icon-rocket_launch rd-js-copy" title="rocket_launch" aria-label="Copy markup for rocket_launch" data-icon-name="rocket_launch" data-icon-words="start launch" data-copy-text="<span class=&quot;rd-icon-rocket_launch&quot;></span>"></button>
+            <button type="button" class="rd-icon-auto_awesome rd-js-copy" title="auto_awesome" aria-label="Copy markup for auto_awesome" data-icon-name="auto_awesome" data-icon-words="sparkle magic ai" data-copy-text="<span class=&quot;rd-icon-auto_awesome&quot;></span>"></button>
+            <button type="button" class="rd-icon-construction rd-js-copy" title="construction" aria-label="Copy markup for construction" data-icon-name="construction" data-icon-words="tools work in progress" data-copy-text="<span class=&quot;rd-icon-construction&quot;></span>"></button>
+            <button type="button" class="rd-icon-recycling rd-js-copy" title="recycling" aria-label="Copy markup for recycling" data-icon-name="recycling" data-icon-words="reuse" data-copy-text="<span class=&quot;rd-icon-recycling&quot;></span>"></button>
+            <button type="button" class="rd-icon-flight rd-js-copy" title="flight" aria-label="Copy markup for flight" data-icon-name="flight" data-icon-words="plane travel" data-copy-text="<span class=&quot;rd-icon-flight&quot;></span>"></button>
+            <button type="button" class="rd-icon-directions_car rd-js-copy" title="directions_car" aria-label="Copy markup for directions_car" data-icon-name="directions_car" data-icon-words="auto vehicle" data-copy-text="<span class=&quot;rd-icon-directions_car&quot;></span>"></button>
+            <button type="button" class="rd-icon-restaurant rd-js-copy" title="restaurant" aria-label="Copy markup for restaurant" data-icon-name="restaurant" data-icon-words="food fork knife" data-copy-text="<span class=&quot;rd-icon-restaurant&quot;></span>"></button>
+            <button type="button" class="rd-icon-festival rd-js-copy" title="festival" aria-label="Copy markup for festival" data-icon-name="festival" data-icon-words="tent event" data-copy-text="<span class=&quot;rd-icon-festival&quot;></span>"></button>
+            <button type="button" class="rd-icon-movie rd-js-copy" title="movie" aria-label="Copy markup for movie" data-icon-name="movie" data-icon-words="film video" data-copy-text="<span class=&quot;rd-icon-movie&quot;></span>"></button>
+            <button type="button" class="rd-icon-music_note rd-js-copy" title="music_note" aria-label="Copy markup for music_note" data-icon-name="music_note" data-icon-words="audio sound" data-copy-text="<span class=&quot;rd-icon-music_note&quot;></span>"></button>
+            <button type="button" class="rd-icon-speaker rd-js-copy" title="speaker" aria-label="Copy markup for speaker" data-icon-name="speaker" data-icon-words="audio sound" data-copy-text="<span class=&quot;rd-icon-speaker&quot;></span>"></button>
+            
+        </div>
+    </div>
+    
 </section>
+
+<script>
+// /styles/icons/ only: the search and the weight switch of the grids above.
+// With no script the form stays hidden and the groups read as they are.
+(() => {
+    const finder = document.getElementById('icon-finder');
+    if (!finder) return;
+    const input = document.getElementById('icon-search');
+    const none = document.getElementById('icon-none');
+    const groups = [...document.querySelectorAll('[data-icon-group]')].map((box) => ({
+        box,
+        tiles: [...box.querySelectorAll('button[data-icon-name]')].map((tile) => ({
+            tile,
+            // "arrow_back" is found by "arrow", "back" and its search words.
+            words: `${tile.dataset.iconName.replace(/_/g, ' ')} ${tile.dataset.iconName} ${tile.dataset.iconWords}`.split(' '),
+        })),
+    }));
+
+    const filter = () => {
+        const terms = input.value.toLowerCase().trim().split(/[\s_]+/).filter(Boolean);
+        let total = 0;
+        groups.forEach(({ box, tiles }) => {
+            let shown = 0;
+            tiles.forEach(({ tile, words }) => {
+                const match = terms.every((term) => words.some((word) => word.startsWith(term)));
+                tile.classList.toggle('rd-is-hidden', !match);
+                if (match) shown += 1;
+            });
+            box.classList.toggle('rd-is-hidden', shown === 0);
+            total += shown;
+        });
+        none.classList.toggle('rd-is-hidden', total > 0);
+    };
+
+    const switches = [...finder.querySelectorAll('[data-icon-weight]')];
+    const setWeight = (weight) => {
+        const suffix = weight === '200' ? '-thin' : '';
+        switches.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.iconWeight === weight)));
+        groups.forEach(({ tiles }) => tiles.forEach(({ tile }) => {
+            const name = tile.dataset.iconName;
+            tile.classList.remove(`rd-icon-${name}`, `rd-icon-${name}-thin`);
+            tile.classList.add(`rd-icon-${name}${suffix}`);
+            tile.dataset.copyText = `<span class="rd-icon-${name}${suffix}"></span>`;
+            tile.setAttribute('aria-label', `Copy markup for ${name}${suffix ? ', thin cut' : ''}`);
+        }));
+    };
+
+    input.addEventListener('input', filter);
+    switches.forEach((button) => button.addEventListener('click', () => setWeight(button.dataset.iconWeight)));
+    finder.classList.remove('rd-is-hidden');
+})();
+</script>
 
 <section>
     <h3 id="component-owned-icons">Component-owned icons</h3>
@@ -816,7 +862,7 @@
 </section>
 
 <section>
-    <h3 id="need-an-icon-that-isnt-here">Need an icon that isn't here?</h3>
+    <h3 id="missing">Need an icon that isn't here?</h3>
     <p>
         The set covers what the Rare Styles ecosystem actually uses, so it is deliberately finite. If
         the glyph you need has no <code>.rd-icon-*</code> class:
@@ -856,7 +902,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

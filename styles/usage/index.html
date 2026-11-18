@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -351,6 +351,15 @@
           
             <li>
               
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/styles/alignment/">Alignment</a>
               
               
@@ -420,40 +429,36 @@
     
     
   <section class="page-title" id="main-content">
-    <h1 id="usage">Usage</h1>
+    <h1 id="usage-2">Usage</h1>
   </section>
 
     <article>
       <h2 id="quick-start">Quick start</h2>
 <p>The fastest way to a working site is the <strong><a href="/examples/styles/content-starter/">content starter</a></strong>: an article index and an article with images, a table and charts, in plain HTML. Copy it, change the content, publish. Its <a href="https://github.com/raredigits/raredigits.art/tree/main/examples/styles/content-starter/demo">README</a> walks through every step below.</p>
-<ol>
-<li><strong>Download and open.</strong> <a href="/examples/styles/content-starter/content-starter.zip">Download the starter</a>, unpack it and open <code>index.html</code> in a browser. No build, no framework, no server: the libraries come from the CDN, and the links are relative, so it also works on any static host and under a sub-path.</li>
-<li><strong>Publish.</strong> Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.</li>
-<li><strong>Make it yours.</strong> Set the brand and the fonts through the library's tokens in your own stylesheet (see <a href="#customization-approach">Customization</a> below). The reading measure is <code>--text-content-width</code>.</li>
-<li><strong>Upgrade on purpose.</strong> Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the <a href="https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md">changelog</a> first.</li>
-</ol>
+<p><strong>1. Download and open.</strong> <a href="/examples/styles/content-starter/content-starter.zip">Download the starter</a>, unpack it and open <code>index.html</code> in a browser. No build, no framework, no server: the libraries come from the CDN, and the links are relative, so it also works on any static host and under a sub-path.</p>
+<p><strong>2. Publish.</strong> Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.</p>
+<p><strong>3. Make it yours.</strong> Set the brand and the fonts through the library's tokens in your own stylesheet (see <a href="#customization-approach">Customization</a> below). The reading measure is <code>--text-content-width</code>.</p>
+<p><strong>4. Upgrade on purpose.</strong> Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the <a href="https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md">changelog</a> first.</p>
 <h3 id="what-a-page-needs">What a page needs</h3>
+<p><strong>Page mode or islands.</strong> <code>class=&quot;rd&quot;</code> on <code>&lt;html&gt;</code> styles the whole page: header, page grid, typography and components. On one element instead, it styles only that block, which is how you embed the library in a page styled by something else. <a href="/styles/getting-started/">Getting Started</a> compares the two.</p>
 <pre><code class="language-html">&lt;html lang=&quot;en&quot; class=&quot;rd&quot;&gt;                         &lt;!-- the one integration step --&gt;
 &lt;head&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.min.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.2/rare.min.css&quot;&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;project.css&quot;&gt;       &lt;!-- your layer, loaded after --&gt;
 &lt;/head&gt;
 </code></pre>
-<ul>
-<li><strong>Page mode or islands.</strong> <code>class=&quot;rd&quot;</code> on <code>&lt;html&gt;</code> styles the whole page: header, page grid, typography and components. On one element instead, it styles only that block, which is how you embed the library in a page styled by something else. <a href="/styles/getting-started/">Getting Started</a> compares the two.</li>
-<li><strong>Library files and your files stay apart.</strong> <code>rare.css</code> is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.</li>
-<li><strong>Self-hosting.</strong> To serve the library yourself instead of from the CDN, download <code>rare.min.css</code> with its <code>fonts/</code> and <code>images/</code> folders from the <a href="https://github.com/raredigits/rare-styles">rare-styles repository</a> at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.</li>
-<li><strong>Companion scripts are optional.</strong> The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the <a href="/scripts/">Scripts</a> pages. Copy only the ones you use.</li>
-<li><strong>Charts are separate.</strong> <a href="/charts/">RareCharts</a> is its own pinned script. Load it in <code>&lt;head&gt;</code> only on pages that have charts, and create each chart after its container, as the starter's article does.</li>
-</ul>
+<p><strong>Library files and your files stay apart.</strong> <code>rare.css</code> is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.</p>
+<p><strong>Self-hosting.</strong> To serve the library yourself instead of from the CDN, download <code>rare.min.css</code> with its <code>fonts/</code> and <code>images/</code> folders from the <a href="https://github.com/raredigits/rare-styles">rare-styles repository</a> at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.</p>
+<p><strong>Companion scripts are optional.</strong> The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the <a href="/scripts/">Scripts</a> pages. Copy only the ones you use.</p>
+<p><strong>Charts are separate.</strong> <a href="/charts/">RareCharts</a> is its own pinned script. Load it in <code>&lt;head&gt;</code> only on pages that have charts, and create each chart after its container, as the starter's article does.</p>
 <h2 id="general-principles">General Principles</h2>
 <p>Rare Styles provides a solid foundation for creating clean, functional interfaces. This guide explains how to effectively implement the style system in your projects and customize it when needed.</p>
 <h2 id="including-the-stylesheet">Including the Stylesheet</h2>
 <p>Add the Rare Styles stylesheet to your project by including it in the <code>&lt;head&gt;</code> section of your HTML:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.min.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.2/rare.min.css&quot;&gt;
 </code></pre>
 <p>For development environments or when you need unminified code:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.2/rare.css&quot;&gt;
 </code></pre>
 <p>Then opt the page in. From <code>v0.7.0</code> every library style applies only under the <code>.rd</code> class, so a page without it is left alone:</p>
 <pre><code class="language-html">&lt;html lang=&quot;en&quot; class=&quot;rd&quot;&gt;
@@ -469,7 +474,7 @@
 <p>This cascade principle is what makes customizing Rare Styles straightforward: you can override the default styles simply by adding more specific rules or loading your custom styles after the main stylesheet.</p>
 <h2 id="customization-approach">Customization Approach</h2>
 <p>The simplest way to customize Rare Styles is to create your own stylesheet and include it after the main Rare Styles file:</p>
-<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.min.css&quot;&gt;
+<pre><code class="language-html">&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.2/rare.min.css&quot;&gt;
 &lt;link rel=&quot;stylesheet&quot; href=&quot;path/to/my-beautiful-styles.css&quot;&gt;
 </code></pre>
 <p>This approach preserves all the functional benefits of Rare Styles while allowing you to:</p>
@@ -493,6 +498,7 @@
   --primary-color: #1a1a2e;              /* body text and headings */
   --brand-color: #ff6b00;                /* brand accents */
   --brand-color-dark: #c25100;           /* link underline and hover fill */
+  --brand-color-deep: #a84600;           /* primary button hover, under a white label */
   --heading-font: 'Montserrat', sans-serif;
 
   /* Your own tokens: any name, read only by your rules below */
@@ -512,7 +518,7 @@
   color: white;
 }
 </code></pre>
-<p>Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline and the heading font, and adds two variants of existing library components without modifying the original stylesheet. <code>--primary-font</code> and <code>--code-font</code> work the same way as <code>--heading-font</code>.</p>
+<p>Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline, the primary button’s hover and the heading font, and adds two variants of existing library components without modifying the original stylesheet. <code>--primary-font</code> and <code>--code-font</code> work the same way as <code>--heading-font</code>.</p>
 <h2 id="learning-from-examples">Learning from Examples</h2>
 <p>Check out the <a href="/examples">examples section</a> to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.</p>
 <h2 id="getting-help">Getting Help</h2>
@@ -544,7 +550,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

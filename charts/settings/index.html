@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -402,7 +402,7 @@
     
     
   <section class="page-title" id="main-content">
-    <h1 id="settings">Settings</h1>
+    <h1 id="settings-2">Settings</h1>
   </section>
 
     <article>
@@ -469,42 +469,42 @@
 <p><code>options</code> is a plain object. Everything is optional.</p>
 <h2 id="header-options">Header options</h2>
 <p>The chart header sits above the chart area and can contain a title, a subtitle, and a legend.</p>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>title</code></td>
-<td>string</td>
-<td>Chart title, rendered as an uppercase <code>&lt;h5&gt;</code></td>
-</tr>
-<tr>
-<td><code>subtitle</code></td>
-<td>string</td>
-<td>Smaller text below the title; wraps onto as many lines as it needs (the title stays on one line)</td>
-</tr>
-<tr>
-<td><code>legend</code></td>
-<td>array | string | HTMLElement</td>
-<td>Legend items (see below)</td>
-</tr>
-<tr>
-<td><code>legendPosition</code></td>
-<td><code>'right'</code></td>
-<td>Move the legend into a vertical column beside the chart</td>
-</tr>
-<tr>
-<td><code>ariaLabel</code></td>
-<td>string</td>
-<td>Accessible name of the chart drawing (the <code>&lt;svg&gt;</code> gets <code>role=&quot;img&quot;</code>). Defaults to the title and subtitle, joined with &quot; — &quot;; without them, &quot;Chart&quot;</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>title</code></td>
+            <td>string</td>
+            <td>Chart title, rendered as an uppercase <code>&lt;h5&gt;</code></td>
+        </tr>
+        <tr>
+            <td><code>subtitle</code></td>
+            <td>string</td>
+            <td>Smaller text below the title; wraps onto as many lines as it needs (the title stays on one line)</td>
+        </tr>
+        <tr>
+            <td><code>legend</code></td>
+            <td>array | string | HTMLElement</td>
+            <td>Legend items (see below)</td>
+        </tr>
+        <tr>
+            <td><code>legendPosition</code></td>
+            <td><code>'right'</code></td>
+            <td>Move the legend into a vertical column beside the chart</td>
+        </tr>
+        <tr>
+            <td><code>ariaLabel</code></td>
+            <td>string</td>
+            <td>Accessible name of the chart drawing (the <code>&lt;svg&gt;</code> gets <code>role="img"</code>). Defaults to the title and subtitle, joined with " — "; without them, "Chart"</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>Without a title, subtitle or legend — and without timeframe or Lin/Log buttons — no header element is created: the chart starts right at the top of the container.</p>
@@ -524,32 +524,32 @@
 <p>For line charts, use the default line indicator. For bar and donut charts, use <code>type: 'bar'</code> — a dot reads as a filled mark rather than a stroke, which matches the shape of what you're labeling. Use <code>'dashed'</code> for a forecast and <code>'band'</code> for a confidence range.</p>
 <p><code>legendPosition: 'right'</code> places the legend in a vertical column to the right of the chart. Useful when you have many series and don't want the legend eating into the chart's vertical space. The chart area automatically adjusts its width; the navigator, your <code>controls</code> and the footer stay under the drawing, in that order.</p>
 <h2 id="footer">Footer</h2>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>source</code></td>
-<td>string | <code>{ text, href }</code> | array | HTMLElement</td>
-<td>Rendered as a <code>&lt;cite&gt;</code> below the chart. Great for data attribution. Pass <code>{ text, href }</code> to make it a link, or an <strong>array of parts</strong> to mix several links and plain text on one line — see below.</td>
-</tr>
-<tr>
-<td><code>note</code></td>
-<td>string | HTMLElement</td>
-<td>Rendered as a <code>&lt;p class=&quot;rc-chart-note&quot;&gt;</code> below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container.</td>
-</tr>
-<tr>
-<td><code>controls</code></td>
-<td>HTMLElement | selector</td>
-<td>Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact <code>rc-chart-controls</code> row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it.</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>source</code></td>
+            <td>string | <code>{ text, href }</code> | array | HTMLElement</td>
+            <td>Rendered as a <code>&lt;cite&gt;</code> below the chart. Great for data attribution. Pass <code>{ text, href }</code> to make it a link, or an <strong>array of parts</strong> to mix several links and plain text on one line — see below.</td>
+        </tr>
+        <tr>
+            <td><code>note</code></td>
+            <td>string | HTMLElement</td>
+            <td>Rendered as a <code>&lt;p class="rc-chart-note"&gt;</code> below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container.</td>
+        </tr>
+        <tr>
+            <td><code>controls</code></td>
+            <td>HTMLElement | selector</td>
+            <td>Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact <code>rc-chart-controls</code> row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it.</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <pre class="text-content-caption"><code>source: 'Source: The Truth',
@@ -565,30 +565,30 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   ', Internal calculations',     <span class="code-comment">// plain, no link</span>
 ]</code></pre>
 <h2 id="layout">Layout</h2>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>height</code></td>
-<td>number</td>
-<td>varies</td>
-<td>Total container height in px, with the title, subtitle, legend, buttons, navigator and footer included; see each chart's page for its default. On a narrow card those parts wrap and take more of it, and the plot gets what is left (<code>chart.height</code>). The plot keeps at least 80 px: when the parts would leave it less, the card grows past <code>height</code> by the difference, and returns to <code>height</code> once they fit again.</td>
-</tr>
-<tr>
-<td><code>margin</code></td>
-<td>object</td>
-<td>per chart</td>
-<td>Space around the drawing area in px, <code>{ top, right, bottom, left }</code>; a side you leave out keeps the chart's default. Donut, Pie, Gauge, Sankey and Graph fill the card and do not use it — except a vertical Sankey, which adds <code>top</code> and <code>bottom</code> to the height it computes for its card</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td>varies</td>
+            <td>Total container height in px, with the title, subtitle, legend, buttons, navigator and footer included; see each chart's page for its default. On a narrow card those parts wrap and take more of it, and the plot gets what is left (<code>chart.height</code>). The plot keeps at least 80 px: when the parts would leave it less, the card grows past <code>height</code> by the difference, and returns to <code>height</code> once they fit again.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>per chart</td>
+            <td>Space around the drawing area in px, <code>{ top, right, bottom, left }</code>; a side you leave out keeps the chart's default. Donut, Pie, Gauge, Sankey and Graph fill the card and do not use it — except a vertical Sankey, which adds <code>top</code> and <code>bottom</code> to the height it computes for its card</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>Each chart sets its own margins around its axes — Line <code>{ top: 10, right: 64, bottom: 18, left: 0 }</code>, Time Series <code>{ top: 16, right: 70, bottom: 28, left: 0 }</code>, DualAxes a 64px gutter on each side; Map, MapFlow and MultiChart use none. Hiding an axis gives its gutter back, and annotations raise <code>top</code> to make room for their labels. Set <code>margin</code> for a different frame:</p>
@@ -597,22 +597,22 @@ note:   'Figures are unaudited and restated monthly.'</code></pre>
   margin: { top: 8, right: 50, bottom: 16, left: 40 },
 })</code></pre>
 <h2 id="theme">Theme</h2>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Option</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>theme</code></td>
-<td>object</td>
-<td>Partial or full theme object. Merged with the active default.</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>theme</code></td>
+            <td>object</td>
+            <td>Partial or full theme object. Merged with the active default.</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>Pass a theme object to override colors, the tooltip font, or the sizing defaults (line width, crosshair dots, markers, DualAxes bar opacity). The chart's own fonts and spacing are CSS variables. The full theme system is documented on the <a href="/charts/styles/">Styles</a> page.</p>
@@ -817,7 +817,7 @@ map.whenReady().then(() => console.log('drawn'));</code></pre>
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

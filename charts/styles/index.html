@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -507,9 +507,7 @@
   theme: RareCharts.darkTheme,
 }).setData(data);</code></pre>
 <p>The result:</p>
-<div class="text-content-caption card-dashboard-bordered black-bg">
-    <div id="line-chart-demo-revenue"></div>
-</div>
+<div id="line-chart-demo-revenue" class="panel panel--bordered text-content-caption black-bg"></div>
 <h2 id="creating-a-custom-theme">Creating a custom theme</h2>
 <p><code>RareCharts.createTheme(overrides, base)</code> merges your overrides with a base theme — the default one unless you pass another — and returns a complete theme object. You only need to specify what you want to change:</p>
 <pre class="text-content-caption"><code>const brandTheme = RareCharts.createTheme({
@@ -546,318 +544,318 @@ new RareCharts.Line('#chart', {
 }).setData(data);</code></pre>
 <h2 id="theme-token-reference">Theme token reference</h2>
 <h3 id="colors">Colors</h3>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Default</th>
-<th>Dark</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>bg</code></td>
-<td><code>var(--bg-color, #ffffff)</code></td>
-<td><code>#0a0a0a</code></td>
-<td>Page background under Rare Styles, white otherwise. Plates behind last-value and annotation labels, label backdrops and halos (the tooltip background is <code>tooltip.bg</code>)</td>
-</tr>
-<tr>
-<td><code>surface</code></td>
-<td><code>#f5f5f5</code></td>
-<td><code>#141414</code></td>
-<td>Graph node fills, flow lane bands</td>
-</tr>
-<tr>
-<td><code>grid</code></td>
-<td><code>#e8e8e8</code></td>
-<td><code>#666666</code></td>
-<td>Horizontal grid lines</td>
-</tr>
-<tr>
-<td><code>border</code></td>
-<td><code>#cccccc</code></td>
-<td><code>#888888</code></td>
-<td>Axis lines, zero baseline</td>
-</tr>
-<tr>
-<td><code>crosshair</code></td>
-<td><code>#aaaaaa</code></td>
-<td><code>#3a3a3a</code></td>
-<td>Hover tracker line</td>
-</tr>
-<tr>
-<td><code>text</code></td>
-<td><code>#000000</code></td>
-<td><code>#e8e8e8</code></td>
-<td>Primary labels, node labels, navigator strip tint and window</td>
-</tr>
-<tr>
-<td><code>muted</code></td>
-<td><code>#666666</code></td>
-<td><code>#888888</code></td>
-<td>Axis tick labels, secondary text, fallback link color</td>
-</tr>
-<tr>
-<td><code>positive</code></td>
-<td><code>#389e0d</code></td>
-<td><code>#389e0d</code></td>
-<td>Not read by any chart — a named color for your own code (a <code>tooltipFormat</code>, a page header)</td>
-</tr>
-<tr>
-<td><code>negative</code></td>
-<td><code>#ff0000</code></td>
-<td><code>#ff0000</code></td>
-<td>Not read by any chart — a named color for your own code</td>
-</tr>
-<tr>
-<td><code>accent</code></td>
-<td><code>#00aaff</code></td>
-<td><code>#ff6200</code></td>
-<td>Single-series default, highlights</td>
-</tr>
-<tr>
-<td><code>colors</code></td>
-<td>6-color array</td>
-<td>same</td>
-<td>Multi-series palette, node group colors</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>bg</code></td>
+            <td><code>var(--bg-color, #ffffff)</code></td>
+            <td><code>#0a0a0a</code></td>
+            <td>Page background under Rare Styles, white otherwise. Plates behind last-value and annotation labels, label backdrops and halos (the tooltip background is <code>tooltip.bg</code>)</td>
+        </tr>
+        <tr>
+            <td><code>surface</code></td>
+            <td><code>#f5f5f5</code></td>
+            <td><code>#141414</code></td>
+            <td>Graph node fills, flow lane bands</td>
+        </tr>
+        <tr>
+            <td><code>grid</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td><code>#666666</code></td>
+            <td>Horizontal grid lines</td>
+        </tr>
+        <tr>
+            <td><code>border</code></td>
+            <td><code>#cccccc</code></td>
+            <td><code>#888888</code></td>
+            <td>Axis lines, zero baseline</td>
+        </tr>
+        <tr>
+            <td><code>crosshair</code></td>
+            <td><code>#aaaaaa</code></td>
+            <td><code>#3a3a3a</code></td>
+            <td>Hover tracker line</td>
+        </tr>
+        <tr>
+            <td><code>text</code></td>
+            <td><code>#000000</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td>Primary labels, node labels, navigator strip tint and window</td>
+        </tr>
+        <tr>
+            <td><code>muted</code></td>
+            <td><code>#666666</code></td>
+            <td><code>#888888</code></td>
+            <td>Axis tick labels, secondary text, fallback link color</td>
+        </tr>
+        <tr>
+            <td><code>positive</code></td>
+            <td><code>#389e0d</code></td>
+            <td><code>#389e0d</code></td>
+            <td>Not read by any chart — a named color for your own code (a <code>tooltipFormat</code>, a page header)</td>
+        </tr>
+        <tr>
+            <td><code>negative</code></td>
+            <td><code>#ff0000</code></td>
+            <td><code>#ff0000</code></td>
+            <td>Not read by any chart — a named color for your own code</td>
+        </tr>
+        <tr>
+            <td><code>accent</code></td>
+            <td><code>#00aaff</code></td>
+            <td><code>#ff6200</code></td>
+            <td>Single-series default, highlights</td>
+        </tr>
+        <tr>
+            <td><code>colors</code></td>
+            <td>6-color array</td>
+            <td>same</td>
+            <td>Multi-series palette, node group colors</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <h3 id="typography">Typography</h3>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Default</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>font</code></td>
-<td><code>var(--rc-font-family, &quot;Fira Sans&quot;, system-ui, …, sans-serif)</code></td>
-<td>Tooltip font when <code>numericFont</code> is unset</td>
-</tr>
-<tr>
-<td><code>fontSize</code></td>
-<td><code>var(--rc-font-size-sm, 14px)</code></td>
-<td>Not used — the tooltip size is CSS. Removal at 1.0</td>
-</tr>
-<tr>
-<td><code>numericFont</code></td>
-<td><code>var(--rc-font-family-numeric, &quot;Cousine&quot;, ui-monospace, …, monospace)</code></td>
-<td>Tooltip font family</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>font</code></td>
+            <td><code>var(--rc-font-family, "Fira Sans", system-ui, …, sans-serif)</code></td>
+            <td>Tooltip font when <code>numericFont</code> is unset</td>
+        </tr>
+        <tr>
+            <td><code>fontSize</code></td>
+            <td><code>var(--rc-font-size-sm, 14px)</code></td>
+            <td>Not used — the tooltip size is CSS. Removal at 1.0</td>
+        </tr>
+        <tr>
+            <td><code>numericFont</code></td>
+            <td><code>var(--rc-font-family-numeric, "Cousine", ui-monospace, …, monospace)</code></td>
+            <td>Tooltip font family</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>The chart CSS also defines the following container-level variables:</p>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>CSS Variable</th>
-<th>Default</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>--rc-font-family</code></td>
-<td><code>&quot;Fira Sans&quot;, system-ui, …, sans-serif</code></td>
-<td>Chart font: title, legend, source, note, buttons, SVG text</td>
-</tr>
-<tr>
-<td><code>--rc-font-family-numeric</code></td>
-<td><code>&quot;Cousine&quot;, ui-monospace, …, monospace</code></td>
-<td>Numeric font for values and axes</td>
-</tr>
-<tr>
-<td><code>--rc-font-size</code></td>
-<td><code>16px</code></td>
-<td>Chart title</td>
-</tr>
-<tr>
-<td><code>--rc-font-size-sm</code></td>
-<td><code>14px</code></td>
-<td>SVG text, subtitle, legend, source, note, buttons</td>
-</tr>
-<tr>
-<td><code>--rc-space-xs</code></td>
-<td><code>4px</code></td>
-<td>Header row gap, timeframe button gap and radius</td>
-</tr>
-<tr>
-<td><code>--rc-space-sm</code></td>
-<td><code>8px</code></td>
-<td>Legend dots, tooltip and button padding, source margin</td>
-</tr>
-<tr>
-<td><code>--rc-space-md</code></td>
-<td><code>16px</code></td>
-<td>Header and legend column gap, tooltip and button padding</td>
-</tr>
-<tr>
-<td><code>--rc-space-lg</code></td>
-<td><code>32px</code></td>
-<td><code>MultiChart</code> grid gap, right-hand legend offset</td>
-</tr>
-<tr>
-<td><code>--rc-scale-btn-fill</code></td>
-<td><code>#ccc</code></td>
-<td>Half fill of the Lin/Log button</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>CSS Variable</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>--rc-font-family</code></td>
+            <td><code>"Fira Sans", system-ui, …, sans-serif</code></td>
+            <td>Chart font: title, legend, source, note, buttons, SVG text</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-family-numeric</code></td>
+            <td><code>"Cousine", ui-monospace, …, monospace</code></td>
+            <td>Numeric font for values and axes</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-size</code></td>
+            <td><code>16px</code></td>
+            <td>Chart title</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-size-sm</code></td>
+            <td><code>14px</code></td>
+            <td>SVG text, subtitle, legend, source, note, buttons</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-xs</code></td>
+            <td><code>4px</code></td>
+            <td>Header row gap, timeframe button gap and radius</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-sm</code></td>
+            <td><code>8px</code></td>
+            <td>Legend dots, tooltip and button padding, source margin</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-md</code></td>
+            <td><code>16px</code></td>
+            <td>Header and legend column gap, tooltip and button padding</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-lg</code></td>
+            <td><code>32px</code></td>
+            <td><code>MultiChart</code> grid gap, right-hand legend offset</td>
+        </tr>
+        <tr>
+            <td><code>--rc-scale-btn-fill</code></td>
+            <td><code>#ccc</code></td>
+            <td>Half fill of the Lin/Log button</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>These are RareCharts variables, not host-site variables: a host's spacing scale or page font does not change a chart. If you want a different type system, override them as above. Of the theme's fonts, only <code>numericFont</code> (or <code>font</code> when it is unset) is read — the tooltip font family; the chart text follows the variables.</p>
 <h3 id="sizing">Sizing</h3>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Default</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>strokeWidth</code></td>
-<td><code>2</code></td>
-<td>Line width of Line, DualAxes and Time Series lines</td>
-</tr>
-<tr>
-<td><code>dotRadius</code></td>
-<td><code>3</code></td>
-<td>Radius of the crosshair dots (Line, DualAxes)</td>
-</tr>
-<tr>
-<td><code>markerSize</code></td>
-<td><code>4</code></td>
-<td>Per-point markers (Line, DualAxes)</td>
-</tr>
-<tr>
-<td><code>barOpacity</code></td>
-<td><code>0.35</code></td>
-<td>DualAxes bar fill opacity; <code>Bar</code> draws opaque bars</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>strokeWidth</code></td>
+            <td><code>2</code></td>
+            <td>Line width of Line, DualAxes and Time Series lines</td>
+        </tr>
+        <tr>
+            <td><code>dotRadius</code></td>
+            <td><code>3</code></td>
+            <td>Radius of the crosshair dots (Line, DualAxes)</td>
+        </tr>
+        <tr>
+            <td><code>markerSize</code></td>
+            <td><code>4</code></td>
+            <td>Per-point markers (Line, DualAxes)</td>
+        </tr>
+        <tr>
+            <td><code>barOpacity</code></td>
+            <td><code>0.35</code></td>
+            <td>DualAxes bar fill opacity; <code>Bar</code> draws opaque bars</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>The tokens are fallbacks: an option wins when it is set — a series' <code>strokeWidth</code>, <code>markerSize</code> on the chart or a series, DualAxes' <code>barOpacity</code>. The Time Series line has no width option; set the token.</p>
 <h3 id="map">Map</h3>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Default</th>
-<th>Dark</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>map.matchFill</code></td>
-<td><code>#00aaff</code></td>
-<td><code>#ff6200</code></td>
-<td>Regions with data and no <code>color</code> of their own (the <code>matchFill</code> option wins)</td>
-</tr>
-<tr>
-<td><code>map.unmatchedFill</code></td>
-<td><code>#e8e8e8</code></td>
-<td><code>#1e1e2e</code></td>
-<td>Regions without data (the <code>defaultFill</code> option wins)</td>
-</tr>
-<tr>
-<td><code>map.border</code></td>
-<td><code>#ffffff</code></td>
-<td><code>#444455</code></td>
-<td>Region borders (the <code>borderColor</code> option wins)</td>
-</tr>
-<tr>
-<td><code>map.ocean</code></td>
-<td><code>transparent</code></td>
-<td><code>transparent</code></td>
-<td>Background behind the land (the <code>oceanColor</code> option wins)</td>
-</tr>
-<tr>
-<td><code>map.hoverBrighten</code></td>
-<td><code>1.3</code></td>
-<td><code>1.2</code></td>
-<td>Hover on a region with data: its fill moves (factor − 1) of the way towards white; a very light fill darkens a little instead (the <code>hoverFill</code> option wins; <code>1</code> turns it off)</td>
-</tr>
-<tr>
-<td><code>map.graticule</code></td>
-<td><code>rgba(0,0,0,0.08)</code></td>
-<td><code>rgba(255,255,255,0.06)</code></td>
-<td>The 10° grid drawn with the <code>graticule</code> option</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>map.matchFill</code></td>
+            <td><code>#00aaff</code></td>
+            <td><code>#ff6200</code></td>
+            <td>Regions with data and no <code>color</code> of their own (the <code>matchFill</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.unmatchedFill</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td><code>#1e1e2e</code></td>
+            <td>Regions without data (the <code>defaultFill</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.border</code></td>
+            <td><code>#ffffff</code></td>
+            <td><code>#444455</code></td>
+            <td>Region borders (the <code>borderColor</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.ocean</code></td>
+            <td><code>transparent</code></td>
+            <td><code>transparent</code></td>
+            <td>Background behind the land (the <code>oceanColor</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.hoverBrighten</code></td>
+            <td><code>1.3</code></td>
+            <td><code>1.2</code></td>
+            <td>Hover on a region with data: its fill moves (factor − 1) of the way towards white; a very light fill darkens a little instead (the <code>hoverFill</code> option wins; <code>1</code> turns it off)</td>
+        </tr>
+        <tr>
+            <td><code>map.graticule</code></td>
+            <td><code>rgba(0,0,0,0.08)</code></td>
+            <td><code>rgba(255,255,255,0.06)</code></td>
+            <td>The 10° grid drawn with the <code>graticule</code> option</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p><code>createTheme</code> merges <code>map</code> deeply, so <code>createTheme({ map: { matchFill: '#ff6200' } })</code> recolors every map; changing <code>accent</code> alone does not.</p>
 <h3 id="tooltip">Tooltip</h3>
 <p>The <code>tooltip</code> sub-object colors every built-in tooltip, independently from the main chart:</p>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>Token</th>
-<th>Default</th>
-<th>Dark</th>
-<th>Used for</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>tooltip.bg</code></td>
-<td><code>#ffffff</code></td>
-<td><code>#1a1a1a</code></td>
-<td>Background</td>
-</tr>
-<tr>
-<td><code>tooltip.border</code></td>
-<td><code>#e0e0e0</code></td>
-<td><code>#2e2e2e</code></td>
-<td>1px border</td>
-</tr>
-<tr>
-<td><code>tooltip.text</code></td>
-<td><code>#000000</code></td>
-<td><code>#e8e8e8</code></td>
-<td>Values, names, titles, links</td>
-</tr>
-<tr>
-<td><code>tooltip.muted</code></td>
-<td><code>#666666</code></td>
-<td><code>#888888</code></td>
-<td>Dates, percentages, counts — every secondary row</td>
-</tr>
-<tr>
-<td><code>tooltip.shadow</code></td>
-<td><code>0 2px 8px rgba(0,0,0,0.10)</code></td>
-<td><code>0 2px 12px rgba(0,0,0,0.55)</code></td>
-<td>Box shadow</td>
-</tr>
-<tr>
-<td><code>tooltip.header.text</code></td>
-<td><code>null</code></td>
-<td><code>null</code></td>
-<td>Color of the header — the row naming what is hovered</td>
-</tr>
-<tr>
-<td><code>tooltip.header.bg</code></td>
-<td><code>null</code></td>
-<td><code>null</code></td>
-<td>A band behind the header, across the top of the tooltip</td>
-</tr>
-</tbody>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>tooltip.bg</code></td>
+            <td><code>#ffffff</code></td>
+            <td><code>#1a1a1a</code></td>
+            <td>Background</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.border</code></td>
+            <td><code>#e0e0e0</code></td>
+            <td><code>#2e2e2e</code></td>
+            <td>1px border</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.text</code></td>
+            <td><code>#000000</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td>Values, names, titles, links</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.muted</code></td>
+            <td><code>#666666</code></td>
+            <td><code>#888888</code></td>
+            <td>Dates, percentages, counts — every secondary row</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.shadow</code></td>
+            <td><code>0 2px 8px rgba(0,0,0,0.10)</code></td>
+            <td><code>0 2px 12px rgba(0,0,0,0.55)</code></td>
+            <td>Box shadow</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.header.text</code></td>
+            <td><code>null</code></td>
+            <td><code>null</code></td>
+            <td>Color of the header — the row naming what is hovered</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.header.bg</code></td>
+            <td><code>null</code></td>
+            <td><code>null</code></td>
+            <td>A band behind the header, across the top of the tooltip</td>
+        </tr>
+    </tbody>
 </table>
 </div>
 <p>The header is the date in Line, DualAxes and TimeSeries, the label in Bar, HierarchicalBar and Donut, the title in Map, MapFlow, Sankey and Graph. With <code>header.text</code> left <code>null</code> each keeps its role: a date is muted, a title bold in <code>tooltip.text</code>. A data color — a Donut slice label — wins over <code>header.text</code>.</p>
@@ -879,7 +877,7 @@ new RareCharts.Line('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

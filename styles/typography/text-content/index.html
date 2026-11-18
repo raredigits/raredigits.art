@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -350,12 +350,6 @@
                   
                     <li>
                       
-                        <a href="/styles/typography/interactive/">Interactive Elements</a>
-                      
-                    </li>
-                  
-                    <li>
-                      
                         <a href="/styles/typography/notes/">Notes</a>
                       
                     </li>
@@ -377,6 +371,15 @@
             <li>
               
                 <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
               
               
               
@@ -475,12 +478,14 @@
             <tr><th>Level</th><th>Size</th><th>Margin (top / bottom)</th></tr>
         </thead>
         <tbody>
-            <tr><td><code>h2</code></td><td>1.8em</td><td><code>--space-lg</code> / <code>--space-md</code></td></tr>
-            <tr><td><code>h3</code></td><td>1.4em</td><td><code>--space-lg</code> / <code>--space-md</code></td></tr>
+            <tr><td><code>h2</code></td><td>1.8em</td><td><code>--space-md</code> / <code>--space-sm</code></td></tr>
+            <tr><td><code>h3</code></td><td>1.4em</td><td><code>--space-md</code> / <code>--space-sm</code></td></tr>
             <tr><td><code>h4</code></td><td>1.2em</td><td><code>--space-sm</code> / <code>--space-sm</code></td></tr>
             <tr><td><code>h5</code>, <code>h6</code></td><td>1em, capitals</td><td><code>--space-sm</code> / <code>--space-sm</code></td></tr>
         </tbody>
     </table>
+
+    <p>An <code>h2</code>, <code>h3</code> or <code>h4</code> that opens the article, or opens a section that opens the article, has no top margin.</p>
 
     <p>The margins are tuned for the library's own typefaces. If you set your own fonts through <code>--heading-font</code> and <code>--primary-font</code>, choose your own heading margins as well: a face with a different x-height or line height needs a different rhythm.</p>
 </section>
@@ -488,6 +493,8 @@
 <section>
     <h3 id="body-text">Body Text</h3>
     <p>Body text is the default. Paragraphs sit on the text-content column at a comfortable measure, the line-height is tuned for sustained reading, and nothing extra is needed — just write.</p>
+    <p>The measure (<code>--text-content-width</code>) holds for paragraphs and lists anywhere in the article: in its sections, cards, details and sidenotes, and in a plain <code>&lt;table&gt;</code> that sets prose in two columns. It stops at the edge of a data component — a data table (<code>.table-scroll</code>, <code>.table-bordered</code>), a <code>.panel</code>, a <code>.stat</code>, an embedded chart (<code>.rc-chart</code>) — which lays out its own text across its full width, and at the edge of a <code>.caption</code>, which is its own measure: its text runs the block’s full width. A definition list, a quote and a figure keep the measure anywhere in the article too, and stop at the same edges: the details list of a chart spans its panel. Another component opts out with its own <code>max-width</code>.</p>
+    <p>Paragraphs and headings carry their own vertical margins. Most block components — cards, panels, grids, lists, quotes, callouts, sidenote rows — bring no top margin of their own. In the article flow (and in its sections) a block that directly follows another block keeps <code>--space-md</code> from it, so a card followed by code or a list never touches it. Next to a paragraph, the paragraph's own margin is the gap; two sidenote rows one after the other are two blocks, <code>--space-md</code> apart. To change or remove the gap, put a margin-top utility on the second block (<code>.margin-t-0</code> closes it); a margin-bottom on the first block does not reduce it.</p>
 
     <h4 id="lead"><code>.lead</code></h4>
     <p>A single oversized opening paragraph. Think of it as the page's TL;DR: one or two sentences that tell the reader what this page is about and whether to keep reading. Use it once, at the top of a long-read.</p>
@@ -516,7 +523,7 @@
 <section>
     <h2 id="special-text-elements">Special Text Elements</h2>
 
-    <p>A handful of blocks sit slightly past the text-content column on both sides — a small but deliberate signal that they are not the prose, they are <em>about</em> the prose. Captions, highlights, and content-captions all share this outdent: <code>var(--space-lg)</code> on desktop, tightening to <code>var(--space-sm)</code> on mobile. The shift is driven by a single internal SCSS mixin (<code>@mixin outdent</code> in <code>typography/_text-content.scss</code>) so the three blocks stay coherent. In <code>v0.6.15</code> the same pattern will be exposed as the public utility <code>.rd-outdent</code>.</p>
+    <p>A handful of blocks sit slightly past the text-content column on both sides — a small but deliberate signal that they are not the prose, they are <em>about</em> the prose. Captions, highlights, and content-captions all share this outdent: <code>var(--space-lg)</code> on a tablet and a desktop, tightening to <code>var(--space-sm)</code> on mobile, and none on paper. A <code>.caption</code> spans the content column, not the measure. On the right it hangs only into the room beside the page: 16px on a tablet and up to about 1150px, the full 32px from 1280px. The amount is one internal value in <code>typography/_text-content.scss</code>, read by every block that hangs past the column, so they stay coherent.</p>
 
     <h3 id="text-content-caption"><code>.text-content-caption</code></h3>
     <p>A wrapper that widens its content past the regular text column by one outdent on each side. Use it for figures, illustrative cards, or any block that needs slightly more horizontal room than a paragraph but should still belong to the article.</p>
@@ -529,17 +536,22 @@
     </div>
 
     <h3 id="caption"><code>.caption</code></h3>
-    <p>An aside-style block with a soft gray background and a brand-color left rule. Used for editor's notes, observations, or short asides that comment on the prose without being part of it.</p>
+    <p>An aside-style block with a soft gray background and a thick black left rule (<code>--primary-color</code>). Used for editor's notes, observations, or short asides that comment on the prose without being part of it.</p>
 
     <div class="caption">
-        <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant.</p>
+        <p>A bad font doesn't just look bad. It <em>feels</em> irrelevant. The reader decides in the first second whether the page is worth their attention, long before the first sentence is read — and a face chosen for decoration, not for reading, answers that question for them. The words stay the same; the trust does not.</p>
     </div>
 
     <h3 id="mark"><code>&lt;mark&gt;</code></h3>
     <p>Inline highlighting for words or phrases inside running text. <mark>Use it to flag the single phrase a skimming reader must not miss.</mark></p>
 
     <h3 id="cite"><code>&lt;cite&gt;</code></h3>
-    <p>The semantic element for attributing a quotation. Renders right-aligned and muted — see the <code>&lt;blockquote&gt;</code> example below.</p>
+    <p><code>&lt;cite&gt;</code> marks the title of a work, and a bare one stays inline, as the browser sets it: in running text, in quoted prose, in a <code>&lt;figcaption&gt;</code>. The <code>&lt;cite&gt;</code> that closes a <code>&lt;blockquote&gt;</code>, as its direct child, is the attribution: its own line, right-aligned, small and light — see the <code>&lt;blockquote&gt;</code> example below. A credit under an image goes in the image’s <code>&lt;figcaption&gt;</code>:</p>
+
+<pre><code>&lt;figure&gt;
+    &lt;img src="…" alt="…"&gt;
+    &lt;figcaption&gt;Illustration: Rare Digits&lt;/figcaption&gt;
+&lt;/figure&gt;</code></pre>
 
     <h3 id="blockquote">Blockquote</h3>
 
@@ -561,6 +573,25 @@
     <div class="boilerplate">
         <p>Rare Styles is a narrow, professional CSS library for clarity-first longreads and decision-first data views — not a general-purpose framework.</p>
     </div>
+
+    <h3 id="callouts"><code>.callout</code></h3>
+
+    <p>A short notice between two thin rules: small, muted and centered. Use it for a tip or a side remark the reader may skip.</p>
+
+    <p class="callout">Tip: the same shortcut works in every view.</p>
+
+    <p>When the reader must not skip it, add a variant. The notice then reads at full strength, left-aligned in the body text color, with a stripe on the left. An information notice takes a stripe in the text color (black on the page, light on <code>.card-inverted</code>) and no fill; a state takes the stripe in its role color and a fill of that color at 25%, the role’s <code>-bg</code> mix, worked out on the callout itself, so a role re-mapped on a surface re-colors both:</p>
+
+    <p class="callout callout-signal"><strong>Info.</strong> The table below is updated every Monday.</p>
+    <p class="callout callout-success"><strong>Done.</strong> All 14 checks passed.</p>
+    <p class="callout callout-warning"><strong>Experimental.</strong> This chart type is outside the 1.0 stability guarantee: its options may change.</p>
+    <p class="callout callout-danger"><strong>Error.</strong> The data source did not respond; the figures are from yesterday.</p>
+
+<pre><code>&lt;p class="callout callout-warning"&gt;
+    &lt;strong&gt;Experimental.&lt;/strong&gt; Its options may change.
+&lt;/p&gt;</code></pre>
+
+    <p>The four variants — <code>.callout-signal</code>, <code>-success</code>, <code>-warning</code> and <code>-danger</code> — go next to <code>.callout</code>. The three state variants take their color from the <a href="/styles/colors/#semantic-colors">semantic role</a> of the same name, so a project that re-maps <code>--warning</code> re-colors its warnings too. <code>.callout-signal</code> is plain information: its stripe is the text color, <code>--primary-text-color</code>, with no fill, so it does not compete with the states. The aliases (<code>--positive</code>, <code>--negative</code>, <code>--neutral</code>, <code>--fail</code>) are the same colors as their roles and have no variants of their own. The color is never the only cue: name the state in the first words. A callout that must be announced as it appears, such as a form error, also needs <code>role="alert"</code> on the element; the class does not add it.</p>
 
     <h3 id="definition-lists">Definition Lists</h3>
 
@@ -594,22 +625,18 @@
 
     <p><code>dt &gt; code</code> inside <code>.dl-grid</code> is intentionally rendered at normal weight, so code-like keys do not become too heavy.</p>
 
-    <h3 id="tags">Tags</h3>
-    <p><code>.tag</code></p>
+    <h3 id="tag"><code>.tag</code></h3>
+    <p>A topic label on an article, a feed entry or a tag cloud: muted text in a light outline that takes the primary colour on hover. The open background, the softer corners and the text face keep it apart from <code>&lt;code&gt;</code>, a gray box in the monospace face. Put it on the link to the tag’s page; the <code>#</code> is part of the text, if the site marks tags that way. The line height leaves room between rows when a cloud of tags wraps.</p>
+    <p><a class="tag" href="/styles/typography/lists/">#release</a> <a class="tag" href="/styles/typography/lists/">#typography</a> <a class="tag" href="/styles/typography/lists/">#audit</a></p>
+
+<pre><code>&lt;a class="tag" href="/tags/release/"&gt;#release&lt;/a&gt;</code></pre>
     
-    <h3 id="raw-code">Raw Code</h3>
-    <p><code>&lt;code&gt;</code></p>
-    
-    <p></p><pre><code>
-&lt;pre&gt;
-    &lt;code&gt;&lt;/code&gt;
-&lt;/pre&gt;
-        </code></pre><p></p>
-    
-    
-    <p><code>.legal</code></p>
-    
-    <p><code>.rd-icon-&lt;name&gt;</code></p>
+    <h3 id="code-and-pre"><code>&lt;code&gt;</code> and <code>&lt;pre&gt;</code></h3>
+    <p>Inline <code>&lt;code&gt;</code> is set in the code face, a step smaller than the text, in a light gray box with a thin frame. A long token, such as a path or a call, breaks anywhere rather than widen the page. In a <a href="/styles/typography/tables/">table’s scroll box</a> it keeps its shape.</p>
+    <p>A <code>&lt;pre&gt;</code> is a gray block that hangs into the left margin by as much as its padding, so the code lines start on the text edge. On a phone it hangs by 8px and its padding is 16px. Lines do not wrap: a long one scrolls sideways. The <code>&lt;code&gt;</code> inside drops its box, and <code>.code-comment</code> mutes a comment in it:</p>
+
+<pre><code><span class="code-comment">// The lines start on the text edge</span>
+&lt;pre&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;</code></pre>
 </section>
 
 <section id="figures">
@@ -656,7 +683,7 @@
     </figure>
 
     <h4 id="text-content-caption-2"><code>.text-content-caption</code></h4>
-    <p>The caption width that the lead and the highlight use: the measure plus an outdent on both sides.</p>
+    <p>The caption width that the lead and the highlight use, <code>--text-content-caption</code>: the measure plus an outdent on both sides.</p>
 
     <figure class="text-content-caption">
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
@@ -664,7 +691,7 @@
     </figure>
 
     <h4 id="full-width-caption"><code>.full-width-caption</code></h4>
-    <p>Outdented on the left like <code>.caption</code>, and out to the edge of the content column on the right, like <code>pre</code>.</p>
+    <p>Outdented on the left like <code>.caption</code>, and out to the edge of the content column on the right, like <code>pre</code>. <code>.card-caption</code> is the same class under its older name.</p>
 
     <figure class="full-width-caption">
         <img src="/assets/img/illustrations/leg-split.jpg" alt="An illustrated figure doing a split between two ledges" width="1648" height="720" loading="lazy">
@@ -676,7 +703,7 @@
         <li><strong>Always set <code>width</code> and <code>height</code></strong> to the image's real pixel size. The browser reserves the box from them, so the text does not jump when the image arrives; CSS still scales the image to the column.</li>
         <li><strong>Write <code>alt</code> for what the image says</strong> in this article, not what it looks like in general. A purely decorative image gets <code>alt=""</code>. The caption is not a substitute: it is read after the image, and only when there is one.</li>
         <li><strong>Add <code>loading="lazy"</code> below the fold</strong>, never on the first image a reader sees. The browser then fetches the image only as the reader scrolls near it. With JavaScript turned off, browsers load lazy images straight away — by design, so nothing is lost.</li>
-        <li><strong>Offer sizes with <code>srcset</code> and <code>sizes</code></strong>. The ordinary figure is at most the reading measure (about 640&nbsp;px on desktop, the full screen on a phone): <code>sizes="(width &lt; 769px) 100vw, 640px"</code>. Producing the image files is your build's job — the library only lays them out.</li>
+        <li><strong>Offer sizes with <code>srcset</code> and <code>sizes</code></strong>. The ordinary figure is at most the reading measure (about 800&nbsp;px on the widest desktop, the full screen on a phone): <code>sizes="(width &lt; 769px) 100vw, 800px"</code>. Producing the image files is your build's job — the library only lays them out.</li>
     </ul>
 </section>
 
@@ -701,7 +728,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

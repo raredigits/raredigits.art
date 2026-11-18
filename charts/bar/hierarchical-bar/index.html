@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -424,7 +424,7 @@
     <article>
       <p>A hierarchical bar chart is what you reach for when your data is not a flat list but a tree — a whole that breaks into parts, and those parts break down further. A portfolio splits into asset classes, and each class into holdings. A budget splits into departments, and each department into line items. An org splits into teams. The question is no longer just “how much?” but “how much, and what is it made of?”</p>
 <p><code>HierarchicalBar</code> answers that as an outline: one row per node, each with its own bar on a shared scale from one zero line. Parent rows carry their subtotal; nested rows read underneath them. You get the top-line comparison and the composition in a single figure, top to bottom, without a legend and without asking the reader to decode nested rectangles.</p>
-<div id="hbar-portfolio" class="text-content-caption card-dashboard-bordered"></div>
+<div id="hbar-portfolio" class="panel panel--bordered text-content-caption"></div>
 <p>This is the linear view of a shallow hierarchy. For the spatial views of a deep one — treemap, pack, sunburst — that is a different tool. Bars are for reading a breakdown as a ranked, labeled list.</p>
 <h3 id="data-format">Data format</h3>
 <p><code>HierarchicalBar</code> takes a <strong>tree</strong>, not an array of rows. A node is:</p>
@@ -438,7 +438,7 @@
 }</code></pre>
 <p>Pass one root object, or an array of roots (a forest — several top-level items with no shared total). Only <code>label</code> is required. <code>children</code> marks an internal node; <code>color</code> and <code>remainderLabel</code> are optional.</p>
 <p>The same tree feeds the drill-down <a href="/charts/circular/">Donut</a> — one data shape, two representations. Build the object once and hand it to whichever view fits the page.</p>
-<div id="hbar-org" class="text-content-caption card-dashboard-bordered"></div>
+<div id="hbar-org" class="panel panel--bordered text-content-caption"></div>
 <h3 id="value-is-authoritative-and-the-remainder-is-real">Value is authoritative — and the remainder is real</h3>
 <p>A parent’s <code>value</code> is taken as stated. It may be <strong>larger</strong> than the sum of its listed children, and that difference is not an error to be normalized away — it is a genuine remainder: the undisclosed, the “other”, the part that was never itemized. In the portfolio above, World Liberty Financial is stated at $536.4M but its named holdings add up to $243.2M; the $293.2M gap is drawn as its own muted segment labeled <em>Other token &amp; equity sales</em>.</p>
 <p>The remainder is never surfaced silently. It appears only when you ask for it:</p>
@@ -627,7 +627,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

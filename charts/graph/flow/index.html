@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -417,16 +417,16 @@
 
     <article>
       <p>The flow view draws a <strong>trace</strong>: value moving between entities, left to right through ordered lanes — networks, stages, jurisdictions. Ties are directed, may repeat between the same pair (a swap there and back, a deposit and a withdrawal), and carry value (width), category (color), certainty (dash) and a label. It is the view for money trails, supply chains and address investigations.</p>
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
   <p><strong>⚠️ Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. Its layout, folds and options may change without a major-version bump.</p>
 </div>
 <p>The demo below follows funds as they move: income from a validator is swapped, bridged and moved through five networks, then spent on a token crowdfunding — and the trace goes on to show where the sale money went. Read it left to right: lanes are networks, line color is the asset, width its USD value, a dashed line an amount derived rather than read from transactions. Press <strong>−</strong> on the <strong>Crowdfunding</strong> node to fold the sale into one node and focus on the route that led to it (<strong>+</strong> brings it back); the buttons in the header jump to the trace's chapters, and the strip under the drawing brushes any period. The legend's <strong>address poisoning</strong> item reveals a look-alike address that tried to pass as the team's.</p>
-<div class="full-width-caption bordered padding-lg mobile:padding-md" id="graph-flow-demo"></div>
+<div id="graph-flow-demo" class="panel panel--bordered full-width-caption"></div>
 <div id="graph-flow-demo-panel" aria-live="polite"></div>
 <p>Select a node or a tie: the chart reports it through <code>onSelect</code>, and the page fills the details panel — placed inside the card with the <code>details</code> option: beside the drawing when the card has room for both — <code>minWidth</code> plus the 300 px panel, here a card about 1100 px wide — and below it otherwise. The library draws, your page explains. The crowdfunding side is a <code>fold</code>; the decoy starts hidden with <code>hiddenLinkTypes: ['noise']</code>.</p>
 <h2 id="automatic-layout">Automatic layout</h2>
 <p>Data from an API rarely knows where a node should stand. Leave the hints out and the flow view lays the trace out itself: below is the same trace with every <code>row</code> and <code>col</code> removed — only the lanes are kept, because the network a wallet lives on is data, not layout.</p>
-<div class="full-width-caption bordered padding-lg mobile:padding-md" id="graph-flow-auto"></div>
+<div id="graph-flow-auto" class="panel panel--bordered full-width-caption"></div>
 <ul>
 <li><strong>Columns</strong> follow the ties inside a lane: a payment goes left to right. Loops are broken where they would read backwards — with dates, the later tie turns (a refund, a payout two years on); without dates, as few ties as possible.</li>
 <li><strong>The main route</strong> — the longest left-to-right path, the heavier by <code>value</code> on a tie — runs along the middle. Flag nodes or ties with <code>main: true</code> to choose it yourself.</li>
@@ -551,7 +551,7 @@ graph.setTimeframe('sale');              <span class="code-comment">// with time
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -443,9 +443,7 @@
       <p><span class="meta-info">/assets/charts/examples/line/line-chart-band.js</span></p>
 <p>A band is a filled ribbon between a lower and an upper value at each point on the X axis. Where an ordinary line answers “what is the number”, a band answers “how sure are we about it”. That makes it the natural shape for confidence intervals, forecast cones, min/max envelopes, and error ranges — anywhere a single line would overstate precision.</p>
 <p>In RareCharts a band is just another series in a <code>Line</code> chart. You mark a series with <code>type: 'band'</code> and give each point a <code>lower</code> and an <code>upper</code> instead of a <code>value</code>. The band renders behind the lines, so a central estimate drawn as a normal line sits cleanly on top of its own range.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo-band"></div>
-</div>
+<div id="line-chart-demo-band" class="panel panel--bordered text-content-caption"></div>
 <h3 id="data-format">Data format</h3>
 <p>A band series carries <code>{ date, lower, upper }</code> points. It mixes freely with ordinary line series in the same <code>setData</code> call — order matters only for layering, and bands are always drawn behind lines regardless.</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
@@ -486,9 +484,7 @@ chart.setData([
 <p>The fill uses the series <code>color</code> at <code>fillOpacity</code> (default: the chart’s <code>areaOpacity</code>, <code>0.12</code>). Because it is a translucent fill of the same hue, a band reads correctly on both light and dark themes without any per-theme tuning.</p>
 <h3 id="forecasts">Forecasts</h3>
 <p>The most common use is a forecast: actuals up to today, a central path beyond it, and a widening range that makes the growing uncertainty visible instead of pretending the future is a single number.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo-forecast"></div>
-</div>
+<div id="line-chart-demo-forecast" class="panel panel--bordered text-content-caption"></div>
 <p>This chart is assembled from three series plus one annotation:</p>
 <ul>
 <li>a <strong>band</strong> series for the P10–P90 range, with zero width at the anchor date so it fans out from the last actual</li>
@@ -597,7 +593,7 @@ new RareCharts.Line('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

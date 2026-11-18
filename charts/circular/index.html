@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -409,7 +409,7 @@
       <p>RareCharts provides three circular chart types that share a common API and theme system: <strong>Donut</strong>, <strong>Pie</strong>, and <strong>Gauge</strong>. Each answers a different question.</p>
 <h2 id="donut">Donut</h2>
 <p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
-<div id="chart-donut" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut" class="panel panel--bordered text-content-caption"></div>
 <div class="air-md"></div>
 <pre class="text-content-caption"><code>const d3 = RareCharts.d3;   <span class="code-comment">// the bundled D3</span>
 
@@ -423,7 +423,7 @@ new RareCharts.Donut('#chart', {
 }).setData(segments);</code></pre>
 <h3 id="legend-to-the-right">Legend to the right</h3>
 <p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
-<div id="chart-donut-legend-right" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut-legend-right" class="panel panel--bordered text-content-caption"></div>
 <div class="air-md"></div>
 <pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
   legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
@@ -433,7 +433,7 @@ new RareCharts.Donut('#chart', {
 <p>Either way the legend items need no <code>color</code>: the chart paints each dot, line or band in the color of the slice with the same <code>label</code> — or the same <code>id</code>, when the item has one — so the items may come in any order. An item whose slice is not in the ring (a zero value, a level you drilled away from) keeps the theme accent, and an item with its own <code>color</code> keeps that.</p>
 <h3 id="drill-down-hierarchy-mode">Drill-down (hierarchy mode)</h3>
 <p>Hand Donut a <strong>tree</strong> — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up — once you are in, the center is a button, so Tab and Enter take you up as well. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.</p>
-<div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut-drilldown" class="panel panel--bordered text-content-caption"></div>
 <div class="air-md"></div>
 <p>Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a <strong>remainder</strong> — the undisclosed gap — which draws as a muted slice once you surface it with <code>showRemainder: true</code> or a per-node <code>remainderLabel</code>. And a <strong>named-but-undisclosed</strong> item (<code>value: null</code>) has no magnitude, so it cannot be a slice; the ring notes it as “<em>N not disclosed</em>” beneath the chart instead. A parent with no <code>value</code> of its own whose children are all undisclosed is undisclosed too — noted the same way, never drawn as an empty slice. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.</p>
 <pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
@@ -452,7 +452,7 @@ new RareCharts.Donut('#chart', {
 <p>From code: <code>chart.drillUp()</code> goes one level up, and <code>chart.drillToDepth(i)</code> jumps to the i-th crumb of the breadcrumb (0 is the root). Both return the chart and do nothing at the root or on flat data. <code>chart.drillTo(child)</code> is the step a click on a slice takes: it descends into a child of the level shown — pass the object you gave <code>setData</code>, its <code>id</code>, or its <code>label</code> — and draws that level as a click does, remainder and undisclosed items included. A child without disclosed children (a leaf, a remainder), or one not in the level shown, is ignored. It returns the chart too.</p>
 <h2 id="pie">Pie</h2>
 <p>A pie is a donut with <code>innerRadius: 0</code>, and that is what <code>Pie</code> draws by default: no hole, no center text, slightly tighter slice gaps. Every other Donut option and method works the same, drill-down included — a pie has no center to click, so you go back up through the breadcrumb; an explicit <code>innerRadius</code> still makes a hole.</p>
-<div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-pie" class="panel panel--bordered text-content-caption"></div>
 <p>A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.</p>
 <pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
   height:     300,
@@ -474,14 +474,14 @@ new RareCharts.Donut('#chart', {
 }).setData(segments);</code></pre>
 <h2 id="gauge">Gauge</h2>
 <p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
-<div class="grid grid-cols-3 mobile:grid-cols-1 gap-none bordered rounded-xs card-caption">
-  <div class="card-row-bordered-item">
+<div class="panel__row panel__row--stack panel__row--text-start card-caption">
+  <div class="panel__row-item">
     <div id="chart-gauge-progress"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-target"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-thin"></div>
   </div>
 </div>
@@ -519,11 +519,11 @@ gauge.setData(40);</code></pre>
 <li><strong>Sweep.</strong> <code>startAngle</code> / <code>endAngle</code> set the arc in radians, clockwise from 12 o'clock. The default <code>±Math.PI * 0.75</code> is a 270° horseshoe; <code>-Math.PI / 2 … Math.PI / 2</code> is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.</li>
 <li><strong>Needle.</strong> <code>needle: true</code> draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with <code>needleColor</code> (default: theme text).</li>
 </ul>
-<div class="grid grid-cols-2 gap-none bordered rounded-xs card-caption margin-y-md">
-  <div class="card-row-bordered-item">
+<div class="panel__row panel__row--stack panel__row--text-start card-caption margin-y-md">
+  <div class="panel__row-item">
     <div id="chart-gauge-speed"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-needle"></div>
   </div>
 </div>
@@ -782,7 +782,7 @@ new RareCharts.Donut('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -442,9 +442,7 @@
     <article>
       <p>Line charts are the default choice when you need to show change over time, compare multiple series, and make trends readable without forcing the reader to do arithmetic in their head. RareCharts supports a set of practical defaults and configuration options that help keep line charts clear even when the data is messy, multi-series, or formatted for business reporting.</p>
 <p>A common use case is performance comparison: multiple instruments, portfolios, products, or metrics plotted on the same time axis, where the story is not “what is the exact number”, but “who moved, when, and how strongly”.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo"></div>
-</div>
+<div id="line-chart-demo" class="panel panel--bordered text-content-caption"></div>
 <p>Data can be passed either as a single series or as multiple named series.</p>
 <p><strong>Single series format</strong></p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart');
@@ -530,16 +528,12 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <p>By default, the Y axis is rendered on the right side of the chart. If your layout or design system requires a left-aligned axis, you can override this behavior by setting:</p>
 <pre class="text-content-caption"><code>yAxisPosition: 'left'</code></pre>
 <p>This moves the Y axis to the left while preserving all formatting and scaling logic.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-left-axis-demo"></div>
-</div>
+<div id="line-chart-left-axis-demo" class="panel panel--bordered text-content-caption"></div>
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
 <p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Lin and Log to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
 <p>Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.</p>
 <p>The demo's Lin/Log button is built in: <code>scaleToggle: true</code> pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. The button is split on the diagonal so it does not read as one more period. It names the current scale, flips it on click, and <code>onScaleChange(fn)</code> tells the page when the reader switches. The same switch works on <code>TimeSeries</code> and <code>DualAxes</code>.</p>
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-log-demo"></div>
-</div>
+<div id="line-chart-log-demo" class="panel panel--bordered text-content-caption"></div>
 <br>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
     yScale: 'log',
@@ -982,7 +976,7 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

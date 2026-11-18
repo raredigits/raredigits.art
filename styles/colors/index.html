@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -337,12 +337,37 @@
               
               
               
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <a href="/styles/colors/chart-tokens/">Chart Tokens</a>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/colors/legend/">Legend</a>
+                      
+                    </li>
+                  
+                </ul>
+              
               
             </li>
           
             <li>
               
                 <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
               
               
               
@@ -535,14 +560,16 @@
 <h2 id="accent-colors">Accent Colors</h2>
 <p>While the grayscale palette forms the foundation, strategic use of color helps highlight key informational elements and establish visual hierarchy where necessary.</p>
 <h3 id="brand-color">Brand Color</h3>
-<p>The most prominent color in the system is defined by the <code>--brand-color</code> variable. This color is primarily used for links and supporting elements, ensuring brand recognition and consistency throughout the interface.</p>
+<p>The most prominent color in the system is defined by the <code>--brand-color</code> variable. It marks the brand: it fills the <a href="/styles/interactive/buttons/#variants">primary button</a> and frames a <code>.highlight</code>. Links are underlined in the darker <code>--brand-color-dark</code>.</p>
 <pre class="text-content-caption">
 <code><span class="code-comment">// css/modules/colors/_brand.scss</span>
     
 --brand-color: #00ff4e; <span class="code-comment">// Primary brand color</span>
---brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant for hover states</span>
---brand-color-dark: #00b300; <span class="code-comment">// Darker variant for active states</span>
+--brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant: only its color utilities read it (.brand-color-light, -bg, -link)</span>
+--brand-color-dark: #00b300; <span class="code-comment">// Darker variant: link underlines and their hover fill</span>
+--brand-color-deep: #3a8000; <span class="code-comment">// Deeper still: the primary button's hover; white text on it reads at 4.9:1</span>
 </code></pre>
+<p>A project that re-maps <code>--brand-color</code> sets <code>--brand-color-deep</code> too, to a shade that carries white text at 4.5:1 or more: under the pointer the primary button turns to it, with a white label.</p>
 <h3 id="technical-colors">Technical Colors</h3>
 <p>Technical colors are used to highlight important info: statuses, warnings, and errors.</p>
 <div class="card text-content-caption padding-lg">
@@ -568,9 +595,108 @@
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
+        <div class="flex stretched blue-bg white width-100 padding-md copy-data-icon--light">
+            <div>blue — the signal</div>
+            <div>
+                <span data-copy="">#1677ff</span>
+                <span class="copy-data-icon rd-js-copy"></span>
+            </div>
+        </div>
     </div>
 </div>
 <p>Technical colors should be used strictly for their intended purpose — a designer must avoid inflating the importance of content that isn’t truly critical.</p>
+<h3 id="semantic-colors">Semantic Colors</h3>
+<div class="meta-info">css/modules/colors/_semantic.scss</div>
+<p>Components that signal a state read a role, not a hue. Four roles point at the technical colors above:</p>
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Role</th>
+        <th>Default</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--signal</code></td>
+        <td class="nobr"><code>var(--blue)</code></td>
+        <td>Technical information, the main chart color</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--success</code></td>
+        <td class="nobr"><code>var(--green)</code></td>
+        <td>Done, passed</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--warning</code></td>
+        <td class="nobr"><code>var(--yellow)</code></td>
+        <td>Caution: read before you go on</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--danger</code></td>
+        <td class="nobr"><code>var(--red)</code></td>
+        <td>An error, a destructive action</td>
+    </tr>
+</table>
+</div>
+<p>Four aliases name the same colors where the meaning is different. They follow the role they point at:</p>
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Alias</th>
+        <th>Points at</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--positive</code></td>
+        <td class="nobr"><code>var(--success)</code></td>
+        <td>A financial figure that changed for the better</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--negative</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A financial figure that changed for the worse</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--neutral</code></td>
+        <td class="nobr"><code>var(--warning)</code></td>
+        <td>A financial figure that did not change</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--fail</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A check or an operation that did not go through</td>
+    </tr>
+</table>
+</div>
+<p>Each role and each alias has its own <code>-bg</code> twin: the color at 25%, a fill to set text on. Every swatch below is the token as a stripe on its own <code>-bg</code>:</p>
+<div class="card text-content-caption padding-lg">
+    <div class="column gap-xs">
+        <div class="padding-sm" style="background: var(--signal-bg); border-left: var(--space-xs) solid var(--signal)"><code>--signal</code> on <code>--signal-bg</code></div>
+        <div class="padding-sm" style="background: var(--success-bg); border-left: var(--space-xs) solid var(--success)"><code>--success</code> on <code>--success-bg</code></div>
+        <div class="padding-sm" style="background: var(--warning-bg); border-left: var(--space-xs) solid var(--warning)"><code>--warning</code> on <code>--warning-bg</code></div>
+        <div class="padding-sm" style="background: var(--danger-bg); border-left: var(--space-xs) solid var(--danger)"><code>--danger</code> on <code>--danger-bg</code></div>
+        <div class="padding-sm" style="background: var(--positive-bg); border-left: var(--space-xs) solid var(--positive)"><code>--positive</code> on <code>--positive-bg</code></div>
+        <div class="padding-sm" style="background: var(--negative-bg); border-left: var(--space-xs) solid var(--negative)"><code>--negative</code> on <code>--negative-bg</code></div>
+        <div class="padding-sm" style="background: var(--neutral-bg); border-left: var(--space-xs) solid var(--neutral)"><code>--neutral</code> on <code>--neutral-bg</code></div>
+        <div class="padding-sm" style="background: var(--fail-bg); border-left: var(--space-xs) solid var(--fail)"><code>--fail</code> on <code>--fail-bg</code></div>
+    </div>
+</div>
+<p>Where they are used: the <a href="/styles/typography/text-content/#callouts">callout variants</a> (<code>.callout-success</code>, <code>-warning</code>, <code>-danger</code>; <code>.callout-signal</code> takes the text color, <code>--primary-text-color</code>, with no fill), a <a href="/styles/bricks/panels/#stats">KPI delta</a> (<code>--positive</code> up, <code>--negative</code> down), a <a href="/styles/interactive/forms/">form field</a> (<code>--success</code> when right, <code>--fail</code> when invalid), the <a href="/styles/interactive/buttons/">danger button</a> (<code>--danger</code>) and the keyboard focus ring (<code>--focus-ring-color: var(--signal)</code>; an own <code>--focus-ring-color</code> on <code>:root</code> still wins). <code>--signal</code> also colors checked boxes and the focused field (<code>--field-accent</code>), an emphasized <a href="/styles/bricks/panels/#stat-signal">stat</a> (<code>.stat--signal</code>) and a chart's first series (<code>--chart-series-1</code>).</p>
+<p>To change what a meaning looks like, re-map the role once, not every component. Re-map it on <code>:root</code>: the aliases and the <code>-bg</code> twins are resolved there and follow. On a single surface, restate them too (the callouts mix their fill from the role where they are, so theirs follows by itself; the <code>-bg</code> twins are for your own fills, the library reads none of them):</p>
+<pre class="text-content-caption"><code>:root {
+    --warning: var(--orange); /* --neutral and both -bg follow */
+}
+
+.report {
+    --danger: var(--cherry);
+    --danger-bg: color-mix(in srgb, var(--danger) 25%, transparent);
+}</code></pre>
+<p>They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.</p>
+<p><code>--signal</code> is kept apart from the brand colors, which are identity: brand marks, the primary button, link highlights (<code>--brand-color-dark</code>).</p>
+<h4 id="surface">Surface</h4>
+<p><code>--surface-current</code> is the background of the surface an element sits on: the page's <code>--bg-color</code>, unless a <code>.card</code> or a <code>.card-inverted</code> sets its own (each paints its background with it). A <code>.panel</code> paints no background and sets none, so the surface behind it passes through. On paper it is white; in an island, which sits on the host's background, set it yourself. Charts paint their label plates with it from RareCharts 0.9.8_7; see <a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>.</p>
+<h3 id="chart-tokens">Chart Tokens</h3>
+<div class="meta-info">css/modules/charts/_index.scss</div>
+<p>The colours a chart takes from the page (its series, text, axes and gridlines, range controls and tooltip) have names of their own, <code>--chart-*</code>; most point at a token on this page, and three series keep RareCharts' own hues. RareCharts reads them first, from its 0.9.8_7. The full list is on <a href="/styles/colors/chart-tokens/">Chart Tokens</a>.</p>
 <h3 id="supporting-colors">Supporting Colors</h3>
 <div class="meta-info">css/modules/colors/_supporting.scss</div>
 <p>A limited set of supporting colors is available for specific purposes like data visualization and thematic section coding:</p>
@@ -699,7 +825,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

@@ -1,18 +1,23 @@
-/* Site-layer overrides for raredigits.art.
-   The `.header-logo` brand surface moved into the SCSS pipeline in v0.6.15
-   (CSS-058): see modules/navigation/header/_header-container.scss, which now
-   serves the Rare Digits logo from the package-local images/vendors/ surface.
-   Keep this file as the intentional site-override layer; add new site-only
-   rules here, not in the library SCSS. */
+/* rare-website.css — the raredigits.art site layer, not Rare Styles.
+   It loads after rare.css on this site only: it is not gated by `.rd`, does
+   not ship (RELEASE_FILES in scripts/release-css.mjs), and no consumer sees it.
+   What may live here: chrome for this site's own docs pages and demos — a
+   docs affordance or a demo's furniture that is no component a consumer page
+   would need. Every block states, in one line, why it is site-only.
+   What may not: stop-gaps for library defects (fix the library instead), or
+   anything a consumer would need — that belongs in the SCSS modules.
+   Harvested on 2026-10-26 (CSS-371): the bordered-grid dividers of the
+   /charts/circular/ gauge rows became the library's `.panel__row--stack`;
+   the `.header-logo` surface moved into the SCSS pipeline in v0.6.15. */
 
 /* /styles/icons/ — the glyph grids are click-to-copy, so every tile is a real
    <button> (focusable, Enter/Space for free) instead of the <span> the page
    documents. Strip the UA chrome so a tile still renders as a plain character
    of text: `font` because a button does not inherit font-size, so the 1em mask
    box would collapse to the UA's 13.3px and ignore the grid's 1.5rem.
-   Site-only on purpose — the library's icon API is the class, and this is a
-   docs affordance, not a component. The copied-state check swap it pairs with
-   IS library (modules/decorations/_icons.scss), since the script sets it. */
+   Site-only: a docs affordance — the library's icon API is the class, not a
+   tile. The copied-state check swap it pairs with IS library
+   (modules/decorations/_icons.scss), since the script sets it. */
 .icon-grid button {
     font: inherit;
     color: inherit;
@@ -25,7 +30,10 @@
 /* RareCharts docs demos — moved out of the library CSS (X-05), which the
    bundle injects into every consumer's page. The markup lives in the docs
    pages and the example scripts, outside any chart, so these rules use the
-   site tokens; the class names stay, the synced examples emit them.
+   site tokens.
+   Site-only: demo furniture for one docs page, not a component. The names
+   stay `rc-demo-*` (a `demo-*` name would clear RareCharts' `rc-` namespace)
+   until the example script that emits them is renamed on RareCharts' side.
    /charts/line/visual-options/ — option controls (line-chart-lines-options.js) */
 .rc-demo-controls {
     display: flex;
@@ -54,15 +62,23 @@
     border-radius: 3px;
     padding: 2px 4px;
     color: inherit;
+    /* the browser's own arrow and line box, as before the library styled
+       selects (elements/_forms.scss, v0.7.2): the demo keeps its compact look */
+    appearance: auto;
+    background-image: none;
+    line-height: normal;
 }
 
-@media (max-width: 768px) {
+/* the library's gap-free phone boundary (CSS-355) */
+@media (width < 769px) {
     .rc-demo-group {
         width: 100%;
     }
 }
 
-/* /charts/line/time-series/ — price header and stats row around the chart */
+/* /charts/line/time-series/ — the quote header above the chart.
+   Site-only: a docs demo of composing a page around a TimeSeries chart, not
+   a library component. */
 .price-chart-header {
     width: calc(100% - 60px);
     display: flex;
@@ -91,6 +107,9 @@
 .price-chart-change.up   { color: var(--green); }
 .price-chart-change.down { color: var(--red); }
 
+/* /charts/line/time-series/ — the KPI row under the chart, on `.panel__row`.
+   Site-only until the docs move to the library's `.stat`, which ships in
+   v0.7.2 (RareCharts RC-058). */
 .price-chart-stats {
     width: calc(100% - 56px);
     margin-left: -8px;
@@ -106,18 +125,4 @@
 
 .price-chart-stat-value {
     font-variant-numeric: tabular-nums;
-}
-
-/* Chart demo rows on /charts/circular/ — a grid of .card-row-bordered-item
-   cells (so the 3-up row can stack on a phone) keeps the dividers that
-   .card-row-bordered draws; stacked cells are divided top to bottom. */
-.grid.bordered > .card-row-bordered-item + .card-row-bordered-item {
-    border-left: 1px solid var(--border-color);
-}
-
-@media (max-width: 768px) {
-    .grid.bordered.mobile\:grid-cols-1 > .card-row-bordered-item + .card-row-bordered-item {
-        border-left: 0;
-        border-top: 1px solid var(--border-color);
-    }
 }

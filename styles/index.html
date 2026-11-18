@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -351,6 +351,15 @@
           
             <li>
               
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/styles/alignment/">Alignment</a>
               
               
@@ -427,7 +436,7 @@
       <div class="meta-info">
   /assets/css/rare.min.css
   <p>
-      v0.7.1 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.1/rare.min.css">CDN</a> | 
+      v0.7.2 Beta | <a href="https://cdn.jsdelivr.net/gh/raredigits/rare-styles@v0.7.2/rare.min.css">CDN</a> | 
       <a href="/assets/css/rare.min.css">Download</a> <span class="rd-icon-download"></span>
   </p>
 </div>
@@ -440,30 +449,28 @@
   <div>
     <p>Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a>. Its tokens, components and defaults carry the same philosophy: signal over noise, certainty over feature count, function over ornament.</p>
   </div>
-  <div class="sidenote">
+  <div class="sidenote sidenote-banner">
     <h5 id="built-on-20-years-of-business-tooling-expertise">Built on 20 years of business-tooling expertise</h5>
     <p>Rare Styles is authored by <a href="https://raredigits.io">Rare Digits Production</a>, a team that has spent two decades building instruments for businesses and decision-makers.</p>
   </div>
   <div>
     <p>Most CSS frameworks ship a box of primitives and let the frontend assemble the answer. <strong>Rare Styles ships the answer.</strong> Visual decisions — typography, spacing, contrast, density, hierarchy — are already made and encoded in the defaults. Dark text on light background. Calm <a href="/kb/choosing-the-right-font/">typography</a>. Sufficient contrast. Deliberate density. The page you are reading uses these defaults with no overrides.</p>
-    <p>This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
-  </p></div>
+  </div>
 </div>
+<p>This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.</p>
 <div class="highlight">Clarity is the default, not the goal.</div>
 <p>There is no light/dark toggle either — see the <a href="/styles/themes/">stance on theme switching</a> for why.</p>
-<p>Where a page genuinely calls for a different frame — a longread that wants a slower reading rhythm, or a data view that needs the full canvas — Rare Styles provides two opt-in body-level layout modes: <strong>Story</strong> for prose-heavy pages, <strong>Dashboard</strong> for data-heavy pages. Most pages need neither. The defaults already render correctly.</p>
+<p>Two opt-in page layouts are planned for v0.7.4: <strong>Longread</strong> for prose-heavy pages and <strong>Dashboard</strong> for data-heavy ones.</p>
 <p>The important part is not how many components ship. It is that each one has earned its place by serving a real reading or decision task.</p>
 <h2 id="standard-architecture">Standard Architecture</h2>
-<p>The library is organized into layered modules: tokens, utilities, layout, typography, elements, components, navigation, decorations, layouts. You can ship the full bundle or import only the modules you need from the SCSS source.</p>
+<p>The library is organized into layered modules: tokens, utilities, layout, typography, elements, components, navigation, decorations. You can ship the full bundle or import only the modules you need from the SCSS source.</p>
 <h3 id="tokens">Tokens</h3>
 <p>All design decisions live as CSS custom properties — colors, spacing, typography, shadows, motion, surfaces. Adapting Rare Styles to a constrained brand context is a matter of overriding tokens in <code>:root</code>, not forking the library. Brand identity (<code>--brand-color</code>) and decision-driving accents (<code>--signal</code>) are intentionally kept separate.</p>
-<h3 id="components">Components</h3>
-<p>Components split into two semantic families. <strong>Cards</strong> carry narrative content: article previews, persons, projects. <strong>Panels</strong> carry data and system content: KPIs, charts, status, settings. Both work in either layout mode. The choice is semantic, not stylistic.</p>
-<h3 id="layouts">Layouts</h3>
-<p>Story and Dashboard are opt-in body-level modes for pages whose content asks for a different frame. <strong>Story</strong> scales typography up and adjusts heading treatment for prose-heavy reading; <strong>Dashboard</strong> removes the sidebar and lifts text-width constraints for data-heavy composition. Most pages need neither — the defaults already render correctly. The visual language stays identical across all three states.</p>
+<h3 id="components-2">Components</h3>
+<p>Components split into two semantic families. <strong>Cards</strong> carry narrative content: article previews, persons, projects. <strong>Panels</strong> carry data and system content: KPIs, charts, status, settings. The choice is semantic, not stylistic.</p>
 <h3 id="professional-considerations">Professional Considerations</h3>
 <p>Rare Styles accounts for details that are often skipped in feature-driven frameworks: keyboard focus visibility, motion reduction, semantic markup, WCAG AA contrast, and a clear public API contract that distinguishes breaking from non-breaking change.</p>
-<p>The following sections cover each module in depth: tokens, layout, typography, colors, elements, components, navigation, decorations, utilities, layouts, and integration with sibling libraries — <a href="/scripts/">Rare Scripts</a> and <a href="/charts/">Rare Charts</a>.</p>
+<p>The following sections cover each module in depth: tokens, layout, typography, colors, elements, components, navigation, decorations, utilities, and integration with sibling libraries — <a href="/scripts/">Rare Scripts</a> and <a href="/charts/">Rare Charts</a>.</p>
 
     </article>
   </div>
@@ -474,7 +481,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

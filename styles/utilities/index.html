@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -351,6 +351,15 @@
           
             <li>
               
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/styles/alignment/">Alignment</a>
               
               
@@ -424,7 +433,7 @@
   </section>
 
     <article>
-      <p>Small single-purpose classes that adjust one thing on one element. They live in <code>modules/utilities/</code> and, like everything in the library, apply only inside <code>.rd</code>.</p>
+      <p>Small single-purpose classes that adjust one thing on one element. Like everything in the library, they apply only inside <code>.rd</code>. Most live in <code>modules/utilities/</code>.</p>
 <h2 id="display-and-visibility">Display and visibility</h2>
 <div class="table-scroll">
 <table>
@@ -471,6 +480,8 @@
 </tbody>
 </table>
 </div>
+<h2 id="alignment">Alignment</h2>
+<p>These live in <code>layout/_grid.scss</code>. <code>.self-start</code>, <code>-center</code>, <code>-end</code> and <code>-stretch</code> set <code>align-self</code> on one item of a flex or grid container. On the container, <code>.items-*</code> (the same four) sets <code>align-items</code> and <code>.justify-items-*</code> sets <code>justify-items</code>; <code>.grid-center</code> sets <code>place-items: center</code>, and <code>.grid-flow-row</code>, <code>-col</code> and <code>-dense</code> set <code>grid-auto-flow</code>.</p>
 <h2 id="overflow-and-scrolling">Overflow and scrolling</h2>
 <div class="table-scroll">
 <table>
@@ -502,6 +513,7 @@
 </div>
 <h2 id="stacking">Stacking</h2>
 <p><code>.z-index-0</code> … <code>.z-index-5</code> set <code>z-index</code> from 0 to 5. Library chrome sits above them (header 100, skip link 1000).</p>
+<p><code>.opacity-0</code>, <code>-25</code>, <code>-50</code>, <code>-75</code> and <code>-100</code> set <code>opacity</code> in quarter steps, for a decoration set back: a shape, a watermark. A disabled control fades on its own.</p>
 <h2 id="resets">Resets</h2>
 <div class="table-scroll">
 <table>
@@ -528,7 +540,7 @@
 </table>
 </div>
 <h2 id="responsive-prefixes">Responsive prefixes</h2>
-<p>Spacing, sizing, position and grid utilities come in breakpoint variants: <code>mobile:</code>, <code>tablet:</code> and <code>desktop:</code>, as in <code>mobile:padding-sm</code> or <code>desktop:grid-cols-3</code>. The breakpoints have no gaps between them, so a fractional viewport such as 768.5px always lands in exactly one:</p>
+<p>Spacing, sizing, position, grid and type-size utilities come in breakpoint variants: <code>mobile:</code>, <code>tablet:</code> and <code>desktop:</code>, as in <code>mobile:padding-sm</code>, <code>desktop:grid-cols-3</code> or <code>mobile:font-size-sm</code>. The breakpoints have no gaps between them, so a fractional viewport such as 768.5px always lands in exactly one:</p>
 <div class="table-scroll">
 <table>
 <thead>
@@ -558,7 +570,7 @@
 <h3 id="focus-ring">Focus ring</h3>
 <p>Every focusable element inside <code>.rd</code> shows a ring on keyboard focus (<code>:focus-visible</code>), so mouse clicks stay ring-free. The ring is driven by three tokens. Override them on <code>:root</code>:</p>
 <pre><code class="language-css">:root {
-  --focus-ring-color: var(--blue);  /* ≥ 3:1 on every library surface */
+  --focus-ring-color: var(--signal);  /* blue by default: ≥ 3:1 on every library surface */
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
 }
@@ -578,6 +590,11 @@
   &lt;section class=&quot;page-title&quot; id=&quot;main-content&quot;&gt;…&lt;/section&gt;
 </code></pre>
 <p>The target scrolls clear of the fixed header on its own: <code>html</code> carries <code>scroll-padding-top</code> from <code>--header-height</code>.</p>
+<h2 id="print">Print</h2>
+<div class="meta-info">css/modules/utilities/_print.scss</div>
+<p>An article prints, or saves as PDF, without the page chrome: the header, the footer, the sidebar, the search and the menu, the cookie notice and the carousel and copy controls are left off the paper. The article runs at the full width of the page; the prose keeps its reading measure (550px on an A4 or Letter page). Outdented blocks fold back into the column (code blocks, quotes, the lead, highlights and captions, every caption width including <code>.card-caption</code>, teasers and collapsible containers), and a heading stays with the text that follows it. A figure, a quote, a code block or a table row is never split across two pages, and a table in a <code>.table-scroll</code> box prints whole, wrapped to the page: the code in its cells breaks again where it must.</p>
+<p>A <code>.card-inverted</code> prints as a light card in a thin frame: the page’s text, link and border colours on white paper, so nothing light is left on the sheet and no dark ground costs ink. A colour you set light yourself inside it (<code>.white</code>, <code>.gray-light</code>) stays light: give it a print colour.</p>
+<p>An external link in the prose prints its address after the text, in small type: <code>(https://…)</code>. Links to places on the same page and note marks do not, and neither do links inside an embedded chart (<code>.rc-chart</code>): its source line and notes are not prose. Hiding the chart's own controls on paper is the chart library's job.</p>
 
     </article>
   </div>
@@ -588,7 +605,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

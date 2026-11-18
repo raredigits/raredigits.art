@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" class="rd">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colors / Chart Tokens | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/" class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/" class="current">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/" class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/" class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/" class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/" class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/" class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
+                        <div class="index-list">
+                            <h5 class="list-title" id="settings">Settings</h5>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="modules">Modules</h5>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="components">Components</h5>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="decorations">Decorations</h5>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="usage">Usage</h5>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header" id="styles">
+          
+            <a href="/styles/">Styles</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/usage/">Usage</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Chart Tokens</span>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/colors/legend/">Legend</a>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/icons/">Icons</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title" id="main-content">
+    <h1 id="colors-chart-tokens">Colors / Chart Tokens</h1>
+  </section>
+
+    <article>
+      
+<div class="meta-info">
+    css/modules/charts/_index.scss
+</div>
+
+<section>
+    <p>The chart tokens name the colours and fonts a chart takes from the page: its series, its text, axes and gridlines, its range controls, its tooltip. Each has one <code>--chart-*</code> name. Most defaults point at a token the library already has, so a chart follows the page's palette, its surfaces and a project's overrides; three series, the tooltip's shadow and its type size keep RareCharts' own values.</p>
+    <p><a href="/charts/">RareCharts</a> reads these names first, from its 0.9.8_7, and keeps its own values as fallbacks for a page without Rare Styles. A chart's own theme (an explicit <code>theme</code>, or <code>darkTheme</code>) still wins over the page.</p>
+    <p>The library's own pieces beside a chart do not read these names; they use the roles the chart tokens are made from. A <a href="/styles/colors/legend/">legend</a> swatch takes a series when you give it one, <code>--swatch-color: var(--chart-series-1)</code>. A row of <a href="/styles/bricks/panels/#stats">stats</a> sets its labels in <code>--text-color-light</code>, which <code>--chart-label-color</code> points at by default. To change both, re-map the role; a re-mapped chart token changes only the chart.</p>
+    <p>Like every token they live on <code>:root</code>, outside the <code>.rd</code> gate: a chart in an island, or on a page without <code>.rd</code>, reads the same names. One of them names a colour the library cannot see there: see <a href="#host-surface">On a host's background</a>.</p>
+</section>
+
+<section>
+    <h2 id="series">Series</h2>
+    <p>Six series colours, in the order a multi-series chart uses them: <code>--signal</code>, the main chart colour, then RareCharts' orange, green, yellow, violet and red. Where the library's palette has the hue, the token points at it. RareCharts 0.9.8_6 and earlier read no tokens and start with orange, then a light blue #0af, so their series 1 and 2 differ.</p>
+    <ul class="legend padding-y-md">
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-1)"></span>1</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-2)"></span>2</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-3)"></span>3</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-4)"></span>4</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-5)"></span>5</li>
+        <li class="legend__item"><span class="legend__swatch legend__swatch--dot" style="--swatch-color: var(--chart-series-6)"></span>6</li>
+    </ul>
+    <div class="table-scroll">
+    <table class="table-small">
+        <tr><th>Token</th><th>Default</th><th>Hue</th></tr>
+        <tr><td class="nobr"><code>--chart-series-1</code></td><td class="nobr"><code>var(--signal)</code></td><td>blue, #1677ff</td></tr>
+        <tr><td class="nobr"><code>--chart-series-2</code></td><td class="nobr"><code>var(--orange)</code></td><td>orange, #fa8c16</td></tr>
+        <tr><td class="nobr"><code>--chart-series-3</code></td><td class="nobr"><code>#00c97a</code></td><td>green</td></tr>
+        <tr><td class="nobr"><code>--chart-series-4</code></td><td class="nobr"><code>#fc0</code></td><td>yellow, #ffcc00</td></tr>
+        <tr><td class="nobr"><code>--chart-series-5</code></td><td class="nobr"><code>#c4f</code></td><td>violet, #cc44ff</td></tr>
+        <tr><td class="nobr"><code>--chart-series-6</code></td><td class="nobr"><code>var(--red)</code></td><td>red, #ff0000</td></tr>
+    </table>
+    </div>
+    <p>Re-map a series for every chart on <code>:root</code>, or for one chart on its container:</p>
+<pre class="text-content-caption"><code>:root {
+    --chart-series-1: var(--green);  <span class="code-comment">/* every chart */</span>
+}
+
+#revenue-chart {
+    --chart-series-1: var(--purple); <span class="code-comment">/* this one */</span>
+}</code></pre>
+</section>
+
+<section>
+    <h2 id="text-axes-grid">Text, axes and gridlines</h2>
+    <p>These name roles of the surface the chart sits on, so they change with it (see <a href="#surfaces">Surfaces</a>).</p>
+    <div class="table-scroll">
+    <table class="table-small">
+        <tr><th>Token</th><th>Default</th><th style="min-width: 12rem">Colours</th></tr>
+        <tr><td class="nobr"><code>--chart-bg</code></td><td class="nobr"><code>var(--surface-current)</code></td><td>the surface: the plates behind labels, halos and knockouts</td></tr>
+        <tr><td class="nobr"><code>--chart-text-color</code></td><td class="nobr"><code>var(--primary-text-color)</code></td><td>titles, data labels, end labels</td></tr>
+        <tr><td class="nobr"><code>--chart-label-color</code></td><td class="nobr"><code>var(--text-color-light)</code></td><td>axis ticks, secondary text</td></tr>
+        <tr><td class="nobr"><code>--chart-axis-color</code></td><td class="nobr"><code>var(--border-color)</code></td><td>axis lines, the zero baseline</td></tr>
+        <tr><td class="nobr"><code>--chart-grid-color</code></td><td class="nobr"><code>var(--border-color-light)</code></td><td>gridlines</td></tr>
+    </table>
+    </div>
+
+    <h3 id="range-controls">Range controls</h3>
+    <p>The timeframe buttons and the Lin/Log switch of a time-series chart. A hovered control takes the active control's text and border.</p>
+    <div class="table-scroll">
+    <table class="table-small">
+        <tr><th>Token</th><th>Default</th><th style="min-width: 12rem">Colours</th></tr>
+        <tr><td class="nobr"><code>--chart-control-text</code></td><td class="nobr"><code>var(--text-color-light)</code></td><td>a control's label</td></tr>
+        <tr><td class="nobr"><code>--chart-control-border</code></td><td class="nobr"><code>var(--border-color)</code></td><td>its border</td></tr>
+        <tr><td class="nobr"><code>--chart-control-hover-border</code></td><td class="nobr"><code>var(--primary-text-color)</code></td><td>the border of a hovered and of the active control</td></tr>
+        <tr><td class="nobr"><code>--chart-control-active-text</code></td><td class="nobr"><code>var(--primary-text-color)</code></td><td>the label of a hovered and of the active control</td></tr>
+        <tr><td class="nobr"><code>--chart-control-active-bg</code></td><td class="nobr"><code>var(--white)</code></td><td>the active control's background</td></tr>
+        <tr><td class="nobr"><code>--chart-control-fill</code></td><td class="nobr"><code>var(--gray)</code></td><td>the filled half of the Lin/Log switch</td></tr>
+    </table>
+    </div>
+
+    <h3 id="tooltip">Tooltip</h3>
+    <p>The tooltip is a popover with a surface of its own, so it stays light on a dark card.</p>
+    <div class="table-scroll">
+    <table class="table-small">
+        <tr><th>Token</th><th>Default</th><th style="min-width: 12rem">Colours</th></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-bg</code></td><td class="nobr"><code>var(--white)</code></td><td>its background</td></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-border</code></td><td class="nobr"><code>var(--border-color-light)</code></td><td>its border</td></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-text</code></td><td class="nobr"><code>var(--primary-text-color)</code></td><td>rows and titles</td></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-muted</code></td><td class="nobr"><code>var(--text-color-light)</code></td><td>dates, shares, counts</td></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-shadow</code></td><td class="nobr"><code>0 2px 8px</code>, black at 10%</td><td>its lift</td></tr>
+        <tr><td class="nobr"><code>--chart-tooltip-font-size</code></td><td class="nobr"><code>13px</code></td><td>its type size: RareCharts' own, fixed like the chart's other type, so it does not follow the root font size</td></tr>
+    </table>
+    </div>
+
+    <h3 id="fonts-and-focus">Fonts and focus</h3>
+    <div class="table-scroll">
+    <table class="table-small">
+        <tr><th>Token</th><th>Default</th><th style="min-width: 12rem">Sets</th></tr>
+        <tr><td class="nobr"><code>--chart-font-family</code></td><td class="nobr"><code>var(--primary-font)</code></td><td>chart text</td></tr>
+        <tr><td class="nobr"><code>--chart-font-family-numeric</code></td><td class="nobr"><code>var(--code-font)</code></td><td>figures in the tooltip: every digit one width</td></tr>
+        <tr><td class="nobr"><code>--chart-focus-ring</code></td><td class="nobr"><code>var(--focus-ring-color)</code></td><td>keyboard focus on controls and nodes</td></tr>
+    </table>
+    </div>
+</section>
+
+<section>
+    <h2 id="surfaces">Surfaces</h2>
+    <p><code>--surface-current</code> is the background of the surface an element sits on. The page's is <code>--bg-color</code> (on paper it is white). A <code>.card</code> and a <code>.card-inverted</code> set their own and paint their background with it. A <code>.panel</code> paints no background and sets none, so the surface behind it passes through: a panel on a dark card sits on the dark card. <code>--chart-bg</code> follows the surface, so a chart's label plates hide the gridlines under them without showing a box (RareCharts 0.9.8_7 and later; earlier versions read none of the <code>--chart-*</code> tokens).</p>
+    <p><code>.card-inverted</code> re-maps more than its text. Its border roles turn quiet on the dark surface, as they are on the light page: <code>--border-color</code> is <code>--gray-mid-dark</code>, <code>--border-color-light</code> a step closer to the surface, and <code>--border-color-dark</code> is light. So a frame, a panel's dividers and a chart's axes read without glaring. The chart tokens follow: light text and labels, and an active control in the darkest grey under a light label and border.</p>
+    <p>A <code>.card</code> inside a <code>.card-inverted</code> is a light surface again: it restores the text, link and border roles to their page values, and the chart tokens with them, so a chart in it reads as on the page. A project's own value on <code>:root</code> for one of the text, axis, grid or control tokens (the eight listed under <a href="#own-surface">A surface of your own</a>) does not reach a <code>.card-inverted</code> or a <code>.card</code> in one: both resolve those tokens again from their roles. Restate the token on those surfaces. A role re-mapped on <code>:root</code> reaches the nested <code>.card</code>, but not the <code>.card-inverted</code>, which sets its own.</p>
+    <p>The same tokens on the three library surfaces, and on a panel in the dark card:</p>
+    <div class="grid grid-cols-2 gap-md mobile:grid-cols-1 text-content-caption" id="chart-token-surfaces">
+        <div class="chart-token-specimen" data-surface="The page"></div>
+        <div class="card padding-md chart-token-specimen" data-surface=".card"></div>
+        <div class="card-inverted padding-md chart-token-specimen" data-surface=".card-inverted"></div>
+        <div class="card-inverted padding-md">
+            <div class="panel panel--bordered chart-token-specimen" data-surface=".panel in .card-inverted"></div>
+        </div>
+    </div>
+
+    <h3 id="own-surface">A surface of your own</h3>
+    <p>Set <code>--surface-current</code> and paint with it. A custom property is resolved where it is declared, so a token made from another, such as <code>--chart-bg</code> from <code>--surface-current</code>, keeps its <code>:root</code> value inside your surface unless the surface restates it:</p>
+<pre class="text-content-caption"><code>.report-band {
+    --surface-current: var(--gray-mid-light);
+    --chart-bg: var(--surface-current);
+
+    background: var(--surface-current);
+}</code></pre>
+    <p>A dark surface also re-maps the text and border roles, and restates the chart tokens made from them, as <code>.card-inverted</code> does: <code>--chart-text-color</code>, <code>--chart-label-color</code>, <code>--chart-axis-color</code>, <code>--chart-grid-color</code>, <code>--chart-control-text</code>, <code>--chart-control-border</code>, <code>--chart-control-hover-border</code> and <code>--chart-control-active-text</code>, plus its own <code>--chart-control-active-bg</code> and <code>--chart-control-fill</code>.</p>
+
+    <h3 id="host-surface">On a host's background</h3>
+    <p>In an island, or on a page without <code>.rd</code>, the library paints no page background: the block sits on the host's. <code>--surface-current</code> still says <code>--bg-color</code>, so a chart there would draw its label plates as light grey boxes on a background of another colour. Tell the island what it sits on:</p>
+<pre class="text-content-caption"><code>&lt;div class="rd" style="--surface-current: #faf0e6;
+                       --chart-bg: var(--surface-current)"&gt;
+    …a chart…
+&lt;/div&gt;</code></pre>
+</section>
+
+<template id="chart-token-specimen">
+    <svg viewBox="0 0 320 150" role="img" aria-label="A small line chart drawn with the chart tokens" style="display: block; width: 100%; height: auto; font-family: var(--chart-font-family)">
+        <text x="0" y="14" style="fill: var(--chart-text-color); font-size: 13px; font-weight: 700">Weekly orders</text>
+        <text class="specimen-surface" x="0" y="30" style="fill: var(--chart-label-color); font-size: 11px"></text>
+        <line x1="34" x2="320" y1="52" y2="52" style="stroke: var(--chart-grid-color)"></line>
+        <line x1="34" x2="320" y1="84" y2="84" style="stroke: var(--chart-grid-color)"></line>
+        <line x1="34" x2="320" y1="116" y2="116" style="stroke: var(--chart-axis-color)"></line>
+        <text x="0" y="56" style="fill: var(--chart-label-color); font-size: 11px">200</text>
+        <text x="0" y="88" style="fill: var(--chart-label-color); font-size: 11px">100</text>
+        <text x="0" y="120" style="fill: var(--chart-label-color); font-size: 11px">0</text>
+        <text x="34" y="134" style="fill: var(--chart-label-color); font-size: 11px">W1</text>
+        <text x="262" y="134" style="fill: var(--chart-label-color); font-size: 11px">W8</text>
+        <polyline points="40,100 76,92 112,96 148,78 184,74 220,62 256,58 276,52" style="fill: none; stroke: var(--chart-series-1); stroke-width: 2"></polyline>
+        <polyline points="40,110 76,106 112,100 148,102 184,94 220,90 256,86 276,84" style="fill: none; stroke: var(--chart-series-2); stroke-width: 2"></polyline>
+        <!-- end labels on plates in --chart-bg: the gridline stops behind them -->
+        <rect x="281" y="45" width="32" height="15" style="fill: var(--chart-bg)"></rect>
+        <text x="284" y="56" style="fill: var(--chart-text-color); font-size: 11px">B2C</text>
+        <rect x="281" y="77" width="32" height="15" style="fill: var(--chart-bg)"></rect>
+        <text x="284" y="88" style="fill: var(--chart-text-color); font-size: 11px">B2B</text>
+    </svg>
+    <div class="flex gap-xs padding-t-sm" style="font-size: var(--font-size-sm)">
+        <span style="padding: 4px 8px; border: 1px solid var(--chart-control-border); border-radius: 4px; color: var(--chart-control-text)">1M</span>
+        <span style="padding: 4px 8px; border: 1px solid var(--chart-control-hover-border); border-radius: 4px; color: var(--chart-control-active-text); background: var(--chart-control-active-bg)">1Y</span>
+        <span style="padding: 4px 8px; border: 1px solid var(--chart-control-border); border-radius: 4px; color: var(--chart-control-text)">All</span>
+        <span style="padding: 4px 8px; border: 1px solid var(--chart-control-border); border-radius: 4px; color: var(--chart-control-text); background-image: linear-gradient(135deg, var(--chart-control-fill) 50%, transparent 50%)">Lin</span>
+    </div>
+</template>
+
+<script>
+    (() => {
+        const template = document.getElementById('chart-token-specimen');
+        document.querySelectorAll('.chart-token-specimen').forEach((slot) => {
+            const copy = template.content.cloneNode(true);
+            copy.querySelector('.specimen-surface').textContent = slot.dataset.surface;
+            slot.append(copy);
+        });
+    })();
+</script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3 id="">🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en" class="rd">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Elements / Buttons | Rare Digits Art</title>
+
+    
+
+    
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/FiraSans-Regular-latin.woff2" crossorigin="">
+    <link rel="preload" as="font" type="font/woff2" href="/assets/css/fonts/PlayfairDisplay-latin.woff2" crossorigin="">
+
+    <link rel="stylesheet" href="/assets/css/rare.css">
+    
+    
+    <link rel="stylesheet" href="/assets/css/rare-website.css">
+
+    
+
+    <link rel="stylesheet" href="/pagefind/pagefind-ui.css">
+    <script src="/pagefind/pagefind-ui.js" defer=""></script>
+
+    <link rel="icon" href="/assets/img/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
+    <script>
+      if (location.hostname !== "localhost") {
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
+        document.head.appendChild(s);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-FM752YW3F4');
+      }
+    </script>
+</head>
+<body class="">
+<a class="skip-to-content" href="#main-content">Skip to content</a>
+
+<header class="padding-x-md">
+  <div class="header-container grid-global">
+    <div class="header-logo-wrapper">
+      
+        <a class="no-decoration" href="/"><div class="header-logo"></div></a>
+      
+    </div>
+    <nav class="nav-global flex stretched">
+      <ul>
+        
+        <li>
+            <a href="/manifesto/" class="">
+              Manifesto
+            </a>
+        </li>
+        
+        <li>
+            <a href="/styles/" class="current">
+              Styles
+            </a>
+        </li>
+        
+        <li>
+            <a href="/charts/" class="">
+              Charts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/scripts/" class="">
+              Scripts
+            </a>
+        </li>
+        
+        <li>
+            <a href="/examples/" class="">
+              Examples
+            </a>
+        </li>
+        
+        <li>
+            <a href="/kb/" class="">
+              101
+            </a>
+        </li>
+        
+        <li>
+            <a href="/pricing/" class="">
+              Pricing
+            </a>
+        </li>
+        
+      </ul>
+    </nav>
+    <div class="header-icons">
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
+      <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
+          <span class="hamburger__icon-menu"></span>
+          <span class="hamburger__icon-close"></span>
+      </button>
+    </div>
+  </div>
+  <div class="search-wrapper">
+    <div id="searchbar" class="searchbar rd-js-search-bar">
+      <div id="search" class="search-input rd-js-search-ui"></div>
+    </div>
+  </div>
+</header>
+<div id="nav-hamburger" class="nav-hamburger rd-js-hamburger-nav">
+    <div>
+        <div class="height-lg padding-x-md center-center">
+            <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
+        </div>
+        <div class="gray-dark-bg padding-md gray-light">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 row-span-full white uppercase padding-b-md">
+                    The Path To&nbsp;Glory:
+                </div>
+                <div class="col-span-11 grid grid-cols-11 mobile:grid-cols-6">
+                    <div class="col-span-2 padding-b-md">
+                        1. Sort Content
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/prepare-layout.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        2. Import Styles
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/import-styles.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        3. Mark-Up
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/mark-up.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        4. Customize
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/customize.svg" alt="">
+                    </div>
+                    <div class="col-span-2 padding-b-md">
+                        5. Publish
+                        <img class="square width-xxl" src="/assets/img/illustrations/hamburger/publish.svg" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="gray-light-bg padding-x-md padding-t-md">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 uppercase padding-b-md">
+                   Remind Your Way:
+                </div>
+                <div class="col-span-2 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6">
+                    <span class="bold">Clean The Noise,<br>Highlight The Value</span>
+                    <p><a href="/manifesto/value/">The Value</a></p>
+                    <p><a href="/manifesto/principles/">Principles</a></p>
+                    <p><a href="/manifesto/tips/">Tips</a></p>
+                </div>
+                <div class="col-span-5 mobile:col-span-4 mobile:col-start-3 mobile:col-end-6 gray-mid-dark padding-b-lg">
+                    <span class="gray-dark">Stop thinking about decorations, start thinking about the value.</span>
+                    <p>The only thing that matters is the data your audience came for. Design, layouts, make-up and decorations are just your tools to highlight the value.</p>
+                    <p>Imagine you have 30 secs to pitch your data. What would you say? What decision maker need to know? How would you present it? What would you highlight? What would you hide?</p>
+                    <p>That's it. That's the only thing that matters. Delete the noise. Make your audience satisfied.</p>
+                </div>
+            </div>
+        </div>
+        <div class="padding-md">
+            <div class="site-width-wrapper grid-global font-size-sm">
+                <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
+                    Manuals:
+                </div>
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
+                        <div class="index-list">
+                            <h5 class="list-title" id="settings">Settings</h5>
+                            <ul>
+                                <li>Base Unit</li>
+                                <li>Viewport & Container</li>
+                                <li>Spacing Scale</li>
+                                <li>Brand Palette</li>
+                                <li>Semantic Colors</li>
+                                <li>Text Colors</li>
+                                <li>Typefaces</li>
+                                <li>UI Tokens</li>
+                                <li>States</li>
+                                <li>Naming System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="modules">Modules</h5>
+                            <ul>
+                                <li><a href="/styles/layout/">Layout</a></li>
+                                <li>Grid</li>
+                                <li>Spaces</li>
+                                <li><a href="/styles/bricks/">Components</a></li>
+                                <li>Navigation</li>
+                                <li><a href="/styles/typography/">Typography</a></li>
+                                <li><a href="/styles/colors/">Colors</a></li>
+                                <li>Special</li>
+                                <li><a href="/styles/themes/">Themes</a></li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
+                            <ul>
+                                <li>General Layout</li>
+                                <li>Full-Width</li>
+                                <li>Mobile Only</li>
+                                <li>Floors System</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="components">Components</h5>
+                            <ul>
+                                <li>Sections</li>
+                                <li>Cards</li>
+                                <li>Card Decks</li>
+                                <li>Tables</li>
+                                <li>Images</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="decorations">Decorations</h5>
+                            <ul>
+                                <li>Text Captions</li>
+                                <li>Spaces</li>
+                                <li>Dividers</li>
+                                <li>Shadows</li>
+                            </ul>
+                        </div>
+                        <div class="index-list">
+                            <h5 class="list-title" id="usage">Usage</h5>
+                            <ul>
+                                <li>Import Styles</li>
+                                <li>Customization</li>
+                                <li>Basic Scripts</li>
+                                <li><a href="/kb/">Mark-Up 101</a></li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section class="padding-md">
+        <div class="site-width-wrapper grid-global font-size-sm">
+            <div class="col-span-1 uppercase padding-b-md">
+                Need Help?
+            </div>
+            <div class="col-span-11 grid  grid-cols-11 mobile:grid-cols-6">
+                <div class="col-span-2">
+                    <a href="https://chatgpt.com">Ask GPT</a>
+                    <p class="font-size-xs">Actually, the most effective way to solve your problem</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://github.com/raredigits/rare-styles/issues">Create an Issue</a>
+                    <p class="font-size-xs">If you find a bug or have a feature request</p>
+                </div>
+                <div class="col-span-2">
+                    <a href="https://raredigits.io/about/contacts/">Let's Chat</a>
+                    <p class="font-size-xs">To discuss a proper way or provide some feedback</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+  
+<main>
+  <div class="content grid-global">
+    
+      <aside class="sidebar">
+  
+    
+    
+      <h5 class="sidebar-header" id="styles">
+          
+            <a href="/styles/">Styles</a>
+          
+      </h5>
+      <nav class="sidebar-nav no-scrollbar">
+        <ul>
+          
+            <li>
+              
+                <a href="/styles/idea/">The Idea</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/getting-started/">Getting Started</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/usage/">Usage</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/modules/">Modules</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/layout/">Layout</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/typography/">Typography</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/colors/">Colors</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+                <ul class="sidebar-submenu">
+                  
+                    <li>
+                      
+                        <span class="bold">Buttons</span>
+                      
+                    </li>
+                  
+                    <li>
+                      
+                        <a href="/styles/interactive/forms/">Forms</a>
+                      
+                    </li>
+                  
+                </ul>
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/alignment/">Alignment</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/navigation/">Navigation</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/decorations/">Decorations</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/icons/">Icons</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/special/">Special</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/utilities/">Utilities</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/themes/">Themes</a>
+              
+              
+              
+              
+            </li>
+          
+        </ul>
+      </nav>
+    
+  
+</aside>
+    
+    
+  <section class="page-title" id="main-content">
+    <h1 id="interactive-elements-buttons">Interactive Elements / Buttons</h1>
+  </section>
+
+    <article>
+      
+<div class="meta-info">
+    css/modules/elements/_buttons.scss
+</div>
+
+<section>
+    <p>A <code>&lt;button&gt;</code> inside <code>.rd</code> needs no class: it gets the default look, as a form field does, and so does an <code>&lt;input&gt;</code> of type <code>submit</code>, <code>button</code> or <code>reset</code>. <code>.button</code> gives the same look to a link or any other element. Variants, sizes and layouts are classes on top. A button is inline, so buttons placed side by side share a line, and it is as wide as its label, in a card, a panel or a form group too.</p>
+    <div class="flex wrap items-center gap-sm text-content-width padding-t-sm padding-b-md">
+        <button type="button">Button element</button>
+        <a class="button" href="/styles/interactive/">Link as a button</a>
+    </div>
+<pre class="text-content-caption"><code>&lt;button type="button"&gt;Button element&lt;/button&gt;
+&lt;a class="button" href="/styles/interactive/"&gt;Link as a button&lt;/a&gt;</code></pre>
+    <p>The default is a light grey control (<code>--gray-lightest</code>, its label <code>--gray-dark</code>) with rounded corners (<code>--space-lg</code>) and a light frame; under the pointer it turns white with a black frame and label, and grey while pressed. Its label stays dark on a dark surface such as <code>.card-inverted</code>, on a button and on a link alike: the card's link colour is for text links.</p>
+    <p>Until <code>v0.7.2</code> a bare button was a block-level grey pill; it is inline now. To give one a line of its own, put it in a block (a <code>&lt;p&gt;</code>, a <code>&lt;div&gt;</code>), or take the full width with <a href="#block"><code>.button-block</code></a>. The <code>.block</code> utility works on a <code>&lt;button&gt;</code> but not on <code>a.button</code>: <code>.button</code> comes after the utilities in the stylesheet and has the same weight.</p>
+</section>
+
+<section>
+    <h2 id="variants">Variants</h2>
+    <div class="flex wrap items-center gap-sm text-content-width padding-y-sm">
+        <button class="button-primary" type="button">Primary</button>
+        <button class="button-ghost" type="button">Ghost</button>
+        <button class="button-danger" type="button">Danger</button>
+        <button class="button-link" type="button">Link</button>
+    </div>
+    <dl>
+        <dt><code>.button-primary</code></dt>
+        <dd>The one action that matters on the screen, in the brand colour: <code>--brand-color</code>, <code>--brand-color-deep</code> under the pointer and darker still while pressed. The label is black (<code>--primary-color</code>) at rest, about 15:1 on the brand green, and turns white on the dark fills: under the pointer, while pressed, and on a pressed toggle in a group. A pressed toggle on its own keeps the brand fill and the black label. A project that re-maps <code>--brand-color</code> sets <code>--brand-color-deep</code> too, to a shade that carries white text at 4.5:1 or more; otherwise the button turns the library green under the pointer.</dd>
+
+        <dt><code>.button-ghost</code></dt>
+        <dd>No frame until the pointer is on it. For toolbars and secondary actions in a row. Its label is the text colour of the surface it sits on (<code>--primary-text-color</code>) and its hover tint a share of that colour, so it reads on a light page and on <code>.card-inverted</code> alike.</dd>
+
+        <dt><code>.button-danger</code></dt>
+        <dd>A destructive action, on <code>--danger</code> shaded by 15%, so the white label reads at 5.3:1.</dd>
+
+        <dt><code>.button-link</code></dt>
+        <dd>Reads as a text link: the link's underline, and under the pointer its fill rising behind the label. It keeps the button's box, so it lines up with the buttons next to it.</dd>
+    </dl>
+<pre class="text-content-caption"><code>&lt;button class="button-primary" type="submit"&gt;Save&lt;/button&gt;
+&lt;a class="button button-ghost" href="…"&gt;Details&lt;/a&gt;</code></pre>
+    <p>On a link, a variant needs <code>.button</code> next to it; on a <code>&lt;button&gt;</code> it does not.</p>
+</section>
+
+<section>
+    <h2 id="dark-surface">On a dark surface</h2>
+    <p>The filled variants keep their colours. The ghost and link variants have no fill, so their labels take the text and link colours of the surface.</p>
+    <div class="card-inverted padding-md text-content-caption">
+        <div class="flex wrap items-center gap-sm">
+            <button type="button">Default</button>
+            <a class="button" href="/styles/interactive/">Link button</a>
+            <button class="button-primary" type="button">Primary</button>
+            <button class="button-ghost" type="button">Ghost</button>
+            <button class="button-link" type="button">Link</button>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2 id="sizes">Sizes</h2>
+    <div class="flex wrap items-center gap-sm text-content-width padding-y-sm">
+        <button class="button-sm" type="button">Small</button>
+        <button class="button-md" type="button">Medium</button>
+        <button class="button-lg" type="button">Large</button>
+    </div>
+    <p><code>.button-md</code> is the default, named so it can be restored inside a container that sets another size. A size sets <code>--button-padding-x</code>, <code>--button-padding-y</code> and <code>--button-font-size</code>; at the default size a button is as tall as a text field.</p>
+<pre class="text-content-caption"><code>&lt;button class="button-sm" type="button"&gt;Small&lt;/button&gt;
+&lt;button class="button-lg button-primary" type="button"&gt;Large&lt;/button&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="icons">Icons</h2>
+    <p>An <a href="/styles/icons/"><code>rd-icon-*</code></a> glyph before or after the label sits at an even gap from it, whatever whitespace the markup has, and the button stays on the text line like one without a glyph. <code>.button-icon</code> is a square for a glyph alone: as tall as a text button of the same size. Give it a name with <code>aria-label</code>.</p>
+    <div class="flex wrap items-center gap-sm text-content-width padding-t-sm padding-b-md">
+        <button type="button"><span class="rd-icon-download"></span> Download</button>
+        <button type="button">Next <span class="rd-icon-arrow_forward"></span></button>
+        <button class="button-icon" type="button" aria-label="Settings"><span class="rd-icon-settings"></span></button>
+        <button class="button-icon button-ghost" type="button" aria-label="Close"><span class="rd-icon-close"></span></button>
+        <button class="button-icon button-sm" type="button" aria-label="Edit"><span class="rd-icon-edit_document"></span></button>
+    </div>
+<pre class="text-content-caption"><code>&lt;button type="button"&gt;&lt;span class="rd-icon-download"&gt;&lt;/span&gt; Download&lt;/button&gt;
+&lt;button type="button"&gt;Next &lt;span class="rd-icon-arrow_forward"&gt;&lt;/span&gt;&lt;/button&gt;
+&lt;button class="button-icon" type="button" aria-label="Settings"&gt;
+    &lt;span class="rd-icon-settings"&gt;&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="states">States</h2>
+    <dl>
+        <dt>Hover, pressed</dt>
+        <dd>Each variant darkens its frame or its fill. The change is a 0.15s colour fade; nothing moves. <code>.button-link</code> raises its link fill instead, as a text link does, in 0.23s. With reduced motion it is instant.</dd>
+
+        <dt>Keyboard focus</dt>
+        <dd>The library's <a href="/styles/interactive/#keyboard-focus">focus ring</a>, in <code>--signal</code>.</dd>
+
+        <dt><code>disabled</code></dt>
+        <dd>Faded in every variant, with the default pointer. <code>aria-disabled="true"</code> looks the same and keeps the button focusable, so it can still explain why it is off. A link has no <code>disabled</code>: give it <code>aria-disabled="true"</code> and remove its <code>href</code>.</dd>
+
+        <dt><code>aria-busy="true"</code></dt>
+        <dd>The label hides, so the button keeps its width, and a ring in the label colour turns in its place. With reduced motion the ring stands still. The script that sets the attribute also ignores clicks while it is set. The ring needs a <code>&lt;button&gt;</code> or a <code>.button</code> link: an <code>&lt;input&gt;</code> cannot draw it.</dd>
+    </dl>
+    <div class="flex wrap items-center gap-sm padding-t-sm padding-b-md">
+        <button type="button" disabled="">Disabled</button>
+        <button class="button-primary" type="button" disabled="">Disabled</button>
+        <button id="busy-demo" class="button-primary" type="button">Save (click me)</button>
+    </div>
+<pre><code>&lt;button class="button-primary" type="submit" aria-busy="true"&gt;Save&lt;/button&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="group">Group</h2>
+    <p><code>.button-group</code> joins buttons into one segmented row: neighbours share a border, and only the outer corners are rounded. A pressed toggle (<code>aria-pressed="true"</code>) keeps the pressed look of its variant: grey under a black frame for the default, the darkest fill for a primary. The hovered or focused button is lifted, so its whole frame and the focus ring show.</p>
+    <div id="group-demo" class="button-group text-content-width" role="group" aria-label="Period">
+        <button type="button" aria-pressed="false">Day</button>
+        <button type="button" aria-pressed="true">Week</button>
+        <button type="button" aria-pressed="false">Month</button>
+    </div>
+<pre><code>&lt;div class="button-group" role="group" aria-label="Period"&gt;
+    &lt;button type="button" aria-pressed="false"&gt;Day&lt;/button&gt;
+    &lt;button type="button" aria-pressed="true"&gt;Week&lt;/button&gt;
+    &lt;button type="button" aria-pressed="false"&gt;Month&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="block">Full width</h2>
+    <p><code>.button-block</code> takes the full width of its container, for a phone layout or a narrow column. A glyph and its label stay centred together.</p>
+    <div class="text-content-width padding-y-sm">
+        <button class="button-block button-primary" type="button"><span class="rd-icon-download"></span> Download the report</button>
+    </div>
+<pre><code>&lt;button class="button-block button-primary" type="button"&gt;Download the report&lt;/button&gt;</code></pre>
+</section>
+
+<section>
+    <h2 id="recolour">Re-colouring a button</h2>
+    <p>Buttons have no tokens of their own: the look is written with the library's spacing, type and colour tokens, and the corners are <code>--space-lg</code>. A variant re-colours a button through six slots on its class. The default look reads them, each with the default as its fallback:</p>
+    <div class="table-scroll card-caption">
+        <table class="table-bordered">
+            <thead><tr><th></th><th>At rest</th><th>Under the pointer</th></tr></thead>
+            <tbody>
+                <tr><td>Fill</td><td><code>--button-bg</code> (<code>--gray-lightest</code>)</td><td><code>--button-bg-hover</code> (the <code>--button-bg</code> a variant sets, else <code>--white</code>)</td></tr>
+                <tr><td>Label</td><td><code>--button-text</code> (<code>--gray-dark</code>)</td><td><code>--button-text</code> (<code>--primary-color</code>)</td></tr>
+                <tr><td>Frame</td><td><code>--button-border-color</code> (<code>--border-color</code>)</td><td><code>--button-border-color-hover</code> (<code>--primary-color</code>)</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <p>While pressed the fill is <code>--button-bg-active</code> (<code>--bg-color</code>); the label and the frame stay as under the pointer. Set the slots on a class or an element for a colour the library does not ship:</p>
+<pre class="text-content-caption"><code>.button-signal {
+    --button-bg: var(--signal);
+    --button-text: var(--white);
+    --button-border-color: transparent;
+    --button-bg-hover: var(--blue-dark);
+    --button-border-color-hover: transparent;
+}</code></pre>
+    <p>The sizes work the same way: <code>--button-padding-x</code> (<code>--space-md</code>), <code>--button-padding-y</code> (<code>--field-padding-y</code>) and <code>--button-font-size</code> (<code>--font-size-md</code>). So a default button stays as tall as a field when a project changes the field's padding. The label sits 1px below the centre: 9px above and 7px below at the default.</p>
+</section>
+
+<section>
+    <h2 id="own-buttons">A component's own buttons</h2>
+    <p>The element defaults have type weight in every state, so one class overrides them, hover and press included. A text-like toggle drops the chrome with a single rule and keeps the focus ring:</p>
+<pre class="text-content-caption"><code>.my-toggle {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+}</code></pre>
+    <p>A <a href="/charts/">RareCharts</a> card (<code>.rc-chart</code>) draws its own buttons, so the element defaults stop at it. A button the page places inside a chart's <code>controls</code> row takes the library look only when it asks for it with <code>.button</code>.</p>
+</section>
+
+<script>
+    document.getElementById('busy-demo').addEventListener('click', (event) => {
+        const button = event.currentTarget;
+        if (button.getAttribute('aria-busy') === 'true') return;
+        button.setAttribute('aria-busy', 'true');
+        setTimeout(() => button.removeAttribute('aria-busy'), 2000);
+    });
+    document.querySelectorAll('#group-demo button').forEach((button, _, all) => {
+        button.addEventListener('click', () => {
+            all.forEach((other) => other.setAttribute('aria-pressed', String(other === button)));
+        });
+    });
+</script>
+
+    </article>
+  </div>
+</main>
+  
+<footer class="padding-x-md">
+  <div class="site-max-width padding-y-lg row stretched">
+    <div>
+      <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
+      <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
+    </div>
+    <div class="row gap-md padding-y-sm font-size-lg">
+      <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
+      <a class="link-img" href="https://github.com/raredigits/rare-styles"><span class="vendor-logo github color"></span></a>
+    </div>
+  </div>
+
+</footer>
+
+<div class="cookie-notice rd-js-cookie-consent">
+  <div class="cookie-notice__content">
+    <h3 id="">🍪</h3>
+    <p class="bold">Help yourself to&nbsp;some cookies!</p>
+    <p>We’re using third party cookies and scripts to improve the functionality of this website. For legal purpose, we have a <a href="/legal/privacy">Privacy Policy</a>.</p>
+    <div class="right">
+        <button class="cookie-notice__button rd-js-cookie-accept">Nice!</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/gh/raredigits/rare-scripts@v3.0.0/simple-cookie-notice/cookie-consent.min.js"></script>
+
+
+<script src="/assets/js/search.js"></script>
+<script src="/assets/js/hamburger.js"></script>
+<script src="/assets/js/header-scroll.js"></script>
+<script src="/assets/js/collapsible.js"></script>
+<script src="/assets/js/copy-to-clipboard.js"></script>
+
+
+
+
+
+</body>
+</html>

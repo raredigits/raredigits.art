@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -361,6 +361,15 @@
           
             <li>
               
+                <a href="/styles/interactive/">Interactive Elements</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
                 <a href="/styles/alignment/">Alignment</a>
               
               
@@ -458,77 +467,102 @@
     <pre class="full-width-caption">
 <code>css/
 │
-├── rare.scss                     # Main entry file that imports all modules
-│
-├── modules/   
-│   │
-│   ├── layout/                   # Layout components
-│   │   ├── _grid.scss            # Grid system definitions
-│   │   ├── _containers.scss      # Content containers styles (header, main, footer)
-│   │   ├── _spacing.scss         # Margin and padding utilities
-│   │   └── _spacing-aliases.scss # Spacing aliases for easier use
-│   │
-│   ├── typography/               # Typography components
-│   │   ├── _fonts.scss           # Font imports and definitions
-│   │   ├── _headings.scss        # Heading styles
-│   │   ├── _body.scss            # Paragraph and inline text styles
-│   │   ├── _lists.scss           # List styles
-│   │   ├── _notes.scss           # References and Notes
-│   │   ├── _tables.scss          # Table styles
-│   │   └── _text-content.scss    # Blockquotes, code blocks, etc.
-│   │
-│   ├── colors/                   # Color variables and palettes
-│   │   ├── _base.scss            # Base colors
-│   │   ├── _brand.scss           # Brand colors
-│   │   ├── _supporting.scss      # Supporting colors
-│   │   └── _blue.scss            # Blue palette
-│   │
-│   ├── bricks/                   # Holders and wrappers
-│   │   ├── _sections.scss        # Section styles
-│   │   └── _cards.scss           # Cards and card decks
+├── modules/
 │   │
 │   ├── align/                    # Alignment utilities
-│   │   ├── _align.scss           # Alignment variables
+│   │   ├── _align.scss           # Alignment classes
 │   │   ├── _flex.scss            # Flexbox utilities
 │   │   └── _position.scss        # Positioning utilities
 │   │
-│   ├── navigation/               # Navigation components
-│   │   ├── _header.scss          # Header & Search panel styles
-│   │   ├── _hamburger.scss       # Hamburger menu styles
-│   │   ├── _navigation.scss      # Navigation bars styles
-│   │   ├── _sidebar.scss         # Sidebar styles
-│   │   └── _links.scss           # Link styles
+│   ├── bricks/                   # Holders and wrappers
+│   │   ├── _cards.scss           # Cards and the card grid
+│   │   ├── _contain-outdents.scss # Mixin and lists: outdents held inside cards, panels, collapsibles (Sass only)
+│   │   ├── <a href="/styles/colors/legend/">_legend.scss</a>          # Legend rows, items and swatches
+│   │   ├── _page-roles.scss      # Mixins: a surface takes back the page's roles (Sass only)
+│   │   ├── <a href="/styles/bricks/panels/">_panels.scss</a>          # Panels, panel grid and panel row
+│   │   ├── _sections.scss        # Section styles
+│   │   └── <a href="/styles/bricks/panels/#stats">_stats.scss</a>           # KPI figures: label, value, direction
 │   │
-│   ├── elements/                 # Interactive UI elements
-│   │   ├── _buttons.scss         # Button styles
-│   │   ├── _forms.scss           # Form element styles
-│   │   ├── _pop-ups.scss         # Pop-up and modal styles
-│   │   └── _tooltips.scss        # Tooltip styles
+│   ├── <a href="/styles/colors/chart-tokens/">charts/</a>                   # Chart tokens
+│   │   ├── <a href="/styles/colors/chart-tokens/">_index.scss</a>           # --chart-*: series, text, axes, controls, tooltip
+│   │   └── _roles.scss           # Mixin: chart tokens resolved again on a surface (Sass only)
+│   │
+│   ├── colors/                   # Color variables and palettes
+│   │   ├── _base.scss            # Base colors: grays, red, green, yellow, blue
+│   │   ├── _brand.scss           # Brand colors
+│   │   ├── _color-classes.scss   # Mixin: the text, background and link classes of each color (Sass only)
+│   │   ├── <a href="/styles/colors/#semantic-colors">_semantic.scss</a>        # Roles: semantic colors, signal, surface
+│   │   └── _supporting.scss      # Supporting colors
 │   │
 │   ├── decorations/              # Visual enhancements
-│   │   ├── _media.scss           # Images, videos, and other media styles
-│   │   ├── _icons.scss           # Icons
 │   │   ├── _borders.scss         # Borders
+│   │   ├── _icons.scss           # Icons
+│   │   ├── _media.scss           # Images, videos, and other media styles
 │   │   ├── _separators.scss      # Separators
 │   │   ├── _shadows.scss         # Shadow styles
 │   │   └── _skeleton.scss        # Skeleton styles
 │   │
+│   ├── <a href="/styles/interactive/">elements/</a>                 # Controls: plain elements inside .rd
+│   │   ├── <a href="/styles/interactive/buttons/">_buttons.scss</a>         # Buttons: variants, sizes, icons, states, groups
+│   │   ├── _control-face.scss    # Mixins: the face buttons and fields share (Sass only)
+│   │   └── <a href="/styles/interactive/forms/">_forms.scss</a>           # Form fields, checkbox and radio, groups, validation
+│   │
+│   ├── layout/                   # Layout components
+│   │   ├── _containers.scss      # Content containers styles (header, main, footer)
+│   │   ├── _grid.scss            # Grid system definitions
+│   │   ├── _spacing.scss         # Margin and padding utilities
+│   │   └── _spacing-aliases.scss # Spacing aliases for easier use
+│   │
+│   ├── navigation/               # Navigation components
+│   │   ├── _link-look.scss       # Mixins: the link underline and hover fill (Sass only)
+│   │   ├── _links.scss           # Link styles
+│   │   ├── _navigation.scss      # Navigation bars styles
+│   │   ├── _sidebar.scss         # Sidebar styles
+│   │   ├── _tags.scss            # Topic tags
+│   │   └── header/               # Site header
+│   │       ├── _hamburger.scss   # Hamburger menu styles
+│   │       ├── _header-container.scss # Header container
+│   │       └── _search.scss      # Search panel styles
+│   │
 │   ├── special/                  # Special components
-│   │   ├── _cookie-consent.scss  # Cookies consent 
-│   │   ├── _construction.scss    # Construction notice
+│   │   ├── _carousel.scss        # Image carousel
 │   │   ├── _collapsible.scss     # Collapsible elements
-│   │   └── _mockups.scss         # Browsers mockups
+│   │   ├── _construction.scss    # Construction notice
+│   │   ├── _cookie-consent.scss  # Cookies consent
+│   │   ├── _mockups.scss         # Browsers mockups
+│   │   ├── _rare.scss            # Rare branding helpers
+│   │   └── _web-reusable.scss    # Sticky WhatsApp button
+│   │
+│   ├── typography/               # Typography components
+│   │   ├── _body.scss            # Paragraph and inline text styles
+│   │   ├── _figures.scss         # Figures, captions and sources
+│   │   ├── _font-faces.scss      # Self-hosted font faces (generated)
+│   │   ├── _fonts.scss           # Font imports and definitions
+│   │   ├── _headings.scss        # Heading styles
+│   │   ├── _lists.scss           # List styles
+│   │   ├── _notes.scss           # References and Notes
+│   │   ├── _small-print.scss     # Mixins: small muted type (Sass only)
+│   │   ├── _tables.scss          # Table styles
+│   │   └── _text-content.scss    # Blockquotes, code blocks, etc.
 │   │
 │   └── utilities/                # Helper classes
+│       ├── _a11y.scss            # Focus ring, skip link, visually hidden
 │       ├── _breakpoints.scss     # Responsive breakpoint definitions
+│       ├── _contracts.scss       # Selector lists: rules stop at an embedded chart, a link-button (Sass only)
 │       ├── _display.scss         # Display and visibility helpers
-│       └── _resets.scss          # CSS resets
+│       ├── _print.scss           # Print styles
+│       ├── _resets.scss          # CSS resets
+│       └── _states.scss          # State classes rd-is-*
+│
+├── rare.scss                     # Main entry file that imports all modules
 │
 └── vendor/                       # Third-party styles
     └── normalize.css             # CSS normalization
 </code>
     </pre>
     
+    <p>The tree is in alphabetical order. Each folder also has an <code>_index.scss</code> that forwards its files in the order they load.</p>
+
     <p>When adding new features, place them within the appropriate existing module rather than creating isolated stylesheets. This maintains system coherence and makes relationships between elements clear.</p>
     
     <p>The main <code>rare.scss</code> file imports all modules in the correct order, ensuring dependencies are resolved properly during compilation. This automated build process eliminates the need to manually manage stylesheet references in your HTML.</p>
@@ -542,7 +576,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

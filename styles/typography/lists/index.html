@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -350,12 +350,6 @@
                   
                     <li>
                       
-                        <a href="/styles/typography/interactive/">Interactive Elements</a>
-                      
-                    </li>
-                  
-                    <li>
-                      
                         <a href="/styles/typography/notes/">Notes</a>
                       
                     </li>
@@ -377,6 +371,15 @@
             <li>
               
                 <a href="/styles/bricks/">Bricks</a>
+              
+              
+              
+              
+            </li>
+          
+            <li>
+              
+                <a href="/styles/interactive/">Interactive Elements</a>
               
               
               
@@ -472,19 +475,20 @@
 </ul>
 <p>Use it for navigation blocks, groups of links, table-of-contents lists, and any custom list pattern where the marker would be visual noise.</p>
 <h3 id="list-title"><code>.list-title</code></h3>
-<p>An uppercase, bold label for a list group. It works above unstyled lists, inside <code>.list-group-pack</code> columns, and as the title of an <code>.index-list</code>. It is a pure label utility: it carries no margins of its own — vertical rhythm belongs to the surrounding context. A plain <code>&lt;span&gt;</code> is the right element for it — the label is a visual marker, not a document heading; the utility pins <code>font-family</code> and <code>font-size: 1em</code> so it stays stable even if it lands on a heading element.</p>
-<p><span class="list-title">Reference</span></p>
+<p>The label of a list group, declared on an <code>&lt;h5&gt;</code>: uppercase and bold, above an unstyled list, inside <code>.list-group-pack</code> columns, or as the title of an <code>.index-list</code>. It has no margin or padding of its own: the list follows directly under it, and all other spacing belongs to the surrounding context. A link inside it reads as the label, with no underline or highlight and the label's color; only the pointer shows it is a link.</p>
+<h5 class="list-title" id="reference">Reference</h5>
 <ul class="list-unstyled">
     <li>Specification</li>
     <li>Changelog</li>
     <li>Migration Notes</li>
 </ul>
+<pre><code>&lt;h5 class="list-title"&gt;&lt;a href="/reference/"&gt;Reference&lt;/a&gt;&lt;/h5&gt;</code></pre>
 <h2 id="index-lists">Index lists</h2>
 <h3 id="index-list"><code>.index-list</code></h3>
 <p><code>index-list</code> is the compact &quot;section title + short link list&quot; pattern used for table-of-contents style navigation. The title is the thing you scan first; the items underneath stay tight and quiet.</p>
-<p>The markup is deliberately plain: a <code>.list-title</code> label on a <code>&lt;span&gt;</code>, then a bare <code>&lt;ul&gt;</code> — the component styles its own <code>ul</code>/<code>li</code> (resets markers, sets item rhythm), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (<code>margin-bottom</code>), so stacked or packed index lists separate cleanly — it is also the canonical content unit inside <code>.list-group-pack</code> columns.</p>
+<p>The markup is deliberately plain: a <code>.list-title</code> label on an <code>&lt;h5&gt;</code>, then a bare <code>&lt;ul&gt;</code> — the component styles its own <code>ul</code>/<code>li</code> (no markers, no indent, no margin between entries), because any list item inside an index list is an index entry by definition; no extra classes needed. The block itself owns the bottom rhythm (<code>margin-bottom</code>), so stacked index lists separate cleanly — it is also the canonical content unit inside <code>.list-group-pack</code> columns.</p>
 <div class="index-list">
-    <span class="list-title"><a href="">Typography</a></span>
+    <h5 class="list-title" id="typography"><a href="">Typography</a></h5>
     <ul>
         <li><a href="">Body Text</a></li>
         <li><a href="">Lists &amp; Columns</a></li>
@@ -513,8 +517,8 @@
 </tr>
 <tr>
 <td><code>.list-group-pack</code></td>
-<td>CSS columns + <code>column-fill: auto</code></td>
-<td>min column width + container height</td>
+<td>CSS columns, balanced</td>
+<td>min column width</td>
 <td>Several grouped sublists that must stay intact</td>
 </tr>
 <tr>
@@ -564,12 +568,12 @@
     </div>
 </div>
 <h3 id="list-group-pack"><code>.list-group-pack</code></h3>
-<p>For grouped sublists with subheadings. This utility packs the groups into columns sequentially and keeps each child block intact with <code>break-inside: avoid</code>, so a label and its items travel together. The canonical child is an <code>.index-list</code> — the packer arranges the columns, the index lists carry the content and their own bottom rhythm.</p>
-<p>Important: <code>column-fill: auto</code> only does useful work when the container has a height. Add a height utility such as <code>.height-xxxxl</code>, or set a custom height inline, tall enough for the groups at the narrowest desktop width; otherwise the extra columns spill out to the right. You can also tune the minimum column width with <code>--list-group-pack-min</code>.</p>
-<p>On narrow viewports the utility ignores the height-driven packing and falls back to a balanced fixed-count layout: 2 columns on mobile, 3 on tablet.</p>
-<div class="list-group-pack height-xxxxl" style="--list-group-pack-min: 11rem;">
+<p>For grouped sublists with subheadings. This utility balances the groups across the columns and keeps each child block intact with <code>break-inside: avoid</code>, so a label and its items travel together. The canonical child is an <code>.index-list</code> — the packer arranges the columns and sets the 16px gap under each group, the index lists carry the content.</p>
+<p>The pack needs no height: on a desktop it fits as many columns as the container allows, and you can tune their minimum width with <code>--list-group-pack-min</code>. A height utility on it has no effect.</p>
+<p>On narrow viewports the number of columns is fixed: 2 on mobile, 3 on tablet.</p>
+<div class="list-group-pack" style="--list-group-pack-min: 11rem;">
     <div class="index-list">
-        <span class="list-title">Foundations</span>
+        <h5 class="list-title" id="foundations">Foundations</h5>
         <ul>
             <li>Tokens</li>
             <li>Typography</li>
@@ -578,7 +582,7 @@
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Components</span>
+        <h5 class="list-title" id="components-2">Components</h5>
         <ul>
             <li>Buttons</li>
             <li>Cards</li>
@@ -588,7 +592,7 @@
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Navigation</span>
+        <h5 class="list-title" id="navigation">Navigation</h5>
         <ul>
             <li>Header</li>
             <li>Sidebar</li>
@@ -596,7 +600,7 @@
         </ul>
     </div>
     <div class="index-list">
-        <span class="list-title">Decorations</span>
+        <h5 class="list-title" id="decorations-2">Decorations</h5>
         <ul>
             <li>Highlights</li>
             <li>Frames</li>
@@ -616,23 +620,25 @@
     <li>Verify responsive behavior</li>
     <li>Link the next typography page</li>
 </ol>
-<h4 id="two-equal-columns-tables-of-contents">Two equal columns (tables of contents)</h4>
-<p>A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and <code>--list-rows: 4</code>, the grid fills four rows and wraps into two equal-width columns — <code>.list-fixed-rows</code> sizes its implicit columns with <code>minmax(0, 1fr)</code>, so they stay equal without any extra class.</p>
-<div class="note">Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</div>
-<ol class="list-fixed-rows" style="--list-rows: 4;">
-    <li>What the library is for</li>
-    <li>Installation</li>
-    <li>Tokens</li>
-    <li>Typography</li>
-    <li>Layout</li>
-    <li>Components</li>
-    <li>Navigation</li>
-    <li>Decorations</li>
-</ol>
+<h3 id="two-equal-columns-tables-of-contents">Two equal columns (tables of contents)</h3>
+<div class="sidenote-wrapper">
+    <p>A two-column table of contents is just a fixed-rows list whose row count is half the item count. With eight entries and <code>--list-rows: 4</code>, the grid fills four rows and wraps into two equal-width columns — <code>.list-fixed-rows</code> sizes its implicit columns with <code>minmax(0, 1fr)</code>, so they stay equal without any extra class.</p>
+        <div class="sidenote"><p>Earlier releases shipped a dedicated <code>.list-fixed-rows-2col</code> modifier for this. It was removed in <code>v0.6.15</code> because the base utility now equalizes its columns on its own — set <code>--list-rows</code> instead.</p></div>
+    <ol class="list-fixed-rows" style="--list-rows: 4;">
+        <li>What the library is for</li>
+        <li>Installation</li>
+        <li>Tokens</li>
+        <li>Typography</li>
+        <li>Layout</li>
+        <li>Components</li>
+        <li>Navigation</li>
+        <li>Decorations</li>
+    </ol>
+</div>
 <h2 id="feed-lists">Feed lists</h2>
 <h3 id="feed-list-feed-list-item-feed-list-title-feed-list-meta"><code>.feed-list</code>, <code>.feed-list__item</code>, <code>.feed-list__title</code>, <code>.feed-list__meta</code></h3>
 <p>A feed is a chronological vertical stream — and a navigation surface, not body copy. Authors put content into a feed precisely because it deserves the reader's attention, so the pattern spends visual budget on it: full-size titles and generous vertical whitespace between line-separated items signal that the entries are valuable. Each item gets a top rule, a title, and a quiet meta line that keeps dates and tags from competing with the title. The pattern is intentionally narrow: it is for updates, logs, changelogs, or knowledge-base streams where sequence matters more than per-item detail.</p>
-<div class="feed-list">
+<div class="text-content-width feed-list">
     <div class="feed-list__item">
         <span class="feed-list__meta">10.06.2026</span>
         <h4 class="feed-list__title" id="lists-module-harvested-and-normalized"><a href="">Lists module harvested and normalized</a></h4>
@@ -726,7 +732,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

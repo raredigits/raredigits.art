@@ -96,7 +96,7 @@
       </ul>
     </nav>
     <div class="header-icons">
-      <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+      <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
       <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
           <span class="hamburger__icon-menu"></span>
           <span class="hamburger__icon-close"></span>
@@ -115,7 +115,7 @@
             <div class="site-width-wrapper">Daily Tip: <a href="/kb/hamburger-menu-saga/">Don't hide important stuff in hamburgers</a>!</div>
         </div>
         <div class="gray-dark-bg padding-md gray-light">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 row-span-full white uppercase padding-b-md">
                     The Path To&nbsp;Glory:
                 </div>
@@ -144,7 +144,7 @@
             </div>
         </div>
         <div class="gray-light-bg padding-x-md padding-t-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 uppercase padding-b-md">
                    Remind Your Way:
                 </div>
@@ -163,13 +163,13 @@
             </div>
         </div>
         <div class="padding-md">
-            <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+            <div class="site-width-wrapper grid-global font-size-sm">
                 <div class="col-span-1 mobile:col-span-full uppercase padding-b-md">
                     Manuals:
                 </div>
-                <div class="col-span-11 mobile:col-span-full list-group-pack height-xxxxl">
+                <div class="col-span-11 mobile:col-span-full list-group-pack">
                         <div class="index-list">
-                            <span class="list-title">Settings</span>
+                            <h5 class="list-title" id="settings">Settings</h5>
                             <ul>
                                 <li>Base Unit</li>
                                 <li>Viewport & Container</li>
@@ -184,7 +184,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Modules</span>
+                            <h5 class="list-title" id="modules">Modules</h5>
                             <ul>
                                 <li><a href="/styles/layout/">Layout</a></li>
                                 <li>Grid</li>
@@ -198,7 +198,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Layout Patterns</span>
+                            <h5 class="list-title" id="layout-patterns">Layout Patterns</h5>
                             <ul>
                                 <li>General Layout</li>
                                 <li>Full-Width</li>
@@ -207,7 +207,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Components</span>
+                            <h5 class="list-title" id="components">Components</h5>
                             <ul>
                                 <li>Sections</li>
                                 <li>Cards</li>
@@ -217,7 +217,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Decorations</span>
+                            <h5 class="list-title" id="decorations">Decorations</h5>
                             <ul>
                                 <li>Text Captions</li>
                                 <li>Spaces</li>
@@ -226,7 +226,7 @@
                             </ul>
                         </div>
                         <div class="index-list">
-                            <span class="list-title">Usage</span>
+                            <h5 class="list-title" id="usage">Usage</h5>
                             <ul>
                                 <li>Import Styles</li>
                                 <li>Customization</li>
@@ -239,7 +239,7 @@
         </div>
     </div>
     <section class="padding-md">
-        <div class="site-width-wrapper grid-global font-size-sm line-height-sm">
+        <div class="site-width-wrapper grid-global font-size-sm">
             <div class="col-span-1 uppercase padding-b-md">
                 Need Help?
             </div>
@@ -511,10 +511,10 @@ Icons don’t copy things by positive thinking alone.</p>
 <p>Include it once per page, preferably near the end of the document or with defer.</p>
 <h2 id="styling">Styling</h2>
 <p>Make it feel clickable, not decorative:</p><div class="code-block"><p></p>
-  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    line-height: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;/* The glyph is an SVG mask filled with currentcolor — ship the two SVGs&#10;   next to your CSS (Rare Styles bundles them under images/icons/) */&#10;.copy-data-icon::before {&#10;    content: &#34;&#34;;&#10;    display: inline-block;&#10;    position: relative;&#10;    top: 0.2em;&#10;    width: 1em;&#10;    height: 1em;&#10;    background-color: currentcolor;&#10;    mask: url(&#34;images/icons/content_copy-400.svg&#34;) no-repeat center / contain;&#10;}&#10;&#10;.copy-data-icon[data-icon=&#34;check&#34;]::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;); /* success glyph set by the script */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* The general success state. data-icon above only drives .copy-data-icon, so&#10;   anything else that carries rd-js-copy — a block, or a glyph that is itself&#10;   the control — styles .rd-is-copied instead. Here: any Rare Styles glyph&#10;   flips to a check for ~1.2s. The per-glyph masks are single-class rules, so&#10;   the extra .rd-is-copied outranks them. */&#10;[class*=&#34;rd-icon-&#34;].rd-is-copied::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;);&#10;}&#10;&#10;/* Optional: park the icon in a container&#39;s top-right instead of the flow.&#10;   The container needs a positioning context of its own (position: relative).&#10;   Rare Styles applies this to .code-block automatically. */&#10;.copy-data-icon--pinned {&#10;    position: absolute;&#10;    top: 8px;&#10;    right: 8px;&#10;}&#10;&#10;/* Optional: light icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon--light {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
+  <pre><code id="snippet-4">.copy-data-icon {&#10;    display: inline-block;&#10;    font: inherit;&#10;    background: none;&#10;    color: var(--copy-icon-color, var(--text-color-light));&#10;    border: none;&#10;    padding: 0;&#10;    cursor: pointer;&#10;}&#10;&#10;/* The glyph is an SVG mask filled with currentcolor — ship the two SVGs&#10;   next to your CSS (Rare Styles bundles them under images/icons/) */&#10;.copy-data-icon::before {&#10;    content: &#34;&#34;;&#10;    display: inline-block;&#10;    position: relative;&#10;    top: 0.2em;&#10;    width: 1em;&#10;    height: 1em;&#10;    background-color: currentcolor;&#10;    mask: url(&#34;images/icons/content_copy-400.svg&#34;) no-repeat center / contain;&#10;}&#10;&#10;.copy-data-icon[data-icon=&#34;check&#34;]::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;); /* success glyph set by the script */&#10;}&#10;&#10;.copy-data-icon:hover {&#10;    color: var(--copy-icon-color-hover, var(--primary-color));&#10;    background: none;&#10;    border: none;&#10;}&#10;&#10;/* The general success state. data-icon above only drives .copy-data-icon, so&#10;   anything else that carries rd-js-copy — a block, or a glyph that is itself&#10;   the control — styles .rd-is-copied instead. Here: any Rare Styles glyph&#10;   flips to a check for ~1.2s. The per-glyph masks are single-class rules, so&#10;   the extra .rd-is-copied outranks them. */&#10;[class*=&#34;rd-icon-&#34;].rd-is-copied::before {&#10;    mask-image: url(&#34;images/icons/check-400.svg&#34;);&#10;}&#10;&#10;/* Optional: park the icon in a container&#39;s top-right instead of the flow.&#10;   The container needs a positioning context of its own (position: relative).&#10;   Rare Styles applies this to .code-block automatically. */&#10;.copy-data-icon--pinned {&#10;    position: absolute;&#10;    top: 8px;&#10;    right: 8px;&#10;}&#10;&#10;/* Optional: light icon for dark surfaces (put on the icon or any ancestor) */&#10;.copy-data-icon--light {&#10;    --copy-icon-color: #fafafa;&#10;    --copy-icon-color-hover: #ccc;&#10;}</code></pre>
 <p><button class="copy-data-icon rd-js-copy" data-copy-target="#snippet-4"></button></p>
 </div>
-<p>There are two success channels and{N}the script writes both. <code>data-icon=&quot;check&quot;</code> is{N}the older one{N}and{N}is{N}read by{N}exactly one{N}rule, <code>.copy-data-icon</code>’s — it{N}is{N}an{N}internal channel, never something you{N}author. <code>rd-is-copied</code> is{N}the general one: it{N}lands on{N}whatever was clicked, so{N}it{N}is{N}what a{N}block or{N}a{N}bare glyph should style. A{N}control with no{N}success state copies silently, which reads as{N}broken — give every carrier one.</p>
+<p>There are two success channels and the script writes both. <code>data-icon=&quot;check&quot;</code> is the older one and is read by exactly one rule, <code>.copy-data-icon</code>’s — it is an internal channel, never something you author. <code>rd-is-copied</code> is the general one: it lands on whatever was clicked, so it is what a block or a bare glyph should style. A control with no success state copies silently, which reads as broken — give every carrier one.</p>
 <h3 id="recoloring">Recoloring</h3>
 <p>The copy icon defaults to a muted gray (<code>--text-color-light</code>), which can fade into some surfaces or clash with a brand. Both of its colors are exposed as component tokens — <code>--copy-icon-color</code> and <code>--copy-icon-color-hover</code> — so any container (or a single icon) can override them without fighting the selector. Set the token on whatever wraps the icon (here, a code block — its copy button is already pinned top-right by <code>.code-block</code>):</p><div class="code-block"><p></p>
   <pre><code id="snippet-5" class="language-html">&lt;!-- recolor every copy icon inside this block --&gt;
@@ -606,7 +606,7 @@ If the icon should copy something specific, tell it where with <code>data-copy
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-10-26T12:42:44.370Z">October 26, 2026</time></p>
+      Last release: <time datetime="2026-11-18T09:25:49.417Z">November 18, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
