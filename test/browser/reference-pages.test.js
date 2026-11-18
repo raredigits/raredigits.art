@@ -2,10 +2,11 @@
 // site, in page mode, at 375 / 768 / 769 / 1024 / 1440px, at fractional
 // widths, and at 200% zoom (720 / 640 CSS px = 1440 / 1280 windows zoomed).
 // Checks: no horizontal page overflow, no keyboard focus hidden under the
-// cookie notice or invisible, anchor targets clear of the fixed header.
+// cookie notice or invisible, anchor targets clear of the fixed header, and
+// (v0.7.2) chart text readable on whatever shows through its frame.
 // Needs a built site: `npm run test:browser` runs Eleventy first.
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
@@ -17,11 +18,24 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 const PAGES = [
   '/', '/styles/', '/styles/getting-started/', '/styles/typography/', '/styles/typography/lists/',
   '/styles/typography/tables/', '/styles/typography/notes/', '/styles/layout/spacing/', '/styles/utilities/',
+  '/styles/bricks/panels/', '/styles/colors/legend/', '/charts/circular/',
   '/charts/line/', '/charts/sankey/', '/scripts/carousel/', '/kb/taming-lesspregreater/', '/examples/styles/hetke/landing/',
 ];
 const WIDTHS = [375, 640, 720, 768, 769, 1024, 1440];
 const TAB_WIDTHS = [375, 768, 1440];
+// Chart pages with a frame that once had a `.card` surface or a colour
+// utility (CSS-183a).
+const CHART_PAGES = ['/charts/', '/charts/styles/', '/charts/line/', '/charts/bar/', '/charts/multi/', '/charts/combined/', '/charts/sankey/'];
 const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#main-content', '/charts/line/dual-axes/#options-reference'];
+
+// The built pages ask the network for the cookie notice script (jsDelivr). A
+// stalled request held a page past the 30s load timeout about once in a few
+// hundred loads and failed a random test. Nothing outside this machine
+// resolves: the request fails at once, the notice stays as the markup has it
+// (shown), and a load takes a tenth of the time. It also keeps the runs out
+// of the live analytics, whatever the page's own host check says
+// (_includes/head.njk).
+const OFFLINE = '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1';
 
 let server;
 let origin;
@@ -39,7 +53,7 @@ beforeAll(async () => {
   });
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   origin = `http://127.0.0.1:${server.address().port}`;
-  browser = await chromium.launch({ channel: 'chrome', headless: true });
+  browser = await chromium.launch({ channel: 'chrome', headless: true, args: [OFFLINE] });
 });
 afterAll(async () => { await browser?.close(); server?.close(); });
 
@@ -63,7 +77,7 @@ describe('no horizontal page overflow', () => {
   });
 
   it.each([[768, 1.1], [1023, 1.1]])('at a fractional viewport (window %ipx × %f scale)', async (win, scale) => {
-    const b = await chromium.launch({ channel: 'chrome', headless: true, args: [`--force-device-scale-factor=${scale}`, `--window-size=${win},900`] });
+    const b = await chromium.launch({ channel: 'chrome', headless: true, args: [OFFLINE, `--force-device-scale-factor=${scale}`, `--window-size=${win},900`] });
     const ctx = await b.newContext({ viewport: null });
     const bad = [];
     for (const p of PAGES) {
@@ -79,7 +93,7 @@ describe('no horizontal page overflow', () => {
   });
 });
 
-describe('every built page fits phone widths (not just the reference set)', () => {
+describe('every built page fits its width (not just the reference set)', () => {
   // The 14 reference pages missed rendered READMEs and the RareCharts
   // changelog (release audit 2026-10-17). 320px is excluded on purpose: single
   // long h1 words are deferred to fluid type, CSS-164.
@@ -88,16 +102,20 @@ describe('every built page fits phone widths (not just the reference set)', () =
     const walk = (d) => {
       for (const f of readdirSync(d, { withFileTypes: true })) {
         const p = join(d, f.name);
-        if (f.isDirectory()) { if (f.name !== 'pagefind' && f.name !== 'old') walk(p); }
-        else if (f.name === 'index.html') out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
+        if (f.isDirectory()) { if (f.name !== 'pagefind') walk(p); }
+        // A redirect stub (a moved page, `meta refresh`) has no layout to measure.
+        else if (f.name === 'index.html' && !/http-equiv="refresh"/.test(readFileSync(p, 'utf8'))) out.push('/' + p.slice(SITE.length + 1).split('\\').join('/').replace(/index\.html$/, ''));
       }
     };
     walk(SITE);
     return out;
   };
 
-  // ~77 pages per width: one context, one tab, own timeout.
-  it.each([375, 414])('at %ipx', async (width) => {
+  // ~77 pages per width: one context, one tab, own timeout. 800 and 1150:
+  // a tablet and the narrow desktop, where `.content` is narrower than the
+  // site width — a `.caption` there hung past the page by up to 15px (the
+  // right outdent counted `main`'s padding twice).
+  it.each([375, 414, 800, 1150])('at %ipx', async (width) => {
     const pages = allPages();
     expect(pages.length).toBeGreaterThan(60);
     const ctx = await browser.newContext({ viewport: { width, height: 800 } });
@@ -111,6 +129,31 @@ describe('every built page fits phone widths (not just the reference set)', () =
     await ctx.close();
     expect(bad).toEqual([]);
   }, 300000);
+});
+
+// `.wide-background` (/styles/bricks/): the band runs from edge to edge of
+// the viewport and its wrapper puts the text back on the article's line, at
+// every width. It started 8px off on a tablet and up to 14px off at
+// 1024–1180px, where `.content` is narrower than the site width.
+describe('the full-bleed band', () => {
+  it('meets both viewport edges and keeps its text on the column, 320–1920px', async () => {
+    const page = await open('/styles/bricks/', 1440);
+    const bad = [];
+    for (let w = 320; w <= 1920; w += 20) {
+      await page.setViewportSize({ width: w, height: 800 });
+      const r = await page.evaluate(() => {
+        const band = document.querySelector('.wide-background');
+        const b = band.getBoundingClientRect();
+        const cw = document.documentElement.clientWidth;
+        const inner = band.querySelector('.wide-background-text-content-wrapper p').getBoundingClientRect().left;
+        const text = band.closest('section').querySelector('p').getBoundingClientRect().left;
+        return { left: b.left, right: cw - b.right, text: inner - text };
+      });
+      if (Math.abs(r.left) > 0.5 || Math.abs(r.right) > 0.5 || Math.abs(r.text) > 0.5) bad.push(`${w}: ${JSON.stringify(r)}`);
+    }
+    await page.close();
+    expect(bad).toEqual([]);
+  });
 });
 
 describe('keyboard focus is visible and not covered (cookie notice shown)', () => {
@@ -167,6 +210,47 @@ describe('anchor targets clear the fixed header', () => {
       if (r.gap < 0 || (r.gap > 16 && !r.atEnd)) bad.push(`${a} gap=${Math.round(r.gap)}`);
       await page.close();
     }
+    expect(bad).toEqual([]);
+  });
+});
+
+describe('chart text is readable on its frame (CSS-183a)', () => {
+  // The chart frames moved from `.card` to the transparent `.panel`. A colour
+  // utility that the card's background used to hide (`black-bg` on the
+  // /charts/ hero) came alive under a light-theme chart: its title, subtitle
+  // and source were black on black. Each chart's own text has to keep at
+  // least 3:1 against the first background behind it.
+  it.each([1440, 375])('at %ipx', async (width) => {
+    const bad = [];
+    let checked = 0;
+    for (const p of CHART_PAGES) {
+      const page = await open(p, width);
+      await page.waitForSelector('.rc-chart-title');
+      const r = await page.evaluate(() => {
+        const rgb = (c) => (c.match(/[\d.]+/g) || []).map(Number);
+        const lum = ([r, g, b]) => {
+          const ch = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+          return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+        };
+        const behind = (el) => {
+          for (let n = el; n; n = n.parentElement) {
+            const c = rgb(getComputedStyle(n).backgroundColor);
+            if (c.length === 3 || c[3] > 0) return c.slice(0, 3);
+          }
+          return [255, 255, 255];
+        };
+        return [...document.querySelectorAll('.rc-chart-title, .rc-chart-subtitle, .rc-chart-source')]
+          .filter((el) => el.textContent.trim() && el.getBoundingClientRect().height)
+          .map((el) => {
+            const [a, b] = [lum(rgb(getComputedStyle(el).color).slice(0, 3)), lum(behind(el))];
+            return { text: `${el.closest('.rc-chart')?.id} ${el.className}`, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) };
+          });
+      });
+      checked += r.length;
+      for (const x of r) if (x.ratio < 3) bad.push(`${p} ${x.text} ${x.ratio.toFixed(2)}`);
+      await page.close();
+    }
+    expect(checked).toBeGreaterThan(20);
     expect(bad).toEqual([]);
   });
 });

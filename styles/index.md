@@ -28,27 +28,28 @@ Rare Styles takes the opposite stance. It encodes [Rareism](/manifesto/) — th
   <div>
     <p>Rare Styles is the technical instrument of <a href="/manifesto/">Digital Rareism</a>. Its tokens, components and defaults carry the same philosophy: signal over noise, certainty over feature count, function over ornament.</p>
   </div>
-  <div class="sidenote">
+  <div class="sidenote sidenote-banner">
     <h5>Built on 20 years of business-tooling expertise</h5>
     <p>Rare Styles is authored by <a href="https://raredigits.io">Rare Digits Production</a>, a team that has spent two decades building instruments for businesses and decision-makers.</p>
   </div>
   <div>
     <p>Most CSS frameworks ship a box of primitives and let the frontend assemble the answer. <strong>Rare Styles ships the answer.</strong> Visual decisions — typography, spacing, contrast, density, hierarchy — are already made and encoded in the defaults. Dark text on light background. Calm <a href="/kb/choosing-the-right-font/">typography</a>. Sufficient contrast. Deliberate density. The page you are reading uses these defaults with no overrides.</p>
-    <p>This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
   </div>
 </div>
+
+This shifts where the design work happens. With Rare Styles, the design is largely done <em>before</em> the technical specification reaches the frontend developer. The developer composes structure; the library carries the visual language. There are no debates about font sizes, no rounds of “make it more breathable”, no theme variants to A/B.
 
 <div class="highlight">Clarity is the default, not the goal.</div>
 
 There is no light/dark toggle either — see the <a href="/styles/themes/">stance on theme switching</a> for why.
 
-Where a page genuinely calls for a different frame — a longread that wants a slower reading rhythm, or a data view that needs the full canvas — Rare Styles provides two opt-in body-level layout modes: <strong>Story</strong> for prose-heavy pages, <strong>Dashboard</strong> for data-heavy pages. Most pages need neither. The defaults already render correctly.
+Two opt-in page layouts are planned for v0.7.4: <strong>Longread</strong> for prose-heavy pages and <strong>Dashboard</strong> for data-heavy ones.
 
 The important part is not how many components ship. It is that each one has earned its place by serving a real reading or decision task.
 
 ## Standard Architecture
 
-The library is organized into layered modules: tokens, utilities, layout, typography, elements, components, navigation, decorations, layouts. You can ship the full bundle or import only the modules you need from the SCSS source.
+The library is organized into layered modules: tokens, utilities, layout, typography, elements, components, navigation, decorations. You can ship the full bundle or import only the modules you need from the SCSS source.
 
 ### Tokens
 
@@ -56,14 +57,10 @@ All design decisions live as CSS custom properties — colors, spacing, typograp
 
 ### Components
 
-Components split into two semantic families. **Cards** carry narrative content: article previews, persons, projects. **Panels** carry data and system content: KPIs, charts, status, settings. Both work in either layout mode. The choice is semantic, not stylistic.
-
-### Layouts
-
-Story and Dashboard are opt-in body-level modes for pages whose content asks for a different frame. **Story** scales typography up and adjusts heading treatment for prose-heavy reading; **Dashboard** removes the sidebar and lifts text-width constraints for data-heavy composition. Most pages need neither — the defaults already render correctly. The visual language stays identical across all three states.
+Components split into two semantic families. **Cards** carry narrative content: article previews, persons, projects. **Panels** carry data and system content: KPIs, charts, status, settings. The choice is semantic, not stylistic.
 
 ### Professional Considerations
 
 Rare Styles accounts for details that are often skipped in feature-driven frameworks: keyboard focus visibility, motion reduction, semantic markup, WCAG AA contrast, and a clear public API contract that distinguishes breaking from non-breaking change.
 
-The following sections cover each module in depth: tokens, layout, typography, colors, elements, components, navigation, decorations, utilities, layouts, and integration with sibling libraries — <a href="/scripts/">Rare Scripts</a> and <a href="/charts/">Rare Charts</a>.
+The following sections cover each module in depth: tokens, layout, typography, colors, elements, components, navigation, decorations, utilities, and integration with sibling libraries — <a href="/scripts/">Rare Scripts</a> and <a href="/charts/">Rare Charts</a>.

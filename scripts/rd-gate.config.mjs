@@ -6,6 +6,13 @@
 // unreviewed — scripts/rd-gate.mjs fails the build on an unclassified one.
 // Everything else (class/attribute/id selectors) is island-gated by default.
 //
+// Exclusions do not make a selector a class context (v0.7.2): a class,
+// attribute or id inside `:not()` only takes elements out, so
+// `button:not(:where(.rc-chart *))` is a bare-element rule all the same. It
+// is listed by its key, the selector without its `:not()` parts (`button`):
+// the entry stays valid when a list of excluded components grows. See
+// `inventoryKey()` in scripts/rd-gate.mjs; the build error names the keys.
+//
 // Three gate kinds:
 //   ungated — emitted as is: `:root` tokens, `@font-face`, `@keyframes`, and
 //             the self-contained `rd-icon-*` compounds (icons work anywhere).
@@ -57,12 +64,18 @@ export const ISLAND = [
   'button::-moz-focus-inner', 'button:-moz-focusring',
   'fieldset', 'legend', 'progress', '::-webkit-file-upload-button',
   'details', 'summary', 'template',
-  // typography — figures (CSS-127) use classes or `:where()` and need no entry
+  // typography
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-  'article > :is(h2, h3):first-child',
+  'article > :is(h2, h3, h4):first-child',
+  'article > section:first-child > :is(h2, h3, h4):first-child',
   'p', 'ul', 'ol',
-  'article p', 'article ul', 'article ol',
-  'mark', 'cite', 'blockquote', 'blockquote p:first-of-type',
+  // the prose measure, minus the components that set their own (CSS-374)
+  'article :is(p, ul, ol)',
+  // figures (CSS-127), minus the carousel's and the epigraph's
+  'article figure', 'article figure > img', 'article figure > picture img',
+  'article figcaption',
+  'mark', 'blockquote', 'blockquote p:first-of-type',
+  ':where(blockquote) > cite', // the attribution look (CSS-379)
   'sup > a', // note reference marks (CSS-128)
   'dl', 'dt', 'dd + dt',
   'pre', 'code', 'pre code',
@@ -71,7 +84,16 @@ export const ISLAND = [
   // links
   'a', 'a:hover', 'a img', 'h1 a', 'h2 a', 'h3 a', 'h4 a',
   // interactive
-  'button:hover', 'details summary',
+  'details summary',
+  // the button and form-field defaults (elements/_buttons.scss,
+  // elements/_forms.scss, v0.7.2), minus a RareCharts card's controls; their
+  // base rules are the normalize entries above (`button`, `select`,
+  // `textarea`, `fieldset`, `legend`). Rules scoped by an attribute
+  // (`input:where([type="text"], …)`, `button:where(:disabled,
+  // [aria-disabled="true"])`) are class context and need no entry.
+  'button:where(:hover)', 'button:where(:active)',
+  'textarea::placeholder', 'select::placeholder',
+  'label:where(:has(> :disabled))',
   // focus ring (CSS-110)
   ':focus-visible', 'button:focus-visible',
   // print hygiene (CSS-167) — inside @media print only

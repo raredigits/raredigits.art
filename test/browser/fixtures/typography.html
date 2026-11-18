@@ -1,0 +1,294 @@
+<!doctype html>
+<!-- Typography and colour checks for v0.7.2 (the typography stream): what a
+     real engine computes for callouts, sidenotes, option tables, the prose
+     measure, line-heights, block rhythm, cite and the page title. Page mode
+     (`<html class="rd">`) with the site shell, as on raredigits.art. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typography fixture</title>
+<link rel="stylesheet" href="/assets/css/rare.css">
+<style>
+  /* A chart card as RareCharts builds it: nested grids placed by one-class
+     rules, the weight a component's own stylesheet has (CSS-372). */
+  .fx-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "title range" "subtitle range"; column-gap: 16px; }
+  .fx-title { grid-area: title; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fx-subtitle { grid-area: subtitle; margin: 0; }
+  .fx-range { grid-area: range; }
+  .fx-legend-right { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 16px; }
+  .fx-plot { grid-column: 1; height: 40px; background: #ddd; }
+  .fx-legend { grid-column: 2; }
+  .fx-multi { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fx-dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; margin: 0; }
+  .fx-dl dt, .fx-dl dd { margin: 0; }
+  .fx-source a { color: rgb(0, 0, 238); }
+  .fx-note { margin: 4px 0 0; }
+</style>
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <section class="page-title" id="main-content"><h1 id="title">Fixture</h1></section>
+    <article>
+      <h2>Callouts (CSS-156)</h2>
+      <p class="callout" id="callout-plain">A plain callout.</p>
+      <p class="callout callout-signal" id="callout-signal"><strong>Info.</strong> A notice.</p>
+      <p class="callout callout-success" id="callout-success"><strong>Done.</strong> A notice.</p>
+      <p class="callout callout-warning" id="callout-warning"><strong>Experimental.</strong> A notice.</p>
+      <p class="callout callout-danger" id="callout-danger"><strong>Error.</strong> A notice.</p>
+      <div class="card-inverted padding-md" id="callout-dark-card"><p class="callout callout-signal" id="callout-signal-dark"><strong>Info.</strong> A notice on a dark card.</p></div>
+      <div style="--warning: rgb(250, 140, 22)">
+        <p class="callout callout-warning" id="callout-remapped"><strong>Warning.</strong> The role re-mapped on a surface.</p>
+      </div>
+
+      <h2>A chart card in a sidenote (CSS-372)</h2>
+      <div class="sidenote-wrapper" id="sn">
+        <p id="sn-first">Main text next to a sidenote. It needs enough words to form a column of prose beside the note.</p>
+        <div class="sidenote" id="sn-note">
+          <p id="sn-note-p">A note with <a id="sn-note-link" href="#">a link</a>.</p>
+          <div class="rc-chart" id="sn-chart">
+            <div class="fx-header" id="sn-header">
+              <h5 class="fx-title" id="sn-title">Understanding data</h5>
+              <p class="fx-subtitle" id="sn-subtitle">Speed, seconds</p>
+              <div class="fx-range" id="sn-range">1Y</div>
+            </div>
+            <div class="fx-legend-right" id="sn-legend-right">
+              <div class="fx-plot" id="sn-plot"></div>
+              <div class="fx-legend" id="sn-legend">Text</div>
+            </div>
+            <cite class="fx-source">Source: <a id="sn-chart-link" href="#">Rare Digits</a></cite>
+            <div class="fx-footer"><p class="fx-note" id="sn-chart-note">A chart note: the chart's own top margin.</p></div>
+          </div>
+        </div>
+        <div id="sn-second">
+          <div class="card rc-chart" id="sn-card">
+            <div class="fx-header" id="sn-card-header">
+              <h5 class="fx-title" id="sn-card-title">Revenue by product</h5>
+              <p class="fx-subtitle">A subtitle</p>
+              <div class="fx-range" id="sn-card-range">1M 1Y</div>
+            </div>
+            <div class="fx-multi" id="sn-multi">
+              <div class="fx-cell">a</div><div class="fx-cell">b</div><div class="fx-cell">c</div><div class="fx-cell">d</div>
+            </div>
+            <dl class="fx-dl" id="sn-dl"><dt>Node</dt><dd>Acme Holdings</dd><dt>Flows</dt><dd>12</dd></dl>
+            <div class="sidenote" id="sn-nested-note">A class named sidenote inside the card.</div>
+          </div>
+        </div>
+      </div>
+
+      <h2>Sidenote rows: a chart in a note, the note width, wide blocks, the banner, the bottom edge</h2>
+      <div class="sidenote-wrapper" id="snc">
+        <p id="snc-first">Text next to a note that holds a chart. It needs enough words to wrap over a few lines of the text column.</p>
+        <div class="sidenote sidenote-bulb" id="snc-note">
+          <p id="snc-note-p">A note above the chart.</p>
+          <div class="chart" id="snc-chart"><p class="fx-title" id="snc-chart-title">A chart title</p><cite class="fx-source" id="snc-chart-source">Source</cite></div>
+        </div>
+        <p id="snc-second">The text after the note.</p>
+      </div>
+      <div class="sidenote-wrapper" id="snm">
+        <p>Text next to a marked note that opens with a chart.</p>
+        <div class="sidenote sidenote-bulb" id="snm-note"><div class="chart" id="snm-chart"><p class="fx-title">A chart title</p></div></div>
+      </div>
+      <div class="sidenote-wrapper" id="sn2">
+        <p id="sn2-a">The first text block of a row with two notes.</p>
+        <div class="sidenote" id="sn2-n1"><p>The first note, long enough to run over several lines of the narrow note column, and then some more.</p></div>
+        <p id="sn2-b">The second text block.</p>
+        <div class="sidenote" id="sn2-n2"><p>The second note.</p></div>
+        <p>The third text block.</p>
+      </div>
+      <div class="sidenote-wrapper" id="snn">
+        <div><p>Text in a block of the text column.</p><p class="highlight" id="snn-wide">A wide block nested in the text block.</p></div>
+        <div class="sidenote" id="snn-note"><p>A note beside it.</p></div>
+      </div>
+      <div class="sidenote-wrapper" id="snl">
+        <p>Text next to a marked note with a long first line.</p>
+        <div class="sidenote sidenote-memory" id="snl-note"><p id="snl-p">A long note paragraph that wraps over several lines in the stacked form, so its first line would run the full width of the note.</p></div>
+      </div>
+      <div class="sidenote-wrapper" id="snp">
+        <p>Text next to a plain note.</p>
+        <div class="sidenote sidenote-bulb" id="snp-note"><p>A plain note.</p></div>
+      </div>
+      <div class="sidenote-wrapper" id="snt">
+        <p>Text next to a note that holds a table.</p>
+        <div class="sidenote" id="snt-note">
+          <p>A terminal table:</p>
+          <div class="table-scroll"><table class="table-terminal" id="snt-table">
+            <tr><td>Visitors:</td><td>1,234</td></tr>
+            <tr><td>Clicks:</td><td>345</td></tr>
+            <tr><td>Leads:</td><td>123</td></tr>
+            <tr><td>Sales:</td><td>12</td></tr>
+          </table></div>
+        </div>
+      </div>
+      <div class="sidenote-wrapper" id="snw">
+        <p>Text next to a note, with a wide block below it.</p>
+        <div class="sidenote" id="snw-note"><p>A note beside a wide block.</p></div>
+        <div class="highlight" id="snw-wide">A wide block in the row.</div>
+      </div>
+      <div class="highlight" id="hl-alone">A wide block outside a row.</div>
+      <!-- caption-width blocks in containers narrower than the measure -->
+      <div class="width-50" id="cw-half"><div class="text-content-caption" id="cw-cap">A caption-width box in a half-width block.</div></div>
+      <div class="grid grid-cols-3 gap-md" id="cw-grid"><div><p class="highlight" id="cw-hl">A highlight in a third of a grid.</p></div><div><p>B</p></div><div><p>C</p></div></div>
+      <div class="grid grid-cols-2 gap-md" id="cw-grid2"><div><p class="lead" id="cw-lead">A lead paragraph sitting in one cell of a two-column grid inside an article.</p></div><div><p>Other cell.</p></div></div>
+      <p class="full-width-caption" id="fwc-p">A paragraph with the caption width on the left.</p>
+      <p class="card-caption" id="cc-p">The same under the older name.</p>
+      <p class="font-size-lg mobile:font-size-sm opacity-50" id="util-p">A size that steps down on a phone, set back by half.</p>
+      <div class="sidenote-wrapper" id="snb">
+        <p>Text next to a banner.</p>
+        <div class="sidenote sidenote-banner" id="snb-note"><h5>A banner</h5><p>Its text.</p></div>
+      </div>
+      <div class="sidenote-wrapper" id="snbw">
+        <p>Text next to a banner, with a wide block.</p>
+        <div class="sidenote sidenote-banner" id="snbw-note"><h5>A banner</h5><p>Its text.</p></div>
+        <div class="highlight" id="snbw-wide">A wide block beside the banner.</div>
+      </div>
+      <div class="sidenote-wrapper" id="sne-lead">
+        <p>Text.</p>
+        <div class="sidenote">note</div>
+        <p class="lead" id="sne-lead-last">A lead paragraph, last in the row.</p>
+      </div>
+      <div class="sidenote-wrapper" id="sne-util">
+        <p class="margin-b-lg" id="sne-util-last">A paragraph with a margin utility, last in the row.</p>
+        <div class="sidenote">note</div>
+      </div>
+      <div id="sne-out-box">
+        <div class="sidenote-wrapper" id="sne-out"><p id="sne-out-last">A row outside the article flow.</p><div class="sidenote">note</div></div>
+      </div>
+
+      <h2>A surface keeps a quote on the measure; a striped terminal keeps its preset</h2>
+      <div class="card-inverted padding-md" id="inv-box"><p id="inv-p">A paragraph in a dark card.</p><blockquote id="inv-bq"><p>A quote in a dark card, long enough to reach the measure on a wide screen if nothing capped it.</p></blockquote></div>
+      <div class="collapsible-container" id="coll-box"><div class="collapsible-content rd-is-open"><p id="coll-p">A paragraph in a collapsible.</p><blockquote id="coll-bq"><p>A quote in a collapsible.</p></blockquote></div></div>
+      <table class="table-terminal table-striped table-bordered" id="tt-sb"><tr><td id="tt-sb-td">a</td><td>b</td></tr></table>
+      <table class="table-terminal table-bordered" id="tt-b"><tr><td id="tt-b-td">a</td><td>b</td></tr></table>
+
+      <div class="callout callout-signal" id="callout-outer"><p class="callout callout-warning" id="callout-nested">A warning inside an information notice.</p></div>
+      <div class="aside-footer" id="float-note">A margin note floated beside the paragraph that follows it.</div>
+      <p id="float-p">A paragraph next to a margin note, long enough to run past the note on a wide screen: the note floats at the article's right edge, clear of the measure.</p>
+      <div class="sidenote-wrapper"><p>Text.</p><div class="sidenote" id="sn-head"><h4><a id="sn-head-a" href="#x">A heading link</a></h4><p><a id="sn-p-a" href="#x">A note link</a></p></div></div>
+      <div class="flex" id="shrink-box"><div id="shrink-item"><div class="sidenote-wrapper" id="shrink-row"><p>Text next to a chart note, in a flex item that sizes to its content.</p><div class="sidenote"><div class="chart"><p>Chart</p></div></div></div></div></div>
+
+      <h2>A caption is its own measure</h2>
+      <div class="caption" id="cap"><p id="cap-p">A caption paragraph.</p><dl id="cap-dl"><dt>Term</dt><dd>Definition</dd></dl><blockquote id="cap-bq"><p>A quotation.</p></blockquote></div>
+
+      <h2>An option table on a phone (CSS-373)</h2>
+      <div class="table-scroll card-caption" id="opt-scroll">
+        <table class="table-bordered" id="opt-table">
+          <thead><tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr class="table-section"><td colspan="4"><h6>Layout</h6></td></tr>
+            <tr><td><code>yAxisPosition</code></td><td><code>'left'</code> | <code>'right'</code></td><td><code>'right'</code></td><td>Which side the Y axis sits on. With <code>'left'</code> the axis takes a 64px gutter on the left.</td></tr>
+            <tr><td><code>showRemainder</code></td><td>boolean</td><td><code>false</code></td><td>Draws the undisclosed remainder of a parent as a muted slice.</td></tr>
+            <tr><td><code>labelMinPct</code></td><td>number</td><td><code>0.04</code></td><td>Slices below this share get no outer label.</td></tr>
+            <tr><td><code>--chart-axis-color</code></td><td>colour</td><td><code>#ddd</code></td><td>A token name in the key column: it does not break at a hyphen.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="inline-code">Outside a table a long token still breaks: <code>new RareCharts.DualAxes('#chart',{left:{},right:{}}).setData(data)</code>.</p>
+
+      <h2>A footnote list (hand review, second pass)</h2>
+      <div class="footnote" id="fn-box"><ol id="fn-list"><li id="fn-li">A note in a numbered list.</li></ol></div>
+
+      <h2>The prose measure (CSS-374)</h2>
+      <p id="m-prose">A paragraph of the article itself, long enough to reach the measure on a wide screen: the reading line ends where the column of prose ends, not at the edge of the article, so the eye finds the next line without a hunt.</p>
+      <ul id="m-list"><li>A list in the article, with a long item that also reaches the measure on a wide screen before it wraps to a second line.</li></ul>
+      <section><p id="m-section">A paragraph in a section of the article, long enough to reach the measure on a wide screen: the reading line ends where the column of prose ends.</p></section>
+      <div class="card full-width padding-md"><p id="m-card">A paragraph in a card that spans the article, long enough to reach the measure on a wide screen: authored text keeps the reading line.</p></div>
+      <div class="full-width rc-chart" id="m-chart">
+        <div><p id="m-chart-subtitle">A chart subtitle in a wide chart card, long enough to pass the measure on a wide screen: the chart lays out its own text across the card.</p></div>
+        <div><ul id="m-chart-list"><li>A details-panel list in the chart, long enough to pass the measure on a wide screen, across the card.</li></ul></div>
+      </div>
+      <div class="panel full-width"><p id="m-panel">A paragraph in a data panel, long enough to pass the measure on a wide screen: the panel lays out its own text.</p></div>
+      <div class="table-scroll">
+        <table class="table-bordered" id="m-table">
+          <tbody>
+            <tr class="table-section"><td colspan="2"><h6>Group</h6><p id="m-table-section">A group-row line in a reference table, long enough to pass the measure on a wide screen: the row spans every column.</p></td></tr>
+            <tr><td><code>x</code></td><td><p id="m-td">A paragraph in a table cell, long enough to pass the measure on a wide screen: the table lays out its own columns.</p></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="table-bordered"><tr><td><p id="m-bordered-td">A paragraph in a bordered table without a scroll box, long enough to pass the measure on a wide screen.</p></td></tr></table>
+      <table id="m-layout">
+        <tr>
+          <td class="top" id="m-layout-label"><p class="bold">Primary Font: Fira Sans</p><span class="meta-info">Google Fonts: <a href="#">Type tester</a></span></td>
+          <td class="left"><p id="m-layout-td">A plain table that sets prose in two columns, as the font table on the typography page: the paragraph keeps the reading measure, and the label column keeps its room.</p></td>
+        </tr>
+      </table>
+
+      <h2 id="lh-h2">Line-heights inherit as ratios (CSS-375)</h2>
+      <div class="font-size-xs" id="lh-xs">Small text in the article.</div>
+      <div style="font-size: 11px" id="lh-11">An 11px chart label in the article.</div>
+      <div class="note" id="lh-note"><div class="font-size-xl" id="lh-note-big">Large text inside a note.</div></div>
+      <aside class="sidenote-wrapper"><p>Text.</p><div class="sidenote"><div style="font-size: 11px" id="lh-sidenote-11">An 11px label in a sidenote.</div></div></aside>
+      <pre id="lh-pre"><code id="lh-code">const a = 1;
+const b = 2;
+const c = 3;
+const d = 4;</code></pre>
+      <div class="footnote" id="lh-footnote"><div class="font-size-xl" id="lh-footnote-big">Large text in a footnote.</div></div>
+      <div class="footnote-inside-text" id="lh-fit"><div class="font-size-xl" id="lh-fit-big">Large text in an inline footnote.</div></div>
+      <div class="aside-footer" id="lh-aside"><div class="font-size-xl" id="lh-aside-big">Large text in an aside footer.</div></div>
+      <div style="clear: both"></div>
+      <div class="sidebar-meta" id="lh-meta"><div class="font-size-xl" id="lh-meta-big">Large text in sidebar meta.</div></div>
+      <blockquote><p>A quote.</p><cite id="lh-cite"><span class="font-size-xl" id="lh-cite-big">Large text in an attribution.</span></cite></blockquote>
+
+      <h2>Block rhythm in the article flow (CSS-377)</h2>
+      <p id="r-p">A paragraph before a card.</p>
+      <div class="card padding-md" id="r-card1">A card.</div>
+      <pre id="r-pre1"><code>card → code</code></pre>
+      <ul id="r-ul1"><li>code → list</li></ul>
+      <div class="card padding-md" id="r-card2">list → card</div>
+      <div class="rc-chart" id="r-chart">A chart container.</div>
+      <div class="grid grid-cols-2" id="r-grid"><div>chart → grid</div><div>b</div></div>
+      <div class="sidenote-wrapper" id="r-sn"><p>grid → sidenote row</p><div class="sidenote">note</div></div>
+      <pre id="r-pre2"><code>sidenote row → code</code></pre>
+      <div class="card padding-md" id="r-card3">A card before a spacer.</div>
+      <div class="air-md" id="r-air"></div>
+      <pre id="r-pre3"><code>spacer → code: the spacer alone is the gap</code></pre>
+      <div class="table-scroll" id="r-scroll"><table><tr><td>A table in its scroll box.</td></tr></table></div>
+      <pre id="r-pre4"><code>table box → code: the table's own margin is the gap</code></pre>
+      <div class="card padding-md" id="r-card4">A card before code with a margin utility.</div>
+      <pre class="margin-t-lg" id="r-pre5"><code>the utility decides</code></pre>
+      <div class="card padding-md margin-b-0" id="r-card5">A card with .margin-b-0 before code.</div>
+      <pre id="r-pre6"><code>a margin-bottom on the first block does not close the gap</code></pre>
+      <div class="card padding-md" id="r-card6">A card before code with .margin-t-0.</div>
+      <pre class="margin-t-0" id="r-pre7"><code>a margin-top utility on the second block closes it</code></pre>
+      <div class="panel__row" id="r-prow"><div class="panel__row-item">A panel row</div><div class="panel__row-item">of cells</div></div>
+      <pre id="r-pre8"><code>code after a panel row</code></pre>
+      <div class="panel-grid" id="r-pgrid"><div class="panel">a panel in a grid</div></div>
+      <div class="legend" id="r-legend"><span class="legend__item"><span class="legend__swatch legend__swatch--dot"></span>Series</span></div>
+      <pre id="r-pre9"><code>code after a legend</code></pre>
+      <div class="stat" id="r-stat"><span class="stat__label">Visits</span><span class="stat__value">1,204</span></div>
+      <div class="button-group" id="r-bgroup"><button type="button">Day</button><button type="button">Week</button></div>
+      <fieldset id="r-fs"><legend>Range</legend><label><input type="checkbox"> All time</label></fieldset>
+      <pre id="r-pre10"><code>code after a fieldset</code></pre>
+      <p id="r-pp1">A paragraph before a paragraph.</p>
+      <p id="r-pp2">A paragraph after a paragraph.</p>
+      <div class="sidenote-wrapper" id="r-row1"><p id="r-row1-p">A paragraph in a sidenote row.</p><div class="sidenote">note</div></div>
+      <div class="sidenote-wrapper" id="r-row2"><p id="r-row2-p">The next row reads as the next paragraph.</p><div class="sidenote">note</div></div>
+      <div class="sidenote-wrapper" id="r-row3"><p>Short text.</p><div class="sidenote" id="r-row3-note"><p>A note taller than its text, over several lines in the narrow note column.</p><p>And a second paragraph.</p></div></div>
+      <div class="sidenote-wrapper" id="r-row4"><p>The row after a tall note.</p><div class="sidenote">note</div></div>
+      <section>
+        <div class="sidenote-wrapper" id="r-sec-row1"><p id="r-sec-row1-p">A row in a section.</p><div class="sidenote">note</div></div>
+        <div class="sidenote-wrapper" id="r-sec-row2"><p id="r-sec-row2-p">The next row in the section.</p><div class="sidenote">note</div></div>
+        <div class="card padding-md" id="r-sec-card">A card in a section.</div>
+        <pre id="r-sec-pre"><code>card → code in a section</code></pre>
+      </section>
+
+      <h2>Cite (CSS-379)</h2>
+      <p id="c-p">Borges wrote <cite id="c-bare">The Library of Babel</cite> in 1941.</p>
+      <blockquote><p>The universe (which others call the Library)…</p><cite id="c-quote">Jorge Luis Borges</cite></blockquote>
+      <blockquote><p>As Melville wrote in <cite id="c-inquote">Moby-Dick</cite>, call me Ishmael.</p></blockquote>
+      <figure><div>A figure.</div><figcaption>Adapted from <cite id="c-fig">The Visual Display of Quantitative Information</cite>, p. 12.</figcaption></figure>
+      <figure><blockquote><p>A quote in a figure.</p></blockquote><figcaption id="c-figcap">— Edward Tufte, <cite id="c-fig-work">Envisioning Information</cite></figcaption></figure>
+
+      <h2>Print (CSS-383)</h2>
+      <p>Prose with <a id="pr-prose" href="https://example.com/report">an external link</a> and <a id="pr-anchor" href="#title">an anchor</a>.</p>
+      <div class="rc-chart">
+        <div class="rc-chart-footer"><p class="rc-chart-note">A chart note with <a id="pr-chart-note" href="https://example.com/data">a source link</a>.</p></div>
+        <ul><li><a id="pr-chart-li" href="https://example.com/evidence">evidence in a details panel</a></li></ul>
+      </div>
+    </article>
+  </div>
+</main>
+</body>
+</html>

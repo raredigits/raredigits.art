@@ -22,6 +22,7 @@ permalink: '/styles/layout/spacing/'
 
 <p>The scale is intentionally non-linear: small steps for micro-adjustments inside components, wider doublings for layout-scale spacing. Each step carries a semantic shift, not a gradual visual nudge.</p>
 
+<div class="table-scroll">
 <table>
   <thead>
     <tr><th>Token</th><th>Multiplier</th><th>Default value</th></tr>
@@ -40,6 +41,7 @@ permalink: '/styles/layout/spacing/'
     <tr><td><code>--space-fr</code></td>    <td>—</td>    <td>one column of the global grid</td></tr>
   </tbody>
 </table>
+</div>
 
 <p>Special values: <code>--space-0</code> (0), <code>--space-auto</code> (auto), and percentage tokens for layout sizing — <code>--space-5</code>, <code>--space-10</code>, <code>--space-25</code>, <code>--space-50</code>, <code>--space-100</code>, and the rest in between.</p>
 
@@ -89,9 +91,9 @@ permalink: '/styles/layout/spacing/'
 
 <pre><code>:root {
   --space-md: 20px;            /* tighten or expand the base step */
-  --space-xxxxl: 32rem;        /* taller list-group-pack columns */
+  --space-xxxxl: 32rem;        /* the tallest step of the scale */
 }</code></pre>
 
 <p>Components that consume tokens via custom properties accept inline overrides too:</p>
 
-<pre><code>&lt;div class="list-group-pack" style="height: var(--space-xxxxl);"&gt;</code></pre>
+<pre><code>&lt;div class="list-group-pack" style="--list-group-pack-min: 11rem;"&gt;</code></pre>

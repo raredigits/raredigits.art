@@ -37,9 +37,28 @@ beforeAll(() => {
   });
 });
 
-const VAR = /var\(\s*(--[\w-]+)\s*(?:,\s*((?:[^()]|\([^()]*\))*))?\)/g;
-const resolveVars = (v, depth = 0) => (depth > 12 ? v : v.replace(VAR, (m, name, fb) =>
-  name in tokens ? resolveVars(tokens[name], depth + 1) : fb !== undefined ? resolveVars(fb, depth + 1) : '\u0000'));
+// Resolves var() with fallbacks nested to any depth: the fallback runs to the
+// var()'s own closing parenthesis, found by counting.
+const resolveVars = (v, depth = 0) => {
+  if (depth > 12) return v;
+  let out = '';
+  let i = 0;
+  while (i < v.length) {
+    const at = v.indexOf('var(', i);
+    if (at < 0) { out += v.slice(i); break; }
+    out += v.slice(i, at);
+    let j = at + 4;
+    let level = 1;
+    while (j < v.length && level) { if (v[j] === '(') level++; else if (v[j] === ')') level--; j++; }
+    const inner = v.slice(at + 4, j - 1);
+    const comma = inner.indexOf(',');
+    const name = (comma < 0 ? inner : inner.slice(0, comma)).trim();
+    const fb = comma < 0 ? undefined : inner.slice(comma + 1).trim();
+    out += name in tokens ? resolveVars(tokens[name], depth + 1) : fb !== undefined ? resolveVars(fb, depth + 1) : '\u0000';
+    i = j;
+  }
+  return out;
+};
 
 describe('CSS-118: committed artifacts equal a fresh build', () => {
   it.each(TARGETS.map((t) => [t.file, t]))('%s', async (file, target) => {

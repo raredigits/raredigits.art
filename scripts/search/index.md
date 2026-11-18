@@ -54,7 +54,7 @@ First, we need an element that will allow users to open the search interface.
 
 ```html
 <div class="header-icons">
-  <button class="icon-search no-decoration rd-js-search" aria-label="Поиск"></button>
+  <button class="icon-search no-decoration rd-js-search" aria-label="Search"></button>
   <button class="hamburger no-decoration rd-js-hamburger" aria-label="Toggle navigation">
       <span class="hamburger__icon-menu"></span>
       <span class="hamburger__icon-close"></span>

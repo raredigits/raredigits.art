@@ -32,7 +32,7 @@ The numbers we care about are revenue and price. One tells you what the miner e
 
 One `setData()` call and the mechanical feed becomes something you can actually read.
 
-<div class="card-dashboard-bordered card-caption" id="mining-hashrate-profit"></div>
+<div id="mining-hashrate-profit" class="panel panel--bordered card-caption"></div>
 
 The first thing the chart tells you is that the miner is losing ground. Not dramatically, but <strong>steadily</strong>. The gray bars track daily BTC output, and they slope downward for the entire year. From roughly 0.00013 BTC per day in February to around 0.00009 by December. The machine is doing the same work. The network is just getting more competitive, and the miner’s share of the reward keeps shrinking. This is not a bad week. This is physics.
 
@@ -64,7 +64,7 @@ The divergence series is just the difference between the two — how many index
 
 <div class="air-md"></div>
 
-<div class="card-dashboard-bordered card-caption" id="mining-index"></div>
+<div id="mining-index" class="panel panel--bordered card-caption"></div>
 
 The indexed chart makes the structure hard to ignore.
 
@@ -92,7 +92,7 @@ const ELEC = {
 
 Plotted against revenue, it draws a fixed line across the chart, and everything below that line is loss.
 
-<div class="card-dashboard-bordered card-caption" id="mining-net-profit"></div>
+<div id="mining-net-profit" class="panel panel--bordered card-caption"></div>
 
 The pink line is electricity. It doesn’t care about Bitcoin.
 
@@ -114,7 +114,7 @@ For each day in the dataset we know two things: how much electricity the miner
 
 Plotted against the market price, it answers a simple question: was the miner <em>actually</em> getting a discount?
 
-<div class="card-dashboard-bordered card-caption" id="btc-mining-cost"></div>
+<div id="btc-mining-cost" class="panel panel--bordered card-caption"></div>
 
 In February, the orange line sits above the blue one. The market price of Bitcoin is higher than what it costs in electricity to produce it. This is the scenario the mining optimists describe: you’re buying Bitcoin at a discount, just via a <em>power outlet</em>, a 3,500-watt ASIC, and a willingness to receive your Bitcoin in daily increments of 0.00013. <strong>It’s real</strong>, and for a while it’s quite good.
 

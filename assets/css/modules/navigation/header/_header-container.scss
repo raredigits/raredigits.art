@@ -1,4 +1,5 @@
 @use "../../utilities/breakpoints" as bp;
+@use "../../elements/control-face" as cf;
 
 // `--header-height` is owned by `layout/_containers.scss` — do not redeclare it here.
 
@@ -88,15 +89,24 @@
     }
 }
 
+// The glyph takes the bar's icon size, not the default button's own
+// (elements/_buttons.scss, v0.7.2); 1.15 is the line box the icons have
+// always sat on (normalize's, before the button system set its own).
 .header-icons button {
+    @include cf.unbutton;
+
     display: inline;
     appearance: none;
-    background: none;
-    border: none;
     color: var(--primary-text-color);
+    line-height: 1.15;
     -webkit-tap-highlight-color: transparent;
-    padding: 0;
     margin-left: var(--base-unit);
+
+    // A <button> stays an atomic inline box under `display: inline`, so it
+    // takes the bar's height: the glyphs sit in the middle of the bar.
+    // Centring them with flex instead (CSS-399) lifted the menu glyph 5px
+    // and moved the nav text 2px: the line box holds them within 1–2px of
+    // the bar's centre, so it stays.
     height: 100%;
     align-items: center;
 }

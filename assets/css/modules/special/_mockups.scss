@@ -1,8 +1,11 @@
 // Iphone mockup styles
 
+// The mockup is a fixed-size block: it centres in its container by its
+// margins (`.center` only sets `text-align`, which a block ignores).
 .phone-frame-wrapper {
     position: relative;
     width: fit-content;
+    margin-inline: auto;
     z-index: 5;
 }
 

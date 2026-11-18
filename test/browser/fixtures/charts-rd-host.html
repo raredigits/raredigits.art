@@ -1,0 +1,98 @@
+<!doctype html>
+<!-- CSS-381 (v0.7.2): RareCharts under the gated library, the hostile-host
+     case for the button and form defaults. Checked by
+     test/browser/charts-rd-host.test.js. Page mode (`<html class="rd">`),
+     the built rare.css and the RareCharts bundle:
+       #line   Line with timeframes and the Lin/Log switch (range buttons)
+       #graph  Graph with a relation-type legend, breadcrumbs, footer tools
+       #ctl-chart  a chart whose `controls:` row holds a page checkbox and
+               select; #ref holds the same controls outside any chart
+     `?bare` loads the same page without rare.css: RareCharts alone, the
+     oracle each chart control is compared with. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RareCharts under Rare Styles</title>
+<script>
+  if (!location.search.includes('bare')) document.write('<link id="rare" rel="stylesheet" href="/assets/css/rare.css">');
+</script>
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <article>
+      <h2>Range buttons and the Lin/Log switch</h2>
+      <div id="line" class="panel panel--bordered"></div>
+
+      <h2>Graph: type legend, breadcrumbs, tools</h2>
+      <div id="graph" class="panel panel--bordered"></div>
+
+      <h2>A chart with page controls</h2>
+      <div id="ctl-chart" class="panel panel--bordered"></div>
+      <div id="ctl">
+        <label><input id="ctl-check" type="checkbox" checked> Show the band</label>
+        <label>Scale <select id="ctl-select"><option>Linear</option><option>Log</option></select></label>
+      </div>
+
+      <h2>The same controls on the page</h2>
+      <div id="ref">
+        <label><input id="ref-check" type="checkbox" checked> Show the band</label>
+        <label>Scale <select id="ref-select"><option>Linear</option><option>Log</option></select></label>
+        <button id="ref-button" type="button">Apply</button>
+      </div>
+    </article>
+  </div>
+</main>
+
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const DAY = 864e5;
+  const days = (n, from = Date.UTC(2024, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+    date: new Date(from + i * DAY),
+    value: 100 + 10 * Math.sin(i / 9) + i / 20,
+  }));
+
+  window.charts = {
+    line: new RareCharts.Line('#line', {
+      height: 300,
+      animate: false,
+      title: 'Timeframes and scale',
+      timeframes: ['1M', '3M', '1Y', 'ALL'],
+      scaleToggle: true,
+    }).setData(days(500)),
+
+    graph: new RareCharts.Graph('#graph', {
+      height: 420,
+      duration: 0,
+      title: 'Relations',
+      source: 'Source: fixture',
+      linkTypes: {
+        family: { color: '#1677ff', label: 'Family' },
+        work: { color: '#fa8c16', label: 'Work' },
+      },
+    }).setData({
+      nodes: [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }, { id: 'c', label: 'Gamma' }, { id: 'd', label: 'Delta' }],
+      links: [
+        { source: 'a', target: 'b', type: 'family' },
+        { source: 'a', target: 'c', type: 'work' },
+        { source: 'b', target: 'c', type: 'work' },
+        { source: 'c', target: 'd', type: 'family' },
+      ],
+    }),
+
+    controls: new RareCharts.Line('#ctl-chart', {
+      height: 240,
+      animate: false,
+      title: 'Controls row',
+      controls: '#ctl',
+    }).setData(days(60)),
+  };
+
+  // A second view, so the Graph shows its breadcrumbs (two states). The
+  // first view is on 'c', the best-connected node.
+  window.ready = window.charts.graph.whenReady()
+    .then(() => window.charts.graph.focus('a').whenReady());
+</script>
+</body>
+</html>

@@ -23,7 +23,7 @@ This file documents the canonical CSS workflow for Rare Styles inside `raredigit
 
 ## The `.rd` gate config
 
-`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically; `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
+`scripts/rd-gate.config.mjs` is the global-rule inventory (`CSS-337`). Every selector that targets bare elements (no class, attribute or id) must be listed there as `PAGE` (page shell: active only with `.rd` on `<html>`/`<body>`) or `ISLAND` (tag styles: active on `.rd` and inside it). The build fails on an unclassified bare selector and warns about stale entries. Class/attribute/id selectors are island-gated automatically, but not one whose classes sit only inside `:not()`: an exclusion does not scope a rule, so `p:not(.lead)` is listed like `p`, by its key without the `:not()` parts (`inventoryKey()` in `scripts/rd-gate.mjs`, `v0.7.2`), and the build error names the keys. `:root`, `@font-face`, `@keyframes` and self-contained `rd-icon-*` compounds stay ungated.
 
 ## Reset and normalize (decided 2026-10-16, `CSS-078`)
 
@@ -31,7 +31,17 @@ Both apply only inside `.rd`: `vendor/normalize.css` (v8.0.1, kept **whole and u
 
 **Islands.** The reset matches the island root and everything inside it, at zero specificity (`*:where(.rd, .rd *)`). It removes **user-agent** margins and padding only. Any host rule with a type or class selector (`figcaption { margin: … }`) still wins over it. Same-specificity collisions, such as a host `p {}` against the library's `p:where(…)`, resolve by load order. That is the documented caveat: the gate protects the host from the library, not the library from the host.
 
-**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font inheritance that the `v0.7.9` forms will build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
+**Why normalize stays whole.** It costs about 1.9 KB minified and **≈ 730 B gzip (≈ 2% of `rare.min.css`)**. Trimming it to what the library relies on would save under 400 B gzip and turn a vendor file into a fork. Rules the library relies on today: `[hidden]` (carousel arrows), `b, strong` bolder, `small`, `sub`/`sup`, `kbd`/`samp`, `details`/`summary`, and the form-control font family inheritance that the `v0.7.2` forms (`elements/_forms.scss`) build on. IE- and legacy-Edge-era rules that are no-ops in evergreen browsers (`main`, `template`, `img { border-style }`, `hr` overflow, `button` overflow, `legend` table display) stay as harmless weight. Revisit in Lean Delivery (`v0.7.5`) with the `CSS-097` coverage data, not before.
+
+## Element defaults: buttons and forms (`v0.7.2`, `Q-04`)
+
+A bare `<button>`, `<input>`, `<select>`, `<textarea>`, `<fieldset>` and `<legend>` inside `.rd` get the library's look (`elements/_buttons.scss`, `elements/_forms.scss`). Three rules keep them from fighting the components that style their own controls:
+
+- **Type weight in every state.** The element rules stay at `(0,0,1)`, hover, active, disabled, busy and validation included: the state goes in `:where()` (`button:where(:hover:not(:disabled))`), so any class beats the defaults in every state and a component never repeats its look for `:hover`. `.button` keeps the `(0,2,0)` its states always had, so a link-button outranks `nav a:hover` and a page's `.button.my-variant` loaded later still wins.
+- **They stop at a RareCharts card.** Every element selector carries `:not(:where(.rc-chart *))` (zero weight; written once, as `$outside-embedded` in `utilities/_contracts.scss`, beside `$not-button`), as the prose measure and the print URLs do: the chart owns its controls (RareCharts C-13), the page controls it moves into its `controls:` row included. `test/browser/charts-rd-host.test.js` (`CSS-381`) compares each chart control with the same page without the library. The exclusion does not take the rules out of the inventory: they are listed as `ISLAND` in `rd-gate.config.mjs` by their keys (`button`, `button:where(:hover)`, `select::placeholder`, …). A rule scoped by an attribute (`input:where([type="text"])`) is class context, as before.
+- **A component that resets a button names the states it resets** (see `button.legend__item` in `bricks/_legend.scss`): a disabled toggle must not fade, a busy one must not spin.
+
+A variant sets colour slots (`--button-bg`, `--button-text`, `--button-border-color`, `--button-bg-hover`, `--button-border-color-hover`, `--button-bg-active`) and a size sets size slots (`--button-padding-x`, `--button-padding-y`, `--button-font-size`); the base rule in `elements/_buttons.scss` reads them, each with the default look as its fallback (the colours are in `elements/_control-face.scss`). `.button-link` also takes the link look (`navigation/_link-look.scss`). A selector that names the icon set inside a pseudo-class argument (`button:has(> [class*=rd-icon-])`) is gated like any other: only a self-contained `rd-icon-*` compound stays ungated (`classify()` in `scripts/rd-gate.mjs`).
 
 ## Day-to-day editing flow
 
@@ -74,6 +84,38 @@ State MAY also be styled via ARIA attributes the scripts maintain (`[aria-expand
 
 **Migration note:** prefixing the existing component/utility surface is deliberately deferred — `CSS-133` (`0.8.0`) audits each class and decides prefix / alias / leave per case. Do not preemptively rename shipped classes.
 
+## Card vs panel (`CSS-182`, v0.7.2)
+
+Two surfaces, chosen by what the content is, never by how it should look:
+
+- **`.card` — narrative content.** A person wrote it and it reads as content: an article preview, an author or a project, a pricing block, a briefing list in a post. A soft surface (`--gray-lightest`) with no fixed inner structure.
+- **`.panel` — data and system content.** A system produced it and it reads as data: a KPI, a chart, a status, settings, a log. No surface of its own (theme-agnostic), an optional frame (`.panel--bordered`), a fixed structure when it needs one (`.panel__header` / `__body` / `__footer`), rows of figures (`.panel__row`), a grid of panels (`.panel-grid`).
+
+When unsure, ask where the block would feel at home: in an article (card) or on a dashboard (panel). A block that mixes both splits along the same line: the chart is the panel, and the prose that explains it stays text around it.
+
+| Block | Markup | Why |
+|---|---|---|
+| Blog teaser, author box, project tile | `.card` | authored narrative |
+| A briefing checklist in a post | `.card` | authored narrative, even when it is a list |
+| A card with a header | a block with `.border-bottom` and a padding utility (`.border-top` over a footer) | a card has no parts of its own (`.card-header` is gone since v0.7.2); a fixed header, body and footer are the panel's, for data |
+| A chart frame | `.panel .panel--bordered` on the chart element itself | data; RareCharts' container is the card it draws in: its `height` includes the padding, and its labels may run into it |
+| A quote header, a chart and a row of figures | a `.panel .panel--bordered` around them, the chart unframed | one data block |
+| A chart in a sidenote, or in a panel row cell | no frame of its own | a margin illustration to the text; the row is the frame |
+| KPI figures under a chart, a row of gauges | `.panel__row` (`--stack` when the cells are charts) | data |
+| Three KPI tiles | `.panel-grid` of `.panel`s with header / body / footer | data |
+
+For maintainers: a panel is a block, so content moves over from `.card-dashboard-bordered` as it was; it becomes a flex column only with parts (`__header` / `__body` / `__footer`). Its layout sits at zero specificity (`:where()`), so a chart's own layout wins on the same element whatever the load order; its padding has class specificity, because the reset at the end of `rare.scss` would erase it. A panel never sets `gap`, `overflow`, `position` or `container` (`test/panels.test.js`, `test/browser/panels.test.js`).
+
+## Surfaces and derived tokens (`CSS-380`, v0.7.2)
+
+A custom property is resolved where it is declared and inherited as the result. A token made from another on `:root` (`--chart-axis-color: var(--border-color)`, `--chart-bg: var(--surface-current)`) keeps its `:root` value inside an element that re-maps the source. So:
+
+- a rule that sets `--surface-current` also restates `--chart-bg` and paints its background from `--surface-current` (`.card`, `.card-inverted`); a `.panel` sets neither;
+- a surface that re-maps text or border roles includes `role-tokens` from `modules/charts/_roles.scss` after the re-mapping (`.card-inverted`), which resolves the chart tokens again against it;
+- a light surface nested in a dark one restores every role the dark one re-maps to its `:root` value (the `--_page-*` snapshot in `bricks/_page-roles.scss`, which the print module also uses for a dark card on paper) and includes `role-tokens` again (`:where(.card-inverted .card)`), at zero specificity: it only has to beat inheritance.
+
+`test/tokens-contracts.test.js` fails when a surface re-maps a role and does not restate a chart token made from it, and when the nested light card misses a role or a value the dark card re-maps.
+
 ## Icon policy
 
 - Icons are **not a font**. Since `v0.6.18` (`CSS-095`/`CSS-096`) the library ships its own SVG icon set — static cuts of Material Symbols Outlined (Apache-2.0) under `assets/css/images/icons/` — drawn via `mask-image` + `background-color: currentColor`, so icons recolor through the normal `color`/token cascade. Never re-introduce an icon-font `@import` or the vendor `.material-symbols-outlined` class (removed in `v0.6.18`).
@@ -87,9 +129,11 @@ State MAY also be styled via ARIA attributes the scripts maintain (`[aria-expand
 
 - Canonical public asset folder for externally reusable Rare Styles images: `assets/css/images/**`
 - Current canonical reusable assets include:
-  - `assets/css/images/wa.svg`
-  - `assets/css/images/github.svg`
-  - `assets/css/images/rare-digits/rare-logo-black.svg`
+  - `assets/css/images/vendors/whatsapp/wa-stripe.svg`
+  - `assets/css/images/vendors/github/github-stripe.svg`
+  - `assets/css/images/vendors/github/mark/github-mark.svg` and `github-mark-white.svg` (with `.png` copies)
+  - `assets/css/images/vendors/rare-digits/rare-logo-black.svg`
+  - `assets/css/images/common/mark-quote.svg`
 - These files are deployed with the site and can be referenced through versioned jsDelivr URLs after release tagging
 - Before a release tag exists, library code may still point at local project paths
 - After tagging a release, library-facing asset references should be updated to canonical versioned CDN URLs rather than old project-internal image paths

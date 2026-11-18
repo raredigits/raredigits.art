@@ -1,0 +1,151 @@
+---
+layout: page.njk
+title: "Bricks / Cards"
+section: "Styles"
+displaySidebar: true
+permalink: '/styles/bricks/cards/'
+---
+
+<div class="meta-info">
+    css/modules/bricks/_cards.scss
+</div>
+
+<section>
+    <p>The card is the narrative surface: an article preview, a person, a project, a pricing block — content an author made for a reader. A panel is for data; the rule for choosing between them is on the <a href="/styles/bricks/#card-vs-panel">Building Blocks</a> page.</p>
+</section>
+
+<section>
+    <h2>Card</h2>
+    <p>Cards provide distinct content separation, letting you build complex hierarchies and group related elements. By default they stand out through background color, and they lay out as a <em>flex column</em>.</p>
+    <div class="card center-center padding-lg">
+       .card
+    </div>
+    <p>A card is a versatile connector piece — it takes on any visual style through utilities: sizes, colors, margins, paddings, alignment, borders. Content-wise it can be a simple container or develop its own hierarchy, holding any content type, blocks, or interactive elements.</p>
+    <p>A card has no parts of its own: a fixed header, body and footer belong to the <a href="/styles/bricks/panels/">panel</a>, which is for data. A card’s header is a block with <code>.border-bottom</code> and a padding utility, a footer one with <code>.border-top</code>.</p>
+    <div class="card text-content-width stretched">
+        <div class="border-bottom padding-md">.border-bottom</div>
+        <div class="column gap-sm padding-md">
+            <div class="width-50 skeleton-row"></div>
+            <div class="skeleton-row width-100"></div>
+        </div>
+        <div class="border-top padding-md">.border-top</div>
+    </div>
+    <p>Cards come in two default styles: <code>.card</code> and <code>.card-inverted</code>. Each is a surface: it paints its background from <code>--surface-current</code>, and a chart on it (RareCharts 0.9.8_7 and later) paints its label plates with the same colour. <code>.card-inverted</code> also re-maps the text, border and chart roles for its dark ground, so a panel divider or a chart on it reads (<a href="/styles/colors/chart-tokens/#surfaces">Surfaces</a>). A <code>.card</code> nested in a <code>.card-inverted</code> is a light surface again: it takes back the page's values of those roles, a project's own on <code>:root</code> included.</p>
+    <p>Blocks that hang into the page margin (<code>pre</code>, <code>blockquote</code>, <code>.lead</code>, the caption widths) stay inside both cards, as in a panel. On paper a <code>.card-inverted</code> prints as a light card in a thin frame (<a href="/styles/utilities/#print">Print</a>).</p>
+</section>
+
+<section>
+    <h2>Card Grid</h2>
+    <p>When one card is not enough and the cards form a regular, repeated set, <code>.card-grid</code> is the special case that arranges <code>.card-grid__item</code> tiles into a responsive grid. It is the one place where the card surface owns its own layout, because the tiles are uniform by design. Column count defaults to five; the <code>--cols-2</code> / <code>--cols-3</code> / <code>--cols-4</code> modifiers (or the <code>--card-grid-cols</code> custom property) set it; below desktop every variant collapses to two so tiles stay legible.</p>
+
+    <p>The grid ships two tile treatments. <code>.card-grid--cards</code> turns items into square card surfaces:</p>
+
+    <div class="card-grid card-grid--cards card-grid--cols-4 padding-y-md">
+        <div class="card-grid__item"><span class="card-grid__title">Clarity</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Density</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Signal</span></div>
+        <div class="card-grid__item"><span class="card-grid__title">Restraint</span></div>
+    </div>
+
+    <p><code>.card-grid--gallery</code> turns items into image tiles — set the image with an inline <code>background-image</code> — with a title overlaid at the bottom:</p>
+
+    <div class="card-grid card-grid--gallery card-grid--cols-3 padding-y-md">
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/icecream-flowers.png');">
+            <span class="card-grid__title"><a href="">Pleasure</a></span>
+        </div>
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/stormtrooper.png');">
+            <span class="card-grid__title"><a href="">Technology</a></span>
+        </div>
+        <div class="card-grid__item" style="background-image: url('/assets/img/illustrations/retropunk.png');">
+            <span class="card-grid__title"><a href="">Retropunk</a></span>
+        </div>
+    </div>
+
+    <p>The card grid is for <em>uniform, repeated</em> tiles. For a freeform arrangement of full <code>.card</code> surfaces, do not reach for a component — use the grid utilities directly, as shown next.</p>
+</section>
+
+<section>
+    <h2>Composing cards — no new class required</h2>
+    <p>There is no <code>.card-deck</code> selector, and there never needs to be. A “card deck” is not a thing the library ships; it is just several cards arranged together, and arrangement is already a solved problem. Any block-level element — a <code>&lt;div&gt;</code>, a <code>&lt;section&gt;</code>, or another <code>.card</code> — can serve as the wrapper, and the alignment, positioning, spacing, and grid utilities do the placement.</p>
+    <div class="card-inverted padding-b-lg text-content-width">
+        <div>
+            <img src="/assets/img/illustrations/poker.jpg" alt="">
+        </div>
+        <div class="padding-md">
+            <div class="border-bottom padding-b-md">
+                <h3>A “deck” is just composition</h3>
+            </div>
+            <p>This block is a <code>.card-inverted</code> wrapping an image, a header, prose, and a nested card — no special deck class involved.</p>
+            <div class="card center-center padding-lg black">
+              .card.center-center.padding-lg
+            </div>
+            <div class="divider-lg"></div>
+            <p>Cards are standard block elements capable of holding any content type: text, images, charts, tables, or interactive elements.</p>
+        </div>
+        <code class="absolute right-md bottom-md">.card-inverted</code>
+    </div>
+    <p>The takeaway: any positioning a card layout needs is reachable through the existing utilities. Before adding a new class, check whether alignment and positioning already cover it — they almost always do.</p>
+</section>
+
+<section>
+    <h3>Helper Selectors</h3>
+    <p>The same principle, pushed further. Everything below is built from cards plus decoration, color, spacing, and positioning utilities — no bespoke classes. Combine them freely to satisfy virtually any design requirement.</p>
+    <div class="grid grid-cols-3 gap-md">
+        <div class="card rounded-sm gray-bg col-span-2 center-center">
+            <code>.rounded</code>
+        </div>
+        <div class="card circle width-xxl col-span-1">
+            <code>.circle</code>
+        </div>
+        <div class="shadow-sm col-span-1 center-center">
+            <code>.shadow</code>
+        </div>
+        <div class="card card-hover col-span-1 center-center">
+            <code>.card-hover</code>
+        </div>
+        <div class="card-inverted col-span-1 padding-sm note">
+            <div>
+                Reference Modules:<br>
+                <a class="gray-light-link" href="/styles/decorations/">Decorations</a><br>
+                <a class="gray-light-link" href="/styles/colors/">Colors</a><br>
+                <a class="gray-light-link" href="/styles/layout/spacing/">Spacing</a>
+            </div>
+        </div>
+        <div class="card bordered padding-xl col-span-3 overflow-hidden">
+            <!-- confetti: palette colours, circle and square, placed by the position utilities -->
+            <div class="width-5 square rounded-sm purple-bg absolute left-0 top-0 z-index-0"></div>
+            <div class="width-5 square circle orange-bg absolute left-0 bottom-0 z-index-0"></div>
+            <div class="width-5 square tiffany-bg absolute left-70 top-5 z-index-0"></div>
+            <div class="width-5 square circle princess-bg absolute left-90 top-0 z-index-0"></div>
+            <div class="width-10 square circle yellow-bg absolute left-70 bottom-10 z-index-0"></div>
+            <div class="width-5 square circle green-bg absolute right-30 top-60 z-index-0"></div>
+            <div class="width-5 square ocean-bg absolute right-25 bottom-0 z-index-0"></div>
+            <div class="width-15 square circle pink-bg absolute right-5 bottom-10 z-index-0"></div>
+
+            <!-- the stamp -->
+            <div class="width-20 mobile:width-33 square circle coral-bg white shadow-md absolute right-5 top-10 z-index-4 uppercase bold">
+                <span class="font-size-xl font-weight-black">−100%</span>
+                <span class="font-size-xs">on everything</span>
+            </div>
+
+            <!-- the pitch -->
+            <div class="relative z-index-3 width-66 column gap-sm">
+                <div class="flex gap-xs wrap">
+                    <span class="tag">#limited</span>
+                    <span class="tag">#nocatch</span>
+                    <span class="tag">#forever</span>
+                </div>
+                <h3 class="font-size-xxl font-weight-black uppercase margin-0">Buy 1,<br>get <mark>all</mark> free!</h3>
+                <p class="handwritten margin-0">No catch. Well, one: it’s a demo.</p>
+                <p class="margin-0">Was <s>$999</s>, now <strong>$0</strong>. We did the math twice.</p>
+                <p class="callout callout-warning"><strong>Hurry!</strong> Only ∞ left in stock.</p>
+                <div class="flex gap-sm items-center wrap">
+                    <button class="button-primary button-lg" type="button">Grab them all</button>
+                    <span class="font-size-xs gray-mid-dark">Valid until the heat death of the universe. One universe per customer.</span>
+                </div>
+            </div>
+            <code class="absolute right-md bottom-md">.bordered</code>
+        </div>
+    </div>
+    <p>Not a single new style went into this section. The confetti, the stamp and the poster itself are cards plus the existing decoration, color, spacing, positioning and typography utilities, with stock components on top: <code>.button-primary</code>, <code>.tag</code>, <code>.callout</code>, and plain <code>&lt;mark&gt;</code> and <code>&lt;s&gt;</code>. No inline styles, no one-off classes: open the markup and every class in it is documented in the library.</p>
+</section>

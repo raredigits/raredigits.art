@@ -41,6 +41,12 @@ root.walkRules((rule) => {
   }
 });
 
+// RareCharts' container class appears in the library's exclusions
+// (`:not(:where(.rc-chart *))`) and in the block-rhythm list: a host hook the
+// library recognises, not a class it ships. Listed apart from the API.
+const hostHooks = [...classes].filter((c) => c.startsWith('rc-')).sort();
+hostHooks.forEach((c) => classes.delete(c));
+
 const pkg = JSON.parse(read('package.json'));
 const snapshot = {
   label,
@@ -50,6 +56,7 @@ const snapshot = {
   assetDirs: list('assets/css').filter((f) => ['fonts', 'images'].includes(f)).sort(),
   scssEntryPoints: ['assets/css/rare.scss', ...list('assets/css/modules').filter((f) => f === '_index.scss').map((f) => `assets/css/modules/${f}`)],
   classes: [...classes].sort(),
+  hostHooks,
   customProperties: Object.fromEntries(Object.entries(tokens).sort(([a], [b]) => a.localeCompare(b))),
 };
 

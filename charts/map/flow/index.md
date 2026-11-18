@@ -8,15 +8,13 @@ permalink: '/charts/map/flow/'
 
 `MapFlow` draws flows between places over a map: capital, goods, influence. Each flow is an arc from one point to another; its width is the value it carries, its color the type, an arrowhead marks where it goes. It is built on [`Map`](/charts/map/) — the same geometry, projections and theme — and takes the same `{ nodes, links }` shape as [`Graph`](/charts/graph/) and [`Sankey`](/charts/sankey/).
 
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
   <p><strong>⚠️ Experimental.</strong> <code>MapFlow</code> is not covered by the 1.0 stability guarantee — its rendering and options may change without a major-version bump.</p>
 </div>
 
 The smallest case: three places, three flows, two types. Hover an arc for its details; click it to pin the tooltip.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="mapflow-triangle"></div>
-</div>
+<div id="mapflow-triangle" class="panel panel--bordered text-content-caption"></div>
 
 ## Data
 
@@ -57,9 +55,7 @@ Nodes are places, links are flows between them. A node is placed by its own coor
 
 Flows carry `start` and `end` — years, `YYYY-MM` or ISO dates; a missing bound is open. Turn on `timeframes`, `navigator` or both and the map gets a time scale, as [TimeSeries](/charts/line/time-series/) has: `timeframes` puts period buttons in the header, `navigator` a strip under the map with a time axis that shows how many flows run over time — brush it to pick any period. Flows outside the period are hidden (`timeWindowMode: 'dim'` fades them instead), and a place whose flows are all outside fades with them.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="mapflow-eurodollar"></div>
-</div>
+<div id="mapflow-eurodollar" class="panel panel--bordered text-content-caption"></div>
 
 <br>
 

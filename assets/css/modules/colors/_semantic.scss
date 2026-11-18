@@ -1,0 +1,51 @@
+@use "color-classes" as cc;
+
+// SEMANTIC COLOURS (CSS-121, v0.7.2)
+// Roles on top of the palette: what a colour means, not which colour it is.
+// Components that signal a state (callouts, KPI deltas, buttons, form
+// validation) read these, so a project re-maps a role once instead of hunting
+// for every `--red`. Each role points at an existing palette token; override
+// it on `:root` (or on a surface) to change the meaning's colour.
+
+// The values are signal colours for borders, stripes, fills and icons. None
+// reaches 4.5:1 as body text on the light surfaces (red and blue about 4:1 on
+// white, green 3.5:1, yellow 1.3:1), so components keep their text in the
+// text-role tokens.
+// Each role and alias has a `-bg` twin, the colour at 25%, for a fill behind
+// text (`color-bg`, _color-classes.scss). Aliases and twins are resolved here
+// on `:root`: re-map a role on `:root` and they follow; on a surface, restate
+// them too. The library's own fills (the callouts) mix the role where they
+// are, so they follow a role re-mapped on a surface by themselves.
+
+:root {
+    // The state roles, each on its own base colour.
+    --success: var(--green);
+    --warning: var(--yellow);
+    --danger: var(--red);
+
+    // SIGNAL (CSS-124, v0.7.2): technical information and the attention
+    // accent: an emphasised figure (`.stat--signal`), checked boxes and the
+    // focused field (`--field-accent`), the keyboard focus ring; the main
+    // colour of a chart. Kept apart from the brand colours, which are
+    // identity (brand marks, the primary button, link highlights in
+    // --brand-color-dark).
+    --signal: var(--blue);
+
+    // Aliases for financial figures: a change for the better, for the worse,
+    // or none. Pure aliases — they follow the role they point at.
+    --positive: var(--success);
+    --negative: var(--danger);
+    --neutral: var(--warning);
+
+    // The outcome of a check or an operation that did not go through.
+    --fail: var(--danger);
+
+    @include cc.color-bg((signal, success, warning, danger, positive, negative, neutral, fail));
+
+    // SURFACE (CSS-380, v0.7.2): the background of the surface an element
+    // sits on, for what paints with it — a chart's label plates and
+    // knockouts (`--chart-bg`). The page by default; `.card` and
+    // `.card-inverted` set their own (bricks/_cards.scss). A `.panel` paints
+    // no background and sets none: the surface behind it passes through.
+    --surface-current: var(--bg-color);
+}

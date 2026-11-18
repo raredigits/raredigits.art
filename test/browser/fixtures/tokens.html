@@ -1,0 +1,105 @@
+<!doctype html>
+<!-- Checked by test/browser/tokens.test.js (v0.7.2, the tokens stream): the
+     chart tokens and the surfaces they follow (CSS-380 + CSS-240 + CSS-176),
+     the KPI stat (CSS-184), the measure stopping at data components for dl,
+     blockquote and figure (CSS-384), and the print fold-back of every outdent
+     (CSS-385). Page mode (`<html class="rd">`) with the site shell. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokens fixture</title>
+<link rel="stylesheet" href="/assets/css/rare.css">
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <article>
+      <h2>Surfaces (CSS-380)</h2>
+      <div id="tok-page">On the page.</div>
+      <div class="card padding-md" id="tok-card">
+        <div id="tok-card-probe">In a card. <a href="#" id="tok-card-link">A link</a></div>
+        <div class="panel panel--bordered" id="tok-card-panel"><div id="tok-card-panel-probe">A panel in a card.</div></div>
+      </div>
+      <div class="card-inverted padding-md" id="tok-inv">
+        <div id="tok-inv-probe">In an inverted card. <a href="#" id="tok-inv-link">A link</a></div>
+        <div class="border-bottom" id="tok-inv-card-header">A card's header.</div>
+        <div class="panel panel--bordered" id="tok-inv-panel">
+          <div class="panel__header" id="tok-inv-panel-header"><h5>Revenue</h5><span>Q3</span></div>
+          <div class="panel__body" id="tok-inv-panel-probe">A panel on the dark card.</div>
+          <div class="panel__footer" id="tok-inv-panel-footer">Source: demo</div>
+        </div>
+        <div class="stat stat--signal" id="st-inv-signal"><div class="stat__label">Errors</div><div class="stat__value">42</div></div>
+        <!-- a light card on the dark one, as in the deck on /styles/bricks/cards/ -->
+        <div class="card padding-md" id="tok-inv-card">
+          <div id="tok-inv-card-probe">A light card on the dark one. <a href="#" id="tok-inv-card-link">A link</a></div>
+          <div class="panel panel--bordered" id="tok-inv-card-panel"><div>A panel in it.</div></div>
+        </div>
+      </div>
+      <div style="--surface-current: rgb(10, 20, 30)" id="tok-custom"><div id="tok-custom-probe">A surface of one's own.</div></div>
+      <div class="card padding-md" style="--surface-current: rgb(200, 210, 220)" id="tok-card-repaint"><div id="tok-card-repaint-probe">A repainted card.</div></div>
+
+      <h2>Stats (CSS-184)</h2>
+      <div class="stat" id="st-plain"><div class="stat__label" id="st-plain-label">Revenue</div><div class="stat__value" id="st-plain-value">$2,840,112</div></div>
+      <div class="stat stat--delta-up" id="st-up"><div class="stat__label">Change</div><div class="stat__value" id="st-up-value">+1.23 (0.76%)</div></div>
+      <div class="stat stat--delta-down" id="st-down"><div class="stat__label">Change</div><div class="stat__value" id="st-down-value">−0.48 (0.31%)</div></div>
+      <div class="stat stat--delta-up" style="--stat-delta-color: var(--danger)" id="st-remap"><div class="stat__label">Costs</div><div class="stat__value" id="st-remap-value">+12%</div></div>
+      <div class="stat stat--signal" id="st-signal"><div class="stat__label">Error rate over 1%</div><div class="stat__value" id="st-signal-value">1.8%</div></div>
+      <div class="panel__row" id="st-row">
+        <div class="panel__row-item stat"><div class="stat__label">OPEN</div><div class="stat__value">$184.62</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">HIGH</div><div class="stat__value">$188.13</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">LOW</div><div class="stat__value">$185.23</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">VOLUME</div><div class="stat__value">95.4M</div></div>
+        <div class="panel__row-item stat stat--delta-up"><div class="stat__label">52W HIGH</div><div class="stat__value">$199.62</div></div>
+        <div class="panel__row-item"><div class="stat" id="st-nested"><div class="stat__label" id="st-nested-label">52W LOW</div><div class="stat__value" id="st-nested-value">$124.17</div></div></div>
+      </div>
+      <!-- figures that do not fit their box: a delta stat narrower than its
+           figure, and values with a space in a row that scrolls at 375px -->
+      <div class="stat stat--delta-up" id="st-narrow" style="width: 80px"><div class="stat__label">Open</div><div class="stat__value">$184.62</div></div>
+      <div class="stat stat--delta-up" id="st-narrower" style="width: 60px"><div class="stat__label">Orders</div><div class="stat__value">+12.4%</div></div>
+      <div class="panel__row" id="st-spaced">
+        <div class="panel__row-item stat stat--delta-up"><div class="stat__label">Change</div><div class="stat__value">+1.23 (0.76%)</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">Volume</div><div class="stat__value">95.4 M</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">Market cap</div><div class="stat__value">2.9 T</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">Yield</div><div class="stat__value">0.5 %</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">Open</div><div class="stat__value">$184.62</div></div>
+        <div class="panel__row-item stat"><div class="stat__label">High</div><div class="stat__value">$188.13</div></div>
+      </div>
+      <div class="panel__row" id="st-pair">
+        <div class="panel__row-item stat stat--delta-up"><div class="stat__label">Orders</div><div class="stat__value">+12.4%</div></div>
+        <div class="panel__row-item stat stat--delta-down"><div class="stat__label">Returns, week on week, all channels</div><div class="stat__value">−3.1%</div></div>
+      </div>
+
+      <h2>The measure stops at data components (CSS-384)</h2>
+      <dl id="ms-dl"><dt>Term</dt><dd>A definition in the article, long enough to reach the measure on a wide screen before it wraps: prose keeps its reading line.</dd></dl>
+      <blockquote id="ms-bq"><p>A quote in the article, long enough to reach the measure on a wide screen before it wraps: prose keeps its reading line.</p></blockquote>
+      <figure id="ms-fig"><div style="height: 20px; background: #ccc"></div><figcaption>A figure in the article.</figcaption></figure>
+      <div class="panel full-width" id="ms-panel">
+        <dl id="ms-panel-dl"><dt>Node</dt><dd>A definition in a panel.</dd></dl>
+        <blockquote id="ms-panel-bq"><p>A quote in a panel.</p></blockquote>
+        <figure id="ms-panel-fig"><div style="height: 20px; background: #ccc"></div></figure>
+      </div>
+      <div class="full-width rc-chart" id="ms-chart">
+        <div class="rc-graph-details"><dl class="dl-grid" id="ms-chart-dl"><dt>Node</dt><dd>Acme Holdings</dd><dt>Flows</dt><dd>12</dd></dl></div>
+        <figure id="ms-chart-fig"><div style="height: 20px; background: #ccc"></div></figure>
+      </div>
+      <div class="table-scroll">
+        <table class="table-bordered">
+          <tr><td><code>x</code></td><td><dl id="ms-scroll-dl"><dt>Key</dt><dd>A definition in a reference table cell, long enough to pass the measure on a wide screen.</dd></dl></td></tr>
+        </table>
+      </div>
+      <table class="table-bordered full-width"><tr><td><blockquote id="ms-bordered-bq"><p>A quote in a bordered table, long enough to pass the measure on a wide screen.</p></blockquote></td></tr></table>
+      <div class="stat full-width" id="ms-stat"><figure id="ms-stat-fig"><div style="height: 20px; background: #ccc"></div></figure></div>
+
+      <h2>Print folds every outdent back (CSS-385)</h2>
+      <div class="table-scroll card-caption" id="pr-card-caption"><table class="table-bordered"><tr><th>Option</th><th>Default</th></tr><tr><td><code>projection</code></td><td><code>'mercator'</code></td></tr></table></div>
+      <div class="full-width-caption" id="pr-full-width-caption">A full-width caption.</div>
+      <div class="teaser-bottom" id="pr-teaser">A teaser.</div>
+      <div class="collapsible-container" id="pr-collapsible">A collapsible container.</div>
+      <div class="text-content-caption" id="pr-text-content-caption">A caption width.</div>
+      <pre id="pr-pre"><code>pre</code></pre>
+    </article>
+  </div>
+</main>
+</body>
+</html>

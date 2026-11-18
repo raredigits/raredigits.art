@@ -1,4 +1,5 @@
 @use "../utilities/breakpoints" as bp;
+@use "../typography/small-print" as sp;
 
 :root {
     --sidebar-width: calc(var(--global-fr) * 3 + var(--grid-gap) * 2);
@@ -112,8 +113,8 @@ h5.sidebar-header a:hover {
 }
 
 .sidebar-meta {
-    font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    @include sp.small-type;
+
     color: var(--text-color-light);
     width: 75%;
     margin-bottom: var(--space-md);

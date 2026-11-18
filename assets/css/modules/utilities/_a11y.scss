@@ -4,9 +4,10 @@
     // Keyboard focus ring. --blue measures ≥ 3:1 (WCAG 1.4.11) on every
     // library surface: 3.6 on --bg-color, 3.9 on --gray-lightest, 4.1 on
     // white, 3.2 on --gray-mid-light, 3.1 on --gray-dark, 4.3 on
-    // --gray-darkest. Override it on :root; CSS-124 later repoints the
-    // default onto --signal without touching overrides.
-    --focus-ring-color: var(--blue);
+    // --gray-darkest. Since v0.7.2 the default follows --signal (CSS-124,
+    // blue): re-map --signal and the ring follows; an override of
+    // --focus-ring-color on :root still wins.
+    --focus-ring-color: var(--signal);
     --focus-ring-width: 2px;
     --focus-ring-offset: 2px;
 }

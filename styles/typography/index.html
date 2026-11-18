@@ -8,7 +8,7 @@ permalink: '/styles/typography/'
 
 <h2>Foundation of Visual Hierarchy</h2>
 <div class="meta-info">
-    css/modules/_typography.scss
+    css/modules/typography/
 </div>
 
 <section>
@@ -308,7 +308,7 @@ permalink: '/styles/typography/'
     <p>Always separate semantic groups with whitespace or background shading—never rely solely on layout to imply relationships. This clear delineation helps users immediately understand how information is organized, reducing cognitive load and improving comprehension.</p>
     <p>Remember that effective hierarchy isn't about making everything stand out—it's about creating meaningful visual relationships that guide attention where it matters most.</p>
     <h3>Heading levels</h3>
-    <p><code>h1</code>–<code>h4</code> use the heading typeface. <code>h5</code> and <code>h6</code> stay in the text face, uppercase, with <code>h6</code> set light. From <code>h4</code> down the levels share one rhythm, <code>var(--space-sm)</code> above and below, so a run of minor headings never collapses into a block:</p>
+    <p><code>h1</code>–<code>h4</code> use the heading typeface. <code>h5</code> and <code>h6</code> stay in the text face, uppercase, with <code>h6</code> set light. They serve as minor headings and as technical inserts: labels on dashboards and in tables. From <code>h4</code> down the levels share one rhythm, <code>var(--space-sm)</code> above and below, so a run of minor headings never collapses into a block:</p>
     <div class="card text-content-width padding-lg">
         <h4>Quarterly results</h4>
         <p>Revenue grew in every region.</p>
@@ -318,6 +318,10 @@ permalink: '/styles/typography/'
         <h6>Wholesale</h6>
         <p>Flat, with longer payment terms.</p>
     </div>
+    <p>The page title (<code>.page-title h1</code>, 56px) shrinks with the screen on a narrow phone — 14vw, so 52.5px at 375px and 44.8px at 320px, and the full 56px from 400px up — so a long word fits the title's column. A word still wider than the column breaks instead of widening the page.</p>
+    <h3>Line height</h3>
+    <p>The leading tokens are ratios, not lengths: <code>--line-height</code> (1.5) for running text, <code>--line-height-sm</code> (1.2) for headings and other display text, <code>--line-height-xs</code> (1), <code>--line-height-md</code> (1.7) and <code>--line-height-lg</code> (2). A ratio is inherited as a ratio, so each element computes its line height from its own font size: a 13px label inside a 16px paragraph gets 19.5px lines, not the paragraph's 24px. Override a token the same way, without a unit. <code>.line-height</code>, <code>.line-height-sm</code>, <code>.line-height-xs</code> and <code>.line-height-lg</code> set one on an element.</p>
+    <p><code>h1</code>–<code>h4</code> set <code>--line-height-sm</code> themselves, so a heading that wraps keeps tight display leading. A heading inside your own block with a fixed line-height takes this one, not the block's; give the heading its own <code>line-height</code> (or <code>inherit</code>) to keep yours.</p>
 </section>
 
 <div class="teaser-bottom">

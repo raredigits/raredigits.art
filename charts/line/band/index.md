@@ -12,9 +12,7 @@ A band is a filled ribbon between a lower and an upper value at each point
 
 In RareCharts a band is just another series in a `Line` chart. You mark a series with `type: 'band'` and give each point a `lower` and an `upper` instead of a `value`. The band renders behind the lines, so a central estimate drawn as a normal line sits cleanly on top of its own range.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo-band"></div>
-</div>
+<div id="line-chart-demo-band" class="panel panel--bordered text-content-caption"></div>
 
 ### Data format
 
@@ -64,9 +62,7 @@ The fill uses the series `color` at `fillOpacity` (default: the chart’s `area
 
 The most common use is a forecast: actuals up to today, a central path beyond it, and a widening range that makes the growing uncertainty visible instead of pretending the future is a single number.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo-forecast"></div>
-</div>
+<div id="line-chart-demo-forecast" class="panel panel--bordered text-content-caption"></div>
 
 This chart is assembled from three series plus one annotation:
 

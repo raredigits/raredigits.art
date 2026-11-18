@@ -1,14 +1,15 @@
 @use "../utilities/breakpoints" as bp;
 @use "../decorations/icons" as ico;
+@use "../bricks/contain-outdents" as co;
+@use "../elements/control-face" as cf;
 
 .collapsible-container {
     padding: var(--space-md) var(--space-lg);
-    margin-left: calc(-1 * var(--space-lg));
+    margin-left: calc(-1 * var(--outdent));
     border-radius: var(--space-sm);
 
     @include bp.mobile {
-        margin-left: calc(-1 * var(--space-sm));
-        margin-right: calc(-1 * var(--space-sm));
+        margin-right: calc(-1 * var(--outdent));
         padding: var(--space-md);
     }
 }
@@ -27,25 +28,13 @@ details summary {
 // global button treatment (elements/_buttons.scss) so it reads as inline text
 // inside prose; the dashed underline above still applies.
 button.collapsible-trigger {
+    @include cf.unbutton;
+
     display: inline;
     width: auto;
-    background: none;
     color: inherit;
-    border: none;
     border-radius: 0;
-    padding: 0;
-    font: inherit;
     text-align: left;
-    text-decoration: underline;
-    text-decoration-style: dashed;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 0.2em;
-    text-decoration-color: var(--text-color-light);
-
-    &:hover {
-        background: none;
-        border: none;
-    }
 }
 
 // Glyph baked into the class (decorations/_icons.scss) — markup needs no vendor
@@ -69,32 +58,14 @@ button.collapsible-trigger {
 .collapsible-content {
     display: none;
     padding-top: var(--space-lg);
-
-    > .card-dashboard-bordered {
-        padding: var(--space-md);
-    }
 }
 
-// CSS-047 resolution: inside the card frame the prose outdent contract is
-// inverted, not mirrored. On open pages .lead / .highlight / .caption /
-// .text-content-caption outdent past the text column (typography/_text-content.scss)
-// — but a padded card has no page margins to bleed into, so the same outdent
-// pinned them to (or past) the card edge. Reset the whole family to the card's
-// content width. `pre` and `.card-caption` are included because the previous
-// collapsible-scoped rules imposed an outdent on them here.
+// The collapsible box is a surface like a card (CSS-047): it has no page
+// margins for outdents to hang into, so it holds the whole family at its
+// content width (bricks/_contain-outdents.scss).
 .collapsible-container,
 .collapsible-content {
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    .text-content-caption,
-    .card-caption {
-        width: auto;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
+    @include co.contain-outdents;
 }
 
 // State written by collapsible.js (contract: SCRIPTS_CONTRACT.md, v0.6.17)

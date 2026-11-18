@@ -1,3 +1,5 @@
+@use "../navigation/link-look" as ll;
+
 // Shared generator for the per-hue utility classes (CSS-116):
 // .<hue> (text color), .<hue>-bg (background), .<hue>-link (underline +
 // translucent gradient highlight). Every color module calls this with its
@@ -12,12 +14,18 @@
             background-color: var(--#{$color});
         }
 
+        // The link look (navigation/_link-look.scss) in this colour.
         .#{$color + ""}-link {
-            text-decoration-color: var(--#{$color});
-            background-image: linear-gradient(
-              to top,
-              color-mix(in srgb, var(--#{$color}) 20%, transparent) 0 100%
-            );
+            @include ll.link-colour(var(--#{$color}));
         }
+    }
+}
+
+// The `-bg` twin of a colour token (CSS-121): the colour at 25% over whatever
+// is behind it, a fill to set text on. Called inside a rule that declares
+// tokens (`:root`): `--<name>-bg` for each name.
+@mixin color-bg($names) {
+    @each $name in $names {
+        --#{$name}-bg: color-mix(in srgb, var(--#{$name}) 25%, transparent);
     }
 }

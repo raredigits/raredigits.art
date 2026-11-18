@@ -1,3 +1,5 @@
+@use "../bricks/contain-outdents" as co;
+
 table {
     min-width: 100%;
     font-size: var(--font-size-sm);
@@ -12,6 +14,21 @@ table {
 // <div class="table-scroll"><table>…</table></div>.
 .table-scroll {
     overflow-x: auto;
+}
+
+// Inside the scroll box a code token keeps its shape (CSS-373). Inline `code`
+// may break anywhere (CSS-354), which let every code cell shrink: the table
+// never outgrew its box and option names broke mid-word on a phone. Here the
+// table grows instead, and the box scrolls.
+.table-scroll :is(th, td) code {
+    overflow-wrap: normal;
+}
+
+// The first column holds the keys (a class, a token, an option): its code
+// does not break at a hyphen either (`.table-horizontal-borders` broke into
+// three lines). On paper it wraps again (utilities/_print.scss).
+.table-scroll :is(th, td):first-child code {
+    white-space: nowrap;
 }
 
 th {
@@ -39,9 +56,29 @@ th:first-child {
 .table-terminal {
     font-family: var(--code-font);
 
+    // Columns are set apart by a gap, not by cell padding: nothing on the
+    // table's outer edges, `--space-sm` between columns (a table has no
+    // `gap`, and `border-spacing` would pad the edges too). Value rows sit
+    // flush; the header keeps its vertical padding.
     th,
     td {
         text-align: center;
+        padding-inline: 0;
+    }
+
+    :is(th, td) + :is(th, td) {
+        padding-left: var(--space-sm);
+    }
+
+    td {
+        padding-block: 0;
+    }
+
+    // A striped table is set in bands: every cell keeps its vertical padding,
+    // shaded or not. At the terminal's own weight, so a preset after it
+    // (`.table-small`, `.table-bordered`) still sets its padding.
+    &:where(.table-striped) td {
+        padding-block: var(--space-xs);
     }
 
     th:first-child,
@@ -53,6 +90,18 @@ th:first-child {
     td:last-child {
         text-align: right;
     }
+}
+
+// A table in a box with an outdent (`.text-content-caption`,
+// `.full-width-caption`, `.card-caption`) hangs into the outdent with it: its
+// first column steps back in by the outdent, so the labels stay on the text
+// edge. Not where a surface holds the outdent (`$outdent-surfaces`: the box
+// does not hang there), and not in a panel that steps its own content back
+// (bricks/_panels.scss): the table would step back twice.
+$-hanging: ":not(:where(#{co.$outdent-surfaces}) *)";
+
+:is(:is(#{co.$caption-boxes})#{$-hanging}:not(:where(.panel:not(.panel--flush))) table, table:is(#{co.$caption-boxes})#{$-hanging}) :is(th, td):first-child {
+    padding-left: var(--outdent);
 }
 
 .table-terminal tbody tr:hover,

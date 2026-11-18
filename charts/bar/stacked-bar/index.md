@@ -10,7 +10,7 @@ A stacked bar chart answers a different question than a plain bar. A plain bar c
 
 It is a **mode of the <a href="/charts/bar/">Bar</a> chart**, not a separate class. Hand `Bar` a set of series instead of a flat list and it stacks them. It draws **vertically** (the default) or **horizontally** — set `orientation: 'horizontal'` for a ranked, composed list; axes and grid behave as they do for an ordinary bar, and on first render the segments fade in (they do not grow, and `stagger` does not apply).
 
-<div id="stacked-revenue" class="text-content-caption card-dashboard-bordered"></div>
+<div id="stacked-revenue" class="panel panel--bordered text-content-caption"></div>
 
 This is composition **within a category** — several series sharing one axis. That is a different shape from the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a>, which breaks a single total down a *tree* of parents and children. Same instinct — “what is this made of?” — different structure: stacking adds a series dimension, a hierarchy adds depth.
 
@@ -32,7 +32,7 @@ Values are expected to be **non-negative** — a stacked bar encodes cumulative 
 
 When the story is the *shifting share* rather than the absolute total, normalize every bar to fill the axis: pass `stacked: 'percent'`. Each category then reads as parts of 100%, which makes a changing mix legible even when the totals move underneath it.
 
-<div id="stacked-energy" class="text-content-caption card-dashboard-bordered margin-b-md"></div>
+<div id="stacked-energy" class="panel panel--bordered text-content-caption margin-b-md"></div>
 
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
     stacked: 'percent',

@@ -10,12 +10,17 @@ permalink: '/styles/usage/'
 
 The fastest way to a working site is the **[content starter](/examples/styles/content-starter/)**: an article index and an article with images, a table and charts, in plain HTML. Copy it, change the content, publish. Its [README](https://github.com/raredigits/raredigits.art/tree/main/examples/styles/content-starter/demo) walks through every step below.
 
-1. **Download and open.** [Download the starter](/examples/styles/content-starter/content-starter.zip), unpack it and open `index.html` in a browser. No build, no framework, no server: the libraries come from the CDN, and the links are relative, so it also works on any static host and under a sub-path.
-2. **Publish.** Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.
-3. **Make it yours.** Set the brand and the fonts through the library's tokens in your own stylesheet (see [Customization](#customization-approach) below). The reading measure is `--text-content-width`.
-4. **Upgrade on purpose.** Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the [changelog](https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md) first.
+**1. Download and open.** [Download the starter](/examples/styles/content-starter/content-starter.zip), unpack it and open `index.html` in a browser. No build, no framework, no server: the libraries come from the CDN, and the links are relative, so it also works on any static host and under a sub-path.
+
+**2. Publish.** Upload the folder to any static host. With a site generator or a CMS, the two pages are your templates.
+
+**3. Make it yours.** Set the brand and the fonts through the library's tokens in your own stylesheet (see [Customization](#customization-approach) below). The reading measure is `--text-content-width`.
+
+**4. Upgrade on purpose.** Both libraries are pinned to an exact version: Rare Styles in the stylesheet URL, RareCharts in the chart script. A new release changes nothing on your site until you change the pin. Read the [changelog](https://github.com/raredigits/rare-styles/blob/main/docs/Changelog.md) first.
 
 ### What a page needs
+
+**Page mode or islands.** `class="rd"` on `<html>` styles the whole page: header, page grid, typography and components. On one element instead, it styles only that block, which is how you embed the library in a page styled by something else. [Getting Started](/styles/getting-started/) compares the two.
 
 ```html
 <html lang="en" class="rd">                         <!-- the one integration step -->
@@ -25,11 +30,13 @@ The fastest way to a working site is the **[content starter](/examples/styles/co
 </head>
 ```
 
-- **Page mode or islands.** `class="rd"` on `<html>` styles the whole page: header, page grid, typography and components. On one element instead, it styles only that block, which is how you embed the library in a page styled by something else. [Getting Started](/styles/getting-started/) compares the two.
-- **Library files and your files stay apart.** `rare.css` is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.
-- **Self-hosting.** To serve the library yourself instead of from the CDN, download `rare.min.css` with its `fonts/` and `images/` folders from the [rare-styles repository](https://github.com/raredigits/rare-styles) at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.
-- **Companion scripts are optional.** The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the [Scripts](/scripts/) pages. Copy only the ones you use.
-- **Charts are separate.** [RareCharts](/charts/) is its own pinned script. Load it in `<head>` only on pages that have charts, and create each chart after its container, as the starter's article does.
+**Library files and your files stay apart.** `rare.css` is never edited. Your brand, fonts and layout rules go in your own stylesheet, so an upgrade cannot overwrite them.
+
+**Self-hosting.** To serve the library yourself instead of from the CDN, download `rare.min.css` with its `fonts/` and `images/` folders from the [rare-styles repository](https://github.com/raredigits/rare-styles) at the same tag. Keep them side by side, because the stylesheet loads its fonts and icons from relative paths.
+
+**Companion scripts are optional.** The CSS works without JavaScript. Interactive pieces (the mobile menu, collapsibles, the carousel, copy buttons) each have a small script on the [Scripts](/scripts/) pages. Copy only the ones you use.
+
+**Charts are separate.** [RareCharts](/charts/) is its own pinned script. Load it in `<head>` only on pages that have charts, and create each chart after its container, as the starter's article does.
 
 ## General Principles
 
@@ -97,6 +104,7 @@ Here's a simple example of brand-specific customization in `my-beautiful-styles.
   --primary-color: #1a1a2e;              /* body text and headings */
   --brand-color: #ff6b00;                /* brand accents */
   --brand-color-dark: #c25100;           /* link underline and hover fill */
+  --brand-color-deep: #a84600;           /* primary button hover, under a white label */
   --heading-font: 'Montserrat', sans-serif;
 
   /* Your own tokens: any name, read only by your rules below */
@@ -117,7 +125,7 @@ Here's a simple example of brand-specific customization in `my-beautiful-styles.
 }
 ```
 
-Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline and the heading font, and adds two variants of existing library components without modifying the original stylesheet. `--primary-font` and `--code-font` work the same way as `--heading-font`.
+Load it after Rare Styles so that the same-specificity rules win by source order. This changes the text color, the brand accents, the link underline, the primary button’s hover and the heading font, and adds two variants of existing library components without modifying the original stylesheet. `--primary-font` and `--code-font` work the same way as `--heading-font`.
 
 ## Learning from Examples
 Check out the [examples section](/examples) to see Styles in action. These practical implementations demonstrate how selectors are used in real-world scenarios. When in doubt, your browser's inspector tool is also invaluable—examining how elements are styled on the live site often reveals patterns and best practices that aren't immediately obvious from documentation alone.

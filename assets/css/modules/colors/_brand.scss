@@ -6,13 +6,21 @@
     // drift without dragging --matrix along (CSS-115).
     --brand-color: #00ff4e;
     --brand-color-light: #d8f9d1;
+
+    // The darker brand green: link underlines and their hover fill.
     --brand-color-dark: #00b300;
+
+    // Deeper still, a saturated dark yellow-green that carries white text:
+    // 4.9:1 (WCAG AA), under the primary button's white hover label, where
+    // --brand-color-dark gives 2.8:1.
+    --brand-color-deep: #3a8000;
     --brand-color-rgb: 0, 255, 78;
 }
 
 $brand_colors:
 brand-color,
 brand-color-light,
-brand-color-dark;
+brand-color-dark,
+brand-color-deep;
 
 @include cc.color-classes($brand_colors);

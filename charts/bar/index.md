@@ -10,7 +10,7 @@ Bar charts are the simplest and most reliable way to compare things. If you ha
 
 The strength of a bar chart is that it relies on length. Humans are very good at comparing lengths. Longer bar means bigger value. Shorter bar means smaller value. No interpretation layer, no storytelling tricks. Just comparison.
 
-<div id="bar-chart-revenue" class="text-content-caption card-dashboard-bordered"></div>
+<div id="bar-chart-revenue" class="panel panel--bordered text-content-caption"></div>
 
 Orientation and reading comfort
 
@@ -18,9 +18,7 @@ The Bar chart supports two orientations: `vertical` (default) and `horizontal`. 
 
 In horizontal mode, the category axis is on the left and values run along the bottom. In vertical mode, categories sit at the bottom and values are on the right, which matches how most business dashboards place numeric scales.
 
-<div class="text-content-width">
-    <div id="bar-chart-coder-gender"></div>
-</div>
+<div id="bar-chart-coder-gender" class="panel panel--bordered text-content-width"></div>
 
 ### Data format
 
@@ -76,7 +74,7 @@ A row's own `color` fills that bar; bars without one take `barColor`, then the t
     { label: 'Dec', value: 156000, color: '#00aaff' },
 ]);</code></pre>
 
-<div id="bar-chart-highlight" class="text-content-caption card-dashboard-bordered"></div>
+<div id="bar-chart-highlight" class="panel panel--bordered text-content-caption"></div>
 
 Colors follow the data: `setData` repaints a bar whose `color` changed, and a bar that lost its `color` goes back to `barColor`. Hover only dims a bar, so its color stays. The stacked mode ignores a value's `color`: segments always take their series color. Value labels inside horizontal bars are drawn in the theme background color, so a per-bar color should be dark enough to carry them.
 
@@ -120,7 +118,7 @@ Example:
 
 The date-based vertical mode takes the same `annotations` as <a href="/charts/line/">Line</a>: points and ranges on dates, lines and bands on values, mixed in one array. They are drawn over the bars on the chart’s own scales, follow timeframes, the navigator and `setView()`, and move with new data. The pointer passes through them, so a bar under a band still shows its tooltip. The full API is on the <a href="/charts/line/annotations/">Annotations</a> page.
 
-<div id="bar-chart-dated-annotations" class="text-content-caption card-dashboard-bordered"></div>
+<div id="bar-chart-dated-annotations" class="panel panel--bordered text-content-caption"></div>
 
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
     annotations: [

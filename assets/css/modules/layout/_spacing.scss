@@ -59,18 +59,17 @@ $non-auto-spaces: ();
   width: 100%;
 }
 
-.full-width-caption {
+// `.card-caption` is the same class under its older name (Q-15): one rule,
+// so the two cannot drift (it lacked `max-width: none`, and a paragraph or a
+// figure with it stayed on the 505px measure).
+.full-width-caption,
+.card-caption {
   // The outdent on the left, the container's edge on the right, like `pre`.
   // The width is the container plus exactly the left outdent: on a phone it
   // used to add 16px for an 8px outdent and overflowed the page by 8px.
-  width: calc(100% + var(--space-lg));
+  width: calc(100% + var(--outdent));
   max-width: none;
-  margin-left: calc(-1 * var(--space-lg));
-
-  @include bp.mobile {
-    width: calc(100% + var(--space-sm));
-    margin-left: calc(-1 * var(--space-sm));
-  }
+  margin-left: calc(-1 * var(--outdent));
 }
 
 @each $space in $spaces {

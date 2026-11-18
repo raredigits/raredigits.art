@@ -10,9 +10,7 @@ Line charts are the default choice when you need to show change over time, comp
 
 A common use case is performance comparison: multiple instruments, portfolios, products, or metrics plotted on the same time axis, where the story is not “what is the exact number”, but “who moved, when, and how strongly”.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-demo"></div>
-</div>
+<div id="line-chart-demo" class="panel panel--bordered text-content-caption"></div>
 
 Data can be passed either as a single series or as multiple named series.
 
@@ -127,9 +125,7 @@ By default, the Y axis is rendered on the right side of the chart. If your
 
 This moves the Y axis to the left while preserving all formatting and scaling logic.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-left-axis-demo"></div>
-</div>
+<div id="line-chart-left-axis-demo" class="panel panel--bordered text-content-caption"></div>
 
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
 
@@ -139,9 +135,7 @@ Zero and negative values have no place on a log scale: they are skipped (the lin
 
 The demo's Lin/Log button is built in: `scaleToggle: true` pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. The button is split on the diagonal so it does not read as one more period. It names the current scale, flips it on click, and `onScaleChange(fn)` tells the page when the reader switches. The same switch works on `TimeSeries` and `DualAxes`.
 
-<div class="text-content-caption card-dashboard-bordered">
-    <div id="line-chart-log-demo"></div>
-</div>
+<div id="line-chart-log-demo" class="panel panel--bordered text-content-caption"></div>
 <br>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
     yScale: 'log',

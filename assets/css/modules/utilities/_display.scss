@@ -37,6 +37,14 @@
     overflow: auto;
 }
 
+// Opacity in quarter steps: a decoration set back (a confetti shape, a
+// watermark), not a state — a disabled control fades on its own.
+@each $step in 0, 25, 50, 75, 100 {
+    .opacity-#{$step} {
+        opacity: $step * 0.01;
+    }
+}
+
 .z-index-0 {
     z-index: 0;
 }

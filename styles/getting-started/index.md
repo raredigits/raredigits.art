@@ -33,10 +33,10 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
 
 ## What an island gets
 
-<div class="table-scroll">
+<div class="table-scroll card-caption">
 <table class="table-comparison table-bordered">
     <thead>
-        <tr><th></th><th>Page mode <code>&lt;html class="rd"&gt;</code></th><th>Island <code>class="rd"</code></th></tr>
+        <tr><th></th><th>Page mode<br><code>&lt;html class="rd"&gt;</code></th><th>Island<br><code>class="rd"</code></th></tr>
     </thead>
     <tbody>
         <tr><td>Tag styles (<code>h1</code>–<code>h6</code>, <code>p</code>, lists, tables, <code>code</code>, links, forms…)</td><td>yes</td><td>yes</td></tr>
@@ -44,12 +44,14 @@ A page without `.rd` anywhere is not affected by `rare.css` at all, even though 
         <tr><td>Icons <code>rd-icon-*</code></td><td>yes</td><td>yes, and also outside <code>.rd</code></td></tr>
         <tr><td>Page shell: fixed <code>header</code>, <code>main</code> padding, <code>article</code> placement, <code>section</code>, <code>footer</code>, <code>nav</code> chrome</td><td>yes</td><td><strong>no</strong></td></tr>
         <tr><td>Base typography of <code>body</code> (font, size, colour, line height)</td><td>yes</td><td><strong>no</strong>: the island inherits the host's text settings</td></tr>
-        <tr><td>Reset (<code>margin: 0; padding: 0; box-sizing: border-box</code>)</td><td>yes</td><td>yes, on the island root and inside it</td></tr>
+        <tr><td>Reset: <code>margin</code> and <code>padding</code> to 0, <code>box-sizing: border-box</code></td><td>yes</td><td>yes, on the island root and inside it</td></tr>
     </tbody>
 </table>
 </div>
 
 The reset has zero specificity. It removes the browser's default margins and padding, but any rule of your own with a tag or class selector still wins over it.
+
+An island has no page background either: it sits on the host's. A chart in it paints its label plates with `--surface-current`, which still names the library's page colour, so set it on the island to the host's background ([Chart tokens: on a host's background](/styles/colors/chart-tokens/#host-surface)).
 
 `<body class="rd">` works like page mode, except for the few rules that sit on `<html>` itself (root line height, text-size adjust, the anchor offset). Prefer `<html class="rd">`.
 

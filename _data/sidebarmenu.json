@@ -36,12 +36,33 @@
             { "title": "Text Content", "url": "/styles/typography/text-content/" },
             { "title": "Lists & Columns", "url": "/styles/typography/lists/" },
             { "title": "Tables", "url": "/styles/typography/tables/" },
-            { "title": "Interactive Elements", "url": "/styles/typography/interactive/" },
             { "title": "Notes", "url": "/styles/typography/notes/" }
           ]
       },
-      { "title": "Colors", "url": "/styles/colors/" },
-      { "title": "Bricks", "url": "/styles/bricks/" },
+      {
+          "title": "Colors",
+          "url": "/styles/colors/",
+          "subitems": [
+            { "title": "Chart Tokens", "url": "/styles/colors/chart-tokens/" },
+            { "title": "Legend", "url": "/styles/colors/legend/" }
+          ]
+      },
+      {
+          "title": "Bricks",
+          "url": "/styles/bricks/",
+          "subitems": [
+            { "title": "Cards", "url": "/styles/bricks/cards/" },
+            { "title": "Panels", "url": "/styles/bricks/panels/" }
+          ]
+      },
+      {
+          "title": "Interactive Elements",
+          "url": "/styles/interactive/",
+          "subitems": [
+            { "title": "Buttons", "url": "/styles/interactive/buttons/" },
+            { "title": "Forms", "url": "/styles/interactive/forms/" }
+          ]
+      },
       { "title": "Alignment", "url": "/styles/alignment/" },
       { "title": "Navigation", "url": "/styles/navigation/" },
       { "title": "Decorations", "url": "/styles/decorations/" },

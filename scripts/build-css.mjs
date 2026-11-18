@@ -1,4 +1,5 @@
-// Rare Styles build: sass → rd-gate (CSS-343) → rare.css / rare.min.css.
+// Rare Styles build: sass → rd-gate (CSS-343) → inline icons (CSS-419) →
+// rare.css / rare.min.css.
 // Replaces the bare `sass` CLI calls so the `.rd` scope gate can never be
 // skipped. Source maps are chained (Sass → PostCSS) and stay relative to
 // assets/css/, as the Sass CLI wrote them.
@@ -16,6 +17,7 @@ import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import rdGate from './rd-gate.mjs';
+import inlineIcons from './inline-icons.mjs';
 
 // Under test runners `import.meta.url` is not always a file: URL; fall back
 // to the repository root, which is where the scripts are run from.
@@ -60,7 +62,7 @@ export async function compile({ file, style, compact }) {
   );
   sourceMap.sourceRoot = '';
 
-  const result = await postcss([rdGate({ compact }), addBanner()]).process(css, {
+  const result = await postcss([rdGate({ compact }), inlineIcons({ iconDir: resolve(CSS_DIR, 'images/icons') }), addBanner()]).process(css, {
     from: ENTRY,
     to: out,
     map: { prev: sourceMap, inline: false, annotation: `${file}.map`, sourcesContent: false },

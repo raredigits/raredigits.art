@@ -10,7 +10,7 @@ A hierarchical bar chart is what you reach for when your data is not a flat list
 
 `HierarchicalBar` answers that as an outline: one row per node, each with its own bar on a shared scale from one zero line. Parent rows carry their subtotal; nested rows read underneath them. You get the top-line comparison and the composition in a single figure, top to bottom, without a legend and without asking the reader to decode nested rectangles.
 
-<div id="hbar-portfolio" class="text-content-caption card-dashboard-bordered"></div>
+<div id="hbar-portfolio" class="panel panel--bordered text-content-caption"></div>
 
 This is the linear view of a shallow hierarchy. For the spatial views of a deep one — treemap, pack, sunburst — that is a different tool. Bars are for reading a breakdown as a ranked, labeled list.
 
@@ -31,7 +31,7 @@ Pass one root object, or an array of roots (a forest — several top-level items
 
 The same tree feeds the drill-down <a href="/charts/circular/">Donut</a> — one data shape, two representations. Build the object once and hand it to whichever view fits the page.
 
-<div id="hbar-org" class="text-content-caption card-dashboard-bordered"></div>
+<div id="hbar-org" class="panel panel--bordered text-content-caption"></div>
 
 ### Value is authoritative — and the remainder is real
 

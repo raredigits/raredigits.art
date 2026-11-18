@@ -1,8 +1,6 @@
 // Gap-free range syntax (CSS-355): with `max-width: 768px` / `min-width:
 // 769px` a fractional viewport (768.18px at 110% scaling) matched no layer.
-$mobile-max: 768px;
 $tablet-min: 769px;
-$tablet-max: 1023px;
 $desktop-min: 1024px;
 
 @mixin mobile {
@@ -23,6 +21,16 @@ $desktop-min: 1024px;
   }
 }
 
+// Below the desktop grid: tablet and mobile together, one media block.
+@mixin below-desktop {
+  @media screen and (width < $desktop-min) {
+    @content;
+  }
+}
+
+// Deprecated: one block per breakpoint, the same content repeated. The
+// library no longer calls it (tablet and mobile together is `below-desktop`);
+// kept for a project that compiles the SCSS and calls it.
 @mixin multi-breakpoint($breakpoints...) {
   @each $breakpoint in $breakpoints {
     @if $breakpoint == "mobile" {

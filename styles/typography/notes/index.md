@@ -28,7 +28,7 @@ permalink: '/styles/typography/notes/'
 &lt;/ol&gt;
 &lt;/div&gt;</code></pre>
 
-<p>The <code>.footnote</code> block and its top rule keep to the width of the prose. Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
+<p>The <code>.footnote</code> block and its top rule keep to the width of the prose. Its list starts on the block’s text edge, with the numbers in its padding. Numbered automatically, with one source of truth for the order, is a full footnote engine — that comes later. For an article with a handful of notes, numbering by hand is fine.</p>
 
 
 ## Sidenotes
@@ -45,11 +45,27 @@ permalink: '/styles/typography/notes/'
         <p>We provide two distinct elements for different annotation needs:</p>
         <ul>
             <li><code>sidenote</code> — The workhorse of our marginalia system. This is a flexible block element that can contain text, images, interactive elements, or your grandmother’s secret borscht recipe if that’s somehow relevant to your content. Built on a 9-column grid system, it ensures the main content column remains unbroken while providing unlimited creative freedom for supplementary content. Use this when you need a proper sidebar conversation.</li>
-            <li><code>aside-footer</code> — The rebel that doesn’t follow margin rules. This element appears alongside the paragraph <em>after</em> the one being commented on, rather than beside it. Useful for logical asides or when the space next to the original paragraph is already occupied by another sidenote (it happens—some content is just chatty). On mobile, it reverts to following the commented paragraph directly, because we’re not complete anarchists.</li>
+            <li><code>aside-footer</code> — The rebel that doesn’t follow margin rules. This element appears alongside the paragraph <em>after</em> the one being commented on, rather than beside it. It floats at the article’s right edge. Useful for logical asides or when the space next to the original paragraph is already occupied by another sidenote (it happens—some content is just chatty). On mobile, it reverts to following the commented paragraph directly, because we’re not complete anarchists. There it gets a thin rule above, like a stacked sidenote.</li>
         </ul>
     </div>
     <div class="sidenote">
         <p>In Rare Styles, sidenotes live in the right margin of text pages, creating a visual dialogue between primary and secondary content. On mobile devices, where margins are a luxury we can’t afford, they gracefully fold into the main column immediately after the commented element. They’re styled with smaller font sizes and secondary colors to signal their supporting role—think backup dancers, not the main act.</p>
+    </div>
+</div>
+
+<p>The <code>.sidenote</code> is a direct child of the <code>.sidenote-wrapper</code>, next to the text it comments on. The wrapper places only its own children: whatever sits inside them — a chart card, a grid, a definition list — keeps its own layout, and an embedded chart keeps the color of its own links.</p>
+
+<p>The row is a nine-column grid: the text takes columns 1–6, the note columns 8–9, at the article’s right edge. <code>.lead</code>, <code>.highlight</code>, <code>.text-content-caption</code> and <code>.teaser-bottom</code> take columns 1–7 and stop short of the note. In the article flow two rows are 16px apart, and a row’s last text block has no bottom margin. A table wider than the note goes in a <code>.table-scroll</code> inside it.</p>
+
+<p>On a tablet the note stays beside the text. On a phone every row stacks: the note follows the text under a thin rule, set to the right.</p>
+
+<p>A chart in a note goes in a <code>.chart</code> block; a RareCharts chart counts without the class. Such a row stacks as on a phone below 1024px, below 1226px when it sits directly in the article or one of its sections, and on paper. The chart keeps its own alignment. A row with a table in its note stacks on paper too: a sheet does not scroll.</p>
+
+<div class="sidenote-wrapper">
+    <p>A <code>.sidenote-banner</code> is a note set off by a 4px rule on its left, for an aside with a heading of its own, like this one. On a tablet it takes one column more, unless a wide block in the row holds it; on a phone it spans the row under the text.</p>
+    <div class="sidenote sidenote-banner">
+        <h5>Banner heading</h5>
+        <p>The banner’s text, set small and light like any note.</p>
     </div>
 </div>
 
@@ -85,19 +101,9 @@ mask: url("images/icons/cognition-200.svg") no-repeat center / contain;
     <div class="sidenote sidenote-memory">
         <p><strong>Memory Activation:</strong> Remember <a href="/manifesto/principles/">Rareism principles</a>. Just because you <em>can</em> create custom sidenote types doesn’t mean you <em>should</em> turn your margins into an icon bazaar.</p>
     </div>
-    <p>Don’t forget to add your new selector to the shared icon properties group to ensure consistent positioning and styling:</p>
+    <p>Don’t forget to add your new class to the marker list in the source: the marker then takes its place beside the note, and the top-left corner of a stacked note:</p>
 </div>
-</section>
 
 <pre class="text-content-width">
 <code><span class="code-comment">// assets/css/modules/typography/_notes.scss</span>
-.sidenote-attach::before,
-.sidenote-link::before,
-.sidenote-bulb::before,
-.sidenote-memory::before {
-    font-size: var(--font-size-lg);
-    position: absolute;
-    top: -8px;
-    left: -16px;
-    color: var(--text-color-light);
-}</code></pre>
+$sidenote-markers: ".sidenote-bookmark, .sidenote-attach, .sidenote-link, .sidenote-bulb, .sidenote-memory, .sidenote-coffee";</code></pre>

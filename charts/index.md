@@ -22,9 +22,7 @@ Text can be precise. Tables can be structured. But both require sequential rea
 
 If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and acceleration in Q4</em>”, it is clear. If you show a table, it is structured. But only a chart reveals where the turning point happened, how deep the decline was, and how strong the recovery became. The difference is not visual appeal. The difference is speed of understanding.
 
-<div class="card text-content-caption card-dashboard-bordered black-bg">
-    <div id="line-chart-demo-revenue"></div>
-</div>
+<div id="line-chart-demo-revenue" class="panel panel--bordered text-content-caption"></div>
 
 ## RareCharts
 
@@ -77,7 +75,7 @@ There are no hidden layout “surprises”. Control remains with the developer.
 <div class="sidenote-wrapper">
   <p>RareCharts accounts for details that are often overlooked in demo-oriented libraries: correct zero-line handling, number and date formatting, structured legends, clear data source attribution, configurable axes and scale behavior.</p>
   <div class="sidenote">
-    <div id="bar-chart-understanding"></div>
+    <div id="bar-chart-understanding" class="chart"></div>
   </div>
   <div>
     <p>In real reporting environments, such details determine whether a chart communicates clearly or creates ambiguity.</p>

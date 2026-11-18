@@ -14,6 +14,16 @@ Each glyph becomes **one self-contained class per weight**: `.rd-icon-<name>`
 (400) and `.rd-icon-<name>-thin` (200). That is the public markup API — the
 glyph name is the class, there is no `data-icon` authoring attribute.
 
+## Glyphs inside the stylesheet
+
+Seven glyphs a page shows at once or on its first click — `menu`, `close`,
+`search`, `content_copy`, `refresh`, `check` (and the thin `check`) — are written into
+`rare.css` / `rare.min.css` as data URIs by the build
+(`scripts/inline-icons.mjs`, `INLINE_ICONS`), so they need no request. Their
+files stay here for builds from the SCSS source. Add a glyph to that list only
+if a component draws it on the first screen: each one costs its size in every
+rule that uses it.
+
 ## Updating or extending the set
 
 1. Edit the `ICONS` list in [`scripts/fetch-icons.py`](https://github.com/raredigits/raredigits.art/blob/main/scripts/fetch-icons.py)

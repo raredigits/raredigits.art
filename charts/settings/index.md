@@ -86,16 +86,43 @@ All charts are created the same way:
 
 The chart header sits above the chart area and can contain a title, a subtitle, and a legend.
 
-<div class="table-scroll">
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `title` | string | Chart title, rendered as an uppercase `<h5>` |
-| `subtitle` | string | Smaller text below the title; wraps onto as many lines as it needs (the title stays on one line) |
-| `legend` | array \| string \| HTMLElement | Legend items (see below) |
-| `legendPosition` | `'right'` | Move the legend into a vertical column beside the chart |
-| `ariaLabel` | string | Accessible name of the chart drawing (the `<svg>` gets `role="img"`). Defaults to the title and subtitle, joined with " — "; without them, "Chart" |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>title</code></td>
+            <td>string</td>
+            <td>Chart title, rendered as an uppercase <code>&lt;h5&gt;</code></td>
+        </tr>
+        <tr>
+            <td><code>subtitle</code></td>
+            <td>string</td>
+            <td>Smaller text below the title; wraps onto as many lines as it needs (the title stays on one line)</td>
+        </tr>
+        <tr>
+            <td><code>legend</code></td>
+            <td>array | string | HTMLElement</td>
+            <td>Legend items (see below)</td>
+        </tr>
+        <tr>
+            <td><code>legendPosition</code></td>
+            <td><code>'right'</code></td>
+            <td>Move the legend into a vertical column beside the chart</td>
+        </tr>
+        <tr>
+            <td><code>ariaLabel</code></td>
+            <td>string</td>
+            <td>Accessible name of the chart drawing (the <code>&lt;svg&gt;</code> gets <code>role="img"</code>). Defaults to the title and subtitle, joined with " — "; without them, "Chart"</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 Without a title, subtitle or legend — and without timeframe or Lin/Log buttons — no header element is created: the chart starts right at the top of the container.
@@ -122,14 +149,33 @@ For line charts, use the default line indicator. For bar and donut charts, use `
 
 ## Footer
 
-<div class="table-scroll">
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `source` | string \| `{ text, href }` \| array \| HTMLElement | Rendered as a `<cite>` below the chart. Great for data attribution. Pass `{ text, href }` to make it a link, or an **array of parts** to mix several links and plain text on one line — see below. |
-| `note` | string \| HTMLElement | Rendered as a `<p class="rc-chart-note">` below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container. |
-| `controls` | HTMLElement \| selector | Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact `rc-chart-controls` row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it. |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>source</code></td>
+            <td>string | <code>{ text, href }</code> | array | HTMLElement</td>
+            <td>Rendered as a <code>&lt;cite&gt;</code> below the chart. Great for data attribution. Pass <code>{ text, href }</code> to make it a link, or an <strong>array of parts</strong> to mix several links and plain text on one line — see below.</td>
+        </tr>
+        <tr>
+            <td><code>note</code></td>
+            <td>string | HTMLElement</td>
+            <td>Rendered as a <code>&lt;p class="rc-chart-note"&gt;</code> below the source, in muted type. For disclaimers, data caveats, and editorial context. Keeps interpretive text inside the component instead of as stray markup around the container.</td>
+        </tr>
+        <tr>
+            <td><code>controls</code></td>
+            <td>HTMLElement | selector</td>
+            <td>Your own controls that drive the chart — checkboxes, a time slider, a select. The element is moved inside the card, between the drawing and the source line, and gets the compact <code>rc-chart-controls</code> row style; its event listeners keep working. Keeps the controls visibly part of the chart instead of floating above it.</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 <pre class="text-content-caption"><code>source: 'Source: The Truth',
@@ -151,13 +197,31 @@ Multiple sources — some linked, some not. Pass an array of parts: a string ren
 
 ## Layout
 
-<div class="table-scroll">
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `height` | number | varies | Total container height in px, with the title, subtitle, legend, buttons, navigator and footer included; see each chart's page for its default. On a narrow card those parts wrap and take more of it, and the plot gets what is left (`chart.height`). The plot keeps at least 80 px: when the parts would leave it less, the card grows past `height` by the difference, and returns to `height` once they fit again. |
-| `margin` | object | per chart | Space around the drawing area in px, `{ top, right, bottom, left }`; a side you leave out keeps the chart's default. Donut, Pie, Gauge, Sankey and Graph fill the card and do not use it — except a vertical Sankey, which adds `top` and `bottom` to the height it computes for its card |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>height</code></td>
+            <td>number</td>
+            <td>varies</td>
+            <td>Total container height in px, with the title, subtitle, legend, buttons, navigator and footer included; see each chart's page for its default. On a narrow card those parts wrap and take more of it, and the plot gets what is left (<code>chart.height</code>). The plot keeps at least 80 px: when the parts would leave it less, the card grows past <code>height</code> by the difference, and returns to <code>height</code> once they fit again.</td>
+        </tr>
+        <tr>
+            <td><code>margin</code></td>
+            <td>object</td>
+            <td>per chart</td>
+            <td>Space around the drawing area in px, <code>{ top, right, bottom, left }</code>; a side you leave out keeps the chart's default. Donut, Pie, Gauge, Sankey and Graph fill the card and do not use it — except a vertical Sankey, which adds <code>top</code> and <code>bottom</code> to the height it computes for its card</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 Each chart sets its own margins around its axes — Line `{ top: 10, right: 64, bottom: 18, left: 0 }`, Time Series `{ top: 16, right: 70, bottom: 28, left: 0 }`, DualAxes a 64px gutter on each side; Map, MapFlow and MultiChart use none. Hiding an axis gives its gutter back, and annotations raise `top` to make room for their labels. Set `margin` for a different frame:
@@ -169,12 +233,23 @@ Each chart sets its own margins around its axes — Line `{ top: 10, right: 64, 
 
 ## Theme
 
-<div class="table-scroll">
-
-| Option | Type | Description |
-|--------|------|-------------|
-| `theme` | object | Partial or full theme object. Merged with the active default. |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>theme</code></td>
+            <td>object</td>
+            <td>Partial or full theme object. Merged with the active default.</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 Pass a theme object to override colors, the tooltip font, or the sizing defaults (line width, crosshair dots, markers, DualAxes bar opacity). The chart's own fonts and spacing are CSS variables. The full theme system is documented on the [Styles](/charts/styles/) page.

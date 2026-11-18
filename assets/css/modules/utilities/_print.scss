@@ -5,6 +5,10 @@
 // later `layout-print` (CSS-308). Forwarded last, so it wins over the screen
 // rules it undoes.
 
+@use "../bricks/contain-outdents" as co; // the outdent list only, no CSS
+@use "contracts" as ct;
+@use "../bricks/page-roles" as pr; // the list and mixins only, no CSS
+
 @media print {
     // Chrome and controls: nothing on paper can be clicked.
     header,
@@ -27,6 +31,18 @@
         color: #000;
     }
 
+    // The page surface is the paper (CSS-380): what paints with it, a chart's
+    // label plates and knockouts (`--chart-bg`), is white, not grey boxes. An
+    // SVG fill prints even with background graphics off. `--chart-bg` on
+    // `:root` follows, being declared on the same element. A card keeps its
+    // own: #fafafa on white paper does not show. Outdents hang into page
+    // margins the paper does not have (below): no outdent.
+    :root {
+        --surface-current: var(--white);
+        --outdent: 0px;
+        --outdent-end: 0px;
+    }
+
     main {
         padding: 0;
     }
@@ -40,17 +56,38 @@
         width: auto;
     }
 
-    // Outdents hang into page margins the paper does not have.
-    .text-content-caption,
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    blockquote {
+    // Outdents hang into page margins the paper does not have: the outdent
+    // is 0 (`:root` above), so nothing steps back in by it either (a panel's
+    // padding, a table's first column), and the family folds back to the
+    // column. One list with bricks/_contain-outdents.scss, so a new outdent
+    // cannot miss paper again: `.card-caption` did, and the /charts/map/
+    // option tables hung 32px left of the column (CSS-385);
+    // `.full-width-caption`, `.teaser-bottom` and `.collapsible-container`
+    // with it.
+    @include co.contain-outdents;
+
+    // A dark card prints as a light one, in a thin frame: without background
+    // graphics its light text and lines vanished on the white sheet, and
+    // forcing the dark ground costs a page of ink. It takes back the page's
+    // roles (bricks/_page-roles.scss) and the paper's surface.
+    .card-inverted {
+        @include pr.take-page-roles;
+
+        --surface-current: var(--white);
+
+        color: var(--primary-text-color);
+        border: 1px solid var(--border-color);
+    }
+
+    .card-inverted a#{ct.$not-button} {
+        color: var(--link-color);
+    }
+
+    // In a sidenote row a wide block sets its width at (0,2,0) to stop at its
+    // columns on a screen (typography/_notes.scss); on paper it fills them.
+    .sidenote-wrapper > :is(#{co.$outdents}),
+    .sidenote-wrapper > :not(.sidenote) :is(#{co.$outdents}) {
         width: auto;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
     }
 
     // A heading stays with what follows it; a figure, a quote or a table row
@@ -74,8 +111,22 @@
     }
 
     // A scrolling table prints whole, wrapped instead of cut at the edge.
+    // Its code may break again (on screen it keeps its shape and the box
+    // scrolls, CSS-373): paper does not scroll.
     .table-scroll {
         overflow: visible;
+    }
+
+    .table-scroll :is(th, td) code {
+        overflow-wrap: anywhere;
+    }
+
+    // The key column wraps too, at the weight of its screen rule
+    // (_tables.scss), which this module follows: at a name's hyphens, never
+    // inside it (an A4 page broke `controls` into `cont` and `rols`).
+    .table-scroll :is(th, td):first-child code {
+        white-space: normal;
+        overflow-wrap: normal;
     }
 
     th {
@@ -83,8 +134,10 @@
     }
 
     // A link's address is lost on paper: print it after external links in
-    // the prose. Anchors inside the page and note marks stay as they are.
-    article :is(p, li) a[href^="http"]::after {
+    // the prose. Anchors inside the page and note marks stay as they are,
+    // and so do links inside an embedded chart (its note, source line or
+    // details panel, `.rc-chart`), which is not prose (CSS-383).
+    article :is(p, li) a[href^="http"]#{ct.$outside-embedded}::after {
         content: " (" attr(href) ")";
         font-size: var(--font-size-xs);
         color: var(--text-color-light);

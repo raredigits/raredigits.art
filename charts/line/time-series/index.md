@@ -18,7 +18,7 @@ In RareCharts, this module combines three things:
 
 The important bit is that both the buttons and the brush work with the same internal `view`. If the user clicks a range button, the chart updates its visible extent. If the user drags the brush, the chart updates the same visible extent. No duplicated state, no two widgets trying to outsmart each other, no “why is the UI lying to me” moment.
 
-<div class="padding-y-md">
+<div class="panel panel--bordered full-width-caption">
   <!-- ── Header ─────────────────────── -->
   <div class="price-chart-header">
       <div>
@@ -32,28 +32,28 @@ The important bit is that both the buttons and the brush work with the same inte
   <div class="rc-chart" id="timeseriesChart"></div>
   
   <!-- ── Stats ─────────────────────── -->
-  <div class="card-row-bordered price-chart-stats">
-    <div class="card-row-bordered-item price-chart-stat">
+  <div class="panel__row price-chart-stats">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">OPEN</div>
       <div class="price-chart-stat-value" id="s-open">—</div>
     </div>
-    <div class="card-row-bordered-item price-chart-stat">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">HIGH</div>
       <div class="price-chart-stat-value" id="s-high">—</div>
     </div>
-    <div class="card-row-bordered-item price-chart-stat">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">LOW</div>
       <div class="price-chart-stat-value" id="s-low">—</div>
     </div>
-    <div class="card-row-bordered-item price-chart-stat">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">VOLUME</div>
       <div class="price-chart-stat-value" id="s-vol">—</div>
     </div>
-    <div class="card-row-bordered-item price-chart-stat">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">52W HIGH</div>
       <div class="price-chart-stat-value" id="s-52h">—</div>
     </div>
-    <div class="card-row-bordered-item price-chart-stat">
+    <div class="panel__row-item price-chart-stat">
       <div class="price-chart-stat-label">52W LOW</div>
       <div class="price-chart-stat-value" id="s-52l">—</div>
     </div>

@@ -1,32 +1,25 @@
 @use "../utilities/breakpoints" as bp;
+@use "../charts/roles" as chart;
+@use "contain-outdents" as co;
+@use "page-roles" as pr;
+@use "../utilities/contracts" as ct;
 
+// A card is a surface: it paints its background from `--surface-current`
+// and says so to what sits on it (CSS-380). `--chart-bg` is restated because
+// a custom property resolves where it is declared: from `:root` it would hand
+// a chart in the card the page's background. Set `--surface-current` on a
+// card to repaint it; a chart in it follows.
 .card {
+    --surface-current: var(--gray-lightest);
+    --chart-bg: var(--surface-current);
+
     display: flex;
     flex-direction: column;
-    background: var(--gray-lightest);
+    background: var(--surface-current);
     position: relative;
 
-    // Outdents (`pre`, `blockquote`, `.lead`, `.caption`, `.highlight`, the
-    // caption-width blocks, `.card-caption`) hang into the page margins beside
-    // the text column. A card has no such margins: with padding smaller than
-    // the outdent they poked out of the card and, on phones, widened the page.
-    // Reset the family to the card's content width, as `.collapsible-content`
-    // does (CSS-345 sweep, 2026-10-16).
-    .lead,
-    .caption,
-    .highlight,
-    pre,
-    blockquote,
-    .text-content-caption,
-    .full-width-caption,
-    .card-caption,
-    .collapsible-container,
-    .teaser-bottom {
-        width: auto;
-        max-width: 100%;
-        margin-left: 0;
-        margin-right: 0;
-    }
+    // A card has no page margins for outdents to hang into (CSS-345 sweep).
+    @include co.contain-outdents;
 }
 
 .card-hover:hover {
@@ -35,9 +28,10 @@
     box-shadow: var(--shadow-sm);
 }
 
-.card-header {
-    border-bottom: 1px solid var(--border-color-light);
-}
+// A card has no parts of its own (`.card-header` was removed in v0.7.2): its
+// header is a block with `.border-bottom` and a padding utility, a footer one
+// with `.border-top`. A fixed header, body and footer are the panel's, for
+// data (bricks/_panels.scss).
 
 .card-inverted {
     // Text roles re-mapped for the dark surface (CSS-364). Derived tokens are
@@ -51,60 +45,70 @@
     --link-color-secondary: var(--gray-light);
     --link-color-light: var(--gray);
 
+    // Border roles (CSS-380): lines as quiet on the dark surface as on the
+    // light one — a frame (`.panel--bordered`), a divider (a panel's header
+    // and footer, a card's `.border-bottom`), a chart's axes and gridlines.
+    // The light values glared on it, and `--border-color-dark` (#333) vanished into it.
+    --border-color: var(--gray-mid-dark);
+    --border-color-light: color-mix(in srgb, var(--gray-mid-dark) 50%, var(--gray-dark));
+    --border-color-dark: var(--gray-light);
+
+    // Derived on :root from --border-color, so restated here to follow it.
+    --border-code: 1px solid var(--border-color);
+
+    // The surface, and the chart tokens resolved again against the roles
+    // above (charts/_roles.scss). The active control mirrors the light one:
+    // the far end of the scale with a strong border, as white is on a light
+    // card; the Lin/Log fill is the quiet grey under the light label.
+    // The tooltip keeps its light popover.
+    --surface-current: var(--gray-dark);
+
+    @include chart.role-tokens;
+
+    --chart-control-active-bg: var(--gray-darkest);
+    --chart-control-fill: var(--gray-mid-dark);
+
     display: flex;
     flex-direction: column;
-    background: var(--gray-dark);
+    background: var(--surface-current);
     color: var(--gray-light);
     position: relative;
+
+    // A separate class, not a `.card` modifier: it holds the outdents itself.
+    @include co.contain-outdents;
 }
 
-.card-inverted a {
-    color: var(--gray-light);
+// Text links only. A link in a light card nested in the dark one takes
+// `--link-color` from the nearest surface instead (below), and a link-button
+// keeps its own label colour, dark on the default button's light grey
+// (utilities/_contracts.scss). Zero weight in the exclusions, so the rule
+// keeps (0,1,1).
+.card-inverted a:not(:where(.card-inverted .card *))#{ct.$not-button} {
+    color: var(--link-color);
 }
 
-.card-dashboard-bordered {
-    padding: var(--space-md) var(--space-lg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
+// A light card inside a dark one (the deck on /styles/bricks/cards/) is a light
+// surface again. Custom properties inherit, so it would keep every role the
+// dark card re-maps: light text, dark lines and chart tokens made for #333,
+// on #fafafa. It takes back the page's own value of each role, kept on
+// `:root` (bricks/_page-roles.scss), and resolves the chart tokens again
+// against them (CSS-380); its surface is the card's own (`.card`).
+:root {
+    @include pr.keep-page-roles;
 }
 
-.card-row-bordered {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: nowrap;
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
+// Zero specificity: it only has to beat inheritance, so a project's own
+// `.card` rule and a colour utility still win.
+:where(.card-inverted .card) {
+    @include pr.take-page-roles;
 
-    // A long row (six stats) cannot shrink below its content on a phone;
-    // scroll it inside its own border instead of widening the page (CSS-354).
-    @include bp.mobile {
-        overflow-x: auto;
-        scrollbar-width: thin;
-    }
+    color: var(--primary-text-color);
 }
 
-.card-row-bordered-item {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    padding: var(--space-md);
-    text-align: center;
-}
-
-.card-row-bordered > .card-row-bordered-item:not(:last-child) {
-    border-right: 1px solid var(--border-color);
-}
-
-.card-caption {
-    margin-left: calc(var(--space-lg) * -1);
-    width: calc(100% + var(--space-lg));
-    
-    @include bp.mobile {
-        margin-left: calc(var(--space-sm) * -1);
-        width: calc(100% + var(--space-sm));
-    }
-}
+// The bordered data surface and the bordered row moved to the panel family
+// in v0.7.2 (CSS-181, no alias): `.card-dashboard-bordered` → `.panel
+// .panel--bordered`, `.card-row-bordered(-item)` → `.panel__row(-item)`.
+// See bricks/_panels.scss.
 
 // Paper-like surface for document-style inserts: a quiet white sheet with
 // generous inner space and a mild lift from the page.
@@ -139,6 +143,12 @@
 .card-grid--cols-2 { --card-grid-cols: 2; }
 .card-grid--cols-3 { --card-grid-cols: 3; }
 .card-grid--cols-4 { --card-grid-cols: 4; }
+
+// A tile's title link takes no brand fill: the tile shows the hover itself
+// (in the gallery, the title's background darkens).
+.card-grid__title a {
+    background-image: none;
+}
 
 .card-grid__item {
     display: flex;
@@ -203,7 +213,7 @@
 
 // Below desktop every column variant collapses to two. Placed last so it
 // wins over the `--cols-*` modifiers on equal specificity.
-@include bp.multi-breakpoint("mobile", "tablet") {
+@include bp.below-desktop {
     .card-grid {
         --card-grid-cols: 2;
     }

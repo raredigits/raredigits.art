@@ -12,7 +12,7 @@ RareCharts provides three circular chart types that share a common API and them
 
 The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.
 
-<div id="chart-donut" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut" class="panel panel--bordered text-content-caption"></div>
 
 <div class="air-md"></div>
 
@@ -31,7 +31,7 @@ new RareCharts.Donut('#chart', {
 
 Pass `legendPosition: 'right'` to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.
 
-<div id="chart-donut-legend-right" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut-legend-right" class="panel panel--bordered text-content-caption"></div>
 
 <div class="air-md"></div>
 
@@ -47,7 +47,7 @@ Either way the legend items need no `color`: the chart paints each dot, line or 
 
 Hand Donut a **tree** — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up — once you are in, the center is a button, so Tab and Enter take you up as well. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.
 
-<div id="chart-donut-drilldown" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-donut-drilldown" class="panel panel--bordered text-content-caption"></div>
 
 <div class="air-md"></div>
 
@@ -73,7 +73,7 @@ From code: `chart.drillUp()` goes one level up, and `chart.drillToDepth(i)` jump
 
 A pie is a donut with `innerRadius: 0`, and that is what `Pie` draws by default: no hole, no center text, slightly tighter slice gaps. Every other Donut option and method works the same, drill-down included — a pie has no center to click, so you go back up through the breadcrumb; an explicit `innerRadius` still makes a hole.
 
-<div id="chart-pie" class="text-content-caption card-dashboard-bordered"></div>
+<div id="chart-pie" class="panel panel--bordered text-content-caption"></div>
 
 A pie chart is a blunt instrument: it answers “how is the total split” when there are only a few categories and the differences are obvious. It breaks down quickly when slices are similar in size, when there are many categories, or when the reader needs precision.
 
@@ -103,14 +103,14 @@ Control what appears with `labelContent`:
 
 An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is "how far along are we?"
 
-<div class="grid grid-cols-3 mobile:grid-cols-1 gap-none bordered rounded-xs card-caption">
-  <div class="card-row-bordered-item">
+<div class="panel__row panel__row--stack panel__row--text-start card-caption">
+  <div class="panel__row-item">
     <div id="chart-gauge-progress"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-target"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-thin"></div>
   </div>
 </div>
@@ -155,11 +155,11 @@ Two ingredients make the automotive-indicator look:
 - **Sweep.** `startAngle` / `endAngle` set the arc in radians, clockwise from 12 o'clock. The default `±Math.PI * 0.75` is a 270° horseshoe; `-Math.PI / 2 … Math.PI / 2` is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.
 - **Needle.** `needle: true` draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with `needleColor` (default: theme text).
 
-<div class="grid grid-cols-2 gap-none bordered rounded-xs card-caption margin-y-md">
-  <div class="card-row-bordered-item">
+<div class="panel__row panel__row--stack panel__row--text-start card-caption margin-y-md">
+  <div class="panel__row-item">
     <div id="chart-gauge-speed"></div>
   </div>
-  <div class="card-row-bordered-item">
+  <div class="panel__row-item">
     <div id="chart-gauge-needle"></div>
   </div>
 </div>

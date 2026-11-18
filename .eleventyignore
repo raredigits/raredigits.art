@@ -7,5 +7,4 @@ assets/charts/README.md
 test/
 vitest.config.js
 .claude/
-_temp/
 examples/styles/content-starter/demo/

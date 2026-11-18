@@ -1,11 +1,14 @@
 // Layout contracts found by the CSS-345 bug sweep (v0.7.0, 2026-10-16).
 //
 //   CSS-357  every outdent (negative margin-left that hangs a block into the
-//            page margin) is reset inside `.card`, which has no margin to hang
-//            into — or is explicitly exempt with a reason.
+//            page margin) is reset inside `.card` — and, from v0.7.2, inside
+//            `.panel` (CSS-180) — which have no margin to hang into; or it is
+//            explicitly exempt with a reason.
 //   CSS-358  every media query uses the shared gap-free boundaries (CSS-355), so no
 //            module switches layout one pixel off the rest (sidenotes used
-//            `width <= 1024px` while desktop starts at 1024px).
+//            `width <= 1024px` while desktop starts at 1024px). The site layer
+//            (rare-website.css) keeps to them too: its `max-width: 768px`
+//            stop-gap was the last one off (harvested in CSS-371, v0.7.2).
 import { describe, it, expect, beforeAll } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -29,44 +32,56 @@ const ALLOWED_MEDIA = new Set([
   'screen and (width < 769px)',
   'screen and (769px <= width < 1024px)',
   'screen and (width >= 1024px)',
-  '(width < 1024px)',
+  'screen and (width < 1024px)', // below-desktop: tablet and phone together
+  'screen and (width < 1226px)', // a sidenote row with a chart in the article flow: the article is under 870px (typography/_notes.scss), not a layout layer
   '(width < 769px)',
   '(prefers-reduced-motion: no-preference)',
   'print', // article print hygiene (CSS-167), not a layout boundary
 ]);
 
 let root;
+let site;
 beforeAll(() => {
   root = postcss.parse(readFileSync(resolve(process.cwd(), 'assets/css/rare.css'), 'utf8'));
+  site = postcss.parse(readFileSync(resolve(process.cwd(), 'assets/css/rare-website.css'), 'utf8'));
 });
 
-describe('CSS-357: outdents are contained inside .card', () => {
-  it('every outdent selector is reset in .card or exempt', () => {
+describe('CSS-357: outdents are contained inside every surface', () => {
+  it.each(['card', 'card-inverted', 'panel', 'collapsible-container', 'collapsible-content'])('every outdent selector is reset in .%s or exempt', (surface) => {
     const outdents = new Set();
     root.walkDecls('margin-left', (d) => {
       if (!/^(-|calc\(\s*-|calc\(.*\*\s*-1\s*\))/.test(d.value.trim())) return;
       for (const s of d.parent.selectors) outdents.add(strip(s));
     });
-    const resetInCard = new Set();
+    const reset = new Set();
+    const inSurface = new RegExp(`^\\.${surface} (.+)$`);
     root.walkRules((r) => {
       const zero = r.nodes.some((n) => n.type === 'decl' && n.prop === 'margin-left' && n.value === '0');
       if (!zero) return;
       for (const s of r.selectors) {
-        const m = strip(s).match(/^\.card (.+)$/);
-        if (m) resetInCard.add(m[1]);
+        const m = strip(s).match(inSurface);
+        if (m) reset.add(m[1]);
       }
     });
-    const uncovered = [...outdents].filter((o) => !resetInCard.has(o) && !(o in EXEMPT));
+    const uncovered = [...outdents].filter((o) => !reset.has(o) && !(o in EXEMPT));
     expect(outdents.size).toBeGreaterThan(8);
     expect(uncovered).toEqual([]);
   });
 });
 
 describe('CSS-358: media queries use the shared breakpoint boundaries', () => {
-  it('no ad-hoc media query', () => {
+  it.each(['rare.css', 'rare-website.css'])('no ad-hoc media query in %s', (file) => {
+    const css = file === 'rare.css' ? root : site;
     const odd = new Set();
-    root.walkAtRules('media', (a) => { if (!ALLOWED_MEDIA.has(a.params)) odd.add(a.params); });
+    css.walkAtRules('media', (a) => { if (!ALLOWED_MEDIA.has(a.params)) odd.add(a.params); });
     expect([...odd]).toEqual([]);
+  });
+
+  it('the site layer says what may live in it (CSS-371)', () => {
+    const head = site.first;
+    expect(head.type).toBe('comment');
+    expect(head.text).toMatch(/What may live here:/);
+    expect(head.text).toMatch(/What may not:/);
   });
 
   it('the 1024px boundary is exclusive everywhere (desktop starts at 1024)', () => {

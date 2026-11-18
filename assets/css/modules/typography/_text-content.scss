@@ -1,54 +1,70 @@
+@use "sass:selector";
 @use "../utilities/breakpoints" as *;
 @use "../decorations/icons" as ico;
+@use "small-print" as sp;
 
+// The outdent: a block hangs past the text column by `--outdent` on the left
+// and `--outdent-end` on the right (the tokens below).
 @mixin outdent {
-    margin-left: calc(-1 * var(--space-lg));
-
-    // On the right the outdent may only use the room that is there: `main`'s
-    // padding plus the field beside the centred page. At 769–1279px that is
-    // 16px, and the full 32px pushed the page sideways (CSS-367).
-    margin-right: calc(-1 * min(var(--space-lg), var(--field-width) + var(--space-md)));
-
-    @include mobile {
-        margin-left: calc(-1 * var(--space-sm));
-        margin-right: calc(-1 * var(--space-sm));
-    }
+    margin-left: calc(-1 * var(--outdent));
+    margin-right: calc(-1 * var(--outdent-end));
 }
 
-// The caption width: the reading measure plus the outdent on both sides —
-// `.text-content-caption`, `.lead`, `.highlight`, `.teaser-bottom`. Never wider
-// than the room the outdent has, so a narrow container is not overflowed; on a
-// phone the block is the column plus the outdent on each side. Explicit
-// widths, not `auto`, so it holds on tables, images and flex items too.
+// The caption width — `.text-content-caption`, `.lead`, `.highlight`,
+// `.teaser-bottom`: `--text-content-caption`, the reading measure plus the
+// outdent on each side, and never more than its container plus the outdents.
+// In an article the measure is the narrower one; in a grid cell or a narrow
+// column the block hangs by the outdent and no further, so it neither widens
+// its grid track nor the page (as in v0.7.1, `CSS-367`). An explicit width,
+// not `auto`, so it holds on tables, images and flex items too.
 @mixin caption-width {
-    width: min(
-        var(--text-content-caption),
-        100% + var(--space-lg) + min(var(--space-lg), var(--field-width) + var(--space-md))
-    );
+    width: min(var(--text-content-caption), 100% + var(--outdent) + var(--outdent-end));
     max-width: none;
 
     @include outdent;
-
-    @include mobile {
-        width: calc(100% + 2 * var(--space-sm));
-    }
 }
 
 :root {
-    --text-content-width: calc((var(--global-fr) * 5) + (var(--grid-gap) * 4));
-    --text-content-caption: calc(var(--text-content-width) + var(--global-fr) + var(--space-xl));
+    // The reading measure: six columns of the page grid (five until v0.7.2:
+    // 49–61 characters a line at 1100–1440px, now 61–69; the site width
+    // bounds it). A tablet takes eight of its columns, a phone the screen.
+    --text-content-width: calc((var(--global-fr) * 6) + (var(--grid-gap) * 5));
+
+    // The outdent, read by every block that hangs past the text column by it
+    // (a `blockquote` keeps its own `--space-md`) and by every rule that steps
+    // content back in by it: `--space-lg`, `--space-sm`
+    // on a phone, 0 on paper (utilities/_print.scss). On the right a block may
+    // only use the room that is there, between the centred `.content` and the
+    // viewport: `main`'s padding, or the field beside the page where that is
+    // wider (`--field-width` already includes the padding). On a tablet and
+    // up to ~1270px that is under 32px, and the full outdent pushed an
+    // auto-width block (`.caption`) past the page (CSS-367; adding the padding
+    // to the field still did, by up to 15px at 1120–1260px). A block with the
+    // caption width is sized by the measure and reaches it only in a narrower
+    // container (`caption-width` above). Internal,
+    // like `--field-width`: not a theming token.
+    --outdent: var(--space-lg);
+    --outdent-end: min(var(--space-lg), max(var(--field-width), var(--space-md)));
+
+    // The width of every block with an outdent: the measure plus the outdent
+    // on each side (`outdent` above). On a phone the container plus the
+    // outdent (below), not the measure: a project that re-maps the measure on
+    // `:root` without a media query must not widen the page there.
+    --text-content-caption: calc(var(--text-content-width) + 2 * var(--outdent));
 }
 
 @include tablet {
     :root {
-        --text-content-width: calc((var(--global-fr) * 7) + var(--grid-gap-global) * 6);
+        --text-content-width: calc((var(--global-fr) * 8) + var(--grid-gap-global) * 7);
     }
 }
 
 @include mobile {
     :root {
         --text-content-width: 100%;
-        --text-content-caption: calc(100vw - var(--space-md));
+        --text-content-caption: calc(100% + 2 * var(--outdent));
+        --outdent: var(--space-sm);
+        --outdent-end: var(--space-sm);
     }
 }
 
@@ -62,11 +78,34 @@ article {
     min-width: 0;
 }
 
-article p,
-article ul, 
-article ol  {
-    max-width: var(--text-content-width);
+// The reading measure binds the prose surface: paragraphs and lists in the
+// article, its sections, cards, details and sidenotes. A data component lays
+// out its own content, so the measure stops at its edge (CSS-374): a data
+// table (`.table-scroll`, `.table-bordered`: a group-row line, a cell's
+// paragraph), a panel, a KPI stat, an embedded chart (`.rc-chart`: its
+// subtitle, note and details panel). So does `.caption`, which is its own
+// measure: its text runs the block's full width. A plain <table> that sets
+// prose in two columns keeps the measure: the capped cell is what leaves its
+// label column room. A component not listed opts out with its own
+// `max-width`. Binding the measure to direct children only (`.prose`,
+// CSS-151) would drop it from prose in authored wrappers (`details`, a card),
+// so the list stays until then.
+$measure-free: ".table-scroll, .table-bordered, .panel, .stat, .rc-chart";
+$measure-stop: "#{$measure-free}, .caption";
 
+// The measure on a prose block: paragraphs and lists here, `blockquote` and
+// `dl` below, the article `figure` (_figures.scss), each stopping at the same
+// edge (CSS-384: a chart's details `<dl>` spans its panel). The exclusion sits
+// in `:where()` and adds no specificity.
+@mixin reading-measure($selector) {
+    #{selector.append($selector, ":not(:where(#{$measure-stop}) *)")} {
+        max-width: var(--text-content-width);
+
+        @content;
+    }
+}
+
+@include reading-measure("article :is(p, ul, ol)") {
     @include mobile {
         max-width: 100%;
     }
@@ -74,6 +113,25 @@ article ol  {
 
 article .meta-info {
     margin-top: var(--space-sm);
+}
+
+// BLOCK RHYTHM IN THE ARTICLE FLOW (CSS-377)
+// Paragraphs and headings bring their own margins; block components do not,
+// so a card followed by code, a list or a grid touched it. A block that
+// follows another block in the article (or in a section of it) keeps
+// `--space-md` from it. Only block after block: next to a paragraph the
+// paragraph's own margin stays the gap, and a spacer between two blocks
+// keeps its height (neither side matches it).
+// The gap is the second block's `margin-top`, weight (0,0,1): a margin-top
+// utility on the second block decides (`.margin-t-0` closes the gap). A
+// margin-bottom on the first block does not shrink it — the two collapse,
+// and the larger wins. A `.table-scroll` box contains its table's bottom
+// margin, so it only takes a gap, never gives one.
+$flow-blocks: ".card, .card-inverted, .panel, .panel__row, .panel-grid, .legend, .stat, .button-group, fieldset, .grid, .card-grid, .sidenote-wrapper, .collapsible-container, .rc-chart, .callout, .caption, .highlight, pre, ul, ol, dl, table, blockquote, figure, details";
+
+article > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll),
+:where(article) > section > :where(#{$flow-blocks}) + :where(#{$flow-blocks}, .table-scroll) {
+    margin-top: var(--space-md);
 }
 
 .nobr {
@@ -88,10 +146,6 @@ article .meta-info {
     @include caption-width;
 
     position: relative;
-}
-
-article .text-content-caption:first-child {
-    padding: 0 0 var(--space-sm);
 }
 
 .lead {
@@ -135,44 +189,94 @@ mark {
 // Muted secondary text. `.note` and `.meta-info` share the look; `cite` and
 // `.callout` build on it.
 .note {
-    color: var(--text-color-light);
-    font-weight: var(--font-weight-light);
-    font-size: var(--font-size-sm);
-    line-height: 1.3em;
+    @include sp.small-print;
 }
 
 .meta-info {
     margin-bottom: var(--space-md);
-    color: var(--text-color-light);
-    font-weight: var(--font-weight-light);
-    font-size: var(--font-size-sm);
-    line-height: 1.3em;
+
+    @include sp.small-print;
 }
 
 .callout {
     padding: var(--space-sm) var(--space-md);
     text-align: center;
-    color: var(--text-color-light);
-    font-weight: var(--font-weight-light);
-    font-size: var(--font-size-sm);
-    line-height: 1.3em;
-    border: 1px solid var(--border-color);
-    border-radius: var(--space-xs);
+
+    @include sp.small-print;
+
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
-cite {
+// Variants (CSS-156): `.callout .callout-warning`. A notice the reader must
+// not skip, so it reads at full strength — left-aligned, in the body text
+// colour — with a stripe on the left. The state variants take the stripe in
+// their role's colour and a fill of it at 25%, the `-bg` twin's mix
+// (colors/_semantic.scss), worked out on the callout itself: a role re-mapped
+// on a surface re-colours the fill with the stripe (the twin on `:root` would
+// keep the page's). The aliases (`--positive`, `--fail`…) are the same
+// colours and need none.
+// `.callout-signal` is plain information: a stripe in the text colour (black
+// on the page, light on `.card-inverted`), no fill, so it does not compete
+// with the states. The colour is never the only cue: the text
+// names the state.
+.callout-signal,
+.callout-success,
+.callout-warning,
+.callout-danger {
+    text-align: left;
+    color: var(--text-color-dark);
+    font-weight: var(--font-weight-normal);
+    border-left: var(--space-xs) solid var(--callout-color);
+    background-color: var(--callout-bg);
+}
+
+.callout-signal {
+    --callout-color: var(--primary-text-color);
+    --callout-bg: transparent;
+}
+
+// The fill is declared on each state callout, so one nested in a signal
+// callout (whose slot is transparent) keeps its own.
+.callout-success,
+.callout-warning,
+.callout-danger {
+    --callout-bg: color-mix(in srgb, var(--callout-color) 25%, transparent);
+}
+
+.callout-success {
+    --callout-color: var(--success);
+}
+
+.callout-warning {
+    --callout-color: var(--warning);
+}
+
+.callout-danger {
+    --callout-color: var(--danger);
+}
+
+// The attribution: a quote's source on its own line, right-aligned and small.
+// `<cite>` marks the title of a work, so a bare one stays inline; the look
+// applies only to the cite that closes a <blockquote>, its direct child
+// (CSS-379). A title cited inside the quoted prose or in a <figcaption>
+// ("— Author, <cite>Work</cite>") stays inline. A credit under an image is
+// the figure's <figcaption> (_figures.scss). `:where()` keeps the weight of
+// the old bare `cite` rule.
+:where(blockquote) > cite {
     display: block;
     width: 100%;
     margin: var(--space-sm) 0;
     text-align: right;
-    color: var(--text-color-dark); // a role, so inverted surfaces re-map it (CSS-364)
-    font-weight: var(--font-weight-light);
-    font-size: var(--font-size-sm);
-    line-height: 1.3em;
+
+    // In a role, so inverted surfaces re-map it (CSS-364).
+    @include sp.small-print(var(--text-color-dark));
 }
 
+// On the measure (above): (0,0,1), the bare `blockquote` weight.
+@include reading-measure("blockquote");
+
 blockquote {
-    max-width: var(--text-content-width);
     margin-left: calc(var(--space-md) * -1);
     padding: var(--space-md) 0 var(--space-md) var(--space-lg);
     background-image: url('images/common/mark-quote.svg');
@@ -193,9 +297,11 @@ blockquote p:first-of-type {
 // key:value metadata, opt in to `.dl-grid`.
 
 dl {
-    max-width: var(--text-content-width);
     margin: var(--space-md) 0;
 }
+
+// On the measure (above): (0,0,1), the bare `dl` weight.
+@include reading-measure("dl");
 
 dt {
     font-size: var(--font-size-lg);
@@ -243,6 +349,9 @@ dd + dt {
 }
 
 pre {
+    // Unitless, as it was in `em` (CSS-375): the block's own 19.2px line box
+    // (its strut) sets the pitch of the smaller code inside it, so code lines
+    // and box-drawing trees keep their spacing. The code inherits the ratio.
     line-height: var(--line-height-sm);
     background-color: var(--gray-mid-light);
     color: var(--gray-dark);
@@ -250,18 +359,16 @@ pre {
     border-radius: var(--space-sm);
     overflow-x: auto;
     margin-bottom: 1em;
-    margin-left: calc(-1 * var(--space-lg));
+    margin-left: calc(-1 * var(--outdent));
     box-shadow: var(--inner-shadow-sm);
-    scrollbar-width: none; 
+    scrollbar-width: none;
     -ms-overflow-style: none;
 
-    @include tablet {
-        padding: var(--space-md);
-    }
-
+    // The code starts on the text edge: the side padding equals the outdent
+    // (32px) on a desktop and a tablet. On a phone the outdent is 8px and the
+    // padding 16px.
     @include mobile {
         padding: var(--space-md);
-        margin-left: calc(-1 * var(--space-sm));
     }
 }
 
@@ -298,7 +405,7 @@ pre code {
 .handwritten {
     font-family: var(--script-font);
     font-size: var(--font-size-lg);
-    line-height: 1em;
+    line-height: 1;
 }
 
 .bold {

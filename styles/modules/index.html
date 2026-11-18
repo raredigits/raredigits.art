@@ -29,77 +29,102 @@ permalink: '/styles/modules/'
     <pre class="full-width-caption">
 <code>css/
 │
-├── rare.scss                     # Main entry file that imports all modules
-│
-├── modules/   
-│   │
-│   ├── layout/                   # Layout components
-│   │   ├── _grid.scss            # Grid system definitions
-│   │   ├── _containers.scss      # Content containers styles (header, main, footer)
-│   │   ├── _spacing.scss         # Margin and padding utilities
-│   │   └── _spacing-aliases.scss # Spacing aliases for easier use
-│   │
-│   ├── typography/               # Typography components
-│   │   ├── _fonts.scss           # Font imports and definitions
-│   │   ├── _headings.scss        # Heading styles
-│   │   ├── _body.scss            # Paragraph and inline text styles
-│   │   ├── _lists.scss           # List styles
-│   │   ├── _notes.scss           # References and Notes
-│   │   ├── _tables.scss          # Table styles
-│   │   └── _text-content.scss    # Blockquotes, code blocks, etc.
-│   │
-│   ├── colors/                   # Color variables and palettes
-│   │   ├── _base.scss            # Base colors
-│   │   ├── _brand.scss           # Brand colors
-│   │   ├── _supporting.scss      # Supporting colors
-│   │   └── _blue.scss            # Blue palette
-│   │
-│   ├── bricks/                   # Holders and wrappers
-│   │   ├── _sections.scss        # Section styles
-│   │   └── _cards.scss           # Cards and card decks
+├── modules/
 │   │
 │   ├── align/                    # Alignment utilities
-│   │   ├── _align.scss           # Alignment variables
+│   │   ├── _align.scss           # Alignment classes
 │   │   ├── _flex.scss            # Flexbox utilities
 │   │   └── _position.scss        # Positioning utilities
 │   │
-│   ├── navigation/               # Navigation components
-│   │   ├── _header.scss          # Header & Search panel styles
-│   │   ├── _hamburger.scss       # Hamburger menu styles
-│   │   ├── _navigation.scss      # Navigation bars styles
-│   │   ├── _sidebar.scss         # Sidebar styles
-│   │   └── _links.scss           # Link styles
+│   ├── bricks/                   # Holders and wrappers
+│   │   ├── _cards.scss           # Cards and the card grid
+│   │   ├── _contain-outdents.scss # Mixin and lists: outdents held inside cards, panels, collapsibles (Sass only)
+│   │   ├── <a href="/styles/colors/legend/">_legend.scss</a>          # Legend rows, items and swatches
+│   │   ├── _page-roles.scss      # Mixins: a surface takes back the page's roles (Sass only)
+│   │   ├── <a href="/styles/bricks/panels/">_panels.scss</a>          # Panels, panel grid and panel row
+│   │   ├── _sections.scss        # Section styles
+│   │   └── <a href="/styles/bricks/panels/#stats">_stats.scss</a>           # KPI figures: label, value, direction
 │   │
-│   ├── elements/                 # Interactive UI elements
-│   │   ├── _buttons.scss         # Button styles
-│   │   ├── _forms.scss           # Form element styles
-│   │   ├── _pop-ups.scss         # Pop-up and modal styles
-│   │   └── _tooltips.scss        # Tooltip styles
+│   ├── <a href="/styles/colors/chart-tokens/">charts/</a>                   # Chart tokens
+│   │   ├── <a href="/styles/colors/chart-tokens/">_index.scss</a>           # --chart-*: series, text, axes, controls, tooltip
+│   │   └── _roles.scss           # Mixin: chart tokens resolved again on a surface (Sass only)
+│   │
+│   ├── colors/                   # Color variables and palettes
+│   │   ├── _base.scss            # Base colors: grays, red, green, yellow, blue
+│   │   ├── _brand.scss           # Brand colors
+│   │   ├── _color-classes.scss   # Mixin: the text, background and link classes of each color (Sass only)
+│   │   ├── <a href="/styles/colors/#semantic-colors">_semantic.scss</a>        # Roles: semantic colors, signal, surface
+│   │   └── _supporting.scss      # Supporting colors
 │   │
 │   ├── decorations/              # Visual enhancements
-│   │   ├── _media.scss           # Images, videos, and other media styles
-│   │   ├── _icons.scss           # Icons
 │   │   ├── _borders.scss         # Borders
+│   │   ├── _icons.scss           # Icons
+│   │   ├── _media.scss           # Images, videos, and other media styles
 │   │   ├── _separators.scss      # Separators
 │   │   ├── _shadows.scss         # Shadow styles
 │   │   └── _skeleton.scss        # Skeleton styles
 │   │
+│   ├── <a href="/styles/interactive/">elements/</a>                 # Controls: plain elements inside .rd
+│   │   ├── <a href="/styles/interactive/buttons/">_buttons.scss</a>         # Buttons: variants, sizes, icons, states, groups
+│   │   ├── _control-face.scss    # Mixins: the face buttons and fields share (Sass only)
+│   │   └── <a href="/styles/interactive/forms/">_forms.scss</a>           # Form fields, checkbox and radio, groups, validation
+│   │
+│   ├── layout/                   # Layout components
+│   │   ├── _containers.scss      # Content containers styles (header, main, footer)
+│   │   ├── _grid.scss            # Grid system definitions
+│   │   ├── _spacing.scss         # Margin and padding utilities
+│   │   └── _spacing-aliases.scss # Spacing aliases for easier use
+│   │
+│   ├── navigation/               # Navigation components
+│   │   ├── _link-look.scss       # Mixins: the link underline and hover fill (Sass only)
+│   │   ├── _links.scss           # Link styles
+│   │   ├── _navigation.scss      # Navigation bars styles
+│   │   ├── _sidebar.scss         # Sidebar styles
+│   │   ├── _tags.scss            # Topic tags
+│   │   └── header/               # Site header
+│   │       ├── _hamburger.scss   # Hamburger menu styles
+│   │       ├── _header-container.scss # Header container
+│   │       └── _search.scss      # Search panel styles
+│   │
 │   ├── special/                  # Special components
-│   │   ├── _cookie-consent.scss  # Cookies consent 
-│   │   ├── _construction.scss    # Construction notice
+│   │   ├── _carousel.scss        # Image carousel
 │   │   ├── _collapsible.scss     # Collapsible elements
-│   │   └── _mockups.scss         # Browsers mockups
+│   │   ├── _construction.scss    # Construction notice
+│   │   ├── _cookie-consent.scss  # Cookies consent
+│   │   ├── _mockups.scss         # Browsers mockups
+│   │   ├── _rare.scss            # Rare branding helpers
+│   │   └── _web-reusable.scss    # Sticky WhatsApp button
+│   │
+│   ├── typography/               # Typography components
+│   │   ├── _body.scss            # Paragraph and inline text styles
+│   │   ├── _figures.scss         # Figures, captions and sources
+│   │   ├── _font-faces.scss      # Self-hosted font faces (generated)
+│   │   ├── _fonts.scss           # Font imports and definitions
+│   │   ├── _headings.scss        # Heading styles
+│   │   ├── _lists.scss           # List styles
+│   │   ├── _notes.scss           # References and Notes
+│   │   ├── _small-print.scss     # Mixins: small muted type (Sass only)
+│   │   ├── _tables.scss          # Table styles
+│   │   └── _text-content.scss    # Blockquotes, code blocks, etc.
 │   │
 │   └── utilities/                # Helper classes
+│       ├── _a11y.scss            # Focus ring, skip link, visually hidden
 │       ├── _breakpoints.scss     # Responsive breakpoint definitions
+│       ├── _contracts.scss       # Selector lists: rules stop at an embedded chart, a link-button (Sass only)
 │       ├── _display.scss         # Display and visibility helpers
-│       └── _resets.scss          # CSS resets
+│       ├── _print.scss           # Print styles
+│       ├── _resets.scss          # CSS resets
+│       └── _states.scss          # State classes rd-is-*
+│
+├── rare.scss                     # Main entry file that imports all modules
 │
 └── vendor/                       # Third-party styles
     └── normalize.css             # CSS normalization
 </code>
     </pre>
     
+    <p>The tree is in alphabetical order. Each folder also has an <code>_index.scss</code> that forwards its files in the order they load.</p>
+
     <p>When adding new features, place them within the appropriate existing module rather than creating isolated stylesheets. This maintains system coherence and makes relationships between elements clear.</p>
     
     <p>The main <code>rare.scss</code> file imports all modules in the correct order, ensuring dependencies are resolved properly during compilation. This automated build process eliminates the need to manually manage stylesheet references in your HTML.</p>

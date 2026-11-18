@@ -8,9 +8,7 @@ permalink: '/charts/multi/'
 
 `MultiChart` combines two to four charts inside a single block with a shared title, subtitle, legend, and source footer. Each panel is an independent chart instance — a `Line` or a `Bar` — arranged in a CSS grid.
 
-<div class="card text-content-caption card-dashboard-bordered">
-    <div id="multi-chart-market-overview"></div>
-</div>
+<div id="multi-chart-market-overview" class="panel panel--bordered text-content-caption"></div>
 
 ### Usage
 
@@ -73,15 +71,11 @@ The narrow layout depends on the container width alone — at most `mobileBreakp
 
 Side-by-side horizontal bar charts are a natural fit for group comparisons where labels are shared. Suppress the Y axis on panels after the first to keep things clean:
 
-<div class="card text-content-caption card-dashboard-bordered">
-    <div id="multi-chart-coding-experience"></div>
-</div>
+<div id="multi-chart-coding-experience" class="panel panel--bordered text-content-caption"></div>
 
 When you need a third panel, the `span` field on a chart descriptor stretches that cell across all grid columns — a clean way to place a summary chart above two detail panels:
 
-<div class="card text-content-caption card-dashboard-bordered">
-    <div id="multi-chart-developer-survey"></div>
-</div>
+<div id="multi-chart-developer-survey" class="panel panel--bordered text-content-caption"></div>
 
 ## MultiChart options
 

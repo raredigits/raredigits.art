@@ -1,0 +1,102 @@
+<!doctype html>
+<!-- Checked by test/browser/controls-contexts.test.js: the button system and
+     the forms (Rare Styles v0.7.2, Part C1) in the places a page puts them —
+     a dark card, a sidenote, the sidebar, flex columns, a segmented group —
+     and the element types and states the first pass missed. Page mode. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Controls in context fixture</title>
+<link rel="stylesheet" href="/assets/css/rare.css">
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <article>
+      <h2>On a dark card</h2>
+      <div id="inv" class="card-inverted padding-md">
+        <p>
+          <button id="inv-ghost" class="button-ghost" type="button">Ghost</button>
+          <button id="inv-ghost-busy" class="button-ghost" type="button" aria-busy="true">Ghost busy</button>
+          <a id="inv-a" class="button" href="#x">Link button</a>
+          <a id="inv-a-primary" class="button button-primary" href="#x">Primary link</a>
+          <a id="inv-text-link" href="#x">a text link</a>
+        </p>
+      </div>
+      <p><button id="page-ghost" class="button-ghost" type="button">Ghost on the page</button></p>
+
+      <h2>In a sidenote and the sidebar</h2>
+      <div class="sidenote-wrapper">
+        <p>Body text.</p>
+        <aside class="sidenote">
+          <p><a id="note-a" class="button" href="#x">Note button</a> and <a id="note-text-link" href="#x">a note link</a></p>
+        </aside>
+      </div>
+      <p>Prose with an inline note.<span class="footnote-inside-text"><a id="fit-a" class="button" href="#x">Footnote button</a> <a id="fit-text-link" href="#x">a footnote link</a></span></p>
+      <div class="card-inverted padding-md"><div class="sidenote-wrapper"><p>Text.</p><div class="sidenote"><p><a id="inv-note-link" href="#x">a note link in a dark card</a></p></div></div></div>
+      <aside class="sidebar">
+        <a id="side-a" class="button" href="#x">Sidebar button</a>
+        <a id="side-text-link" href="#x">Sidebar link</a>
+      </aside>
+
+      <h2>In flex columns</h2>
+      <p><button id="w-ref" type="button">Same label</button></p>
+      <div id="card" class="card padding-md">
+        <button id="w-card" type="button">Same label</button>
+        <a id="w-card-a" class="button" href="#x">Same label</a>
+      </div>
+      <div id="card-inv" class="card-inverted padding-md">
+        <button id="w-card-inv" type="button">Same label</button>
+      </div>
+      <div id="panel" class="panel panel--bordered">
+        <div class="panel__header">Header</div>
+        <div class="panel__body">Body</div>
+        <button id="w-panel" type="button">Same label</button>
+      </div>
+      <div id="fg" class="form-group">
+        <label for="fg-in">Field</label>
+        <input id="fg-in" type="text">
+        <button id="w-fg" type="button">Same label</button>
+      </div>
+      <div id="card-block" class="card padding-md">
+        <button id="w-block" class="button-block" type="button">Same label</button>
+      </div>
+
+      <h2>Pressed in a group</h2>
+      <div class="button-group" role="group" aria-label="Filled">
+        <button id="g-default" type="button" aria-pressed="true">Default</button>
+        <button id="g-primary" class="button-primary" type="button" aria-pressed="true">Primary</button>
+        <button id="g-danger" class="button-danger" type="button" aria-pressed="true">Danger</button>
+        <button id="g-primary-off" class="button-primary" type="button" aria-pressed="false">Off</button>
+      </div>
+
+      <h2>States and types</h2>
+      <p>
+        <button id="b-plain" type="button">Plain</button>
+        <button id="b-aria-disabled" type="button" aria-disabled="true">Aria-disabled</button>
+        <button id="b-link-busy" class="button-link" type="button" aria-busy="true">Busy link</button>
+      </p>
+      <div class="legend">
+        <button id="lg-aria-disabled" class="legend__item" type="button" aria-pressed="true" aria-disabled="true"><span class="legend__swatch"></span>Aria-disabled on</button>
+      </div>
+      <form onsubmit="return false">
+        <p>
+          <input id="i-submit" type="submit" value="Submit">
+          <input id="i-button" type="button" value="Button">
+          <input id="i-reset" type="reset" value="Reset">
+          <input id="i-text" type="text">
+        </p>
+        <p>
+          <input id="i-date" type="date">
+          <input id="i-time" type="time">
+          <input id="i-datetime" type="datetime-local">
+          <input id="i-month" type="month">
+          <input id="i-week" type="week">
+        </p>
+      </form>
+    </article>
+  </div>
+</main>
+</body>
+</html>

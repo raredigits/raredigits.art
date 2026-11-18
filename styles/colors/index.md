@@ -132,15 +132,18 @@ While the grayscale palette forms the foundation, strategic use of color helps 
 
 ### Brand Color
 
-The most prominent color in the system is defined by the <code>--brand-color</code> variable. This color is primarily used for links and supporting elements, ensuring brand recognition and consistency throughout the interface.
+The most prominent color in the system is defined by the <code>--brand-color</code> variable. It marks the brand: it fills the <a href="/styles/interactive/buttons/#variants">primary button</a> and frames a <code>.highlight</code>. Links are underlined in the darker <code>--brand-color-dark</code>.
 
 <pre class="text-content-caption">
 <code><span class="code-comment">// css/modules/colors/_brand.scss</span>
     
 --brand-color: #00ff4e; <span class="code-comment">// Primary brand color</span>
---brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant for hover states</span>
---brand-color-dark: #00b300; <span class="code-comment">// Darker variant for active states</span>
+--brand-color-light: #d8f9d1; <span class="code-comment">// Lighter variant: only its color utilities read it (.brand-color-light, -bg, -link)</span>
+--brand-color-dark: #00b300; <span class="code-comment">// Darker variant: link underlines and their hover fill</span>
+--brand-color-deep: #3a8000; <span class="code-comment">// Deeper still: the primary button's hover; white text on it reads at 4.9:1</span>
 </code></pre>
+
+A project that re-maps <code>--brand-color</code> sets <code>--brand-color-deep</code> too, to a shade that carries white text at 4.5:1 or more: under the pointer the primary button turns to it, with a white label.
 
 ### Technical Colors
 
@@ -169,10 +172,127 @@ Technical colors are used to highlight important info: statuses, warnings, and 
                 <span class="copy-data-icon rd-js-copy"></span>
             </div>
         </div>
+        <div class="flex stretched blue-bg white width-100 padding-md copy-data-icon--light">
+            <div>blue — the signal</div>
+            <div>
+                <span data-copy>#1677ff</span>
+                <span class="copy-data-icon rd-js-copy"></span>
+            </div>
+        </div>
     </div>
 </div>
 
 Technical colors should be used strictly for their intended purpose — a designer must avoid inflating the importance of content that isn’t truly critical.
+
+### Semantic Colors
+
+<div class="meta-info">css/modules/colors/_semantic.scss</div>
+
+Components that signal a state read a role, not a hue. Four roles point at the technical colors above:
+
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Role</th>
+        <th>Default</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--signal</code></td>
+        <td class="nobr"><code>var(--blue)</code></td>
+        <td>Technical information, the main chart color</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--success</code></td>
+        <td class="nobr"><code>var(--green)</code></td>
+        <td>Done, passed</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--warning</code></td>
+        <td class="nobr"><code>var(--yellow)</code></td>
+        <td>Caution: read before you go on</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--danger</code></td>
+        <td class="nobr"><code>var(--red)</code></td>
+        <td>An error, a destructive action</td>
+    </tr>
+</table>
+</div>
+
+Four aliases name the same colors where the meaning is different. They follow the role they point at:
+
+<div class="table-scroll">
+<table class="table-small">
+    <tr>
+        <th>Alias</th>
+        <th>Points at</th>
+        <th>Meaning</th>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--positive</code></td>
+        <td class="nobr"><code>var(--success)</code></td>
+        <td>A financial figure that changed for the better</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--negative</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A financial figure that changed for the worse</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--neutral</code></td>
+        <td class="nobr"><code>var(--warning)</code></td>
+        <td>A financial figure that did not change</td>
+    </tr>
+    <tr>
+        <td class="nobr"><code>--fail</code></td>
+        <td class="nobr"><code>var(--danger)</code></td>
+        <td>A check or an operation that did not go through</td>
+    </tr>
+</table>
+</div>
+
+Each role and each alias has its own `-bg` twin: the color at 25%, a fill to set text on. Every swatch below is the token as a stripe on its own `-bg`:
+
+<div class="card text-content-caption padding-lg">
+    <div class="column gap-xs">
+        <div class="padding-sm" style="background: var(--signal-bg); border-left: var(--space-xs) solid var(--signal)"><code>--signal</code> on <code>--signal-bg</code></div>
+        <div class="padding-sm" style="background: var(--success-bg); border-left: var(--space-xs) solid var(--success)"><code>--success</code> on <code>--success-bg</code></div>
+        <div class="padding-sm" style="background: var(--warning-bg); border-left: var(--space-xs) solid var(--warning)"><code>--warning</code> on <code>--warning-bg</code></div>
+        <div class="padding-sm" style="background: var(--danger-bg); border-left: var(--space-xs) solid var(--danger)"><code>--danger</code> on <code>--danger-bg</code></div>
+        <div class="padding-sm" style="background: var(--positive-bg); border-left: var(--space-xs) solid var(--positive)"><code>--positive</code> on <code>--positive-bg</code></div>
+        <div class="padding-sm" style="background: var(--negative-bg); border-left: var(--space-xs) solid var(--negative)"><code>--negative</code> on <code>--negative-bg</code></div>
+        <div class="padding-sm" style="background: var(--neutral-bg); border-left: var(--space-xs) solid var(--neutral)"><code>--neutral</code> on <code>--neutral-bg</code></div>
+        <div class="padding-sm" style="background: var(--fail-bg); border-left: var(--space-xs) solid var(--fail)"><code>--fail</code> on <code>--fail-bg</code></div>
+    </div>
+</div>
+
+Where they are used: the <a href="/styles/typography/text-content/#callouts">callout variants</a> (`.callout-success`, `-warning`, `-danger`; `.callout-signal` takes the text color, `--primary-text-color`, with no fill), a [KPI delta](/styles/bricks/panels/#stats) (`--positive` up, `--negative` down), a [form field](/styles/interactive/forms/) (`--success` when right, `--fail` when invalid), the [danger button](/styles/interactive/buttons/) (`--danger`) and the keyboard focus ring (`--focus-ring-color: var(--signal)`; an own `--focus-ring-color` on `:root` still wins). `--signal` also colors checked boxes and the focused field (`--field-accent`), an emphasized [stat](/styles/bricks/panels/#stat-signal) (`.stat--signal`) and a chart's first series (`--chart-series-1`).
+
+To change what a meaning looks like, re-map the role once, not every component. Re-map it on `:root`: the aliases and the `-bg` twins are resolved there and follow. On a single surface, restate them too (the callouts mix their fill from the role where they are, so theirs follows by itself; the `-bg` twins are for your own fills, the library reads none of them):
+
+<pre class="text-content-caption"><code>:root {
+    --warning: var(--orange); /* --neutral and both -bg follow */
+}
+
+.report {
+    --danger: var(--cherry);
+    --danger-bg: color-mix(in srgb, var(--danger) 25%, transparent);
+}</code></pre>
+
+They are signal colors for stripes, borders and fills, not for text: none of them reaches 4.5:1 as body text on the light surfaces. Keep the words in the text colors and say the state in words too, so the color is never the only cue.
+
+`--signal` is kept apart from the brand colors, which are identity: brand marks, the primary button, link highlights (`--brand-color-dark`).
+
+#### Surface
+
+`--surface-current` is the background of the surface an element sits on: the page's `--bg-color`, unless a `.card` or a `.card-inverted` sets its own (each paints its background with it). A `.panel` paints no background and sets none, so the surface behind it passes through. On paper it is white; in an island, which sits on the host's background, set it yourself. Charts paint their label plates with it from RareCharts 0.9.8_7; see [Surfaces](/styles/colors/chart-tokens/#surfaces).
+
+### Chart Tokens
+
+<div class="meta-info">css/modules/charts/_index.scss</div>
+
+The colours a chart takes from the page (its series, text, axes and gridlines, range controls and tooltip) have names of their own, `--chart-*`; most point at a token on this page, and three series keep RareCharts' own hues. RareCharts reads them first, from its 0.9.8_7. The full list is on [Chart Tokens](/styles/colors/chart-tokens/).
 
 ### Supporting Colors
 

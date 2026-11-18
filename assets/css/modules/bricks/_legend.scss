@@ -1,0 +1,108 @@
+@use "../elements/control-face" as cf;
+@use "../typography/small-print" as sp;
+
+// LEGEND (CSS-178, v0.7.2) — the key to a chart or to any colour-coded view,
+// usable outside charts: a row of items, each a swatch and a label.
+//   <ul class="legend">
+//     <li class="legend__item">
+//       <span class="legend__swatch legend__swatch--line" style="--swatch-color: #00aaff"></span>
+//       Revenue
+//     </li>
+//   </ul>
+// The swatch takes its colour from `--swatch-color` (default: the text
+// colour), set on the swatch, the item or the whole legend. The shapes and
+// sizes are RareCharts' legend — line, dashed, dot, band — so a page legend
+// and a chart's own legend read as one (CSS-241 builds on this contract).
+// An interactive legend is a row of `<button aria-pressed>` items; `false` is
+// the off state.
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 2px var(--space-md); // wrapped lines sit close, items keep their spacing
+    padding-left: 0; // a `<ul>` legend drops the list indent
+    list-style: none;
+
+    @include sp.small-type;
+}
+
+.legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px; // the chart legend's swatch-to-label gap
+    white-space: nowrap;
+}
+
+// A toggle item is a button: drop the button chrome, so the item still reads
+// as a label. The element default (elements/_buttons.scss) holds its states at
+// (0,0,1), so this one rule wins in every state: hover, active, disabled,
+// busy. Keyboard focus keeps the library ring (utilities/_a11y.scss), which
+// this rule does not touch.
+button.legend__item {
+    @include cf.unbutton;
+
+    border-radius: 0;
+    color: inherit;
+    cursor: pointer;
+}
+
+// A disabled toggle (`disabled` or `aria-disabled="true"`) is a plain
+// label: not faded like a disabled button, so an item that is on still
+// reads as on. The off state below still dims it.
+button.legend__item:is(:disabled, [aria-disabled="true"]) {
+    cursor: default;
+}
+
+button.legend__item:is(:disabled, [aria-disabled="true"]):not([aria-pressed="false"]) {
+    opacity: 1;
+}
+
+// Busy: no spinner over the label; the pointer says it.
+button.legend__item[aria-busy="true"] {
+    cursor: progress;
+}
+
+button.legend__item[aria-busy="true"]::after {
+    content: none;
+}
+
+// Off: the series it names is hidden. RareCharts dims its own items the same.
+.legend__item[aria-pressed="false"] {
+    opacity: 0.35;
+}
+
+// The base swatch is a square; the modifiers give the series' shape.
+.legend__swatch {
+    display: inline-block;
+    flex-shrink: 0;
+    width: var(--space-sm);
+    height: var(--space-sm);
+    background: var(--swatch-color, currentcolor);
+}
+
+// A line series.
+.legend__swatch--line {
+    width: var(--space-md);
+    height: 2px;
+    border-radius: 1px;
+}
+
+// A forecast or projected series: the dashes are a gradient, so the swatch
+// stays a thin rule in any colour.
+.legend__swatch--dashed {
+    width: var(--space-md);
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--swatch-color, currentcolor) 0 5px, transparent 5px 8px);
+}
+
+// Bars, slices, points.
+.legend__swatch--dot {
+    border-radius: 50%;
+}
+
+// A shaded range: a confidence interval, an envelope.
+.legend__swatch--band {
+    border-radius: 2px;
+    opacity: 0.85;
+}

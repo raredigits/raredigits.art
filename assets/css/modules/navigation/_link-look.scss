@@ -1,0 +1,43 @@
+@use "../utilities/breakpoints" as bp;
+
+// THE LINK LOOK (v0.7.2): a thin underline in the darker brand green, and a
+// light fill of the same colour that rises from the bottom under the
+// pointer. One recipe for a text link (`a`, navigation/_links.scss), a
+// link-button (`.button-link`, elements/_buttons.scss) and the colour
+// utilities (`.<hue>-link`, colors/_color-classes.scss), so the three read
+// alike. Sass only: this file emits no CSS.
+
+// The colour of the underline and of the fill.
+@mixin link-colour($color) {
+    text-decoration-color: $color;
+    background-image: linear-gradient(
+      to top,
+      color-mix(in srgb, #{$color} 20%, transparent) 0 100%
+    );
+}
+
+// At rest: the underline, and the fill at zero height, pinned to the bottom
+// of the box. The fill used to be a 1px line at 1.2em, just below the inline
+// box: clipped in Chrome, but visible as a second, lighter underline wherever
+// the engine or font makes the box a pixel taller, e.g. Safari (CSS-365).
+@mixin link-look($color: var(--brand-color-dark)) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+
+    @include link-colour($color);
+
+    background-size: 100% 0;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+
+    @include bp.motion-safe {
+        transition: background-size 0.23s cubic-bezier(.7,.2,.2,1), background-position 0.23s cubic-bezier(.7,.2,.2,1);
+    }
+}
+
+// Under the pointer the fill rises over the text.
+@mixin link-look-hover {
+    background-size: 100% 1.3em;
+    background-position: 0 0;
+}

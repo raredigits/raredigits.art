@@ -121,9 +121,7 @@ Two themes ship with the library.
 
 The result:
 
-<div class="text-content-caption card-dashboard-bordered black-bg">
-    <div id="line-chart-demo-revenue"></div>
-</div>
+<div id="line-chart-demo-revenue" class="panel panel--bordered text-content-caption black-bg"></div>
 
 ## Creating a custom theme
 
@@ -177,84 +175,270 @@ new RareCharts.Line('#chart', {
 
 ### Colors
 
-<div class="table-scroll">
-
-| Token | Default | Dark | Used for |
-|-------|---------|------|----------|
-| `bg` | `var(--bg-color, #ffffff)` | `#0a0a0a` | Page background under Rare Styles, white otherwise. Plates behind last-value and annotation labels, label backdrops and halos (the tooltip background is `tooltip.bg`) |
-| `surface` | `#f5f5f5` | `#141414` | Graph node fills, flow lane bands |
-| `grid` | `#e8e8e8` | `#666666` | Horizontal grid lines |
-| `border` | `#cccccc` | `#888888` | Axis lines, zero baseline |
-| `crosshair` | `#aaaaaa` | `#3a3a3a` | Hover tracker line |
-| `text` | `#000000` | `#e8e8e8` | Primary labels, node labels, navigator strip tint and window |
-| `muted` | `#666666` | `#888888` | Axis tick labels, secondary text, fallback link color |
-| `positive` | `#389e0d` | `#389e0d` | Not read by any chart — a named color for your own code (a `tooltipFormat`, a page header) |
-| `negative` | `#ff0000` | `#ff0000` | Not read by any chart — a named color for your own code |
-| `accent` | `#00aaff` | `#ff6200` | Single-series default, highlights |
-| `colors` | 6-color array | same | Multi-series palette, node group colors |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>bg</code></td>
+            <td><code>var(--bg-color, #ffffff)</code></td>
+            <td><code>#0a0a0a</code></td>
+            <td>Page background under Rare Styles, white otherwise. Plates behind last-value and annotation labels, label backdrops and halos (the tooltip background is <code>tooltip.bg</code>)</td>
+        </tr>
+        <tr>
+            <td><code>surface</code></td>
+            <td><code>#f5f5f5</code></td>
+            <td><code>#141414</code></td>
+            <td>Graph node fills, flow lane bands</td>
+        </tr>
+        <tr>
+            <td><code>grid</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td><code>#666666</code></td>
+            <td>Horizontal grid lines</td>
+        </tr>
+        <tr>
+            <td><code>border</code></td>
+            <td><code>#cccccc</code></td>
+            <td><code>#888888</code></td>
+            <td>Axis lines, zero baseline</td>
+        </tr>
+        <tr>
+            <td><code>crosshair</code></td>
+            <td><code>#aaaaaa</code></td>
+            <td><code>#3a3a3a</code></td>
+            <td>Hover tracker line</td>
+        </tr>
+        <tr>
+            <td><code>text</code></td>
+            <td><code>#000000</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td>Primary labels, node labels, navigator strip tint and window</td>
+        </tr>
+        <tr>
+            <td><code>muted</code></td>
+            <td><code>#666666</code></td>
+            <td><code>#888888</code></td>
+            <td>Axis tick labels, secondary text, fallback link color</td>
+        </tr>
+        <tr>
+            <td><code>positive</code></td>
+            <td><code>#389e0d</code></td>
+            <td><code>#389e0d</code></td>
+            <td>Not read by any chart — a named color for your own code (a <code>tooltipFormat</code>, a page header)</td>
+        </tr>
+        <tr>
+            <td><code>negative</code></td>
+            <td><code>#ff0000</code></td>
+            <td><code>#ff0000</code></td>
+            <td>Not read by any chart — a named color for your own code</td>
+        </tr>
+        <tr>
+            <td><code>accent</code></td>
+            <td><code>#00aaff</code></td>
+            <td><code>#ff6200</code></td>
+            <td>Single-series default, highlights</td>
+        </tr>
+        <tr>
+            <td><code>colors</code></td>
+            <td>6-color array</td>
+            <td>same</td>
+            <td>Multi-series palette, node group colors</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 ### Typography
 
-<div class="table-scroll">
-
-| Token | Default | Used for |
-|-------|---------|----------|
-| `font` | `var(--rc-font-family, "Fira Sans", system-ui, …, sans-serif)` | Tooltip font when `numericFont` is unset |
-| `fontSize` | `var(--rc-font-size-sm, 14px)` | Not used — the tooltip size is CSS. Removal at 1.0 |
-| `numericFont` | `var(--rc-font-family-numeric, "Cousine", ui-monospace, …, monospace)` | Tooltip font family |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>font</code></td>
+            <td><code>var(--rc-font-family, "Fira Sans", system-ui, …, sans-serif)</code></td>
+            <td>Tooltip font when <code>numericFont</code> is unset</td>
+        </tr>
+        <tr>
+            <td><code>fontSize</code></td>
+            <td><code>var(--rc-font-size-sm, 14px)</code></td>
+            <td>Not used — the tooltip size is CSS. Removal at 1.0</td>
+        </tr>
+        <tr>
+            <td><code>numericFont</code></td>
+            <td><code>var(--rc-font-family-numeric, "Cousine", ui-monospace, …, monospace)</code></td>
+            <td>Tooltip font family</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 The chart CSS also defines the following container-level variables:
 
-<div class="table-scroll">
-
-| CSS Variable | Default | Used for |
-|-------|---------|----------|
-| `--rc-font-family` | `"Fira Sans", system-ui, …, sans-serif` | Chart font: title, legend, source, note, buttons, SVG text |
-| `--rc-font-family-numeric` | `"Cousine", ui-monospace, …, monospace` | Numeric font for values and axes |
-| `--rc-font-size` | `16px` | Chart title |
-| `--rc-font-size-sm` | `14px` | SVG text, subtitle, legend, source, note, buttons |
-| `--rc-space-xs` | `4px` | Header row gap, timeframe button gap and radius |
-| `--rc-space-sm` | `8px` | Legend dots, tooltip and button padding, source margin |
-| `--rc-space-md` | `16px` | Header and legend column gap, tooltip and button padding |
-| `--rc-space-lg` | `32px` | `MultiChart` grid gap, right-hand legend offset |
-| `--rc-scale-btn-fill` | `#ccc` | Half fill of the Lin/Log button |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>CSS Variable</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>--rc-font-family</code></td>
+            <td><code>"Fira Sans", system-ui, …, sans-serif</code></td>
+            <td>Chart font: title, legend, source, note, buttons, SVG text</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-family-numeric</code></td>
+            <td><code>"Cousine", ui-monospace, …, monospace</code></td>
+            <td>Numeric font for values and axes</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-size</code></td>
+            <td><code>16px</code></td>
+            <td>Chart title</td>
+        </tr>
+        <tr>
+            <td><code>--rc-font-size-sm</code></td>
+            <td><code>14px</code></td>
+            <td>SVG text, subtitle, legend, source, note, buttons</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-xs</code></td>
+            <td><code>4px</code></td>
+            <td>Header row gap, timeframe button gap and radius</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-sm</code></td>
+            <td><code>8px</code></td>
+            <td>Legend dots, tooltip and button padding, source margin</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-md</code></td>
+            <td><code>16px</code></td>
+            <td>Header and legend column gap, tooltip and button padding</td>
+        </tr>
+        <tr>
+            <td><code>--rc-space-lg</code></td>
+            <td><code>32px</code></td>
+            <td><code>MultiChart</code> grid gap, right-hand legend offset</td>
+        </tr>
+        <tr>
+            <td><code>--rc-scale-btn-fill</code></td>
+            <td><code>#ccc</code></td>
+            <td>Half fill of the Lin/Log button</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 These are RareCharts variables, not host-site variables: a host's spacing scale or page font does not change a chart. If you want a different type system, override them as above. Of the theme's fonts, only `numericFont` (or `font` when it is unset) is read — the tooltip font family; the chart text follows the variables.
 
 ### Sizing
 
-<div class="table-scroll">
-
-| Token | Default | Used for |
-|-------|---------|----------|
-| `strokeWidth` | `2` | Line width of Line, DualAxes and Time Series lines |
-| `dotRadius` | `3` | Radius of the crosshair dots (Line, DualAxes) |
-| `markerSize` | `4` | Per-point markers (Line, DualAxes) |
-| `barOpacity` | `0.35` | DualAxes bar fill opacity; `Bar` draws opaque bars |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>strokeWidth</code></td>
+            <td><code>2</code></td>
+            <td>Line width of Line, DualAxes and Time Series lines</td>
+        </tr>
+        <tr>
+            <td><code>dotRadius</code></td>
+            <td><code>3</code></td>
+            <td>Radius of the crosshair dots (Line, DualAxes)</td>
+        </tr>
+        <tr>
+            <td><code>markerSize</code></td>
+            <td><code>4</code></td>
+            <td>Per-point markers (Line, DualAxes)</td>
+        </tr>
+        <tr>
+            <td><code>barOpacity</code></td>
+            <td><code>0.35</code></td>
+            <td>DualAxes bar fill opacity; <code>Bar</code> draws opaque bars</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 The tokens are fallbacks: an option wins when it is set — a series' `strokeWidth`, `markerSize` on the chart or a series, DualAxes' `barOpacity`. The Time Series line has no width option; set the token.
 
 ### Map
 
-<div class="table-scroll">
-
-| Token | Default | Dark | Used for |
-|-------|---------|------|----------|
-| `map.matchFill` | `#00aaff` | `#ff6200` | Regions with data and no `color` of their own (the `matchFill` option wins) |
-| `map.unmatchedFill` | `#e8e8e8` | `#1e1e2e` | Regions without data (the `defaultFill` option wins) |
-| `map.border` | `#ffffff` | `#444455` | Region borders (the `borderColor` option wins) |
-| `map.ocean` | `transparent` | `transparent` | Background behind the land (the `oceanColor` option wins) |
-| `map.hoverBrighten` | `1.3` | `1.2` | Hover on a region with data: its fill moves (factor − 1) of the way towards white; a very light fill darkens a little instead (the `hoverFill` option wins; `1` turns it off) |
-| `map.graticule` | `rgba(0,0,0,0.08)` | `rgba(255,255,255,0.06)` | The 10° grid drawn with the `graticule` option |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>map.matchFill</code></td>
+            <td><code>#00aaff</code></td>
+            <td><code>#ff6200</code></td>
+            <td>Regions with data and no <code>color</code> of their own (the <code>matchFill</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.unmatchedFill</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td><code>#1e1e2e</code></td>
+            <td>Regions without data (the <code>defaultFill</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.border</code></td>
+            <td><code>#ffffff</code></td>
+            <td><code>#444455</code></td>
+            <td>Region borders (the <code>borderColor</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.ocean</code></td>
+            <td><code>transparent</code></td>
+            <td><code>transparent</code></td>
+            <td>Background behind the land (the <code>oceanColor</code> option wins)</td>
+        </tr>
+        <tr>
+            <td><code>map.hoverBrighten</code></td>
+            <td><code>1.3</code></td>
+            <td><code>1.2</code></td>
+            <td>Hover on a region with data: its fill moves (factor − 1) of the way towards white; a very light fill darkens a little instead (the <code>hoverFill</code> option wins; <code>1</code> turns it off)</td>
+        </tr>
+        <tr>
+            <td><code>map.graticule</code></td>
+            <td><code>rgba(0,0,0,0.08)</code></td>
+            <td><code>rgba(255,255,255,0.06)</code></td>
+            <td>The 10° grid drawn with the <code>graticule</code> option</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 `createTheme` merges `map` deeply, so `createTheme({ map: { matchFill: '#ff6200' } })` recolors every map; changing `accent` alone does not.
@@ -263,18 +447,61 @@ The tokens are fallbacks: an option wins when it is set — a series' `strokeWid
 
 The `tooltip` sub-object colors every built-in tooltip, independently from the main chart:
 
-<div class="table-scroll">
-
-| Token | Default | Dark | Used for |
-|-------|---------|------|----------|
-| `tooltip.bg` | `#ffffff` | `#1a1a1a` | Background |
-| `tooltip.border` | `#e0e0e0` | `#2e2e2e` | 1px border |
-| `tooltip.text` | `#000000` | `#e8e8e8` | Values, names, titles, links |
-| `tooltip.muted` | `#666666` | `#888888` | Dates, percentages, counts — every secondary row |
-| `tooltip.shadow` | `0 2px 8px rgba(0,0,0,0.10)` | `0 2px 12px rgba(0,0,0,0.55)` | Box shadow |
-| `tooltip.header.text` | `null` | `null` | Color of the header — the row naming what is hovered |
-| `tooltip.header.bg` | `null` | `null` | A band behind the header, across the top of the tooltip |
-
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>Token</th>
+            <th>Default</th>
+            <th>Dark</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>tooltip.bg</code></td>
+            <td><code>#ffffff</code></td>
+            <td><code>#1a1a1a</code></td>
+            <td>Background</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.border</code></td>
+            <td><code>#e0e0e0</code></td>
+            <td><code>#2e2e2e</code></td>
+            <td>1px border</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.text</code></td>
+            <td><code>#000000</code></td>
+            <td><code>#e8e8e8</code></td>
+            <td>Values, names, titles, links</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.muted</code></td>
+            <td><code>#666666</code></td>
+            <td><code>#888888</code></td>
+            <td>Dates, percentages, counts — every secondary row</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.shadow</code></td>
+            <td><code>0 2px 8px rgba(0,0,0,0.10)</code></td>
+            <td><code>0 2px 12px rgba(0,0,0,0.55)</code></td>
+            <td>Box shadow</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.header.text</code></td>
+            <td><code>null</code></td>
+            <td><code>null</code></td>
+            <td>Color of the header — the row naming what is hovered</td>
+        </tr>
+        <tr>
+            <td><code>tooltip.header.bg</code></td>
+            <td><code>null</code></td>
+            <td><code>null</code></td>
+            <td>A band behind the header, across the top of the tooltip</td>
+        </tr>
+    </tbody>
+</table>
 </div>
 
 The header is the date in Line, DualAxes and TimeSeries, the label in Bar, HierarchicalBar and Donut, the title in Map, MapFlow, Sankey and Graph. With `header.text` left `null` each keeps its role: a date is muted, a title bold in `tooltip.text`. A data color — a Donut slice label — wins over `header.text`.

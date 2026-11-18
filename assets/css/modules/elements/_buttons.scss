@@ -1,17 +1,367 @@
-button,
+@use "sass:selector";
+@use "../utilities/breakpoints" as bp;
+@use "control-face" as cf;
+@use "../navigation/link-look" as ll;
+@use "../utilities/contracts" as ct;
+
+// BUTTONS (CSS-040…046, v0.7.2; Q-04 closed 2026-10-26)
+
+// A bare <button> inside `.rd` gets the system look, as a form field does:
+// the library's default button; so does an `<input>` of type submit, button
+// or reset. `.button` gives the same look to a link or any other element.
+// Variants, sizes and layouts are classes on top:
+//   <button type="button">Cancel</button>
+//   <button class="button-primary" type="submit">Save</button>
+//   <a class="button button-ghost button-sm" href="…">More</a>
+// A button is inline (`display: block` went with Q-04) and as wide as its
+// label, in a flex column (a card, a panel, a form group) too.
+
+// Specificity contract. The bare-element rules stay at type specificity
+// (0,0,1) in every state — hover, active, disabled and busy are wrapped in
+// `:where()` — so any class beats them: a component that styles its own
+// <button> (a carousel arrow, a legend toggle, a copy icon) never has to
+// repeat its look for `:hover` or bump its specificity. `.button` keeps
+// the weight its states always had (0,2,0): a link-button outranks the link
+// rules (`a:hover`, `nav a:hover`), and a page's `.button.my-variant`,
+// loaded after the library, still wins on hover.
+
+// A RareCharts card (`.rc-chart`) owns its controls (RareCharts C-13): the
+// element defaults stop at it, as the prose measure and the print URLs do.
+// `.button` still works there, because it is asked for by name.
+
+// No button tokens on :root: the look is written with the library's own
+// tokens (spacing, type, colour). A variant and a size set slots on their
+// class, which the rules below read, each with the default look as its
+// fallback (the colour values are in elements/_control-face.scss):
+//   colours: --button-bg (--gray-lightest), --button-text (--gray-dark at
+//   rest, --primary-color under the pointer and while pressed),
+//   --button-border-color (--border-color), --button-bg-hover (--button-bg,
+//   else --white), --button-border-color-hover (--primary-color),
+//   --button-bg-active (--bg-color)
+//   size: --button-padding-x (--space-md), --button-padding-y
+//   (--field-padding-y, elements/_forms.scss: a button and a field of the
+//   default size stay equally tall, also when a project changes the field's),
+//   --button-font-size (--font-size-md)
+
+$-button: "button#{ct.$outside-embedded}";
+$-bare: "#{$-button}, input#{ct.$outside-embedded}:where([type=\"submit\"], [type=\"button\"], [type=\"reset\"])";
+
+// The bare selectors with a state appended to each of them.
+@function bare($state, $of: $-bare) {
+    @return selector.append($of, $state);
+}
+
+// The default look: a light grey control with a light frame; under the
+// pointer white with a black frame and label, grey while pressed.
+#{$-bare},
 .button {
-    display: block;
+    display: inline-block;
+
+    // As wide as the label: a flex column (`.card`, `.panel`, `.form-group`)
+    // would stretch it otherwise. `.button-block` takes the full width.
     width: fit-content;
-    background: var(--bg-color-light);
-    color: var(--primary-color);
-    border-radius: var(--space-lg);
-    border: 1px solid var(--bg-color-light);
+    font-family: inherit;
+    font-weight: var(--font-weight-normal);
+
+    // The face (elements/_control-face.scss): the label 1px below the centre,
+    // as tall as a field. Its `background` shorthand also drops a link's hover
+    // fill (navigation/_links.scss).
+    @include cf.button-face(
+        var(--button-padding-y, var(--field-padding-y)),
+        var(--button-padding-x, var(--space-md)),
+        var(--button-font-size, var(--font-size-md)),
+        var(--button-bg, #{cf.$rest-bg}),
+        var(--button-text, #{cf.$rest-text}),
+        var(--button-border-color, var(--border-color))
+    );
+
+    text-align: center;
     text-decoration: none;
-    padding: var(--space-sm) var(--space-md);
     cursor: pointer;
 
-    &:hover {
-        background: var(--bg-color);
-        border: 1px solid var(--primary-color);
+    // Colour changes only: a label colour never fades, and nothing moves.
+    @include bp.motion-safe {
+        transition: background-color 0.15s ease, border-color 0.15s ease;
     }
+}
+
+// The whole border and the label colour are restated, so `nav a:hover`
+// (a 2px underline, black text) cannot reach a link-button.
+#{bare(":where(:hover:not(:disabled, [aria-disabled=\"true\"], [aria-busy=\"true\"]))")},
+.button:hover:where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
+    border: 1px solid var(--button-border-color-hover, #{cf.$ink});
+    background: var(--button-bg-hover, var(--button-bg, #{cf.$hover-bg}));
+    color: var(--button-text, #{cf.$ink});
+}
+
+#{bare(":where(:active:not(:disabled, [aria-disabled=\"true\"], [aria-busy=\"true\"]))")},
+.button:active:where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
+    border: 1px solid var(--button-border-color-hover, #{cf.$ink});
+    background: var(--button-bg-active, #{cf.$active-bg});
+    color: var(--button-text, #{cf.$ink});
+}
+
+// :focus-visible is the library ring (utilities/_a11y.scss).
+
+// Disabled: faded and inert under the pointer, in every variant.
+// `aria-disabled="true"` keeps the button focusable (it stays in the tab
+// order and can explain itself); a link has no `disabled`, so it takes
+// `aria-disabled="true"` and drops its `href`.
+#{bare(":where(:disabled, [aria-disabled=\"true\"])")},
+.button:is(:disabled, [aria-disabled="true"]) {
+    opacity: 0.5;
+    cursor: default;
+}
+
+// Busy (`aria-busy="true"`): the label hides, keeping the button's width,
+// and a ring in the label colour turns in its place. With reduced motion
+// the ring stands still; the state shows all the same. The ring is drawn in
+// `::after`, which an `<input>` does not have: a busy control is a
+// `<button>` or a `.button` link.
+#{bare(":where([aria-busy=\"true\"])", $-button)},
+.button[aria-busy="true"] {
+    position: relative;
+    color: transparent;
+    text-decoration-color: transparent;
+    cursor: progress;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 1em;
+        height: 1em;
+        margin: auto;
+        border: 2px solid var(--button-text, #{cf.$ink});
+        border-inline-end-color: transparent;
+        border-radius: 50%;
+
+        @include bp.motion-safe {
+            animation: button-busy-spin 0.75s linear infinite;
+        }
+    }
+}
+
+@keyframes button-busy-spin {
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+// VARIANTS (CSS-040). A variant sets the colour slots; `.button-link` also
+// takes the link look (navigation/_link-look.scss).
+
+// The one action that matters on the screen, in the brand colour: the fill
+// is --brand-color, --brand-color-deep under the pointer, and darker still
+// while pressed. The label is --primary-color at rest, black on the brand
+// green at about 15:1, and --white on the dark fills: --brand-color-deep
+// carries white text at 4.9:1, the darker pressed fill more. The border is
+// transparent, so the fill shows through it.
+.button-primary {
+    --button-bg: var(--brand-color);
+    --button-text: var(--primary-color);
+    --button-border-color: transparent;
+    --button-bg-hover: var(--brand-color-deep);
+    --button-border-color-hover: transparent;
+    --button-bg-active: color-mix(in srgb, var(--brand-color-deep) 85%, black);
+}
+
+// On the dark fills the label turns white: under the pointer and while
+// pressed. Not on a disabled button, which keeps the light fill, nor on a
+// busy one, whose label is hidden; not on a bare <button> in a chart, which
+// keeps the browser's look (the chart owns its controls), unless it is a
+// `.button`.
+.button-primary:where(.button, #{ct.$outside-embedded}):is(:hover, :active):where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
+    color: var(--white);
+}
+
+// A pressed toggle in a group sits on the pressed fill (GROUP, below) in
+// every state, disabled and busy too: its label slot is white, so the label
+// and the busy ring read on it. A pressed toggle on its own keeps the brand
+// fill and the black label.
+:where(.button-group) > .button-primary[aria-pressed="true"] {
+    --button-text: var(--white);
+}
+
+// A destructive action, on --danger (CSS-121), shaded by 15%: white on the
+// default red measures 5.3:1, where the pure red gives 4.0 (WCAG AA wants 4.5).
+.button-danger {
+    --button-bg: color-mix(in srgb, var(--danger) 85%, black);
+    --button-text: var(--white);
+    --button-border-color: transparent;
+    --button-bg-hover: color-mix(in srgb, var(--danger) 70%, black);
+    --button-border-color-hover: transparent;
+    --button-bg-active: color-mix(in srgb, var(--danger) 60%, black);
+}
+
+// No frame until the pointer is on it: toolbars, secondary actions in a row.
+// It has no fill of its own, so its label is the surface's text colour
+// (`--primary-text-color`, which `.card-inverted` re-maps) and its tint a
+// share of that colour. Declared here, the slots resolve on the button
+// itself, so they follow the surface it sits on; from `:root` they would
+// keep the page's black on a dark card.
+.button-ghost {
+    --button-bg: transparent;
+    --button-text: var(--primary-text-color);
+    --button-border-color: transparent;
+    --button-bg-hover: color-mix(in srgb, var(--primary-text-color) 8%, transparent);
+    --button-border-color-hover: transparent;
+    --button-bg-active: color-mix(in srgb, var(--primary-text-color) 14%, transparent);
+}
+
+// A button that reads as a text link and keeps the button's box, so it lines
+// up with the buttons next to it: the link's colour and its look, the
+// underline and the fill that rises under the pointer
+// (navigation/_link-look.scss). The fill sits behind the label, not the
+// button's padding.
+.button-link {
+    --button-bg: transparent;
+    --button-text: var(--link-color);
+    --button-border-color: transparent;
+    --button-bg-hover: transparent;
+    --button-border-color-hover: transparent;
+    --button-bg-active: transparent;
+
+    @include ll.link-look;
+
+    background-origin: content-box;
+    background-clip: content-box;
+
+    // The button's own hover rule resets the background with its shorthand
+    // (`.button:hover`, above): the fill is restated, then raised. Not on a
+    // disabled or busy button, as in the other states.
+    &:hover:where(:not(:disabled, [aria-disabled="true"], [aria-busy="true"])) {
+        @include ll.link-colour(var(--brand-color-dark));
+
+        background-origin: content-box;
+        background-clip: content-box;
+        background-repeat: no-repeat;
+
+        @include ll.link-look-hover;
+    }
+
+    // A disabled or busy link-button keeps the fill down under the pointer
+    // (`a:hover` would raise it on a link), and a block one has none: its box
+    // is wider than the label.
+    &:is(:disabled, [aria-disabled="true"], [aria-busy="true"]) {
+        background-size: 100% 0;
+        background-position: 0 100%;
+    }
+
+    &.button-block {
+        background-image: none;
+    }
+
+    // Busy hides the label; the underline goes with it. Restated here: the
+    // colour above outranks the bare `button:where([aria-busy])` rule.
+    &[aria-busy="true"] {
+        text-decoration-color: transparent;
+    }
+}
+
+// SIZES (CSS-041). `.button-md` is the default, named so it can be restored
+// inside a container that changes the size of its buttons.
+.button-sm {
+    --button-padding-x: var(--space-sm);
+    --button-padding-y: var(--space-xs);
+    --button-font-size: var(--font-size-sm);
+}
+
+.button-md {
+    --button-padding-x: var(--space-md);
+    --button-padding-y: var(--field-padding-y);
+    --button-font-size: var(--font-size-md);
+}
+
+.button-lg {
+    --button-padding-x: var(--space-ml);
+    --button-padding-y: calc(var(--space-sm) * 1.5);
+    --button-font-size: var(--font-size-lg);
+}
+
+// ICONS (CSS-042). An `rd-icon-*` glyph before or after the label lines up
+// with it at an even gap, whatever whitespace the markup has:
+//   <button><span class="rd-icon-download"></span> Download</button>
+// Without :has() support the glyph stays inline, spaced like a character.
+#{$-button}:where(:has(> [class*="rd-icon-"])),
+.button:where(:has(> [class*="rd-icon-"])) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+// The glyph's line is as tall as the label's and has the label's baseline,
+// so a button with a glyph sits on the text line exactly like one without.
+// The 1em glyph is centred in that line instead of nudged down like a glyph
+// in running text (`top: 0.2em`, decorations/_icons.scss).
+:is(#{$-button}, .button) > [class*="rd-icon-"]::before {
+    top: calc((var(--line-height-sm) - 1) * 0.5em);
+    vertical-align: top;
+}
+
+// Icon only: a square as tall as a text button of the same size. Give it an
+// accessible name: <button class="button-icon" aria-label="Close">.
+.button-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    // line box + padding + the 1px border on each side
+    inline-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--field-padding-y)) + 2px);
+    block-size: calc(1em * var(--line-height-sm) + 2 * var(--button-padding-y, var(--field-padding-y)) + 2px);
+
+    // The glyph sits 1px below the centre, as a text button's label does, so
+    // the two stand on one baseline: the face's shift on a 1px padding.
+    @include cf.control-padding(1px, 0);
+}
+
+// GROUP (CSS-044): a segmented row; neighbours share one border. A pressed
+// toggle (`aria-pressed="true"`) keeps the look of its variant while pressed
+// (`:active`): the default button fills grey under a black frame, a primary
+// one takes its darkest fill and keeps its white label. The hovered, focused
+// or pressed button is lifted, so its whole frame and the focus ring show.
+// The group's baseline is its first label's, so it lines up with the
+// buttons and fields next to it.
+.button-group {
+    display: inline-flex;
+
+    > :is(button, .button) {
+        position: relative;
+        border-radius: 0;
+    }
+
+    > :is(button, .button):first-child {
+        border-start-start-radius: cf.$radius;
+        border-end-start-radius: cf.$radius;
+    }
+
+    > :is(button, .button):last-child {
+        border-start-end-radius: cf.$radius;
+        border-end-end-radius: cf.$radius;
+    }
+
+    > :is(button, .button) + :is(button, .button) {
+        margin-inline-start: -1px;
+    }
+
+    > :is(button, .button):is(:hover, :focus-visible, [aria-pressed="true"]) {
+        z-index: 1;
+    }
+
+    // The same fallbacks as the base `:active` rule; the label slot is left
+    // to the variant, so it stays on the fill it was made for.
+    > [aria-pressed="true"] {
+        --button-bg: var(--button-bg-active, #{cf.$active-bg});
+        --button-bg-hover: var(--button-bg-active, #{cf.$active-bg});
+        --button-border-color: var(--button-border-color-hover, #{cf.$ink});
+    }
+}
+
+// BLOCK (CSS-045): the full width of its container. A flex box, so a glyph
+// and its label stay centred together.
+.button-block {
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }

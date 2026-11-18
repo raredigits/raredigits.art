@@ -8,13 +8,13 @@ permalink: '/charts/graph/flow/'
 
 The flow view draws a **trace**: value moving between entities, left to right through ordered lanes — networks, stages, jurisdictions. Ties are directed, may repeat between the same pair (a swap there and back, a deposit and a withdrawal), and carry value (width), category (color), certainty (dash) and a label. It is the view for money trails, supply chains and address investigations.
 
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
   <p><strong>⚠️ Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. Its layout, folds and options may change without a major-version bump.</p>
 </div>
 
 The demo below follows funds as they move: income from a validator is swapped, bridged and moved through five networks, then spent on a token crowdfunding — and the trace goes on to show where the sale money went. Read it left to right: lanes are networks, line color is the asset, width its USD value, a dashed line an amount derived rather than read from transactions. Press **−** on the **Crowdfunding** node to fold the sale into one node and focus on the route that led to it (**+** brings it back); the buttons in the header jump to the trace's chapters, and the strip under the drawing brushes any period. The legend's **address poisoning** item reveals a look-alike address that tried to pass as the team's.
 
-<div class="full-width-caption bordered padding-lg mobile:padding-md" id="graph-flow-demo"></div>
+<div id="graph-flow-demo" class="panel panel--bordered full-width-caption"></div>
 
 <div id="graph-flow-demo-panel" aria-live="polite"></div>
 
@@ -24,7 +24,7 @@ Select a node or a tie: the chart reports it through `onSelect`, and the page fi
 
 Data from an API rarely knows where a node should stand. Leave the hints out and the flow view lays the trace out itself: below is the same trace with every `row` and `col` removed — only the lanes are kept, because the network a wallet lives on is data, not layout.
 
-<div class="full-width-caption bordered padding-lg mobile:padding-md" id="graph-flow-auto"></div>
+<div id="graph-flow-auto" class="panel panel--bordered full-width-caption"></div>
 
 - **Columns** follow the ties inside a lane: a payment goes left to right. Loops are broken where they would read backwards — with dates, the later tie turns (a refund, a payout two years on); without dates, as few ties as possible.
 - **The main route** — the longest left-to-right path, the heavier by `value` on a tie — runs along the middle. Flag nodes or ties with `main: true` to choose it yourself.

@@ -1,7 +1,7 @@
 # Rare Styles ↔ Rare Scripts — Contract
 
 **Release:** `v0.6.17` (`CSS-064` audit / `CSS-065` target contract). Implemented by `CSS-068` (JS rewrite) and `CSS-069` (CSS follow-through); `carousel` joined via the `CSS-088` harvest.
-**Scope:** the five original companion scripts — `collapsible`, `cookie-consent`, `copy-to-clipboard`, `hamburger`, `search` — plus `carousel`, harvested from schnellreich.ru into the collection in `v0.6.17` and born on the contract (no as-was pass; see the harvest note below the target table). Undocumented site scripts (`header-scroll.js`, `gridDisplay.js`, `themeSwitcher.js`) are out of contract — see Findings.
+**Scope:** the five original companion scripts — `collapsible`, `cookie-consent`, `copy-to-clipboard`, `hamburger`, `search` — plus `carousel`, harvested from schnellreich.ru into the collection in `v0.6.17` and born on the contract (no as-was pass; see the harvest note below the target table). Undocumented site scripts (`header-scroll.js`, `gridDisplay.js`) are out of contract — see Findings.
 
 This document has two halves: the **as-was audit** (what each script actually read and wrote before the rewrite — from the JS in `assets/js/`, not the `/scripts/` doc pages) and the **target contract** every script conforms to from `v0.6.17` on.
 
@@ -93,7 +93,7 @@ Each consumer's migration must land **in the same commit as its pin bump** to `@
 5. **Dead state write** — `.has-query` is set/removed by `search.js` but styled by nothing. Either style it or stop writing it (`CSS-069` decision).
 6. **Cookie-notice FOUC** — `.cookie-notice` is `display: block` in CSS; dismissed users could see a paint-then-hide flash while the script waited for `DOMContentLoaded`. **Resolved in `v0.6.17`:** the script initializes immediately when the notice markup is already parsed (`readyState` pattern shared with `search.js`), so a synchronous include right after the markup hides a dismissed notice before paint; an optional inline guard is documented on `/scripts/cookies/` for `defer`/CDN setups. The visible-by-default CSS is kept deliberately — hiding by default would make the notice invisible to no-JS visitors and delay it for first-time visitors.
 7. **Keyboard access** — collapsible triggers are non-focusable inline elements. The contract below makes `<button>` the canonical trigger markup; existing content migrates in `CSS-070`.
-8. **Undocumented companions** — `header-scroll.js`, `gridDisplay.js`, `themeSwitcher.js` load on the site but have no `/scripts/` page and no contract. Route: file for triage in the next backlog pass (contract them or mark site-internal).
+8. **Undocumented companions** — `header-scroll.js` and `gridDisplay.js` load on the site but have no `/scripts/` page and no contract. (`themeSwitcher.js`, which nothing loaded, was deleted on 2026-11-17.) Route: file for triage in the next backlog pass (contract them or mark site-internal).
 
 ---
 

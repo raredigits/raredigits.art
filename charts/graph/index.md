@@ -8,7 +8,7 @@ permalink: '/charts/graph/'
 
 The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with deterministic views: **ego** (who surrounds a node), **path** (how two nodes are connected), **cluster** (the shape of the whole network), and **[flow](/charts/graph/flow/)** (a trace of value moving through ordered lanes — money trails, supply chains). You never draw the full graph — you draw the answer to a query.
 
-<div class="card text-content-caption card-dashboard-bordered">
+<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
   <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
 </div>
 
@@ -16,25 +16,25 @@ The Graph chart renders networks of relationships — entity connections, agent 
 
 Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node `group`) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80% of at least six nodes), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).
 
-<div id="graph-ego"></div>
+<div id="graph-ego" class="panel panel--bordered full-width-caption"></div>
 
 ### Path view
 
 "How are A and B connected?" — up to `pathCount` edge-disjoint routes, laid out left to right: columns are hops, each route gets its own row with a hop-count caption, and the shortest route is visually emphasized while the alternatives recede. Each endpoint's other connections fan out behind it, faded — showing that both nodes are well connected beyond these routes (disable with `pathContext: false`). Pathfinding is the data source's job (server-side on a real backend), because the client only holds the neighborhoods it has walked.
 
-<div id="graph-path"></div>
+<div id="graph-path" class="panel panel--bordered full-width-caption"></div>
 
 ### Cluster view
 
 The whole network collapsed into communities (Louvain). Meta-nodes stand on the same kind of grid as the ego view — the largest community in the centre, the rest spiralling out — so big communities never overlap. Each meta-node is labelled by its most-connected member; size encodes the community size, link width the number of real edges between groups (up to eight; more draw at full width). Click a community to dive into the ego view of its top member; zoom in to dive back to the last ego view.
 
-<div id="graph-cluster"></div>
+<div id="graph-cluster" class="panel panel--bordered full-width-caption"></div>
 
 ### Example: warm-intro routing
 
 A CRM-style scenario: the ego view is centered on a sales rep, and target leads — deliberately not connected to the rep — are marked with a star glyph. Clicking a lead answers the question that matters: *who can introduce me?* The `onNodeClick` callback switches to the path view with the warm-intro routes; clicking the rep restores the ego view. Category glyphs (person, company, partner org, ★ lead) carry the node semantics, so all the color stays on the relationship types.
 
-<div id="graph-columbus"></div>
+<div id="graph-columbus" class="panel panel--bordered full-width-caption"></div>
 
 ### Data source
 

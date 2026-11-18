@@ -34,20 +34,65 @@ const isPseudoElement = (n) =>
 
 const isClassish = (n) => n.type === 'class' || n.type === 'attribute' || n.type === 'id';
 
+const isNot = (n) => n.type === 'pseudo' && n.value.toLowerCase() === ':not';
+
+function insideNot(n) {
+  for (let p = n.parent; p; p = p.parent) if (isNot(p)) return true;
+  return false;
+}
+
+// The inventory key of a selector: the selector without its `:not()`
+// exclusions (v0.7.2). A class, attribute or id inside `:not()` excludes
+// elements; it does not scope the rule. `button:not(:where(.rc-chart *))`
+// still styles every other button, so it is classified by hand, as
+// `button`. Dropping the exclusions keeps the key stable when a list of
+// excluded components grows. A `:where()` / `:is()` emptied by the drop goes
+// too, and a compound left empty becomes `*` (`article :not(.x)` →
+// `article *`, never `article`).
+export function inventoryKey(selector) {
+  const sel = selectorParser().astSync(selector).first;
+  const nots = [];
+  sel.walk((n) => { if (isNot(n)) nots.push(n); });
+  if (!nots.length) return normalize(selector);
+  nots.forEach((n) => n.remove());
+  for (let emptied = true; emptied;) {
+    const empty = [];
+    sel.walk((n) => {
+      if (n.type === 'pseudo' && [':where', ':is'].includes(n.value.toLowerCase())
+        && n.nodes.length && n.nodes.every((s) => s.nodes.length === 0)) empty.push(n);
+    });
+    empty.forEach((n) => n.remove());
+    emptied = empty.length > 0;
+  }
+  let boundary = true;
+  for (const n of [...sel.nodes]) {
+    if (n.type === 'combinator' && boundary) sel.insertBefore(n, selectorParser.universal());
+    boundary = n.type === 'combinator';
+  }
+  if (boundary) sel.append(selectorParser.universal());
+  return normalize(String(sel));
+}
+
 // Classify one selector (string) → 'ungated' | 'page' | 'island'.
 export function classify(selector, { page = PAGE, island = ISLAND } = {}) {
-  const key = normalize(selector);
-  if (UNGATED_SELECTORS.includes(key)) return 'ungated';
+  if (UNGATED_SELECTORS.includes(normalize(selector))) return 'ungated';
+  const key = inventoryKey(selector);
 
   const sel = selectorParser().astSync(selector).first;
   let classish = false;
   let namesRd = false;
-  let iconRef = false;
   sel.walk((n) => {
-    if (isClassish(n)) classish = true;
+    // Only a class, attribute or id that scopes the rule makes it a class
+    // context; one inside `:not()` only excludes (see inventoryKey).
+    if (isClassish(n) && !insideNot(n)) classish = true;
     if (n.type === 'class' && n.value === 'rd') namesRd = true;
-    if ((n.type === 'class' || n.type === 'attribute') && String(n).includes('rd-icon-')) iconRef = true;
   });
+  // The icon set is named by the selector's own compound, not inside a
+  // pseudo-class argument: `button:has(> [class*=rd-icon-])` styles the
+  // button, which must stay gated (v0.7.2, CSS-042).
+  const iconRef = sel.nodes.some(
+    (n) => (n.type === 'class' || n.type === 'attribute') && String(n).includes('rd-icon-'),
+  );
 
   if (namesRd) return 'ungated';
   // A self-contained icon compound (`.rd-icon-check::before`,
@@ -126,11 +171,12 @@ export default function rdGate({ compact = false } = {}) {
         }
         rule.selectors = rule.selectors.map((s) => {
           const kind = classify(s);
+          const key = inventoryKey(s);
           if (kind === null) {
-            unclassified.add(normalize(s));
+            unclassified.add(key === normalize(s) ? key : `${key} (from ${normalize(s)})`);
             return s;
           }
-          seen.add(normalize(s));
+          seen.add(key);
           stats[kind]++;
           return kind === 'ungated' ? s : gate(s, kind);
         });

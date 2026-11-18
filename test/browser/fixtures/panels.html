@@ -1,0 +1,160 @@
+<!doctype html>
+<!-- Checked by test/browser/panels.test.js: the panel family (CSS-180…183a,
+     CSS-376), the panel row's stacking mode (CSS-371) and the legend
+     primitive (CSS-178), in page mode with the RareCharts bundle.
+     `?css-first`: the page links rare-charts.css itself, BEFORE rare.css, and
+     turns the bundle's injection off — the order in which a panel's defaults
+     would beat the chart's own layout if they had class specificity. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panels fixture</title>
+<script>
+  if (location.search.includes('css-first')) {
+    window.RareChartsConfig = { injectStyles: false };
+    document.write('<link rel="stylesheet" href="/assets/charts/rare-charts.css">');
+  }
+</script>
+<link rel="stylesheet" href="/assets/css/rare.css">
+</head>
+<body>
+<main>
+  <div class="content grid-global">
+    <article>
+      <h2>A chart on a panel</h2>
+      <div id="chart" class="panel panel--bordered text-content-caption"></div>
+      <div id="chart-legend-right" class="panel panel--bordered text-content-caption"></div>
+
+      <h2>The chart's height: framed on the element, inside a composite, bare</h2>
+      <div id="chart-framed" class="panel panel--bordered text-content-caption"></div>
+      <div id="frame-wrapped" class="panel panel--bordered text-content-caption">
+        <p>A composite: text above the chart.</p>
+        <div id="chart-wrapped"></div>
+      </div>
+      <div id="chart-bare" class="text-content-caption"></div>
+
+      <h2>A block, not a flex column</h2>
+      <div id="inline-mixed" class="panel panel--bordered">Total: <strong>5</strong> units</div>
+      <div id="paras" class="panel panel--bordered"><p id="para-1">First paragraph.</p><p id="para-2">Second paragraph.</p></div>
+
+      <h2>Opening an article block</h2>
+      <div><div id="first-frame" class="panel panel--bordered text-content-caption"><p>A frame that is a first child.</p></div></div>
+      <div><p id="first-caption" class="text-content-caption">A caption that is a first child.</p></div>
+
+      <h2>Inside a collapsible</h2>
+      <div class="collapsible-content rd-is-open">
+        <div id="in-collapsible" class="panel"><p>A panel in the content.</p></div>
+        <div id="in-collapsible-flush" class="panel panel--bordered panel--flush"><p>A flush panel in the content.</p></div>
+      </div>
+
+      <h2>Panel parts</h2>
+      <div id="kpi" class="panel panel--bordered">
+        <div class="panel__header"><h4>Revenue</h4><span>Q3</span></div>
+        <div class="panel__body"><p>$2.8M</p></div>
+        <div class="panel__footer">Source: fixture</div>
+      </div>
+      <div id="flush" class="panel panel--bordered panel--flush"><p>Flush</p></div>
+      <div id="utility" class="panel panel--bordered grid grid-cols-2"><p>A</p><p>B</p></div>
+
+      <div id="grid" class="panel-grid">
+        <div class="panel panel--bordered">
+          <div class="panel__header"><h4>Short</h4></div>
+          <div class="panel__body"><p>One line.</p></div>
+          <div class="panel__footer">Footer</div>
+        </div>
+        <div class="panel panel--bordered">
+          <div class="panel__header"><h4>Long</h4></div>
+          <div class="panel__body"><p>Several lines of text in this panel, so that it is taller than its neighbours and they have to stretch to its height for the footers to line up.</p></div>
+          <div class="panel__footer">Footer</div>
+        </div>
+        <div class="panel panel--bordered">
+          <div class="panel__header"><h4>Third</h4></div>
+          <div class="panel__body"><p>Two lines of text in this one.</p></div>
+          <div class="panel__footer">Footer</div>
+        </div>
+      </div>
+
+      <div id="outdents" class="panel panel--bordered">
+        <pre><code>const x = 1; // a long line of code inside a panel that must scroll, not poke out</code></pre>
+        <blockquote><p>A quotation inside a panel.</p></blockquote>
+        <p class="lead">A lead paragraph inside a panel.</p>
+        <div class="full-width-caption">A wide block inside a panel.</div>
+      </div>
+      <div id="outdents-inv" class="card-inverted padding-md">
+        <pre><code>const x = 1; // a long line of code inside a dark card that must scroll, not poke out</code></pre>
+        <p class="highlight">A highlight inside a dark card.</p>
+        <p class="lead">A lead paragraph inside a dark card.</p>
+        <div class="full-width-caption">A wide block inside a dark card.</div>
+      </div>
+      <div id="outdents-coll" class="collapsible-container">
+        <blockquote><p>A quotation inside a collapsible box.</p></blockquote>
+        <div class="full-width-caption">A wide block inside a collapsible box.</div>
+        <p class="teaser-bottom">A teaser inside a collapsible box.</p>
+      </div>
+
+      <div class="panel-grid full-width-caption" id="hang-grid"><div class="panel panel--bordered" id="hang-first"><p>A panel in a hanging grid.</p></div><div class="panel panel--bordered"><p>Another.</p></div></div>
+
+      <h2>A table in a box with an outdent</h2>
+      <div class="text-content-caption" id="tbl-box"><table><tr><td id="tbl-box-td">Label</td><td>Value</td></tr></table></div>
+      <div class="panel panel--bordered text-content-caption" id="tbl-panel"><table><tr><td id="tbl-panel-td">Label</td><td>Value</td></tr></table></div>
+      <div class="card padding-md" id="tbl-card"><div class="text-content-caption"><table><tr><td id="tbl-card-td">Label</td><td>Value</td></tr></table></div></div>
+
+      <h2>Rows</h2>
+      <div id="row-stack" class="panel__row panel__row--stack panel__row--text-start card-caption">
+        <div class="panel__row-item"><div id="gauge-a"></div></div>
+        <div class="panel__row-item"><div id="gauge-b"></div></div>
+        <div class="panel__row-item"><p>Text cell</p></div>
+      </div>
+      <div id="row-scroll" class="panel__row">
+        <div class="panel__row-item">OPEN 41,203.55</div><div class="panel__row-item">HIGH 42,118.20</div>
+        <div class="panel__row-item">LOW 40,877.10</div><div class="panel__row-item">VOLUME 1,203,448</div>
+        <div class="panel__row-item">52W HIGH 73,750.07</div><div class="panel__row-item">52W LOW 24,920.11</div>
+      </div>
+
+      <h2>Legend</h2>
+      <ul id="legend" class="legend">
+        <li class="legend__item"><span id="sw-line" class="legend__swatch legend__swatch--line" style="--swatch-color: rgb(0, 170, 255)"></span>Revenue</li>
+        <li class="legend__item"><span id="sw-dashed" class="legend__swatch legend__swatch--dashed" style="--swatch-color: rgb(250, 140, 22)"></span>Forecast</li>
+        <li class="legend__item" style="--swatch-color: rgb(0, 201, 122)"><span id="sw-dot" class="legend__swatch legend__swatch--dot"></span>Bars</li>
+        <li class="legend__item"><span id="sw-band" class="legend__swatch legend__swatch--band"></span>Range</li>
+      </ul>
+      <div id="legend-toggles" class="legend">
+        <button id="toggle-on" class="legend__item" type="button" aria-pressed="true"><span class="legend__swatch legend__swatch--line"></span>Shown</button>
+        <button id="toggle-off" class="legend__item" type="button" aria-pressed="false"><span class="legend__swatch legend__swatch--line"></span>Hidden</button>
+      </div>
+    </article>
+  </div>
+</main>
+
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const DAY = 864e5;
+  const days = (n, from = Date.UTC(2025, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+    date: new Date(from + i * DAY),
+    value: 100 + 10 * Math.sin(i / 9) + i / 20,
+  }));
+  window.charts = {
+    chart: new RareCharts.Line('#chart', {
+      height: 320, animate: false, title: 'A chart on a panel', subtitle: 'The chart element is the panel',
+      legend: [{ label: 'Revenue' }], source: 'Source: fixture',
+    }).setData(days(120)),
+    legendRight: new RareCharts.Line('#chart-legend-right', {
+      height: 320, animate: false, title: 'Legend on the right',
+      legend: [{ label: 'Revenue' }, { label: 'Costs' }], legendPosition: 'right', source: 'Source: fixture',
+    }).setData(days(120)),
+    framed: new RareCharts.Line('#chart-framed', {
+      height: 320, animate: false, title: 'Framed', source: 'Source: fixture',
+    }).setData(days(120)),
+    wrapped: new RareCharts.Line('#chart-wrapped', {
+      height: 320, animate: false, title: 'Wrapped', source: 'Source: fixture',
+    }).setData(days(120)),
+    bare: new RareCharts.Line('#chart-bare', {
+      height: 320, animate: false, title: 'Bare', source: 'Source: fixture',
+    }).setData(days(120)),
+    gaugeA: new RareCharts.Gauge('#gauge-a', { title: 'Goal', height: 200, animate: false }).setData(73),
+    gaugeB: new RareCharts.Gauge('#gauge-b', { title: 'Budget', height: 200, animate: false }).setData(40),
+  };
+</script>
+</body>
+</html>
