@@ -19426,7 +19426,7 @@ button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
   height: 1em;
   mask: no-repeat center/contain;
   background-color: currentcolor;
-  mask-image: url("images/icons/menu-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z'/%3E%3C/svg%3E");
 }
 
 .hamburger__icon-close:where(.rd, .rd *) {
@@ -19443,7 +19443,7 @@ button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
   height: 1em;
   mask: no-repeat center/contain;
   background-color: currentcolor;
-  mask-image: url("images/icons/close-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z'/%3E%3C/svg%3E");
 }
 .hamburger__icon-close:where(.rd, .rd *) {
   display: none;
@@ -19537,7 +19537,7 @@ button.legend__item[aria-busy=true]:where(.rd, .rd *)::after {
   height: 1em;
   mask: no-repeat center/contain;
   background-color: currentcolor;
-  mask-image: url("images/icons/search-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z'/%3E%3C/svg%3E");
 }
 
 .search-wrapper:where(.rd, .rd *) {
@@ -20692,7 +20692,7 @@ img:where(.rd, .rd *) {
   height: 1em;
   mask: no-repeat center/contain;
   background-color: currentcolor;
-  mask-image: url("images/icons/content_copy-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z'/%3E%3C/svg%3E");
 }
 .copy-data-icon:where(.rd, .rd *) {
   padding: 0;
@@ -20704,16 +20704,16 @@ img:where(.rd, .rd *) {
 }
 
 .copy-data-icon[data-icon=check]:where(.rd, .rd *)::before {
-  mask-image: url("images/icons/check-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z'/%3E%3C/svg%3E");
 }
 
 [class*=rd-icon-].rd-is-copied::before {
-  mask-image: url("images/icons/check-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z'/%3E%3C/svg%3E");
 }
 
 [class*=rd-icon-][class*="-thin "].rd-is-copied::before,
 [class*=rd-icon-][class$=-thin].rd-is-copied::before {
-  mask-image: url("images/icons/check-200.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M382-267.69 183.23-466.46 211.77-495 382-324.77 748.23-691l28.54 28.54L382-267.69Z'/%3E%3C/svg%3E");
 }
 
 .copy-data-icon:hover:where(.rd, .rd *) {
@@ -20769,6 +20769,36 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/account_tree-200.svg");
 }
 
+.rd-icon-add::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/add-400.svg");
+}
+
+.rd-icon-add-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/add-200.svg");
+}
+
+.rd-icon-arrow_back::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_back-400.svg");
+}
+
+.rd-icon-arrow_back-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_back-200.svg");
+}
+
+.rd-icon-arrow_downward::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_downward-400.svg");
+}
+
+.rd-icon-arrow_downward-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_downward-200.svg");
+}
+
 .rd-icon-arrow_drop_down::before {
   background-color: currentcolor;
   mask-image: url("images/icons/arrow_drop_down-400.svg");
@@ -20817,6 +20847,16 @@ img:where(.rd, .rd *) {
 .rd-icon-arrow_right_alt-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/arrow_right_alt-200.svg");
+}
+
+.rd-icon-arrow_upward::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_upward-400.svg");
+}
+
+.rd-icon-arrow_upward-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/arrow_upward-200.svg");
 }
 
 .rd-icon-attach_file::before {
@@ -20889,6 +20929,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/bedtime-200.svg");
 }
 
+.rd-icon-block::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/block-400.svg");
+}
+
+.rd-icon-block-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/block-200.svg");
+}
+
 .rd-icon-bolt::before {
   background-color: currentcolor;
   mask-image: url("images/icons/bolt-400.svg");
@@ -20939,6 +20989,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/business_center-200.svg");
 }
 
+.rd-icon-calendar_today::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/calendar_today-400.svg");
+}
+
+.rd-icon-calendar_today-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/calendar_today-200.svg");
+}
+
 .rd-icon-campaign::before {
   background-color: currentcolor;
   mask-image: url("images/icons/campaign-400.svg");
@@ -20947,6 +21007,16 @@ img:where(.rd, .rd *) {
 .rd-icon-campaign-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/campaign-200.svg");
+}
+
+.rd-icon-cancel::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cancel-400.svg");
+}
+
+.rd-icon-cancel-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cancel-200.svg");
 }
 
 .rd-icon-chat::before {
@@ -20961,12 +21031,12 @@ img:where(.rd, .rd *) {
 
 .rd-icon-check::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/check-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-check-thin::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/check-200.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M382-267.69 183.23-466.46 211.77-495 382-324.77 748.23-691l28.54 28.54L382-267.69Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-check_circle::before {
@@ -21011,12 +21081,22 @@ img:where(.rd, .rd *) {
 
 .rd-icon-close::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/close-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-close-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/close-200.svg");
+}
+
+.rd-icon-cloud_off::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cloud_off-400.svg");
+}
+
+.rd-icon-cloud_off-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/cloud_off-200.svg");
 }
 
 .rd-icon-code::before {
@@ -21039,6 +21119,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/cognition-200.svg");
 }
 
+.rd-icon-comment::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/comment-400.svg");
+}
+
+.rd-icon-comment-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/comment-200.svg");
+}
+
 .rd-icon-construction::before {
   background-color: currentcolor;
   mask-image: url("images/icons/construction-400.svg");
@@ -21051,7 +21141,7 @@ img:where(.rd, .rd *) {
 
 .rd-icon-content_copy::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/content_copy-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-content_copy-thin::before {
@@ -21097,6 +21187,16 @@ img:where(.rd, .rd *) {
 .rd-icon-dashboard-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/dashboard-200.svg");
+}
+
+.rd-icon-date_range::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/date_range-400.svg");
+}
+
+.rd-icon-date_range-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/date_range-200.svg");
 }
 
 .rd-icon-delete::before {
@@ -21169,6 +21269,26 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/drafts-200.svg");
 }
 
+.rd-icon-drag_indicator::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/drag_indicator-400.svg");
+}
+
+.rd-icon-drag_indicator-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/drag_indicator-200.svg");
+}
+
+.rd-icon-edit::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/edit-400.svg");
+}
+
+.rd-icon-edit-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/edit-200.svg");
+}
+
 .rd-icon-edit_document::before {
   background-color: currentcolor;
   mask-image: url("images/icons/edit_document-400.svg");
@@ -21187,16 +21307,6 @@ img:where(.rd, .rd *) {
 .rd-icon-error-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/error-200.svg");
-}
-
-.rd-icon-error_outline::before {
-  background-color: currentcolor;
-  mask-image: url("images/icons/error_outline-400.svg");
-}
-
-.rd-icon-error_outline-thin::before {
-  background-color: currentcolor;
-  mask-image: url("images/icons/error_outline-200.svg");
 }
 
 .rd-icon-event::before {
@@ -21289,6 +21399,46 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/filter_alt-200.svg");
 }
 
+.rd-icon-filter_alt_off::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_alt_off-400.svg");
+}
+
+.rd-icon-filter_alt_off-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_alt_off-200.svg");
+}
+
+.rd-icon-filter_list::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_list-400.svg");
+}
+
+.rd-icon-filter_list-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_list-200.svg");
+}
+
+.rd-icon-filter_list_off::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_list_off-400.svg");
+}
+
+.rd-icon-filter_list_off-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/filter_list_off-200.svg");
+}
+
+.rd-icon-first_page::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/first_page-400.svg");
+}
+
+.rd-icon-first_page-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/first_page-200.svg");
+}
+
 .rd-icon-flag::before {
   background-color: currentcolor;
   mask-image: url("images/icons/flag-400.svg");
@@ -21359,6 +21509,26 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/forum-200.svg");
 }
 
+.rd-icon-fullscreen::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/fullscreen-400.svg");
+}
+
+.rd-icon-fullscreen-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/fullscreen-200.svg");
+}
+
+.rd-icon-fullscreen_exit::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/fullscreen_exit-400.svg");
+}
+
+.rd-icon-fullscreen_exit-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/fullscreen_exit-200.svg");
+}
+
 .rd-icon-function::before {
   background-color: currentcolor;
   mask-image: url("images/icons/function-400.svg");
@@ -21419,6 +21589,26 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/handshake-200.svg");
 }
 
+.rd-icon-help::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/help-400.svg");
+}
+
+.rd-icon-help-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/help-200.svg");
+}
+
+.rd-icon-history::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/history-400.svg");
+}
+
+.rd-icon-history-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/history-200.svg");
+}
+
 .rd-icon-home_work::before {
   background-color: currentcolor;
   mask-image: url("images/icons/home_work-400.svg");
@@ -21427,6 +21617,16 @@ img:where(.rd, .rd *) {
 .rd-icon-home_work-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/home_work-200.svg");
+}
+
+.rd-icon-hourglass_empty::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/hourglass_empty-400.svg");
+}
+
+.rd-icon-hourglass_empty-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/hourglass_empty-200.svg");
 }
 
 .rd-icon-hub::before {
@@ -21457,16 +21657,6 @@ img:where(.rd, .rd *) {
 .rd-icon-info-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/info-200.svg");
-}
-
-.rd-icon-insert_drive_file::before {
-  background-color: currentcolor;
-  mask-image: url("images/icons/insert_drive_file-400.svg");
-}
-
-.rd-icon-insert_drive_file-thin::before {
-  background-color: currentcolor;
-  mask-image: url("images/icons/insert_drive_file-200.svg");
 }
 
 .rd-icon-insights::before {
@@ -21529,6 +21719,26 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/keyboard_arrow_down-200.svg");
 }
 
+.rd-icon-keyboard_arrow_up::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keyboard_arrow_up-400.svg");
+}
+
+.rd-icon-keyboard_arrow_up-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/keyboard_arrow_up-200.svg");
+}
+
+.rd-icon-last_page::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/last_page-400.svg");
+}
+
+.rd-icon-last_page-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/last_page-200.svg");
+}
+
 .rd-icon-lightbulb::before {
   background-color: currentcolor;
   mask-image: url("images/icons/lightbulb-400.svg");
@@ -21549,6 +21759,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/lightbulb_2-200.svg");
 }
 
+.rd-icon-link::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/link-400.svg");
+}
+
+.rd-icon-link-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/link-200.svg");
+}
+
 .rd-icon-local_shipping::before {
   background-color: currentcolor;
   mask-image: url("images/icons/local_shipping-400.svg");
@@ -21557,6 +21777,16 @@ img:where(.rd, .rd *) {
 .rd-icon-local_shipping-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/local_shipping-200.svg");
+}
+
+.rd-icon-lock::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lock-400.svg");
+}
+
+.rd-icon-lock-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/lock-200.svg");
 }
 
 .rd-icon-login::before {
@@ -21589,14 +21819,54 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/mail-200.svg");
 }
 
+.rd-icon-mark_chat_unread::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mark_chat_unread-400.svg");
+}
+
+.rd-icon-mark_chat_unread-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mark_chat_unread-200.svg");
+}
+
+.rd-icon-mark_email_unread::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mark_email_unread-400.svg");
+}
+
+.rd-icon-mark_email_unread-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/mark_email_unread-200.svg");
+}
+
 .rd-icon-menu::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/menu-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-menu-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/menu-200.svg");
+}
+
+.rd-icon-more_horiz::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/more_horiz-400.svg");
+}
+
+.rd-icon-more_horiz-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/more_horiz-200.svg");
+}
+
+.rd-icon-more_vert::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/more_vert-400.svg");
+}
+
+.rd-icon-more_vert-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/more_vert-200.svg");
 }
 
 .rd-icon-movie::before {
@@ -21649,6 +21919,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/notifications-200.svg");
 }
 
+.rd-icon-notifications_active::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/notifications_active-400.svg");
+}
+
+.rd-icon-notifications_active-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/notifications_active-200.svg");
+}
+
 .rd-icon-open_in_new::before {
   background-color: currentcolor;
   mask-image: url("images/icons/open_in_new-400.svg");
@@ -21679,14 +21959,24 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/payments-200.svg");
 }
 
-.rd-icon-people_alt::before {
+.rd-icon-pending::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/people_alt-400.svg");
+  mask-image: url("images/icons/pending-400.svg");
 }
 
-.rd-icon-people_alt-thin::before {
+.rd-icon-pending-thin::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/people_alt-200.svg");
+  mask-image: url("images/icons/pending-200.svg");
+}
+
+.rd-icon-person::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/person-400.svg");
+}
+
+.rd-icon-person-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/person-200.svg");
 }
 
 .rd-icon-person_add::before {
@@ -21707,6 +21997,16 @@ img:where(.rd, .rd *) {
 .rd-icon-pets-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/pets-200.svg");
+}
+
+.rd-icon-print::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/print-400.svg");
+}
+
+.rd-icon-print-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/print-200.svg");
 }
 
 .rd-icon-priority_high::before {
@@ -21819,6 +22119,26 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/recycling-200.svg");
 }
 
+.rd-icon-refresh::before {
+  background-color: currentcolor;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z'/%3E%3C/svg%3E");
+}
+
+.rd-icon-refresh-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/refresh-200.svg");
+}
+
+.rd-icon-remove::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/remove-400.svg");
+}
+
+.rd-icon-remove-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/remove-200.svg");
+}
+
 .rd-icon-remove_circle::before {
   background-color: currentcolor;
   mask-image: url("images/icons/remove_circle-400.svg");
@@ -21827,6 +22147,16 @@ img:where(.rd, .rd *) {
 .rd-icon-remove_circle-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/remove_circle-200.svg");
+}
+
+.rd-icon-report::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/report-400.svg");
+}
+
+.rd-icon-report-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/report-200.svg");
 }
 
 .rd-icon-restart_alt::before {
@@ -21869,6 +22199,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/rss_feed-200.svg");
 }
 
+.rd-icon-save::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/save-400.svg");
+}
+
+.rd-icon-save-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/save-200.svg");
+}
+
 .rd-icon-savings::before {
   background-color: currentcolor;
   mask-image: url("images/icons/savings-400.svg");
@@ -21891,7 +22231,7 @@ img:where(.rd, .rd *) {
 
 .rd-icon-search::before {
   background-color: currentcolor;
-  mask-image: url("images/icons/search-400.svg");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24'%3E%3Cpath d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z'/%3E%3C/svg%3E");
 }
 
 .rd-icon-search-thin::before {
@@ -21917,6 +22257,16 @@ img:where(.rd, .rd *) {
 .rd-icon-settings-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/settings-200.svg");
+}
+
+.rd-icon-share::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/share-400.svg");
+}
+
+.rd-icon-share-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/share-200.svg");
 }
 
 .rd-icon-show_chart::before {
@@ -21947,6 +22297,16 @@ img:where(.rd, .rd *) {
 .rd-icon-sms-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/sms-200.svg");
+}
+
+.rd-icon-sort::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sort-400.svg");
+}
+
+.rd-icon-sort-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sort-200.svg");
 }
 
 .rd-icon-south_west::before {
@@ -22039,6 +22399,36 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/swap_horiz-200.svg");
 }
 
+.rd-icon-sync::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sync-400.svg");
+}
+
+.rd-icon-sync-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sync-200.svg");
+}
+
+.rd-icon-sync_problem::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sync_problem-400.svg");
+}
+
+.rd-icon-sync_problem-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/sync_problem-200.svg");
+}
+
+.rd-icon-table_rows::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/table_rows-400.svg");
+}
+
+.rd-icon-table_rows-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/table_rows-200.svg");
+}
+
 .rd-icon-target::before {
   background-color: currentcolor;
   mask-image: url("images/icons/target-400.svg");
@@ -22089,6 +22479,16 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/trending_down-200.svg");
 }
 
+.rd-icon-trending_flat::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_flat-400.svg");
+}
+
+.rd-icon-trending_flat-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/trending_flat-200.svg");
+}
+
 .rd-icon-trending_up::before {
   background-color: currentcolor;
   mask-image: url("images/icons/trending_up-400.svg");
@@ -22119,6 +22519,56 @@ img:where(.rd, .rd *) {
   mask-image: url("images/icons/tune-200.svg");
 }
 
+.rd-icon-undo::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/undo-400.svg");
+}
+
+.rd-icon-undo-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/undo-200.svg");
+}
+
+.rd-icon-unfold_more::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/unfold_more-400.svg");
+}
+
+.rd-icon-unfold_more-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/unfold_more-200.svg");
+}
+
+.rd-icon-update::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/update-400.svg");
+}
+
+.rd-icon-update-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/update-200.svg");
+}
+
+.rd-icon-upload::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/upload-400.svg");
+}
+
+.rd-icon-upload-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/upload-200.svg");
+}
+
+.rd-icon-view_column::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/view_column-400.svg");
+}
+
+.rd-icon-view_column-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/view_column-200.svg");
+}
+
 .rd-icon-visibility::before {
   background-color: currentcolor;
   mask-image: url("images/icons/visibility-400.svg");
@@ -22127,6 +22577,16 @@ img:where(.rd, .rd *) {
 .rd-icon-visibility-thin::before {
   background-color: currentcolor;
   mask-image: url("images/icons/visibility-200.svg");
+}
+
+.rd-icon-visibility_off::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/visibility_off-400.svg");
+}
+
+.rd-icon-visibility_off-thin::before {
+  background-color: currentcolor;
+  mask-image: url("images/icons/visibility_off-200.svg");
 }
 
 .rd-icon-warehouse::before {

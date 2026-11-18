@@ -68,24 +68,90 @@ permalink: '/styles/icons/'
 </section>
 
 <section>
-    <h3>The set</h3>
+    <h3 id="set">The set</h3>
     <p>
         {{ icons.size }} glyphs, each in both weights: the library-core names consumed by Rare
-        Styles' own components and docs, maintainer-selected extras, and every glyph the known
-        consumer sites render — promoted into the one shared collection. Hover any icon for
-        its name, <strong>click it to copy its markup</strong> — the glyph turns into a check
-        when the snippet is on your clipboard.
+        Styles' own components and docs, the plain interface marks a data view needs, and every
+        glyph the known consumer sites render — one shared collection, sorted into groups below.
+        Hover any icon for its name, <strong>click it to copy its markup</strong> — the glyph turns
+        into a check when the snippet is on your clipboard.
     </p>
-    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
-        {% for name in icons %}<button class="rd-icon-{{ name }} rd-js-copy" title="{{ name }}" aria-label="Copy markup for {{ name }}" data-copy-text='<span class="rd-icon-{{ name }}"></span>'></button>
-        {% endfor %}
+    <form id="icon-finder" class="form-row text-content-width padding-b-md rd-is-hidden" role="search" onsubmit="return false">
+        <label class="self-center" for="icon-search">Find a glyph</label>
+        <input id="icon-search" type="search" placeholder="arrow, reload, user…" autocomplete="off" spellcheck="false">
+        <div class="button-group" role="group" aria-label="Weight">
+            <button type="button" aria-pressed="true" data-icon-weight="400">Regular</button>
+            <button type="button" aria-pressed="false" data-icon-weight="200">Thin</button>
+        </div>
+    </form>
+    <p id="icon-none" class="rd-is-hidden" role="status">
+        No glyph matches. Try another word, or see <a href="#missing">what to do when a glyph is not in the set</a>.
+    </p>
+    <noscript>
+        <p>The grids show the regular cut. Every glyph also has the thin one: add <code>-thin</code> to its class.</p>
+    </noscript>
+    {% for group in iconGroups %}
+    <div class="padding-b-sm" data-icon-group>
+        <h5 id="icons-{{ group.id }}">{{ group.title }}</h5>
+        <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
+            {% for icon in group.icons %}<button type="button" class="rd-icon-{{ icon.name }} rd-js-copy" title="{{ icon.name }}" aria-label="Copy markup for {{ icon.name }}" data-icon-name="{{ icon.name }}" data-icon-words="{{ icon.words }}" data-copy-text='<span class="rd-icon-{{ icon.name }}"></span>'></button>
+            {% endfor %}
+        </div>
     </div>
-    <p>The same set in the thin cut:</p>
-    <div class="icon-grid flex wrap gap-md" style="font-size: 1.5rem;">
-        {% for name in icons %}<button class="rd-icon-{{ name }}-thin rd-js-copy" title="{{ name }}" aria-label="Copy markup for {{ name }}, thin cut" data-copy-text='<span class="rd-icon-{{ name }}-thin"></span>'></button>
-        {% endfor %}
-    </div>
+    {% endfor %}
 </section>
+
+<script>
+// /styles/icons/ only: the search and the weight switch of the grids above.
+// With no script the form stays hidden and the groups read as they are.
+(() => {
+    const finder = document.getElementById('icon-finder');
+    if (!finder) return;
+    const input = document.getElementById('icon-search');
+    const none = document.getElementById('icon-none');
+    const groups = [...document.querySelectorAll('[data-icon-group]')].map((box) => ({
+        box,
+        tiles: [...box.querySelectorAll('button[data-icon-name]')].map((tile) => ({
+            tile,
+            // "arrow_back" is found by "arrow", "back" and its search words.
+            words: `${tile.dataset.iconName.replace(/_/g, ' ')} ${tile.dataset.iconName} ${tile.dataset.iconWords}`.split(' '),
+        })),
+    }));
+
+    const filter = () => {
+        const terms = input.value.toLowerCase().trim().split(/[\s_]+/).filter(Boolean);
+        let total = 0;
+        groups.forEach(({ box, tiles }) => {
+            let shown = 0;
+            tiles.forEach(({ tile, words }) => {
+                const match = terms.every((term) => words.some((word) => word.startsWith(term)));
+                tile.classList.toggle('rd-is-hidden', !match);
+                if (match) shown += 1;
+            });
+            box.classList.toggle('rd-is-hidden', shown === 0);
+            total += shown;
+        });
+        none.classList.toggle('rd-is-hidden', total > 0);
+    };
+
+    const switches = [...finder.querySelectorAll('[data-icon-weight]')];
+    const setWeight = (weight) => {
+        const suffix = weight === '200' ? '-thin' : '';
+        switches.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.iconWeight === weight)));
+        groups.forEach(({ tiles }) => tiles.forEach(({ tile }) => {
+            const name = tile.dataset.iconName;
+            tile.classList.remove(`rd-icon-${name}`, `rd-icon-${name}-thin`);
+            tile.classList.add(`rd-icon-${name}${suffix}`);
+            tile.dataset.copyText = `<span class="rd-icon-${name}${suffix}"></span>`;
+            tile.setAttribute('aria-label', `Copy markup for ${name}${suffix ? ', thin cut' : ''}`);
+        }));
+    };
+
+    input.addEventListener('input', filter);
+    switches.forEach((button) => button.addEventListener('click', () => setWeight(button.dataset.iconWeight)));
+    finder.classList.remove('rd-is-hidden');
+})();
+</script>
 
 <section>
     <h3>Component-owned icons</h3>
@@ -113,7 +179,7 @@ permalink: '/styles/icons/'
 </section>
 
 <section>
-    <h3>Need an icon that isn't here?</h3>
+    <h3 id="missing">Need an icon that isn't here?</h3>
     <p>
         The set covers what the Rare Styles ecosystem actually uses, so it is deliberately finite. If
         the glyph you need has no <code>.rd-icon-*</code> class:

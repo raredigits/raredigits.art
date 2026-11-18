@@ -74,6 +74,9 @@ Alongside, everything RareCharts and its docs need from the library is in: chart
   - "Print" on `/styles/utilities/`;
   - cards and the legend get pages of their own;
   - `/styles/interactive/` replaces `/styles/typography/interactive/`, which redirects to it.
+  - `/styles/icons/` sorts the set into ten groups and has a search by name and by meaning ("reload" finds `refresh`, `sync` and `restart_alt`) and a regular / thin switch (`CSS-418`).
+- **Seven first-screen glyphs travel inside the stylesheet** (`CSS-419`): `menu`, `close`, `search`, `content_copy`, `refresh`, `check` and the thin `check`. Every rule that draws one — the hamburger, the header search, the copy icon and its answer, and the public `.rd-icon-<name>` class — carries the drawing as a data URI. Before, the browser asked the CDN for each file only after the stylesheet had loaded and the page was laid out, over a second connection: a consumer's hamburger appeared a second or more after its header, and the close glyph started loading at the click. The other glyphs stay files. A build step does it (`scripts/inline-icons.mjs`); a build from the SCSS source without it keeps the file URLs, and the SVG files still ship.
+- **49 interface and data-view glyphs; the set goes 143 → 189** (`CSS-416`), both weights, through `scripts/fetch-icons.py`. Actions: `refresh`, `sync`, `add`, `remove`, `edit`, `save`, `undo`, `upload`, `print`, `share`, `link`, `more_horiz`, `more_vert`. Tables and filters: `filter_list`, `sort`, `arrow_upward`, `arrow_downward`, `arrow_back`, `first_page`, `last_page`, `fullscreen`, `fullscreen_exit`. States: `help`, `lock`, `visibility_off`, `hourglass_empty`, `block`, `history`. Navigation: `keyboard_arrow_up`, `calendar_today`, `person`. For the dashboard set of `v0.7.3` — table filters and columns: `unfold_more`, `filter_alt_off`, `filter_list_off`, `view_column`, `table_rows`, `drag_indicator`, `date_range`; panel and row states: `cancel`, `pending`, `report`, `trending_flat`, `cloud_off`, `sync_problem`, `update`; messages: `notifications_active`, `mark_email_unread`, `mark_chat_unread`, `comment`. A test keeps the SVG files, the `$icons` list and the fetch script's list in step and fails on two glyphs with one drawing.
 
 ### Changed
 
@@ -137,6 +140,7 @@ Alongside, everything RareCharts and its docs need from the library is in: chart
 
 - **`.card-dashboard-bordered`**, **`.card-row-bordered`**, **`.card-row-bordered-item`**. Use `.panel .panel--bordered`, `.panel__row` and `.panel__row-item` (`CSS-181`). A panel pads 16px, not 16px 32px, keeps outdented blocks inside it and lets paragraphs run its width. The site migrated in the same change (`CSS-183a`).
 - **`.card-header`** (`CSS-388`). A card has no parts of its own: put `.border-bottom` on the header block. Its line is `--border-color`, a step darker than the old `--border-color-light` (#ccc rather than #e4e4e4 on a light card). A fixed header, body and footer are the panel's, for data.
+- **Three glyphs whose files were identical to another's** (`CSS-417`): `rd-icon-insert_drive_file` (use `rd-icon-draft`), `rd-icon-people_alt` (`rd-icon-group`), `rd-icon-error_outline` (`rd-icon-error`), with their `-thin` forms. The picture is the same; the old class now draws nothing.
 - **`colors/_blue.scss`**: its tokens and `.blue*` classes are in `colors/_base.scss`. A build from the SCSS source that loads `colors/blue` loads `colors/base` instead.
 
 ## [v0.7.1] — 2026-10-20 — Content Starter
