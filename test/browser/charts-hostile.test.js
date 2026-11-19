@@ -121,7 +121,14 @@ async function force(page, selector, pseudo) {
 // on a <button> (Rare Styles since v0.7.0; with RareCharts' own border and
 // fill it draws nothing of its own, as charts-rd-host.test.js notes).
 const COLOURS = ['color', 'border-top-color', 'background-color'];
-const allowed = (host, prop) => host !== 'hostile' && (COLOURS.includes(prop) || prop === 'appearance');
+// The custom range's date fields size to their text, and on Rare Styles the
+// chart's words are in the page's font (K-15): a host with Fira sets them
+// narrower than a bare page without it (126 vs 133 px on the Linux CI, where
+// no Fira is installed; equal on a machine that has it). Their width is the
+// font's, not a leak, as the legend items' widths are left out for S11.
+const FONT_SIZED = /^input(:|$)/;
+const allowed = (host, prop, name = '') => host !== 'hostile'
+  && (COLOURS.includes(prop) || prop === 'appearance' || (prop === 'width' && FONT_SIZED.test(name)));
 
 // What no guard covered on 2026-11-19 — a host's margin, shadow and
 // :active / :focus fill on the range buttons, the Log toggle, the Graph tools
@@ -142,7 +149,7 @@ function diff(host, name, got, want) {
   if (got.length !== want.length) return [`${name}: ${got.length} matches, bare ${want.length}`];
   got.forEach((row, i) => Object.keys(row).forEach((p) => {
     const [a, b] = [srgb(row[p]), srgb(want[i][p])];
-    if (a !== b && !allowed(host, p) && !known(host, `${name}.${p}`)) out.push(`${name}[${i}].${p}: ${a} (bare ${b})`);
+    if (a !== b && !allowed(host, p, name) && !known(host, `${name}.${p}`)) out.push(`${name}[${i}].${p}: ${a} (bare ${b})`);
   }));
   return out;
 }
