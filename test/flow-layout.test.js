@@ -1,15 +1,18 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { layoutFlow } from '../assets/charts/src/graph/views/flow.js';
+import { layoutFlow, laneOfNode } from '../assets/charts/src/graph/views/flow.js';
 import { autoFlowHints, countCrossings } from '../assets/charts/src/graph/layouts/flowAuto.js';
 import { resolveFolds, foldGraph, foldSub } from '../assets/charts/src/graph/views/flowFold.js';
 import { normalizeLinks } from '../assets/charts/src/core/links.js';
 
 // The flow view's pure layer, without a DOM: lanes and rows (layoutFlow), the
 // automatic placement (autoFlowHints, layout: auto) and the fold / aggregation
-// math (Flows II, 0.9.8_6; spec: _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md). The
+// math (Flows II, 0.9.8_6; the decisions: assets/charts/docs/DECISIONS.md §13, Flow view). The
 // drawing itself is in graph-flow.test.js.
+//
+// Moved from graph-fixes-7a.test.js (RC-026):
+//   'C-38: a short flow drawing gives its padding to the rows' → same describe
 
 const lanesOf = ids => new Map(ids.map((id, i) => [id, i]));
 const hintsFor = (nodes, links, laneIds = ['a', 'b', 'c']) => {
@@ -107,11 +110,43 @@ describe('layoutFlow', () => {
     expect(p.get('top').y).toBeLessThan(p.get('main').y);
   });
 
+  it('a col that is not a whole number ≥ 0 counts as column 0', () => {
+    const { positions: p, colsPerLane } = layoutFlow({
+      lanes,
+      nodes: [{ id: 'neg', lane: 'l1', col: -1 }, { id: 'frac', lane: 'l1', col: 1.5, row: 1 }, { id: 'str', lane: 'l1', col: '2', row: 2 }],
+    }, { width: 800, height: 400, layout: 'hints' });
+    expect(['neg', 'frac', 'str'].map(id => p.get(id).col)).toEqual([0, 0, 0]);
+    expect(colsPerLane.get('l1')).toBe(1);
+    expect(['neg', 'frac', 'str'].map(id => p.get(id).x)).toEqual([100, 100, 100]);
+  });
+
   it('appends lanes that only the data mentions; laneBy can be a field or a function', () => {
     const r1 = layoutFlow({ lanes, nodes: [{ id: 'x', net: 'l3' }] }, { laneBy: 'net' });
     expect(r1.lanes.map(l => l.id)).toEqual(['l1', 'l2', 'l3']);
     const r2 = layoutFlow({ lanes, nodes: [{ id: 'y', meta: { lane: 'l2' } }] }, { laneBy: n => n.meta.lane });
     expect(r2.positions.get('y').lane).toBe('l2');
+  });
+});
+
+describe('C-38: a short flow drawing gives its padding to the rows', () => {
+  const nodes = [
+    { id: 'dex', lane: 'l2', row: -1 },
+    { id: 'wallet', lane: 'l2', row: 0, sub: 'osmo1…w7zs' },
+    { id: 'buyer', lane: 'l2', row: 1 },
+  ];
+  const ys = res => ['dex', 'wallet', 'buyer'].map(id => res.positions.get(id).y);
+
+  it('rows keep room for a node, its two caption lines and the node below', () => {
+    // 270 px: the step-6 900 px card with title, buttons, legend and navigator
+    const [a, b, c] = ys(layoutFlow({ nodes }, { width: 900, height: 270, layout: 'hints' }));
+    expect(b - a).toBeGreaterThanOrEqual(2 * 18 + 38);
+    expect(c - b).toBeGreaterThanOrEqual(2 * 18 + 38);
+    expect(a - 18).toBeGreaterThanOrEqual(34 + 8);    // under the lane headers
+  });
+
+  it('a drawing with room is laid out as before', () => {
+    // header 34 + pad 24; band 600 − 58 − 24 − 36 − 36 = 446; step min(120, 223)
+    expect(ys(layoutFlow({ nodes }, { width: 900, height: 600, layout: 'hints' }))).toEqual([179, 299, 419]);
   });
 });
 
@@ -263,6 +298,106 @@ describe('layoutFlow — layout: auto', () => {
   });
 });
 
+// ─── Lane resolution (D-05) ────────────────────────────────────────────────────
+
+describe('laneOfNode', () => {
+  it('reads laneBy: a field name (default lane) or a function of the node; the value comes back as given', () => {
+    expect(laneOfNode({ lane: 'a' })).toBe('a');
+    expect(laneOfNode({ lane: 2 })).toBe(2);
+    expect(laneOfNode({ net: 'eth', lane: 'a' }, 'net')).toBe('eth');
+    expect(laneOfNode({ meta: { lane: 'l2' } }, n => n.meta.lane)).toBe('l2');
+    expect(laneOfNode({ id: 'x' })).toBeUndefined();
+    expect(laneOfNode({ lane: null })).toBeNull();
+  });
+
+  it("a folded meta-node's _lane wins over laneBy, even when empty; only an undefined _lane falls through", () => {
+    const by = vi.fn(() => 'fn');
+    expect(laneOfNode({ _lane: 'c', lane: 'a' })).toBe('c');
+    expect(laneOfNode({ _lane: 'c', net: 'a' }, by)).toBe('c');
+    expect(laneOfNode({ _lane: null, lane: 'a' })).toBeNull();
+    expect(laneOfNode({ _lane: '', lane: 'a' })).toBe('');
+    expect(laneOfNode({ _lane: 0, lane: 'a' })).toBe(0);
+    expect(by).not.toHaveBeenCalled();
+    expect(laneOfNode({ _lane: undefined, lane: 'a' })).toBe('a');
+    const n = { _lane: undefined, net: 'b' };
+    expect(laneOfNode(n, by)).toBe('fn');
+    expect(by).toHaveBeenCalledTimes(1);
+    expect(by).toHaveBeenCalledWith(n);
+  });
+});
+
+describe('layoutFlow — lanes and columns from one pass (D-05)', () => {
+  // A cycle in one lane, a declared lane no node uses, a numeric lane id, a
+  // lane only the data names, a meta-node whose _lane overrides its field,
+  // nodes without a lane (one null, one missing) and a col hint. Pinned
+  // before lane resolution and column counting went down to one pass.
+  const lanes = [{ id: 'a', label: 'A' }, { id: 2, weight: 2 }, { id: 'empty' }];
+  const nodes = [
+    { id: 'x', lane: 'a' },
+    { id: 'y', lane: 'a' },
+    { id: 'z', lane: 'a' },
+    { id: 'w', lane: 'a', row: 1 },
+    { id: 'n2', lane: 2, col: 2 },
+    { id: 'm', lane: 2 },
+    { id: 'meta', _lane: 'c', lane: 'a' },
+    { id: 'nul', lane: null },
+    { id: 'und' },
+    { id: 'c2', lane: 'c' },
+  ];
+  const links = normalizeLinks([
+    { from: 'x', to: 'y' }, { from: 'y', to: 'z' }, { from: 'z', to: 'x' },
+    { from: 'z', to: 'm' }, { from: 'm', to: 'n2' }, { from: 'n2', to: 'meta' }, { from: 'meta', to: 'c2' },
+    { from: 'c2', to: 'nul' }, { from: 'c2', to: 'w' },
+  ]);
+  const r3 = v => Math.round(v * 1000) / 1000;
+  const pin = res => ({
+    lanes: res.lanes.map(l => [l.id, l.label, l.weight, r3(l.x0), r3(l.x1)]),
+    cols: [...res.colsPerLane],
+    at: [...res.positions].map(([id, p]) => [id, p.lane, p.col, p.row, r3(p.x), r3(p.y)]),
+    top: res.top,
+  });
+  const run = (extra = {}) => layoutFlow({ nodes, links, lanes }, { width: 1000, height: 500, ...extra });
+
+  it('layout: auto — lanes sized by their columns, the cycle ranked, _lane and the empty lane honoured', () => {
+    expect(pin(run())).toEqual({
+      lanes: [['a', 'A', 3, 0, 333.333], ['2', '2', 2, 333.333, 555.556], ['empty', 'empty', 1, 555.556, 666.667],
+        ['c', 'c', 2, 666.667, 888.889], ['', '', 1, 888.889, 1000]],
+      cols: [['a', 3], ['2', 3], ['c', 2], ['', 1]],
+      at: [
+        ['x', 'a', 0, 0, 55.556, 189], ['y', 'a', 1, 0, 166.667, 189], ['z', 'a', 2, 0, 277.778, 189],
+        ['w', 'a', 0, 1, 55.556, 309], ['n2', '2', 2, 0, 518.519, 189], ['m', '2', 0, 0, 370.37, 189],
+        ['meta', 'c', 0, 0, 722.222, 189], ['nul', '', 0, 0, 944.444, 189], ['und', '', 0, 1, 944.444, 309],
+        ['c2', 'c', 1, 0, 833.333, 189],
+      ],
+      top: 58,
+    });
+  });
+
+  it('layout: hints — equal widths for undeclared lanes, free rows per lane and column', () => {
+    expect(pin(run({ layout: 'hints' }))).toEqual({
+      lanes: [['a', 'A', 1, 0, 166.667], ['2', '2', 2, 166.667, 500], ['empty', 'empty', 1, 500, 666.667],
+        ['c', 'c', 1, 666.667, 833.333], ['', '', 1, 833.333, 1000]],
+      cols: [['a', 1], ['2', 3], ['c', 1], ['', 1]],
+      at: [
+        ['x', 'a', 0, 0, 83.333, 191.333], ['y', 'a', 0, -1, 83.333, 76], ['z', 'a', 0, 2, 83.333, 422],
+        ['w', 'a', 0, 1, 83.333, 306.667], ['n2', '2', 2, 0, 444.444, 191.333], ['m', '2', 0, 0, 222.222, 191.333],
+        ['meta', 'c', 0, 0, 750, 191.333], ['nul', '', 0, 0, 916.667, 191.333], ['und', '', 0, 1, 916.667, 306.667],
+        ['c2', 'c', 0, 1, 750, 306.667],
+      ],
+      top: 58,
+    });
+  });
+
+  it('asks laneBy once per node, in input order, and never for a node that carries _lane', () => {
+    ['auto', 'hints'].forEach(layout => {
+      const asked = [];
+      const res = run({ layout, laneBy: n => { asked.push(n.id); return n.lane; } });
+      expect(asked, layout).toEqual(['x', 'y', 'z', 'w', 'n2', 'm', 'nul', 'und', 'c2']);
+      expect(pin(res), layout).toEqual(pin(run({ layout })));
+    });
+  });
+});
+
 // ─── Folds and aggregation (pure) ──────────────────────────────────────────────
 
 describe('folds', () => {
@@ -319,6 +454,15 @@ describe('folds', () => {
     expect(agg._dim).toBeUndefined();
     const allOut = ties.map(l => ({ ...l, _dim: true }));
     expect(foldGraph({ nodes, links: allOut }, [], new Set(), { aggregate: true }).links[0]._dim).toBe(true);
+  });
+
+  it('an input tie with its own links and key fields is not taken for a group (D-06)', () => {
+    const [own] = normalizeLinks([{ from: 'in', to: 'hub', type: 'ETH', value: 3 }]);
+    const odd = { ...own, links: ['x'], key: 'mine' };
+    const out = foldGraph({ nodes, links: [odd] }, [], new Set()).links;
+    expect(out).toHaveLength(1);
+    expect(out[0]).toBe(odd);                                // itself, not an aggregate
+    expect(out[0].aggregate).toBeUndefined();
   });
 
   it('a bucket key cannot confuse two pairs whose ids contain separators (R-20)', () => {

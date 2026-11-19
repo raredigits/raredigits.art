@@ -8,9 +8,7 @@ permalink: '/charts/graph/flow/'
 
 The flow view draws a **trace**: value moving between entities, left to right through ordered lanes — networks, stages, jurisdictions. Ties are directed, may repeat between the same pair (a swap there and back, a deposit and a withdrawal), and carry value (width), category (color), certainty (dash) and a label. It is the view for money trails, supply chains and address investigations.
 
-<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
-  <p><strong>⚠️ Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. Its layout, folds and options may change without a major-version bump.</p>
-</div>
+<p class="callout callout-warning"><strong>Experimental.</strong> Like the rest of <code>Graph</code>, the flow view is outside the 1.0 stability guarantee. Its layout, folds and options may change without a major-version bump.</p>
 
 The demo below follows funds as they move: income from a validator is swapped, bridged and moved through five networks, then spent on a token crowdfunding — and the trace goes on to show where the sale money went. Read it left to right: lanes are networks, line color is the asset, width its USD value, a dashed line an amount derived rather than read from transactions. Press **−** on the **Crowdfunding** node to fold the sale into one node and focus on the route that led to it (**+** brings it back); the buttons in the header jump to the trace's chapters, and the strip under the drawing brushes any period. The legend's **address poisoning** item reveals a look-alike address that tried to pass as the team's.
 
@@ -18,7 +16,7 @@ The demo below follows funds as they move: income from a validator is swapped, b
 
 <div id="graph-flow-demo-panel" aria-live="polite"></div>
 
-Select a node or a tie: the chart reports it through `onSelect`, and the page fills the details panel — placed inside the card with the `details` option: beside the drawing when the card has room for both — `minWidth` plus the 300 px panel, here a card about 1100 px wide — and below it otherwise. The library draws, your page explains. The crowdfunding side is a `fold`; the decoy starts hidden with `hiddenLinkTypes: ['noise']`.
+Select a node or a tie: the chart reports it through `onSelect`, and the page fills the details panel — placed inside the card with the `details` option: beside the drawing when the card has room for both — `minWidth` plus the 300 px panel, here a card about 1100 px wide — and below it otherwise. The library draws, your page explains. The crowdfunding side is a `fold`; the decoy's ties are the legend's “address poisoning” — click it to hide them.
 
 ## Automatic layout
 
@@ -45,9 +43,9 @@ The same `{ nodes, links }` contract as every Graph view. Hints on the nodes pla
   linkColorBy: 'asset',
   linkTypes: { ETH: { color: '#3d4a5c', label: 'ETH' } },
   linkWidth: { by: 'value', scale: 'sqrt', min: 1.6, max: 22 },
+  valueFormat: v => '$' + v.toLocaleString('en-US'),   <span class="code-comment">// value is USD</span>
   linkDash: link => link.basis === 'derived',
   hulls: [{ id: 'owner', label: 'one key on five networks', members: n => n.cluster }],
-  hiddenLinkTypes: ['noise'],                     <span class="code-comment">// off until turned on in the legend</span>
   folds: [{ id: 'sale', anchor: 'crowdfunding', members: n => n.crowd, sub: '{n} addresses' }],
   timeframes: [{ key: 'sale', label: 'The sale', range: ['2024-01-28', '2024-02-08'] }, 'ALL'],
   navigator: true,
@@ -111,6 +109,7 @@ Flow-specific options; the common Graph options (`height`, `details`, `fullscree
         <tr><td><code>linkColorBy</code></td><td>string | function</td><td><code>'type'</code></td><td>Tie field (or function) whose value is looked up in <code>linkTypes</code></td></tr>
         <tr><td><code>linkWidth</code></td><td>object</td><td><code>{ by: 'value', scale: 'sqrt', min: 1.6, max: 22 }</code></td><td>Tie width from a value field; <code>scale: 'linear'</code> also available</td></tr>
         <tr><td><code>linkDash</code></td><td>function</td><td>—</td><td><code>link =&gt; boolean</code> — dashed tie (e.g. a derived amount); a type's own <code>dash</code> wins</td></tr>
+        <tr><td><code>legendSymbols</code></td><td>object | false</td><td>—</td><td>The key to the drawing, as static rows after the tie categories in the legend, its marks in the muted text color. <code>shapes</code>: a row per node shape when the nodes draw two or more, named by the kinds that draw it (<code>shapeBy</code>); <code>{ kind: 'label' }</code> renames a kind, <code>{ kind: false }</code> leaves it out, <code>shapes: false</code> all of them. <code>dash: 'words'</code>: a row for the ties <code>linkDash</code> dashes. <code>width: 'words'</code>: a wedge for the tie width (<code>linkWidth.by</code>). Without words there is no dash or width row; <code>false</code> drops the key</td></tr>
         <tr><td><code>linkLabels</code></td><td>boolean</td><td><code>true</code></td><td>Tie labels; also <code>setLinkLabels()</code></td></tr>
         <tr><td><code>hulls</code></td><td>array</td><td><code>[]</code></td><td><code>[{ id, label, members, color? }]</code> — a soft band through a group's nodes; <code>members</code> is a list of ids or <code>node =&gt; boolean</code></td></tr>
         <tr><td><code>hiddenLinkTypes</code></td><td>array</td><td><code>[]</code></td><td>Tie categories hidden at start; the legend shows them dimmed and turns them on</td></tr>
@@ -119,6 +118,7 @@ Flow-specific options; the common Graph options (`height`, `details`, `fullscree
         <tr><td><code>onFoldChange</code></td><td>function</td><td>—</td><td><code>({ id, collapsed, fold, event }) =&gt; void</code> when a fold opens or closes</td></tr>
         <tr><td><code>aggregateLinks</code></td><td>boolean</td><td><code>false</code></td><td>Merge parallel ties of one pair and category, <code>value</code> summed</td></tr>
         <tr><td><code>laneCap</code></td><td>integer</td><td>—</td><td>Most nodes drawn in a lane, the "+N more" node included: over the cap, the lane keeps its <code>n − 1</code> heaviest nodes and folds the rest. A whole number ≥ 1</td></tr>
+        <tr><td><code>timeZone</code></td><td>string</td><td><code>'local'</code></td><td><code>'local'</code> or <code>'UTC'</code>: the zone the ties' <code>start</code> / <code>end</code>, <code>setTimeWindow</code> and the view bounds are read in, the timeframes cut in, and the navigator counts and labels its periods in. A year (<code>1990</code>, <code>'1990'</code>) or a month (<code>'2024-03'</code>) is a period; as an end it runs to its last moment. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a></td></tr>
         <tr><td><code>timeframes</code></td><td>array | true</td><td>—</td><td>Period buttons in the header, over the ties' dates</td></tr>
         <tr><td><code>navigator</code></td><td>boolean | object</td><td>—</td><td>A brushable strip of active ties under the drawing</td></tr>
         <tr><td><code>defaultTimeframe</code></td><td>string</td><td>—</td><td>Key of the <code>timeframes</code> button the chart opens on</td></tr>
@@ -138,6 +138,7 @@ graph.setTimeWindow(null, '2024-01');    <span class="code-comment">// open star
 graph.select('osmo');                    <span class="code-comment">// or select({ link: id }); clearSelection()</span>
 graph.setLinkLabels(false);
 graph.setHulls([]);
+graph.setLinkTypesVisible(['ETH']);      <span class="code-comment">// what the legend does; null shows all</span>
 graph.collapse('sale');                  <span class="code-comment">// expand(id), isCollapsed(id), setFolds(list)</span>
 graph.setTimeframe('sale');              <span class="code-comment">// with timeframes; setView([from, to]), getView(), onViewChange(fn)</span></code></pre>
 
@@ -145,19 +146,30 @@ graph.setTimeframe('sale');              <span class="code-comment">// with time
 
 **Select** — click a node or a tie: its neighbourhood stays, the rest fades, and `onSelect({ node, link, event })` fires; click the background, or press Escape on a focused node, to clear. Without `onSelect`, clicking a tie pins its tooltip instead.
 
-**Keyboard** — the ties and the nodes are two Tab stops, the ties first; each is the selected tie or node, else the one focused last. On a tie, the arrows step through the ties left to right, Home / End go to the first / last, and focus shows its tooltip; Enter or Space selects it as a click does (without `onSelect`, it pins the tooltip), Escape clears. On a node, Enter or Space selects; → follows an outgoing tie, ← an incoming one, ↑ / ↓ move within a lane and on into the next one, so every node can be reached; Home / End go to the first / last node; + and − open and close a fold; Escape clears. Ties are announced as "from → to, category, label".
+**Keyboard** — the ties and the nodes are two Tab stops, the ties first; each is the selected tie or node, else the one focused last. On a tie, the arrows step through the ties left to right, Home / End go to the first / last, and focus shows its tooltip; Enter or Space selects it as a click does (without `onSelect`, it pins the tooltip, and Tab then goes into it, to its `sources` links; Tab past the last link or Escape releases it and returns to the tie), Escape clears. On a node, Enter or Space selects; → follows an outgoing tie, ← an incoming one, ↑ / ↓ move within a lane and on into the next one, so every node can be reached; Home / End go to the first / last node; + and − open and close a fold; Escape clears. Ties are announced as "from → to, category, label".
 
 **Folds** — − on an open fold's anchor collapses it, + on the folded node opens it; the tooltip of a folded node lists what is inside.
 
 **Time** — timeframe buttons and the navigator brush pick a period; ties outside it dim (or go, with `timeWindowMode: 'hide'`).
 
-**Legend** — node groups and tie categories; click a category to hide or show its ties. Categories in `hiddenLinkTypes` start hidden. A node whose ties are all hidden is hidden with them.
+**Legend** — node groups and tie categories; click a category to hide or show its ties, double-click to keep only it, "Show all" to bring every category back. Categories in `hiddenLinkTypes` start hidden and stay hidden across `setData`. `setLinkTypesVisible(types | null)` does the same from code, read against the trace's categories, without `onLegendToggle`; `legendInteractive: false` lists the categories drawn. A node whose ties are all hidden is hidden with them. After the categories comes the key to the drawing (`legendSymbols`): the node shapes, the dash and the width, as plain rows that toggle nothing.
 
 **Details** — with `details`, the selected node or tie is explained in a panel inside the card: beside the drawing when the card has room for `minWidth` and the panel, below it otherwise (see the [Graph options](/charts/graph/)).
 
 **Full screen** — ⛶ in the footer opens the trace on the whole screen; Esc or ✕ closes it.
 
-**Narrow screens** — set `minWidth` and the drawing scrolls sideways instead of crushing the lanes, while the title, buttons, legend, navigator and footer stay in place; a details panel moves below the drawing.
+**Narrow screens** — set `minWidth` and the drawing scrolls sideways instead of crushing the lanes (one finger scrolls it and the page, two fingers move the drawing), while the title, buttons, legend, navigator and footer stay in place; a details panel moves below the drawing.
+
+## Not in this version
+
+The flow view draws the trace it is given, whole: the trace is the answer to a query. It does not do, by design:
+
+- a free force layout — lanes and columns come from the data or the [automatic layout](#automatic-layout);
+- editing the graph in the chart;
+- clustering addresses by itself — groups come from the data, as `folds` and `hulls`;
+- loading a node's neighbours on a click — that is the [ego view](/charts/graph/);
+- turning the trace on a phone — a card narrower than `minWidth` scrolls sideways;
+- exporting the drawing as an image.
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/graph/graph-flow-demo.js"></script>

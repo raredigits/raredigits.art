@@ -107,7 +107,8 @@ describe('Bar — positive-only data is unchanged', () => {
 
 // Horizontal category axis has no axis line (after v0.9.8_4_1). With negative
 // values the bars start at zero, not at the plot's left edge, so the line drew
-// a stray rule beside the category labels. Vertical keeps its baseline.
+// a stray rule beside the category labels. Vertical drops it too (maintainer,
+// 2026-11-18): under a negative bar it ran along the plot's bottom, not zero.
 describe('Bar — category axis line', () => {
   const stacked = [
     { name: 'A', values: [{ label: 'X', value: 3 }, { label: 'Y', value: 5 }] },
@@ -126,9 +127,10 @@ describe('Bar — category axis line', () => {
     expect(host.querySelector('.rc-axis-cat .domain')).toBeNull();
   });
 
-  it('vertical: the category axis keeps its baseline', () => {
+  it('vertical: no .domain on the category axis either', () => {
     new Bar('#chart', { height: 300, animate: false }).setData(mixed);
-    expect(host.querySelector('.rc-axis-cat .domain')).not.toBeNull();
+    expect(host.querySelectorAll('.rc-axis-cat .tick')).toHaveLength(3);
+    expect(host.querySelector('.rc-axis-cat .domain')).toBeNull();
   });
 });
 
@@ -141,11 +143,15 @@ const series = [
 ];
 
 const segCount = () => host.querySelectorAll('.rc-bar-seg').length;
+const plainCount = () => host.querySelectorAll('.rc-bar').length;
+// the category axis, as drawn: its tick labels in order
+const categories = () => [...host.querySelectorAll('.rc-axis-cat .tick text')].map(t => t.textContent);
 
 describe('Bar — stacked mode', () => {
   it('detects the series-major shape and renders a labelled svg', () => {
-    const c = new Bar('#chart', { title: 'Stacked', height: 300 }).setData(series);
-    expect(c._isStacked).toBe(true);
+    new Bar('#chart', { title: 'Stacked', height: 300 }).setData(series);
+    expect(segCount()).toBe(9);                   // stacked segments, not plain bars
+    expect(plainCount()).toBe(0);
     const svg = host.querySelector('svg');
     expect(svg.getAttribute('role')).toBe('img');
     expect(svg.getAttribute('aria-label')).toBe('Stacked');
@@ -157,8 +163,8 @@ describe('Bar — stacked mode', () => {
   });
 
   it('takes categories as the ordered union of series labels', () => {
-    const c = new Bar('#chart', { height: 300 }).setData(series);
-    expect(c._categories).toEqual(['2022', '2023', '2024']);
+    new Bar('#chart', { height: 300 }).setData(series);
+    expect(categories()).toEqual(['2022', '2023', '2024']);
   });
 
   it('treats a category a series omits as zero (no segment drawn)', () => {
@@ -166,8 +172,8 @@ describe('Bar — stacked mode', () => {
       { name: 'A', values: [{ label: 'Q1', value: 10 }, { label: 'Q2', value: 10 }] },
       { name: 'B', values: [{ label: 'Q1', value: 5 }] },   // omits Q2
     ];
-    const c = new Bar('#chart', { height: 300 }).setData(sparse);
-    expect(c._categories).toEqual(['Q1', 'Q2']);
+    new Bar('#chart', { height: 300 }).setData(sparse);
+    expect(categories()).toEqual(['Q1', 'Q2']);
     expect(segCount()).toBe(3);   // A/Q1, A/Q2, B/Q1 — not B/Q2
   });
 
@@ -189,8 +195,8 @@ describe('Bar — stacked mode', () => {
   });
 
   it('falls back to plain single-series bars for a flat array', () => {
-    const c = new Bar('#chart', { height: 300 }).setData([{ label: 'A', value: 4 }, { label: 'B', value: 7 }]);
-    expect(c._isStacked).toBe(false);
+    new Bar('#chart', { height: 300 }).setData([{ label: 'A', value: 4 }, { label: 'B', value: 7 }]);
+    expect(segCount()).toBe(0);
     expect(host.querySelectorAll('.rc-bar')).toHaveLength(2);
   });
 

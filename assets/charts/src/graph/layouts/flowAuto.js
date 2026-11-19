@@ -16,7 +16,8 @@
 //      branch, not the line going on — a DEX swapped with and back, a fee
 //      paid by a node that also sends elsewhere, an income source of a node
 //      that also receives elsewhere. The two ends of a plain chain are not
-//      satellites.
+//      satellites. Without the rule every swap and every fee took a column
+//      of its own, and the lanes were squeezed thin.
 //   2. Main route. Nodes flagged `main: true` (or the ends of ties flagged
 //      `main: true`); otherwise the longest left-to-right path, by number of
 //      steps, the heavier by `value` on a tie — the trace itself rather than
@@ -28,13 +29,15 @@
 // A node that carries any position hint (`row`, `col`, `x`, `y`) is pinned:
 // it keeps its hints (col 0 when only a row is given) and the automaton
 // works around it.
+//
+// The ties' `start` is read in `timeZone`, the chart's ('local' or 'UTC';
+// parseTime in core/links.js): it orders a calendar date against an instant.
 
-import { parseTime } from '../../core/links.js';
+import { linkValue, parseTime } from '../../core/links.js';
 
 const isHinted = n => ['row', 'col', 'x', 'y'].some(k => Number.isFinite(n[k]));
-const num = v => (v == null || v === '' || !Number.isFinite(+v) ? null : Math.max(0, +v));
 
-export function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf }) {
+export function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf, timeZone = 'local' }) {
   const index = new Map(nodes.map((n, i) => [n.id, i]));
   const lane = new Map(nodes.map(n => [n.id, laneIndex(laneOf(n))]));
   const pinned = new Set(nodes.filter(isHinted).map(n => n.id));
@@ -78,7 +81,7 @@ export function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf }) {
     const inner = edges.filter(e => lane.get(e.source) === k && lane.get(e.target) === k
       && !satelliteOf.has(e.source) && !satelliteOf.has(e.target));
     const forward = inner.some(e => parseTime(e.start) != null)
-      ? temporalForward(ids, inner)
+      ? temporalForward(ids, inner, timeZone)
       : eadesForward(ids, inner, index);
     // longest path over the forward ties, in a topological order. A pinned
     // node starts from its own col and keeps it, so what follows it lands to
@@ -169,8 +172,8 @@ export function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf }) {
 
 // Ties in time order (timeless ones last, in input order); a tie whose
 // target already reaches its source would close a loop and is left out.
-function temporalForward(ids, edges) {
-  const t = e => parseTime(e.start);
+function temporalForward(ids, edges, timeZone) {
+  const t = e => parseTime(e.start, { timeZone });
   const order = edges.map((e, i) => [e, i]).sort((a, b) => {
     const ta = t(a[0]), tb = t(b[0]);
     if (ta == null || tb == null) return ta == null && tb == null ? a[1] - b[1] : ta == null ? 1 : -1;
@@ -223,7 +226,7 @@ function acyclicOrder(ids, edges, index) {
       }
     }
     if (!left.size) break;
-    const weight = list => list.reduce((s, e) => s + (num(e.value) ?? 0), 0);
+    const weight = list => list.reduce((s, e) => s + (linkValue(e) ?? 0), 0);
     const best = [...left].sort(byInput).reduce((a, b) => {
       const da = outs(a).length - ins(a).length, db = outs(b).length - ins(b).length;
       if (db !== da) return db > da ? b : a;
@@ -254,8 +257,8 @@ function mainRoute(nodes, edges, slot, index) {
   if (!forward.length) return new Set();
   // Each step counts 1; value adds less than one step in total, so it only
   // decides between routes of equal length.
-  const total = forward.reduce((s, e) => s + (num(e.value) ?? 0), 0);
-  const w = e => 1 + (total ? (num(e.value) ?? 0) / (total * 2) : 0);
+  const total = forward.reduce((s, e) => s + (linkValue(e) ?? 0), 0);
+  const w = e => 1 + (total ? (linkValue(e) ?? 0) / (total * 2) : 0);
   const order = nodes.map(n => n.id)
     .sort((a, b) => (slot(a) - slot(b)) || (index.get(a) - index.get(b)));
   const best = new Map(order.map(id => [id, 0]));

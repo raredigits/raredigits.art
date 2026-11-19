@@ -3,7 +3,7 @@
 
   // Shared date range: Feb 2 – Mar 3
   const days = 20;
-  const start = new Date('2025-02-02');
+  const start = new Date(2025, 1, 2);   // local midnight: new Date('2025-02-02') is UTC, the day before west of it
   const dates = Array.from({ length: days }, (_, i) => {
     const d = new Date(start);
     d.setDate(d.getDate() + i);
@@ -37,7 +37,6 @@
   const brentValues   = spikeUp(walk(67,  days, 0.014), 1.09);
   const dxyValues     = spikeUp(walk(97.4, days, 0.004), 1.018);
   const ftseValues    = spikeDown(walk(460, days, 0.008), 0.96);
-  const goldValues    = spikeDown(walk(4800, days, 0.012), 0.958);
 
   const toPoints = arr => arr.map((v, i) => ({ date: dates[i], value: v }));
 
@@ -54,7 +53,7 @@
         data:  toPoints(brentValues),
         options: {
           yPrefix: '$',
-          lineColor: '#00aaff',
+          lineColor: '#1677ff',
           curve: 'monotone',
           endLabels: true,
           crosshair: true,
@@ -67,7 +66,7 @@
         title: 'DXY Dollar Index',
         data:  toPoints(dxyValues),
         options: {
-          lineColor: '#00aaff',
+          lineColor: '#1677ff',
           curve: 'monotone',
           endLabels: true,
           crosshair: true,
@@ -81,7 +80,7 @@
         title: 'FTSE All-World Excluding US',
         data:  toPoints(ftseValues),
         options: {
-          lineColor: '#00aaff',
+          lineColor: '#1677ff',
           curve: 'monotone',
           endLabels: true,
           crosshair: true,
@@ -101,7 +100,7 @@
           { label: 'May', value: 112000 },
         ],
         options: {
-          barColor: '#00aaff',
+          barColor: '#1677ff',
           yTickFormat: d => '$' + d3.format('.2s')(d),
         },
       },

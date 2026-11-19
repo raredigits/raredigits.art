@@ -17,7 +17,9 @@
 //                negative, missing or non-numeric value counts as 0 (no
 //                segment). stacked: 'percent' normalizes each bar to
 //                100%. A legend is auto-built from series names unless a
-//                `legend` option is passed.
+//                `legend` option is passed; either way its items that name
+//                a series (by `series`, `name` or `label`) are toggles —
+//                the interactive legend below.
 //   A row's `color` fills that bar (B-01); the stacked mode ignores it —
 //   segments take their series colour.
 //   The timeframe buttons and the navigator strip belong to the date axis:
@@ -43,18 +45,28 @@
 //                    labels fade in at their place. A render in the middle of it
 //                    (fonts, the first resize, new data) carries the motion on
 //                    to the new geometry (C-16)
-//   duration       — animation duration ms (default: 500)
+//   duration       — animation duration ms (default: 650)
 //   stagger        — per-bar delay ms (default: 0); not in the stacked mode
 //   ease           — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //
-//   showValues     — show numeric labels at bar ends (horizontal only, default: false)
+//   showValues     — show numeric labels at bar ends (default: false; not on
+//                    stacked bars). Horizontal: past the bar's end, flipped
+//                    inside where room is tight (valueInsideGap). Vertical
+//                    (categories and dates): above a positive bar, below a
+//                    negative one, the value axis grown to make room; where
+//                    labels would collide (with each other or another bar),
+//                    the larger values keep theirs — the tooltip keeps every
+//                    value
 //   valueFormat    — function(d, info) => string for bar-end labels
-//                    (default: ',.0f') and the default stacked-segment tooltip
+//                    (default: ',.2~f' — whole numbers with separators, up to
+//                    two decimals for a fraction: 1,234 and 0.4, where ',.0f'
+//                    printed 0.4 as "0", C-41) and the default stacked-segment tooltip
 //                    value (default: ','); arguments as tooltipFormat's
 //   valueOffset    — px offset from bar end (default: 6)
-//   valueInsideGap — threshold px: label flips inside bar when space is tight
-//                    and it fits there (default: 42); a label that fits
-//                    neither way gets room outside — the value axis widens
+//   valueInsideGap — horizontal bars: threshold px; the label flips inside the
+//                    bar when space is tight and it fits there (default: 42);
+//                    a label that fits neither way gets room outside — the
+//                    value axis widens
 //
 //   showGrid       — show grid lines (default: true)
 //   showXAxis      — show X axis (default: true; hiding it also reclaims its margin)
@@ -76,6 +88,14 @@
 //                    by the span in view, as on TimeSeries ('%H:%M' up to 36 h,
 //                    '%b %d' up to 92 days,
 //                    '%b' up to a year, "%b '%y" up to five, then '%Y')
+//   timeZone       — date mode: 'local' (default) | 'UTC', the zone date strings
+//                    without a zone are read in, timeframes cut in and the
+//                    axis and tooltip name dates in; an instant stays that
+//                    instant (the table: parseDate in core/utils.js, T-10)
+//   timeframeAnchor / weekStart — date mode: the end the timeframes count
+//                    back from ('dataEnd' default | 'now' | a date) and the
+//                    first day of a week (Monday default), as on TimeSeries
+//                    (RC-001)
 //   tooltipFormat  — function(d, info) => html string; d is a copy of the row
 //                    (label a string, value a number; date mode: date a Date,
 //                    label ''), info its role fields { label, value, color }
@@ -89,14 +109,30 @@
 //                    on values. Dated vertical bars only; the categorical,
 //                    stacked and horizontal modes do not draw them and warn once.
 //   annotationLabelHeight — px reserved above the chart for date labels (default: 22)
+//
+// The interactive legend (stacked mode; the base options legendInteractive
+// and onLegendToggle, /charts/settings/): a click (Enter, Space) hides or
+// shows a series, a double click keeps only it, Show all brings all back.
+// A hidden series leaves the stacks — the segments above close up, its
+// colour and those of the others stay — and its category keeps its slot.
+//   legendRescale  — true (default): the value axis runs to the tallest
+//                    stack of the shown series, and 'percent' bars are
+//                    shares of what is shown (each fills 100%); false: the
+//                    axis keeps every series, and 'percent' bars are shares
+//                    of the whole bar (the top stays empty). The tooltip's
+//                    percent and the segment's total follow the same base.
+//   setSeriesVisible(names | null) — shows only these series (null: all), as
+//                    the legend does but without onLegendToggle; chain it
+//                    after setData. Series are named `name`, else
+//                    'Series N'. The categorical and date modes have one
+//                    series: their legend is a caption.
 
 import * as d3 from 'd3';
 import { Chart }              from '../core/Chart.js';
-import { Tooltip }            from '../core/Tooltip.js';
-import { parseDate, byDate, resolveEase, motionDuration, normalizeAnnotations, compactTickFormat, spanTimeFormat, spanTimeFormatter } from '../core/utils.js';
-import { renderGrid, renderAnnotations, renderAxisX, applySvgA11y, fitTextNode, dayTicks } from '../core/renderHelpers.js';
-import { EntryMotion, entryTransition } from '../core/entryMotion.js';
-import { escapeHtml, tipHeader, tipMuted } from '../core/html.js';
+import { parseDate, byDate, resolveEase, motionDuration, annotationRoom, compactTickFormat, spanTimeFormat, spanTimeFormatter, barValueDomain, linearTickValues, timeKit } from '../core/utils.js';
+import { renderGrid, renderGridX, renderAnnotations, renderAxisX, renderAxisY, thinBandLabels, fitTextNode, dayTicks, textWidth } from '../core/renderHelpers.js';
+import { EntryMotion, entryTransition, ENTRY_DURATION } from '../core/entryMotion.js';
+import { escapeHtml, tipDate, tipHeader, tipNum, tipRow } from '../core/html.js';
 import { readBarWidth, fitBarWidth, timeSlot, barInset } from '../core/barLayout.js';
 
 const SEG_SEP = String.fromCharCode(31); // stacked join-key separator (never in labels)
@@ -110,11 +146,29 @@ function stackTickValues(scale, count) {
   return d3.range(count + 1).map(i => d0 + (d1 - d0) * (i / count));
 }
 
+// d3.stackOffsetExpand with each bar divided by its row's `field` instead of
+// the sum of its stacked values: the percent mode with legendRescale: false,
+// where a bar is a share of the whole row, hidden series included, and its
+// top stays empty. With nothing hidden the row's whole is that sum, added in
+// the same order, so the bars equal stackOffsetExpand's.
+const stackOffsetShareOf = field => (series, order) => {
+  if (!series.length) return;
+  for (let j = 0; j < series[0].length; j++) {
+    const whole = series[0][j].data[field];
+    if (whole) series.forEach(s => { s[j][1] /= whole; });
+  }
+  d3.stackOffsetNone(series, order);
+};
+
 // Horizontal category gutter (C-39): the default 65px, grown to the longest
 // label plus the axis padding (3px) and a little air, up to 40% of the width.
 const GUTTER_MIN   = 65;
 const GUTTER_PAD   = 9;
 const GUTTER_SHARE = 0.4;
+
+// The default text of a bar's value (C-41): separators, no decimals on a
+// whole number, up to two on a fraction — 1,234, 87,000, 0.4, 2.35.
+const barValueText = d3.format(',.2~f');
 
 export class Bar extends Chart {
   constructor(selector, options = {}) {
@@ -130,20 +184,21 @@ export class Bar extends Chart {
     // Annotations mark the date axis of vertical bars; their labels take room
     // above the plot, as on Line (an explicit margin.top wins). Horizontal
     // bars have no date axis, so no room is kept.
-    const annotations    = normalizeAnnotations(options.annotations);
-    const annLabelHeight = options.annotationLabelHeight ?? 22;
-    const annTopReserve  = annotations.length && !horizontal ? annLabelHeight + 4 : 0;
+    const ann = annotationRoom(options, !horizontal);
 
     super(selector, {
       height: 200,
       margin: {
-        top:    options.margin?.top    ?? Math.max(12, annTopReserve),
-        right:  options.margin?.right  ?? (!horizontal && yGutter ? 65 : 0),
+        top:    options.margin?.top    ?? Math.max(12, ann.top),
+        // the value axis gutter: 64px, as Line's (K-10; it was 65)
+        right:  options.margin?.right  ?? (!horizontal && yGutter ? 64 : 0),
         left:   options.margin?.left   ?? (horizontal && yGutter ? 65 : 0),
         bottom: options.margin?.bottom ?? (xGutter ? (horizontal ? 16 : 8) : 0),
       },
       ...restOptions,
     });
+    // the sides the page's own margin sets: those gutters stay as given (RC-060)
+    this._pageMargin = options.margin ?? {};
 
     this._data          = [];
     this._isTimeSeries  = false;
@@ -158,11 +213,11 @@ export class Bar extends Chart {
     this._autoGutter    = horizontal && yGutter && options.margin?.left == null;
     this._builtMargin   = this.options.margin;
     this._labelRoom     = null;
-    this._annotations   = annotations;
-    this._annLabelHeight = annLabelHeight;
+    this._annotations   = ann.annotations;
+    this._annLabelHeight = ann.labelHeight;
     this._warnedAnnotations = false;
     this._warnedHorizontalDates = false;
-    this._tooltip       = new Tooltip(this.container, this.theme);
+    this.tooltip;   // made now: its element keeps its place in the card
 
     this._initSVG();
   }
@@ -184,7 +239,7 @@ export class Bar extends Chart {
       ? data
         .map(d => ({
           ...d,
-          date: parseDate(d.date),
+          date: parseDate(d.date, this._zone()),
           value: +d.value,
           label: d.label ?? '',
         }))
@@ -212,7 +267,7 @@ export class Bar extends Chart {
     return this._isTimeSeries && this.options.orientation !== 'horizontal';
   }
 
-  _getDataExtent() {
+  _dataExtent() {
     return this._hasDateAxis() && this._data.length
       ? d3.extent(this._data, d => d.date)
       : null;
@@ -226,7 +281,7 @@ export class Bar extends Chart {
   // before it knows its data. A mode without a date axis (categorical,
   // stacked, horizontal) hides them, so no inert buttons or empty strip are
   // left on the card; dated vertical bars show them again. (Bar has no
-  // Lin/Log switch, so the range row holds only the timeframes.) A header
+  // Log toggle, so the range row holds only the timeframes.) A header
   // with nothing else in it — no title, subtitle or legend — goes with it.
   _showTimeControls(on) {
     const row = this._rangeRowEl;
@@ -241,16 +296,7 @@ export class Bar extends Chart {
   }
 
   _initSVG() {
-    this.container.style.height = this.options.height + 'px';
-
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%');
-    applySvgA11y(this.svg, this.options);
-
-    const { left, top } = this.margin;
-    this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
+    this._createPlot();
 
     this.gGrid  = this.g.append('g');
     this.gBars  = this.g.append('g');
@@ -272,18 +318,23 @@ export class Bar extends Chart {
   }
 
   // The role fields of a bar (K-09): formatters get the row first, as
-  // before, and these second.
+  // before, and these second; the colour as hex (core/paint.js).
   _barRole(d) {
-    const color = this._barColor(d);
+    const color = this._hex(this._barColor(d));
     return this._isTimeSeries
       ? { date: d.date, value: d.value, color }
       : { label: d.label, value: d.value, color };
   }
 
+  // The default (RC-082): a bar's dot in its colour, its label and its
+  // value; on dates, the date above the row.
   _tooltipHtml(d) {
-    return this.options.tooltipFormat
-      ? this.options.tooltipFormat(d, this._barRole(d))
-      : `${tipHeader(escapeHtml(d.label || d3.timeFormat('%b %d, %Y')(d.date)))}<div>${d3.format(',')(d.value)}</div>`;
+    if (this.options.tooltipFormat) return this.options.tooltipFormat(d, this._barRole(d));
+    const opts = { swatch: 'dot', color: this._hex(this._barColor(d)) };
+    const value = escapeHtml(d3.format(',')(d.value));
+    return d.label
+      ? tipRow(escapeHtml(d.label), value, opts)
+      : tipDate(escapeHtml(timeKit(this._zone()).format('%b %d, %Y')(d.date))) + tipRow('', value, opts);
   }
 
   _dataLayers() {
@@ -301,7 +352,12 @@ export class Bar extends Chart {
   }
 
   render() {
-    if (this._isStacked) { this._showTimeControls(false); this._renderStacked(); return; }
+    if (this._isStacked) {
+      this._showTimeControls(false);
+      this._renderStacked();
+      if (this.options.orientation !== 'horizontal') this._fitGutters([[this.gAxisY, 'right']]);   // RC-060
+      return;
+    }
     if (!this._data.length) { this._renderEmpty(); return; }
 
     // Before the plot is measured: hidden controls give their height back.
@@ -319,7 +375,7 @@ export class Bar extends Chart {
 
     const t          = this.theme;
     const animate    = this.options.animate ?? true;   // the entry timeline decides when (C-16)
-    const duration   = motionDuration(this.options.duration ?? 500);
+    const duration   = motionDuration(this.options.duration ?? ENTRY_DURATION);
     const stagger    = this.options.stagger  ?? 0;
     const ease       = resolveEase(this.options.ease ?? 'cubicOut');
     const barFill    = d => this._barColor(d);   // B-01: row colour, then barColor, then accent
@@ -342,11 +398,16 @@ export class Bar extends Chart {
       this._syncTimeframeButtons(fullExtent, viewExtent);
       this._syncNavigator();
       this._renderTimeSeries({ data: visible, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent });
+      this._fitGutters([[this.gAxisY, 'right']]);   // the value gutter takes the room its labels need (RC-060)
       return;
     }
 
-    horizontal ? this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut })
-               : this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+    if (horizontal) {
+      this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+    } else {
+      this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+      this._fitGutters([[this.gAxisY, 'right']]);   // RC-060
+    }
   }
 
   // ─── Horizontal ───────────────────────────────────────────────────────────
@@ -364,20 +425,19 @@ export class Bar extends Chart {
     const by = d => y(d.label) + (y.bandwidth() - bh) / 2;
 
     // The domain always includes 0 — bars grow from the zero baseline, and
-    // negative values extend to the left of it.
+    // negative values extend to the left of it — with the 8% headroom of the
+    // vertical modes and Line (barValueDomain; it was 10% of each end value).
     const maxVal = d3.max(this._data, d => d.value) ?? 0;   // all values missing → an empty scale at 0
     const minVal = d3.min(this._data, d => d.value) ?? 0;
     const x = d3.scaleLinear()
-      .domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)])
+      .domain(barValueDomain(minVal, maxVal, { tickValues: this.options.xTickValues }))
       .range([0, W]);
 
     const showValues     = this.options.showValues     ?? false;
     const valueOffset    = this.options.valueOffset    ?? 6;
     const valueInsideGap = this.options.valueInsideGap ?? 42;
-    const valueFormat    = this.options.valueFormat    ?? (d => d3.format(',.0f')(d.value));
+    const valueFormat    = this.options.valueFormat    ?? (d => barValueText(d.value));
     const showGrid       = this.options.showGrid       ?? true;
-    const showXAxis      = this.options.showXAxis      ?? true;
-    const showYAxis      = this.options.showYAxis      ?? true;
 
     // A value label goes inside its bar only when it fits there; otherwise it
     // sits past the bar end. A short bar near the plot edge (a small negative
@@ -395,7 +455,7 @@ export class Bar extends Chart {
         probe.text(text);
         // 0 before layout (or no SVG layout at all): estimate from the
         // monospace numeric font.
-        labelW.set(d.label, probe.node().getComputedTextLength?.() || text.length * 7);
+        labelW.set(d.label, textWidth(probe.node(), 7, text));
         labelH = Math.max(labelH, probe.node().getBBox?.().height || 14);
       });
       probe.remove();
@@ -428,14 +488,8 @@ export class Bar extends Chart {
 
     // Grid — vertical lines
     if (showGrid) {
-      this.gGrid
-        .attr('transform', `translate(0,${H})`)
-        .call(d3.axisBottom(x).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat(''))
-        .call(g => {
-          g.selectAll('line').attr('stroke', t.grid);
-          g.select('.domain').remove();
-          g.selectAll('text').remove();
-        });
+      // the lines at the labels' values: an own xTickValues counts for both (RC-075)
+      renderGridX(this.gGrid, x, H, this.options.xTicks ?? 4, t, this.options.xTickValues ?? null);
     } else {
       this.gGrid.selectAll('*').remove();
     }
@@ -511,48 +565,8 @@ export class Bar extends Chart {
       this.gBars.selectAll('.rc-bar-value').remove();
     }
 
-    // Y axis — category labels on the left
-    if (showYAxis) {
-      this.gAxisX
-        .attr('transform', 'translate(0,0)')
-        .call(d3.axisLeft(y).tickSize(0).tickFormat(d => this._formatLabel(d)))
-        .call(g => {
-          g.selectAll('text')
-            .attr('fill', t.muted);
-          // No axis line: with negative values the bars start at zero, not
-          // at the plot's left edge, and the line read as a stray rule.
-          g.select('.domain').remove();
-          this._fitCategoryLabels(g);
-          this._bindLabelTooltips(g, 'left');
-        });
-    } else {
-      this.gAxisX.selectAll('*').remove();
-    }
-
-    // X axis — values at the bottom
-    if (showXAxis) {
-      this.gAxisY
-        .attr('transform', `translate(0,${H})`)
-        .call(d3.axisBottom(x)
-          .tickValues(xTickVals)
-          .tickFormat(xTickFormat))
-        .call(g => {
-          g.selectAll('text')
-            .attr('fill', t.muted);
-          g.select('.domain').remove();
-          g.selectAll('line').remove();
-
-          // The value axis can sit flush against the chart edge (margin.left /
-          // right = 0), where a centered first/last label would be half-clipped
-          // by the card's overflow. Anchor the end labels inward instead.
-          const ticks = g.selectAll('.tick text');
-          const n = ticks.size();
-          ticks.attr('text-anchor', (d, i) =>
-            i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle');
-        });
-    } else {
-      this.gAxisY.selectAll('*').remove();
-    }
+    this._renderCategoryAxis(y, 'left', H);                 // categories on the left
+    this._renderValueAxisX(x, H, xTickVals, xTickFormat);   // values at the bottom
   }
 
   // ─── Vertical ─────────────────────────────────────────────────────────────
@@ -572,24 +586,24 @@ export class Bar extends Chart {
     const minVal = d3.min(this._data, d => d.value) ?? 0;
     const yTicks = this.options.yTicks ?? 4;
     // Bars grow from a zero baseline, so the domain always includes 0 and
-    // extends to the data on both sides — negative bars hang below it.
-    // d3's .nice() + .ticks() gives clean tick values without overshooting;
-    // a fixed-count step can be 2× too large (e.g. step=100k for max=156k →
-    // ticks go to 300k).
+    // extends to the data on both sides — negative bars hang below it — with
+    // Line's 8% headroom and ticks inside (barValueDomain): no rounding up to
+    // the next round number (156k used to run to 200k).
+    const yTickValues = this.options.yTickValues ?? null;
     const y = d3.scaleLinear()
-      .domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)])
-      .nice(yTicks)
+      .domain(barValueDomain(minVal, maxVal, { tickValues: yTickValues }))
       .range([H, 0]);
+    const drawn = this._data.filter(d => !d.missing);
+    const values = this._valueLabels(drawn);
+    if (values) this._roomForValues(y, drawn, values);
     const zeroY = y(0);
-    const resolvedYTickValues = this.options.yTickValues ?? y.ticks(yTicks);
+    const resolvedYTickValues = yTickValues ?? linearTickValues(...y.domain(), yTicks);
 
     const prefix      = this.options.yPrefix ?? '';
     const suffix      = this.options.ySuffix ?? '';
     const yTickBase   = compactTickFormat(resolvedYTickValues);   // C-30: by the tick step
     const yTickFormat = this.options.yTickFormat ?? (d => `${prefix}${yTickBase(d)}${suffix}`);
     const showGrid    = this.options.showGrid  ?? true;
-    const showXAxis   = this.options.showXAxis ?? true;
-    const showYAxis   = this.options.showYAxis ?? true;
 
     // Grid — horizontal lines
     if (showGrid) {
@@ -599,7 +613,6 @@ export class Bar extends Chart {
     }
 
     // Bars
-    const drawn = this._data.filter(d => !d.missing);
     const phase = this._entry.phase(animate ? duration + Math.max(0, drawn.length - 1) * stagger : 0);
     const grow  = phase !== 'none';
     const bars = this.gBars.selectAll('.rc-bar')
@@ -626,35 +639,11 @@ export class Bar extends Chart {
       .attr('y',      d => y(Math.max(0, d.value)))
       .attr('height', d => Math.abs(y(d.value) - zeroY)));
 
-    // X axis — category labels at the bottom
-    if (showXAxis) {
-      this.gAxisX
-        .attr('transform', `translate(0,${H})`)
-        .call(d3.axisBottom(x).tickSize(0).tickFormat(d => this._formatLabel(d)))
-        .call(g => {
-          g.selectAll('text')
-            .attr('fill', t.muted);
-          g.select('.domain').attr('stroke', t.border);
-          this._bindLabelTooltips(g, 'bottom');
-        });
-    } else {
-      this.gAxisX.selectAll('*').remove();
-    }
+    this._drawVerticalValues(drawn, values, d => x(d.label) + x.bandwidth() / 2, d => d.label, y,
+      { W, barSpan: d => [bx(d), bx(d) + bw], phase, grow, duration, stagger, ease });
 
-    // Y axis — values on the right
-    if (showYAxis) {
-      this.gAxisY
-        .attr('transform', `translate(${W},0)`)
-        .call(d3.axisRight(y).tickValues(resolvedYTickValues).tickFormat(yTickFormat))
-        .call(g => {
-          g.selectAll('text')
-            .attr('fill', t.muted);
-          g.select('.domain').remove();
-          g.selectAll('line').remove();
-        });
-    } else {
-      this.gAxisY.selectAll('*').remove();
-    }
+    this._renderCategoryAxis(x, 'bottom', H);                                // categories at the bottom
+    this._renderValueAxisY(y, W, yTicks, resolvedYTickValues, yTickFormat);   // values on the right
   }
 
   _renderTimeSeries({ data, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent }) {
@@ -672,18 +661,23 @@ export class Bar extends Chart {
       : Math.max(2, Math.min(48, slotAt(L) * ratio));
     const inset = barInset(W - 2 * xPad, widthAt);
     const barW  = widthAt(W - 2 * xPad - 2 * inset);
-    const x = d3.scaleTime()
+    // d3's local or UTC scale: the zone's days and months (T-10)
+    const zone  = this._zone();
+    const x = timeKit(zone).scale()
       .domain(viewExtent)
       .range([xPad + inset, W - xPad - inset]);
 
     const minValue = d3.min(data, d => d.value) ?? 0;
     const maxValue = d3.max(data, d => d.value) ?? 0;
     const yTicks = this.options.yTicks ?? 4;
+    // As the categorical mode: zero in, 8% headroom, ticks inside.
+    const yTickValues = this.options.yTickValues ?? null;
     const y = d3.scaleLinear()
-      .domain([Math.min(0, minValue), Math.max(0, maxValue)])
-      .nice(yTicks)
+      .domain(barValueDomain(minValue, maxValue, { tickValues: yTickValues }))
       .range([H, 0]);
-    const resolvedYTickValues = this.options.yTickValues ?? y.ticks(yTicks);
+    const values = this._valueLabels(data);
+    if (values) this._roomForValues(y, data, values);
+    const resolvedYTickValues = yTickValues ?? linearTickValues(...y.domain(), yTicks);
 
     const prefix      = this.options.yPrefix ?? '';
     const suffix      = this.options.ySuffix ?? '';
@@ -691,14 +685,13 @@ export class Bar extends Chart {
     const yTickFormat = this.options.yTickFormat ?? (d => `${prefix}${yTickBase(d)}${suffix}`);
     // The date default follows the span in view, as on TimeSeries (C-31):
     // '%b' alone repeated a month on a short span ("Jan Jan Jan Feb").
-    const xTickFormat = this.options.xTickFormat ?? spanTimeFormatter(viewExtent);
+    const xTickFormat = this.options.xTickFormat ?? spanTimeFormatter(viewExtent, zone);
     let xTicks = this.options.xTicks ?? 6;
     if (!this.options.xTickFormat && typeof xTicks === 'number' && spanTimeFormat(viewExtent) === '%b %d') {
-      xTicks = dayTicks(viewExtent, xTicks) ?? xTicks;   // one tick per midnight on a span of a few days
+      xTicks = dayTicks(viewExtent, xTicks, zone) ?? xTicks;   // one tick per midnight on a span of a few days
     }
     const showGrid    = this.options.showGrid  ?? true;
     const showXAxis   = this.options.showXAxis ?? true;
-    const showYAxis   = this.options.showYAxis ?? true;
 
     if (showGrid) {
       renderGrid(this.gGrid, y, W, yTicks, t, resolvedYTickValues);
@@ -732,6 +725,9 @@ export class Bar extends Chart {
       .attr('y', d => y(Math.max(0, d.value)))
       .attr('height', d => Math.abs(y(d.value) - zeroY)));
 
+    this._drawVerticalValues(data, values, d => x(d.date), d => +d.date, y,
+      { W, barSpan: d => [x(d.date) - barW / 2, x(d.date) + barW / 2], phase, grow, duration, stagger, ease });
+
     if (showXAxis) {
       // The shared time axis: it thins labels that would overlap, as on
       // Line — the span-aware formats are longer than the old '%b'.
@@ -740,24 +736,103 @@ export class Bar extends Chart {
       this.gAxisX.selectAll('*').remove();
     }
 
-    if (showYAxis) {
-      this.gAxisY
-        .attr('transform', `translate(${W},0)`)
-        .call(d3.axisRight(y).tickValues(resolvedYTickValues).tickFormat(yTickFormat))
-        .call(g => {
-          g.selectAll('text')
-            .attr('fill', t.muted);
-          g.select('.domain').remove();
-          g.selectAll('line').remove();
-        });
-    } else {
-      this.gAxisY.selectAll('*').remove();
-    }
+    this._renderValueAxisY(y, W, yTicks, resolvedYTickValues, yTickFormat);
 
     // Annotations — on the bars' own scales: dates (point, range) on the
     // time axis, levels (value, yFrom/yTo) on the value axis (B-04).
     // levels span the plot past the inset edge bars (C-27), as on DualAxes
     renderAnnotations(this.gAnnotations, this._annotations, x, () => y, H, this._annLabelHeight, t, [xPad, W - xPad]);
+  }
+
+  // ─── Value labels on vertical bars ─────────────────────────────────────────
+
+  // showValues on a vertical mode: each drawn bar's label text and width,
+  // and the height of the line, measured on a probe in the labels' own class
+  // (0 before layout: estimated from the numeric font). null when off.
+  _valueLabels(drawn) {
+    if (!(this.options.showValues ?? false)) return null;
+    const format = this.options.valueFormat ?? (d => barValueText(d.value));
+    const probe  = this.gBars.append('text').attr('class', 'rc-bar-value');
+    const text = new Map(), width = new Map();
+    let height = 0;
+    drawn.forEach(d => {
+      const s = format(d, this._barRole(d));
+      probe.text(s);
+      text.set(d, s);
+      width.set(d, textWidth(probe.node(), 7, s));
+      height = Math.max(height, probe.node().getBBox?.().height || 14);
+    });
+    probe.remove();
+    return { text, width, height, offset: this.options.valueOffset ?? 6 };
+  }
+
+  // Room for the labels past the bar ends: the value domain grows until a
+  // label above the tallest bar, and below the deepest negative one, fits
+  // inside the plot. The ticks are picked afterwards, inside the new domain.
+  _roomForValues(y, drawn, { height, offset }) {
+    const need = height + offset;
+    const [H] = y.range();
+    for (let pass = 0; pass < 3; pass++) {
+      let top = 0, bottom = 0;
+      drawn.forEach(d => {
+        const end = y(d.value);
+        if (d.value < 0) bottom = Math.max(bottom, end + need - H);
+        else             top    = Math.max(top, need - end);
+      });
+      if (top < 0.5 && bottom < 0.5) return;
+      const ys = y.copy().range([H - bottom, top]);
+      y.domain([ys.invert(H), ys.invert(0)]);
+    }
+  }
+
+  // The labels: centred on the bar — moved in just enough to stay inside the
+  // plot at its edges — above a positive one (or zero), below a negative
+  // one, in the text colour. Where they would collide, the larger values
+  // win: labels are placed from the largest |value| down, and one that would
+  // come closer than 6px side by side (2px above or below) to a label
+  // already placed, or overprint another bar, is left out — the peaks keep
+  // theirs on a narrow card; the tooltip keeps every value. They fade in at
+  // their place with the bars (the entry timeline).
+  _drawVerticalValues(drawn, values, cx, key, y, { W, barSpan, phase, grow, duration, stagger, ease }) {
+    if (!values) { this.gBars.selectAll('.rc-bar-value').remove(); return; }
+    const { text, width, height, offset } = values;
+    const zero = y(0);
+    const at = d => {
+      const half = width.get(d) / 2;
+      return Math.max(Math.min(cx(d), W - half), half);
+    };
+    const ly = d => (d.value < 0 ? y(d.value) + offset : y(d.value) - offset);
+    const box = d => {
+      const half = width.get(d) / 2, top = d.value < 0 ? ly(d) : ly(d) - height;
+      return { x0: at(d) - half, x1: at(d) + half, y0: top, y1: top + height };
+    };
+    const bars = drawn.map(d => {
+      const [x0, x1] = barSpan(d);
+      return { d, x0, x1, y0: Math.min(y(d.value), zero), y1: Math.max(y(d.value), zero) };
+    });
+    const hits = (a, b, gx, gy) => a.x0 < b.x1 + gx && b.x0 < a.x1 + gx && a.y0 < b.y1 + gy && b.y0 < a.y1 + gy;
+    const placed = [];
+    [...drawn]
+      .sort((a, b) => Math.abs(b.value) - Math.abs(a.value))   // stable: equal values in order
+      .forEach(d => {
+        const b = box(d);
+        if (placed.some(p => hits(b, p.box, 6, 2))) return;
+        if (bars.some(r => r.d !== d && hits(b, r, 0, 0))) return;
+        placed.push({ d, box: b });
+      });
+    const keep = new Set(placed.map(p => p.d));
+    const sel = this.gBars.selectAll('.rc-bar-value')
+      .data(drawn.filter(d => keep.has(d)), key)
+      .join(enter => enter.append('text')
+        .attr('class', 'rc-bar-value')
+        .attr('opacity', grow ? 0 : 1))
+      .attr('x', at)
+      .attr('y', ly)
+      .attr('dy', d => (d.value < 0 ? '0.71em' : null))
+      .attr('text-anchor', 'middle')
+      .attr('fill', this.theme.text)
+      .text(d => text.get(d));
+    this._entryMove(sel, phase, { duration, stagger, ease }, s => s.attr('opacity', 1));
   }
 
   // ─── Stacked (multi-series composition)─────────────────────────────────────
@@ -786,51 +861,93 @@ export class Bar extends Chart {
   }
 
   // A stacked series' colour: its own, then the palette, then the accent.
+  // By its place in the data, so hiding a series recolours none.
   _seriesColor(i) {
     const palette = this.theme.colors ?? [];
     return this._series[i].color ?? palette[i % palette.length] ?? this.theme.accent;
   }
 
-  // Auto-build a legend from the series names unless the caller passed their own.
+  // A stacked series' name — in its tooltip and legend item, and as a
+  // string its key in the legend and the hidden set: `name`, else 'Series N'.
+  _seriesName(i) {
+    return this._series[i].name || `Series ${i + 1}`;
+  }
+
+  // The series the legend toggles: the stacked ones, in data order. The
+  // categorical and date modes draw one series and list none, so a legend
+  // there stays a caption.
+  _legendSeries() {
+    if (!this._isStacked) return [];
+    return this._series.map((_, i) => ({ key: this._seriesName(i), color: this._seriesColor(i) }));
+  }
+
+  // Shows only the stacked series named (null: all) and redraws; no
+  // onLegendToggle (the base's _setVisibleKeys). Chain it after setData.
+  setSeriesVisible(names) {
+    return this._setVisibleKeys(names);
+  }
+
+  // Auto-build a legend from the series names unless the caller passed their
+  // own. Its items name their series (`series`), so they are toggles. The
+  // header is built once, when the chart has no legend element yet: later
+  // the render's legend sync updates the items in place, so the element —
+  // and the focus in it — survive a new setData.
   _ensureStackedLegend() {
     if (!this._hasUserLegend) {
       this.options.legend = this._series.map((s, i) => ({
-        label: s.name || `Series ${i + 1}`,
-        type:  'bar',
-        color: this._seriesColor(i),
+        label:  this._seriesName(i),
+        series: this._seriesName(i),
+        type:   'bar',
+        color:  this._seriesColor(i),
       }));
     }
-    this._renderHeader();
+    if (!this._legendEl) this._renderHeader();
   }
 
+  // The stack rows, one per category. A hidden series counts 0 in its row,
+  // so its segments drop out and those above close up; its key — the series
+  // index — stays, so colours and segment keys do not move. `_total` sums
+  // the shown series, `_totalAll` every one.
+  //
+  // The base (legendRescale): what is shown — the value axis runs to the
+  // tallest shown stack, a 'percent' bar is the shares of its shown total —
+  // or, with legendRescale: false or nothing drawn, the whole: the axis
+  // keeps every series, a 'percent' bar is shares of the whole row (its top
+  // stays empty). `baseField` names the row field of that base, the
+  // segments' `total`.
   _computeStack() {
     const keys = this._series.map((_, i) => String(i));
+    const shown = this._series.map((_, i) => this._isShown(String(this._seriesName(i))));
     const rows = this._categories.map(cat => {
-      const row = { label: cat, _total: 0 };
+      const row = { label: cat, _total: 0, _totalAll: 0 };
       this._series.forEach((s, i) => {
         const hit = s.values.find(v => v.label === cat);
         const val = hit && Number.isFinite(hit.value) && hit.value > 0 ? hit.value : 0;
-        row[String(i)] = val;
-        row._total += val;
+        row[String(i)] = shown[i] ? val : 0;
+        if (shown[i]) row._total += val;
+        row._totalAll += val;
       });
       return row;
     });
 
     const percent = this.options.stacked === 'percent';
+    const shownMax = d3.max(rows, r => r._total) || 0;
+    const whole = !this._legendRescale() || !(shownMax > 0);
     const gen = d3.stack().keys(keys);
-    if (percent) gen.offset(d3.stackOffsetExpand);
+    if (percent) gen.offset(whole ? stackOffsetShareOf('_totalAll') : d3.stackOffsetExpand);
 
-    return { layers: gen(rows), maxTotal: percent ? 1 : (d3.max(rows, r => r._total) || 0), percent };
+    const maxTotal = percent ? 1 : (whole ? (d3.max(rows, r => r._totalAll) || 0) : shownMax);
+    return { layers: gen(rows), maxTotal, percent, baseField: whole ? '_totalAll' : '_total' };
   }
 
-  _stackSegments(layers) {
+  _stackSegments(layers, baseField) {
     const segs = [];
     layers.forEach((layer, i) => {
       layer.forEach((d, j) => {
         const value = d.data[String(i)];
         if (!(value > 0)) return;
-        const name  = this._series[i].name || `Series ${i + 1}`;
-        const total = d.data._total;
+        const name  = this._seriesName(i);
+        const total = d.data[baseField];
         // The segment is the formatters' one argument: it carries the role
         // fields itself (K-09) — label, series, color, percent.
         segs.push({
@@ -843,7 +960,7 @@ export class Bar extends Chart {
           total,
           label:   this._categories[j],
           series:  name,
-          color:   this._seriesColor(i),
+          color:   this._hex(this._seriesColor(i)),   // the payload's colour: hex
           percent: total > 0 ? value / total : 0,
         });
       });
@@ -855,9 +972,11 @@ export class Bar extends Chart {
     if (this.options.tooltipFormat) return this.options.tooltipFormat(seg);
     const valFmt = this.options.valueFormat ?? (d => d3.format(',')(d.value));
     const pct    = seg.total > 0 ? seg.value / seg.total : 0;
-    return `${tipHeader(escapeHtml(seg.cat))}
-      <div>${escapeHtml(seg.name)}: ${escapeHtml(valFmt(seg))}</div>
-      ${tipMuted(d3.format('.1%')(pct))}`;
+    // the category above (RC-082); the series' row, its share under it
+    return tipHeader(escapeHtml(seg.cat), { muted: true })
+      + tipRow(escapeHtml(seg.name), escapeHtml(valFmt(seg)), {
+        swatch: 'dot', color: seg.color, note: tipNum(d3.format('.1%')(pct)),
+      });
   }
 
   _renderStacked() {
@@ -871,18 +990,16 @@ export class Bar extends Chart {
 
     const t = this.theme;
     const colorFor = i => this._seriesColor(i);
-    const { layers, maxTotal, percent } = this._computeStack();
-    const segs = this._stackSegments(layers);
+    const { layers, maxTotal, percent, baseField } = this._computeStack();
+    const segs = this._stackSegments(layers, baseField);
 
     // Segments fade in once per instance, on the entry timeline (C-16).
-    const duration   = motionDuration(this.options.duration ?? 500);
+    const duration   = motionDuration(this.options.duration ?? ENTRY_DURATION);
     const ease       = resolveEase(this.options.ease ?? 'cubicOut');
     const phase      = this._entry.phase((this.options.animate ?? true) ? duration : 0);
     const segEnter   = enter => enter.append('rect').attr('opacity', phase !== 'none' ? 0 : 1);
 
     const showGrid  = this.options.showGrid  ?? true;
-    const showXAxis = this.options.showXAxis ?? true;
-    const showYAxis = this.options.showYAxis ?? true;
 
     const onOver = (event, d) => {
       d3.select(event.currentTarget).attr('opacity', 0.8);
@@ -908,11 +1025,8 @@ export class Bar extends Chart {
       const x = d3.scaleLinear().domain([0, maxTotal || 1]).nice(xTicks).range([0, W]);
       const xTickValues = this.options.xTickValues ?? stackTickValues(x, xTicks);
 
-      if (showGrid) {
-        this.gGrid.attr('transform', `translate(0,${H})`)
-          .call(d3.axisBottom(x).tickValues(xTickValues).tickSize(-H).tickFormat(''))
-          .call(g => { g.selectAll('line').attr('stroke', t.grid); g.select('.domain').remove(); g.selectAll('text').remove(); });
-      } else { this.gGrid.selectAll('*').remove(); }
+      if (showGrid) { renderGridX(this.gGrid, x, H, xTicks, t, xTickValues); }
+      else { this.gGrid.selectAll('*').remove(); }
 
       const rects = this.gBars.selectAll('.rc-bar-seg')
         .data(segs, d => d.cat + SEG_SEP + d.i)
@@ -926,34 +1040,14 @@ export class Bar extends Chart {
         .on('mouseover', onOver).on('mouseout', onOut);
       this._entryMove(rects, phase, { duration, stagger: 0, ease }, sel => sel.attr('opacity', 1));
 
-      if (showYAxis) {
-        this.gAxisX.attr('transform', 'translate(0,0)')
-          .call(d3.axisLeft(cat).tickSize(0).tickFormat(d => this._formatLabel(d)))
-          .call(g => {
-            g.selectAll('text').attr('fill', t.muted);
-            g.select('.domain').remove();
-            this._fitCategoryLabels(g);
-            this._bindLabelTooltips(g, 'left');
-          });
-      } else { this.gAxisX.selectAll('*').remove(); }
-
-      if (showXAxis) {
-        this.gAxisY.attr('transform', `translate(0,${H})`)
-          .call(d3.axisBottom(x).tickValues(xTickValues).tickFormat(this.options.xTickFormat ?? valFmtFor(xTickValues)))
-          .call(g => {
-            g.selectAll('text').attr('fill', t.muted);
-            g.select('.domain').remove(); g.selectAll('line').remove();
-            // The value axis can sit flush against the right edge — anchor the
-            // first/last labels inward so they are not half-clipped by the card.
-            const ticks = g.selectAll('.tick text');
-            const n = ticks.size();
-            ticks.attr('text-anchor', (d, i) => i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle');
-          });
-      } else { this.gAxisY.selectAll('*').remove(); }
+      this._renderCategoryAxis(cat, 'left', H);
+      this._renderValueAxisX(x, H, xTickValues, this.options.xTickFormat ?? valFmtFor(xTickValues));
       return;
     }
 
     // Vertical
+    // Stacks keep their documented axis: the niced total divided into exactly
+    // yTicks intervals, labelled at both ends (stackTickValues).
     const yTicks = this.options.yTicks ?? 4;
     const y = d3.scaleLinear().domain([0, maxTotal || 1]).nice(yTicks).range([H, 0]);
     const yTickValues = this.options.yTickValues ?? stackTickValues(y, yTicks);
@@ -973,15 +1067,7 @@ export class Bar extends Chart {
       .on('mouseover', onOver).on('mouseout', onOut);
     this._entryMove(rects, phase, { duration, stagger: 0, ease }, sel => sel.attr('opacity', 1));
 
-    if (showXAxis) {
-      this.gAxisX.attr('transform', `translate(0,${H})`)
-        .call(d3.axisBottom(cat).tickSize(0).tickFormat(d => this._formatLabel(d)))
-        .call(g => {
-          g.selectAll('text').attr('fill', t.muted);
-          g.select('.domain').attr('stroke', t.border);
-          this._bindLabelTooltips(g, 'bottom');
-        });
-    } else { this.gAxisX.selectAll('*').remove(); }
+    this._renderCategoryAxis(cat, 'bottom', H);
 
     // yPrefix / ySuffix dress the default Y labels as in the other vertical
     // modes; a percent axis keeps its own unit.
@@ -991,14 +1077,7 @@ export class Bar extends Chart {
     const yFmt   = this.options.yTickFormat
       ?? (percent ? yBase : (d => `${prefix}${yBase(d)}${suffix}`));
 
-    if (showYAxis) {
-      this.gAxisY.attr('transform', `translate(${W},0)`)
-        .call(d3.axisRight(y).tickValues(yTickValues).tickFormat(yFmt))
-        .call(g => {
-          g.selectAll('text').attr('fill', t.muted);
-          g.select('.domain').remove(); g.selectAll('line').remove();
-        });
-    } else { this.gAxisY.selectAll('*').remove(); }
+    this._renderValueAxisY(y, W, yTicks, yTickValues, yFmt);
   }
 
   // Bars, segments and value labels move on the chart's entry timeline
@@ -1016,6 +1095,71 @@ export class Bar extends Chart {
     });
     apply(settled);
     apply(moving);
+  }
+
+  // ─── Axes ──────────────────────────────────────────────────────────────────
+
+  // gAxisX holds the category axis (the time axis in the date mode), gAxisY
+  // the value axis; the orientation decides where each one sits. showXAxis
+  // shows the axis at the bottom, showYAxis the one at the side. A hidden
+  // axis is emptied.
+  _showsAxis(side) {
+    return side === 'bottom' ? (this.options.showXAxis ?? true) : (this.options.showYAxis ?? true);
+  }
+
+  // The category axis: band labels cut to labelMaxLength, the full label in
+  // a tooltip, and no axis line in either orientation, as on Line, DualAxes
+  // and TimeSeries (maintainer, 2026-11-18): with negative values the bars
+  // start at zero, not at the plot's edge, and the line read as a stray
+  // rule under them. Vertical bars put it at the bottom and show every
+  // second (third…) label when neighbours would sit closer than 8px, as the
+  // time axis does (thinBandLabels); horizontal ones on the left, labels
+  // fitted to the gutter.
+  _renderCategoryAxis(scale, side, H) {
+    if (!this._showsAxis(side)) { this.gAxisX.selectAll('*').remove(); return; }
+    const left = side === 'left';
+    this.gAxisX
+      .attr('transform', left ? 'translate(0,0)' : `translate(0,${H})`)
+      .call((left ? d3.axisLeft : d3.axisBottom)(scale).tickSize(0).tickFormat(d => this._formatLabel(d)))
+      .call(g => {
+        g.selectAll('text').attr('fill', this.theme.muted);
+        g.select('.domain').remove();
+        if (left) this._fitCategoryLabels(g);
+        else thinBandLabels(g, scale);
+        this._bindLabelTooltips(g, side);
+      });
+  }
+
+  // The value axis of the vertical modes, on the right: the shared Y axis
+  // of Line, DualAxes and TimeSeries, labels 8px out (until 0.9.8_7 Bar's
+  // sat 9px out, d3's default tick plus padding; aligned by the maintainer,
+  // 2026-11-17).
+  _renderValueAxisY(y, W, ticks, tickValues, tickFormat) {
+    if (!this._showsAxis('right')) { this.gAxisY.selectAll('*').remove(); return; }
+    renderAxisY(this.gAxisY, y, {
+      side: 'right', width: W, ticks, tickValues, tickFormat, theme: this.theme,
+    });
+  }
+
+  // The value axis of the horizontal modes, at the bottom. It can run flush
+  // with the card's edge (margin.left / right = 0), where a centred first or
+  // last label is half cut off: the end labels anchor inward.
+  _renderValueAxisX(x, H, tickValues, tickFormat) {
+    if (!this._showsAxis('bottom')) { this.gAxisY.selectAll('*').remove(); return; }
+    this.gAxisY
+      .attr('transform', `translate(0,${H})`)
+      .call(d3.axisBottom(x).tickValues(tickValues).tickFormat(tickFormat))
+      .call(g => {
+        g.selectAll('text').attr('fill', this.theme.muted);
+        g.select('.domain').remove();
+        g.selectAll('line').remove();
+        const labels = g.selectAll('.tick text');
+        const n = labels.size();
+        labels.attr('text-anchor', (d, i) => (i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'))
+          // the last label ends on the plot's edge, and with margin.right 0 its
+          // glyphs ran about 1 px past the svg ('100%', RC-077): 1 px in
+          .attr('dx', (d, i) => (n > 1 && i === n - 1 ? -1 : null));
+      });
   }
 
   // ─── Category gutter (horizontal) ──────────────────────────────────────────

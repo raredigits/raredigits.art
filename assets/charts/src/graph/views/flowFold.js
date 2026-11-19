@@ -11,8 +11,12 @@
 //
 // Ties can also be aggregated without folding (option aggregateLinks): one
 // tie per pair and category, `value` summed, the originals in `links`.
+//
+// The option is `folds`, not `groups` as in the first flow spec: a node's
+// `group` already names its colour (nodeGroups), and `groups: [...]` would
+// read as that (K-05).
 
-import { parseTime } from '../../core/links.js';
+import { groupTies, linkValue, parseTime } from '../../core/links.js';
 
 export const META_PREFIX = 'fold:';
 export const metaId = foldId => `${META_PREFIX}${foldId}`;
@@ -51,8 +55,10 @@ export function foldSub(fold, n) {
 // Returns the folded payload plus `metaOf` (member id → meta id) and
 // `metas` (meta id → fold).
 //   laneOf(node) — the anchor's lane, which the meta-node takes as `_lane`
+//   timeZone     — the chart's, 'local' or 'UTC': a merged tie's earliest
+//                  start and latest end are found in it (parseTime)
 export function foldGraph({ nodes, links }, folds, collapsed, {
-  keyOf = l => String(l.type ?? 'default'), aggregate = false, laneOf = n => n.lane,
+  keyOf = l => String(l.type ?? 'default'), aggregate = false, laneOf = n => n.lane, timeZone = 'local',
 } = {}) {
   const metaOf = new Map();
   const metas = new Map();
@@ -94,27 +100,22 @@ export function foldGraph({ nodes, links }, folds, collapsed, {
     outNodes.push(meta);
   });
 
-  const bucket = new Map();
-  const outLinks = [];
-  links.forEach(l => {
-    const s = metaOf.get(l.source) ?? l.source;
-    const t = metaOf.get(l.target) ?? l.target;
-    const touched = s !== l.source || t !== l.target;
-    if (touched && s === t) return;            // inside one fold
-    if (!touched && !aggregate) { outLinks.push(l); return; }
-    // an unambiguous key: ids and categories may contain any character
-    const key = JSON.stringify([s, t, keyOf(l)]);
-    if (!bucket.has(key)) {
-      const entry = { key, source: s, target: t, links: [] };
-      bucket.set(key, entry);
-      outLinks.push(entry);
-    }
-    bucket.get(key).links.push(l);
-  });
+  // Ends as drawn: a member's tie re-points to its meta-node, and one inside
+  // a single fold leaves with it. A re-pointed tie merges per pair and
+  // category; an untouched one only with `aggregate`, else it stays itself.
+  const ends = l => [metaOf.get(l.source) ?? l.source, metaOf.get(l.target) ?? l.target];
+  const moved = (l, [s, t]) => s !== l.source || t !== l.target;
+  const kept = links.filter(l => { const e = ends(l); return !(moved(l, e) && e[0] === e[1]); });
+  const ties = groupTies(kept,
+    { tie: l => { const e = ends(l); return moved(l, e) || aggregate ? [...e, keyOf(l)] : null; } },
+  );
+  // A group is an object groupTies made, never an input tie: one that
+  // carries its own `links` and `key` fields stays itself (D-06).
+  const inputs = new Set(kept);
 
   return {
     nodes: outNodes,
-    links: outLinks.map(l => (l.links && l.key ? mergeTies(l) : l)),
+    links: ties.map(l => (inputs.has(l) ? l : mergeTies(l, timeZone))),
     metaOf,
     metas,
   };
@@ -123,7 +124,7 @@ export function foldGraph({ nodes, links }, folds, collapsed, {
 // One tie standing for several: the first original's fields (so field-based
 // colour and dash still resolve), value summed, time spanning all of them.
 // A single original keeps its own id and label.
-function mergeTies({ key, source, target, links }) {
+function mergeTies({ key, source, target, links }, timeZone) {
   const first = links[0];
   if (links.length === 1) return { ...first, source, target, links, aggregate: true };
   // In the time window's dim mode, the ties outside the window (_dim) must
@@ -131,9 +132,10 @@ function mergeTies({ key, source, target, links }) {
   // the merged tie dims only when all of them are out.
   const live = links.filter(l => !l._dim);
   const counted = live.length ? live : links;
-  const vals = counted.map(l => l.value).filter(v => v != null && v !== '' && Number.isFinite(+v));
-  const starts = links.map(l => [l.start, parseTime(l.start)]);
-  const ends = links.map(l => [l.end, parseTime(l.end, { end: true })]);
+  // signed: a negative value subtracts here (every other reader floors at 0)
+  const vals = counted.map(l => linkValue(l, { min: -Infinity })).filter(v => v != null);
+  const starts = links.map(l => [l.start, parseTime(l.start, { timeZone })]);
+  const ends = links.map(l => [l.end, parseTime(l.end, { end: true, timeZone })]);
   const earliest = starts.some(s => s[1] == null) ? null
     : starts.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
   const latest = ends.some(e => e[1] == null) ? null
@@ -143,7 +145,7 @@ function mergeTies({ key, source, target, links }) {
     id: `agg:${key}`,
     source,
     target,
-    value: vals.length ? vals.reduce((s, v) => s + +v, 0) : null,
+    value: vals.length ? vals.reduce((s, v) => s + v, 0) : null,
     label: `${links.length} ties`,
     start: earliest,
     end: latest,

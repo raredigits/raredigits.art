@@ -20,6 +20,11 @@
 
 import * as d3 from 'd3';
 
+// The entry duration in ms when a chart's `duration` option is left out, the
+// same for every chart with an entry (K-08): Bar, HierarchicalBar, Sankey,
+// Gauge, Line, DualAxes, Donut and Pie.
+export const ENTRY_DURATION = 650;
+
 export class EntryMotion {
   constructor() {
     this.reset();
@@ -117,7 +122,9 @@ export function entryTransition(sel, motion, { delay = () => 0, duration, ease }
 export function drawLinesIn(paths, timing) {
   paths.each(function () {
     const p     = d3.select(this).interrupt();
-    const total = this.getTotalLength?.() ?? 0;
+    // measured only on the entry: TimeSeries redraws with timing null on
+    // every zoom, pan and brush step, where the length is not needed
+    const total = timing ? (this.getTotalLength?.() ?? 0) : 0;
     if (!timing || !total) {
       p.attr('stroke-dasharray', null).attr('stroke-dashoffset', null);
       return;
@@ -134,4 +141,36 @@ export function drawLinesIn(paths, timing) {
         d3.select(this).attr('stroke-dasharray', null).attr('stroke-dashoffset', null);
       });
   });
+}
+
+/**
+ * A sweep on the entry timeline: one clip over `groups` opens left to right,
+ * from the eased share already open, and goes once it is wide open. For a
+ * drawing whose marks cannot all draw in by their stroke — a dashed line, a
+ * band — so the whole drawing comes in together (maintainer, 2026-11-19: on
+ * a forecast the actuals drew in while the dashed path and its band were
+ * there from the start). `box` is in the groups' coordinates; `timing` null
+ * (no entry, or over): no clip.
+ */
+export function sweepIn(svg, groups, id, box, timing) {
+  const defsId = `${id}-defs`;
+  const off = () => {
+    groups.forEach(g => g.attr('clip-path', null));
+    svg.select(`#${defsId}`).remove();
+  };
+  if (!timing || !(box.width > 0)) { off(); return; }
+  let defs = svg.select(`#${defsId}`);
+  if (defs.empty()) defs = svg.insert('defs', ':first-child').attr('id', defsId);
+  defs.selectAll('clipPath').data([0]).join('clipPath').attr('id', id)
+    .selectAll('rect').data([0]).join('rect')
+    .attr('x', box.x).attr('y', box.y).attr('height', box.height)
+    .interrupt()
+    .attr('width', box.width * timing.eased)
+    .transition()
+    .delay(timing.delay)
+    .duration(timing.duration)
+    .ease(timing.ease)
+    .attr('width', box.width)
+    .on('end', off);
+  groups.forEach(g => g.attr('clip-path', `url(#${id})`));
 }

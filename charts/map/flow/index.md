@@ -8,9 +8,7 @@ permalink: '/charts/map/flow/'
 
 `MapFlow` draws flows between places over a map: capital, goods, influence. Each flow is an arc from one point to another; its width is the value it carries, its color the type, an arrowhead marks where it goes. It is built on [`Map`](/charts/map/) — the same geometry, projections and theme — and takes the same `{ nodes, links }` shape as [`Graph`](/charts/graph/) and [`Sankey`](/charts/sankey/).
 
-<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
-  <p><strong>⚠️ Experimental.</strong> <code>MapFlow</code> is not covered by the 1.0 stability guarantee — its rendering and options may change without a major-version bump.</p>
-</div>
+<p class="callout callout-warning"><strong>Experimental.</strong> <code>MapFlow</code> is not covered by the 1.0 stability guarantee — its rendering and options may change without a major-version bump.</p>
 
 The smallest case: three places, three flows, two types. Hover an arc for its details; click it to pin the tooltip.
 
@@ -24,6 +22,7 @@ Nodes are places, links are flows between them. A node is placed by its own coor
   topoUrl: '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
   topoObject: 'countries',
   fitTo: 'links',                                  <span class="code-comment">// frame the flows, not the whole world</span>
+  linkWidth: { by: 'weight' },                     <span class="code-comment">// width from a relative weight, not an amount</span>
   linkTypes: {
     goods:  { color: '#8a5a2b', label: 'goods' },
     silver: { color: '#5b6b7d', label: 'silver', dash: '6 4' },
@@ -34,21 +33,21 @@ Nodes are places, links are flows between them. A node is placed by its own coor
     { id: 'CN',  label: 'China',  country: '156' },           <span class="code-comment">// the country's centroid</span>
   ],
   links: [
-    { from: 'CN', to: 'LDN', type: 'silver', value: 2, label: 'silver and tea', start: 1800, end: 1860 },
+    { from: 'CN', to: 'LDN', type: 'silver', weight: 2, label: 'silver and tea', start: 1800, end: 1860 },
   ],
 });</code></pre>
 
 - **`coords`** — `[longitude, latitude]`, exact.
 - **`country`** — a feature id of the map (with world-atlas, the ISO 3166-1 numeric code). The node sits at the centroid of the country's largest polygon, so overseas territories don't pull it into the ocean.
 - **`color`** — the dot's color (default: the theme's text color).
-- **Flows** — `source` / `target` (or `from` / `to`; a `flows` array is accepted for `links`), plus `type`, `value`, `label`, `start` / `end` and any fields of your own. A flow to an unknown node is dropped with a console warning.
+- **Flows** — `source` / `target` (or `from` / `to`; a `flows` array is accepted for `links`), plus `type`, `value`, `label`, `start` / `end` and any fields of your own. One flow per type: a `types: [...]` array is not read, so a pair that carries two types is two flows. A flow to an unknown node is dropped with a console warning.
 
 ### Drawing
 
 - Each arc follows the **great circle** between its ends and bows slightly to one side, so the flows A → B and B → A never sit on top of each other. Several flows in one direction fan out. An arc too short to show a line between two close places is drawn as its arrowhead alone, pointing at the target.
 - The arc is cut where the projection cuts the map. A flow that crosses the edge of a flat map — Tokyo → San Francisco across the Pacific — leaves at one side and comes back at the other, each part bowed on its own. On `'orthographic'` only the near side of the globe is drawn: a place behind it has no dot, a flow toward it runs to the horizon without an arrowhead, and a flow between two hidden places is not drawn (nor in the Tab order).
-- **Width** is `value` through a square-root scale (`linkWidth`); a flow without a value is drawn at the minimum width.
-- **Color and dash** come from the flow's `type` through `linkTypes`. The legend lists the types in use; click one to hide or show its flows. A flow's tooltip lists its `sources` (`[{ url, title }]` or URLs) as links once pinned; only http(s), site-relative and `#` links are made clickable.
+- **Width** is `value` through a square-root scale (`linkWidth`); a flow without a value is drawn at the minimum width. The tooltip prints the value; `linkWidth: { by: 'weight' }` takes the width from another field instead, for a relative size with no amount to print — as in the demos, whose data is illustrative.
+- **Color and dash** come from the flow's `type` through `linkTypes`. The legend lists the types in use; click one to hide or show its flows, double-click one to keep it alone, and *Show all* brings every flow back. A flow's tooltip lists its `sources` (`[{ url, title }]` or URLs) as links once pinned; only http(s), site-relative and `#` links are made clickable.
 - **Labels** of places give way to each other: a place with more flow keeps its label first, a label that would overlap is left to the tooltip.
 
 ## Time
@@ -56,8 +55,6 @@ Nodes are places, links are flows between them. A node is placed by its own coor
 Flows carry `start` and `end` — years, `YYYY-MM` or ISO dates; a missing bound is open. Turn on `timeframes`, `navigator` or both and the map gets a time scale, as [TimeSeries](/charts/line/time-series/) has: `timeframes` puts period buttons in the header, `navigator` a strip under the map with a time axis that shows how many flows run over time — brush it to pick any period. Flows outside the period are hidden (`timeWindowMode: 'dim'` fades them instead), and a place whose flows are all outside fades with them.
 
 <div id="mapflow-eurodollar" class="panel panel--bordered text-content-caption"></div>
-
-<br>
 
 <pre class="text-content-caption"><code>const chart = new RareCharts.MapFlow('#chart', {
   timeframes: [
@@ -97,18 +94,20 @@ Every geometry option of [`Map`](/charts/map/) works the same here (`topoUrl`, `
         <tr><td><code>linkLegend</code></td><td>boolean</td><td><code>true</code></td><td>The type legend (shown with two or more types, or when <code>linkTypes</code> is set)</td></tr>
         <tr><td><code>linkWidth</code></td><td>object</td><td><code>{ by: 'value', scale: 'sqrt', min: 1, max: 6 }</code></td><td>Arc width from a value field; <code>scale: 'linear'</code> also available. The arrowhead grows with the arc, more slowly</td></tr>
         <tr><td><code>bend</code></td><td>number</td><td><code>0.18</code></td><td>How far an arc bows to its side: <code>bend</code> × 0.6 of the arc's length, at most <code>bend</code> × 90 px; parallel flows fan out from there</td></tr>
+        <tr><td><code>timeZone</code></td><td>string</td><td><code>'local'</code></td><td><code>'local'</code> or <code>'UTC'</code>: the zone the flows' <code>start</code> / <code>end</code>, the time window and the view bounds are read in, the timeframes cut in, and the navigator counts and labels its periods in. A year or a month is a period; as an end it runs to its last moment. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a></td></tr>
         <tr><td><code>timeframes</code></td><td>array | true</td><td>—</td><td>Period buttons in the header: <code>'1Y'</code>, <code>'ALL'</code>… or <code>{ key, label, range: [from, to] }</code></td></tr>
         <tr><td><code>navigator</code></td><td>boolean | object</td><td>—</td><td>A brushable strip with a time axis under the map</td></tr>
         <tr><td><code>defaultView</code></td><td>array</td><td>—</td><td><code>[from, to]</code> shown first with the time scale on</td></tr>
         <tr><td><code>defaultTimeframe</code></td><td>string</td><td>—</td><td>Key of the timeframe shown first (instead of <code>defaultView</code>)</td></tr>
         <tr><td><code>timeWindow</code></td><td>array</td><td><code>null</code></td><td><code>[from, to]</code> at start without the time scale; then <code>setTimeWindow()</code></td></tr>
         <tr><td><code>timeWindowMode</code></td><td>string</td><td><code>'hide'</code></td><td>What happens to flows outside the window: <code>'hide'</code> or <code>'dim'</code></td></tr>
-        <tr><td><code>fitTo</code></td><td>string</td><td><code>'features'</code></td><td><code>'links'</code> fits the projection to the places and the arcs between them instead of the whole map — a great circle that runs far from its ends and the bow of each arc stay inside the frame; the frame covers every flow, so the time window and the legend do not move it An arc that crosses the projection's cut (the antimeridian, Mercator's polar edge) is framed by its pieces; an end that lies on the cut may sit at the frame's edge.</td></tr>
+        <tr><td><code>fitTo</code></td><td>string</td><td><code>'features'</code></td><td><code>'links'</code> fits the projection to the places and the arcs between them instead of the whole map — a great circle that runs far from its ends and the bow of each arc stay inside the frame; the frame covers every flow, so the time window and the legend do not move it. An arc that crosses the projection's cut (the antimeridian, Mercator's polar edge) is framed by its pieces, their ends on the cut included.</td></tr>
         <tr><td><code>nodeRadius</code></td><td>number</td><td><code>4</code></td><td>Dot radius in px</td></tr>
         <tr><td><code>nodeLabels</code></td><td>boolean</td><td><code>true</code></td><td>Place labels</td></tr>
         <tr><td><code>tooltipFormat</code></td><td>function</td><td>—</td><td><code>({ node, links }) =&gt; html</code> for a place</td></tr>
         <tr><td><code>regionTooltipFormat</code></td><td>function</td><td>—</td><td><code>({ feature, item }) =&gt; html</code> for a country under the flows (Map’s <code>tooltipFormat</code>); <code>item</code> is always <code>null</code> — MapFlow takes no region data</td></tr>
         <tr><td><code>linkTooltipFormat</code></td><td>function</td><td>—</td><td><code>({ link, source, target }) =&gt; html</code> for a flow</td></tr>
+        <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for a flow’s value in its tooltip, as on Sankey and Graph</td></tr>
     </tbody>
 </table>
 </div>
@@ -123,11 +122,11 @@ chart.whenReady().then(() => { /* the map and the flows are drawn */ });   <span
 
 ## Interaction
 
-**Hover** a place or an arc for its tooltip. **Click** an arc to pin its tooltip — links inside it stay clickable; click elsewhere or press Escape to close it. Arcs are in the Tab order: Enter pins the tooltip of the focused one.
+**Hover** a place or an arc for its tooltip. **Click** an arc to pin its tooltip — links inside it stay clickable; click elsewhere or press Escape to close it. Arcs are in the Tab order: Enter pins the tooltip of the focused one. With arcs to focus, the map is a group named by `ariaLabel`, else from `title` / `subtitle`, and each arc is a button named "from → to, type, label".
 
-**Legend** — click a type to hide or show its flows; its buttons are in the Tab order, and Enter or Space keeps focus on the one pressed.
+**Legend** — click a type to hide or show its flows, double-click it to keep it alone, *Show all* to bring all back; its buttons are in the Tab order, and Enter or Space keeps focus on the one pressed. See [Interactive legend](/charts/settings/#interactive-legend).
 
-**Zoom** — with `zoom: true`, as on [`Map`](/charts/map/). Arcs keep their width; dots, labels and arrowheads keep their size and move with the map, and the labels are placed again, so places that crowd each other at first get theirs as you zoom in.
+**Zoom** — with `zoom: true`, as on [`Map`](/charts/map/): Ctrl/⌘ + wheel or a pinch zooms, two fingers on a phone; a plain wheel scrolls the page. Arcs keep their width; dots, labels and arrowheads keep their size and move with the map, and the labels are placed again, so places that crowd each other at first get theirs as you zoom in.
 
 ## Not in this version
 

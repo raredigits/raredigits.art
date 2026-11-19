@@ -9,7 +9,7 @@
 //             with the model's rules (INPUT below); storage takes the
 //             canonical result (mergeCanonical) and never re-reads it.
 //
-// Two graphs, one truth (decision 2026-10-07, API-INVENTORY → "Flows"):
+// Two graphs, one truth (decision 2026-10-07; DECISIONS.md §2, "One relation contract"):
 // - storage `g` is a directed multigraph — every tie is kept as given, so a
 //   pair can carry several typed ties and both directions (A2);
 // - analytics (degree, Louvain, shortest paths) run on an undirected simple
@@ -19,7 +19,7 @@
 
 import Graphology from 'graphology';
 import louvain from 'graphology-communities-louvain';
-import { normalizeRelationData, tieKey } from '../core/links.js';
+import { linkWeight, normalizeRelationData, tieKey } from '../core/links.js';
 
 // Deterministic PRNG — Louvain uses randomness internally; a fixed seed keeps
 // community assignments (and therefore cluster views) stable between renders.
@@ -33,7 +33,7 @@ function mulberry32(seed) {
   };
 }
 
-const edgeWeight = (edge, attrs) => attrs.weight ?? attrs.strength ?? 1;
+const edgeWeight = (edge, attrs) => linkWeight(attrs, 1);
 
 // How the model reads a raw payload (core/links.js normalizeRelationData):
 // quietly — a link without both ends is dropped without a warning; no tie

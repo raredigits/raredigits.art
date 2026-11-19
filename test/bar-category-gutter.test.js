@@ -6,7 +6,7 @@
 // character here.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
-import { mount, track } from './helpers.js';
+import { mount, track, tooltipOf } from './helpers.js';
 
 const CHAR = 7;
 beforeEach(() => {
@@ -40,9 +40,9 @@ describe('C-39: horizontal category gutter', () => {
     const cut = labels(c)[1];
     expect(cut.endsWith('…')).toBe(true);
     expect(cut.length * CHAR).toBeLessThanOrEqual(120 - 9);
-    const show = vi.spyOn(c._tooltip, 'show');
     c.gAxisX.selectAll('.tick text').nodes()[1].dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-    expect(show.mock.calls.at(-1)[2]).toContain(LONG);
+    expect(tooltipOf(c).classList.contains('is-visible')).toBe(true);
+    expect(tooltipOf(c).textContent).toContain(LONG);
   });
 
   it('labelMaxLength applies first: the gutter fits the shortened label', () => {

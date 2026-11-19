@@ -73,9 +73,11 @@ describe('<defs> ids are per chart (C-04)', () => {
       expect(stopColor(area)).toBe(['#ff0000', '#00ff00'][i]);
       expect(c.container.querySelectorAll('.rc-ts-grad')).toHaveLength(1);
     });
-    // the clip id the chart keeps on itself is the one it uses
-    expect(charts[0].clipId).not.toBe(charts[1].clipId);
-    expect(charts[0].container.querySelector(`#${charts[0].clipId}`)).not.toBeNull();
+    // each chart clips its area to a clip path of its own (X-06: read from
+    // the drawing, the chart keeps no clipId field any more)
+    const clipOf = c => c.container.querySelector('[clip-path]').getAttribute('clip-path').match(/^url\(#(.+)\)$/)[1];
+    expect(clipOf(charts[0])).not.toBe(clipOf(charts[1]));
+    expect(charts[0].container.querySelector(`clipPath#${clipOf(charts[0])}`)).not.toBeNull();
     // a re-render reuses the gradient instead of appending another
     charts[0].setData(monthly(2024));
     expect(charts[0].container.querySelectorAll('.rc-ts-grad')).toHaveLength(1);

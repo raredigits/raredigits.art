@@ -1,12 +1,16 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
-import { mount, track } from './helpers.js';
+import { mount, track, setGeometry } from './helpers.js';
 
 // barWidth on Bar (B-07): a px width in every mode — the thickness when
 // horizontal, the whole column when stacked — centred where the default bar
 // stood and capped at the space per category or date. In date mode the range
 // is inset by half a bar, so the edge bars stay inside the plot (N1, the
 // C-27 defect without a clip).
+//
+// Sizes are the test's own (S-18): an 800×400 card unless a test mounts
+// another width; a value label measures 7px a character (the numeric font).
+beforeEach(() => setGeometry({ width: 800, height: 400, charWidth: 7 }));
 
 const geo = c => [...c.container.querySelectorAll('rect.rc-bar, rect.rc-bar-seg')].map(r => ({
   x: +r.getAttribute('x'), y: +r.getAttribute('y'), w: +r.getAttribute('width'), h: +r.getAttribute('height'),

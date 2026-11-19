@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 import postcss from 'postcss';
 import { Graph } from '../assets/charts/src/charts/Graph.js';
 import { memorySource } from '../assets/charts/src/graph/source.js';
-import { mount, track } from './helpers.js';
+import { mount, track, graphCentres } from './helpers.js';
 
 const fixture = {
   nodes: [
@@ -52,7 +52,7 @@ describe('Graph — onNodeClick', () => {
     await g.focus('a').whenReady();
     click(nodeEl(host, 'b'));
     await g.whenReady();
-    expect(g._root).toBe('a');
+    expect(graphCentres(host)).toEqual(['A']);
     expect(host.querySelector('.rc-graph-breadcrumbs').hidden).toBe(true);
   });
 
@@ -62,7 +62,7 @@ describe('Graph — onNodeClick', () => {
     await g.focus('a').whenReady();
     click(nodeEl(host, 'b'));
     await g.whenReady();
-    expect(g._root).toBe('b');
+    expect(graphCentres(host)).toEqual(['B']);
   });
 });
 
@@ -269,26 +269,32 @@ describe('Graph — hidden-nodes list keyboard (D7)', () => {
 });
 
 describe('Graph legends keep keyboard focus across the redraw (D8, R-16)', () => {
-  const legendButton = (host, type) => host.querySelector(`.rc-graph-legend-item[data-type="${type}"]`);
+  // The legend builder updates the items in place (core/legend.js): the
+  // element keeps focus through the redraw and the ego view's re-query.
+  const legendButton = (host, type) => host.querySelector(`.rc-graph-legend button.rc-legend-item[data-key="${type}"]`);
 
-  it('ego: the activated relation type keeps focus; after "Show all" the focus stays in the legend', async () => {
+  it('ego: the activated relation type keeps focus, through its re-query; after "Show all" the toggle before it has it', async () => {
     const host = mount();
     const g = track(new Graph(host, { dataSource: memorySource(fixture), duration: 0, zoom: false }));
     await g.focus('a').whenReady();
     const before = legendButton(host, 'family');
     before.focus();
-    before.click();
+    before.click();                                      // Enter or Space: at once
     await g.whenReady();
     const after = legendButton(host, 'family');
-    expect(after).not.toBe(before);                      // the legend was rebuilt
+    expect(after).toBe(before);                          // the same element, updated in place
+    expect(after.getAttribute('aria-pressed')).toBe('false');
     expect(document.activeElement).toBe(after);
 
-    const reset = host.querySelector('.rc-graph-legend-reset');
+    const reset = host.querySelector('.rc-graph-legend .rc-legend-reset');
+    expect(reset.classList.contains('rc-graph-legend-reset')).toBe(true);   // the K-06 alias
+    const toggles = [...host.querySelectorAll('.rc-graph-legend button.rc-legend-item')];
     reset.focus();
     reset.click();
     await g.whenReady();
-    expect(host.querySelector('.rc-graph-legend-reset')).toBeNull();
-    expect(host.querySelector('.rc-graph-legend').contains(document.activeElement)).toBe(true);
+    expect(reset.hidden).toBe(true);
+    expect(document.activeElement).toBe(toggles.at(-1)); // the toggle before Show all
+    expect(after.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('flow: a category button keeps focus after it hides and shows its ties', () => {
@@ -300,14 +306,15 @@ describe('Graph legends keep keyboard focus across the redraw (D8, R-16)', () =>
       nodes: [{ id: 'a', lane: 'x' }, { id: 'b', lane: 'y' }, { id: 'c', lane: 'y', row: 1 }],
       links: [{ source: 'a', target: 'b', asset: 'ATOM' }, { source: 'a', target: 'c', asset: 'ETH' }],
     }));
-    let atom = legendButton(host, 'ATOM');
+    const atom = legendButton(host, 'ATOM');
     atom.focus();
     atom.click();
-    expect(legendButton(host, 'ATOM').getAttribute('aria-pressed')).toBe('false');
-    expect(document.activeElement).toBe(legendButton(host, 'ATOM'));
-    atom = legendButton(host, 'ATOM');
+    expect(legendButton(host, 'ATOM')).toBe(atom);
+    expect(atom.getAttribute('aria-pressed')).toBe('false');
+    expect(document.activeElement).toBe(atom);
     atom.click();
-    expect(document.activeElement).toBe(legendButton(host, 'ATOM'));
+    expect(atom.getAttribute('aria-pressed')).toBe('true');
+    expect(document.activeElement).toBe(atom);
   });
 
   it('a redraw while the focus is elsewhere does not pull it into the legend', async () => {

@@ -46,19 +46,23 @@
 
     borderWidth: 0.5,
 
-    tooltipFormat: ({ feature, item }) => {
-      const name =
-        item?.label ??
-        feature.properties?.name ??
-        feature.properties?.NAME ??
-        '—';
+    // The tooltip's own row (/charts/settings/#custom-tooltip): the region's
+    // dot in its fill, its name, and a word where a value would stand.
+    tooltipFormat: ({ item, label, color }) => `
+      <div class="rc-tooltip-row">
+        <span class="rc-tooltip-swatch rc-tooltip-swatch--dot" style="--rc-swatch-color:${color}"></span>
+        <span class="rc-tooltip-label">${label}</span>
+        <span class="rc-tooltip-value">${item ? 'Visited' : 'Not visited'}</span>
+      </div>
+    `,
 
-      return `
-        <div style="font-weight:600">${name}</div>
-        <div style="color:#666;font-size:11px;margin-top:2px">
-          ${item ? 'Visited' : 'Not visited'}
-        </div>
-      `;
+    // The chart reports a click on a visited country (B-06); the page
+    // decides what to do — here, it names the country under the map. A
+    // click on the sea or on a country not visited reports item: null, and
+    // the note goes back to its first words.
+    onRegionClick: ({ item, label }) => {
+      const picked = document.getElementById('map-europe-picked');
+      if (picked) picked.textContent = item ? `You picked ${label}.` : 'Click a visited country.';
     },
   }).setData(visited);
 })();

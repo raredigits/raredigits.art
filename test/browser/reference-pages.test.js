@@ -37,12 +37,35 @@ const ANCHORS = ['/kb/taming-lesspregreater/#solution', '/styles/typography/#mai
 // (_includes/head.njk).
 const OFFLINE = '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1';
 
+// A page load's own timeout, past Playwright's 30s: on a busy machine a
+// chart page (/charts/combined/) once took longer and failed a test that
+// passed on the rerun (RC-055). A page that never loads still fails.
+const LOAD_TIMEOUT = 90000;
+
+// The site must be built from this checkout: a _site/ left from an older
+// build (one from July once failed the 768px matrix, RC-055) is refused.
+// Its copies of the stylesheets, the bundles and the demo scripts must
+// equal the working tree's.
+const COPIED = [
+  'assets/css/rare.css', 'assets/charts/rare-charts.js', 'assets/charts/rare-charts.css',
+  ...readdirSync('assets/charts/examples', { recursive: true })
+    .map(f => join('assets/charts/examples', f)).filter(f => f.endsWith('.js')),
+];
+function staleCopies() {
+  return COPIED.filter((f) => {
+    const built = join(SITE, f);
+    return !existsSync(f) || !existsSync(built) || !readFileSync(f).equals(readFileSync(built));
+  });
+}
+
 let server;
 let origin;
 let browser;
 
 beforeAll(async () => {
   if (!existsSync(join(SITE, 'index.html'))) throw new Error('No _site/ — run `npm run test:browser` (it builds the site first).');
+  const stale = staleCopies();
+  if (stale.length) throw new Error(`_site/ is not this checkout's build (${stale.slice(0, 3).join(', ')}${stale.length > 3 ? ', …' : ''}) — run \`npm run build\` first.`);
   server = createServer(async (req, res) => {
     let p = join(SITE, decodeURIComponent(new URL(req.url, 'http://x').pathname));
     try {
@@ -59,7 +82,7 @@ afterAll(async () => { await browser?.close(); server?.close(); });
 
 async function open(path, width, height = 800) {
   const page = await browser.newPage({ viewport: { width, height } });
-  await page.goto(origin + path);
+  await page.goto(origin + path, { timeout: LOAD_TIMEOUT });
   await page.evaluate(() => document.fonts.ready);
   return page;
 }
@@ -74,7 +97,7 @@ describe('no horizontal page overflow', () => {
       await page.close();
     }
     expect(bad).toEqual([]);
-  });
+  }, 300000);   // seventeen pages, each with LOAD_TIMEOUT (RC-055)
 
   it.each([[768, 1.1], [1023, 1.1]])('at a fractional viewport (window %ipx × %f scale)', async (win, scale) => {
     const b = await chromium.launch({ channel: 'chrome', headless: true, args: [OFFLINE, `--force-device-scale-factor=${scale}`, `--window-size=${win},900`] });
@@ -82,7 +105,7 @@ describe('no horizontal page overflow', () => {
     const bad = [];
     for (const p of PAGES) {
       const page = await ctx.newPage();
-      await page.goto(origin + p);
+      await page.goto(origin + p, { timeout: LOAD_TIMEOUT });
       const r = await page.evaluate(() => ({ w: visualViewport.width, sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
       if (Number.isInteger(r.w)) bad.push(`${p}: viewport not fractional (${r.w})`);
       if (r.sw > r.cw) bad.push(`${p} ${r.sw}>${r.cw}`);
@@ -122,7 +145,7 @@ describe('every built page fits its width (not just the reference set)', () => {
     const page = await ctx.newPage();
     const bad = [];
     for (const p of pages) {
-      await page.goto(origin + p, { waitUntil: 'load' });
+      await page.goto(origin + p, { waitUntil: 'load', timeout: LOAD_TIMEOUT });
       const r = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
       if (r.sw > r.cw) bad.push(`${p} ${r.sw}>${r.cw}`);
     }
@@ -252,5 +275,5 @@ describe('chart text is readable on its frame (CSS-183a)', () => {
     }
     expect(checked).toBeGreaterThan(20);
     expect(bad).toEqual([]);
-  });
+  }, 300000);   // seven chart pages, each with LOAD_TIMEOUT (RC-055)
 });

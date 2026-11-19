@@ -18,7 +18,7 @@
     subtitle: 'Net new subscribers per month, 2024–2025',
     source:   'Source: Illustrative data',
     height:   360,
-    barColor: '#00aaff',
+    barColor: '#1677ff',
     timeframes: ['1Y', 'ALL'],
     defaultTimeframe: 'ALL',
     xTickFormat: d => d3.timeFormat('%b %y')(d),

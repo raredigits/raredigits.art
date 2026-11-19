@@ -25,11 +25,15 @@
   }
 
   new RareCharts.Line('#line-chart-log-demo', {
+    // The rows are UTC instants (Date.UTC): the annotations and the ticks in
+    // UTC as well, so every zone sees the same months (T-10).
+    timeZone: 'UTC',
     height: 340,
     title: 'Performance Visualization',
     subtitle: 'Linear and logarithmic scales',
-    note: 'Try the Lin/Log button to see the effect.',
-    yScale: 'log',
+    // Opens on a linear axis: the reader presses Log and sees steady growth
+    // straighten into a line (maintainer, 2026-11-18).
+    note: 'Press Log to see the same prices on a logarithmic axis: steady growth becomes a straight line.',
     scaleToggle: true,
     yFormat: 'number',
     seriesName: 'Index',

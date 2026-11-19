@@ -41,7 +41,7 @@ Per-series visual overrides continue to work exactly as in `DualAxes`. For ex
 
 All standard DualAxes capabilities remain available in combined mode. This includes independent axis formatting (`y1TickFormat`, `y2TickFormat`), custom domains (`y1Domain`, `y2Domain`), axis titles, crosshair interaction, tooltips, end labels, bar grouping (`overlap` or `cluster`), bar width (`barWidth`, `barWidthRatio`), and curve interpolation for line series.
 
-If you only need bars and do not require a second scale, assign all series to `y1` and set `showY2Axis: false`. `DualAxes` calculates the domain from the Y1 series; without that option the left axis is still drawn, repeats the Y1 range and labels it with the signed Y2 format (+100.00). Hidden, it gives its gutter back unless `y2Title` is set.
+If you only need bars and do not require a second scale, assign all series to `y1` and set `showY2Axis: false`. `DualAxes` calculates the domain from the Y1 series; without that option the left axis is still drawn, repeats the Y1 range and labels it with the Y2 format. Hidden, it gives its gutter back unless `y2Title` is set.
 
 Bars take their width from `barWidthRatio`, a share of the smallest gap between bar dates, or in px from `barWidth`: on the chart for every bar series, or on one series for that series alone. With `barGrouping: 'cluster'`, `barWidth` is the width of each bar, and the cluster is their sum, centred on the date:
 
@@ -60,10 +60,10 @@ A width too large for the space between dates is cut to it, so neighbouring bars
 
 Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) or `'log'`. A long-horizon index on Y1 reads honestly on a log axis — equal percentage moves get equal height — while a signed change on Y2 stays linear, because a log axis has no zero. A log axis follows the same rules as on <a href="/charts/line/#logarithmic-scale">Line</a>: ticks on powers of ten (1-2-5 steps for a narrower range), a margin that is a factor of the data's span, zero and negative values on that axis skipped with one console warning, horizontal annotations at or below zero dropped. Bars on a log axis grow from the bottom of the axis instead of from zero.
 
-`scaleToggle` adds a Lin/Log button pinned to the top right of the chart header, above the Y-axis labels — level with the timeframe buttons, which keep their place; it names the current scale and flips it on click. `true` drives Y1 — the right axis, usually the level or index — `'y2'` the left one, `'both'` both together (the button then reads Log while either axis is log). From code, `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'` (the default), and `onScaleChange(fn)` reports every switch as `{ scale, axis }` — except a `setYScale(…, { silent: true })`. In the demo the button drives Y1 only; the yearly change on Y2 stays linear.
+`scaleToggle` adds a Log toggle pinned to the top right of the chart header, above the Y-axis labels — level with the timeframe buttons, which keep their place; it is filled while the axis is logarithmic and flips the scale on click. `true` drives Y1 — the right axis, usually the level or index — `'y2'` the left one, `'both'` both together (the toggle is then filled while either axis is logarithmic). From code, `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'` (the default), and `onScaleChange(fn)` reports every switch as `{ scale, axis }` — except a `setYScale(…, { silent: true })`. The demo opens on a linear axis and its toggle drives Y1 only: press Log and the first decades stop looking flat. The yearly change on Y2 stays linear.
 
 <div id="combined-chart-log-scale" class="panel panel--bordered text-content-caption"></div>
-<br>
+
 <pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
     y1Scale: 'log',
     scaleToggle: true,  <span class="code-comment">// Y1; or 'y2', 'both'</span>

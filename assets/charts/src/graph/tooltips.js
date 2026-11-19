@@ -8,9 +8,9 @@
 // Methods of Graph (charts/Graph.js mixes them into its prototype; split
 // out of Graph.js in 0.9.8_6, D-11, code unchanged): `this` is the chart.
 
-import { dedupeUndirected } from '../core/links.js';
+import { dedupeUndirected, linkValueText, linkWeight } from '../core/links.js';
 import {
-  escapeHtml, safeUrl, tipBody, tipTitle, tipSub, tipKind, linkTooltipHtml,
+  escapeHtml, safeUrl, tipBody, tipTitle, tipSub, tipKind, tipNum, linkTooltipHtml,
 } from '../core/html.js';
 
 export const graphTooltips = {
@@ -24,18 +24,17 @@ export const graphTooltips = {
 
     if (node._size != null) {
       return tipBody(`${tipTitle(name)}
-        ${tipSub(`${node._size} node${node._size !== 1 ? 's' : ''} — click to explore`)}`);
+        ${tipSub(`${tipNum(node._size)} node${node._size !== 1 ? 's' : ''} — click to explore`)}`);
     }
 
     // Counts-first summary with a hard cap on names: a hover tooltip cannot
     // scroll (it dies on mouseout and takes no pointer events), so on hubs it
-    // must summarize. The full list belongs to a details surface (backlog).
+    // must summarize. The full list belongs to the details panel (option
+    // `details`).
     const MAX_NAMES = 6;
-    const linkW = l => l.weight ?? l.strength ?? 0.5;
-
     const byType = new Map();
     nodeLinks.slice()
-      .sort((a, b) => linkW(b) - linkW(a))          // strongest ties first
+      .sort((a, b) => linkWeight(b) - linkWeight(a))   // strongest ties first
       .forEach(l => {
         const type = l.type ?? 'default';
         if (!byType.has(type)) byType.set(type, []);
@@ -55,16 +54,16 @@ export const graphTooltips = {
       const list = take
         ? `<div>${names.slice(0, take).map(esc).join(', ')}${names.length > take ? '…' : ''}</div>`
         : '';
-      return `<div class="rc-tooltip-section">${tipKind(esc(cfg(type).label ?? type), cfg(type).color)}${tipKind(` · ${names.length}`)}${list}</div>`;
+      return `<div class="rc-tooltip-section">${tipKind(esc(cfg(type).label ?? type), cfg(type).color)}${tipKind(` · ${tipNum(names.length)}`)}${list}</div>`;
     }).join('');
 
     const hiddenNames = nodeLinks.length - shown;
-    const footer = hiddenNames > 0 ? tipSub(`+${hiddenNames} more`, { section: true }) : '';
+    const footer = hiddenNames > 0 ? tipSub(`${tipNum(`+${hiddenNames}`)} more`, { section: true }) : '';
     const total = nodeLinks.length;
 
     return tipBody(`${tipTitle(name)}
       ${node.group ? tipKind(esc(node.group), null, 'div') : ''}
-      ${tipSub(`${total} connection${total !== 1 ? 's' : ''}`)}
+      ${tipSub(`${tipNum(total)} connection${total !== 1 ? 's' : ''}`)}
       ${rows}
       ${footer}`);
   },
@@ -72,20 +71,20 @@ export const graphTooltips = {
   // Tie tooltip: endpoints, type, then whatever the payload carries — label,
   // value, period, and `sources` (posts proving the tie) as links, which is
   // why a clicked tie pins its tooltip. A pair collapsed under a +N badge
-  // lists every tie it stands for.
+  // lists every tie it stands for. The value goes in as text (linkValueText),
+  // as the details panel prints it.
   _defaultLinkTooltip(link, source, target) {
     const ties = link._siblings ?? [link];
     return linkTooltipHtml({
       from: source.label ?? source.id,
       to:   target.label ?? target.id,
-      ties: ties.map(l => ({ link: l, kind: this._linkTypeOf(l) })),
+      ties: ties.map(l => ({ link: { ...l, value: linkValueText(l, this.options.valueFormat) }, kind: this._linkTypeOf(l) })),
     });
   },
 
   // ─── Details panel (details: true) ───────────────────────────────────────
 
   _defaultDetails(subject) {
-    const t = this.theme;
     const esc = escapeHtml;
     const kind = txt => `<p class="rc-graph-details-kind">${esc(txt)}</p>`;
     const row = (k, v) => `<dt>${esc(k)}</dt><dd>${v}</dd>`;
@@ -114,7 +113,7 @@ export const graphTooltips = {
       const list = ties.slice(0, 12).map(l => {
         const other = l.source === n.id ? l.target : l.source;
         const dir = l.source === n.id ? '→' : '←';
-        const extra = l.label ?? (l.value != null ? Number(l.value).toLocaleString() : '');
+        const extra = l.label ?? linkValueText(l, this.options.valueFormat);
         const type = this._linkTypeOf(l).label;
         return `<li>${dir} ${nameOf(other)}${type ? ` <span class="rc-graph-details-muted">· ${esc(type)}</span>` : ''}${extra ? ` <span class="rc-graph-details-muted">· ${esc(extra)}</span>` : ''}</li>`;
       }).join('');
@@ -135,12 +134,12 @@ export const graphTooltips = {
         return safeUrl(url) ? `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></li>` : `<li>${esc(title ?? '')}</li>`;
       }).join('') : '';
       return `${type ? kind(type) : ''}<h4>${nameOf(l.source)} → ${nameOf(l.target)}</h4>
-        <dl>${l.label ? row('Label', esc(l.label)) : ''}${l.value != null && l.value !== '' ? row('Value', esc(typeof l.value === 'number' ? l.value.toLocaleString() : l.value)) : ''}${period ? row('Period', period) : ''}</dl>
+        <dl>${l.label ? row('Label', esc(l.label)) : ''}${linkValueText(l, this.options.valueFormat) ? row('Value', esc(linkValueText(l, this.options.valueFormat))) : ''}${period ? row('Period', period) : ''}</dl>
         ${sources ? `<ul>${sources}</ul>` : ''}`;
     }
     const hint = this._view === 'flow'
       ? 'Select a node or a tie to see its details.'
       : 'Hover a node, or click a tie, to see its details.';
-    return `${kind('Details')}<p style="color:${t.muted}">${hint}</p>`;
+    return `${kind('Details')}<p class="rc-graph-details-muted">${hint}</p>`;
   },
 };

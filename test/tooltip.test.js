@@ -11,8 +11,8 @@ import { MapFlow } from '../assets/charts/src/charts/MapFlow.js';
 import { Sankey } from '../assets/charts/src/charts/Sankey.js';
 import { HierarchicalBar } from '../assets/charts/src/charts/HierarchicalBar.js';
 import { TimeSeries } from '../assets/charts/src/charts/TimeSeries.js';
-import { escapeHtml, safeUrl } from '../assets/charts/src/core/html.js';
-import { mount, track } from './helpers.js';
+import { escapeHtml, safeUrl, tipDate, tipNum, tipRow } from '../assets/charts/src/core/html.js';
+import { mount, track, tooltipOf, unclampTooltip, tooltipPosition } from './helpers.js';
 
 const tick = () => new Promise(r => setTimeout(r, 0));
 
@@ -170,18 +170,19 @@ describe('default tooltips escape data (C-01)', () => {
 
 describe('TimeSeries tooltip position (C-08)', () => {
   it('maps the snapped point from plot to card coordinates', () => {
-    const c = track(new TimeSeries(mount(null), { title: 'Price', subtitle: 'daily' }))
+    // an 800×400 card: the point stays clear of the tooltip's clamp (S-18)
+    const c = track(new TimeSeries(mount(null, { width: 800, height: 400 }), { title: 'Price', subtitle: 'daily' }))
       .setData([{ date: '2026-01-01', value: 1 }, { date: '2026-02-01', value: 2 }]);
     const svg = c.container.querySelector('svg');
     const at = (left, top) => {
       svg.getBoundingClientRect = () => ({ left, top, right: left + 800, bottom: top + 300, width: 800, height: 300 });
-      const spy = vi.spyOn(c._tooltip, 'show');
       // the same point under the cursor in both layouts
       hover(c.container.querySelector('svg > g > rect'), 'mousemove', { clientX: left + 300, clientY: top + 100 });
-      const [x, y] = spy.mock.calls.at(-1);
-      spy.mockRestore();
-      return [x, y];
+      expect(tooltipOf(c).classList.contains('is-visible')).toBe(true);
+      return tooltipPosition(tooltipOf(c));
     };
+    at(0, 0);
+    unclampTooltip(c);                    // where the chart put it, not jsdom's clamp
     // the header pushes the svg down 60px, a side gutter 40px right → the tooltip follows
     const [x0, y0] = at(0, 0), [x1, y1] = at(40, 60);
     expect(x1 - x0).toBe(40);
@@ -201,25 +202,30 @@ const twoCountries = { type: 'FeatureCollection', features: [
 const twoDays = [{ date: '2026-01-01', value: 1 }, { date: '2026-02-01', value: 2 }];
 
 describe('the tooltip element (B-03, C-23)', () => {
-  it('publishes theme.tooltip as --rc-tooltip-*; no inline typography or colour', () => {
-    const tt = new Tooltip(mount(null), createTheme({ tooltip: { muted: '#a0b0c0', header: { text: '#123456' } } }));
-    const { style } = tt.el;
-    expect(style.fontSize).toBe('');
-    expect(style.fontFamily).toBe('');
-    expect(style.color).toBe('');
-    expect(style.getPropertyValue('--rc-tooltip-muted')).toBe('#a0b0c0');
-    expect(style.getPropertyValue('--rc-tooltip-text')).toBe(defaultTheme.tooltip.text);
-    expect(style.getPropertyValue('--rc-tooltip-bg')).toBe(defaultTheme.tooltip.bg);
-    expect(style.getPropertyValue('--rc-tooltip-header-text')).toBe('#123456');
-    expect(style.getPropertyValue('--rc-tooltip-header-bg')).toBe('');    // null: the CSS fallback
+  // The colours are the card's: the chart publishes its theme's own values
+  // there (core/paint.js), the stylesheet declares the rest on .rc-chart.
+  it('carries no inline typography, colour or token; the card has the theme\'s own', () => {
+    const c = track(new Line(mount(null), { animate: false, theme: { tooltip: { muted: '#a0b0c0', header: { text: '#123456' } } } }));
+    const tt = c.tooltip;
+    expect(tt.el.getAttribute('style') ?? '').not.toMatch(/--rc-|font|color/);
+    const card = c.container.style;
+    expect(card.getPropertyValue('--rc-tooltip-muted')).toBe('#a0b0c0');
+    expect(card.getPropertyValue('--rc-tooltip-text')).toBe('');         // the default: the stylesheet's
+    expect(card.getPropertyValue('--rc-tooltip-bg')).toBe('');
+    expect(card.getPropertyValue('--rc-tooltip-header-text')).toBe('#123456');
+    expect(card.getPropertyValue('--rc-tooltip-header-bg')).toBe('');    // null: the CSS fallback
     expect(tt.el.classList.contains('rc-tooltip--header-band')).toBe(false);
-    tt.destroy();
   });
 
   it('tooltip.header.bg draws the header as a band', () => {
-    const tt = new Tooltip(mount(null), createTheme({ tooltip: { header: { bg: '#eeeeee' } } }));
-    expect(tt.el.style.getPropertyValue('--rc-tooltip-header-bg')).toBe('#eeeeee');
-    expect(tt.el.classList.contains('rc-tooltip--header-band')).toBe(true);
+    const c = track(new Line(mount(null), { animate: false, theme: createTheme({ tooltip: { header: { bg: '#eeeeee' } } }) }));
+    expect(c.container.style.getPropertyValue('--rc-tooltip-header-bg')).toBe('#eeeeee');
+    expect(c.tooltip.el.classList.contains('rc-tooltip--header-band')).toBe(true);
+  });
+
+  it('a Tooltip made by hand writes nothing on its element', () => {
+    const tt = new Tooltip(mount(null), createTheme({ tooltip: { bg: '#123456' } }));
+    expect(tt.el.getAttribute('style')).toBeNull();
     tt.destroy();
   });
 });
@@ -284,11 +290,16 @@ describe('built-in tooltips read theme.tooltip, not the chart tokens (B-03)', ()
     },
   };
 
+  // RC-082: the rows' names take tooltip.text by inheritance, their notes
+  // and the date tooltip.muted through classes; a role colour never goes
+  // inline, not even on a mark.
   it.each(Object.keys(charts))('%s', name => {
     const t = tip(charts[name]());
     expect(t.classList.contains('is-visible')).toBe(true);
     expect(t.innerHTML).not.toContain(THEME.muted);
-    expect(t.querySelector('.rc-tooltip-muted, .rc-tooltip-sub')).not.toBeNull();
+    expect(t.innerHTML).not.toContain(THEME.text);
+    expect(t.innerHTML).not.toContain('var(--rc-');
+    expect(t.querySelector('.rc-tooltip-row, .rc-tooltip-muted, .rc-tooltip-sub')).not.toBeNull();
   });
 
   // The neighbour names were painted theme.text: black on a dark tooltip.
@@ -320,55 +331,129 @@ describe('built-in tooltips read theme.tooltip, not the chart tokens (B-03)', ()
   });
 });
 
-describe('one header class across the built-in tooltips (B-03)', () => {
-  const header = c => c.container.querySelector('.rc-tooltip .rc-tooltip-header');
+describe('RC-082: the date above, one row per series', () => {
+  const tipEl = c => c.container.querySelector('.rc-tooltip');
+  const header = c => tipEl(c).querySelector('.rc-tooltip-header');
+  const rows = c => [...tipEl(c).querySelectorAll('.rc-tooltip-row')].map(r => ({
+    mark: r.querySelector('.rc-tooltip-swatch')?.className.replace('rc-tooltip-swatch', '').trim() ?? null,
+    color: r.querySelector('.rc-tooltip-swatch')?.style.getPropertyValue('--rc-swatch-color') || null,
+    label: r.querySelector('.rc-tooltip-label').textContent,
+    value: r.querySelector('.rc-tooltip-value').textContent,
+    num: r.querySelector('.rc-tooltip-value').classList.contains('rc-num'),
+    note: r.querySelector('.rc-tooltip-note')?.textContent ?? null,
+  }));
 
-  it('a date header is muted, a label plain, a subject a title', () => {
-    const line = track(new Line(mount(null), { animate: false })).setData([{ name: 'A', values: twoDays }]);
+  it('Line: the date small and muted, in figures; a row per series, its name never in its colour', () => {
+    // 800px: x = 300 is nearer the first day than the second (S-18)
+    const line = track(new Line(mount(null, { width: 800 }), { animate: false }))
+      .setData([{ name: 'A', values: twoDays }, { name: 'B', values: twoDays, strokeDash: 'dashed' }]);
     hover(line.container.querySelector('rect.rc-overlay'), 'mousemove');
     expect(header(line).textContent).toMatch(/^Jan \d\d, 2026$/);
     expect(header(line).className).toBe('rc-tooltip-header rc-tooltip-muted');
+    expect(header(line).querySelector('.rc-num')).not.toBeNull();
+    const [a, b] = rows(line);
+    expect(a).toMatchObject({ mark: '', label: 'A', value: '1', num: true, note: null });
+    expect(a.color).toMatch(/^#[0-9a-f]{6}$/);
+    expect(b).toMatchObject({ mark: 'rc-tooltip-swatch--dashed', label: 'B' });
+    expect(tipEl(line).querySelector('[style*="color:"]:not(.rc-tooltip-swatch)')).toBeNull();
+  });
 
-    const bar = track(new Bar(mount(null), { animate: false })).setData([{ label: 'Apples', value: 3 }]);
+  it('DualAxes: a bar\'s dot, a band\'s square', async () => {
+    const { DualAxes } = await import('../assets/charts/src/charts/DualAxes.js');
+    const c = track(new DualAxes(mount(null, { width: 800 }), { animate: false })).setData([
+      { name: 'L', axis: 'y1', type: 'line', values: twoDays },
+      { name: 'B', axis: 'y2', type: 'bar', values: twoDays },
+    ]);
+    hover(c.container.querySelector('rect.rc-overlay'), 'mousemove');
+    expect(rows(c).map(r => [r.label, r.mark])).toEqual([['L', ''], ['B', 'rc-tooltip-swatch--dot']]);
+  });
+
+  it('Bar: a category is the row\'s name; a date goes above the row', () => {
+    const bar = track(new Bar(mount(null), { animate: false })).setData([{ label: 'Apples', value: 1234 }]);
     hover(bar.container.querySelector('rect.rc-bar'));
-    expect(header(bar).textContent).toBe('Apples');
-    expect(header(bar).className).toBe('rc-tooltip-header');
+    expect(header(bar)).toBeNull();
+    expect(rows(bar)).toEqual([expect.objectContaining({ mark: 'rc-tooltip-swatch--dot', label: 'Apples', value: '1,234', num: true })]);
 
-    const sankey = track(new Sankey(mount(null), { animate: false })).setData({ links: [{ source: 'A', target: 'B', value: 5 }] });
-    hover(sankey.container.querySelector('.rc-sankey-link'));
-    expect(header(sankey).textContent).toBe('A → B');
-    expect(header(sankey).className).toBe('rc-tooltip-header rc-tooltip-title');
+    const dated = track(new Bar(mount(null), { animate: false })).setData([{ date: '2026-01-05', value: 3 }, { date: '2026-01-06', value: 4 }]);
+    hover(dated.container.querySelector('rect.rc-bar'));
+    expect(header(dated).textContent).toBe('Jan 05, 2026');
+    expect(rows(dated)[0]).toMatchObject({ label: '', value: '3' });
   });
 
-  // D1: TimeSeries had its own date row — theme.fontSize (14px), a 4px gap.
-  it('TimeSeries: the Crosshair date header, nothing inline', () => {
-    const c = track(new TimeSeries(mount(null))).setData(twoDays);
-    hover(c.container.querySelector('svg > g > rect'), 'mousemove');
-    expect(header(c).className).toBe('rc-tooltip-header rc-tooltip-muted');
-    expect(header(c).getAttribute('style')).toBeNull();
-    expect(c.container.querySelector('.rc-tooltip-value').style.color).not.toBe('');  // the accent, a data colour
+  it('stacked Bar: the category above, the series\' row, its share as the note', () => {
+    const c = track(new Bar(mount(null), { animate: false }))
+      .setData([{ name: 'a', values: [{ label: 'Q1', value: 2 }] }, { name: 'b', values: [{ label: 'Q1', value: 6 }] }]);
+    hover(c.container.querySelector('rect.rc-bar-seg'));
+    expect(header(c).textContent).toBe('Q1');
+    expect(rows(c)).toEqual([expect.objectContaining({ mark: 'rc-tooltip-swatch--dot', label: 'a', value: '2', note: '25.0%' })]);
   });
 
-  it('Donut: the slice colour stays inline on the header', () => {
-    const c = track(new Donut(mount(null), { animate: false }))
+  it('Donut: the slice colour on the dot only; the remainder\'s dot takes the tooltip\'s muted', () => {
+    const c = track(new Donut(mount(null), { animate: false, total: 10 }))
       .setData([{ label: 'a', value: 1, color: '#123456' }, { label: 'b', value: 2 }]);
-    hover(c.container.querySelector('path.rc-donut-slice'));
-    expect(header(c).textContent).toBe('a');
-    expect(header(c).getAttribute('style')).toBe('color:#123456');
+    const slices = c.container.querySelectorAll('path.rc-donut-slice');
+    hover(slices[0]);
+    expect(rows(c)).toEqual([expect.objectContaining({ mark: 'rc-tooltip-swatch--dot', color: '#123456', label: 'a', num: true })]);
+    expect(rows(c)[0].note).toMatch(/%$/);
+    expect(tipEl(c).querySelector('.rc-tooltip-label').getAttribute('style')).toBeNull();
+    hover(slices[slices.length - 1]);
+    const sw = tipEl(c).querySelector('.rc-tooltip-swatch');
+    if (rows(c)[0].label !== 'b') {          // the remainder slice
+      expect(sw.classList.contains('rc-tooltip-muted')).toBe(true);
+      expect(sw.getAttribute('style')).toBeNull();
+    }
   });
 
-  it('Map, HierarchicalBar and the Bar axis label', () => {
+  it('Map, HierarchicalBar, Gauge: a row each; the Bar axis label stays a header', () => {
     const map = track(new RareMap(mount(null), { projection: 'mercator', geoData: twoCountries })).setData([{ id: '100', value: 7 }]);
     hover(map.container.querySelector('.rc-map-feature'));
-    expect(header(map).textContent).toBe('West');
+    expect(rows(map)).toEqual([expect.objectContaining({ mark: 'rc-tooltip-swatch--dot', label: 'West', value: '7' })]);
 
-    const hbar = track(new HierarchicalBar(mount(null), { animate: false })).setData({ label: 'Total', value: 5 });
-    hover(hbar.container.querySelector('.rc-hbar-row'), 'mouseenter');
-    expect(header(hbar).textContent).toBe('Total');
+    const hbar = track(new HierarchicalBar(mount(null), { animate: false }))
+      .setData({ label: 'Total', children: [{ label: 'A', value: 3 }, { label: 'B', children: [{ label: 'B1', value: null }] }] });
+    const hrows = [...hbar.container.querySelectorAll('g.rc-hbar-row')];
+    hover(hrows[0], 'mouseenter');
+    expect(rows(hbar)[0]).toMatchObject({ label: 'Total', value: '3' });
+    hover(hrows.find(g => g.querySelector('.rc-hbar-label').textContent === 'B'), 'mouseenter');
+    expect(rows(hbar)[0]).toMatchObject({ label: 'B', value: 'not disclosed', num: false, note: null });
+
+    const gauge = track(new Gauge(mount(null), { animate: false })).setData({ value: 4, max: 10 });
+    hover(gauge.container.querySelector('svg path'), 'mousemove');
+    expect(rows(gauge)).toEqual([expect.objectContaining({ value: '40.0%', note: '4 / 10' })]);
 
     const bar = track(new Bar(mount(null), { animate: false, labelMaxLength: 4 })).setData([{ label: 'Long label', value: 3 }]);
     hover(bar.container.querySelector('.tick text'));
     expect(header(bar).textContent).toBe('Long label');
+  });
+
+  it('Sankey: a node\'s in and out with each band (RC-022), a band\'s value and share, in rows', () => {
+    const c = track(new Sankey(mount(null), { animate: false }))
+      .setData({ links: [{ source: 'A', target: 'B', value: 5 }, { source: 'A', target: 'C', value: 3 }] });
+    hover(c.container.querySelector('.rc-sankey-node'));
+    expect(header(c).className).toBe('rc-tooltip-header rc-tooltip-title');
+    expect(rows(c).map(r => [r.mark, r.label, r.value])).toEqual([
+      [null, 'out', '8'], ['rc-tooltip-swatch--band', 'B', '5'], ['rc-tooltip-swatch--band', 'C', '3']]);
+    hover(c.container.querySelector('.rc-sankey-link'));
+    expect(header(c).textContent).toMatch(/^A → [BC]$/);
+    expect(rows(c)[0].note).toMatch(/^\d+% of A$/);
+  });
+
+  it('the row helpers: a mark per kind, a role colour muted, words or figures', () => {
+    const el = document.createElement('div');
+    el.innerHTML = tipDate('Jan 05') + tipRow('<b>x</b>', '1', { swatch: 'band', color: '#abcdef', note: tipNum('2%') })
+      + tipRow('y', 'No data', { swatch: 'dashed', color: 'var(--rc-muted, #666666)', muted: true })
+      + tipRow('z', '3', { swatch: 'nope' });
+    const [r1, r2, r3] = el.querySelectorAll('.rc-tooltip-row');
+    expect(el.querySelector('.rc-tooltip-header').innerHTML).toBe('<span class="rc-num">Jan 05</span>');
+    expect(r1.querySelector('.rc-tooltip-swatch').className).toBe('rc-tooltip-swatch rc-tooltip-swatch--band');
+    expect(r1.querySelector('.rc-tooltip-swatch').getAttribute('style')).toBe('--rc-swatch-color:#abcdef');
+    expect(r1.querySelector('.rc-tooltip-label b')).not.toBeNull();          // HTML: the caller escapes
+    expect(r1.querySelector('.rc-tooltip-note .rc-num').textContent).toBe('2%');
+    expect(r2.querySelector('.rc-tooltip-swatch').className).toBe('rc-tooltip-swatch rc-tooltip-swatch--dashed rc-tooltip-muted');
+    expect(r2.querySelector('.rc-tooltip-swatch').getAttribute('style')).toBeNull();
+    expect(r2.querySelector('.rc-tooltip-value').className).toBe('rc-tooltip-value rc-tooltip-muted');
+    expect(r3.className).toBe('rc-tooltip-row rc-tooltip-row--plain');      // no such mark: none
+    expect(r3.querySelector('.rc-tooltip-swatch')).toBeNull();
   });
 });
 
@@ -395,13 +480,6 @@ describe('one tie tooltip for Graph and MapFlow (D-03)', () => {
 });
 
 describe('tooltip rows (step 5 review)', () => {
-  it('stacked Bar: the share of the total is a muted row, as on Donut and HierarchicalBar', () => {
-    const c = track(new Bar(mount(null), { animate: false }))
-      .setData([{ name: 'a', values: [{ label: 'Q1', value: 2 }] }, { name: 'b', values: [{ label: 'Q1', value: 6 }] }]);
-    hover(c.container.querySelector('rect.rc-bar-seg'));
-    expect(c.container.querySelector('.rc-tooltip .rc-tooltip-muted')?.textContent).toMatch(/%$/);
-  });
-
   it('Graph cluster meta-node: the tooltip wraps a long name in the capped body (C-29)', async () => {
     const g = track(new Graph(mount(null), { duration: 0 })).setData({
       nodes: [{ id: 'a', label: 'Department of Housing and Long Names That Keep Going' }, { id: 'b' }, { id: 'c' }],

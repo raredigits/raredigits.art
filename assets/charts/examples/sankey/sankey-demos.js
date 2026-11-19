@@ -36,14 +36,15 @@
   });
 
   // 2. Money trail — three columns, bands colored by type, pinnable
-  //    tooltips with the tie's label. Synthetic, USD m.
+  //    tooltips with the tie's label. Synthetic, USD m; each holding passes
+  //    on all it takes in (365 in, 365 out), so the columns stand level.
   new Sankey('#sankey-trail', {
     title: 'Where the fund’s money went',
     subtitle: 'Investors → vehicles → recipients, USD m',
     source: 'Synthetic demo data',
     linkColor: 'type',
     linkTypes: {
-      equity:  { color: '#00aaff', label: 'Equity' },
+      equity:  { color: '#1677ff', label: 'Equity' },
       loan:    { color: '#fa8c16', label: 'Loan' },
       payout:  { color: '#00c97a', label: 'Payout' },
     },
@@ -54,9 +55,9 @@
       { from: 'Family office', to: 'Holding A',  value: 45,  type: 'loan',   label: 'Bridge loan, 8%' },
       { from: 'Family office', to: 'Holding B',  value: 30,  type: 'equity' },
       { from: 'Sovereign fund',to: 'Holding B',  value: 90,  type: 'equity' },
-      { from: 'Holding A',     to: 'Operating co', value: 120, type: 'equity' },
+      { from: 'Holding A',     to: 'Operating co', value: 145, type: 'equity' },
       { from: 'Holding A',     to: 'Founders',   value: 40,  type: 'payout', label: 'Secondary sale' },
-      { from: 'Holding B',     to: 'Operating co', value: 95,  type: 'loan' },
+      { from: 'Holding B',     to: 'Operating co', value: 112, type: 'loan' },
       { from: 'Holding B',     to: 'Advisers',   value: 18,  type: 'payout' },
       { from: 'Holding B',     to: 'Founders',   value: 50,  type: 'payout' },
     ],
@@ -69,7 +70,7 @@
     subtitle: 'Primary sources → conversion → carriers → sectors → useful/lost, TWh',
     source: 'Synthetic demo data',
     linkColor: 'gradient',
-    height: 460,
+    height: 494,
   }).setData({
     links: [
       { from: 'Gas',        to: 'Power plants', value: 180 },

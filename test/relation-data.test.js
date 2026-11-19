@@ -133,7 +133,9 @@ describe('the public link id, per class', () => {
     await g.whenReady();
     document.querySelector('.rc-graph-link-hit').dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
     expect(seen).toEqual(['a→b|family']);
-    expect([...document.querySelectorAll('.rc-graph-legend-item')].map(b => b.dataset.type)).toEqual(['family']);
+    // the legend's key is the tie's type; data-type is its K-06 alias until 0.9.9
+    expect([...document.querySelectorAll('.rc-graph-legend .rc-legend-item')].map(b => [b.dataset.key, b.dataset.type]))
+      .toEqual([['family', 'family']]);
   });
 
   it('Graph flow view: source→target#n, the same in the trace and in the model', () => {

@@ -24,7 +24,7 @@ chart.setData([
     {
         name: 'Confidence range',
         type: 'band',
-        color: '#00aaff',
+        color: '#1677ff',
         fillOpacity: 0.15,
         values: [
             { date: '2025-01-01', lower: 86,  upper: 114 },
@@ -34,7 +34,7 @@ chart.setData([
     },
     {
         name: 'Estimate',
-        color: '#00aaff',
+        color: '#1677ff',
         values: [
             { date: '2025-01-01', value: 100 },
             { date: '2025-02-01', value: 118 },
@@ -71,9 +71,7 @@ This chart is assembled from three series plus one annotation:
 - a dashed line for the **P50** central path, starting at the same anchor so the two lines connect
 - a vertical [annotation](/charts/line/annotations/) marking the forecast cut-over
 
-<div class="air-md"></div>
-
-<pre class="text-content-caption"><code>const FCAST = '#00aaff';
+<pre class="text-content-caption"><code>const FCAST = '#1677ff';
 
 new RareCharts.Line('#chart', {
     curve: 'monotone',
@@ -83,7 +81,7 @@ new RareCharts.Line('#chart', {
     ],
 }).setData([
     { name: 'P10–P90 range', type: 'band', color: FCAST, fillOpacity: 0.16, values: band },
-    { name: 'Actuals',        color: '#00aaff', strokeWidth: 2.5, values: actuals },
+    { name: 'Actuals',        color: '#1677ff', strokeWidth: 2.5, values: actuals },
     { name: 'Forecast (P50)', color: FCAST, strokeDash: '5,4', values: p50 },
 ]);</code>
 </pre>
@@ -93,13 +91,13 @@ new RareCharts.Line('#chart', {
     <div class="sidenote">
         <p>A band only needs the two boundaries you already compute. If your model emits quantiles, map the outer pair to <code>lower</code>/<code>upper</code> and pass the median as an ordinary line.</p>
     </div>
-    <p>When everything shares one color, the legend has to carry the distinction. Set `type` on each legend entry so its swatch matches what is on screen — a solid rule, a dashed rule, or a filled square:</p>
+    <p>When everything shares one color, the legend has to carry the distinction. Set <code>type</code> on each legend entry so its swatch matches what is on screen — a solid rule, a dashed rule, or a filled square:</p>
 </div>
 
 <pre class="text-content-caption"><code>legend: [
-    { label: 'Actuals',        color: '#00aaff' },                   <span class="code-comment">// solid line</span>
-    { label: 'Forecast (P50)', color: '#00aaff', type: 'dashed' },   <span class="code-comment">// dashed line</span>
-    { label: 'P10–P90 range',  color: '#00aaff', type: 'band' },     <span class="code-comment">// filled square</span>
+    { label: 'Actuals',        color: '#1677ff' },                   <span class="code-comment">// solid line</span>
+    { label: 'Forecast (P50)', color: '#1677ff', type: 'dashed' },   <span class="code-comment">// dashed line</span>
+    { label: 'P10–P90 range',  color: '#1677ff', type: 'band' },     <span class="code-comment">// filled square</span>
 ]</code>
 </pre>
 

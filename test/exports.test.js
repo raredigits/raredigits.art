@@ -7,6 +7,9 @@ import { mount, track } from './helpers.js';
 // The public surface, through the entry point the bundle is built from (S-03).
 // Under Vitest the stylesheet import resolves to '' — CSS delivery is checked
 // on the built bundles in bundle-smoke.test.js.
+//
+// Moved from public-surface-k04.test.js (RC-026):
+//   'generateMockPrices — exported demo helper (K-04)' → same describe
 
 // A deliberate freeze: adding or removing an export means updating this list.
 const PUBLIC = [
@@ -51,6 +54,14 @@ describe('public exports (S-03)', () => {
       .replace(/\([^)]*\)/g, '').split(',').map(s => s.trim());
     expect(types).toContain('Pie');
     types.forEach(t => expect(typeof RareCharts[t], t).toBe('function'));
+  });
+});
+
+describe('generateMockPrices — exported demo helper (K-04)', () => {
+  it('is still exported and returns OHLCV rows', () => {
+    const rows = RareCharts.generateMockPrices(10, 100);
+    expect(rows.length).toBeGreaterThan(0);
+    expect(Object.keys(rows[0]).sort()).toEqual(['date', 'high', 'low', 'open', 'value', 'volume']);
   });
 });
 

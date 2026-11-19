@@ -1,11 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { DualAxes } from '../assets/charts/src/charts/DualAxes.js';
-import { mount, track } from './helpers.js';
+import { mount, track, setGeometry } from './helpers.js';
 
 // DualAxes bars: the X range is inset by half the widest bar or cluster, so
 // the edge bars are drawn whole inside the clip (C-27); barWidth and
 // series.barWidth in px (B-07); the space per date is the smallest gap between
 // bar dates (N2); fill and opacity follow setData (N3).
+//
+// Sizes are the test's own (S-18): an 800×400 card unless a test mounts
+// another width.
+beforeEach(() => setGeometry({ width: 800, height: 400 }));
 
 const years = (n, f = i => i % 3 - 1) => Array.from({ length: n }, (_, i) => ({ date: `${2000 + i}-12-31`, value: f(i) }));
 const bars  = c => [...c.container.querySelectorAll('rect.rc-dual-bar')].map(r => ({ x: +r.getAttribute('x'), w: +r.getAttribute('width') }));
@@ -107,6 +111,9 @@ describe('DualAxes barWidth (B-07)', () => {
     }
   });
 
+  // On the 800px card the one-day gap (Mar 1 → Mar 2) is wider than the 4px
+  // floor of a default bar; on a card under about 630px it is not, and the
+  // two bars overlap (by 1.2px at 480px).
   it('irregular dates: bars no wider than the smallest gap between bar dates (N2)', () => {
     const c = dual({}, [{ name: 'b', type: 'bar', values: [
       { date: '2026-01-01', value: 3 }, { date: '2026-03-01', value: 3 },
@@ -114,6 +121,19 @@ describe('DualAxes barWidth (B-07)', () => {
     const rs = bars(c);
     for (let i = 1; i < rs.length; i++) expect(rs[i - 1].x + rs[i - 1].w).toBeLessThanOrEqual(rs[i].x + 1e-6);
     expect(inside(c)).toBe(true);
+  });
+
+  // RC-072: the 4px floor no longer outranks the gap — on a narrow card the
+  // one-day neighbours touch at most
+  it.each([480, 400, 320])('irregular dates on a %ipx card: neighbours never overlap (RC-072)', w => {
+    const el = mount(null);
+    setWidth(el, w);
+    const c = dual({}, [{ name: 'b', type: 'bar', values: [
+      { date: '2026-01-01', value: 3 }, { date: '2026-03-01', value: 3 },
+      { date: '2026-03-02', value: 3 }, { date: '2026-05-01', value: 3 }] }], el);
+    const rs = bars(c);
+    for (let i = 1; i < rs.length; i++) expect(rs[i - 1].x + rs[i - 1].w).toBeLessThanOrEqual(rs[i].x + 1e-6);
+    expect(rs.every(r => r.w > 0)).toBe(true);
   });
 
   it('holds through resize, new data and a new window', () => {

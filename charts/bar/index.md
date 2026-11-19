@@ -12,7 +12,7 @@ The strength of a bar chart is that it relies on length. Humans are very go
 
 <div id="bar-chart-revenue" class="panel panel--bordered text-content-caption"></div>
 
-Orientation and reading comfort
+### Orientation and reading comfort
 
 The Bar chart supports two orientations: `vertical` (default) and `horizontal`. Vertical bars work well for short labels and compact comparisons. Horizontal bars are usually the better default when labels are long or when you want the chart to read like a ranked list.
 
@@ -26,7 +26,7 @@ Bar expects a simple dataset:
 <pre class="text-content-caption"><code>[
     { label: 'Sales', value: 128000 },
     { label: 'Marketing', value: 76000 },
-    { label: 'R&D', value: 154000, color: '#00aaff' }   <span class="code-comment">// color is optional</span>
+    { label: 'R&D', value: 154000, color: '#1677ff' }   <span class="code-comment">// color is optional</span>
 ]</code></pre>
 
 The library treats label as the category key, so it is used for scale domain, tick labels, and join keys during updates.
@@ -60,6 +60,8 @@ Timeframe controls and the navigator apply only to the date-based vertical mode.
 
 There is a third shape: hand Bar series-major data `[{ name, values }]` and it switches into the stacked mode — segments per category, an auto-built legend, and a `'percent'` variant. See <a href="/charts/bar/stacked-bar/">Stacked Bar</a>.
 
+Bar reads the mode from the first row, and the rule is part of its contract — there is no `mode` option: a first row with a `values` array is the stacked mode; one with both `date` and `value`, the date-based mode; anything else, categories. Every row is then read in that mode, so give `setData` one shape at a time.
+
 ### Bar width and color
 
 By default a bar takes a fixed share of the space for its category, or, in the date-based mode, `barWidthRatio` of the smallest gap between dates. `barWidth` sets it in px instead: the width of a vertical bar, the thickness of a horizontal one, the whole column of a stacked bar. With categories (and stacked) the bar stays centred in its slot, so the axis labels do not move; in the date-based mode the time axis is inset by half a bar, so the bars and date labels shift inward a little as the width changes. A width larger than the space per category or date is cut to it: neighbouring bars touch but never overlap, which also keeps a fixed width sane on a phone. Anything that is not a positive number is ignored and the default applies.
@@ -71,7 +73,7 @@ A row's own `color` fills that bar; bars without one take `barColor`, then the t
     barColor: '#cccccc',
 }).setData([
     { label: 'Nov', value: 141000 },
-    { label: 'Dec', value: 156000, color: '#00aaff' },
+    { label: 'Dec', value: 156000, color: '#1677ff' },
 ]);</code></pre>
 
 <div id="bar-chart-highlight" class="panel panel--bordered text-content-caption"></div>
@@ -79,6 +81,12 @@ A row's own `color` fills that bar; bars without one take `barColor`, then the t
 Colors follow the data: `setData` repaints a bar whose `color` changed, and a bar that lost its `color` goes back to `barColor`. Hover only dims a bar, so its color stays. The stacked mode ignores a value's `color`: segments always take their series color. Value labels inside horizontal bars are drawn in the theme background color, so a per-bar color should be dark enough to carry them.
 
 In the date-based mode the time axis is inset by half a bar, so the first and last bars sit whole inside the plot.
+
+### Showing values on bars
+
+Bars can print their values (`showValues: true`), with the text from `valueFormat` and `valueOffset` px between the bar end and the label. On horizontal bars the label sits past the bar end and flips inside the bar if there is not enough space near the edge of the chart — as long as the label fits inside. A label that fits neither way (a short bar near the edge, often a small negative value) stays outside, and the value axis widens to make room for it; `valueInsideGap` sets how tight the space must be. On vertical bars (categories and dates) the label sits above a positive bar and below a negative one, and the value axis grows so the labels of the tallest and the deepest bars fit. Where labels would collide — long values on a narrow card — the larger values keep theirs: a label that would come within 6px of a larger one beside it, or cross another bar, is left out, so the peaks stay labelled; the tooltip keeps every value. The record chart above prints its values in thousands, as its axis does. Stacked bars print no values. While the bars grow in, the labels fade in at their places.
+
+This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.
 
 ### Long labels (without ruining the axis)
 
@@ -89,6 +97,8 @@ This is one of those details you only miss when you do not have it.
 ### Value formatting and units
 
 In vertical mode, the Y axis uses `yTickFormat`. If you do not provide it, Bar labels the ticks by the step between them — `0 0.5 1 1.5`, `145 150 155`, SI prefixes from 1,000 on with one prefix per axis (`0 0.5M 1M`), zero always as `0` — and supports `yPrefix` and `ySuffix` for units — in the categorical, date-based and stacked modes alike (a stacked `'percent'` axis keeps its own percent labels).
+
+Value labels (`valueFormat`) and the default tooltip print full numbers (`50,000`). For the short form everywhere — `50K`, `1.2M` — see [Short numbers](/charts/settings/#short-numbers) on the settings page.
 
 In horizontal mode, the X axis uses `xTickFormat` (the same default). If your values are money, percentages, or mixed units, pass explicit formatters. The chart will not guess what your business means by “1.2”. In the date-based mode `xTickFormat` formats the dates instead; by default the format follows the span in view, as on Time Series — `'%H:%M'` up to 36 hours (a tick at midnight names the day), `'%b %d'` up to 92 days (at most one tick per day), `'%b'` up to a year, `"%b '%y"` up to five years, `'%Y'` beyond.
 
@@ -132,15 +142,9 @@ The date-based vertical mode takes the same `annotations` as <a href="/charts/li
 Two details are specific to bars:
 
 - A bar is centred on its date, so a range from the first to the last bar’s date covers only half of each end bar. Start and end the range half a period out to shade whole bars.
-- Levels never widen the value axis: it spans the data and zero, rounded out to its ticks, as before. A level beyond the axis is not shown, and a band is cut at the edge of the plot.
+- Levels never widen the value axis: it spans the data and zero, with a little headroom above the tallest bar (8% of the span, as on Line). A level beyond the axis is not shown, and a band is cut at the edge of the plot.
 
 The chart keeps room above the plot for the date labels (`annotationLabelHeight + 4` px); an explicit `margin.top` wins. Annotations need a date axis: categorical, stacked and horizontal bars do not draw them and log one console warning per chart.
-
-### Showing values on bars (horizontal)
-
-Horizontal bars have an optional “value labels” mode, because this is where it is actually useful. When enabled (`showValues: true`), the chart prints numeric labels at bar ends and automatically flips them inside the bar if there is not enough space near the edge of the chart — as long as the label fits inside. A label that fits neither way (a short bar near the edge, often a small negative value) stays outside, and the value axis widens to make room for it. This behavior is controlled by `valueInsideGap`, with spacing controlled by `valueOffset`, and the text itself by `valueFormat`. While the bars grow in, the labels fade in at their places.
-
-This solves a classic annoyance: value labels that collide with the container edge or become unreadable when bars are short.
 
 ### Animation (if you must)
 
@@ -170,7 +174,7 @@ new RareCharts.Bar('#chart', {
 
 ## Bar chart options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page. A categorical or dated Bar draws one series, so its <code>legend</code> is a caption; the stacked mode's legend hides and shows series (<a href="/charts/bar/stacked-bar/">Stacked Bar</a>). For several series over dates, use <a href="/charts/line/dual-axes/">DualAxes</a>.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -195,10 +199,10 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>margin</code></td>
             <td>object</td>
-            <td>vertical <code>{12, 65, 8, 0}</code>, horizontal <code>{12, 0, 16, 65}</code></td>
+            <td>vertical <code>{12, 64, 8, 0}</code>, horizontal <code>{12, 0, 16, 65}</code></td>
             <td>
                 Inner padding <code>{top, right, bottom, left}</code>.<br>
-                The 65px gutter holds the value axis (right, vertical) or the category labels (left, horizontal — it grows to the longest label, up to 40% of the width) and collapses when that axis is hidden; the bottom one collapses with the X axis.<br>
+                The gutter holds the value axis (right, vertical: 64px, as on Line) or the category labels (left, horizontal: 65px at least — it grows to the longest label, up to 40% of the width) and collapses when that axis is hidden; the bottom one collapses with the X axis.<br>
                 With <code>annotations</code> on vertical bars, top grows to <code>annotationLabelHeight + 4</code> to fit their labels. Each side you set explicitly wins.
             </td>
         </tr>
@@ -207,6 +211,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>'vertical'</code> | <code>'horizontal'</code></td>
             <td><code>'vertical'</code></td>
             <td>Bar direction. Horizontal works best for long category labels and ranked lists.</td>
+        </tr>
+        <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone a date string without a zone of its own is read in (the rows, <code>annotations</code>, the view bounds), the timeframes cut in, and the axis and the tooltip name dates in. A <code>Date</code>, epoch milliseconds or an ISO string with <code>Z</code> or an offset stays that instant. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>. In the date-based mode only.</td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -292,7 +302,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>duration</code></td>
             <td>number</td>
-            <td><code>500</code></td>
+            <td><code>650</code></td>
             <td>Animation duration in ms.</td>
         </tr>
         <tr>
@@ -319,10 +329,10 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>valueFormat</code></td>
             <td>function</td>
-            <td>—</td>
+            <td><code>,.2~f</code></td>
             <td>
                 <code>(d, info) =&gt; string</code> — <code>d</code> is the row, <code>info</code> is <code>{ label, value, color }</code>, as for <code>tooltipFormat</code>.<br>
-                Default: comma-formatted integer.
+                Default: <code>,.2~f</code> — separators, no decimals on a whole number, up to two on a fraction (<code>1,234</code>, <code>0.4</code>).
             </td>
         </tr>
         <tr>
@@ -336,7 +346,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td>number</td>
             <td><code>42</code></td>
             <td>
-                When space past the bar end is below this px threshold, the label flips inside the bar — if it fits there; otherwise it stays outside and the axis widens to fit it.
+                Horizontal bars: when space past the bar end is below this px threshold, the label flips inside the bar — if it fits there; otherwise it stays outside and the axis widens to fit it.
             </td>
         </tr>
         <tr class="table-section">

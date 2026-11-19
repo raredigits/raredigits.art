@@ -9,13 +9,22 @@
 // out of Graph.js in 0.9.8_6, D-11, code unchanged): `this` is the chart.
 
 import * as d3 from 'd3';
-import { fitTextNode } from '../../core/renderHelpers.js';
+import { fitTextNode, textWidth, placeFirstFree } from '../../core/renderHelpers.js';
 import { motionDuration } from '../../core/utils.js';
-import { dedupeUndirected, parallelIndex, pairKey } from '../../core/links.js';
-import { rovingTabindex, holdsFocus, gridStep } from '../roving.js';
+import {
+  chord, dedupeUndirected, linkWeight, parallelIndex, pairKey, quadBow, quadPoint,
+} from '../../core/links.js';
+import { renderLegendItems } from '../../core/legend.js';
+import { rovingTabindex, holdsFocus, gridStep, listStep, enterPinnedTip } from '../roving.js';
 import { egoLayout, egoCapacity } from '../layouts/ego.js';
 import { pathLayout }    from '../layouts/path.js';
 import { clusterLayout } from '../layouts/cluster.js';
+
+// Ties and nodes move to their new places over this many ms on every render
+// after the first (a click that refocuses, a filter, a resize); the first
+// render does not animate. The `duration` option overrides it. Not the
+// charts' entry duration, ENTRY_DURATION (K-08).
+const GRAPH_TRANSITION = 500;
 
 export const networkView = {
   // ego / path / cluster: render() hands over the measured drawing area
@@ -72,18 +81,18 @@ export const networkView = {
     });
 
     this._labelRoom = this._view === 'ego' ? this._egoCellW - 6 : null;
-    this._draw(positions, W, H, sectors);
+    this._draw(positions, sectors);
   },
 
   // ego / path / cluster with nothing to show (setData with an empty
   // payload): no nodes, ties, captions, legend or notes of the previous
   // data, and the details panel back to its hint (R-17).
   _clearDrawing() {
-    [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes]
+    [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes, this.gLinkKeys]
       .forEach(g => g?.selectAll('*').remove());
     this.gRoot.selectAll('.rc-graph-row-label').remove();
     this._defs.selectAll('.rc-arrow').remove();
-    this._legendEl?.replaceChildren();
+    if (this._typeLegendEl) renderLegendItems(this._typeLegendEl, []);
     if (this._tooltip?.isPinned) this._tooltip.unpin();
     this._tooltip?.hide?.();
     this._root = null;
@@ -101,6 +110,7 @@ export const networkView = {
     this._renderOverflow();
     this._detailsSubject = null;
     this._refreshDetails();
+    this._syncSvgRole();
   },
 
   // Half the drawn width of each node's label, its backdrop included:
@@ -115,9 +125,7 @@ export const networkView = {
     nodes.forEach(n => {
       const text = String(n.label ?? n.id);
       el.textContent = text;
-      let w = 0;
-      try { w = el.getComputedTextLength?.() ?? 0; } catch { w = 0; }
-      out.set(n.id, (w > 0 ? w : text.length * 6.2) / 2 + 3);
+      out.set(n.id, textWidth(el, 6.2, text) / 2 + 3);
     });
     probe.remove();
     return out;
@@ -150,7 +158,7 @@ export const networkView = {
     };
   },
 
-  _draw(positions, W, H, sectors = null) {
+  _draw(positions, sectors = null) {
     const t = this.theme;
     const o = this.options;
     const { nodes, links: viewLinks } = this._shown ?? this._viewData;
@@ -193,7 +201,7 @@ export const networkView = {
     };
     const nodeR = n => baseR * sizeOf(n);
     const byId  = new Map(nodes.map(n => [n.id, n]));
-    const dur   = this._hasRendered ? motionDuration(o.duration ?? 500) : 0;
+    const dur   = this._hasRendered ? motionDuration(o.duration ?? GRAPH_TRANSITION) : 0;
 
     // Monochrome nodes: color stays on the links only. Anchors (the ego
     // center, path endpoints) invert to a filled dark circle so the eye finds
@@ -235,47 +243,38 @@ export const networkView = {
     });
 
     // ── Link geometry ──
-    // In the ego (grid) view every link gets a gentle uniform bow: cell
-    // centers are collinear, so a straight line would run exactly through
-    // the nodes sitting between its endpoints. Path/cluster links connect
-    // adjacent columns or a sparse circle — straight is fine there.
+    // Every view but 'path' bows its ties gently (the bow below): in the ego
+    // and cluster grids cell centres are collinear, so a straight line would
+    // run exactly through the nodes sitting between its endpoints. Path ties
+    // join adjacent columns and stay straight (D-07).
     //
-    // Parallel ties of a pair fan out symmetrically around that base. The
-    // offset is measured on the pair's canonical normal (lower id → higher),
-    // so A→B and B→A ties of one pair land on opposite sides, never on top
-    // of each other.
+    // Parallel ties of a pair fan out symmetrically around that base, 16 px
+    // apart (parallelIndex: A→B and B→A ties of one pair land on opposite
+    // sides, never on top of each other).
     const linkGeom = d => {
       const s = positions.get(d.source);
       const e = positions.get(d.target);
       if (!s || !e) return null;
-      const rT = nodeR(byId.get(d.target)) + 6;
-      const dx = e.x - s.x, dy = e.y - s.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const ex = e.x - (dx / len) * rT;
-      const ey = e.y - (dy / len) * rT;
-      const { index = 0, count = 1 } = par.get(d.id) ?? {};
-      // Grid views (ego, cluster): cell centres are collinear, so ties bow
-      // gently instead of running straight through the nodes between them.
-      const base = this._view !== 'path' && len >= 40 ? Math.min(26, len * 0.08) : 0;
-      const flip = d.source > d.target ? -1 : 1;
-      const fan = count > 1 ? (index - (count - 1) / 2) * 16 * flip : 0;
-      const bow = base + fan;
-      const nx = -dy / len, ny = dx / len;   // fixed-handedness unit normal
-      const cx = (s.x + ex) / 2 + nx * bow;
-      const cy = (s.y + ey) / 2 + ny * bow;
-      // The path starts at the source center (under the node); the visible
-      // stretch begins at the source rim. Its middle anchors the +N badge.
+      const { offset = 0 } = par.get(d.id) ?? {};
+      // The path starts at the source center (under the node) and ends short
+      // of the target rim, where the arrowhead sits.
+      const g = quadBow(s, e, {
+        to: nodeR(byId.get(d.target)) + 6,
+        // Grid views (ego, cluster): cell centres are collinear, so ties bow
+        // gently instead of running straight through the nodes between them.
+        bow: len => (this._view !== 'path' && len >= 40 ? Math.min(26, len * 0.08) : 0) + offset * 16,
+      });
+      // The visible stretch begins at the source rim. Its middle anchors the
+      // +N badge.
       const rS = nodeR(byId.get(d.source));
-      const vx = s.x + (dx / len) * rS, vy = s.y + (dy / len) * rS;
-      const mid = { x: (vx + ex) / 2 + nx * bow * 0.5, y: (vy + ey) / 2 + ny * bow * 0.5 };
-      return { s, e: { x: ex, y: ey }, c: { x: cx, y: cy }, mid, curved: bow !== 0 };
+      const vx = s.x + g.u.x * rS, vy = s.y + g.u.y * rS;
+      const mid = { x: (vx + g.e.x) / 2 + g.n.x * g.off * 0.5, y: (vy + g.e.y) / 2 + g.n.y * g.off * 0.5 };
+      return { ...g, mid, curved: g.off !== 0 };
     };
     const linkD = d => {
       const g = linkGeom(d);
       if (!g) return '';
-      return g.curved
-        ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}`
-        : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
+      return g.curved ? g.d : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
     };
 
     // Route emphasis in the path view is per pair, whatever ties it carries.
@@ -297,7 +296,7 @@ export const networkView = {
       .attr('stroke-width',     d => {
         // weight first, as the layout, the tooltip and the model read it;
         // `strength` is the legacy alias
-        const w = Math.max(0.75, 1.4 * (d.weight ?? d.strength ?? 0.5));
+        const w = Math.max(0.75, 1.4 * linkWeight(d));
         return this._shortestKeys?.has(linkKey(d)) ? Math.max(2, w * 1.6) : w;
       })
       .attr('stroke-dasharray', d => this._typeInfo(d.type).dash)
@@ -332,12 +331,19 @@ export const networkView = {
       .style('pointer-events',   'none')
       .text(d => `+${d._siblings.length - 1}`);
     // A badge takes the first spot along its tie (or just beside it) that
-    // covers no node and no node label; the visible middle is the fallback.
+    // covers no node and no node label as drawn; the visible middle is the
+    // fallback. A label's box is its measured text (cut to the cell in the
+    // ego grid) plus the backdrop's padding, at least the node's width,
+    // r + 3 to r + 19 under the centre. labelW is filled as the labels are
+    // drawn, and the badges are placed after that (D-08: an estimate of
+    // 6.2 px a character let a badge sit on a wide neighbour's label).
+    const labelPadX = 3;
+    const labelW = new Map();
     const nodeBoxes = () => nodes.map(n => {
       const p = positions.get(n.id);
       if (!p) return null;
       const r = nodeR(n);
-      const w = Math.max(2 * r, String(n.label ?? n.id).length * 6.2);
+      const w = Math.max(2 * r, (labelW.get(n.id) ?? 0) + 2 * labelPadX);
       return [
         { x0: p.x - r, x1: p.x + r, y0: p.y - r, y1: p.y + r },
         { x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + r + 3, y1: p.y + r + 19 },
@@ -346,22 +352,15 @@ export const networkView = {
     const badgeAt = (d, obstacles) => {
       const g = linkGeom(d);
       if (!g) return { x: 0, y: 0 };
-      const q = tt => ({
-        x: (1 - tt) ** 2 * g.s.x + 2 * (1 - tt) * tt * g.c.x + tt ** 2 * g.e.x,
-        y: (1 - tt) ** 2 * g.s.y + 2 * (1 - tt) * tt * g.c.y + tt ** 2 * g.e.y,
-      });
-      const dx = g.e.x - g.s.x, dy = g.e.y - g.s.y, len = Math.hypot(dx, dy) || 1;
-      const nx = -dy / len, ny = dx / len;
+      // on the tie, or beside it along the normal of its drawn chord
+      const { n } = chord(g.s, g.e);
       const half = 9;
-      for (const tt of [0.5, 0.4, 0.6, 0.3, 0.7]) {
-        for (const off of [0, 12, -12]) {
-          const p = q(tt);
-          const x = p.x + nx * off, y = p.y + ny * off;
-          const hit = obstacles.some(b => x + half > b.x0 && x - half < b.x1 && y + 7 > b.y0 && y - 7 < b.y1);
-          if (!hit) return { x, y };
-        }
-      }
-      return g.mid;
+      const spots = [0.5, 0.4, 0.6, 0.3, 0.7].flatMap(tt => {
+        const p = quadPoint(g, tt);
+        return [0, 12, -12].map(off => ({ x: p.x + n.x * off, y: p.y + n.y * off }));
+      });
+      const spot = placeFirstFree(spots, ({ x, y }) => ({ x0: x - half, x1: x + half, y0: y - 7, y1: y + 7 }), obstacles);
+      return spot ? spot.at : g.mid;
     };
     const placeBadges = sel => {
       const obstacles = nodeBoxes();
@@ -370,7 +369,6 @@ export const networkView = {
         d3.select(this).attr('x', p.x).attr('y', p.y);
       });
     };
-    placeBadges(badgeSel);
 
     // ── Tie hit targets (A3): hover = tooltip, click = pin it ──
     const hitSel = this.gLinkHits.selectAll('.rc-graph-link-hit')
@@ -391,6 +389,15 @@ export const networkView = {
         ? o.linkTooltipFormat({ link: d, source, target })
         : this._defaultLinkTooltip(d, source, target);
     };
+    // a click, or Enter on the tie's keyboard target: the tie and its ends
+    // stay lit, the details panel shows it, and the tooltip stays put
+    const pinTie = (d, [x, y]) => {
+      this._highlightTie(d, nodeSel, linkSel);
+      this._showDetails({ link: d });
+      this._tooltip.pin(x, y, tieHtml(d), {
+        onClose: () => { this._highlight(null, nodeSel, linkSel); this._showDetails(null); },
+      });
+    };
     hitSel
       .on('mouseover', (event, d) => {
         if (this._tooltip.isPinned) return;
@@ -405,18 +412,14 @@ export const networkView = {
       })
       .on('click', (event, d) => {
         event.stopPropagation();
-        const [mx, my] = d3.pointer(event, this.container);
-        this._highlightTie(d, nodeSel, linkSel);
-        this._showDetails({ link: d });
-        this._tooltip.pin(mx, my, tieHtml(d), {
-          onClose: () => { this._highlight(null, nodeSel, linkSel); this._showDetails(null); },
-        });
+        pinTie(d, d3.pointer(event, this.container));
       });
 
     this._redrawTies = id => {
       const touches = l => l.source === id || l.target === id;
       linkSel.filter(touches).attr('d', linkD);
       hitSel.filter(touches).attr('d', linkD);
+      this.gLinkKeys.selectAll('.rc-graph-link-key').filter(touches).attr('d', linkD);
       placeBadges(badgeSel.filter(touches));
     };
 
@@ -502,6 +505,7 @@ export const networkView = {
         const full = d.label ?? d.id;
         if (room) fitTextNode(this, full, room);
         else this.textContent = full;
+        labelW.set(d.id, textWidth(this, 6.2));
       });
     // Icon glyph: 24×24 path scaled to ~62% of the node diameter, centered.
     // Monochrome: dark on light circles, inverted on anchor/colored nodes.
@@ -519,13 +523,16 @@ export const networkView = {
       const tEl = grp.select('.rc-graph-node-label').node();
       if (!tEl) return;
       const bbox = tEl.getBBox ? tEl.getBBox() : { x: 0, y: 0, width: 0, height: 0 };
-      const padX = 3, padY = 1;
+      const padX = labelPadX, padY = 1;
       grp.select('.rc-graph-node-label-bg')
         .attr('x',      bbox.x - padX)
         .attr('y',      bbox.y - padY)
         .attr('width',  bbox.width  + padX * 2)
         .attr('height', bbox.height + padY * 2);
     });
+
+    // +N badges once the labels they keep off are drawn
+    placeBadges(badgeSel);
 
     // Shared nodes travel to their new position; new nodes fade in place —
     // the identity-preserving move that keeps the user oriented on recenter.
@@ -650,6 +657,75 @@ export const networkView = {
       showFocused(focusedEl.__data__);
     }
 
+    // ── Ties from the keyboard (K-23): one Tab stop of their own, after the
+    // nodes'. The hit strokes lie under the nodes, so that a node wins the
+    // pointer where they overlap, and the Tab order is the DOM's: the
+    // keyboard targets are their twins in a layer after the nodes
+    // (gLinkKeys), with no pointer events. As the flow view's ties: the
+    // arrows step through them by their source, then their target, in
+    // reading order, Home / End to the first / last; focus shows what hover
+    // shows; Enter or Space pins the tooltip as a click does, and Tab then
+    // goes into it, to its `sources` links (graph/roving.js
+    // enterPinnedTip); Escape releases it.
+    // Read before the join, as the nodes' focus above.
+    const tieKeyFocus = holdsFocus(this.gLinkKeys.node());
+    const at = id => positions.get(id) ?? { x: 0, y: 0 };
+    const reading = (a, b) => (Math.round(at(a).y) - Math.round(at(b).y)) || (at(a).x - at(b).x);
+    const tieOrder = links.slice().sort((a, b) => reading(a.source, b.source) || reading(a.target, b.target));
+    const keySel = this.gLinkKeys.selectAll('.rc-graph-link-key')
+      .data(tieOrder, d => d.id)
+      .join('path')
+      .attr('class',          'rc-graph-link-key')
+      .attr('fill',           'none')
+      .attr('stroke',         'transparent')
+      .attr('stroke-width',   12)
+      .style('pointer-events', 'none')
+      .attr('d', linkD)
+      .attr('role', 'button')
+      .attr('aria-label', d => this._tieAriaLabel(d, id => byId.get(id) ?? this._model.node(id)));
+    const tieStop = rovingTabindex(keySel, { state: this._tieRoving });
+    // where a tie's tooltip opens from the keyboard: the middle of its
+    // visible stretch
+    const tieAt = d => { const m = linkGeom(d)?.mid ?? { x: 0, y: 0 }; return this._toCard(m.x, m.y); };
+    const showTie = d => {
+      if (this._tooltip.isPinned) return;
+      this._tooltip.show(...tieAt(d), tieHtml(d));
+      this._highlightTie(d, nodeSel, linkSel);
+    };
+    keySel
+      .on('focus.tip', (event, d) => { if (!this._destroyed) showTie(d); })
+      .on('blur.tip', event => {
+        if (!event.target.isConnected || this._destroyed) return;   // removed by a redraw / destroy()
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        this._highlight(null, nodeSel, linkSel);
+      })
+      .on('keydown', (event, d) => {
+        if (enterPinnedTip(event, this._tooltip, event.currentTarget)) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          pinTie(d, tieAt(d));
+          return;
+        }
+        if (event.key === 'Escape') {
+          if (this._tooltip.isPinned) this._tooltip.unpin();
+          this._tooltip.hide();
+          this._highlight(null, nodeSel, linkSel);
+          return;
+        }
+        const next = listStep(tieOrder, d, event.key);
+        if (next) {
+          event.preventDefault();
+          tieStop.focus(next.id);
+        }
+      });
+    // A redraw that removed the tie keyboard focus was on hands focus to
+    // the ties' new Tab stop; a tie still focused shows its tooltip where
+    // it now runs.
+    const keyEl = typeof document !== 'undefined' ? document.activeElement : null;
+    if (keyEl && keySel.nodes().includes(keyEl)) showTie(keyEl.__data__);
+    else if (tieKeyFocus) tieStop.focus(this._tieRoving.current);
+
     // ── Sector captions (ego view, opt-in): name the category corners ──
     const showSectors = o.sectorLabels === true && (sectors?.length ?? 0) > 1;
     this.gSectors.selectAll('.rc-graph-sector-label')
@@ -699,8 +775,8 @@ export const networkView = {
     }
 
     // ── Legend (link types; meta-links in cluster view carry no types) ──
-    if (this._view === 'cluster') this._legendEl.innerHTML = '';
-    else this._renderLegend(typesInUse, t);
+    if (this._view === 'cluster') renderLegendItems(this._typeLegendEl, []);
+    else this._renderLegend(typesInUse);
   },
 
   // The accessible name of a node: its label, group and number of ties, and
@@ -711,6 +787,18 @@ export const networkView = {
     const n = ties.filter(l => l.source === d.id || l.target === d.id).length;
     const role = anchors.has(d.id) ? (this._view === 'ego' ? 'center' : 'endpoint') : null;
     return [name, d.group, `${n} connection${n === 1 ? '' : 's'}`, role].filter(Boolean).join(' — ');
+  },
+
+  // The accessible name of a tie (K-23), as the flow view names its ties:
+  // its ends, its category and its label. A pair drawn as one line with a
+  // +N badge says how many ties it stands for (of several categories).
+  // `nodeOf` finds an end among the drawn nodes (a community in the cluster
+  // view) or the model.
+  _tieAriaLabel(d, nodeOf) {
+    const name = id => String(nodeOf(id)?.label ?? id);
+    const kind = d._siblings ? null : this._typeInfo(d.type).label;
+    const label = d._siblings ? `${d._siblings.length} ties` : d.label;
+    return [`${name(d.source)} → ${name(d.target)}`, kind, label].filter(v => v != null && v !== '').join(', ');
   },
 
   // ─── Node dragging ────────────────────────────────────────────────────────

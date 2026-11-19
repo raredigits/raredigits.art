@@ -45,6 +45,8 @@
   ];
 
   new RareCharts.DualAxes('#mining-hashrate-profit', {
+    // new Date('2025-02-01') is UTC midnight: name the days in UTC (T-10).
+    timeZone: 'UTC',
     height:   450,
     title:    'The Mining Profitability Rat Race',
     subtitle: 'Feb—Dec 2025 mining performance',
@@ -65,8 +67,11 @@
     timeframes: ['3M', '6M', 'ALL'],
     defaultTimeframe: 'ALL',
 
-    y1Title: 'BTC Price',
+    y1Title: 'Price',   // 'BTC PRICE' outgrows the right gutter on a bare page and on Rare Styles v0.7.1
     y2Title: 'Revenue',
+    // room for the left title in any page font: 'REVENUE' is 58-68px, and the
+    // gutter the narrow $8-$15 ticks need would cut it to 'REVEN…'
+    margin: { left: 80 },
 
     y1TickFormat: v => '$' + d3.format(',.0f')(v),
     y2TickFormat: v => '$' + d3.format(',.0f')(v),
@@ -76,23 +81,22 @@
     y1Domain: [75000, 125000],
     y2Domain: [8, 15],
 
+    // The tooltip's own rows (/charts/settings/#custom-tooltip): the date on
+    // top, then per series its mark (a dot for the bars), name and value.
     tooltipFormat: ({ date, points }) => {
-      const rows = points.map(p => {
-        let display;
-        if (p.name === 'BTC Price') {
-          display = '$' + d3.format(',.0f')(p.value);
-        } else if (p.name === 'Revenue, USD') {
-          display = '$' + d3.format(',.2f')(p.value) + '/day';
-        } else {
-          // BTC Output: un-scale to show actual BTC
-          display = '₿\u202f' + d3.format('.8f')(p.value / BTC_SCALE) + '/day';
-        }
-        return `<div style="color:${p.color}">${p.name}: ${display}</div>`;
-      });
-      return `
-        <div style="color:#888;margin-bottom:4px">${d3.timeFormat('%b %d, %Y')(date)}</div>
-        ${rows.join('')}
-      `;
+      const display = p => {
+        if (p.name === 'BTC Price') return '$' + d3.format(',.0f')(p.value);
+        if (p.name === 'Revenue, USD') return '$' + d3.format(',.2f')(p.value) + '/day';
+        // BTC Output: un-scale to show actual BTC
+        return '₿\u202f' + d3.format('.8f')(p.value / BTC_SCALE) + '/day';
+      };
+      return `<div class="rc-tooltip-header rc-tooltip-muted">${d3.timeFormat('%b %d, %Y')(date)}</div>` +
+        points.map(p => `
+          <div class="rc-tooltip-row">
+            <span class="rc-tooltip-swatch${p.type === 'bar' ? ' rc-tooltip-swatch--dot' : ''}" style="--rc-swatch-color:${p.color}"></span>
+            <span class="rc-tooltip-label">${p.name}</span>
+            <span class="rc-tooltip-value rc-num">${display(p)}</span>
+          </div>`).join('');
     },
   }).setData(series);
 })();

@@ -12,7 +12,7 @@
     source:   'Synthetic demo data (seeded generator)',
     view:     'ego',
     depth:    2,
-    height:   680,
+    height:   714,
     nodeRadius: 10,
     linkTypes: linkPresets.personal,
   }).focus('thiel');

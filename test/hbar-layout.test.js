@@ -1,13 +1,16 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { HierarchicalBar } from '../assets/charts/src/charts/HierarchicalBar.js';
-import { mount, track } from './helpers.js';
+import { mount, track, tooltipOf, setGeometry } from './helpers.js';
 
 // C-28: label placement of HierarchicalBar. From 480px of plot width a row
 // reads name → bar → value (names flush against the bars, one zero line for
 // every bar, values in a right-aligned column); narrower the name keeps its
-// own line above the bar. Depth indents the name only; parents are semibold; branch
-// groups are set apart. jsdom has no text metrics, so widths are the chart's
-// own estimate — these tests check the geometry, the browser test the look.
+// own line above the bar. Depth indents the name only; parents are bold (700, K-15); branch
+// groups are set apart. Every text measures 0 here, as in a page before
+// layout (setGeometry, S-18), so widths are the chart's own estimate from the
+// length — these tests check the geometry, the browser test the look. Each
+// test mounts its own width.
+beforeEach(() => setGeometry({ charWidth: 0 }));
 
 const LONG = 'License agreement with CIC Digital LLC for NFTs and meme coins';
 const tree = {
@@ -32,7 +35,8 @@ const rowsOf = c => [...c.container.querySelectorAll('g.rc-hbar-row')].map(g => 
   return {
     g,
     name:   label.textContent,
-    lines:  [...label.querySelectorAll('tspan')].map(t => t.textContent),
+    // the drawn lines: the space a name broke at is a tspan that is not drawn
+    lines:  [...label.querySelectorAll('tspan')].filter(t => t.getAttribute('display') !== 'none').map(t => t.textContent),
     labelX: +label.getAttribute('x'),
     labelY: +label.getAttribute('y'),
     weight: label.getAttribute('font-weight'),
@@ -96,11 +100,11 @@ describe('HierarchicalBar — side by side on a wide plot (C-28)', () => {
     expect(long.barY - long.labelY).toBeGreaterThan(short.barY - short.labelY);
   });
 
-  it('parents are semibold, name and value; leaves and the missing marker are not', () => {
+  it('parents are bold (700: a weight the self-hosted fonts have), name and value; leaves and the missing marker are not', () => {
     const c = hbar(800);
-    expect(row(c, 'Portfolio').weight).toBe('600');
-    expect(row(c, 'Equities').weight).toBe('600');
-    expect(row(c, 'Equities').valueWeight).toBe('600');
+    expect(row(c, 'Portfolio').weight).toBe('700');
+    expect(row(c, 'Equities').weight).toBe('700');
+    expect(row(c, 'Equities').valueWeight).toBe('700');
     expect(row(c, 'Bonds').weight).toBeNull();
     expect(row(c, 'US Large Cap').valueWeight).toBeNull();
     expect(row(c, 'Cash').valueWeight).toBeNull();
@@ -144,9 +148,9 @@ describe('HierarchicalBar — stacked on a narrow plot (C-28)', () => {
     expect(long.lines.length).toBe(1);
     expect(long.name.endsWith('…')).toBe(true);
     expect(long.name.length).toBeLessThan(LONG.length);
-    const spy = vi.spyOn(c._tooltip, 'show');
     long.g.dispatchEvent(new MouseEvent('mouseenter', { clientX: 5, clientY: 5 }));
-    expect(spy.mock.calls.at(-1)[2]).toContain(LONG);
+    expect(tooltipOf(c).classList.contains('is-visible')).toBe(true);
+    expect(tooltipOf(c).textContent).toContain(LONG);
   });
 
   it('values follow the bar end as before', () => {

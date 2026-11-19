@@ -8,12 +8,34 @@
 // out of Graph.js in 0.9.8_6, D-11, code unchanged): `this` is the chart.
 
 import * as d3 from 'd3';
-import { legendFocus } from './legendFocus.js';
+import { renderLegendItems } from '../core/legend.js';
+
+// The K-06 aliases the Graph and flow legends keep until 0.9.9: the old item
+// and Show all classes, and data-type beside data-key. Page scripts and
+// tests select them.
+export const GRAPH_LEGEND_ALIAS = Object.freeze({
+  item: 'rc-graph-legend-item', reset: 'rc-graph-legend-reset', dataType: true,
+});
+
+// The ego legend's "nothing shown": an empty traversal filter, which only
+// the legend makes — setRelationTypes([]) still means every type.
+export const NO_RELATION_TYPES = Symbol('no relation types');
+
+// The dash a tie category's legend swatch shows: the type's own `dash` when
+// the drawing draws one, else null. The drawing writes `dash` to
+// stroke-dasharray as given, which is solid for anything but a list of
+// lengths with some length in it ('solid', a word, '0').
+export function drawnDash(dash) {
+  const list = Array.isArray(dash) ? dash.map(String)
+    : typeof dash === 'string' || typeof dash === 'number' ? String(dash).trim().split(/[\s,]+/) : [];
+  const lengths = list.map(v => (/^(\d+\.?\d*|\.\d+)(px)?$/i.test(v.trim()) ? parseFloat(v) : NaN));
+  return lengths.length && lengths.every(Number.isFinite) && lengths.some(v => v > 0) ? dash : null;
+}
 
 export const graphChrome = {
   _initGraphChrome() {
-    // The hidden-nodes list is positioned against the chart card.
-    this.container.style.position = 'relative';
+    // The "+N more" list is positioned against the card, which
+    // rare-charts.css makes relative (.rc-chart): no inline position (X-11).
     this._breadcrumbsEl = document.createElement('nav');
     this._breadcrumbsEl.className = 'rc-graph-breadcrumbs';
     this._breadcrumbsEl.setAttribute('aria-label', 'Graph navigation');
@@ -89,7 +111,7 @@ export const graphChrome = {
     // The legend and breadcrumbs above the drawing stop where the panel
     // begins, so they never run under it.
     const clear = side ? `${width + 12}px` : '';
-    if (this._legendEl) this._legendEl.style.marginRight = clear;
+    if (this._typeLegendEl) this._typeLegendEl.style.marginRight = clear;
     if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
     // The navigator under the drawing spans the drawing, not the panel.
     if (this._navigatorEl) this._navigatorEl.style.marginRight = clear;
@@ -145,10 +167,8 @@ export const graphChrome = {
   // covered the bottom row. A chart without source/note gets a footer row
   // just for them.
   _initTools() {
-    const t = this.theme;
     const tools = document.createElement('div');
     tools.className = 'rc-graph-tools';
-    this._toolsEl = tools;
 
     const mkButton = (label, title, fn, cls = '') => {
       const b = document.createElement('button');
@@ -156,11 +176,8 @@ export const graphChrome = {
       b.textContent = label;
       b.title = title;
       b.setAttribute('aria-label', title);
-      if (cls) b.className = cls;
-      b.style.cssText =
-        `height:26px;min-width:26px;padding:0 6px;border:1px solid ${t.border ?? t.muted};` +
-        `border-radius:4px;background:${t.bg ?? '#fff'};color:${t.text};` +
-        'font-size:14px;line-height:1;cursor:pointer;';
+      // the look is the stylesheet's, in the card's tokens (X-11)
+      b.className = cls ? `rc-graph-tool ${cls}` : 'rc-graph-tool';
       b.addEventListener('click', fn);
       return b;
     };
@@ -193,7 +210,6 @@ export const graphChrome = {
         }),
       );
       tools.appendChild(zoom);
-      this._zoomControlsEl = zoom;
     }
 
     if (this.options.fullscreen !== false) {
@@ -243,62 +259,93 @@ export const graphChrome = {
   },
 
   // ─── Legend ───────────────────────────────────────────────────────────────
+  // The relation-type legend, drawn by the one legend builder (core/legend.js,
+  // D-04) like every RareCharts legend. In the ego view each known type is a
+  // toggle, and the toggles drive the traversal (K-05): a click, Enter or
+  // Space turns a type off or on, a double click keeps only that type and a
+  // second double click brings all back, "Show all" shows while a type is
+  // off. The path view lists the types on screen as plain labels — buttons
+  // that did nothing would read as broken, and the accumulated catalogue
+  // would list types the canvas doesn't show. The builder updates the items
+  // in place, so a focused item keeps focus through every redraw and
+  // re-query (R-16).
 
-  _renderLegend(typesInUse, t) {
-    if (!this._legendEl) return;
+  _renderLegend(typesInUse) {
+    const el = this._typeLegendEl;
+    if (!el) return;
     typesInUse.forEach(type => this._knownTypes.add(String(type)));
-    // The filter only drives the ego traversal. In the path view the legend
-    // is a static caption of the types on screen — clickable items that do
-    // nothing would read as broken, and the accumulated catalogue would list
-    // types the canvas doesn't show.
-    const filterable = this._view === 'ego';
-    const available = filterable && this._knownTypes.size
-      ? [...this._knownTypes] : typesInUse.map(String);
-    const items = available
-      .map(type => ({ ...this._typeInfo(type), type }));
-    const active = filterable ? this._relationTypes : null;
-    const refocus = legendFocus(this._legendEl);
-    this._legendEl.replaceChildren();
-    items.forEach(item => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'rc-legend-item rc-graph-legend-item';
-      button.dataset.type = item.type;
-      const selected = !active || active.has(item.type);
-      if (filterable) button.setAttribute('aria-pressed', String(selected));
-      button.style.opacity = selected ? '1' : '0.35';
-      button.disabled = !filterable || this.options.interactiveLegend === false;
-      button.innerHTML = `<svg width="22" height="12" aria-hidden="true">
-        <line x1="1" y1="6" x2="21" y2="6" stroke="${item.color}"
-          stroke-width="2" ${item.dash ? `stroke-dasharray="${item.dash}"` : ''}/>
-      </svg><span></span>`;
-      button.querySelector('span').textContent = item.label ?? item.type;
-      button.addEventListener('click', event => this._toggleRelationType(item.type, event));
-      this._legendEl.appendChild(button);
+    const ego = this._view === 'ego';
+    const interactive = ego && this.options.legendInteractive !== false;
+    const keys = ego && this._knownTypes.size ? [...this._knownTypes] : typesInUse.map(String);
+    const shown = ego ? this._legendShownTypes() : null;
+    let items = keys.map(type => {
+      const info = this._typeInfo(type);
+      const dash = drawnDash(info.dash);
+      return {
+        key: type, label: info.label ?? type, color: info.color,
+        mark: dash ? 'dashed' : 'line', dash, on: !shown || shown.has(type),
+      };
     });
-
-    if (active) {
-      const reset = document.createElement('button');
-      reset.type = 'button';
-      reset.className = 'rc-graph-legend-reset';
-      reset.textContent = 'Show all';
-      reset.addEventListener('click', () => this.clearRelationTypes());
-      this._legendEl.appendChild(reset);
-    }
-    refocus();
+    // A static ego legend (legendInteractive: false) names the types the
+    // view traverses, not the ones it skips.
+    if (!interactive) items = items.filter(item => item.on);
+    this._typeLegendKeys = interactive ? keys : [];
+    renderLegendItems(el, items, {
+      interactive,
+      busy: !!this._legendPending,
+      alias: GRAPH_LEGEND_ALIAS,
+      onToggle: info => this._relationLegendGesture(info),
+    });
   },
 
-  _toggleRelationType(type, event) {
-    if (this.options.interactiveLegend === false) return;
-    const multi = event.shiftKey || event.ctrlKey || event.metaKey;
-    if (!multi) {
-      const onlyThis = this._relationTypes?.size === 1 && this._relationTypes.has(type);
-      this.setRelationTypes(onlyThis ? null : [type]);
-      return;
-    }
-    const next = new Set(this._relationTypes ?? this._knownTypes);
-    if (next.has(type)) next.delete(type); else next.add(type);
-    this.setRelationTypes(next.size === this._knownTypes.size || next.size === 0 ? null : [...next]);
+  // The types the ego legend shows on: those of a legend gesture whose
+  // re-query is still pending (the builder wrote them at once, and a redraw
+  // meanwhile must not flip them back), else the traversal filter. null:
+  // every type.
+  _legendShownTypes() {
+    return this._legendPending ? this._legendPending.shown : this._relationTypes;
+  },
+
+  // A committed gesture on the ego legend (the builder's onToggle). The types
+  // it leaves on become the traversal filter (K-05): all → no filter, none →
+  // the legend's own "nothing shown", the root alone without a source call
+  // (spec decision 26), else the list. The view re-queries around its root,
+  // which is read when the query runs; aria-busy sits on the legend until
+  // then, and onLegendToggle fires after it. `replaces`: the second click of
+  // a double click whose first click already re-queried — its breadcrumb
+  // takes over that click's instead of adding one.
+  _relationLegendGesture({ kind, key, visibleKeys, replaces }) {
+    if (this._destroyed) return;
+    const keys = this._typeLegendKeys ?? [];
+    const on = new Set(visibleKeys);
+    const visible = keys.filter(k => on.has(k));
+    const shown = kind === 'showAll' || visible.length === keys.length ? null : new Set(visible);
+    const pending = { shown };
+    const gen = this._dataGen;
+    this._legendPending = pending;
+    this._typeLegendEl?.setAttribute('aria-busy', 'true');
+    this._enqueue(async () => {
+      if (gen !== this._dataGen) return;   // new data came first: this legend is gone
+      const types = shown == null ? null : shown.size ? [...shown] : NO_RELATION_TYPES;
+      if (this._view === 'ego' && this._root != null) {
+        await this._focusTask(this._root, { types, legend: { replaces: !!replaces } });
+      } else {
+        this._setRelationTypesState(types);
+        this.render();
+      }
+    });
+    this._enqueue(() => {
+      if (this._legendPending === pending) {
+        this._legendPending = null;
+        this._typeLegendEl?.removeAttribute('aria-busy');
+      }
+      if (gen !== this._dataGen) return;
+      this._emit(this.options.onLegendToggle, {
+        name: kind === 'showAll' ? null : key,
+        visible: kind === 'toggle' ? on.has(key) : true,
+        visibleNames: [...this._knownTypes].filter(type => !this._relationTypes || this._relationTypes.has(type)),
+      });
+    });
   },
 
   // ─── "+N more" list ───────────────────────────────────────────────────────

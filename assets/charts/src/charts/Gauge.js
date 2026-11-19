@@ -32,7 +32,7 @@
 //   centerLabel  — secondary label below centerText (default: none)
 //
 //   animate      — animate fill on first render (default: true)
-//   duration     — animation duration ms (default: 800)
+//   duration     — animation duration ms (default: 650)
 //   ease         — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //
 //   tooltipFormat — function({ value, max, min, percent, color }) => html;
@@ -41,11 +41,9 @@
 
 import * as d3 from 'd3';
 import { Chart }       from '../core/Chart.js';
-import { Tooltip }     from '../core/Tooltip.js';
 import { resolveEase, motionDuration } from '../core/utils.js';
-import { EntryMotion } from '../core/entryMotion.js';
-import { applySvgA11y } from '../core/renderHelpers.js';
-import { escapeHtml, tipMuted } from '../core/html.js';
+import { EntryMotion, ENTRY_DURATION } from '../core/entryMotion.js';
+import { escapeHtml, tipNum, tipRow } from '../core/html.js';
 
 export class Gauge extends Chart {
   constructor(selector, options = {}) {
@@ -62,7 +60,10 @@ export class Gauge extends Chart {
     // carries it on to the current value (C-16). _sweep: the angle reached.
     this._entry        = new EntryMotion();
     this._sweep        = null;
-    this._tooltip      = new Tooltip(this.container, this.theme);
+    this.tooltip;   // made now: its element keeps its place in the card
+    // The dial stands in the middle of the card, its title and source over
+    // and under it (rare-charts.css)
+    this.container.classList.add('rc-chart--gauge');
 
     this._initSVG();
   }
@@ -89,13 +90,7 @@ export class Gauge extends Chart {
   // ─── Init ─────────────────────────────────────────────────────────────────
 
   _initSVG() {
-    this.container.style.height = this.options.height + 'px';
-
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width',  '100%')
-      .attr('height', '100%');
-    applySvgA11y(this.svg, this.options);
+    this._createSvg();
 
     this.gArc    = this.svg.append('g').attr('class', 'rc-gauge-arc');
     this.gNeedle = this.svg.append('g').attr('class', 'rc-gauge-needle');
@@ -116,7 +111,7 @@ export class Gauge extends Chart {
     const endAngle   = o.endAngle    ??  Math.PI * 0.75;   // +135°
     const thickness  = o.thickness   ?? 0.18;
     const cornerR    = o.cornerRadius ?? 6;
-    const duration   = motionDuration(o.duration ?? 800);
+    const duration   = motionDuration(o.duration ?? ENTRY_DURATION);
     const ease       = resolveEase(o.ease ?? 'cubicOut');
     const phase      = this._entry.phase((o.animate ?? true) ? duration : 0);
 
@@ -252,11 +247,14 @@ export class Gauge extends Chart {
     const pct = fraction;
     // The role fields (K-09): the tooltip payload, and centerText's last
     // argument.
-    const role = { value: this._value, max: this._max, min: this._min, percent: pct, color: fillColor };
+    const role = { value: this._value, max: this._max, min: this._min, percent: pct, color: this._hex(fillColor) };
     const tooltipHtml = o.tooltipFormat
       ? o.tooltipFormat({ ...role })
-      : `<div>${d3.format('.1%')(pct)}</div>
-         ${tipMuted(`${escapeHtml(this._value)} / ${escapeHtml(this._max)}`)}`;
+      // the fill's dot and the share, the value of the maximum under it (RC-082)
+      : tipRow('', d3.format('.1%')(pct), {
+        swatch: 'dot', color: role.color,
+        note: tipNum(`${escapeHtml(this._value)} / ${escapeHtml(this._max)}`),
+      });
 
     this.gArc.selectAll('path')
       .on('mousemove', (event) => {

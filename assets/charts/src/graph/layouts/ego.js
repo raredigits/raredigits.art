@@ -8,7 +8,8 @@
 // first — and its nodes fill cells starting from the anchor and growing
 // toward the center: deepest connections claim the far corner, first-ring
 // ones end up nearest the ego. No arcs, no simulation — a tidy table where
-// distance from the center still reads as degrees of separation.
+// distance from the center still reads as degrees of separation. (The polar
+// layout it replaced turned a dense first ring to mush.)
 //
 // One dominant category (> 80% of the nodes) has no corners to share — the
 // grid would pile it into a single corner. Then that category is anchored at
@@ -19,7 +20,7 @@
 // Returns { positions: Map<id, {x, y, depth}>,
 //           sectors:   [{ key, angle, x, y }] }  — category caption anchors.
 
-const linkW = l => l.weight ?? l.strength ?? 0.5;
+import { linkWeight } from '../../core/links.js';
 
 // Cell rule shared with the Graph's capacity cap: a node and its label need
 // ~96 px across and ~50 px down once the used rows are spread over the
@@ -87,7 +88,7 @@ export function egoLayout({ nodes = [], links = [] } = {}, {
     if ((n.depth ?? 0) === 0) return;
     const candidates = (adjacency.get(n.id) ?? [])
       .filter(({ other }) => (byId.get(other)?.depth ?? Infinity) === n.depth - 1)
-      .sort((a, b) => (linkW(b.link) - linkW(a.link)) || (a.other < b.other ? -1 : 1));
+      .sort((a, b) => (linkWeight(b.link) - linkWeight(a.link)) || (a.other < b.other ? -1 : 1));
     if (candidates[0]) parentOf.set(n.id, candidates[0]);
   });
   const typeKey = id => {

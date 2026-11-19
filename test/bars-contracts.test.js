@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
 import { HierarchicalBar } from '../assets/charts/src/charts/HierarchicalBar.js';
 import { DualAxes } from '../assets/charts/src/charts/DualAxes.js';
 import { createTheme } from '../assets/charts/src/core/theme.js';
-import { mount, track } from './helpers.js';
+import { mount, track, tooltipOf, setGeometry } from './helpers.js';
 
 // Documented promises of the bar charts that the code now keeps (O-10 §8,
 // step 6): Bar's view controls only on a date axis, yPrefix/ySuffix in every
@@ -133,13 +133,11 @@ const widths = c => [...c.container.querySelectorAll('.rc-hbar-bar')].map(r => r
 
 // The default tooltip of the row labelled `label`: its last line is the share.
 const shareOf = (c, label) => {
-  const spy = vi.spyOn(c._tooltip, 'show');
   const row = [...c.container.querySelectorAll('g.rc-hbar-row')]
     .find(g => g.querySelector('.rc-hbar-label').textContent === label);
   row.dispatchEvent(new MouseEvent('mouseenter', { clientX: 10, clientY: 10 }));
-  const html = spy.mock.calls.at(-1)[2];
-  spy.mockRestore();
-  return html.match(/([\d.]+%)/)?.[1] ?? null;
+  expect(tooltipOf(c).classList.contains('is-visible')).toBe(true);
+  return tooltipOf(c).lastElementChild.textContent.match(/([\d.]+%)/)?.[1] ?? null;
 };
 
 describe('HierarchicalBar — each dataset grows in', () => {
@@ -151,6 +149,8 @@ describe('HierarchicalBar — each dataset grows in', () => {
 });
 
 describe('HierarchicalBar — tooltip share is of the total', () => {
+  // Rows are found by their drawn label: keep it whole (no text width).
+  beforeEach(() => setGeometry({ width: 800, height: 400, charWidth: 0 }));
   it('root shown: a child is its share of the root', () => {
     expect(shareOf(hbar({ animate: false }, portfolio), 'Equities')).toBe('60.0%');
   });
@@ -236,7 +236,7 @@ describe('DualAxes — date ticks on a short span do not repeat (E-03)', () => {
   it('three days: one label per day', () => {
     layoutLabels();
     const labels = xLabels(dual({}, [line(days(3))]));
-    expect(labels).toEqual(['01/01', '01/02', '01/03']);
+    expect(labels).toEqual(['Jan 01', 'Jan 02', 'Jan 03']);   // by the span (K-10), was '01/01'
   });
 
   it('a week: still no repeated date', () => {
@@ -255,7 +255,7 @@ describe('DualAxes — date ticks on a short span do not repeat (E-03)', () => {
 
 describe('step 6 review — plot height and day ticks', () => {
   // jsdom has no layout: the strip reports a height only while it is shown.
-  const strip = c => Object.defineProperty(c._navigatorEl, 'offsetHeight',
+  const strip = c => Object.defineProperty(c.container.querySelector('.rc-chart-navigator'), 'offsetHeight',
     { configurable: true, get() { return this.style.display === 'none' ? 0 : 60; } });
   const axisY = c => c.gAxisX.attr('transform');
 
@@ -277,11 +277,14 @@ describe('step 6 review — plot height and day ticks', () => {
     ({ date: new Date(+from + i * 36e5), value: 10 + (i % 5) }));
   const xLabels = c => [...c.gAxisX.selectAll('.tick text').nodes()].map(n => n.textContent);
   it.each([
-    ['36h across one midnight', new Date(2026, 0, 1, 8), 36, ['01/02']],
-    ['20h inside one day',      new Date(2026, 0, 5, 2), 20, ['01/05']],
-    ['26h across two midnights', new Date(2026, 0, 1, 23), 26, ['01/02', '01/03']],
-  ])('DualAxes default date ticks, %s: one label per midnight, never none, never repeated', (_n, from, h, want) => {
+    ['36h across one midnight', new Date(2026, 0, 1, 8), 36, ['Jan 02']],
+    ['20h inside one day',      new Date(2026, 0, 5, 2), 20, []],
+    ['26h across two midnights', new Date(2026, 0, 1, 23), 26, ['Jan 02', 'Jan 03']],
+  ])('DualAxes default date ticks by the span (K-10), %s: hours, a midnight named by its day, never none', (_n, from, h, days) => {
     const c = track(new DualAxes(mount(null), { animate: false })).setData([{ name: 's', values: hourly(from, h) }]);
-    expect(xLabels(c)).toEqual(want);
+    const labels = xLabels(c);
+    expect(labels.length).toBeGreaterThan(0);                                   // never none
+    expect(labels.filter(l => /^[A-Z][a-z]{2} \d\d$/.test(l))).toEqual(days);      // each midnight names its day
+    expect(labels.every(l => /^[A-Z][a-z]{2} \d\d$|^\d\d:\d\d$/.test(l))).toBe(true);   // the rest, the hour
   });
 });

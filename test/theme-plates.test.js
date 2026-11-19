@@ -10,7 +10,9 @@ import { mount, track } from './helpers.js';
 // (the undocumented theme.service, white in every theme) and the navigator's
 // brush tints (hard-coded black) — C-12. And theme.bg / the map ocean, which
 // read the host's --bg-color without a fallback — C-13 (every host variable
-// in the themes is checked in charts-css.test.js).
+// in the themes is checked in charts-css.test.js). Since RC-014 the chart
+// draws role colours as references to its card's tokens (core/paint.js):
+// var(--rc-bg, <literal>), the theme's own value published on the card.
 
 const monthly = (year, months = 12) => Array.from({ length: months }, (_, i) => ({
   date: new Date(year, i, 15), value: 10 + i,
@@ -24,7 +26,7 @@ describe('theme tokens (C-12, C-13)', () => {
   });
 
   it('bg reads the page background and falls back to white without one', () => {
-    expect(defaultTheme.bg).toBe('var(--bg-color, #ffffff)');
+    expect(defaultTheme.bg).toBe('var(--chart-bg, var(--bg-color, #ffffff))');
     expect(darkTheme.bg).toBe('#0a0a0a');
   });
 
@@ -49,17 +51,19 @@ const plates = c => {
 describe('the plate behind a last-value label is the chart background (C-12)', () => {
   it.each(END_CHARTS)('%s: darkTheme draws dark plates, not white ones', (_n, make, shape) => {
     const c = track(make({ theme: darkTheme })).setData(shape(monthly(2023)));
-    plates(c).forEach(fill => expect(fill).toBe(darkTheme.bg));
+    plates(c).forEach(fill => expect(fill).toBe('var(--rc-bg, #0a0a0a)'));
+    expect(c.container.style.getPropertyValue('--rc-bg')).toBe(darkTheme.bg);
   });
 
   it.each(END_CHARTS)('%s: a custom theme.bg paints the plates', (_n, make, shape) => {
     const c = track(make({ theme: { bg: '#123456' } })).setData(shape(monthly(2023)));
-    plates(c).forEach(fill => expect(fill).toBe('#123456'));
+    plates(c).forEach(fill => expect(fill).toBe('var(--rc-bg, #123456)'));
+    expect(c.container.style.getPropertyValue('--rc-bg')).toBe('#123456');
   });
 
   it.each(END_CHARTS)('%s: the default theme plate is theme.bg, white without a host stylesheet', (_n, make, shape) => {
     const c = track(make({})).setData(shape(monthly(2023)));
-    plates(c).forEach(fill => expect(fill).toBe('var(--bg-color, #ffffff)'));
+    plates(c).forEach(fill => expect(fill).toBe('var(--rc-bg, #ffffff)'));
   });
 });
 
@@ -80,9 +84,10 @@ describe('the navigator brush tints follow the theme (C-12)', () => {
   it.each(NAV_CHARTS)('%s: darkTheme tints the strip and the window with darkTheme.text', (_n, make, shape) => {
     const c = track(make({ navigator: true, theme: darkTheme })).setData(shape(monthly(2023)));
     const { selection, overlay } = navOf(c);
-    expect(overlay.getAttribute('fill')).toBe(darkTheme.text);
+    expect(c.theme.text).toBe(`var(--rc-text, ${darkTheme.text})`);
+    expect(overlay.getAttribute('fill')).toBe(c.theme.text);
     expect(overlay.getAttribute('fill-opacity')).toBe('0.2');
-    expect(selection.getAttribute('fill')).toBe(darkTheme.text);
+    expect(selection.getAttribute('fill')).toBe(c.theme.text);
     expect(selection.getAttribute('fill-opacity')).toBe('0.015');
   });
 
@@ -96,17 +101,17 @@ describe('the navigator brush tints follow the theme (C-12)', () => {
     const c = track(new Line(mount(null), { animate: false, navigator: true, theme: { text: '#123456' } }))
       .setData(monthly(2023));
     const { selection, overlay } = navOf(c);
-    expect(overlay.getAttribute('fill')).toBe('#123456');
-    expect(selection.getAttribute('fill')).toBe('#123456');
+    expect(overlay.getAttribute('fill')).toBe('var(--rc-text, #123456)');
+    expect(selection.getAttribute('fill')).toBe('var(--rc-text, #123456)');
   });
 
   it("the default theme keeps today's look: black, 20 % over the strip, 1.5 % in the window", () => {
     const c = track(new Line(mount(null), { animate: false, navigator: true })).setData(monthly(2023));
     const { selection, overlay } = navOf(c);
-    expect(defaultTheme.text).toBe('#000000');
-    expect(overlay.getAttribute('fill')).toBe('#000000');
+    expect(defaultTheme.text).toBe('var(--chart-text-color, #000000)');
+    expect(overlay.getAttribute('fill')).toBe('var(--rc-text, #000000)');
     expect(+overlay.getAttribute('fill-opacity')).toBe(0.2);         // was rgba(0,0,0,0.2)
-    expect(selection.getAttribute('fill')).toBe('#000000');
+    expect(selection.getAttribute('fill')).toBe('var(--rc-text, #000000)');
     expect(+selection.getAttribute('fill-opacity')).toBe(0.015);     // was rgba alpha 0.05 × d3's 0.3
   });
 
@@ -117,15 +122,16 @@ describe('the navigator brush tints follow the theme (C-12)', () => {
     expect(selection.getAttribute('stroke')).toBe('#ff00ff');
     expect(handles.length).toBeGreaterThan(0);
     handles.forEach(h => expect(h.getAttribute('fill')).toBe('#ff00ff'));
-    expect(selection.getAttribute('fill')).toBe(darkTheme.text);
-    expect(overlay.getAttribute('fill')).toBe(darkTheme.text);
+    expect(selection.getAttribute('fill')).toBe(c.theme.text);
+    expect(overlay.getAttribute('fill')).toBe(c.theme.text);
   });
 
   it('a standalone Overview takes its tints from its own theme', () => {
     const ov = new Overview(mount(null), { theme: { text: '#123456' } }).setData(monthly(2023), () => {});
     track({ destroy: () => ov.destroy() });
     const { selection, overlay } = brush(ov.container);
-    expect(overlay.getAttribute('fill')).toBe('#123456');
-    expect(selection.getAttribute('fill')).toBe('#123456');
+    expect(overlay.getAttribute('fill')).toBe('var(--rc-text, #123456)');
+    expect(selection.getAttribute('fill')).toBe('var(--rc-text, #123456)');
+    expect(ov.container.style.getPropertyValue('--rc-text')).toBe('#123456');
   });
 });

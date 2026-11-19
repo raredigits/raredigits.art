@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { defaultTheme, darkTheme, createTheme } from '../assets/charts/src/core/theme.js';
+import { linkPresets } from '../assets/charts/src/charts/presets/linkPresets.js';
+import { chainLiteral } from '../assets/charts/src/core/paint.js';
 
 describe('createTheme', () => {
   it('returns the defaults when given no overrides', () => {
@@ -86,9 +88,57 @@ describe('darkTheme', () => {
 // same, and the chart and its tooltip agree in both presets.
 describe('tooltip.muted', () => {
   it('equals the chart muted in the light and the dark preset', () => {
-    expect(defaultTheme.tooltip.muted).toBe('#666666');
-    expect(defaultTheme.tooltip.muted).toBe(defaultTheme.muted);
+    expect(chainLiteral(defaultTheme.tooltip.muted)).toBe('#666666');
+    expect(chainLiteral(defaultTheme.tooltip.muted)).toBe(chainLiteral(defaultTheme.muted));
     expect(darkTheme.tooltip.muted).toBe(darkTheme.muted);
+  });
+});
+
+// RC-014: a default colour is a chain — the page's --chart-* token, then the
+// literal (rare-charts.css declares the same on .rc-chart, charts-css.test.js
+// keeps them in step); null marks a derived one. darkTheme stays plain.
+describe('RC-014: the default colours are token chains', () => {
+  it('each role, the accent, the palette, the map and the tooltip behind its --chart-* token', () => {
+    expect(defaultTheme).toMatchObject({
+      bg:        'var(--chart-bg, var(--bg-color, #ffffff))',
+      surface:   null,
+      grid:      'var(--chart-grid-color, #e4e4e4)',
+      border:    'var(--chart-axis-color, #cccccc)',
+      crosshair: '#aaaaaa',
+      text:      'var(--chart-text-color, #000000)',
+      muted:     'var(--chart-label-color, #666666)',
+      accent:    'var(--chart-series-1, #1677ff)',
+    });
+    expect(defaultTheme.colors).toEqual([1, 2, 3, 4, 5, 6].map((n, i) =>
+      `var(--chart-series-${n}, ${['#1677ff', '#fa8c16', '#00c97a', '#ffcc00', '#cc44ff', '#ff0000'][i]})`));
+    expect(defaultTheme.map).toEqual({
+      matchFill: null, unmatchedFill: 'var(--chart-grid-color, #e8e8e8)', ocean: 'transparent',
+      border: 'var(--chart-bg, #ffffff)', hoverBrighten: 1.3, graticule: null,
+    });
+    expect(defaultTheme.tooltip).toEqual({
+      bg: 'var(--chart-tooltip-bg, #ffffff)', border: 'var(--chart-tooltip-border, #e4e4e4)',
+      text: 'var(--chart-tooltip-text, #000000)', muted: 'var(--chart-tooltip-muted, #666666)',
+      shadow: 'var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10))', header: { text: null, bg: null },
+    });
+  });
+
+  it('the literals at their ends are the 0.9.8_7 look (RC-064)', () => {
+    const lit = k => chainLiteral(defaultTheme[k]);
+    expect(['bg', 'grid', 'border', 'crosshair', 'text', 'muted', 'accent'].map(lit))
+      .toEqual(['#ffffff', '#e4e4e4', '#cccccc', '#aaaaaa', '#000000', '#666666', '#1677ff']);
+    expect(chainLiteral(defaultTheme.map.unmatchedFill)).toBe('#e8e8e8');
+    expect(chainLiteral(defaultTheme.map.border)).toBe('#ffffff');
+  });
+
+  it('darkTheme is plain colours, its surface its own; createTheme({}, darkTheme) is darkTheme', () => {
+    for (const k of ['bg', 'surface', 'grid', 'border', 'crosshair', 'text', 'muted', 'accent']) {
+      expect(darkTheme[k], k).toMatch(/^#[0-9a-f]{6}$/);
+    }
+    expect(darkTheme.surface).toBe('#141414');
+    expect(Object.values(darkTheme.tooltip).filter(v => typeof v === 'string').join(' ')).not.toMatch(/var\(/);
+    expect(darkTheme.map.graticule).toBe('rgba(255,255,255,0.06)');
+    expect(darkTheme.colors).toBe(defaultTheme.colors);      // the palette chains, inherited
+    expect(createTheme({}, darkTheme)).toEqual(darkTheme);
   });
 });
 
@@ -102,5 +152,59 @@ describe('font fallbacks', () => {
   it('numericFont falls back through system monospace faces', () => {
     expect(defaultTheme.numericFont).toBe('var(--rc-font-family-numeric, "Cousine", ui-monospace, '
       + 'SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace)');
+  });
+});
+
+// The palette agreed with Rare Styles (DECISIONS §7, 2026-11-17): #1677ff is
+// series 1 and the accent, the light blue #00aaff is gone everywhere, and the
+// orange #ff6200 stays only as the dark theme's accent (the owner, question 2:
+// elsewhere it becomes the palette orange #fa8c16).
+describe('the palette', () => {
+  const PALETTE = ['#1677ff', '#fa8c16', '#00c97a', '#ffcc00', '#cc44ff', '#ff0000'];
+  const text = o => JSON.stringify(o).toLowerCase();
+
+  it('the series in order; series 1 is the accent', () => {
+    expect(defaultTheme.colors.map(chainLiteral)).toEqual(PALETTE);
+    expect(defaultTheme.accent).toBe(defaultTheme.colors[0]);
+  });
+
+  it('the grid and the tooltip border are #e4e4e4', () => {
+    expect(chainLiteral(defaultTheme.grid)).toBe('#e4e4e4');
+    expect(chainLiteral(defaultTheme.tooltip.border)).toBe('#e4e4e4');
+  });
+
+  it('map.matchFill is null in both presets: regions with data take the accent', () => {
+    expect(defaultTheme.map.matchFill).toBeNull();
+    expect(darkTheme.map.matchFill).toBeNull();
+    expect(createTheme({ accent: '#123456' }).map.matchFill).toBeNull();
+  });
+
+  it('darkTheme keeps its orange accent and takes the palette', () => {
+    expect(darkTheme.accent).toBe('#ff6200');
+    expect(darkTheme.colors.map(chainLiteral)).toEqual(PALETTE);
+  });
+
+  it('no #00aaff in either preset; #ff6200 only as the dark accent', () => {
+    expect(text(defaultTheme)).not.toMatch(/#00aaff|#ff6200/);
+    expect(text({ ...darkTheme, accent: null })).not.toMatch(/#00aaff|#ff6200/);
+  });
+
+  it('each link preset has the palette blue and orange once, and no two types share a colour', () => {
+    for (const [name, set] of Object.entries(linkPresets)) {
+      const colors = Object.values(set).map(t => t.color.toLowerCase());
+      expect(colors.filter(c => c === '#1677ff'), name).toHaveLength(1);
+      expect(colors.filter(c => c === '#fa8c16'), name).toHaveLength(1);
+      expect(new Set(colors).size, name).toBe(colors.length);
+    }
+    expect(text(linkPresets)).not.toMatch(/#00aaff|#ff6200/);
+  });
+});
+
+// RC-011: the theme keys no chart read are gone.
+describe('RC-011: positive, negative and fontSize', () => {
+  it('are not in the presets or a created theme', () => {
+    for (const t of [defaultTheme, darkTheme, createTheme()]) {
+      for (const k of ['positive', 'negative', 'fontSize']) expect(t, k).not.toHaveProperty(k);
+    }
   });
 });

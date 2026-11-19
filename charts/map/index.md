@@ -10,7 +10,10 @@ The Map chart renders geographic data as a choropleth or region-highlight ma
 
 Common examples include visited countries, regional performance, market presence, or anything else where geography matters more than a precise number. To draw flows between places — capital, goods, influence — use [Map Flows](/charts/map/flow/).
 
-<div id="map-europe-visited" class="panel panel--bordered text-content-caption"></div>
+<div class="panel panel--bordered text-content-caption">
+    <div id="map-europe-visited"></div>
+    <p class="callout" id="map-europe-picked" aria-live="polite">Click a visited country.</p>
+</div>
 
 Map charts combine two ingredients:
 
@@ -84,8 +87,8 @@ These files use <a href="https://en.wikipedia.org/wiki/ISO_3166-1_numeric">ISO 3
 Each item in the data array identifies a geographic feature and optionally carries a value and color:
 
 <pre class="text-content-caption"><code>chart.setData([
-    { id: '250', label: 'France',  color: '#00aaff' },
-    { id: '276', label: 'Germany', color: '#00aaff' },
+    { id: '250', label: 'France',  color: '#1677ff' },
+    { id: '276', label: 'Germany', color: '#1677ff' },
     { id: '380', label: 'Italy',   value: 42 },
 ]);</code></pre>
 
@@ -132,24 +135,42 @@ For a choropleth map, you will typically compute colors yourself using a scale
 
 Hovering a region with data lightens it: its fill moves `theme.map.hoverBrighten − 1` of the way towards white (`1.3`, so 30%; dark `1.2`) — black lightens too and nothing turns pure white, while a fill already very light (lightness above 0.85) darkens a little instead, so each color of a choropleth gets its own lighter shade. Set `hoverFill` for one fixed hover color instead, or `hoverBrighten: 1` in the theme to turn the effect off. Regions without data do not react.
 
-Default colors come from the theme's `map` section — `RareCharts.defaultTheme.map` and `RareCharts.darkTheme.map`: `matchFill` (`#00aaff`; dark `#ff6200`), `unmatchedFill` (`#e8e8e8`; dark `#1e1e2e`), `border` (`#ffffff`; dark `#444455`), `ocean` (`transparent`), `hoverBrighten` (`1.3`; dark `1.2`) and `graticule` (`rgba(0,0,0,0.08)`; dark `rgba(255,255,255,0.06)`). The theme's `accent`, `surface` and `border` are only fallbacks for a theme without them, so changing `accent` alone does not recolor a map. In most cases it is better to set them once in the theme — `createTheme({ map: { matchFill: '#ff6200' } })` — than in every chart instance.
+Default colors come from the theme's `map` section — `RareCharts.defaultTheme.map` and `RareCharts.darkTheme.map`: `matchFill` (`null`: the accent, `#1677ff`; dark `#ff6200`), `unmatchedFill` (`#e8e8e8`, or the page's `--chart-grid-color`; dark `#1e1e2e`), `border` (`#ffffff`, or the page's `--chart-bg`; dark `#444455`), `ocean` (`transparent`), `hoverBrighten` (`1.3`; dark `1.2`) and `graticule` (`null`: the text at 8%; dark `rgba(255,255,255,0.06)`). With `matchFill` left `null`, changing `accent` recolors a map too. In most cases it is better to set them once in the theme — `createTheme({ map: { matchFill: '#fa8c16' } })` — than in every chart instance.
 
 ## Tooltip
 
-The default tooltip shows the region name and, if present, the `value` for every region on the map, including regions with no matching data item.
+The default tooltip shows a region with a `value` as a row — a dot in its fill, its name and the value — and a region without one by its name, for every region on the map, including regions with no matching data item.
 
 If you need something more specific, override it:
 
-<pre class="text-content-caption"><code>tooltipFormat: ({ feature, item }) => `
-    &lt;strong&gt;${item?.label ?? feature.properties.name}&lt;/strong&gt;
-    &lt;div&gt;Revenue: $${item?.value?.toLocaleString()}&lt;/div&gt;
+<pre class="text-content-caption"><code>tooltipFormat: ({ label, value, color }) => `
+    &lt;div class="rc-tooltip-row"&gt;
+        &lt;span class="rc-tooltip-swatch rc-tooltip-swatch--dot" style="--rc-swatch-color:${color}"&gt;&lt;/span&gt;
+        &lt;span class="rc-tooltip-label"&gt;${label}&lt;/span&gt;
+        &lt;span class="rc-tooltip-value rc-num"&gt;${value == null ? '—' : '$' + value.toLocaleString()}&lt;/span&gt;
+    &lt;/div&gt;
 `</code></pre>
+
+The classes are the default tooltip's rows: [Custom tooltip](/charts/settings/#custom-tooltip) lists them.
 
 The formatter receives both the raw `feature` and the matched `item`, so you can display whatever makes sense. For unmatched regions, `item` will be `null`. It also gets the role fields every formatter gets: `label` (the name the default tooltip shows), `value` (`item.value`, or `null`) and `color` (the region’s fill).
 
+## Region clicks
+
+`onRegionClick` tells your page which region was clicked; the chart does not navigate by itself.
+
+<pre class="text-content-caption"><code>new RareCharts.Map('#map', {
+    onRegionClick: ({ item, label }) => {
+        if (!item) return showDefault();              <span class="code-comment">// the sea, a region without data, Escape</span>
+        location.href = `/countries/${item.slug}/`;   <span class="code-comment">// your own field on the data item</span>
+    },
+});</code></pre>
+
+Only regions with a data item take part: they show a pointer, can be reached with Tab and pressed with Enter or Space, and each is named for screen readers by its label and value. A click anywhere else on the map — the sea, a region without data — and Escape on a focused region report `item: null`, so the page can go back to what it showed before anything was chosen; `feature` is then the region without data, or `null`. A drag that pans or zooms the map is not taken for a click, and on MapFlow a click on an arc or a place reports nothing. In the map at the top of this page, click a visited country, then the sea.
+
 ## Map chart options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on&nbsp;the&nbsp;<a href="/charts/settings/">Settings&nbsp;page</a>. The <code>legend</code> is a caption here: the chart has no series to hide.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -273,7 +294,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         <tr>
             <td><code>matchFill</code></td>
             <td>CSS color</td>
-            <td><code>theme.map.matchFill</code> (<code>#00aaff</code>; dark <code>#ff6200</code>)</td>
+            <td><code>theme.map.matchFill</code> (<code>null</code>: the accent, <code>#1677ff</code>; dark <code>#ff6200</code>)</td>
             <td>Fill for matched regions that have no explicit <code>color</code> field.</td>
         </tr>
         <tr>
@@ -307,7 +328,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td><code>zoom</code></td>
             <td>boolean</td>
             <td><code>false</code></td>
-            <td>Enable scroll-to-zoom and drag-to-pan.</td>
+            <td>Zoom and pan: Ctrl/⌘ + wheel or a trackpad pinch zooms, a drag pans; on a phone two fingers pan and pinch. A plain wheel or one finger scrolls the page, with a short hint over the map.</td>
         </tr>
         <tr>
             <td><code>zoomExtent</code></td>
@@ -320,6 +341,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td>function</td>
             <td>built-in</td>
             <td><code>({ feature, item, label, value, color }) =&gt; html</code> — custom tooltip for any region. <code>item</code> is <code>null</code> when no data item matches; <code>label</code> is the name the default tooltip shows (<code>item.label</code>, then the feature’s name or id), <code>value</code> is <code>item.value</code> (<code>null</code> without an item), <code>color</code> the region’s fill (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>).</td>
+        </tr>
+        <tr>
+            <td><code>onRegionClick</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td><code>({ feature, item, label, value, event }) =&gt; void</code> — a click, Enter or Space on a region with a data item. The chart only reports it; your page decides what happens. With a handler those regions show a pointer, take keyboard focus and get the focus ring. A drag that pans the map is not a click. See <a href="#region-clicks">Region clicks</a>.</td>
         </tr>
     </tbody>
 </table>
@@ -368,7 +395,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
     topoUrl:    '/assets/charts/data/maps/world/level-0/world-atlas/countries-110m.json',
     topoObject: 'countries',
     height:     400,
-    matchFill:  '#00aaff',
+    matchFill:  '#1677ff',
     zoom:       true,
 }).setData([
     { id: '840', label: 'United States' },

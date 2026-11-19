@@ -26,15 +26,23 @@ Both axes are configured independently. You can set titles (`y1Title`, `y2Title`
 
 Axis titles are meant to be terse units (`PRICE`, `N · K HLX`). A title that would run past its axis margin is trimmed with an ellipsis — measured by rendered width, so a short label that fits is left alone — with the full text on hover and a one-time console hint. Set `axisTitleMaxLength` to cap it explicitly, or widen `margin` if you need more room.
 
-In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine. That is also the default `y2TickFormat`: a sign, two decimals, and a plain `0` near zero.
+In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine. Without one, `y2TickFormat` labels as `Line` does: ticks by their step (`0.5`, `65k`), end labels and tooltip values with three significant digits.
 
 ### Logarithmic scale
 
-Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) or `'log'`, and `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'`. `scaleToggle` adds a Lin/Log button pinned to the top right of the header, above the Y-axis labels; `onScaleChange(fn)` reports every switch. A worked example — a long-horizon index on a log Y1 next to a signed yearly change on Y2 — is on the <a href="/charts/combined/#logarithmic-scale">Combined</a> page.
+Each axis has its own scale: `y1Scale` and `y2Scale` take `'linear'` (default) or `'log'`, and `setYScale(type, { axis })` switches `'y1'`, `'y2'` or `'both'`. `scaleToggle` adds a Log toggle pinned to the top right of the header, above the Y-axis labels, filled while the axis is logarithmic; `onScaleChange(fn)` reports every switch. A worked example — a long-horizon index on a log Y1 next to a signed yearly change on Y2 — is on the <a href="/charts/combined/#logarithmic-scale">Combined</a> page.
+
+### Bands
+
+A series with `type: 'band'` draws a ribbon on its axis, as on [Line](/charts/line/band/): `{ name, type: 'band', axis: 'y1', values: [{ date, lower, upper }] }` — a forecast range, a min–max envelope. It sits behind the bars and the lines (opacity `fillOpacity`, else `areaOpacity`, else 0.12), its axis fits both edges, the crosshair reports its range, and the legend toggles it by name. End labels, markers and the navigator leave it out.
 
 ### Interaction
 
 Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through `tooltipFormat: ({ date, points }) => html`, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.
+
+### Legend
+
+The header `legend` is not built from the series: pass it, and every item that names a series (by `series`, else `name`, else `label`) hides and shows it. Each axis then fits its own series still shown. An axis whose series are all hidden keeps their range, so its labels stay in its units, and the bars left re-pack in their slots while the time axis stays put. `legendRescale: false` keeps both axes on every series; `setSeriesVisible(names | null)` sets the legend from code. More: [Interactive legend](/charts/settings/#interactive-legend).
 
 ### Built-in timeframe controls
 
@@ -56,7 +64,7 @@ Available pieces:
 - `getView()` returns the currently visible `[start, end]`.
 - `setTimeframe(key, { silent })` selects a timeframe from code, as a button click does.
 - `onViewChange(fn)` calls `fn([start, end])` (Dates, clamped to the data; a window entirely outside the data is passed as given) after every view change — a button, the end of a navigator drag, `setTimeframe()` or `setView()` — unless that call passed `{ silent: true }`, so external UI stays synchronized.
-- `scaleToggle` adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).
+- `scaleToggle` adds a Log toggle, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).
 
 Example:
 
@@ -116,6 +124,12 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             </td>
         </tr>
         <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone a date string without a zone of its own is read in (the rows, <code>annotations</code>, the view bounds), the timeframes cut in, and the axis and the tooltip name dates in. A <code>Date</code>, epoch milliseconds or an ISO string with <code>Z</code> or an offset stays that instant. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>.</td>
+        </tr>
+        <tr>
             <td><code>timeframes</code></td>
             <td>boolean | array</td>
             <td>—</td>
@@ -169,8 +183,8 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>y1TickFormat</code></td>
             <td>function</td>
-            <td><code>,.2f</code> (log: <code>.3~s</code>)</td>
-            <td><code>(value) =&gt; string</code> — Y1 tick labels, also used for the Y1 end labels and tooltip values.</td>
+            <td>as Line (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y1 tick labels, also used for the Y1 end labels and tooltip values. By default ticks are labelled by their step, as on Line (<code>65k</code>, <code>0.5</code>), end labels and tooltip values with three significant digits (<code>1.23k</code>).</td>
         </tr>
         <tr>
             <td><code>y1LabelsOnly</code></td>
@@ -211,8 +225,8 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>y2TickFormat</code></td>
             <td>function</td>
-            <td><code>+.2f</code>, <code>0</code> near zero (log: <code>.3~s</code>)</td>
-            <td><code>(value) =&gt; string</code> — Y2 tick labels, also used for the Y2 end labels and tooltip values.</td>
+            <td>as Line (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y2 tick labels, also used for the Y2 end labels and tooltip values; the default as for <code>y1TickFormat</code>.</td>
         </tr>
         <tr>
             <td><code>y2LabelsOnly</code></td>
@@ -232,7 +246,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
         <tr>
             <td><code>xTickFormat</code></td>
             <td>function</td>
-            <td><code>'%m/%d'</code></td>
+            <td>by span</td>
             <td><code>(date) =&gt; string</code> — X tick labels. With the default format a view of a few days gets at most one tick per day, so a date is never repeated.</td>
         </tr>
         <tr class="table-section">
@@ -371,7 +385,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</c
             <td><code>scaleToggle</code></td>
             <td>boolean | <code>'y1'</code> | <code>'y2'</code> | <code>'both'</code> | object</td>
             <td><code>false</code></td>
-            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both; or <code>{ axis, labels: { linear, log } }</code>. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
+            <td>A Log toggle pinned to the top right of the header, above the Y-axis labels: filled while the axis is logarithmic, transparent while it is linear; a click flips the scale. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both (filled while either is logarithmic); or <code>{ axis, labels: { log } }</code>, <code>labels.log</code> being its text. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>

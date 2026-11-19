@@ -4,7 +4,7 @@
   const series = [
     {
       name: 'Alice',
-      color: '#00aaff',
+      color: '#1677ff',
       values: [
         { date: '2025-02-01', value: 3.2 },
         { date: '2025-02-05', value: 4.1 },
@@ -51,7 +51,7 @@
     title: 'Sales Reps Performance',
     subtitle: 'Values relative to the previous period',
     legend: [
-      { label: 'Alice', color: '#00aaff' },
+      { label: 'Alice', color: '#1677ff' },
       { label: 'Bob', color: '#ff3b5c' },
       { label: 'Charlie', color: '#00c97a' },
     ],
@@ -66,7 +66,6 @@
       if (Math.abs(v) < 1e-6) return '0';
       return d3.format('+.0f')(v) + '%';
     },
-    xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
     curve: 'linear',
   }).setData(series);

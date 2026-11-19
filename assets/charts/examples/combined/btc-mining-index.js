@@ -73,6 +73,8 @@
   ];
 
   new RareCharts.DualAxes('#mining-index', {
+    // new Date('2025-02-01') is UTC midnight: name the days in UTC (T-10).
+    timeZone: 'UTC',
     height:   500,
     title:    'Price Goes Up. Earnings Lag.',
     subtitle: 'Feb–Dec 2025 mining revenue vs price index',
@@ -84,11 +86,11 @@
       { label: 'Divergence',           color: '#cccccc' },
     ],
 
-    curve:     'monotoneX',
+    curve:     'monotone',
     crosshair: true,
     endLabels: false,
 
-    y1Title: 'Divergence',
+    y1Title: 'Gap',   // the Divergence series: 'DIVERGENCE' is wider than its axis gutter
     y1TickFormat: v => {
       if (Math.abs(v) < 1e-6) return '0';
       return d3.format('+.0f')(v);
@@ -100,18 +102,16 @@
 
     xTickFormat: d => d3.timeFormat('%b')(d),
 
+    // The tooltip's own rows (/charts/settings/#custom-tooltip): every value
+    // to one decimal, where the axes round to whole numbers.
     tooltipFormat: ({ date, points }) => {
-      const rows = points.map(p => {
-        const v = d3.format('.1f')(p.value);
-        return `<div style="color:${p.color}">${p.name}: ${v}</div>`;
-      });
-
-      return `
-        <div style="color:#888;margin-bottom:4px">
-          ${d3.timeFormat('%b %d, %Y')(date)}
-        </div>
-        ${rows.join('')}
-      `;
+      return `<div class="rc-tooltip-header rc-tooltip-muted">${d3.timeFormat('%b %d, %Y')(date)}</div>` +
+        points.map(p => `
+          <div class="rc-tooltip-row">
+            <span class="rc-tooltip-swatch${p.type === 'bar' ? ' rc-tooltip-swatch--dot' : ''}" style="--rc-swatch-color:${p.color}"></span>
+            <span class="rc-tooltip-label">${p.name}</span>
+            <span class="rc-tooltip-value rc-num">${d3.format('.1f')(p.value)}</span>
+          </div>`).join('');
     },
 
   }).setData(series);

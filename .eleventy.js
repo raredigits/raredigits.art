@@ -37,7 +37,16 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("assets/css/images");
   eleventyConfig.addPassthroughCopy("assets/css/examples/rare-styles-main.css");
   eleventyConfig.addPassthroughCopy("assets/css/rare-website.css");
-  eleventyConfig.addPassthroughCopy("assets/charts");
+  // RareCharts on the site: the bundles, the stylesheet (a page under a
+  // strict CSP loads it as a file), the examples and data the docs load, and
+  // the licence. Not the source (src/), the README or internal docs; the
+  // changelog is published as its own page (CHANGELOG.11tydata.json).
+  eleventyConfig.addPassthroughCopy("assets/charts/rare-charts.js");
+  eleventyConfig.addPassthroughCopy("assets/charts/rare-charts.min.js");
+  eleventyConfig.addPassthroughCopy("assets/charts/rare-charts.css");
+  eleventyConfig.addPassthroughCopy("assets/charts/examples");
+  eleventyConfig.addPassthroughCopy("assets/charts/data");
+  eleventyConfig.addPassthroughCopy("assets/charts/LICENSE");
 
   // Worked-example assets (v0.6.20 auto-shop harvest). Each example owns its
   // skin + media under its own assets/ folder; the folder is passed through

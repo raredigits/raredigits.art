@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RareCharts geometry</title>
+  <!-- Checked by test/browser/charts-geometry.test.js (S-18): what the jsdom
+       tests set by hand — the tooltip's place, the right-hand legend, the
+       chart's type sizes — in a real engine. The bundle and
+       assets/charts/rare-charts.css only: the <link> carries the id
+       rc-base-styles, so the bundle injects nothing and the file on disk is
+       what applies. No Rare Styles, no host variables, no fonts. The one
+       chart rule sets the three type variables on one chart, as a page
+       would. -->
+  <link id="rc-base-styles" rel="stylesheet" href="/assets/charts/rare-charts.css">
+  <style>
+    body { margin: 0; padding: 16px; }
+    .card { margin-bottom: 24px; }
+    #type-vars.rc-chart {
+      --rc-font-family: Georgia, serif;
+      --rc-font-size: 20px;
+      --rc-font-size-sm: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="tip" class="card" style="width: 600px"></div>
+
+  <div id="legend-wide" class="card" style="width: 900px"></div>
+  <div id="plain-wide" class="card" style="width: 900px"></div>
+  <div id="legend-narrow" class="card" style="width: 400px"></div>
+  <div id="plain-narrow" class="card" style="width: 400px"></div>
+
+  <div id="type" class="card" style="width: 600px"></div>
+  <div id="type-vars" class="card" style="width: 600px"></div>
+
+  <script src="/assets/charts/rare-charts.js"></script>
+  <script>
+    const DAY = 864e5;
+    const days = (n, from = Date.UTC(2025, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+      date: new Date(from + i * DAY),
+      value: 100 + 10 * Math.sin(i / 9) + i / 20,
+    }));
+    const two = [
+      { name: 'Revenue', values: days(120) },
+      { name: 'Costs', values: days(120).map(d => ({ ...d, value: d.value - 30 })) },
+    ];
+    // The same chart with the legend on the right and without one.
+    const card = (selector, legend) => new RareCharts.Line(selector, {
+      height: 300,
+      animate: false,
+      title: 'Revenue and costs',
+      source: 'Source: fixture',
+      ...(legend ? { legend: [{ label: 'Revenue' }, { label: 'Operating costs' }], legendPosition: 'right' } : {}),
+    }).setData(two);
+    // Title, subtitle, legend, source, a value axis, a category axis and
+    // value labels (SVG text that takes the svg's size; horizontal bars).
+    const typed = selector => new RareCharts.Bar(selector, {
+      height: 300,
+      animate: false,
+      orientation: 'horizontal',
+      showValues: true,
+      title: 'Type',
+      subtitle: 'A subtitle',
+      legend: [{ label: 'Units', type: 'dot' }],
+      source: 'Source: fixture',
+    }).setData([{ label: 'North', value: 4 }, { label: 'South', value: 7 }, { label: 'East', value: 5 }]);
+
+    window.charts = {
+      tip: new RareCharts.Line('#tip', { height: 300, animate: false, title: 'Tooltip' }).setData(two),
+      legendWide: card('#legend-wide', true),
+      plainWide: card('#plain-wide', false),
+      legendNarrow: card('#legend-narrow', true),
+      plainNarrow: card('#plain-narrow', false),
+      type: typed('#type'),
+      typeVars: typed('#type-vars'),
+    };
+  </script>
+</body>
+</html>

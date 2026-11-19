@@ -1,3 +1,5 @@
+// darkTheme colours the chart, not its card: put it on a dark container (the
+// docs page sets this one on a black panel).
 (function () {
   const d3 = RareCharts.d3;
 
@@ -39,7 +41,6 @@
       if (Math.abs(v) < 1e-6) return '0';
       return d3.format('.1f')(v) + 'M';
     },
-    xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
     curve: 'linear',
   }).setData(series);

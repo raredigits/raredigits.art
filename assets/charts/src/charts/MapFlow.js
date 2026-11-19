@@ -1,8 +1,8 @@
 // RareCharts — MapFlow (experimental)
 // Flows between places drawn over a map: capital, goods, influence. Built on
 // Map — same geometry options, projections and theme — with the relation
-// charts' link contract (core/links.js) on top. Spec:
-// _internal_docs/charts/SPEC-GRAPH-MAPFLOW-INTERNAL.md, part B.
+// charts' link contract (core/links.js) on top. The decisions:
+// assets/charts/docs/DECISIONS.md §13, MapFlow.
 //
 // Data (setData or the `nodes` / `links` options):
 //   nodes: [{ id, label?, coords?: [lon, lat], country?: featureId, color?, ... }]
@@ -22,7 +22,8 @@
 //                   (default: 420)
 //   linkTypes     — { type: { color, dash?, label } }; the legend lists the
 //                   types in use and turns them on and off
-//   hiddenLinkTypes — types hidden at start
+//   hiddenLinkTypes — types hidden at start; a hidden type stays hidden
+//                   across setData, also while the data lacks it
 //   linkWidth     — { by: 'value', scale: 'sqrt' | 'linear', min, max }
 //                   (default min 1, max 6); the arrowhead grows with the
 //                   arc, more slowly
@@ -44,6 +45,10 @@
 //                   setTimeWindow moves it, setTimeframe / setView /
 //                   onViewChange work as on TimeSeries; defaultView (or
 //                   defaultTimeframe, a timeframe key) sets the starting period
+//   timeZone      — 'local' (default) | 'UTC', as on TimeSeries: the zone
+//                   the flows' start / end, the window and the view bounds
+//                   are read in, the timeframes cut in and the navigator's
+//                   periods and axis follow (RC-006; parseTime in core/links.js)
 //   fitTo         — 'features' (default) | 'links': fit the projection to the
 //                   map or to the places and the arcs between them (their
 //                   great circles and bows included)
@@ -56,15 +61,28 @@
 //                   MapFlow takes no region data
 //   linkTooltipFormat — ({ link, source, target }) => html; click a flow to
 //                   pin its tooltip (links inside stay clickable)
-//   linkLegend    — false hides the type legend (default: shown with two or
-//                   more types, or when linkTypes is given)
-//   zoom          — as on Map; arcs keep their width, and dots, labels and
-//                   arrowheads their size on screen (labels are placed again)
+//   valueFormat   — v => string for a flow's value in its tooltip
+//                   (default: locale number; Sankey and Graph take the same)
+//   linkLegend    — (not `legend`, which is the base Chart's header legend:
+//                   K-05) false hides the type legend (default: shown with two or
+//                   more types, or when linkTypes is given). A click, Enter
+//                   or Space turns a type off or on; a double click keeps
+//                   only that type and a second one brings all back; "Show
+//                   all" shows while a type is off. Places stay where they
+//                   are, and arc widths keep the scale of every flow
+//   legendInteractive — false: the type legend is plain labels of the types
+//                   drawn (default: true)
+//   onLegendToggle — ({ name, visible, visibleNames }) => void, after a
+//                   legend gesture has redrawn; name is null for "Show all".
+//                   setLinkTypesVisible never calls it
+//   zoom          — as on Map (Ctrl/⌘ + wheel; two fingers on a phone; T-09);
+//                   arcs keep their width, and dots, labels and arrowheads
+//                   their size on screen (labels are placed again)
 //
 // Methods: setData({ nodes, links }) · setTimeWindow(from, to) ·
-// setLinkTypesVisible(types | null) — each returns `this`. With the time
-// scale on: setTimeframe(key), setView([from, to]), getView(),
-// onViewChange(fn). whenReady() as on Map.
+// setLinkTypesVisible(types | null) (silent: no onLegendToggle) — each
+// returns `this`. With the time scale on: setTimeframe(key), setView([from,
+// to]), getView(), onViewChange(fn). whenReady() as on Map.
 //
 // Not in v1 (deliberately): particle animation, node clustering on zoom,
 // choropleth values under the flows, hand-bent curves.
@@ -72,9 +90,19 @@
 import * as d3 from 'd3';
 import { Map as RareMap } from './Map.js';
 import {
-  applyTimeWindow, linkWidthScale, normalizeRelationData, resolveLinkType,
+  applyTimeWindow, linkValue, linkValueText, linkWidthScale, normalizeRelationData, parallelIndex, resolveLinkType,
+  sineBow,
 } from '../core/links.js';
 import { escapeHtml as esc, tipBody, tipTitle, tipSub, linkTooltipHtml } from '../core/html.js';
+import { estimateTextWidth, placeFirstFree } from '../core/renderHelpers.js';
+import { renderLegendItems } from '../core/legend.js';
+import { drawnDash } from '../graph/chrome.js';
+import { enterPinnedTip } from '../graph/roving.js';
+
+// The K-06 aliases the type legend keeps until 0.9.9 (page scripts and tests
+// select them): the Graph legend's item and Show all classes. MapFlow never
+// had data-type.
+const LEGEND_ALIAS = Object.freeze({ item: 'rc-graph-legend-item', reset: 'rc-graph-legend-reset' });
 
 // ─── Arc geometry (projection px) ────────────────────────────────────────────
 
@@ -91,23 +119,6 @@ function densify(pts) {
   });
   if (out.length < 2) out.push(pts[pts.length - 1].slice());
   return out;
-}
-
-// A piece bowed sideways by a sine over its length: `bend` × 0.6 of its
-// chord, at most `bend` × 90 px, to one side of its direction — so A → B and
-// B → A part. Both ends stay where they are.
-function bow(pts, bend) {
-  const [x0, y0] = pts[0], [x1, y1] = pts[pts.length - 1];
-  const len = Math.hypot(x1 - x0, y1 - y0) || 1;
-  const nx = -(y1 - y0) / len, ny = (x1 - x0) / len;
-  const amp = bend * Math.min(90, len * 0.6);
-  const s = [0];
-  for (let i = 1; i < pts.length; i++) s.push(s[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
-  const total = s[s.length - 1] || 1;
-  return pts.map(([x, y], i) => {
-    const k = Math.sin(Math.PI * (s[i] / total)) * amp;
-    return [x + nx * k, y + ny * k];
-  });
 }
 
 // The piece cut `stop` short of its end b, where the arrowhead takes over.
@@ -193,13 +204,37 @@ export class MapFlow extends RareMap {
     return this._flowData?.links ?? null;
   }
 
-  // Show only these flow types (null shows all) — what the legend does.
+  // Show only these flow types (a list, or one name); null shows them all —
+  // what the legend does, without onLegendToggle. Read against the types in
+  // the data: a type it lacks drops from the hidden set (core/Chart.js
+  // _setVisibleKeys). Before the geometry has loaded, the map draws them so.
   setLinkTypesVisible(types) {
-    const all = this._typeKeys();
-    const on = types == null ? null : new Set(types.map(String));
-    this._hiddenTypes = new Set(on ? all.filter(k => !on.has(k)) : []);
-    if (this._geoReady) this.render();
-    return this;
+    return this._setVisibleKeys(types);
+  }
+
+  // The flow types in the data, in data order: what setLinkTypesVisible
+  // reads and onLegendToggle's visibleNames list (core/Chart.js).
+  _legendSeries() {
+    return this._typeKeys().map(key => ({ key }));
+  }
+
+  // The header `legend` names no series in MapFlow: every item stays a
+  // label. The type legend is MapFlow's own (linkLegend).
+  _legendKeyOf() {
+    return null;
+  }
+
+  // A pinned arc tooltip goes when its type is hidden: by Enter or Space on
+  // the legend, or by setLinkTypesVisible (a pointer click on the legend is
+  // a click outside the tooltip, which unpins it already).
+  _unpinHidden() {
+    if (this._pinnedType != null && this._hiddenKeys.has(this._pinnedType)) this._tooltip?.unpin();
+  }
+
+  // Pin an arc's tooltip, and remember its type until the pin is released.
+  _pinTie(x, y, l, html) {
+    this._tooltip.pin(x, y, html, { onClose: () => { this._pinnedType = null; } });
+    this._pinnedType = this._typeOf(l);
   }
 
   // ─── Init ─────────────────────────────────────────────────────────────────
@@ -211,7 +246,10 @@ export class MapFlow extends RareMap {
     const o = this.options;
     this._flowData = { nodes: [], links: [] };
     this._window = Array.isArray(o.timeWindow) ? { from: o.timeWindow[0] ?? null, to: o.timeWindow[1] ?? null } : null;
-    this._hiddenTypes = new Set((o.hiddenLinkTypes ?? []).map(String));
+    // The hidden flow types are the chart's hidden set (the one every
+    // RareCharts legend uses), seeded here: it survives setData.
+    (o.hiddenLinkTypes ?? []).forEach(type => this._hiddenKeys.add(String(type)));
+    this._pinnedType = null;
     this.svg.attr('role', this.svg.attr('role') ?? 'img');
     // Arcs and their mouse targets live in map space and zoom with the map
     // (their stroke does not scale); arrowheads, dots and labels sit on top in
@@ -251,32 +289,41 @@ export class MapFlow extends RareMap {
 
   // fitTo: 'links' — the arcs too, as they are drawn: a great circle runs
   // far from its ends (China → New York goes over the Arctic) and the bow
-  // adds px on top. After a fit, every point of every arc (all flows, so the
-  // time window and the legend do not move the frame) that falls outside
-  // the frame goes into the fit object, read back to [lon, lat], and the
-  // projection is fitted again. A bow capped at bend × 90 px does not shrink
-  // with the map: a second pass, or a third, takes up the rest (C-35).
+  // adds px on top. After the fit to the places, the box the drawing takes
+  // (the places shown and every point of every arc: all flows, so the time
+  // window and the legend do not move the frame) is scaled and moved into
+  // the frame in px. A projection's px are its scale times the raw point
+  // plus its translate, so this is exact for everything geographic — the
+  // great circles, the places, an arc's end on the antimeridian or on
+  // Mercator's polar edge (C-40) — and needs no point read back to
+  // [lon, lat], which a point on the cut or a bow beyond the pole does not
+  // survive. A bow capped at bend × 90 px does not shrink with the map: a
+  // second pass, or a third, takes up the rest (C-35, RC-071).
   _fitProjection(proj, extent) {
     super._fitProjection(proj, extent);
     const fit = this._fitObject();
     if (this.options.fitTo !== 'links' || fit.type !== 'MultiPoint') return;
     const [[x0, y0], [x1, y1]] = extent;
-    const extra = [];
     for (let pass = 0; pass < 3; pass++) {
       const at = this._placesAt(proj);
       const arcs = this._bowArcs(proj, this._flowData.links.filter(l => at.has(l.source) && at.has(l.target)), at);
-      const out = [];
-      arcs.forEach(({ pieces }) => pieces.forEach(pts => pts.forEach(p => {
-        if (p[0] >= x0 - 0.5 && p[0] <= x1 + 0.5 && p[1] >= y0 - 0.5 && p[1] <= y1 + 0.5) return;
-        const c = proj.invert?.(p);
-        // a point the projection cannot read back (off the globe) is left out
-        if (!c?.every(Number.isFinite)) return;
-        const q = proj(c);
-        if (q && Math.hypot(q[0] - p[0], q[1] - p[1]) < 1) out.push(c);
-      })));
-      if (!out.length) return;
-      extra.push(...out);
-      proj.fitExtent(extent, { type: 'MultiPoint', coordinates: [...fit.coordinates, ...extra] });
+      let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
+      const take = (x, y) => {
+        if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+        bx0 = Math.min(bx0, x); bx1 = Math.max(bx1, x);
+        by0 = Math.min(by0, y); by1 = Math.max(by1, y);
+      };
+      at.forEach(p => { if (p.shown) take(p.x, p.y); });
+      arcs.forEach(({ pieces }) => pieces.forEach(pts => pts.forEach(p => take(p[0], p[1]))));
+      if (!(bx1 > bx0 || by1 > by0)) return;
+      if (bx0 >= x0 - 0.25 && bx1 <= x1 + 0.25 && by0 >= y0 - 0.25 && by1 <= y1 + 0.25) return;
+      // never larger than the fit to the places: only what sticks out pulls
+      // the map in
+      const f = Math.min(1, (x1 - x0) / Math.max(bx1 - bx0, 1e-9), (y1 - y0) / Math.max(by1 - by0, 1e-9));
+      const [tx, ty] = proj.translate();
+      const cx = (bx0 + bx1) / 2, cy = (by0 + by1) / 2;
+      proj.scale(proj.scale() * f)
+        .translate([(x0 + x1) / 2 + (tx - cx) * f, (y0 + y1) / 2 + (ty - cy) * f]);
     }
   }
 
@@ -304,14 +351,15 @@ export class MapFlow extends RareMap {
   // Each flow's arc in projection px: the great circle between its places
   // as d3.geoPath draws it — cut where the projection cuts, at the edge of a
   // flat map and at the horizon of the globe, so in pieces, or none at all
-  // (R-13) — each piece bowed on its own (see bow) so the arc reads as a
-  // flow and two directions never overlap. Parallel flows of one direction
-  // fan out; the opposite direction bows to the other side on its own.
+  // (R-13) — each piece bowed on its own by a sine over its length
+  // (sineBow), `bend` × 0.6 of its chord, at most `bend` × 90 px, so the arc
+  // reads as a flow and two directions never overlap: parallel flows of one
+  // direction fan out 0.16 bends apart, and the opposite direction bows to
+  // the other side by its own normal (parallelIndex, directed). Both ends of
+  // a piece stay where they are.
   // `toTarget`: the last piece ends at the target's dot (not at the horizon).
   _bowArcs(proj, links, at) {
-    const fan = new globalThis.Map();
-    d3.group(links, l => `${l.source}→${l.target}`)
-      .forEach(list => list.forEach((l, i) => fan.set(l.id, i - (list.length - 1) / 2)));
+    const par = parallelIndex(links, { directed: true });
     const baseBend = this.options.bend ?? 0.18;
     let pieces = [];
     const trace = d3.geoPath(proj, {
@@ -325,8 +373,9 @@ export class MapFlow extends RareMap {
       const a = at.get(l.source), b = at.get(l.target);
       pieces = [];
       trace({ type: 'LineString', coordinates: [a.lonlat, b.lonlat] });
-      const bend = baseBend + (fan.get(l.id) ?? 0) * 0.16;
-      const drawn = pieces.filter(p => p.length > 1).map(p => bow(densify(p), bend));
+      const bend = baseBend + (par.get(l.id)?.offset ?? 0) * 0.16;
+      const amp = len => bend * Math.min(90, len * 0.6);
+      const drawn = pieces.filter(p => p.length > 1).map(p => sineBow(densify(p), amp));
       if (!drawn.length) return;
       const last = drawn[drawn.length - 1];
       const [ex, ey] = last[last.length - 1];
@@ -390,9 +439,9 @@ export class MapFlow extends RareMap {
     const byId = new globalThis.Map(nodes.map(n => [n.id, n]));
 
     const typed = this._flowData.links.filter(l =>
-      at.has(l.source) && at.has(l.target) && !this._hiddenTypes.has(this._typeOf(l)));
+      at.has(l.source) && at.has(l.target) && !this._hiddenKeys.has(this._typeOf(l)));
     const mode = o.timeWindowMode ?? 'hide';
-    const links = applyTimeWindow(typed, this._window, mode);
+    const links = applyTimeWindow(typed, this._window, mode, this._zone());
     const widthOf = linkWidthScale(this._flowData.links, { min: 1, max: 6, ...(o.linkWidth ?? {}) });
 
     const arcs = this._bowArcs(this._projection, links, at);
@@ -416,7 +465,8 @@ export class MapFlow extends RareMap {
       .attr('vector-effect', 'non-scaling-stroke');
 
     // The arrowhead is drawn on its own: a marker would scale with the stroke
-    // and swamp a thick flow.
+    // and swamp a thick flow, covering the place it points at (maintainer
+    // review, 2026-10-21, with the arc widths of 1–6 px instead of 1.2–12).
     this.gHeads.selectAll('.rc-mapflow-head')
       .data(ordered, l => l.id)
       .join('path')
@@ -453,9 +503,12 @@ export class MapFlow extends RareMap {
       .on('click', (event, l) => {
         event.stopPropagation();
         const [mx, my] = d3.pointer(event, this.container);
-        this._tooltip.pin(mx, my, tieHtml(l));
+        this._pinTie(mx, my, l, tieHtml(l));
       })
       .on('keydown', (event, l) => {
+        // Tab from an arc whose tooltip is pinned goes into its `sources`
+        // links, as from a Graph tie (K-23; maintainer, 2026-11-18).
+        if (enterPinnedTip(event, this._tooltip, event.currentTarget)) return;
         if (event.key !== 'Enter' && event.key !== ' ') return;
         event.preventDefault();
         // the arc's midpoint is in map space: through the zoom, then from the
@@ -463,10 +516,10 @@ export class MapFlow extends RareMap {
         const [mx, my] = this._zoomTransform.apply(this._flowLayout.get(l.id).mid);
         const svgBox = this.svg.node().getBoundingClientRect();
         const cardBox = this.container.getBoundingClientRect();
-        this._tooltip.pin(
+        this._pinTie(
           mx + svgBox.left - cardBox.left - this.container.clientLeft,
           my + svgBox.top - cardBox.top - this.container.clientTop,
-          tieHtml(l));
+          l, tieHtml(l));
       });
 
     // Nodes: a node whose flows are all outside the window fades.
@@ -478,7 +531,7 @@ export class MapFlow extends RareMap {
     this._flowData.links.forEach(l => { tied.add(l.source); tied.add(l.target); });
     const total = new globalThis.Map(nodes.map(n => [n.id, 0]));
     this._flowData.links.forEach(l => {
-      const v = Number.isFinite(+l.value) && l.value !== null ? Math.max(0, +l.value) : 0;
+      const v = linkValue(l) ?? 0;
       total.set(l.source, total.get(l.source) + v);
       total.set(l.target, total.get(l.target) + v);
     });
@@ -508,6 +561,10 @@ export class MapFlow extends RareMap {
 
     this._flowView = { at, arcs, ordered, placed, nodes, total, faded, widthOf, k: null };
     this._layoutFlows();
+    // Arcs in the Tab order make the svg a group, as Map's region buttons
+    // do (K-24): an image would hide them from assistive technology. Map's
+    // render, just before, has set the role for the regions alone.
+    if (ordered.length) this.svg.attr('role', 'group');
 
     this._renderFlowLegend(keys, infoOf);
   }
@@ -614,25 +671,23 @@ export class MapFlow extends RareMap {
         .forEach(n => {
           const { x, y } = screen.get(n.id);
           const text = String(n.label ?? n.id);
-          const w = text.length * 6.4, h = 12;
+          const w = estimateTextWidth(text, 6.4), h = 12;
           const tries = [
             [x + R + 4, y + 4, 'start'], [x - R - 4, y + 4, 'end'],
             [x, y - R - 5, 'middle'], [x, y + R + 13, 'middle'],
           ];
+          const boxOf = ([lx, ly, anchor]) => {
+            const x0 = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
+            return { x0, x1: x0 + w, y0: ly - h + 2, y1: ly + 2 };
+          };
           // First clear of arrowheads, dots and labels; a hub ringed by
           // arrowheads then settles for clear of dots and labels only.
-          const hits = (box, list) => list.some(b => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0);
           const others = dots.filter(d => d.id !== n.id);
           for (const avoid of [[...heads, ...others, ...labelBoxes], [...others, ...labelBoxes]]) {
-            const spot = tries.find(([lx, ly, anchor]) => {
-              const x0 = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
-              const box = { x0, x1: x0 + w, y0: ly - h + 2, y1: ly + 2 };
-              return !(box.x0 < 0 || box.x1 > W || box.y0 < 0 || box.y1 > H) && !hits(box, avoid);
-            });
+            const spot = placeFirstFree(tries, boxOf, avoid, { bounds: { x0: 0, x1: W, y0: 0, y1: H } });
             if (!spot) continue;
-            const [lx, ly, anchor] = spot;
-            const x0 = anchor === 'start' ? lx : anchor === 'end' ? lx - w : lx - w / 2;
-            labelBoxes.push({ x0, x1: x0 + w, y0: ly - h + 2, y1: ly + 2 });
+            const [lx, ly, anchor] = spot.at;
+            labelBoxes.push(spot.box);
             labels.push({ n, x: lx, y: ly, anchor });
             break;
           }
@@ -651,48 +706,43 @@ export class MapFlow extends RareMap {
       .text(d => d.n.label ?? d.n.id);
   }
 
+  // The type legend, through the one legend builder (core/legend.js, D-04):
+  // each flow type in the data a toggle, in its colour and its own dash. A
+  // click, Enter or Space hides or shows a type's flows, a double click
+  // keeps only that type and a second one brings all back, "Show all" shows
+  // while one is off. The state is the chart's hidden set, the gestures the
+  // base Chart's (_legendGesture): it redraws, then onLegendToggle. Shown
+  // with two or more types, or when the page describes them (linkTypes).
+  // legendInteractive: false lists the types drawn as labels. The builder
+  // updates in place: an item keeps focus through the redraw (R-16).
   _renderFlowLegend(keys, infoOf) {
     const el = this._flowLegendEl;
     if (!el) return;
-    // The rebuild replaces the buttons: one pressed from the keyboard would
-    // drop focus to <body>, and the next Space would do nothing (R-16). Hand
-    // focus to its successor.
-    const focused = el.ownerDocument.activeElement;
-    const refocus = el.contains(focused) ? focused.dataset.key : null;
-    el.replaceChildren();
-    const types = this.options.linkTypes ?? {};
-    if (keys.length < 2 && !Object.keys(types).length) return;
-    keys.forEach(key => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'rc-legend-item rc-graph-legend-item';
-      button.dataset.key = key;
-      const off = this._hiddenTypes.has(key);
-      button.setAttribute('aria-pressed', String(!off));
-      button.style.opacity = off ? '0.35' : '1';
+    const listed = keys.length >= 2 || Object.keys(this.options.linkTypes ?? {}).length ? keys : [];
+    const interactive = this.options.legendInteractive !== false;
+    const hidden = this._hiddenKeys;
+    const items = listed.filter(key => interactive || !hidden.has(key)).map(key => {
       const { color, dash, label } = infoOf(key);
-      button.innerHTML = `<svg width="22" height="12" aria-hidden="true"><line x1="1" y1="6" x2="21" y2="6" stroke="${esc(color)}" stroke-width="3" ${dash ? `stroke-dasharray="${esc(dash)}"` : ''}/></svg><span></span>`;
-      button.querySelector('span').textContent = label;
-      button.addEventListener('click', () => {
-        if (this._hiddenTypes.has(key)) this._hiddenTypes.delete(key);
-        else this._hiddenTypes.add(key);
-        this.render();
-      });
-      el.appendChild(button);
+      // the type's own first dash pair, when the drawing draws one
+      const drawn = drawnDash(dash);
+      return { key, label, color, mark: drawn ? 'dashed' : 'line', dash: drawn, on: !hidden.has(key) };
     });
-    if (refocus != null) {
-      [...el.querySelectorAll('button')].find(b => b.dataset.key === refocus)?.focus({ preventScroll: true });
-    }
+    renderLegendItems(el, items, {
+      interactive,
+      alias: LEGEND_ALIAS,
+      onToggle: info => this._legendGesture(info, listed),
+    });
   }
 
-  // Graph's tie tooltip (core/html.js linkTooltipHtml, D-03): label, value,
-  // period and `sources`, clickable once the tooltip is pinned.
+  // Graph's tie tooltip (core/html.js linkTooltipHtml, D-03): label, value
+  // (as Graph prints it, linkValueText), period and `sources`, clickable
+  // once the tooltip is pinned.
   _linkTooltip(l, source, target, infoOf) {
     const kind = this._namesType(l) ? infoOf(this._typeOf(l)) : null;
     return linkTooltipHtml({
       from: source?.label ?? l.source,
       to:   target?.label ?? l.target,
-      ties: [{ link: l, kind }],
+      ties: [{ link: { ...l, value: linkValueText(l, this.options.valueFormat) }, kind }],
     });
   }
 

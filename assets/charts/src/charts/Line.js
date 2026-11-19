@@ -26,12 +26,22 @@
 //                    tooltip. Default: ticks by their step ('~s' from 1000, ',~f'
 //                    below, 0 as '0'), values to 3 significant digits ('.3~r' /
 //                    '.3~s'); percent '+.2%'; log ticks '.3~s'
-//   xTickFormat    — function(date) => string
+//   xTickFormat    — function(date) => string. Default by the span in view,
+//                    as on TimeSeries and Bar (K-10): ≤ 36 h '%H:%M', ≤ 92
+//                    days '%b %d' (at most one tick per day), ≤ 366 days
+//                    '%b', ≤ 5 years "%b '%y", longer '%Y'; it was '%m/%d'
+//   timeZone       — 'local' (default) | 'UTC': the zone date strings without a
+//                    zone are read in, timeframes cut in and the axis and
+//                    tooltip name dates in; an instant stays that instant
+//                    (the table: parseDate in core/utils.js, T-10)
+//   timeframeAnchor / weekStart — the end the timeframes count back from
+//                    ('dataEnd' default | 'now' | a date) and the first day
+//                    of a week (Monday default), as on TimeSeries (RC-001)
 //   yScale         — 'linear' (default) | 'log'. Log: powers-of-ten ticks, the
 //                    margin above/below is a factor of the data's span, values
 //                    ≤ 0 are skipped (warned once per setData). Switch between
 //                    data swaps with setYScale(): chart.setYScale('log').setData(all)
-//   scaleToggle    — a Lin/Log button, top right of the header above the Y labels
+//   scaleToggle    — a Log toggle, top right of the header above the Y labels
 //                    (true | { labels: { linear, log } }); onScaleChange(fn)
 //                    gets { scale, axis: 'y' } on every switch
 //   yTicks         — approximate number of ticks (default: 4); linear ticks stay
@@ -77,8 +87,21 @@
 //   markerShape    — 'circle'|'square'|'diamond'|'triangle'|'cross' (default: 'circle')
 //   markerSize     — marker radius / half-size px (default: theme.markerSize, 4)
 //
+// The interactive legend (D-04; the header options legendInteractive,
+// legendRescale and onLegendToggle are on the Settings page). A header legend
+// item that names a series — its `series`, else `name`, else `label` —
+// toggles that series; a band is a series too. A hidden series leaves the
+// plot, the end labels, the markers, the crosshair and its tooltip, and the
+// Y axis rescales to the series still shown (legendRescale: false keeps it on
+// every series in view). The X axis, the view, the timeframes, the navigator,
+// the annotations and the formats (auto percent) never follow the legend.
+// Hiding every series leaves the axes and the grid with no marks.
+//   setSeriesVisible(names | null) — show only these series (null: all); no
+//                    event. Chain it after setData.
+//
 // Single-series shorthand only:
-//   seriesName     — series name shown in the crosshair tooltip (default: 'Series')
+//   seriesName     — series name shown in the crosshair tooltip and named by
+//                    the legend (default: 'Series')
 //   lineColor      — line color (default: theme.accent)
 //
 // Per-series overrides (multi-series only):
@@ -90,30 +113,26 @@
 
 import * as d3 from 'd3';
 import { Chart }             from '../core/Chart.js';
-import { Tooltip }           from '../core/Tooltip.js';
 import { Crosshair }         from '../core/Crosshair.js';
-import { resolveEase, resolveStrokeDash, linearTickValues, logTickValues, logPaddedDomain, normalizeAnnotations, motionDuration, compactTickFormat, compactValue } from '../core/utils.js';
-import { EntryMotion, drawLinesIn } from '../core/entryMotion.js';
-import { linePath, areaPath, bandPath, normalizeLineSeries } from '../core/seriesPath.js';
+import { resolveEase, resolveStrokeDash, linearTickValues, logTickValues, logPaddedDomain, annotationRoom, motionDuration, compactTickFormat, compactValue, timeKit, spanTimeFormat, spanTimeFormatter } from '../core/utils.js';
+import { EntryMotion, ENTRY_DURATION, sweepIn } from '../core/entryMotion.js';
+import { bandPath, normalizeLineSeries, filterLogSeries } from '../core/seriesPath.js';
 import {
-  applySvgA11y,
   renderGrid,
   renderZeroBaseline,
   renderAxisX,
   dayTicks,
-  renderAxisYRight,
-  renderAxisYLeft,
+  renderAxisY,
   renderEndLabels,
   renderMarkers,
   renderAnnotations,
+  drawLineSeries,
 } from '../core/renderHelpers.js';
 
 export class Line extends Chart {
   constructor(selector, options = {}) {
     const { margin: _margin, ...restOptions } = options;
-    const annotations    = normalizeAnnotations(options.annotations);
-    const annLabelHeight = options.annotationLabelHeight ?? 22;
-    const annTopReserve  = annotations.length ? annLabelHeight + 4 : 0;
+    const ann = annotationRoom(options);
 
     // Margin defaults track what occupies each gutter: end labels always sit
     // on the right, Y-axis labels on their own side, X-axis labels at the
@@ -126,21 +145,22 @@ export class Line extends Chart {
     super(selector, {
       height: 240,
       margin: {
-        top:    options.margin?.top    ?? Math.max(10, annTopReserve),
+        top:    options.margin?.top    ?? Math.max(10, ann.top),
         bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
         right:  options.margin?.right  ?? ((yLeft ? endGutter : (yGutter || endGutter)) ? 64 : 0),
         left:   options.margin?.left   ?? (yLeft && yGutter ? 64 : 0),
       },
       ...restOptions,
     });
+    // the sides the page's own margin sets: those gutters stay as given (RC-060)
+    this._pageMargin = options.margin ?? {};
 
     this._series          = [];
     this._entry           = new EntryMotion();   // draw-in once per instance (C-16)
-    this._annotations     = annotations;
-    this._annLabelHeight  = annLabelHeight;
+    this._annotations     = ann.annotations;
+    this._annLabelHeight  = ann.labelHeight;
 
-    const tooltip = new Tooltip(this.container, this.theme);
-    this._initSVG(tooltip);
+    this._initSVG(this.tooltip);
   }
 
   // ─── Data ─────────────────────────────────────────────────────────────────
@@ -168,7 +188,31 @@ export class Line extends Chart {
     return this.options.yScale === 'log';
   }
 
-  _getDataExtent() {
+  // ─── Legend ───────────────────────────────────────────────────────────────
+
+  // Show only the named series (null: every series) and redraw. Names as in
+  // the data; a band is a series too; a name not in the data is ignored. The
+  // header legend follows. No onLegendToggle: a page that mirrors one chart's
+  // legend into another from that event cannot loop. Chained after setData,
+  // both run in one task — nothing paints in between.
+  setSeriesVisible(names) {
+    return this._setVisibleKeys(names);
+  }
+
+  // The series the legend toggles: every series in the data (bands too), in
+  // data order, keyed by name.
+  _legendSeries() {
+    return (this._series ?? []).map(s => ({ key: s.name, color: s.color }));
+  }
+
+  // A visibility change drops the hover readout: its dots and tooltip rows
+  // were placed for the series and the Y scale before it. The next pointer
+  // move draws them again from what is shown.
+  _unpinHidden() {
+    this._crosshair?.hide();
+  }
+
+  _dataExtent() {
     const all = this._series.flatMap(s => s.values);
     return all.length ? d3.extent(all, d => d.date) : null;
   }
@@ -185,6 +229,7 @@ export class Line extends Chart {
     if (!Array.isArray(data)) return [];
     const isRow  = v => v != null && typeof v === 'object';
     const colors = this.theme.colors ?? [];
+    const timeZone = this._zone();
 
     // Single-series shorthand: [{date, value}, ...]. The shape is read from
     // the first row, not from data[0]: a leading null (or a point without a
@@ -195,7 +240,7 @@ export class Line extends Chart {
         name:   this.options.seriesName ?? 'Series',
         color:  this.options.lineColor  ?? this.theme.accent,
         values: data,
-      }, 0);
+      }, 0, { timeZone });
       return s.values.length ? [s] : [];
     }
 
@@ -210,6 +255,7 @@ export class Line extends Chart {
         return normalizeLineSeries(s, idx, {
           color: colors[idx % (colors.length || 1)] ?? this.theme.accent,
           type:  isBand ? 'band' : 'line',
+          timeZone,
         });
       })
       .filter(s => s?.values.length);
@@ -218,16 +264,7 @@ export class Line extends Chart {
   // ─── Init ─────────────────────────────────────────────────────────────────
 
   _initSVG(tooltip) {
-    this.container.style.height = this.options.height + 'px';
-
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width', '100%')
-      .attr('height', '100%');
-    applySvgA11y(this.svg, this.options);
-
-    const { left, top } = this.margin;
-    this.g = this.svg.append('g').attr('transform', `translate(${left},${top})`);
+    this._createPlot();
 
     this.gGrid  = this.g.append('g').attr('class', 'rc-grid');
     this.gBands = this.g.append('g').attr('class', 'rc-bands');
@@ -239,13 +276,7 @@ export class Line extends Chart {
     this.gZero  = this.g.append('g').attr('class', 'rc-zero-layer');
     this.gAnnotations = this.g.append('g').attr('class', 'rc-annotations');
 
-    const gCross  = this.g.append('g').attr('class', 'rc-crosshair');
-    const overlay = this.g.append('rect')
-      .attr('class', 'rc-overlay')
-      .attr('fill', 'transparent')
-      .style('pointer-events', 'all');
-
-    this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
+    this._crosshair = Crosshair.attach(this.g, tooltip, this.theme);
   }
 
   // ─── Render ───────────────────────────────────────────────────────────────
@@ -269,51 +300,50 @@ export class Line extends Chart {
 
     // A log scale has no place for zero or negatives: such points are skipped
     // (the line joins its neighbours) instead of drawing NaN.
-    let skipped = 0;
-    const positive = d => {
-      const ok = 'lower' in d ? d.lower > 0 && d.upper > 0 : d.value > 0;
-      if (!ok) skipped++;
-      return ok;
-    };
-    const visibleSeries = this._series
-      .map(s => ({ ...s, values: s.values.filter(d =>
-        d.date >= viewExtent[0] && d.date <= viewExtent[1] && (!isLog || positive(d))) }))
-      .filter(s => s.values.length);
-    if (skipped && !this._warnedNonPositive) {
-      this._warnedNonPositive = true;
-      console.warn(`RareCharts.Line: ${skipped} value${skipped === 1 ? '' : 's'} ≤ 0 skipped on the log scale`);
-    }
-    if (!visibleSeries.length) { this._renderEmpty(); return; }
+    const { series: inView, skipped } = filterLogSeries(this._series, viewExtent, () => isLog);
+    this._warnLogSkips(skipped, 'Line');
+    if (!inView.length) { this._renderEmpty(); return; }
+
+    // The legend: `shown` are the series in view the legend has not hidden —
+    // the marks, end labels, markers and crosshair read them. The Y domain
+    // reads `scaleSet`: the shown series, or every series in view with
+    // legendRescale: false, or when nothing is shown (the axes and grid stay,
+    // with no marks). The formats read `inView`, so a toggle never flips the
+    // auto percent.
+    const shown = inView.filter(s => this._isShown(String(s.name)));
+    const scaleSet = this._legendRescale() && shown.length ? shown : inView;
 
     this._syncTimeframeButtons(fullExtent, viewExtent);
     this._syncNavigator();
 
     // Animation — one draw-in per instance; a render in the middle of it
     // (fonts.ready, the first resize) carries it on (C-16).
-    const duration = motionDuration(o.duration ?? 650);
+    const duration = motionDuration(o.duration ?? ENTRY_DURATION);
     const phase    = this._entry.phase((o.animate ?? true) ? duration : 0);
     const ease     = resolveEase(o.ease ?? 'cubicOut');
 
     // Split line vs band series — bands render behind lines and are excluded
     // from the crosshair, end labels, and markers.
-    const lineSeries = visibleSeries.filter(s => s.type !== 'band');
-    const bandSeries = visibleSeries.filter(s => s.type === 'band');
+    const lineSeries = shown.filter(s => s.type !== 'band');
+    const bandSeries = shown.filter(s => s.type === 'band');
 
     // Per-series Y values (band contributes both its lower and upper bounds).
     const yValuesOf = s => s.type === 'band'
       ? s.values.flatMap(d => [d.lower, d.upper])
       : s.values.map(d => d.value);
 
-    // Scales
+    // Scales — the date scale is d3's local or UTC one: ticks fall on the
+    // zone's days and months, and so do the default labels (T-10)
+    const tz   = timeKit(this._zone());
     const xPad = 8;
-    const x    = d3.scaleTime()
+    const x    = tz.scale()
       .domain(viewExtent)
       .range([xPad, W - xPad]);
 
     // Formatters
     const yTicks   = o.yTicks ?? 4;
 
-    const allY = visibleSeries.flatMap(yValuesOf);
+    const allY = scaleSet.flatMap(yValuesOf);
     const maxY = d3.max(allY);
     const minY = d3.min(allY);
 
@@ -336,7 +366,8 @@ export class Line extends Chart {
     const y = (isLog ? d3.scaleLog() : d3.scaleLinear())
       .domain([lo, hi])
       .range([H, 0]);
-    const absMax   = d3.max(allY, v => Math.abs(v)) ?? 0;
+    const viewY    = scaleSet === inView ? allY : inView.flatMap(yValuesOf);
+    const absMax   = d3.max(viewY, v => Math.abs(v)) ?? 0;
     const usePercent = (o.yFormat ?? 'auto') === 'percent' ||
                        ((o.yFormat ?? 'auto') === 'auto' && absMax <= 1);
 
@@ -357,15 +388,15 @@ export class Line extends Chart {
     const yTickFormat  = o.yTickFormat ?? dress(tickBase);
     const yValueFormat = o.yTickFormat ?? dress(valueBase);
 
-    const xTickFormat = o.xTickFormat ?? (d => d3.timeFormat('%m/%d')(d));
+    // The default follows the span in view (K-10), as on TimeSeries and Bar:
+    // '%m/%d' named neither the month nor the year on a long view.
+    const xSpec       = o.xTickFormat ? null : spanTimeFormat(viewExtent);
+    const xTickFormat = o.xTickFormat ?? spanTimeFormatter(viewExtent, tz.zone);
 
     // Curve / area options
     const defaultCurve    = o.curve          ?? 'monotone';
     const tension         = o.curveTension   ?? 0;
-    const globalArea      = o.area           ?? false;
     const globalAreaOp    = o.areaOpacity    ?? 0.12;
-    const globalAreaBase  = o.areaBaseline   ?? 'zero';
-    const globalDash      = o.strokeDash    ?? null;
     const globalMarkers   = o.markers       ?? false;
     const globalShape     = o.markerShape   ?? 'circle';
     const globalSize      = o.markerSize    ?? t.markerSize ?? 4;
@@ -380,11 +411,11 @@ export class Line extends Chart {
     renderZeroBaseline(this.gZero, y, W, t);
 
     if (o.showXAxis ?? true) {
-      // The default format names days: on a span of a few days more ticks
-      // than whole days would repeat a date (12-hour steps) — cap the count.
+      // A day-labelled view: on a span of a few days more ticks than whole
+      // days would repeat a date (12-hour steps) — cap the count.
       let xTicks = o.xTicks ?? 6;
-      if (!o.xTickFormat && typeof xTicks === 'number') {
-        xTicks = dayTicks(viewExtent, xTicks) ?? xTicks;   // one tick per midnight in view (as on DualAxes)
+      if (xSpec === '%b %d' && typeof xTicks === 'number') {
+        xTicks = dayTicks(viewExtent, xTicks, tz.zone) ?? xTicks;   // one tick per midnight in view (as on DualAxes)
       }
       renderAxisX(this.gAxisX, x, H, xTickFormat, t, xTicks);
     } else {
@@ -392,11 +423,10 @@ export class Line extends Chart {
     }
 
     if (o.showYAxis ?? true) {
-      if ((o.yAxisPosition ?? 'right') === 'left') {
-        renderAxisYLeft(this.gAxisY, y, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
-      } else {
-        renderAxisYRight(this.gAxisY, y, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
-      }
+      renderAxisY(this.gAxisY, y, {
+        side: o.yAxisPosition ?? 'right', width: W, ticks: yTicks, tickValues: resolvedYTickValues,
+        tickFormat: yTickFormat, labelsOnly: o.yLabelsOnly ?? true, theme: t,
+      });
     } else {
       this.gAxisY.selectAll('*').remove();
     }
@@ -410,44 +440,39 @@ export class Line extends Chart {
       .attr('fill',    s => s.color)
       .attr('opacity', s => s.fillOpacity ?? globalAreaOp);
 
-    // Areas
-    const areaSeries = lineSeries.filter(s => (s.area ?? globalArea) === true);
-    this.gLines.selectAll('.rc-line-area')
-      .data(areaSeries, s => s.name)
-      .join('path')
-      .attr('class', 'rc-line-area')
-      .attr('d', s => areaPath(s, x, y, defaultCurve, globalAreaBase, tension))
-      .attr('fill',    s => s.color)
-      .attr('opacity', s => s.areaOpacity ?? globalAreaOp);
-
-    // Lines
-    const paths = this.gLines.selectAll('.rc-line')
-      .data(lineSeries, s => s.name)
-      .join('path')
-      .attr('class', 'rc-line')
-      .attr('fill', 'none')
-      .attr('stroke',       s => s.color)
-      .attr('stroke-width',   s => s.strokeWidth ?? t.strokeWidth ?? 2)
-      .attr('stroke-dasharray', s => resolveStrokeDash(s.strokeDash ?? globalDash))
-      .attr('d', s => linePath(s, x, y, defaultCurve, tension));
-
-    // Lines with a dash pattern cannot use the draw-in trick (both use
-    // stroke-dasharray): they appear at once with their real pattern. Solid
-    // lines draw in — from the start ('enter') or on from the share already
-    // drawn ('resume'); 'none' shows them whole.
-    const dashOf = s => resolveStrokeDash(s.strokeDash ?? globalDash);
-    paths.filter(s => dashOf(s)).interrupt()
-      .attr('stroke-dasharray', dashOf)
-      .attr('stroke-dashoffset', null);
-    drawLinesIn(paths.filter(s => !dashOf(s)),
-      phase === 'none' ? null : this._entry.timing(0, duration, ease));
+    // Areas, then lines. Solid lines draw in — from the start ('enter') or on
+    // from the share already drawn ('resume'); 'none' shows them whole. A
+    // dashed line or a band cannot draw in by its stroke: then the whole
+    // drawing sweeps in, left to right, the solid lines with it.
+    const timing = phase === 'none' ? null : this._entry.timing(0, duration, ease);
+    const sweep  = !!timing && (bandSeries.length > 0
+      || lineSeries.some(s => resolveStrokeDash(s.strokeDash ?? o.strokeDash ?? null)));
+    drawLineSeries(this.gLines, lineSeries, {
+      x, yFor: () => y, curve: defaultCurve, tension,
+      area:         o.area         ?? false,
+      areaOpacity:  globalAreaOp,
+      areaBaseline: o.areaBaseline ?? 'zero',
+      dash:         o.strokeDash   ?? null,
+      width:        t.strokeWidth  ?? 2,
+      classes:      { area: 'rc-line-area', line: 'rc-line' },
+      timing:       sweep ? null : timing,
+    });
+    sweepIn(this.svg, [this.gBands, this.gLines, this.gMarkers], `${this._uid}-sweep`,
+      { x: -8, y: -this.margin.top, width: W + 16, height: H + this.margin.top + this.margin.bottom },
+      sweep ? timing : null);
 
     // End labels
     if (o.endLabels ?? true) {
-      renderEndLabels(this.gEnds, lineSeries, y, W, yValueFormat, t);
+      renderEndLabels(this.gEnds, lineSeries, y, W, yValueFormat, t, { axis: (o.showYAxis ?? true) ? this.gAxisY : null });
     } else {
       this.gEnds.selectAll('*').remove();
     }
+
+    // The value gutter takes the room its labels need (RC-060): the end
+    // labels stand in the right one whichever side the axis is on
+    const ySide = o.yAxisPosition ?? 'right';
+    if (this._fitGutters(ySide === 'right' ? [[[this.gAxisY, this.gEnds], 'right']]
+      : [[this.gAxisY, 'left'], [this.gEnds, 'right']])) return;
 
     // Markers
     renderMarkers(this.gMarkers, lineSeries, x, () => y, globalMarkers, globalShape, globalSize, t);
@@ -464,6 +489,8 @@ export class Line extends Chart {
       scaleFor:   () => y,
       formatFor:  (_s, v) => yValueFormat(v),
       tooltipFmt: o.tooltipFormat,
+      timeZone:   tz.zone,
+      dash:       o.strokeDash ?? null,
     });
   }
 }

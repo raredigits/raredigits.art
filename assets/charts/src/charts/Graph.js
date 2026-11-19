@@ -71,8 +71,10 @@
 //                   false renders plain circles
 //   sizeBy        — node size channel: uniform by default; 'degree' computes
 //                   it from connectivity, 'field' reads the per-node `size`
-//   zoom          — +/−/reset buttons and drag pan; the wheel is left to the
-//                   page (default: true)
+//   zoom          — +/−/reset buttons, drag pan and Ctrl/⌘ + wheel (a
+//                   trackpad pinch); on a phone two fingers pan and pinch. A
+//                   plain wheel and one finger scroll the page, with a hint
+//                   over the drawing (T-09, core/zoomGesture.js) (default: true)
 //   fullscreen    — full-screen button in the footer tools; Esc or the
 //                   button exits (default: true). Also toggleFullscreen()
 //   details       — a details panel inside the card: true = rendered by the
@@ -90,16 +92,29 @@
 //                   it untyped ties are #888888 "Connection" (ego/path/cluster)
 //   relationTypes — initial link-type filter: only listed types are traversed
 //                   and drawn; untyped links match 'default' (default: all)
-//   interactiveLegend — click legend items to filter relation types (default: true)
+//   legendInteractive — the type legend's items are toggles (default: true).
+//                   Ego view: a click, Enter or Space turns a relation type
+//                   off or on and re-queries; a double click keeps only that
+//                   type, a second double click brings all back; "Show all"
+//                   shows while a type is off. With every type off the view
+//                   is the focused node alone. Flow view: the same gestures
+//                   hide and show tie categories. false: a static legend of
+//                   the types drawn. (`interactiveLegend`, its old name, is no
+//                   longer read: a console warning says so.)
+//   onLegendToggle — ({ name, visible, visibleNames }) => void, after a legend
+//                   gesture has redrawn (in the ego view, after its re-query);
+//                   name is null for "Show all". The methods never call it
 //   breadcrumbs   — show clickable view history (default: true)
 //   historyLimit  — max states kept for breadcrumbs/back() (default: 12)
 //   tooltipFormat — function({ node, links }) => html
 //   linkTooltipFormat — function({ link, source, target }) => html for a tie's
 //                   hover/pinned tooltip; click a tie to pin it (links inside
 //                   a pinned tooltip are clickable; outside click/Esc closes)
+//   valueFormat   — v => string for a tie's value in its tooltip and the
+//                   details panel (default: locale number; as on Sankey)
 //   duration      — transition ms (default: 500; reduced-motion aware)
 //
-// Flow view options (view: 'flow'; spec: _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md):
+// Flow view options (view: 'flow'; the decisions: assets/charts/docs/DECISIONS.md §13, Flow view):
 //   lanes         — [{ id, label, weight? }] in left-to-right order
 //   laneBy        — node field (or fn) naming its lane (default: 'lane')
 //   nodeGroups    — { group: { color, label } } — node color + legend
@@ -109,6 +124,17 @@
 //   linkWidth     — { by: 'value', scale: 'sqrt' | 'linear', min, max }
 //   linkDash      — tie => boolean: dashed (e.g. derived amounts)
 //   linkLabels    — draw tie labels (default: true)
+//   legendSymbols — { shapes?, dash?, width? } | false — the key to the
+//                   drawing: static rows after the tie categories in the
+//                   legend, marks in the muted text colour. Shapes: a row
+//                   per node shape, named by the kinds (shapeBy) that draw
+//                   it, when the nodes draw two or more shapes (a fold's
+//                   stack is no kind); shapes: { kind: 'label' | false }
+//                   renames or leaves out a kind, shapes: false all of them.
+//                   dash: 'words' — a row for the ties linkDash dashes;
+//                   width: 'words' — a row for the tie width (linkWidth.by).
+//                   No words, no dash or width row. false: no key
+//                   (default: the shape rows only)
 //   layout        — 'auto' (default): nodes without position hints are laid
 //                   out from the ties — ranks along the flow, the heaviest
 //                   route (or nodes/ties flagged `main: true`) on row 0, the
@@ -128,10 +154,15 @@
 //   timeframes / navigator — time navigation over the ties' start/end, as
 //                   on TimeSeries: buttons in the header, a brushable
 //                   overview of active ties under the drawing
+//   timeZone      — 'local' (default) | 'UTC', as on TimeSeries: the zone
+//                   the ties' start / end, setTimeWindow and the view bounds
+//                   are read in, the timeframes cut in and the navigator's
+//                   periods and axis follow (RC-006; parseTime in core/links.js)
 //   hulls         — [{ id, label, members: ids | node => bool, color? }]
 //   hiddenLinkTypes — tie categories hidden at start; the legend shows them
 //                   (dimmed) and turns them on. A node whose ties are all
-//                   hidden is hidden with them
+//                   hidden is hidden with them. A hidden category stays hidden
+//                   across setData, also while the data lacks it
 //   timeWindowMode — 'dim' (default) | 'hide' for setTimeWindow; nodes left
 //                   without ties in the window fade either way
 //   onSelect      — ({ node, link, event }) => void — drive a details panel
@@ -152,35 +183,42 @@
 //                    a focus/connect/overview chained in the same tick replaces
 //                    that default (no whenReady() needed in between). New data,
 //                    new history and legend types; an empty payload clears the
-//                    drawing (R-17). The flow view draws the whole payload instead
-//
-// Keyboard (K-20, graph/roving.js): the nodes of a view share one Tab stop,
-// and the flow view's ties another; arrows move between them, Enter or Space
-// acts as a click, Escape clears.
+//                    drawing (R-17). The flow view draws the whole payload instead.
 //   add(payload)   — merge an incremental { nodes?, links } payload and refresh
 //                    an ego view (path/cluster draw what the source answers:
 //                    the new tie shows with the next focus())
 //   hide(id) / show(id) — toggle a node out of / back into the ego view
 //   setRelationTypes(types) / clearRelationTypes() — filter ego relations
+//                    (the traversal; null or [] means every type)
 //   back() / clearHistory() — navigate the graph view history
-//   flow view: setFilter(fn) · setTimeWindow(from, to) · select(id | { link })
+//   flow view: setLinkTypesVisible(types | null) — show only these tie
+//              categories (null: all), as the legend does; silent (no
+//              onLegendToggle). Read against the categories in the trace;
+//              in the other views it is only kept for the flow view
+//              · setFilter(fn) · setTimeWindow(from, to) · select(id | { link })
 //              · clearSelection() · setLinkLabels(bool) · setHulls(list)
 //              · expand(id) · collapse(id) · isCollapsed(id) · setFolds(list)
 //              · setTimeframe(key) · setView([from, to]) · getView()
 //              · onViewChange(fn)
+//
+// Keyboard (K-20, K-23, graph/roving.js): the nodes of a view share one Tab
+// stop and its ties another (after the nodes in ego, path and cluster,
+// before them in flow); arrows move between them, Enter or Space acts as a
+// click, Escape clears. A tie's tooltip pinned from the keyboard takes Tab
+// into its links. The svg is a group while it holds them (K-24).
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
-import { Tooltip } from '../core/Tooltip.js';
-import { applySvgA11y } from '../core/renderHelpers.js';
-import { pairKey, normalizeRelationData, resolveLinkType } from '../core/links.js';
+import { linkWeight, pairKey, normalizeRelationData, resolveLinkType } from '../core/links.js';
 import { FlowView } from '../graph/views/flow.js';
 import { networkView } from '../graph/views/network.js';
-import { graphChrome } from '../graph/chrome.js';
+import { graphChrome, NO_RELATION_TYPES } from '../graph/chrome.js';
 import { graphTooltips } from '../graph/tooltips.js';
 import { GraphModel }    from '../graph/model.js';
+import { renderLegendItems } from '../core/legend.js';
 import { memorySource }  from '../graph/source.js';
 import { defaultNodeIcons } from '../graph/icons.js';
+import { bindZoom, boxInCard } from '../core/zoomGesture.js';
 
 
 // setData()'s default centre: the node with the most distinct neighbours,
@@ -233,6 +271,21 @@ export class Graph extends Chart {
     this._relationTypes = options.relationTypes?.length
       ? new Set(options.relationTypes.map(String)) : null;
     this._knownTypes = new Set();
+    // The ego legend: its keys at the last render, a gesture whose re-query
+    // is pending ({ shown }), and the breadcrumb its last re-query pushed.
+    this._typeLegendKeys = [];
+    this._legendPending = null;
+    this._legendEntry = null;
+    // The flow view's hidden tie categories are the chart's hidden set (the
+    // one every RareCharts legend uses); the ego filter is the traversal
+    // above, not this set (K-05).
+    (options.hiddenLinkTypes ?? []).forEach(type => this._hiddenKeys.add(String(type)));
+    // Graph's old switch for its legend; legendInteractive now, with no
+    // alias (K-05). Ignored — said once, so a page that turned the legend
+    // off does not silently get an interactive one.
+    if (options.interactiveLegend !== undefined) {
+      console.warn('RareCharts.Graph: `interactiveLegend` is no longer read — use `legendInteractive`');
+    }
     this._history = [];
     this._skipHistoryOnce = false;
     this._manual   = new Map();          // node id → dragged position override
@@ -243,7 +296,8 @@ export class Graph extends Chart {
     this._switching = false;             // guards semantic-zoom feedback loops
     this._hasRendered = false;
     this._nodeRoving = { current: null }; // keyboard: the node holding the drawing's tab stop (K-20)
-    this._tooltip  = new Tooltip(this.container, this.theme);
+    this._tieRoving  = { current: null }; // and the tie holding the ties' tab stop (K-23)
+    this.tooltip;   // made now: its element keeps its place in the card
     // linkTypes: pass a preset (e.g. linkPresets.personal) or your own map.
     this._linkTypes = options.linkTypes ?? {
       default: { color: '#888888', dash: null, label: 'Connection' },
@@ -276,7 +330,9 @@ export class Graph extends Chart {
     return this._enqueue(() => this._focusTask(id, { types }));
   }
 
-  async _focusTask(id, { types } = {}) {
+  // `legend`: { replaces } when a legend gesture asked (chrome.js
+  // _relationLegendGesture).
+  async _focusTask(id, { types, legend = null } = {}) {
     id = String(id);       // every way in (focus, setData's auto-focus, back) — ids are strings in the model
     // The filter is applied inside the queued task: two rapid focus() calls
     // with different filters must each fetch with their own, not both with
@@ -284,11 +340,18 @@ export class Graph extends Chart {
     if (types !== undefined) this._setRelationTypesState(types);
     const depth = this.options.depth ?? 2;
     const activeTypes = this._activeRelationTypes();
+    // Every type turned off in the legend (spec decision 26): the node
+    // alone, from the model — no source call, which a backend could read as
+    // "every type", and no breadcrumb. A node the model does not hold yet is
+    // fetched over every type, then drawn alone.
+    const none = activeTypes?.length === 0;
     const gen = this._dataGen;
-    const sub = await this._requireSource().neighbors(id, { depth, types: activeTypes });
-    if (this._isStale(gen)) return;
-    this._model.merge(sub);
-    (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
+    if (!none || !this._model.has(id)) {
+      const sub = await this._requireSource().neighbors(id, { depth, types: none ? null : activeTypes });
+      if (this._isStale(gen)) return;
+      this._model.merge(sub);
+      (sub.links ?? []).forEach(l => this._knownTypes.add(String(l.type ?? 'default')));
+    }
     this._view = 'ego';
     this._root = id;
     this._paths = null;
@@ -302,7 +365,15 @@ export class Graph extends Chart {
     // through the zoom transform, which must be the new view's.
     this._resetZoomSilently();
     this.render();
-    this._recordHistory({ view: 'ego', root: id, types: activeTypes });
+    if (none) {
+      if (legend) this._legendEntry = null;
+      return;
+    }
+    // The second click of a legend double click replaces the breadcrumb its
+    // first click pushed — only that one, if it is still the last.
+    const replace = !!legend?.replaces && this._history[this._history.length - 1] === this._legendEntry;
+    const entry = this._recordHistory({ view: 'ego', root: id, types: activeTypes }, { replace });
+    if (legend) this._legendEntry = entry;
   }
 
   // Path view: up to `pathCount` routes between a and b.
@@ -341,7 +412,7 @@ export class Graph extends Chart {
           const picked = [];
           sub.links
             .filter(l => l.source === endpoint || l.target === endpoint)
-            .sort((x, y) => (y.weight ?? y.strength ?? 0.5) - (x.weight ?? x.strength ?? 0.5))
+            .sort((x, y) => linkWeight(y) - linkWeight(x))
             .forEach(l => {
               const other = l.source === endpoint ? l.target : l.source;
               if (inPath.has(other)) return;
@@ -436,6 +507,12 @@ export class Graph extends Chart {
     // nor may a retired back() leave its one-shot history skip armed.
     this._dataGen++;
     this._skipHistoryOnce = false;
+    // A legend gesture still waiting for its re-query is retired with them:
+    // the legend shows the filter again, not that gesture's types.
+    if (this._legendPending) {
+      this._legendPending = null;
+      this._typeLegendEl?.removeAttribute('aria-busy');
+    }
     if (this._view === 'flow') return this._setFlowData(data);
     // The ties as the model reads them (core/links.js, K-07): the legend and
     // the default centre below; the source reads the payload itself, as a
@@ -457,6 +534,7 @@ export class Graph extends Chart {
     (this._relationTypes ?? []).forEach(type => this._knownTypes.add(String(type)));
     if (this.options.linkTypes) Object.keys(this._linkTypes).forEach(type => this._knownTypes.add(type));
     this._nodeRoving.current = null;
+    this._tieRoving.current = null;
     const best = bestConnected(norm, this._relationTypes);
     if (best == null) {
       // Nothing to focus: the old drawing must not stay up as if it were
@@ -573,6 +651,28 @@ export class Graph extends Chart {
     return this;
   }
 
+  // Flow view: show only these tie categories (a list, or one name); null
+  // shows them all — what the legend does, without onLegendToggle. Read
+  // against the categories in the trace (MapFlow's rule): a category it
+  // lacks drops from the hidden set. In the other views the set is only
+  // kept for the flow view.
+  setLinkTypesVisible(types) {
+    return this._setVisibleKeys(types);
+  }
+
+  // The flow trace's tie categories, in data order: what setLinkTypesVisible
+  // reads and onLegendToggle's visibleNames list (core/Chart.js). The ego
+  // view's filter is the traversal, not this set.
+  _legendSeries() {
+    return (this._flowView?.linkKeys() ?? []).map(key => ({ key }));
+  }
+
+  // The header `legend` names no series in Graph: every item stays a label.
+  // The type legend is Graph's own (_typeLegendEl).
+  _legendKeyOf() {
+    return null;
+  }
+
   // Merge an incremental payload — e.g. a news item asserting a new tie —
   // into the accumulated model and refresh the current ego view. Nodes
   // referenced only by link endpoints are created automatically (their label
@@ -623,20 +723,10 @@ export class Graph extends Chart {
     return this;
   }
 
-  // Resolves when all queued view changes have fetched and rendered.
   // ─── Init ─────────────────────────────────────────────────────────────────
 
   _initSVG() {
-    this.container.style.height = this.options.height + 'px';
-
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width',  '100%')
-      .attr('height', '100%')
-      .style('cursor',   'grab')
-      .style('overflow', 'hidden');
-
-    applySvgA11y(this.svg, this.options);
+    this._createSvg({ style: { cursor: 'grab', overflow: 'hidden' } });
 
     this._defs = this.svg.append('defs');
 
@@ -649,14 +739,19 @@ export class Graph extends Chart {
     // ties. Below the nodes, so a node always wins where they overlap.
     this.gLinkHits = this.gZoom.append('g').attr('class', 'rc-graph-link-hits');
     this.gNodes   = this.gZoom.append('g').attr('class', 'rc-graph-nodes');
+    // The ties' keyboard targets (K-23): twins of the hit strokes that take
+    // no pointer events. After the nodes, so the ties' Tab stop comes after
+    // the nodes' one, while the pointer still finds a node over a tie.
+    this.gLinkKeys = this.gZoom.append('g').attr('class', 'rc-graph-link-keys');
     // +N badges of collapsed pairs sit above the nodes: on a tight grid the
     // tie's visible stretch is often covered by an endpoint's label.
     this.gLinkBadges = this.gZoom.append('g').attr('class', 'rc-graph-link-badges');
 
-    // Legend — HTML element, rendered outside SVG so it never overlaps nodes
-    this._legendEl = document.createElement('div');
-    this._legendEl.className = 'rc-graph-legend rc-legend';
-    this.container.appendChild(this._legendEl);
+    // The type legend — HTML, outside the SVG so it never overlaps nodes. Its
+    // own name: the base's _legendEl is the header legend (`legend`).
+    this._typeLegendEl = document.createElement('div');
+    this._typeLegendEl.className = 'rc-graph-legend rc-legend';
+    this.container.appendChild(this._typeLegendEl);
 
     if (this.options.zoom !== false) {
       this._zoom = d3.zoom()
@@ -665,16 +760,20 @@ export class Graph extends Chart {
         // resolves to pixels — the silent reset transform then threw.
         .extent(function () { return [[0, 0], [this.clientWidth || 1, this.clientHeight || 1]]; })
         .scaleExtent([0.2, 4])
-        // Buttons zoom, dragging pans — the wheel stays with page scroll
-        .filter(event => event.type !== 'wheel' && !event.button)
         .on('zoom', event => {
           this.gZoom.attr('transform', event.transform);
           this._maybeSemanticZoom(event.transform.k);
         });
 
-      this.svg
-        .call(this._zoom)
-        .on('dblclick.zoom', null);
+      // The buttons zoom, a drag pans, Ctrl/⌘ + wheel zooms; on a phone two
+      // fingers pan and pinch. A plain wheel and one finger are the page's,
+      // with a hint over the drawing (core/zoomGesture.js).
+      this._zoomHint = bindZoom(this.svg, this._zoom, {
+        container: this.container,
+        theme:     this.theme,
+        box:       () => this._drawingBox(),
+      });
+      this.svg.on('dblclick.zoom', null);
     }
     this._initTools();
   }
@@ -697,13 +796,29 @@ export class Graph extends Chart {
 
   // ─── Render ───────────────────────────────────────────────────────────────
 
+  // The header's fit first (RC-066): the drawing measures the svg, not
+  // this.height, which is where the other charts fit it. Then the drawing,
+  // then the svg's role from what it holds.
   render() {
+    this._fitHeader();
+    this._renderDrawing();
+    this._syncSvgRole();
+  }
+
+  // A group while the drawing has focusable nodes or ties — an image would
+  // hide those buttons from assistive technology — an image while it has
+  // none (K-24).
+  _syncSvgRole() {
+    this.svg?.attr('role', this.svg.select('[tabindex]').empty() ? 'img' : 'group');
+  }
+
+  _renderDrawing() {
     if (!this._viewData?.nodes?.length) {
       // Flow view emptied by setData: clear the trace, its legend and the
       // time controls instead of leaving the previous drawing.
       if (this._view === 'flow') {
         this._flowView?.clear();
-        this._legendEl?.replaceChildren();
+        if (this._typeLegendEl) renderLegendItems(this._typeLegendEl, []);
         if (this._tooltip?.isPinned) this._tooltip.unpin();
         this._tooltip?.hide?.();
         const f = this._flowView;
@@ -751,7 +866,7 @@ export class Graph extends Chart {
 
     if (this._view === 'flow') {
       // One view owns the canvas: clear what ego/path/cluster left behind.
-      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes]
+      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes, this.gLinkKeys]
         .forEach(g => g?.selectAll('*').remove());
       this.gRoot.selectAll('.rc-graph-row-label').remove();
       if (this._overflowNoteEl) this._overflowNoteEl.hidden = true;
@@ -803,6 +918,21 @@ export class Graph extends Chart {
     try { this.render(); } finally { this._refitting = false; }
   }
 
+  // The drawing's box in the card's frame, where the zoom hint centres and
+  // the loading bar lies (the base Chart's _plotBox): the svg's, less a
+  // details panel beside it (it sits over the svg's right side).
+  _plotBox() {
+    return this._drawingBox();
+  }
+
+  _drawingBox() {
+    const box = boxInCard(this.svg.node(), this.container);
+    if (this._detailsEl && this.container.classList.contains('rc-graph--details-side')) {
+      box.width = Math.max(0, box.width - (this.options.detailsWidth ?? 300) - 12);
+    }
+    return box;
+  }
+
   // A point of the drawing (zoom-group coordinates) in the card's frame,
   // where tooltips are placed — for tooltips opened from the keyboard.
   _toCard(x, y) {
@@ -845,26 +975,40 @@ export class Graph extends Chart {
 
   // ─── Relation filter and history ─────────────────────────────────────────
 
+  // null or [] → every type; NO_RELATION_TYPES (the legend's "nothing
+  // shown") → an empty set, which no public call makes.
   _setRelationTypesState(types) {
+    if (types === NO_RELATION_TYPES) {
+      this._relationTypes = new Set();
+      return;
+    }
     const list = types == null ? [] : [...types].map(String);
     this._relationTypes = list.length ? new Set(list) : null;
   }
 
   _activeRelationTypes() { return this._relationTypes ? [...this._relationTypes] : null; }
 
-  _recordHistory(state) {
+  // `replace`: the new state takes the last entry's place. Returns the
+  // entry pushed, or null (the same state as the last, a restore).
+  _recordHistory(state, { replace = false } = {}) {
     if (this._skipHistoryOnce) {
       this._skipHistoryOnce = false;
       this._renderBreadcrumbs();
-      return;
+      return null;
     }
     // Types are a set: sort them so {a,b} and {b,a} dedupe to one entry.
     const normalized = { ...state, types: state.types ? [...state.types].sort() : null };
+    if (replace) this._history.pop();
     const last = this._history[this._history.length - 1];
-    if (JSON.stringify(last) !== JSON.stringify(normalized)) this._history.push(normalized);
+    let entry = null;
+    if (JSON.stringify(last) !== JSON.stringify(normalized)) {
+      this._history.push(normalized);
+      entry = normalized;
+    }
     const max = Math.max(1, this.options.historyLimit ?? 12);
     if (this._history.length > max) this._history.splice(0, this._history.length - max);
     this._renderBreadcrumbs();
+    return entry;
   }
 
   _restoreState(state) {
@@ -939,9 +1083,8 @@ export class Graph extends Chart {
     }
     if (this._onFullscreenChange) document.removeEventListener('fullscreenchange', this._onFullscreenChange);
     if (this._onFullscreenKey) document.removeEventListener('keydown', this._onFullscreenKey);
-    this._tooltip?.destroy();
-    this._tooltip = null;
     super.destroy();
+    this._typeLegendEl = null;
   }
 }
 

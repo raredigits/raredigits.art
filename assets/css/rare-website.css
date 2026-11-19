@@ -100,29 +100,7 @@
 }
 
 .price-chart-change {
-    font-size: var(--font-size-md);
-    font-variant-numeric: tabular-nums;
-}
-
-.price-chart-change.up   { color: var(--green); }
-.price-chart-change.down { color: var(--red); }
-
-/* /charts/line/time-series/ — the KPI row under the chart, on `.panel__row`.
-   Site-only until the docs move to the library's `.stat`, which ships in
-   v0.7.2 (RareCharts RC-058). */
-.price-chart-stats {
-    width: calc(100% - 56px);
-    margin-left: -8px;
-}
-
-.price-chart-stat {
-    padding: var(--space-xs) var(--space-md);
-}
-
-.price-chart-stat-label {
-    color: var(--text-color-light);
-}
-
-.price-chart-stat-value {
-    font-variant-numeric: tabular-nums;
+    /* the day's change is a Rare Styles stat with the delta chip (RC-058);
+       inline, so it keeps the baseline of the ticker and the price */
+    display: inline-flex;
 }

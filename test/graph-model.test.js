@@ -73,6 +73,22 @@ describe('GraphModel', () => {
     const total = s1.communities.reduce((n, c) => n + c.size, 0);
     expect(total).toBe(6);
   });
+  // A tie without a weight counts 1 for Louvain (graph/model.js edgeWeight),
+  // not the 0.5 linkWeight falls back to elsewhere (S-19: only the DOM oracle
+  // caught that). x has two unweighted ties into one triangle and one tie of
+  // weight 1.5 into the other: at 1 apiece it joins the first (2 > 1.5), at
+  // 0.5 it would join the second (1 < 1.5).
+  it('communitySummary counts a tie without a weight as 1', () => {
+    const tri = p => [[`${p}1`, `${p}2`], [`${p}2`, `${p}3`], [`${p}1`, `${p}3`]].map(([source, target]) => ({ source, target }));
+    const m = new GraphModel({
+      nodes: ['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'x'].map(id => ({ id })),
+      links: [...tri('a'), ...tri('b'),
+        { source: 'x', target: 'a1' }, { source: 'x', target: 'a2' }, { source: 'x', target: 'b1', weight: 1.5 }],
+    });
+    const { assignment, communities } = m.communitySummary();
+    expect(communities.map(c => c.members.slice().sort())).toEqual([['a1', 'a2', 'a3', 'x'], ['b1', 'b2', 'b3']]);
+    expect(assignment.x).toBe(assignment.a1);
+  });
 });
 
 describe('GraphModel ids (R-19)', () => {

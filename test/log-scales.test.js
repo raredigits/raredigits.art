@@ -146,9 +146,10 @@ describe('DualAxes — per-axis log scale', () => {
     expect(ticks('.rc-axis-y2')).toContain('0');
   });
 
-  it('linear by default — the existing axes are unchanged', () => {
+  it('linear by default, labelled as on Line (K-10): no trailing zeros', () => {
     new DualAxes('#chart', { animate: false }).setData(dual());
-    expect(ticks('.rc-axis-y1').some(s => s.includes('.00'))).toBe(true);
+    expect(ticks('.rc-axis-y1').length).toBeGreaterThan(1);
+    expect(ticks('.rc-axis-y1').some(s => s.includes('.00'))).toBe(false);
   });
 
   it('y2Scale log on a bar series: bars grow from the bottom of the axis', () => {
@@ -236,18 +237,18 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
       chart.onScaleChange(e => events.push(e));
 
       expect(scaleButtons()).toHaveLength(1);
-      expect(scaleButton().textContent).toBe('Lin');
+      expect(scaleButton().getAttribute('aria-pressed')).toBe('false');
       expect(scaleButton().classList.contains('rc-range-btn')).toBe(true);
       expect(scaleButton().closest('.rc-chart-header .rc-chart-range-row')).not.toBeNull();
 
       scaleButton().click();
-      expect(scaleButton().textContent).toBe('Log');
+      expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
       expect(scaleButton().dataset.scale).toBe('log');
       expect(events).toEqual([{ scale: 'log', axis: name === 'DualAxes' ? 'y1' : 'y' }]);
       expect(pathsHaveNaN()).toBe(false);
 
       scaleButton().click();
-      expect(scaleButton().textContent).toBe('Lin');
+      expect(scaleButton().getAttribute('aria-pressed')).toBe('false');
       expect(events.at(-1).scale).toBe('linear');
       expect(scaleButtons()).toHaveLength(1);
     });
@@ -255,7 +256,7 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
 
   it('names the initial scale', () => {
     make.Line({ scaleToggle: true, yScale: 'log' });
-    expect(scaleButton().textContent).toBe('Log');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
   });
 
   it('setYScale() from code renames it; { silent: true } skips the event', () => {
@@ -263,7 +264,7 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
     const cb = vi.fn();
     chart.onScaleChange(cb);
     chart.setYScale('log', { silent: true });
-    expect(scaleButton().textContent).toBe('Log');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
     expect(cb).not.toHaveBeenCalled();
     chart.setYScale('linear');
     expect(cb).toHaveBeenCalledWith({ scale: 'linear', axis: 'y' });
@@ -281,7 +282,7 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
 
   it('DualAxes: true drives Y1 only — a signed Y2 stays linear', () => {
     const chart = new DualAxes('#chart', { animate: false, y1Scale: 'log', scaleToggle: true }).setData(dual());
-    expect(scaleButton().textContent).toBe('Log');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
     scaleButton().click();
     expect(chart.options.y1Scale).toBe('linear');
     expect(chart.options.y2Scale ?? 'linear').toBe('linear');
@@ -292,20 +293,22 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
     expect(host.querySelectorAll('.rc-dual-bar')).toHaveLength(5);
   });
 
-  it("DualAxes: 'both' reads Log while either axis is log, and a click takes both to linear", () => {
+  it("DualAxes: 'both' is pressed while either axis is log, and a click takes both to linear", () => {
     const chart = new DualAxes('#chart', { animate: false, y1Scale: 'log', scaleToggle: 'both' }).setData(dual());
-    expect(scaleButton().textContent).toBe('Log');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
     scaleButton().click();
     expect(chart.options.y1Scale).toBe('linear');
     expect(chart.options.y2Scale).toBe('linear');
-    expect(scaleButton().textContent).toBe('Lin');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('false');
   });
 
-  it('custom labels', () => {
+  it('custom labels: labels.log is the toggle\'s text in both states (RC-083)', () => {
     const chart = make.Line({ scaleToggle: { labels: { linear: 'Лин', log: 'Лог' } } });
-    expect(scaleButton().textContent).toBe('Лин');
+    expect(scaleButton().textContent).toBe('Лог');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('false');
     chart.setYScale('log');
     expect(scaleButton().textContent).toBe('Лог');
+    expect(scaleButton().getAttribute('aria-pressed')).toBe('true');
   });
 
   it('sits in the timeframe row but outside the timeframe group', () => {
@@ -338,8 +341,10 @@ describe('scaleToggle — one Lin/Log button in the header row', () => {
       expect(chart.getView().map(Number)).toEqual(view1Y);
 
       host.querySelector('[data-timeframe="1M"]').click();
-      expect(scaleButton().textContent).toBe('Log');        // the scale stays
-      expect(chart._isLogScale(chart._getScaleToggle().axis)).toBe(true);
+      expect(scaleButton().getAttribute('aria-pressed')).toBe('true');        // the scale stays
+      // the scale itself, not only the button's label: the option the switch sets
+      // (scaleToggle: true drives DualAxes' y1)
+      expect(chart.options[name === 'DualAxes' ? 'y1Scale' : 'yScale']).toBe('log');
       expect(pathsHaveNaN()).toBe(false);
 
       scaleButton().click();                                // → linear

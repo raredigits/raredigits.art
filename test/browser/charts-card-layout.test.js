@@ -61,24 +61,25 @@ describe('C-24: hover keeps the buttons\' own background', () => {
       .toEqual({ 'background-color': 'rgba(0, 0, 0, 0)', 'background-image': 'none' });
   });
 
-  it('the Lin/Log button keeps its diagonal fill — linear state', async () => {
+  it('the Log toggle keeps its look under a host hover — off: no fill (RC-083)', async () => {
     await hover('#wide .rc-scale-btn');
     const s = await style('#wide .rc-scale-btn', ['background-color', 'background-image']);
     expect(s['background-color']).toBe('rgba(0, 0, 0, 0)');
-    expect(s['background-image']).toMatch(/^linear-gradient\(135deg, rgb\(204, 204, 204\) 50%, rgba\(0, 0, 0, 0\) 50%\)$/);
+    expect(s['background-image']).toBe('none');
   });
 
-  it('…and log state', async () => {
+  it('…and on: filled with the accent, white text', async () => {
     await page.evaluate(() => window.charts.wide.setYScale('log'));
     await hover('#wide .rc-scale-btn');
-    const s = await style('#wide .rc-scale-btn', ['background-image']);
-    expect(s['background-image']).toMatch(/^linear-gradient\(135deg, rgba\(0, 0, 0, 0\) 50%, rgb\(204, 204, 204\) 50%\)$/);
+    const s = await style('#wide .rc-scale-btn', ['background-color', 'color']);
+    expect(s['background-color']).toBe('rgb(22, 119, 255)');
+    expect(s.color).toBe('rgb(255, 255, 255)');
     await page.evaluate(() => window.charts.wide.setYScale('linear'));
   });
 });
 
-describe('the Lin/Log button and the x-axis edges (owner, 2026-10-26)', () => {
-  it('the Lin/Log button is as wide on the log scale as on the linear one', async () => {
+describe('the Log toggle and the x-axis edges (owner, 2026-10-26)', () => {
+  it('the Log toggle is as wide on the log scale as on the linear one', async () => {
     const lin = await box('#wide .rc-scale-btn');
     await page.evaluate(() => window.charts.wide.setYScale('log'));
     const log = await box('#wide .rc-scale-btn');

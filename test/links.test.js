@@ -2,8 +2,19 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   normalizeLinks, normalizeLinkData, parseTime, linkInWindow, applyTimeWindow,
   linkWidthScale, pairKey, dedupeUndirected, parallelIndex,
-  resolveLinkType, linkTimeExtent, activeLinkSeries,
+  resolveLinkType, linkTimeExtent, activeLinkSeries, linkValueText,
 } from '../assets/charts/src/core/links.js';
+
+// Ties are read in the chart's timeZone, 'local' by default (RC-006): these
+// build their expectations in local time, so they hold in any zone. The
+// zones themselves are tried in link-time.test.js and time-zones.test.js.
+const L = (y, m = 0, d = 1) => {
+  const dt = new Date(0);
+  dt.setFullYear(y, m, d);          // field by field: the years 0–99 stay themselves
+  dt.setHours(0, 0, 0, 0);
+  return +dt;
+};
+const ym = v => { const d = new Date(v); return `${String(d.getFullYear()).padStart(4, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}`; };
 
 describe('normalizeLinks', () => {
   it('resolves from/to aliases to source/target and strips the aliases', () => {
@@ -36,13 +47,13 @@ describe('normalizeLinks', () => {
 
 describe('parseTime', () => {
   it('reads small numbers and YYYY strings as years', () => {
-    expect(parseTime(1773)).toBe(Date.UTC(1773, 0, 1));
-    expect(parseTime('2024')).toBe(Date.UTC(2024, 0, 1));
+    expect(parseTime(1773)).toBe(L(1773));
+    expect(parseTime('2024')).toBe(L(2024));
   });
 
   it('resolves periods to their last millisecond with end: true', () => {
-    expect(parseTime('2024-01', { end: true })).toBe(Date.UTC(2024, 1, 1) - 1);
-    expect(parseTime(2024, { end: true })).toBe(Date.UTC(2025, 0, 1) - 1);
+    expect(parseTime('2024-01', { end: true })).toBe(L(2024, 1) - 1);
+    expect(parseTime(2024, { end: true })).toBe(L(2025) - 1);
   });
 
   it('passes through epoch ms, Dates and ISO strings; rejects junk', () => {
@@ -117,9 +128,9 @@ describe('pairs', () => {
       { id: 'y', source: 'b', target: 'a' },
       { id: 'z', source: 'a', target: 'c' },
     ]);
-    expect(idx.get('x')).toEqual({ index: 0, count: 2 });
-    expect(idx.get('y')).toEqual({ index: 1, count: 2 });
-    expect(idx.get('z')).toEqual({ index: 0, count: 1 });
+    expect(idx.get('x')).toEqual({ index: 0, count: 2, offset: -0.5 });
+    expect(idx.get('y')).toEqual({ index: 1, count: 2, offset: -0.5 });
+    expect(idx.get('z')).toEqual({ index: 0, count: 1, offset: 0 });
   });
 });
 
@@ -154,24 +165,49 @@ describe('ids and keys stay unambiguous when ids contain separators (R-20)', () 
 
 describe('time of ties', () => {
   it("'YYYY-00' is the month before January, one month long", () => {
-    expect(new Date(parseTime('2024-00')).toISOString().slice(0, 7)).toBe('2023-12');
-    expect(new Date(parseTime('2024-00', { end: true })).toISOString().slice(0, 10)).toBe('2023-12-31');
+    expect(parseTime('2024-00')).toBe(L(2023, 11));
+    expect(parseTime('2024-00', { end: true })).toBe(L(2024) - 1);
   });
 
   it('years 0–99 are those years, not 1900–1999 (T-01)', () => {
-    expect(new Date(parseTime(14)).getUTCFullYear()).toBe(14);
-    expect(new Date(parseTime('0099', { end: true })).toISOString()).toBe('0099-12-31T23:59:59.999Z');
+    expect(new Date(parseTime(14)).getFullYear()).toBe(14);
+    expect(parseTime(14)).toBe(L(14));
+    expect(parseTime('0099', { end: true })).toBe(L(100) - 1);
+    expect(new Date(parseTime('0099', { end: true })).getFullYear()).toBe(99);
   });
   it('linkTimeExtent spans every start and end; null without time', () => {
     const ext = linkTimeExtent([{ start: 1990 }, { start: '1995-03', end: 2001 }]);
-    expect(ext.map(d => d.toISOString().slice(0, 7))).toEqual(['1990-01', '2001-12']);
+    expect(ext.map(ym)).toEqual(['1990-01', '2001-12']);
     expect(linkTimeExtent([{ source: 'a' }])).toBeNull();
   });
   it('activeLinkSeries counts open-ended ties as still running, by month or year', () => {
     const monthly = activeLinkSeries([{ start: '2020-01', end: '2020-02' }, { start: '2020-02' }, { start: '2020-01', end: '2020-06' }]);
     expect(monthly.map(d => d.value)).toEqual([2, 3, 2, 2, 2, 2, 2]);
     const yearly = activeLinkSeries([{ start: 1900, end: 1960 }, { start: 1950 }]);
-    expect(yearly[0].date.getUTCFullYear()).toBe(1900);
+    expect(yearly[0].date.getFullYear()).toBe(1900);
     expect(yearly.at(-1).value).toBe(2);
+  });
+});
+
+// RC-079: one rule for a tie's value wherever it is printed.
+describe('linkValueText', () => {
+  it('prints an amount in the locale, a numeric string alike, and keeps the sign', () => {
+    expect(linkValueText({ value: 1200 })).toBe((1200).toLocaleString());
+    expect(linkValueText({ value: '1200' })).toBe((1200).toLocaleString());
+    expect(linkValueText({ value: -5 })).toBe((-5).toLocaleString());
+    expect(linkValueText({ value: 0 })).toBe('0');
+  });
+  it('gives other text as it is, and nothing for no value', () => {
+    expect(linkValueText({ value: 'abc' })).toBe('abc');
+    expect(linkValueText({ value: '' })).toBe('');
+    expect(linkValueText({ value: null })).toBe('');
+    expect(linkValueText({})).toBe('');
+  });
+  it('formats an amount with the chart\'s valueFormat; text is not formatted', () => {
+    const usd = v => '$' + v.toLocaleString('en-US');
+    expect(linkValueText({ value: 627 }, usd)).toBe('$627');
+    expect(linkValueText({ value: '1200' }, usd)).toBe('$1,200');
+    expect(linkValueText({ value: '≈ 5 M' }, usd)).toBe('≈ 5 M');
+    expect(linkValueText({ value: null }, usd)).toBe('');
   });
 });

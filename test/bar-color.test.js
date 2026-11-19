@@ -1,11 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
-import { defaultTheme } from '../assets/charts/src/core/theme.js';
 import { mount, track } from './helpers.js';
 
 // Per-bar colour (B-01): a row's `color` fills its bar, then barColor, then
 // the theme accent — in the vertical, horizontal and date modes, on every
 // render (setData repaints). The stacked mode keeps series colours.
+// The accent is drawn as read at the card (core/paint.js): the default
+// chain's literal here, with no --chart-series-1 on the page.
+const ACCENT = '#1677ff';
 
 const fills = c => [...c.container.querySelectorAll('rect.rc-bar')].map(r => r.getAttribute('fill'));
 const MODES = [
@@ -22,7 +24,7 @@ describe('Bar per-bar colour (B-01)', () => {
     expect(fills(bar({ barColor: '#123456', ...o }, rows(key, ['#ff0000']))))
       .toEqual(['#ff0000', '#123456', '#123456']);
     expect(fills(bar(o, rows(key, [undefined, '#00ff00']))))
-      .toEqual([defaultTheme.accent, '#00ff00', defaultTheme.accent]);
+      .toEqual([ACCENT, '#00ff00', ACCENT]);
   });
 
   it.each(MODES)('%s: setData recolours an existing bar and drops a removed colour', (_n, o, key) => {
@@ -49,7 +51,7 @@ describe('Bar per-bar colour (B-01)', () => {
 
   it('an empty colour is not set: the bar falls back to barColor', () => {
     expect(fills(bar({ barColor: '#123456' }, [{ label: 'A', value: 1, color: '' }]))).toEqual(['#123456']);
-    expect(fills(bar({ barColor: '' }, [{ label: 'A', value: 1 }]))).toEqual([defaultTheme.accent]);
+    expect(fills(bar({ barColor: '' }, [{ label: 'A', value: 1 }]))).toEqual([ACCENT]);
   });
 
   it('stacked: a value\'s color is ignored, segments keep their series colour', () => {

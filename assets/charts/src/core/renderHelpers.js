@@ -1,9 +1,13 @@
 // RareCharts — core/renderHelpers.js
-// Stateless render functions for common chart elements.
-// Each function mutates the passed D3 selection and returns nothing.
+// Stateless render functions for common chart elements: the render
+// functions mutate the passed D3 selection and return nothing; the text and
+// label-box helpers below (widths, box overlap, greedy placement) only
+// measure or compute.
 
 import * as d3 from 'd3';
-import { markerPath, resolveStrokeDash, warnAxisTitleClipped } from './utils.js';
+import { markerPath, resolveStrokeDash, warnAxisTitleClipped, timeKit } from './utils.js';
+import { linePath, areaPath } from './seriesPath.js';
+import { drawLinesIn } from './entryMotion.js';
 
 // ─── Text ──────────────────────────────────────────────────────────────────────
 
@@ -20,6 +24,48 @@ export function fitTextNode(node, full, avail) {
   }
 }
 
+// The width of a text that is not measured: `perChar` px a character. Each
+// caller keeps the rate of its own font (D-08): Graph's node labels 6.2, the
+// flow view's captions 6.6 and tie labels 6.4, MapFlow's place labels 6.4,
+// Bar's values and Donut's breadcrumb 7, the overview strip's ticks 5.5.
+// null and undefined count as no text.
+export function estimateTextWidth(text, perChar) {
+  return String(text ?? '').length * perChar;
+}
+
+// The drawn width of an SVG text node where the browser can measure it.
+// Before layout (or without an SVG layout: jsdom) getComputedTextLength gives
+// 0, and some browsers throw for a text that is not rendered: the width is
+// then estimated from `text` (by default the node's own content).
+export function textWidth(node, perChar, text = node?.textContent) {
+  let w = 0;
+  try { w = node?.getComputedTextLength?.() ?? 0; } catch { w = 0; }
+  return w > 0 ? w : estimateTextWidth(text, perChar);
+}
+
+// ─── Label boxes ──────────────────────────────────────────────────────────────
+// A box is { x0, x1, y0, y1 } in one coordinate space, x0 ≤ x1, y0 ≤ y1.
+
+// Two boxes overlap when they share area: boxes that only touch along an edge
+// or at a corner do not.
+export function boxesOverlap(a, b) {
+  return a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+}
+
+// Greedy placement: the first candidate, in the order given, whose box
+// (boxOf(candidate)) overlaps none of `obstacles` and, with `bounds`, stays
+// inside that box (edges included). Returns { at, box } — the candidate and
+// its box — or null when every candidate collides. Obstacles are only read:
+// a caller that wants its next label to keep off this one pushes `box`.
+export function placeFirstFree(candidates, boxOf, obstacles, { bounds } = {}) {
+  for (const at of candidates) {
+    const box = boxOf(at);
+    if (bounds && (box.x0 < bounds.x0 || box.x1 > bounds.x1 || box.y0 < bounds.y0 || box.y1 > bounds.y1)) continue;
+    if (!obstacles.some(b => boxesOverlap(box, b))) return { at, box };
+  }
+  return null;
+}
+
 // ─── Accessibility ─────────────────────────────────────────────────────────────
 
 /**
@@ -29,7 +75,8 @@ export function fitTextNode(node, full, avail) {
  * `ariaLabel` option), falling back to a generic "Chart".
  *
  * HTMLElement title/subtitle values are ignored here — only string slots
- * contribute to the label. Call once at SVG creation.
+ * contribute to the label. Chart._createSvg() calls it for every SVG chart
+ * class, once, as it creates the root.
  *
  * @param {d3.Selection} svg     — the root <svg> selection
  * @param {object}       options — chart options (reads ariaLabel, title, subtitle)
@@ -49,17 +96,40 @@ export function applySvgA11y(svg, options = {}) {
 /**
  * Render horizontal grid lines.
  *
- * @param {d3.Selection} g      — target <g> element
- * @param {Function}     scale  — d3 linear scale (Y)
- * @param {number}       W      — chart width (for tick line length)
- * @param {number}       ticks  — tick count
+ * @param {d3.Selection} g          — target <g> element
+ * @param {Function}     scale      — d3 linear scale (Y)
+ * @param {number}       W          — chart width (for tick line length)
+ * @param {number}       ticks      — tick count
  * @param {object}       theme
+ * @param {Iterable}     tickValues — explicit positions; win over ticks
  */
 export function renderGrid(g, scale, W, ticks, theme, tickValues = null) {
-  const axis = tickValues
-    ? d3.axisLeft(scale).tickValues(tickValues).tickSize(-W).tickFormat('')
-    : d3.axisLeft(scale).ticks(ticks).tickSize(-W).tickFormat('');
-  g.call(axis)
+  drawGrid(g, d3.axisLeft(scale), W, ticks, theme, tickValues);
+}
+
+/**
+ * Render vertical grid lines, at the ticks of a horizontal value scale (the
+ * horizontal Bar). The layer moves to the plot's bottom edge, H down, and
+ * its lines run the plot's height up from there.
+ *
+ * @param {d3.Selection} g          — target <g> element
+ * @param {Function}     scale      — d3 linear scale (X)
+ * @param {number}       H          — plot height (translate and line length)
+ * @param {number}       ticks      — tick count
+ * @param {object}       theme
+ * @param {Iterable}     tickValues — explicit positions; win over ticks
+ */
+export function renderGridX(g, scale, H, ticks, theme, tickValues = null) {
+  g.attr('transform', `translate(0,${H})`);
+  drawGrid(g, d3.axisBottom(scale), H, ticks, theme, tickValues);
+}
+
+// Grid lines are an axis's ticks drawn across the plot (`size` px), with no
+// labels and no axis line.
+function drawGrid(g, axis, size, ticks, theme, tickValues) {
+  if (tickValues) axis.tickValues(tickValues);
+  else axis.ticks(ticks);
+  g.call(axis.tickSize(-size).tickFormat(''))
     .call(sel => {
       sel.selectAll('line').attr('stroke', theme.grid);
       sel.select('.domain').remove();
@@ -105,9 +175,10 @@ export function renderZeroBaseline(g, scale, W, theme) {
 // fewer midnights than `max` gets exactly those midnights — a count would let
 // d3 pick 12-hour steps (repeating a date) or a 2-day step with no tick in
 // view — and a span inside one day gets one tick at its start. null: the
-// span holds enough days for d3's own ticks.
-export function dayTicks([d0, d1], max) {
-  const days = d3.timeDay.range(d3.timeDay.ceil(d0), +d1 + 1);
+// span holds enough days for d3's own ticks. Midnight is the zone's (T-10).
+export function dayTicks([d0, d1], max, timeZone = 'local') {
+  const { day } = timeKit(timeZone);
+  const days = day.range(day.ceil(d0), +d1 + 1);
   if (days.length >= max) return null;
   return days.length ? days : [d0];
 }
@@ -140,6 +211,8 @@ function thinAxisX(g, ticks, apply) {
   const minGap = 8;
   let attempts = 5;
   let count = ticks;
+  // labels this pass hid on an earlier render show again before it measures
+  g.selectAll('text[data-rc-thin]').attr('display', null).attr('data-rc-thin', null);
   while (attempts-- > 0) {
     const labels = g.selectAll('text').nodes();
     if (labels.length <= 2) break;
@@ -156,9 +229,58 @@ function thinAxisX(g, ticks, apply) {
     // nothing.
     const newCount = Math.max(1, Math.floor(Math.min(count, labels.length) / 2));
     if (newCount >= count) break;
-    count = newCount;
     apply(newCount);
+    // Never thin down to one label or none (RC-076: the dated Bar kept a
+    // lone 'Jan 25' at 800 px): d3 may answer a small count with a step
+    // longer than the view holds twice. Keep the ticks asked before and show
+    // every k-th label instead, the first one kept.
+    if (g.selectAll('text').size() < 2) {
+      apply(count);
+      const texts = g.selectAll('text').nodes();
+      const rects = texts.map(t => t.getBoundingClientRect());
+      const k = thinStep(rects.map(r => (r.left + r.right) / 2), rects.map(r => r.width), minGap);
+      if (k > 1) texts.forEach((t, i) => { if (i % k) t.setAttribute('display', 'none'); if (i % k) t.setAttribute('data-rc-thin', ''); });
+      break;
+    }
+    count = newCount;
   }
+}
+
+// Labels in a row (centres left to right, widths in px) that would sit
+// closer than minGap to a neighbour: the smallest k such that showing every
+// k-th, from the first, keeps every pair shown at least minGap apart. At
+// most n − 1 (the first and the last stay); 1 when nothing collides or
+// nothing is measured. The time axis's 8px rule (thinAxisX) for rows d3
+// cannot thin by asking for fewer ticks.
+export function thinStep(centres, widths, minGap = 8) {
+  const n = centres.length;
+  if (!widths.some(v => v > 0)) return 1;
+  const clears = k => {
+    for (let i = 0; i + k < n; i += k) {
+      if (centres[i + k] - centres[i] - (widths[i] + widths[i + k]) / 2 < minGap - 1e-9) return false;   // 1e-9: float steps
+    }
+    return true;
+  };
+  let k = 1;
+  while (k < n - 1 && !clears(k)) k++;
+  return k;
+}
+
+// Band labels — a categorical axis at the bottom (Bar's vertical modes) —
+// that would sit closer than minGap to a neighbour: show every k-th label
+// (thinStep). Each category is a tick, so d3 cannot thin them by asking for
+// fewer. Widths come from getComputedTextLength and centres from the band
+// scale, so it needs no layout; a DOM that measures nothing (0 px) hides
+// nothing. A hidden label gets display="none" and keeps its tick; a later
+// call starts afresh. Returns k (1: nothing hidden).
+export function thinBandLabels(g, scale, { minGap = 8 } = {}) {
+  const texts = g.selectAll('.tick text').nodes();
+  texts.forEach(t => t.removeAttribute('display'));
+  const step = scale.step?.() ?? 0;
+  if (!(step > 0)) return 1;
+  const k = thinStep(texts.map((_, i) => i * step), texts.map(t => t.getComputedTextLength?.() || 0), minGap);
+  if (k > 1) texts.forEach((t, i) => { if (i % k) t.setAttribute('display', 'none'); });
+  return k;
 }
 
 // A label centred on a tick near the plot's edge reaches past the svg (a 1M
@@ -169,7 +291,8 @@ function thinAxisX(g, ticks, apply) {
 // nothing.
 function keepEdgeLabelsInside(g) {
   const svg = g.node()?.ownerSVGElement;
-  const labels = g.selectAll('text').nodes();
+  // the labels thinAxisX left in place (it hides every k-th on a crowded axis)
+  const labels = g.selectAll('text').nodes().filter(n => !n.hasAttribute('data-rc-thin'));
   if (!svg || !labels.length) return;
   const box = svg.getBoundingClientRect();
   if (!(box.width > 0)) return;
@@ -192,75 +315,108 @@ function keepEdgeLabelsInside(g) {
   if (r1.width > 0 && r1.right > box.right) shift(last, labels[labels.length - 2], box.right - r1.right);
 }
 
-// ─── Y axis (right) ──────────────────────────────────────────────────────────
+// ─── Y axis ──────────────────────────────────────────────────────────────────
 
 /**
- * Render the right-side Y axis (Y1 in DualAxes, sole Y in Line).
+ * Render a vertical value axis at the right or the left edge of the plot:
+ * Line's (either side), DualAxes' Y1 (right) and Y2 (left), TimeSeries' and
+ * the vertical Bar's (right). Labels in the muted colour and the numeric font
+ * (.rc-axis); no tick marks, and the axis line only when labelsOnly is false.
  *
- * @param {d3.Selection} g          — target <g> element
- * @param {Function}     scale      — d3 linear scale
- * @param {number}       W          — chart width (for translate)
- * @param {number}       ticks      — tick count
- * @param {Function}     tickFormat — value formatter
- * @param {boolean}      labelsOnly — hide axis line (default true)
- * @param {object}       theme
+ * @param {d3.Selection} g                 — target <g> element
+ * @param {Function}     scale             — d3 continuous scale (Y)
+ * @param {object}       opts
+ * @param {string}       opts.side         — 'right' (default): the axis at x = width,
+ *                                           labels start past it; 'left': at x = 0,
+ *                                           labels end before it
+ * @param {number}       opts.width        — plot width (where a right axis sits)
+ * @param {number}       opts.ticks        — approximate tick count (default 4)
+ * @param {Iterable}     opts.tickValues   — explicit positions; win over ticks
+ * @param {Function}     opts.tickFormat   — value formatter
+ * @param {boolean}      opts.labelsOnly   — hide the axis line (default true)
+ * @param {object}       opts.theme
+ * @param {number}       opts.padding      — px between the axis and its labels (default 8)
  */
-export function renderAxisYRight(g, scale, W, ticks, tickFormat, labelsOnly = true, theme, tickValues = null) {
-  const axis = tickValues
-    ? d3.axisRight(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
-    : d3.axisRight(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
+export function renderAxisY(g, scale, {
+  side = 'right', width = 0, ticks = 4, tickValues = null, tickFormat,
+  labelsOnly = true, theme, padding = 8,
+} = {}) {
+  const right = side !== 'left';
+  const axis = (right ? d3.axisRight : d3.axisLeft)(scale)
+    .tickSize(0).tickPadding(padding).tickFormat(tickFormat);
+  if (tickValues) axis.tickValues(tickValues);
+  else axis.ticks(ticks);
   g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
-  g.attr('transform', `translate(${W},0)`)
+  g.attr('transform', `translate(${right ? width : 0},0)`)
     .call(axis)
     .call(sel => {
       sel.selectAll('text')
         .attr('fill', theme.muted)
-        .attr('text-anchor', 'start')
-        .attr('x', 8);
-
-      if (labelsOnly) {
-        sel.select('.domain').remove();
-        sel.selectAll('line').remove();
-      } else {
-        sel.select('.domain').attr('stroke', theme.border);
-        sel.selectAll('line').remove();
-      }
+        .attr('text-anchor', right ? 'start' : 'end')
+        .attr('x', right ? padding : -padding);
+      if (labelsOnly) sel.select('.domain').remove();
+      else sel.select('.domain').attr('stroke', theme.border);
+      sel.selectAll('line').remove();
     });
 }
 
-// ─── Y axis (left) ───────────────────────────────────────────────────────────
+// ─── Line series ─────────────────────────────────────────────────────────────
 
 /**
- * Render the left-side Y axis (Y2 in DualAxes).
+ * Draw the line series of Line, DualAxes and TimeSeries into one layer: the
+ * area fills first (series with area on), then the lines over them, each
+ * joined by series name. A series' own curve, strokeWidth, strokeDash, area,
+ * areaOpacity and areaBaseline win over the chart-level values passed here.
+ * A line with a dash pattern shows at once with it; a solid line draws in on
+ * the chart's entry timeline (`timing`, from EntryMotion.timing; null: whole
+ * at once) — the draw-in uses the same stroke-dasharray attribute.
+ * Without `classes.area` the fills are left alone: TimeSeries draws its own
+ * (a gradient down to the plot's bottom, RC-080) and only its line here.
  *
- * @param {d3.Selection} g          — target <g> element
- * @param {Function}     scale      — d3 linear scale
- * @param {number}       ticks      — tick count
- * @param {Function}     tickFormat — value formatter
- * @param {boolean}      labelsOnly — hide axis line (default true)
- * @param {object}       theme
+ * @param {d3.Selection} g       — the lines layer
+ * @param {object[]}     lines   — the visible line series
+ * @param {object}       opts
+ * @param {Function}     opts.x            — the time scale
+ * @param {Function}     opts.yFor         — (series) => its Y scale
+ * @param {string}       opts.curve        — curve name (resolveCurve)
+ * @param {number}       opts.tension      — cardinal tension
+ * @param {boolean}      opts.area         — fill under the lines
+ * @param {number}       opts.areaOpacity
+ * @param {string|number} opts.areaBaseline — 'zero' | 'min' | number
+ * @param {*}            opts.dash         — strokeDash (resolveStrokeDash); null: solid
+ * @param {number}       opts.width        — stroke width
+ * @param {{area?: string, line: string}} opts.classes — the paths' classes;
+ *                                           no area class: no fills drawn
+ * @param {object|null}  opts.timing       — the draw-in timing, or null
  */
-export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, theme, tickValues = null) {
-  const axis = tickValues
-    ? d3.axisLeft(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat)
-    : d3.axisLeft(scale).ticks(ticks).tickSize(0).tickPadding(8).tickFormat(tickFormat);
-  g.classed('rc-axis', true);   // .rc-axis text → numeric font/size (rare-charts.css)
-  g.attr('transform', 'translate(0,0)')
-    .call(axis)
-    .call(sel => {
-      sel.selectAll('text')
-        .attr('fill', theme.muted)
-        .attr('text-anchor', 'end')
-        .attr('x', -8);
+export function drawLineSeries(g, lines, {
+  x, yFor, curve, tension, area, areaOpacity, areaBaseline, dash, width, classes, timing,
+}) {
+  if (classes.area) {
+    g.selectAll(`.${classes.area}`)
+      .data(lines.filter(s => (s.area ?? area) === true), s => s.name)
+      .join('path')
+      .attr('class', classes.area)
+      .attr('d',       s => areaPath(s, x, yFor(s), curve, areaBaseline, tension))
+      .attr('fill',    s => s.color)
+      .attr('opacity', s => s.areaOpacity ?? areaOpacity);
+  }
 
-      if (labelsOnly) {
-        sel.select('.domain').remove();
-        sel.selectAll('line').remove();
-      } else {
-        sel.select('.domain').attr('stroke', theme.border);
-        sel.selectAll('line').remove();
-      }
-    });
+  const dashOf = s => resolveStrokeDash(s.strokeDash ?? dash);
+  const paths = g.selectAll(`.${classes.line}`)
+    .data(lines, s => s.name)
+    .join('path')
+    .attr('class', classes.line)
+    .attr('fill', 'none')
+    .attr('stroke',           s => s.color)
+    .attr('stroke-width',     s => s.strokeWidth ?? width)
+    .attr('stroke-dasharray', dashOf)
+    .attr('d', s => linePath(s, x, yFor(s), curve, tension));
+
+  paths.filter(s => dashOf(s)).interrupt()
+    .attr('stroke-dasharray', dashOf)
+    .attr('stroke-dashoffset', null);
+  drawLinesIn(paths.filter(s => !dashOf(s)), timing);
 }
 
 // ─── End labels ──────────────────────────────────────────────────────────────
@@ -275,7 +431,10 @@ export function renderAxisYLeft(g, scale, ticks, tickFormat, labelsOnly = true, 
  * @param {Function}     tickFormat — value formatter
  * @param {object}       theme
  */
-export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
+// `axis`: the Y axis group in the same column (the right one). A tick label
+// there that an end label would sit on is hidden while the end label is
+// drawn (RC-084: '10.9k' over '10k'); every other tick label shows.
+export function renderEndLabels(g, series, yScale, W, tickFormat, theme, { axis = null } = {}) {
   g.selectAll('*').remove();
 
   const points = series
@@ -317,6 +476,21 @@ export function renderEndLabels(g, series, yScale, W, tickFormat, theme) {
       .attr('width',  bbox.width  + px * 4)
       .attr('height', bbox.height + py * 8);
   });
+
+  if (axis) {
+    const height = el => el.getBBox?.().height || 12;
+    const labels = [];
+    groups.each(function (d) { labels.push({ y: yScale(d.value), h: height(d3.select(this).select('text').node()) }); });
+    axis.selectAll('.tick').each(function () {
+      const m = /translate\(\s*[-\d.e]+\s*[, ]\s*([-\d.e]+)/.exec(this.getAttribute('transform') ?? '');
+      const text = d3.select(this).select('text');
+      if (!m || text.empty()) return;
+      const y = +m[1], h = height(text.node());
+      // 2px apart, as the plates of two end labels
+      const covered = labels.some(l => Math.abs(l.y - y) < (l.h + h) / 2 + 2);
+      text.attr('visibility', covered ? 'hidden' : null);
+    });
+  }
 }
 
 // ─── Axis titles ─────────────────────────────────────────────────────────────

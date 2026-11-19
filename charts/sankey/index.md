@@ -8,9 +8,7 @@ permalink: '/charts/sankey/'
 
 A Sankey diagram shows how a quantity flows between stages: nodes stand in columns, bands connect them, and the width of each band is the value it carries. It answers "where did it come from and where did it go" — budgets and their spending, money trails, funnels, energy balances.
 
-<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
-  <p><strong>⚠️ Experimental.</strong> <code>Sankey</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump.</p>
-</div>
+<p class="callout callout-warning"><strong>Experimental.</strong> <code>Sankey</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump.</p>
 
 The simplest case first: a city budget in two columns — where the money comes from on the left, where it goes on the right. Hover a band or a node to follow its flows; the tooltip gives each flow's share of its source.
 
@@ -50,10 +48,12 @@ Color bands by `type` with `linkColor: 'type'` and a `linkTypes` map, and the le
 
 The setup: `linkColor: 'type'` and a `linkTypes` map; a link's `label` shows up in its tooltip — other fields reach your `linkTooltipFormat`.
 
+The legend's items hide and show their bands: a click toggles a type, a double click keeps it alone, *Show all* brings every band back. The diagram keeps its layout — nodes, their labels and values stay where and as they were — and a hidden band leaves its gap at its nodes. The hover, the node tooltip and the screen-reader table read the bands shown; a band's "% of source" stays a share of the whole node. `chart.setLinkTypesVisible(['equity'])` does the same from code (`null` shows all), and returns the chart. More: [Interactive legend](/charts/settings/#interactive-legend).
+
 <pre class="text-content-caption"><code>new RareCharts.Sankey('#chart', {
   linkColor: 'type',
   linkTypes: {
-    equity: { color: '#00aaff', label: 'Equity' },
+    equity: { color: '#1677ff', label: 'Equity' },
     loan:   { color: '#fa8c16', label: 'Loan' },
   },
 }).setData({
@@ -96,15 +96,18 @@ With the default `orientation: 'auto'` the diagram turns 90° when its container
         <tr><td><code>iterations</code></td><td>number</td><td><code>6</code></td><td>Layout relaxation rounds — more straightens bands at the cost of time</td></tr>
         <tr><td><code>linkColor</code></td><td>string</td><td><code>'source'</code></td><td><code>'source'</code>, <code>'target'</code>, <code>'type'</code>, <code>'gradient'</code>, or any CSS color</td></tr>
         <tr><td><code>linkOpacity</code></td><td>number</td><td><code>0.45</code></td><td>Band opacity at rest</td></tr>
-        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors for <code>linkColor: 'type'</code>, and then a legend of every type described here (your own <code>legend</code> replaces it); a type not described stays muted</td></tr>
+        <tr><td><code>linkTypes</code></td><td>object</td><td>—</td><td><code>{ type: { color, label } }</code> — band colors for <code>linkColor: 'type'</code>, and then a legend of every type described here that the data uses, each item a toggle for its bands (your own <code>legend</code> replaces it); a type not described stays muted</td></tr>
+        <tr><td><code>hiddenLinkTypes</code></td><td>array</td><td><code>[]</code></td><td>Link types hidden from the start (an untyped band is <code>'default'</code>); the legend shows them off</td></tr>
+        <tr><td><code>legendInteractive</code></td><td>boolean</td><td><code>true</code></td><td><code>false</code>: the legend is plain labels, and a type hidden from code leaves it</td></tr>
+        <tr><td><code>onLegendToggle</code></td><td>function</td><td>—</td><td><code>({ name, visible, visibleNames }) =&gt; void</code> after a legend gesture; <code>name</code> is the link type, <code>null</code> for Show all</td></tr>
         <tr><td><code>labels</code></td><td>string | false</td><td><code>'auto'</code></td><td>Node labels, right of each node (the last column gets a gutter sized to its longest label); long ones are cut with an ellipsis to the room before the next column, the full name stays in the tooltip. <code>false</code> leaves them to the tooltip</td></tr>
         <tr><td><code>minLabelSize</code></td><td>number</td><td><code>10</code></td><td>Nodes thinner than this (px) get no label, only a tooltip; in the vertical layout a node narrower than 24 px (or this, if larger) gets no label</td></tr>
         <tr><td><code>showValues</code></td><td>boolean</td><td><code>true</code></td><td>Append the node value to its label</td></tr>
         <tr><td><code>valueFormat</code></td><td>function</td><td>locale number</td><td><code>v =&gt; string</code> for labels, tooltips and the table</td></tr>
-        <tr><td><code>tooltipFormat</code></td><td>function</td><td>built-in</td><td><code>({ node, incoming, outgoing }) =&gt; html</code></td></tr>
+        <tr><td><code>tooltipFormat</code></td><td>function</td><td>built-in</td><td><code>({ node, incoming, outgoing, links }) =&gt; html</code> — the bands shown; <code>links</code> is <code>incoming</code> then <code>outgoing</code></td></tr>
         <tr><td><code>linkTooltipFormat</code></td><td>function</td><td>built-in</td><td><code>({ link, source, target }) =&gt; html</code></td></tr>
         <tr><td><code>tableFallback</code></td><td>boolean</td><td><code>true</code></td><td>A visually hidden table of the flows for screen readers</td></tr>
-        <tr><td><code>animate</code> / <code>duration</code> / <code>ease</code></td><td></td><td><code>true</code> / <code>600</code> / <code>'cubicOut'</code></td><td>Entry fade of the bands; off under <code>prefers-reduced-motion</code></td></tr>
+        <tr><td><code>animate</code> / <code>duration</code> / <code>ease</code></td><td></td><td><code>true</code> / <code>650</code> / <code>'cubicOut'</code></td><td>Entry fade of the bands; off under <code>prefers-reduced-motion</code></td></tr>
     </tbody>
 </table>
 </div>
@@ -113,7 +116,15 @@ Text slots `title`, `subtitle`, `source` and `note`, and the `controls` slot for
 
 ## Accessibility
 
-The SVG is labelled by `ariaLabel`, else from `title` / `subtitle`. Every node and band carries an accessible name ("Income tax → Health: 9.4"); nodes are reachable with Tab, and Enter or Space pins a node's tooltip. A visually hidden table lists every flow, so the data stays readable without the picture.
+The SVG is a group labelled by `ariaLabel`, else from `title` / `subtitle`. Every node and band carries an accessible name ("Income tax → Health: 9.4"). Nodes are reachable with Tab, and Enter or Space pins a node's tooltip; a click elsewhere or Escape releases it. The tooltip lists the node's bands in and out, each with the node at its other end and its value, under the totals, so the keyboard reads the bands too. Two bands to one node are told apart by their type. A visually hidden table lists every flow, so the data stays readable without the picture.
+
+## Not in this version
+
+- **Cycles.** A Sankey is acyclic; links that return to a node they came from throw, naming the cycle.
+- **Dragging nodes** by hand.
+- **Drill-down** through several levels.
+- **Particles** moving along the bands.
+- **The remainder as its own band.** A node whose inflow and outflow differ is as tall as the larger; the difference is not drawn.
 
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/sankey/sankey-demos.js"></script>

@@ -1,0 +1,102 @@
+<!doctype html>
+<!-- RareCharts on hostile hosts (X-08, RC-032). Checked by
+     test/browser/charts-hostile.test.js against the same page with no host
+     stylesheet. ?host=
+       bare     no stylesheet: RareCharts alone, the oracle
+       hostile  hostile.css: a reset, element rules, element + state and
+                attribute rules no page aims at a chart
+       v071     Rare Styles v0.7.1 (served by test/browser/hosts.js)
+       v072     Rare Styles v0.7.2, the committed rare.css
+     Page mode (`<html class="rd">`). Every control and text part a chart
+     writes in HTML:
+       #line   Line: title, subtitle, a linked source, a note; a legend with
+               an item on, an item off and Show all; timeframes with the
+               custom range, its panel open (labels, date fields, Apply);
+               the Log toggle
+       #graph  Graph: its type legend, breadcrumbs (one disabled), the zoom
+               and full-screen tools, the "+N more" and "N hidden" notes,
+               the "+N" panel open (its items and close), the details panel
+               (h4, p, dl/dt) -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RareCharts on hostile hosts</title>
+<script>
+  const HOST = new URLSearchParams(location.search).get('host') ?? 'bare';
+  const HREF = {
+    hostile: '/test/browser/fixtures/hostile.css', v071: '/assets/css/rare-v0.7.1.css', v072: '/assets/css/rare.css',
+  }[HOST];
+  if (HREF) document.write(`<link id="host" rel="stylesheet" href="${HREF}">`);
+</script>
+<style>
+  main > div { width: 900px; margin: 0 0 24px; }
+</style>
+</head>
+<body>
+<main>
+  <div id="line"></div>
+  <div id="graph"></div>
+</main>
+
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const R = RareCharts;
+  const day = i => new Date(Date.UTC(2025, 0, 1 + i));
+  const vals = (n, f) => Array.from({ length: n }, (_, i) => ({ date: day(i), value: f(i) }));
+  const series = [
+    { name: 'Alice', color: '#1677ff', values: vals(200, i => 10 + Math.sin(i / 9)) },
+    { name: 'Bob',   color: '#fa8c16', values: vals(200, i => 20 + Math.cos(i / 7)) },
+    { name: 'Carol', color: '#52c41a', values: vals(200, i => 15 + i / 50) },
+  ];
+
+  // A hub with more neighbours than an ego view shows ("+N more"), and a
+  // second hub to step to, so the breadcrumbs show.
+  const leaves = Array.from({ length: 40 }, (_, i) => ({ id: `n${i}`, label: `Node ${i}` }));
+  const nodes = [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }, ...leaves];
+  const links = [
+    { source: 'a', target: 'b', type: 'family' },
+    ...leaves.map((n, i) => ({ source: 'a', target: n.id, type: i % 2 ? 'work' : 'family' })),
+    ...leaves.slice(0, 3).map(n => ({ source: 'b', target: n.id, type: 'work' })),
+  ];
+
+  window.charts = {
+    line: new R.Line('#line', {
+      height: 320,
+      animate: false,
+      timeZone: 'UTC',
+      title: 'A hostile host',
+      subtitle: 'Every part of the chrome, against the same page with no stylesheet',
+      source: ['Source: ', { text: 'fixture', href: '#source' }],
+      note: 'A note under the source.',
+      legend: [{ label: 'Alice' }, { label: 'Bob' }, { label: 'Carol' }],
+      timeframes: ['1M', '3M', 'ALL', 'CUSTOM'],
+      scaleToggle: true,
+    }).setData(series).setSeriesVisible(['Alice', 'Bob']),
+
+    graph: new R.Graph('#graph', {
+      height: 420,
+      duration: 0,
+      title: 'Relations',
+      source: 'Source: fixture',
+      details: true,
+      linkTypes: {
+        family: { color: '#1677ff', label: 'Family' },
+        work: { color: '#fa8c16', label: 'Work' },
+      },
+    }).setData({ nodes, links }),
+  };
+
+  const graph = window.charts.graph;
+  window.ready = graph.whenReady()
+    .then(() => graph.focus('b').whenReady())
+    .then(() => graph.focus('a').whenReady())
+    .then(() => {
+      graph.hide('n39');
+      graph.container.querySelector('.rc-graph-note').click();
+      // last: the "+N" panel takes the focus, which would close this one
+      window.charts.line.container.querySelector('.rc-range-custom').click();
+    });
+</script>
+</body>
+</html>

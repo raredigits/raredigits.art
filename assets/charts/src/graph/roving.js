@@ -1,8 +1,8 @@
 // RareCharts — graph/roving.js
 // Keyboard access to what a Graph draws (K-20): a roving tabindex. All
-// items of one set — the nodes of a view, the ties of the flow view — share
-// one Tab stop; the arrow keys move between them, Enter or Space acts as a
-// click, Escape clears (the views wire those keys).
+// items of one set — the nodes of a view, its ties (K-23) — share one Tab
+// stop; the arrow keys move between them, Enter or Space acts as a click,
+// Escape clears (the views wire those keys).
 //
 //   const stop = rovingTabindex(sel, { state, keyOf, preferred });
 //   stop.focus(key)        // focus that item; false when it is not drawn
@@ -78,7 +78,7 @@ export function gridStep(items, item, key, posOf) {
   return null;
 }
 
-// A list in order (the flow view's ties): ← ↑ the previous item, → ↓ the
+// A list in order (the ties of every view): ← ↑ the previous item, → ↓ the
 // next, Home / End the first / last.
 export function listStep(order, item, key) {
   const i = order.indexOf(item);
@@ -88,4 +88,43 @@ export function listStep(order, item, key) {
   if (key === 'ArrowRight' || key === 'ArrowDown') return order[i + 1] ?? null;
   if (key === 'ArrowLeft' || key === 'ArrowUp') return i > 0 ? order[i - 1] : null;
   return null;
+}
+
+// A tooltip pinned from the keyboard (K-23): its links (a tie's `sources`)
+// must be reachable, but the tooltip sits before the svg in the card, so
+// Tab from the item that pinned it would never get there. Called first in
+// the item's keydown: Tab, while the tooltip is pinned and holds something
+// focusable, goes into it instead (true: the key is handled). In there,
+// Shift+Tab on the first part comes back to the item and the tooltip stays;
+// Tab on the last part, or Escape anywhere in it, releases the pin and
+// comes back to the item.
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), '
+  + 'textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+const tipKeys = new WeakMap();   // tooltip element → its keydown listener (one at a time)
+
+export function enterPinnedTip(event, tooltip, item) {
+  if (event.key !== 'Tab' || event.shiftKey || !tooltip?.isPinned) return false;
+  const el = tooltip.el;
+  const parts = () => [...el.querySelectorAll(FOCUSABLE)];
+  if (!parts().length) return false;
+  event.preventDefault();
+  const done = () => {
+    el.removeEventListener('keydown', tipKeys.get(el));
+    tipKeys.delete(el);
+  };
+  if (tipKeys.has(el)) done();
+  const onKey = e => {
+    if (!tooltip.isPinned || !item.isConnected) { done(); return; }
+    const list = parts();
+    const out = e.key === 'Tab' && (e.shiftKey ? e.target === list[0] : e.target === list[list.length - 1]);
+    if (e.key !== 'Escape' && !out) return;
+    e.preventDefault();
+    done();
+    if (!(e.key === 'Tab' && e.shiftKey)) tooltip.unpin();
+    item.focus();
+  };
+  tipKeys.set(el, onKey);
+  el.addEventListener('keydown', onKey);
+  parts()[0].focus();
+  return true;
 }

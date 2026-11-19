@@ -83,7 +83,7 @@ describe('Line — margin reclaim', () => {
 
 describe('Bar — margin reclaim', () => {
   it('vertical: hiding the value (Y) axis collapses the right gutter', () => {
-    expect(new Bar('#chart', {}).margin.right).toBe(65);
+    expect(new Bar('#chart', {}).margin.right).toBe(64);   // as Line's (K-10; it was 65)
     document.body.innerHTML = '';
     document.body.appendChild(host);
     expect(new Bar('#chart', { showYAxis: false }).margin.right).toBe(0);

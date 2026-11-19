@@ -25,7 +25,8 @@
 //   defaultFill   — fill for regions with NO matching data
 //                   (default: theme.map.unmatchedFill — #e8e8e8; dark #1e1e2e)
 //   matchFill     — fill for regions WITH matching data without explicit color
-//                   (default: theme.map.matchFill — #00aaff; dark #ff6200)
+//                   (default: theme.map.matchFill, null in both presets, so
+//                   theme.accent — #1677ff; dark #ff6200)
 //   oceanColor    — SVG background / ocean fill (default: theme.map.ocean,
 //                   transparent)
 //   borderColor   — feature border stroke
@@ -37,9 +38,13 @@
 //   graticule     — draw a 10° grid of meridians and parallels under the
 //                   regions, in theme.map.graticule (default: false; not
 //                   drawn with projection 'identity')
-//   The theme's accent / surface / border are only fallbacks for a theme
-//   without a `map` section.
-//   zoom          — enable scroll-zoom and drag pan (default: false)
+//   The theme's surface / border are only fallbacks for a theme without a
+//   `map` section; its accent fills regions with data unless map.matchFill
+//   is set, so changing accent recolours a map too.
+//   zoom          — zoom and pan (default: false): Ctrl/⌘ + wheel or a
+//                   trackpad pinch zooms, a drag pans; on a phone two fingers
+//                   pan and pinch. A plain wheel and one finger scroll the
+//                   page, with a hint over the map (T-09, core/zoomGesture.js)
 //   zoomExtent    — [minScale, maxScale] for d3 zoom (default: [0.8, 12])
 //   idField       — feature property used as ID when feature.id is absent (default: 'id')
 //   featureFilter — function(feature) => boolean
@@ -51,6 +56,17 @@
 //                   color — the region's fill. Formatter arguments, the rule
 //                   for every class (K-09): /charts/settings/#formatter-arguments
 //   rotate        — [lambda, phi, gamma] rotation angles passed to projection.rotate()
+//   onRegionClick — function({ feature, item, label, value, event }) (B-06):
+//                   a click, Enter or Space on a region with a data item. The
+//                   chart only reports it; the page navigates (links from the
+//                   data come after 1.0). With a handler those regions take a
+//                   pointer, become focusable buttons named by their label and
+//                   value, and show the focus ring; the svg is a group, not an
+//                   image. A click anywhere else on the map — the sea, a region
+//                   without data — and Escape on a focused region report
+//                   item: null, so the page can clear what it showed (feature
+//                   is the region without data, or null). A drag (a pan) is
+//                   not a click; MapFlow's arcs and places do not report.
 //
 // Readiness: whenReady() (base Chart) resolves once the geometry has loaded
 // and the map is drawn — and also when the load fails, after the error is
@@ -59,9 +75,8 @@
 import * as d3 from 'd3';
 import * as topojson from 'topojson-client';
 import { Chart } from '../core/Chart.js';
-import { Tooltip } from '../core/Tooltip.js';
-import { applySvgA11y } from '../core/renderHelpers.js';
-import { escapeHtml, tipTitle, tipMuted } from '../core/html.js';
+import { escapeHtml, tipTitle, tipRow } from '../core/html.js';
+import { bindZoom } from '../core/zoomGesture.js';
 
 export class Map extends Chart {
   constructor(selector, options = {}) {
@@ -73,7 +88,7 @@ export class Map extends Chart {
 
     this._features = [];
     this._dataMap = new globalThis.Map(); // id → item
-    this._tooltip = new Tooltip(this.container, this.theme);
+    this.tooltip;   // made now: its element keeps its place in the card
     this._geoReady = false;
     this._activeTooltipHtml = null;
     this._zoomTransform = d3.zoomIdentity;
@@ -104,17 +119,10 @@ export class Map extends Chart {
   _initSVG() {
     this.container.style.overflow = 'hidden';
 
-    this.svg = d3.create('svg')
-      .attr('class', 'rc-map-svg')
-      .style('display', 'block')
-      .style('overflow', 'hidden');
-    applySvgA11y(this.svg, this.options);
-
-    if (this._footerEl && this._footerEl.parentNode === this.container) {
-      this.container.insertBefore(this.svg.node(), this._footerEl);
-    } else {
-      this.container.appendChild(this.svg.node());
-    }
+    // sized at render (width, height and a viewBox)
+    this._createSvg({
+      size: 'none', className: 'rc-map-svg', style: { display: 'block', overflow: 'hidden' }, beforeFooter: true,
+    });
 
     this._bgRect = this.svg.append('rect')
       .attr('class', 'rc-map-ocean');
@@ -145,6 +153,10 @@ export class Map extends Chart {
 
     if (this.options.zoom) {
       this._zoom = d3.zoom()
+        // An explicit extent, as Graph's (RC-073): the default reads the
+        // svg's width/height attributes or viewBox, which not every
+        // environment resolves to pixels.
+        .extent(function () { return [[0, 0], [this.clientWidth || 1, this.clientHeight || 1]]; })
         .scaleExtent(this.options.zoomExtent ?? [0.8, 12])
         .translateExtent([[-2000, -2000], [4000, 4000]])
         .on('zoom', event => {
@@ -153,9 +165,10 @@ export class Map extends Chart {
           this._onZoom(event.transform);
         });
 
-      this.svg
-        .call(this._zoom)
-        .on('dblclick.zoom', null);
+      // Ctrl/⌘ + wheel, two fingers on a phone; a plain wheel and one finger
+      // are the page's, with a hint over the map (core/zoomGesture.js)
+      this._zoomHint = bindZoom(this.svg, this._zoom, { container: this.container, theme: this.theme });
+      this.svg.on('dblclick.zoom', null);
     }
   }
 
@@ -294,14 +307,14 @@ export class Map extends Chart {
     this._fitProjection(proj, [[pad, pad], [W - pad, H - pad]]);
 
     const path = d3.geoPath(proj);
-    // Kept for overlays drawn by subclasses (MapFlow).
+    // Kept for overlays drawn by subclasses: MapFlow places its points with
+    // the projection.
     this._projection = proj;
-    this._geoPath = path;
 
     // ─── Colors ─────────────────────────────────────────────────────────────
 
     const defaultFill = o.defaultFill ?? tm.unmatchedFill ?? t.surface ?? '#e8e8e8';
-    const matchFill = o.matchFill ?? tm.matchFill ?? t.accent ?? '#00aaff';
+    const matchFill = o.matchFill ?? tm.matchFill ?? t.accent ?? '#1677ff';
     const borderColor = o.borderColor ?? tm.border ?? t.border ?? '#ffffff';
 
     const fillFor = feature => {
@@ -317,13 +330,13 @@ export class Map extends Chart {
     // A region with data under the pointer: hoverFill, else its own fill
     // moved (hoverBrighten − 1) of the way towards white (C-22) — black
     // changes too, and nothing reaches pure white; a fill already lighter
-    // than 0.85 darkens by a similar step instead. A fill d3 cannot read (a
-    // gradient url, currentColor) stays as it is.
+    // than 0.85 darkens by a similar step instead. A token or var() fill is
+    // read as hex first; one d3 still cannot read (a gradient url) stays.
     const brighten = Number.isFinite(tm.hoverBrighten) ? tm.hoverBrighten : 1.3;
     const hoverFillFor = feature => {
       if (o.hoverFill != null) return o.hoverFill;
       const fill = fillFor(feature);
-      const c = d3.hsl(fill);
+      const c = d3.hsl(this._hex(fill));                 // a token or var() fill, read as hex
       if (!Number.isFinite(c.l)) return fill;
       const step = brighten - 1;
       c.l = c.l > 0.85 ? Math.max(0, c.l - step * 0.4) : c.l + (1 - c.l) * step;
@@ -364,9 +377,10 @@ export class Map extends Chart {
 
         // The payload is an object: the role fields sit on it (K-09).
         const fmt = this._regionTooltipFormat();
+        const color = this._hex(fillFor(d));
         const html = fmt
-          ? fmt({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, color: fillFor(d) })
-          : this._defaultTooltip(d, item);
+          ? fmt({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, color })
+          : this._defaultTooltip(d, item, color);
 
         this._activeTooltipHtml = html;
 
@@ -386,9 +400,82 @@ export class Map extends Chart {
         this._tooltip.hide();
       });
 
+    this._bindRegionClicks(idField);
+
     if (this._zoom) {
       this._zoom.translateExtent([[-W * 2, -H * 2], [W * 3, H * 3]]);
     }
+  }
+
+  // ─── Region clicks (B-06) ───────────────────────────────────────────────
+
+  // With onRegionClick, every region with a data item is a button: a click,
+  // Enter or Space reports { feature, item, label, value, event }; a click on
+  // the rest of the map, or Escape, reports item: null (nothing chosen).
+  // Without it, no attribute and no handler, so the drawing stays as it was.
+  // The handlers are set on every render (namespaced, replaced, never stacked).
+  _bindRegionClicks(idField) {
+    const handler = this.options.onRegionClick;
+    const on = typeof handler === 'function';
+    const itemOf = d => {
+      const fid = this._featureId(d, idField);
+      return fid != null ? (this._dataMap.get(fid) ?? null) : null;
+    };
+    const active = d => on && !!itemOf(d);
+    const report = (event, d) => {
+      if (this._destroyed) return;
+      const item = itemOf(d);
+      handler({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, event });
+    };
+    // Nothing chosen: a region without data (its feature), the sea (none).
+    const clear = (event, d = null) => {
+      if (this._destroyed) return;
+      handler({ feature: d, item: null, label: d ? this._regionName(d, null) : null, value: null, event });
+    };
+    // A drag that pans the map ends with a click on a region: one that moved
+    // more than 4 px since the press is not taken for a click.
+    const moved = event => {
+      const at = this._regionPress;
+      return !!at && Math.hypot(event.clientX - at[0], event.clientY - at[1]) > 4;
+    };
+    // Regions sit inside a group, not an image: an image hides its buttons
+    // from assistive technology (K-24's rule).
+    this.svg.attr('role', on ? 'group' : 'img');
+    // One click handler on the svg reads what was hit: a region with data
+    // reports it, a region without data or the map's ground clears; anything
+    // else drawn over the map (MapFlow's arcs and places) is left alone.
+    this.svg
+      .on('pointerdown.rc-region', on ? event => { this._regionPress = [event.clientX, event.clientY]; } : null)
+      .on('click.rc-region', on ? event => {
+        const drag = moved(event);
+        this._regionPress = null;
+        if (drag) return;
+        const t = event.target;
+        const region = t?.closest?.('.rc-map-feature');
+        if (region && this.gPaths.node().contains(region)) {
+          const d = d3.select(region).datum();
+          if (active(d)) report(event, d); else clear(event, d);
+        } else if (t === this.svg.node() || t === this._graticule?.node() || t?.classList?.contains('rc-map-ocean')) {
+          clear(event);
+        }
+      } : null);
+    this.gPaths.selectAll('.rc-map-feature')
+      .classed('rc-map-feature--clickable', active)
+      .attr('tabindex', d => (active(d) ? 0 : null))
+      .attr('role', d => (active(d) ? 'button' : null))
+      .attr('aria-label', d => {
+        if (!active(d)) return null;
+        const item = itemOf(d);
+        const label = this._regionName(d, item);
+        return item?.value != null ? `${label}, ${item.value}` : label;
+      })
+      .on('keydown.rc-region', on ? (event, d) => {
+        if (!active(d)) return;
+        if (event.key === 'Escape') { clear(event); return; }
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        report(event, d);
+      } : null);
   }
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -456,26 +543,20 @@ export class Map extends Chart {
       ?? '—';
   }
 
-  _defaultTooltip(feature, item) {
+  _defaultTooltip(feature, item, color = null) {
     const name = this._regionName(feature, item);
 
-    const valueRow = item?.value != null ? tipMuted(escapeHtml(item.value)) : '';
-
-    // names and values can come from a third-party geoUrl / topoUrl
-    return `${tipTitle(escapeHtml(name))}${valueRow}`;
+    // names and values can come from a third-party geoUrl / topoUrl. A
+    // region with a value: its fill's dot, its name and the value (RC-082);
+    // without one, its name.
+    return item?.value != null
+      ? tipRow(escapeHtml(name), escapeHtml(item.value), { swatch: 'dot', color })
+      : tipTitle(escapeHtml(name));
   }
 
-  // ─── Resize & Destroy ─────────────────────────────────────────────────────
+  // ─── Resize ───────────────────────────────────────────────────────────────
 
   _onResize() {
     if (this._geoReady) this.render();
-  }
-
-  destroy() {
-    // destroy, not hide: a pinned tooltip ignores hide() and keeps its
-    // document listeners
-    this._tooltip?.destroy?.();
-    this._tooltip = null;
-    super.destroy();
   }
 }

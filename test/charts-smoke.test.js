@@ -13,7 +13,7 @@ import { Graph } from '../assets/charts/src/charts/Graph.js';
 import { MapFlow } from '../assets/charts/src/charts/MapFlow.js';
 import { Sankey } from '../assets/charts/src/charts/Sankey.js';
 import * as publicApi from '../assets/charts/src/index.js';
-import { mount, track } from './helpers.js';
+import { mount, track, tooltipOf } from './helpers.js';
 
 // Construct → setData → render must not throw, and must produce a labelled
 // <svg> with its marks — for every public chart class. Imports are direct.
@@ -105,7 +105,8 @@ describe('chart render smoke tests', () => {
     const svg = host.querySelector('svg');
     expect(svg).not.toBeNull();
     if (label != null) {
-      expect(svg.getAttribute('role')).toBe('img');
+      // a drawing of buttons is a group, not an image (K-24)
+      expect(svg.getAttribute('role')).toBe(['Graph', 'MapFlow', 'Sankey'].includes(name) ? 'group' : 'img');
       expect(svg.getAttribute('aria-label')).toBe(label);
     }
     expect(host.querySelectorAll(marks)).toHaveLength(count);
@@ -192,7 +193,8 @@ describe('input normalization', () => {
     const d = c.container.querySelector('path.rc-ts-line').getAttribute('d');
     expect(d).toMatch(/^M/);
     expect(d).not.toMatch(/NaN/);
-    expect(c.getView().map(v => v.toISOString().slice(0, 10))).toEqual(['2026-01-01', '2026-01-03']);
+    // date-only strings are local midnights (T-10)
+    expect(c.getView().map(Number)).toEqual([+new Date(2026, 0, 1), +new Date(2026, 0, 3)]);
     // drawn in date order: the line's x coordinates only grow
     const xs = d.match(/[ML]\s*(-?[\d.]+)/g).map(m => +m.slice(1));
     expect(xs).toEqual([...xs].sort((a, b) => a - b));
@@ -258,7 +260,7 @@ describe('input normalization', () => {
       { date: null, value: 4 }, { date: '2026-01-01', value: 5 }, { date: '2026-02-01', value: 6 },
     ]);
     expect(mixed.container.querySelector('path.rc-line').getAttribute('d')).not.toMatch(/NaN/);
-    expect(mixed.getView().map(d => d.toISOString().slice(0, 7))).toEqual(['2026-01', '2026-02']);
+    expect(mixed.getView().map(Number)).toEqual([+new Date(2026, 0, 1), +new Date(2026, 1, 1)]);
   });
 });
 
@@ -340,12 +342,16 @@ describe('destroy()', () => {
   });
 
   it('a pinned map tooltip is released on destroy (no document listeners left)', () => {
-    const m = new MapFlow(mount(null), { geoData: { type: 'FeatureCollection', features: [] } });
-    const tip = m._tooltip;
-    tip.pin(10, 10, 'x');
+    const geoData = { type: 'FeatureCollection', features: [{ type: 'Feature', id: '1', properties: {},
+      geometry: { type: 'Polygon', coordinates: [[[0, 0], [0, 10], [10, 10], [10, 0], [0, 0]]] } }] };
+    const m = new MapFlow(mount(null), { geoData })
+      .setData({ nodes: [{ id: 'a', coords: [2, 2] }, { id: 'b', coords: [8, 8] }], links: [{ from: 'a', to: 'b' }] });
+    m.container.querySelector('.rc-mapflow-link-hit').dispatchEvent(new MouseEvent('click', { bubbles: true }));   // a click pins it
+    const tip = tooltipOf(m);
+    expect(tip.classList.contains('is-pinned')).toBe(true);
     const off = vi.spyOn(document, 'removeEventListener');
     m.destroy();
-    expect(tip.isPinned).toBe(false);
+    expect(tip.classList.contains('is-pinned')).toBe(false);
     expect(off).toHaveBeenCalledWith('pointerdown', expect.any(Function), true);
   });
 
@@ -359,7 +365,8 @@ describe('destroy()', () => {
     try {
       const g = new Graph(el, { duration: 0 });
       g.toggleFullscreen(true);
-      g._syncFullscreen(true);                 // what the fullscreenchange event does
+      document.dispatchEvent(new Event('fullscreenchange'));   // the browser: the element is full screen now
+      expect(el.classList.contains('rc-graph--fullscreen')).toBe(true);
       g.destroy();
       expect(exit).toHaveBeenCalled();
       expect(el.classList.contains('rc-graph--fullscreen')).toBe(false);

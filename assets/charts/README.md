@@ -112,7 +112,7 @@ const graph = new RareCharts.Graph('#network', {
   height: 520,
   depth: 2,
   linkTypes: {
-    investment: { color: '#00aaff', label: 'Investment' },
+    investment: { color: '#1677ff', label: 'Investment' },
   },
 }).setData(data);
 
@@ -142,7 +142,7 @@ graph.clearHistory();
 await graph.whenReady();
 ```
 
-The relation legend is interactive by default: click to isolate one type, or Shift/Ctrl/Cmd-click for multiple types. When an ego view exceeds its node capacity, `+N more` opens the omitted-node list. Breadcrumbs preserve ego, path, cluster, and relation-filter states. Disable these controls with `interactiveLegend: false` or `breadcrumbs: false`.
+The relation legend is interactive by default: a click (or Enter / Space) turns a relation type off or on, a double click keeps only that type and a second one brings all back, and "Show all" brings every type back. In the ego view this filters the traversal; in the flow view it sets what is drawn. When an ego view exceeds its node capacity, `+N more` opens the omitted-node list. Breadcrumbs preserve ego, path, cluster, and relation-filter states. Disable these controls with `legendInteractive: false` or `breadcrumbs: false`.
 
 Relevant options include:
 
@@ -152,7 +152,7 @@ Relevant options include:
 | `view` | `'ego'` | Initial view; `'flow'` draws a trace in lanes |
 | `depth` | `2` | Ego traversal depth |
 | `relationTypes` | all | Initial relation-type filter |
-| `interactiveLegend` | `true` | Enable relation filtering from the legend |
+| `legendInteractive` | `true` | Toggle relation types from the legend |
 | `breadcrumbs` | `true` | Show semantic view history |
 | `historyLimit` | `12` | Maximum retained graph states |
 | `maxNodes` | `'auto'` | Ego viewport capacity |
@@ -212,7 +212,7 @@ The global bundle also exports:
 - `RareCharts.d3` — a documented subset of the bundled D3 for formatters and small calculations in page code: `format`, `formatPrefix`, `timeFormat`, `timeParse`, `utcFormat`, `utcParse`; `sum`, `min`, `max`, `extent`, `mean`, `range`; `scaleLinear`, `scaleTime`, `scaleLog`, `scaleOrdinal`; `color`, `rgb`, `hsl`, `interpolate`; the intervals `timeDay`, `timeWeek`, `timeMonth`, `timeYear` and `utcDay`, `utcWeek`, `utcMonth`, `utcYear`. Before v0.9.8_6 it was the whole D3 namespace; a page that needs more of D3 loads D3 itself;
 - `RareCharts.generateMockPrices(days, startPrice)` — a demo helper that makes random price rows (`date`, `value`, `open`, `high`, `low`, `volume`) for examples and sketches. It is **outside the stability guarantee**: its output and signature may change in any release, and it may leave the bundle.
 
-Deprecated: the `viewSteps` option is the old name of `timeframes`. It still works and warns once per chart in the console; removal is planned for v0.9.9.
+Removed in v0.9.8_7: the `viewSteps` option, the old name of `timeframes` (deprecated in v0.9.8_6). A chart ignores it; use `timeframes`. Graph's `interactiveLegend` is now `legendInteractive`, with no alias: the old name is not read and logs a console warning.
 
 ## Documentation
 

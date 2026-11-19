@@ -61,13 +61,15 @@
       },
       {
         name: 'Electricity Cost to Mine 1 BTC',
-        color: '#00aaff',
+        color: '#1677ff',
         strokeWidth: 2,
         values: costSeries
       }
     ];
 
     new RareCharts.Line('#btc-mining-cost', {
+      // new Date('2025-02-01') is UTC midnight: name the days in UTC (T-10).
+      timeZone: 'UTC',
 
       height: 450,
 
@@ -75,7 +77,7 @@
       subtitle: 'Electricity-only production cost',
 
       legend: [
-        { label: 'Electricity Cost to Mine 1 BTC', color: '#00aaff' },
+        { label: 'Electricity Cost to Mine 1 BTC', color: '#1677ff' },
         { label: 'BTC Market Price', color: '#f7931a' }
       ],
 
@@ -83,7 +85,7 @@
 
       endLabels: false,
 
-      curve: 'monotoneX',
+      curve: 'monotone',
 
       yTickFormat: v => '$' + d3.format(',.0f')(v),
 

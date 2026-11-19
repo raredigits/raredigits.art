@@ -8,13 +8,11 @@ permalink: '/charts/graph/'
 
 The Graph chart renders networks of relationships — entity connections, agent networks, blockchain addresses. Instead of a single force simulation, it is a viewport over a headless graph model with deterministic views: **ego** (who surrounds a node), **path** (how two nodes are connected), **cluster** (the shape of the whole network), and **[flow](/charts/graph/flow/)** (a trace of value moving through ordered lanes — money trails, supply chains). You never draw the full graph — you draw the answer to a query.
 
-<div class="card bordered rounded-xs padding-y-md padding-x-lg mobile:padding-x-md text-content-caption">
-  <p><strong>⚠️ Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
-</div>
+<p class="callout callout-warning"><strong>Experimental.</strong> <code>Graph</code> is not covered by the 1.0 stability guarantee — its layout, rendering, and options may change without a major-version bump. For production reporting, prefer the stable chart types.</p>
 
 ### Ego view
 
-Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node `group`) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80% of at least six nodes), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out to switch to the cluster overview (semantic zoom).
+Nodes snap to a regular grid sized for the neighborhood. The focused node is pinned to the center cell; every category (node `group`) owns a home corner or edge and fills cells from its far corner toward the center — so the deepest connections sit at the rim and first-ring ones end up next to the ego, and distance from the center still reads as degrees of separation. When one category holds almost the whole neighbourhood (over 80% of at least six nodes), it has no corners to share: it fills the grid from the ego outwards instead, first ring nearest, and the few others sit just outside it towards their corners. The layout is deterministic — same data, same picture. Nodes are monochrome with a category glyph; color belongs to the links, and the filled dark node marks the current center. Click any node to recenter on it: the chart queries the source for that node's neighborhood, and nodes present in both views travel to their new positions instead of being redrawn. Zoom out (the − button, Ctrl/⌘ + wheel or a pinch) to switch to the cluster overview (semantic zoom).
 
 <div id="graph-ego" class="panel panel--bordered full-width-caption"></div>
 
@@ -126,7 +124,7 @@ Each node requires only `id`. `label` and every other field are optional; when n
 
 ### Links
 
-Each link requires `source` and `target` node ids:
+Each link requires `source` and `target` node ids. `from` and `to` are read as `source` and `target`, and the ties may come as `flows` instead of `links` — every view reads both names (they are the same in [Sankey](/charts/sankey/) and [MapFlow](/charts/map/flow/)):
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -161,7 +159,7 @@ Each link requires `source` and `target` node ids:
       <td><code>type</code></td>
       <td>string</td>
       <td><code>'default'</code></td>
-      <td>Controls color, dash style, arrow, legend label — and ego sectors</td>
+      <td>Controls color, dash style, arrow, legend label — and ego sectors. One type per tie: a <code>types: [...]</code> array is not read; a pair with several types is several ties</td>
     </tr>
     <tr>
       <td><code>weight</code></td>
@@ -185,7 +183,7 @@ Each link requires `source` and `target` node ids:
 </table>
 </div>
 
-**Several ties between one pair.** A pair can carry ties of different types — family, investment and employment at once. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a `+N` badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once — in the drawing, the tooltip and the details panel (the flow view, where direction matters, keeps both).
+**Several ties between one pair.** A pair can carry ties of different types — family, investment and employment at once. Give each its own link, one link per type. They are drawn as parallel arcs; a pair with more than three ties collapses into one line with a `+N` badge, and its tooltip lists them all. Filtering a type in the legend hides only that type's arc, not the pair. The same tie listed in both directions counts once — in the drawing, the tooltip and the details panel (the flow view, where direction matters, keeps both).
 
 Note the division of labor: link **weight** is data you bring (observable ties), while node **importance** is computed — with `sizeBy: 'degree'` a node's size follows how many distinct neighbors it has in everything loaded, so "who has the most connections" is an answer, not an input.
 
@@ -194,7 +192,7 @@ Note the division of labor: link **weight** is data you bring (observable ties),
 The `type` field on a link is resolved against the `linkTypes` map you pass in. Each entry defines how that type looks:
 
 <pre class="text-content-caption"><code>{
-  professional: { color: '#00aaff', dash: null, label: 'Professional' },
+  professional: { color: '#1677ff', dash: null, label: 'Professional' },
   family:       { color: '#00c97a', dash: null, label: 'Family'       },
 }</code></pre>
 
@@ -274,10 +272,16 @@ Common options shared by all chart types (`title`, `subtitle`, `source`, `note`,
             <td>Initial ego-view relation filter: only the listed types are traversed and drawn — an off-type tie between two visible nodes stays hidden. Links without a <code>type</code> match <code>'default'</code>. Omit or pass an empty array to show every relation type</td>
         </tr>
         <tr>
-            <td><code>interactiveLegend</code></td>
+            <td><code>legendInteractive</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>Ego view: legend items filter relation types. A regular click isolates one type; Shift/Ctrl/Cmd-click toggles types in a multi-selection. The flow view's legend always hides and shows categories (see <a href="/charts/graph/flow/">Flow view</a>)</td>
+            <td>The type legend's items are toggles. In the ego view they filter the traversal (as <code>setRelationTypes</code>, re-queried); in the flow view they hide and show tie categories (as <code>setLinkTypesVisible</code>, see <a href="/charts/graph/flow/">Flow view</a>). <code>false</code>: a static legend of the types drawn. The old name <code>interactiveLegend</code> is not read; a console warning says so</td>
+        </tr>
+        <tr>
+            <td><code>onLegendToggle</code></td>
+            <td>function</td>
+            <td>—</td>
+            <td><code>({ name, visible, visibleNames }) =&gt; void</code> after a legend gesture has redrawn (in the ego view, after its re-query); <code>name</code> is <code>null</code> for "Show all". The methods never call it</td>
         </tr>
         <tr>
             <td><code>breadcrumbs</code></td>
@@ -349,7 +353,7 @@ Common options shared by all chart types (`title`, `subtitle`, `source`, `note`,
             <td><code>zoom</code></td>
             <td>boolean</td>
             <td><code>true</code></td>
-            <td>+/−/reset buttons and drag-to-pan. The mouse wheel is left to page scroll</td>
+            <td>+/−/reset buttons, drag-to-pan, Ctrl/⌘ + wheel or a trackpad pinch to zoom; on a phone two fingers pan and pinch. A plain wheel or one finger scrolls the page, with a short hint</td>
         </tr>
         <tr>
             <td><code>details</code></td>
@@ -406,10 +410,16 @@ Common options shared by all chart types (`title`, `subtitle`, `source`, `note`,
             <td><code>({ link, source, target }) =&gt; html</code> — tooltip for a tie; <code>source</code>/<code>target</code> are the endpoint nodes</td>
         </tr>
         <tr>
+            <td><code>valueFormat</code></td>
+            <td>function</td>
+            <td>locale number</td>
+            <td><code>v =&gt; string</code> for a tie’s value in its tooltip and the details panel, as on Sankey: <code>v =&gt; '$' + v.toLocaleString()</code></td>
+        </tr>
+        <tr>
             <td><code>duration</code></td>
             <td>number</td>
             <td><code>500</code></td>
-            <td>Transition ms for view changes; respects reduced-motion</td>
+            <td>Transition ms for view changes after the first render (it does not animate); respects reduced-motion</td>
         </tr>
     </tbody>
 </table>
@@ -470,11 +480,27 @@ await graph.whenReady();</code></pre>
 
 `await` at the top level needs a `<script type="module">` or an async function; in a classic `<script>` write `graph.whenReady().then(() => …)`.
 
-`setData()` replaces the data and starts over: the breadcrumbs and `back()` begin with its first view, and the legend lists the relation types of the new data only (under `relationTypes`, the `linkTypes` catalogue). Unless a view method follows in the same tick, it focuses the node with the most distinct neighbours — counted over the ties the view draws, so under `relationTypes` over those types; `from` / `to` count as `source` / `target`, a tie to itself or without both ends does not count. A payload without nodes or ties clears the drawing, its legend and notes.
+`setData()` replaces the data and starts over: the breadcrumbs and `back()` begin with its first view, and the legend lists the relation types of the new data only (under `relationTypes`, the `linkTypes` catalogue). Unless a view method follows in the same tick, it focuses the node with the most distinct neighbours — counted over the ties the view draws, so under `relationTypes` over those types; `from` / `to` count as `source` / `target`, a tie to itself or without both ends does not count. A payload with no nodes and no ties clears the drawing, its legend and notes; a single node without ties is focused and drawn alone.
 
 The flow view adds `setFilter`, `setTimeWindow`, `select` / `clearSelection`, `setLinkLabels`, `setHulls`, the fold methods (`collapse`, `expand`, `isCollapsed`, `setFolds`) and time navigation (`setTimeframe`, `setView`, `getView`, `onViewChange`) — see the Methods section of [Flow view](/charts/graph/flow/).
 
 `add()` is built for feed-driven graphs (a news item asserts a new tie): the minimal payload is a single link — endpoint nodes are created automatically, with the label falling back to the id. It refreshes an ego view. Path and cluster views draw what the source answers, so there the new tie appears with the next ego view (`focus()`); the flow view takes new data through `setData()`.
+
+#### A news feed
+
+A feed-driven graph starts with the one node the story is about — a one-node payload focuses it and draws it alone — and grows by one `add()` per event. The ego view around that node refreshes with each tie. A tie's `type` is the kind of event (a deal, a sanction, an incident), drawn by your own `linkTypes`:
+
+<pre class="text-content-caption"><code>const graph = new RareCharts.Graph('#chart', {
+  linkTypes: {
+    deal:     { color: '#1677ff', label: 'Deal' },
+    sanction: { color: '#cf1322', label: 'Sanction' },
+  },
+}).setData({ nodes: [{ id: 'acme', label: 'Acme Corp' }], links: [] });
+
+<span class="code-comment">// one tie per news item; a new counterpart node is created from its id</span>
+feed.on('item', item =&gt; graph.add({
+  links: [{ source: 'acme', target: item.party, type: item.kind, label: item.headline }],
+}));</code></pre>
 
 ### Interaction
 
@@ -484,15 +510,19 @@ The flow view adds `setFilter`, `setTimeWindow`, `select` / `clearSelection`, `s
 
 **Keyboard** — the nodes share one Tab stop: the focused node in the ego view, the first endpoint in the path view, otherwise the node focused last. ← and → step through the nodes row by row, so every node can be reached; ↑ and ↓ go to the nearest node above or below, Home and End to the first and last. A focused node shows what hover shows — the tooltip, the highlight and the details panel. Enter or Space acts as a click (`onNodeClick`), Escape hides the tooltip and the highlight. Each node is announced by its label, group and number of connections.
 
+The ties have one Tab stop of their own, after the nodes: the tie focused last, else the first. The arrows step through the ties, Home and End go to the first and last, and focus shows what hover shows — the tooltip and the highlight. Enter or Space pins the tooltip, as a click does; Tab then goes into it, to its `sources` links, and Shift+Tab comes back to the tie. Tab past the last link, or Escape, releases the tooltip and returns to the tie. Ties are announced as "from → to, type, label"; a pair drawn as one line with a +N badge, as "from → to, N ties".
+
+The drawing is a group named by `ariaLabel`, else from `title` / `subtitle`, whose nodes and ties are buttons (a node is an image when `onNodeClick` is `null`).
+
 **Ties: hover and pin** — hovering a tie highlights it and its two endpoints and shows its tooltip: endpoints, type, label, value, period and `sources`. Clicking a tie pins the tooltip, so links inside it can be followed; a click elsewhere or Escape releases it.
 
-**Filter relations from the legend** — click a relation type to isolate it; Shift/Ctrl/Cmd-click toggles types in a multi-selection. Filtering is applied to the `neighbors()` query and the client-side neighborhood. "Show all" clears the filter. Graphs whose links have no explicit `type` continue to work as a single `default` relation type.
+**Filter relations from the legend** — a click (or Enter / Space) turns a relation type off or on; a double click keeps only that type, a second one brings all back; "Show all" shows while a type is off. In the ego view this filters the traversal: it is applied to the `neighbors()` query and the client-side neighborhood, and with every type off the view is the focused node alone. The flow view's legend sets visibility instead (`setLinkTypesVisible`). Graphs whose links have no explicit `type` continue to work as a single `default` relation type.
 
 **Reveal omitted nodes** — when the viewport cap removes nodes from the drawing, a `+N more` button appears in the footer tools; it opens an accessible list. Or open the graph full screen (⛶) — the bigger canvas fits more. Selecting an item recenters the graph on it. Capacity omissions are separate from nodes hidden explicitly with `hide()`.
 
 **Breadcrumb navigation** — after more than one semantic view has been visited, Graph shows a clickable history of ego, path, and cluster states. Returning through a breadcrumb or `back()` restores the relation filter together with the view; literal pan and zoom are deliberately reset.
 
-**Footer tools** — +/− zoom, ⟲ resets, dragging the background pans (the mouse wheel deliberately stays with page scrolling). ⛶ opens the graph full screen; Esc or ✕ closes it. When nodes did not fit, `+N more` lists them; `N hidden · restore` brings back nodes hidden with a right-click.
+**Footer tools** — +/− zoom, ⟲ resets, dragging the background pans, Ctrl/⌘ + wheel or a pinch zooms (a plain wheel stays with page scrolling). ⛶ opens the graph full screen; Esc or ✕ closes it. When nodes did not fit, `+N more` lists them; `N hidden · restore` brings back nodes hidden with a right-click. The buttons carry the class `rc-graph-tool`, a hook for page CSS, and the `+N more` list is drawn like the tooltip. The tools, the lists, the details panel and full screen follow the chart's theme: with `darkTheme` they are dark too.
 
 **Node dragging** — drag any node to fine-tune the picture (no simulation fights back); hand-placed positions survive re-renders until the next view change. A click with a slight tremor (under 6 px) stays a click.
 

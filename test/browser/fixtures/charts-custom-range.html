@@ -1,0 +1,91 @@
+<!doctype html>
+<!-- RC-003: the custom range panel on three hosts. Checked by
+     test/browser/charts-custom-range.test.js. `?host=` picks the page:
+       bare     the bundle only (the default)
+       v0.7.2   the committed Rare Styles rare.css, page mode (.rd)
+       v0.7.1   the published v0.7.1 rare.css, page mode; the test serves it
+                at /assets/css/rare-v0.7.1.css from git (d6ae6bb, the
+                v0.7.1 row of assets/css/docs/SIZE-BASELINE.md), so its
+                fonts load from the same folder as v0.7.2's
+     The cards carry the same frame on every host (.fixture-card): 16px
+     padding, a 1px border, border-box.
+       #ts     TimeSeries, five timeframes and Custom (a right gutter)
+       #flow   Graph flow view, timeframes and Custom (a flush row)
+       #dark   Line in the dark theme, Custom labelled by the page
+       #short  a short Line: too little room under the button -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RareCharts: the custom range on three hosts</title>
+<script>
+  const host = new URLSearchParams(location.search).get('host') ?? 'bare';
+  const sheet = { 'v0.7.2': '/assets/css/rare.css', 'v0.7.1': '/assets/css/rare-v0.7.1.css' }[host];
+  if (sheet) document.write(`<link id="rare" rel="stylesheet" href="${sheet}">`);
+</script>
+<style>
+  .fixture-card { box-sizing: border-box; padding: 16px; border: 1px solid #cccccc; margin: 0 0 24px; }
+</style>
+</head>
+<body style="margin: 0; padding: 12px;">
+<main>
+  <div id="ts" class="fixture-card"></div>
+  <div id="flow" class="fixture-card"></div>
+  <div id="dark" class="fixture-card" style="background: #0a0a0a;"></div>
+  <div id="short" class="fixture-card"></div>
+</main>
+
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const DAY = 864e5;
+  const days = (n, from = Date.UTC(2024, 0, 1)) => Array.from({ length: n }, (_, i) => ({
+    date: new Date(from + i * DAY),
+    value: 100 + 10 * Math.sin(i / 9) + i / 20,
+  }));
+
+  window.charts = {
+    ts: new RareCharts.TimeSeries('#ts', {
+      height: 340,
+      animate: false,
+      timeZone: 'UTC',
+      title: 'Custom range',
+      timeframes: ['1M', '3M', '6M', '1Y', 'ALL', 'CUSTOM'],
+    }).setData(days(500)),
+
+    flow: new RareCharts.Graph('#flow', {
+      view: 'flow',
+      height: 360,
+      duration: 0,
+      timeZone: 'UTC',
+      title: 'Flow',
+      timeframes: ['ALL', 'CUSTOM'],
+    }).setData({
+      nodes: [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }, { id: 'c', label: 'Gamma' }],
+      links: [
+        { from: 'a', to: 'b', start: '2024-01-01', end: '2024-06-30' },
+        { from: 'b', to: 'c', start: '2024-03-01', end: '2024-12-31' },
+      ],
+    }),
+
+    dark: new RareCharts.Line('#dark', {
+      height: 300,
+      animate: false,
+      timeZone: 'UTC',
+      theme: RareCharts.darkTheme,
+      title: 'Dark',
+      timeframes: ['3M', 'ALL', { key: 'CUSTOM', label: 'Dates' }],
+    }).setData(days(300)),
+
+    short: new RareCharts.Line('#short', {
+      height: 170,
+      animate: false,
+      timeZone: 'UTC',
+      title: 'Short',
+      timeframes: ['1M', '3M', '6M', '1Y', 'ALL', 'CUSTOM'],
+    }).setData(days(300)),
+  };
+
+  window.ready = Promise.all([window.charts.flow.whenReady(), document.fonts.ready]);
+</script>
+</body>
+</html>

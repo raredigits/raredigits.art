@@ -51,6 +51,10 @@
   const values = synth.concat(recent).sort((a, b) => a.date - b.date);
 
   new RareCharts.Line('#btc-price-chart', {
+    // The rows are UTC midnights (new Date('2024-01-01')): read the
+    // annotation dates and name the ticks in UTC too, so every zone sees the
+    // same days (T-10).
+    timeZone: 'UTC',
     height:   360,
     margin:   { right: 72 },
     title:    'BTC / USD',
@@ -90,12 +94,15 @@
       },
     ],
 
-    tooltipFormat: ({ date, points }) => {
-      const p = points[0];
-      return `
-        <div style="color:#888;margin-bottom:4px">${d3.timeFormat('%b %d, %Y')(date)}</div>
-        <div style="color:${p.color}">BTC: $${d3.format(',.0f')(p.value)}</div>
-      `;
-    },
+    // The default rows, with the full price where the axis shows $95k
+    // (/charts/settings/#custom-tooltip).
+    tooltipFormat: ({ date, points: [p] }) => `
+      <div class="rc-tooltip-header rc-tooltip-muted">${d3.timeFormat('%b %d, %Y')(date)}</div>
+      <div class="rc-tooltip-row">
+        <span class="rc-tooltip-swatch" style="--rc-swatch-color:${p.color}"></span>
+        <span class="rc-tooltip-label">${p.name}</span>
+        <span class="rc-tooltip-value rc-num">$${d3.format(',.0f')(p.value)}</span>
+      </div>
+    `,
   }).setData(values);
 })();

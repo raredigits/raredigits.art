@@ -5,7 +5,10 @@
 // towards the weighted centre of each node's neighbours, collision
 // resolution, then stacking link bands at both ends), written for this
 // library: deterministic, with explicit column overrides and a stable
-// input-order mode that never reshuffles nodes inside a column.
+// input-order mode that never reshuffles nodes inside a column. Not
+// d3-sankey: 0.12.3 has not been updated since 2020 and pulls d3-array 1–2
+// and d3-shape 1 beside our d3 v7, so the bundle would carry them twice;
+// the same idea in our own code needs no licence notice either.
 //
 // Input:
 //   nodes: [{ id, column?, ... }]          (column: manual layer override)

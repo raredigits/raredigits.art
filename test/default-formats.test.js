@@ -100,11 +100,11 @@ describe('Bar default formats (C-30)', () => {
 
   it('vertical: "0", not "0.0"; one SI prefix from 1000 on', () => {
     expect(yTicks(bar({}, cats([400000, 1000000]))))
-      .toEqual(['0', '0.2M', '0.4M', '0.6M', '0.8M', '1M', '1.2M']);
+      .toEqual(['0', '0.2M', '0.4M', '0.6M', '0.8M', '1M']);
   });
 
   it('vertical: small values keep their decimals instead of a milli prefix', () => {
-    expect(yTicks(bar({}, cats([0.5, 2])))).toEqual(['0', '0.5', '1', '1.5', '2', '2.5']);
+    expect(yTicks(bar({}, cats([0.5, 2])))).toEqual(['0', '0.5', '1', '1.5', '2']);
   });
 
   it('horizontal: the value axis reads "0 10 20 30 40"', () => {
@@ -116,7 +116,7 @@ describe('Bar default formats (C-30)', () => {
     const rows = [145, 150, 160].map((value, i) => ({ date: new Date(2026, i, 1), value }));
     const c = bar({ yPrefix: '$' }, rows);
     expect([...c.gAxisY.selectAll('.tick text').nodes()].map(n => n.textContent))
-      .toEqual(['$0', '$50', '$100', '$150', '$200']);
+      .toEqual(['$0', '$50', '$100', '$150']);
   });
 
   it('stacked: exact labels on the divided axis; percent stays .0%', () => {
@@ -219,7 +219,10 @@ describe('Bar date axis: the same span-aware default (C-31)', () => {
   });
 });
 
-describe('DualAxes: y1Ticks / y2Ticks reach the auto domain (C-21)', () => {
+// The auto domain follows Line's rule (maintainer, 2026-11-17): the data
+// 12…87 with 8% of the span (6) as headroom, [6, 93], not rounded up; the
+// axis's own tick count picks the ticks inside it.
+describe('DualAxes: y1Ticks / y2Ticks pick the ticks inside the auto domain (C-21)', () => {
   const values = [12, 40, 87].map((value, i) => ({ date: new Date(2026, 0, 1 + i), value }));
   const dual = o => track(new DualAxes(mount(null), { animate: false, ...o })).setData([
     { name: 'a', axis: 'y1', values },
@@ -227,16 +230,25 @@ describe('DualAxes: y1Ticks / y2Ticks reach the auto domain (C-21)', () => {
   ]);
   const ends = (c, axis) => { const l = texts(c, `.rc-axis-${axis} .tick text`); return [l[0], l.at(-1)]; };
 
-  it('default 4: the domain rounds to [0, 100]', () => {
+  it('default 4: 20…80, inside [6, 93] — the axis no longer runs on to 0 and 100', () => {
     const c = dual({});
-    expect(ends(c, 'y1')).toEqual(['0.00', '100.00']);
-    expect(ends(c, 'y2')).toEqual(['0', '+100.00']);
+    // labelled as on Line (K-10): it was '20.00' / '+20.00'
+    expect(ends(c, 'y1')).toEqual(['20', '80']);
+    expect(ends(c, 'y2')).toEqual(['20', '80']);
   });
 
-  it('10 ticks: the domain rounds to the finer step, [10, 90]', () => {
+  it('the highest point stands 8% of the span below the top', () => {
+    const c = dual({});
+    const tops = [...c.container.querySelectorAll('.rc-dual-dot, circle')].map(n => +n.getAttribute('cy')).filter(Number.isFinite);
+    const path = c.container.querySelector('path.rc-line, .rc-line path, path[fill="none"]');
+    const ys = tops.length ? tops : [...path.getAttribute('d').matchAll(/[ML][\d.]+,([\d.]+)/g)].map(m => +m[1]);
+    expect(Math.min(...ys)).toBeCloseTo(c.height * 6 / 87, 1);
+  });
+
+  it('10 ticks: the finer step inside the same domain, 10…90', () => {
     const c = dual({ y1Ticks: 10, y2Ticks: 10 });
-    expect(ends(c, 'y1')).toEqual(['10.00', '90.00']);
-    expect(ends(c, 'y2')).toEqual(['+10.00', '+90.00']);
+    expect(ends(c, 'y1')).toEqual(['10', '90']);
+    expect(ends(c, 'y2')).toEqual(['10', '90']);
   });
 });
 
@@ -260,5 +272,20 @@ describe('Bar date axis thins overlapping labels (step 7a review)', () => {
     } finally {
       Element.prototype.getBoundingClientRect = orig;
     }
+  });
+});
+
+// K-10: a curve name the charts do not know draws the fallback, with a hint
+describe('an unknown curve name warns once (K-10)', () => {
+  it('names the curve, lists the known ones and the curve drawn; once per name', async () => {
+    const { curveName } = await import('../assets/charts/src/core/utils.js');
+    const { vi } = await import('vitest');
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(curveName('monotoneXYZ', 'monotone')).toBe('monotone');
+    expect(curveName('monotoneXYZ', 'monotone')).toBe('monotone');
+    expect(curveName(undefined, 'linear')).toBe('linear');
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(warn.mock.calls[0][0]).toMatch(/curve "monotoneXYZ" is not one of linear, monotone.*drawing monotone/);
+    warn.mockRestore();
   });
 });

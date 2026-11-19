@@ -28,7 +28,14 @@
 //   linkOpacity   — band opacity at rest (default: 0.45)
 //   linkTypes     — { type: { color, label } } — colors bands when
 //                   linkColor: 'type' and fills the legend with every type it
-//                   describes; a type it does not describe stays muted
+//                   describes that the data uses, each item a toggle for its
+//                   bands; a type it does not describe stays muted
+//   hiddenLinkTypes — link types hidden from the start (an untyped band is
+//                   'default'); the legend shows them off
+//   legendInteractive — false: the legend is plain labels, and a type hidden
+//                   through the API is left out of it (default: true)
+//   onLegendToggle — ({ name, visible, visibleNames }) after a legend gesture
+//                   (name: the link type; null for "Show all")
 //   labels        — 'auto' | false (default: 'auto'): right of each node, the
 //                   last column in a measured right gutter; cut with an
 //                   ellipsis to the room before the next column
@@ -37,45 +44,67 @@
 //                   max(minLabelSize, 24)
 //   showValues    — append the node value to its label (default: true)
 //   valueFormat   — v => string (default: locale number)
-//   tooltipFormat — ({ node, incoming, outgoing }) => html
+//   tooltipFormat — ({ node, incoming, outgoing, links }) => html (the shown
+//                   bands; links = incoming then outgoing, the shape of
+//                   MapFlow's and Graph's node payloads, RC-010)
 //   linkTooltipFormat — ({ link, source, target }) => html
 //   tableFallback — render a visually hidden source/target/value table for
 //                   screen readers (default: true)
-//   animate, duration (default: 600), ease
+//   animate, duration (default: 650), ease
 //
 // Interaction: hover a node or band to highlight its flows; click a band (or
-// press Enter on a focused node) to pin its tooltip.
+// press Enter on a focused node) to pin its tooltip; a click elsewhere or
+// Escape releases it. A node's tooltip lists its bands in and out with their
+// values (RC-022), so the keyboard, which stops on the nodes only, reads the
+// bands too. A band thinner than 8 px takes the pointer 8 px wide.
+//
+// The legend (RC-052): a header legend item that names a link type (`series`,
+// else `name`, else `label`; the auto legend sets `series`) toggles that
+// type's bands — a click, Enter or Space; a double click keeps only that
+// type; "Show all" brings every band back. Hidden bands leave without a new
+// layout: nodes, their labels and their values stay where and as they were,
+// and a hidden band leaves its gap at its nodes. The hover, the node tooltip
+// and the screen-reader table read the shown bands; a band's "% of source"
+// stays a share of the whole node.
+//
+// Methods: setData(data), setLinkTypesVisible(types | null) — show only these
+// link types (null shows all); returns `this`.
 
 import * as d3 from 'd3';
 import { Chart }   from '../core/Chart.js';
-import { Tooltip } from '../core/Tooltip.js';
-import { applySvgA11y, fitTextNode } from '../core/renderHelpers.js';
+import { fitTextNode } from '../core/renderHelpers.js';
 import { motionDuration, resolveEase } from '../core/utils.js';
-import { normalizeRelationData, resolveLinkType } from '../core/links.js';
+import { groupTies, linkValue, normalizeRelationData, resolveLinkType } from '../core/links.js';
 import { sankeyLayout } from '../core/sankey.js';
-import { EntryMotion, entryTransition } from '../core/entryMotion.js';
-import { escapeHtml as esc, tipTitle, tipMuted, tipSub } from '../core/html.js';
+import { EntryMotion, entryTransition, ENTRY_DURATION } from '../core/entryMotion.js';
+import { escapeHtml as esc, tipNum, tipTitle, tipRow, tipSub } from '../core/html.js';
 
+// The least width a band takes the pointer at, px (RC-024).
+const HIT_MIN = 8;
 
 export class Sankey extends Chart {
   constructor(selector, options = {}) {
-    // linkColor 'type': the header legend lists the link types.
-    const legend = options.legend ?? (options.linkColor === 'type' && options.linkTypes
+    // linkColor 'type': the header legend lists the link types, each item
+    // keyed to its type (`series`), so it toggles that type's bands.
+    const auto = options.legend == null && options.linkColor === 'type' && options.linkTypes
       ? Object.entries(options.linkTypes).map(([type, cfg]) => ({
-          label: cfg.label ?? type, color: cfg.color, type: 'bar',
+          label: cfg.label ?? type, color: cfg.color, type: 'bar', series: type,
         }))
-      : undefined);
+      : null;
     super(selector, {
       height: 400,
       margin: { top: 8, right: 8, bottom: 8, left: 8 },
       ...options,
-      ...(legend ? { legend } : {}),
+      ...(auto ? { legend: auto } : {}),
     });
+    this._autoLegend   = !!auto;
+    [].concat(this.options.hiddenLinkTypes ?? []).forEach(t => this._hiddenKeys.add(String(t)));
+    this._pinnedItem   = null;   // what the pinned tooltip shows: a band or a node
     this._baseHeight   = this.options.height;
     this._nodes        = [];
     this._links        = [];
     this._entry        = new EntryMotion();   // a fade per dataset (C-16)
-    this._tooltip      = new Tooltip(this.container, this.theme);
+    this.tooltip;   // made now: its element keeps its place in the card
     this._initSVG();
   }
 
@@ -90,8 +119,8 @@ export class Sankey extends Chart {
     const given = (data.nodes ?? []).length > 0;
     const { nodes: readNodes, links } = normalizeRelationData(data, {
       accept: l => {
-        const v = +l.value;
-        if (l.value == null || l.value === '' || !Number.isFinite(v) || v <= 0) {
+        const v = linkValue(l);
+        if (!(v > 0)) {
           console.warn(`RareCharts.Sankey: link ${l.source} → ${l.target} has no positive value — dropped`);
           return null;
         }
@@ -102,23 +131,16 @@ export class Sankey extends Chart {
     });
     const nodes = given ? readNodes : readNodes.map(n => ({ ...n, label: n.id }));
 
-    // Same pair + same type = one band; sum it and say so.
-    const merged = new Map();
-    links.forEach(l => {
-      const key = JSON.stringify([l.source, l.target, l.type ?? '']);
-      const prev = merged.get(key);
-      if (prev) {
-        console.warn(`RareCharts.Sankey: repeated link ${l.source} → ${l.target}${l.type ? ` (${l.type})` : ''} — values summed`);
-        prev.value += l.value;
-      } else {
-        merged.set(key, { ...l });
-      }
-    });
+    // Same pair + same type = one band; sum it and say so. The type as given
+    // (`?? ''`): an untyped band and a 'default' one stay apart, as do 1 and '1'.
+    const nextLinks = groupTies(links, {
+      tie: l => [l.source, l.target, l.type ?? ''],
+      onRepeat: l => console.warn(`RareCharts.Sankey: repeated link ${l.source} → ${l.target}${l.type ? ` (${l.type})` : ''} — values summed`),
+    }).map(g => ({ ...g.links[0], value: g.links.reduce((s, l) => s + l.value, 0) }));
 
     // Validate before storing — a cycle is a data error the caller should see
     // at once, and the chart keeps its previous valid data (otherwise every
     // later resize would throw again).
-    const nextLinks = [...merged.values()];
     sankeyLayout({ nodes, links: nextLinks }, { width: 100, height: 100, iterations: 0 });
     this._nodes = nodes;
     this._links = nextLinks;
@@ -127,18 +149,79 @@ export class Sankey extends Chart {
     return this;
   }
 
+  // Show only these link types (a list, or one type); null shows all. Types
+  // not in the data are dropped from the hidden set. The chart redraws
+  // without a new layout; onLegendToggle does not fire.
+  setLinkTypesVisible(types) {
+    return this._setVisibleKeys(types);
+  }
+
+  // ─── Legend ───────────────────────────────────────────────────────────────
+
+  // A band's link type, the legend key: an untyped band is 'default'
+  // (core/links.js). `data` is the link as given (a layout link's .data).
+  _typeOf(data) {
+    return resolveLinkType(this.options.linkTypes, data?.type).key;
+  }
+
+  _linkShown(l) {
+    return this._isShown(this._typeOf(l.data));
+  }
+
+  // The link types in the data, in data order, with the colour their bands
+  // take: the type's own with linkColor 'type' (an undescribed type muted, as
+  // drawn), the one colour with a CSS colour; by source, target or gradient a
+  // type has no one colour, and an item without its own takes the accent.
+  _legendSeries() {
+    const o = this.options;
+    const mode = o.linkColor ?? 'source';
+    const colorOf = key => {
+      if (mode === 'type') return resolveLinkType(o.linkTypes ?? {}, key, { theme: this.theme }).color;
+      return ['source', 'target', 'gradient'].includes(mode) ? undefined : mode;
+    };
+    const seen = new Map();
+    (this._links ?? []).forEach(l => {
+      const key = this._typeOf(l);
+      if (!seen.has(key)) seen.set(key, { key, color: colorOf(key) });
+    });
+    return [...seen.values()];
+  }
+
+  // The auto legend lists the described types the data uses: a type that
+  // is not in the data has no item (a page's own legend keeps a label for
+  // it). Before any data every described type stays, as a label.
+  _headerLegendItems(present) {
+    const items = super._headerLegendItems(present);
+    return this._autoLegend && present?.size ? items.filter(item => item.key != null) : items;
+  }
+
+  // A legend change lets go of a pinned tooltip that no longer holds: a band
+  // that is now hidden, or a node whose shown in/out sums changed.
+  _unpinHidden() {
+    const pin = this._pinnedItem;
+    if (!pin || !this._tooltip?.isPinned) return;
+    let stale;
+    if (pin.kind === 'band') {
+      stale = !this._isShown(pin.key);
+    } else {
+      const n = this._layout?.nodes.find(x => x.id === pin.id);
+      stale = !n || this._nodeHtml(n, this._valueFormat()) !== pin.html;
+    }
+    if (stale) this._tooltip.unpin();
+  }
+
+  _valueFormat() {
+    return this.options.valueFormat ?? (v => Number(v).toLocaleString());
+  }
+
   // ─── Init ─────────────────────────────────────────────────────────────────
 
   _initSVG() {
-    this.container.style.height = this.options.height + 'px';
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width',  '100%')
-      .attr('height', '100%');
-    applySvgA11y(this.svg, this.options);
+    this._createSvg();
     this._defs  = this.svg.append('defs');
     this.gRoot  = this.svg.append('g').attr('class', 'rc-sankey');
     this.gLinks = this.gRoot.append('g').attr('class', 'rc-sankey-links');
+    this.gLinkHits = this.gRoot.append('g').attr('class', 'rc-sankey-link-hits').attr('aria-hidden', 'true');
     this.gNodes = this.gRoot.append('g').attr('class', 'rc-sankey-nodes');
     this.gLabels = this.gRoot.append('g').attr('class', 'rc-sankey-labels');
   }
@@ -156,13 +239,13 @@ export class Sankey extends Chart {
     const o = this.options;
     const t = this.theme;
     if (!this._links.length) {
-      [this.gLinks, this.gNodes, this.gLabels].forEach(g => g.selectAll('*').remove());
+      [this.gLinks, this.gLinkHits, this.gNodes, this.gLabels].forEach(g => g.selectAll('*').remove());
+      this.svg.attr('role', 'img');   // nothing focusable left (K-24)
       this._renderTable([]);
       return;
     }
 
     const vertical = this._orientation() === 'vertical';
-    this._vertical = vertical;
 
     // Vertical: the chart grows with the number of columns (now rows).
     // Columns are known before geometry: a cheap pass fixes them for sizing.
@@ -187,7 +270,7 @@ export class Sankey extends Chart {
 
     const labelGap = 6;
     const pad = 8;
-    const fmt = o.valueFormat ?? (v => Number(v).toLocaleString());
+    const fmt = this._valueFormat();
     const labelText = n => o.showValues === false
       ? this._name(n) : `${this._name(n)} · ${fmt(n.value)}`;
     // Horizontal: every label sits right of its node, so no two columns'
@@ -216,6 +299,11 @@ export class Sankey extends Chart {
       iterations:  o.iterations ?? 6,
     });
     this._layout = layout;
+    // The legend hides bands, never the layout: it runs over every link
+    // above, so nodes keep their place and size, and only the bands of the
+    // shown types are drawn.
+    const shown = layout.links.filter(l => this._linkShown(l));
+    const drawn = new Set(shown);
 
     // Layout space (flow axis = x, cross axis = y) → screen space.
     const P = vertical
@@ -254,9 +342,12 @@ export class Sankey extends Chart {
       if (mode === 'gradient') return `url(#${gradId(l)})`;
       return mode;
     };
+    // A band's swatch in a node's tooltip: the band's colour; a gradient's
+    // at the band's far end (`far`, the other node).
+    this._bandColor = (l, far) => (mode === 'gradient' ? nodeColor(far) : linkStroke(l));
     this._defs.selectAll('linearGradient').remove();
     if (mode === 'gradient') {
-      layout.links.forEach(l => {
+      shown.forEach(l => {
         const [sx, sy] = P(l.source.x1, l.y0);
         const [tx, ty] = P(l.target.x0, l.y1);
         const g = this._defs.append('linearGradient')
@@ -269,13 +360,13 @@ export class Sankey extends Chart {
     }
 
     const baseOpacity = o.linkOpacity ?? 0.45;
-    const dur = motionDuration(o.duration ?? 600);
+    const dur = motionDuration(o.duration ?? ENTRY_DURATION);
     const ease = resolveEase(o.ease ?? 'cubicOut');
     const phase = this._entry.phase((o.animate ?? true) ? dur : 0);
 
     // ── Bands ──
     const linkSel = this.gLinks.selectAll('.rc-sankey-link')
-      .data(layout.links, l => l.id)
+      .data(shown, l => l.id)
       .join('path')
       .attr('class', 'rc-sankey-link')
       .attr('fill', 'none')
@@ -300,6 +391,22 @@ export class Sankey extends Chart {
       moving.attr('stroke-opacity', baseOpacity);
     }
 
+    // Each band takes the pointer on an invisible stroke over the bands, at
+    // least HIT_MIN px wide (RC-024), the thinnest on top: a thin band wins
+    // a few px from a thick neighbour, which keeps the rest. Nodes stay
+    // above.
+    const hitSel = this.gLinkHits.selectAll('.rc-sankey-link-hit')
+      .data(shown.slice().sort((a, b) => b.width - a.width), l => l.id)
+      .join('path')
+      .attr('class', 'rc-sankey-link-hit')
+      .attr('fill', 'none')
+      .attr('d', bandPath)
+      .attr('stroke', 'transparent')
+      .attr('stroke-width', l => Math.max(HIT_MIN, l.width))
+      .style('pointer-events', 'stroke')
+      .style('cursor', 'pointer')
+      .order();
+
     // ── Nodes ──
     const nodeSel = this.gNodes.selectAll('.rc-sankey-node')
       .data(layout.nodes, n => n.id)
@@ -314,6 +421,9 @@ export class Sankey extends Chart {
       .attr('role', 'img')
       .attr('aria-label', n => `${this._name(n)}: ${fmt(n.value)}`)
       .style('cursor', 'pointer');
+    // The nodes are Tab stops: the svg is a group, not an image, which
+    // would hide them from assistive technology (K-24).
+    this.svg.attr('role', 'group');
 
     // ── Labels ──
     const minLabel = o.minLabelSize ?? 10;
@@ -357,17 +467,22 @@ export class Sankey extends Chart {
 
     // ── Interaction ──
     // A hover or pin ends the entry fade at once: the fade would otherwise
-    // carry on over the highlight and leave it lost.
+    // carry on over the highlight and leave it lost. A node's neighbours are
+    // those of its shown bands.
     const reset = () => {
       linkSel.interrupt().attr('stroke-opacity', baseOpacity);
       nodeSel.style('opacity', 1);
+    };
+    const unpinned = () => {
+      this._pinnedItem = null;
+      reset();
     };
     const highlightNode = n => {
       const touches = l => l.source === n || l.target === n;
       linkSel.interrupt().attr('stroke-opacity', l => touches(l) ? Math.min(1, baseOpacity + 0.35) : 0.12);
       const near = new Set([n]);
-      n.sourceLinks.forEach(l => near.add(l.target));
-      n.targetLinks.forEach(l => near.add(l.source));
+      n.sourceLinks.forEach(l => { if (drawn.has(l)) near.add(l.target); });
+      n.targetLinks.forEach(l => { if (drawn.has(l)) near.add(l.source); });
       nodeSel.style('opacity', x => near.has(x) ? 1 : 0.35);
     };
     const highlightLink = l => {
@@ -398,10 +513,12 @@ export class Sankey extends Chart {
         event.preventDefault();
         const [mx, my] = centerOf(event.currentTarget);
         highlightNode(n);
-        this._tooltip.pin(mx, my, this._nodeHtml(n, fmt), { onClose: reset });
+        const html = this._nodeHtml(n, fmt);
+        this._tooltip.pin(mx, my, html, { onClose: unpinned });
+        this._pinnedItem = { kind: 'node', id: n.id, html };
       });
 
-    linkSel
+    [linkSel, hitSel].forEach(sel => sel
       .on('mouseover', (event, l) => {
         if (this._tooltip.isPinned) return;
         const [mx, my] = pointer(event);
@@ -417,48 +534,67 @@ export class Sankey extends Chart {
         event.stopPropagation();
         const [mx, my] = pointer(event);
         highlightLink(l);
-        this._tooltip.pin(mx, my, this._linkHtml(l, fmt), { onClose: reset });
-      });
+        this._tooltip.pin(mx, my, this._linkHtml(l, fmt), { onClose: unpinned });
+        this._pinnedItem = { kind: 'band', id: l.id, key: this._typeOf(l.data) };
+      }));
 
-    this._renderTable(layout.links, fmt);
+    this._renderTable(shown, fmt);
   }
 
   // ─── Text ─────────────────────────────────────────────────────────────────
 
   _name(n) { return n.data.label ?? n.id; }
 
+  // A node's tooltip: its shown bands in and out (the drawing, not the node's
+  // whole value, which its label keeps).
   _nodeHtml(n, fmt) {
     const o = this.options;
+    const incoming = n.targetLinks.filter(l => this._linkShown(l));
+    const outgoing = n.sourceLinks.filter(l => this._linkShown(l));
     if (o.tooltipFormat) {
-      return o.tooltipFormat({
-        node: n.data,
-        incoming: n.targetLinks.map(l => l.data),
-        outgoing: n.sourceLinks.map(l => l.data),
-      });
+      const ins = incoming.map(l => l.data), outs = outgoing.map(l => l.data);
+      return o.tooltipFormat({ node: n.data, incoming: ins, outgoing: outs, links: [...ins, ...outs] });
     }
-    const inV = n.targetLinks.reduce((s, l) => s + l.value, 0);
-    const outV = n.sourceLinks.reduce((s, l) => s + l.value, 0);
-    const row = (k, v) => `<div>${tipMuted(k, 'span')} ${esc(fmt(v))}</div>`;
+    const inV = incoming.reduce((s, l) => s + l.value, 0);
+    const outV = outgoing.reduce((s, l) => s + l.value, 0);
+    // label/value rows, as every default tooltip (RC-082): the total in,
+    // then each band in by the node it comes from; the same out (RC-022).
+    // A band row carries the band's swatch; two bands with one other node
+    // (two types) are told apart by their type, under the name.
+    const row = (k, v) => tipRow(k, esc(fmt(v)));
+    const bands = (list, far) => {
+      const count = new Map();
+      list.forEach(l => count.set(far(l), (count.get(far(l)) ?? 0) + 1));
+      return list.map(l => {
+        const type = l.data.type;
+        const note = count.get(far(l)) > 1 && type ? esc(o.linkTypes?.[type]?.label ?? type) : '';
+        return tipRow(esc(this._name(far(l))), esc(fmt(l.value)),
+          { swatch: 'band', color: this._bandColor?.(l, far(l)) ?? null, note });
+      }).join('\n');
+    };
     return `${tipTitle(esc(this._name(n)))}
-      ${n.targetLinks.length ? row('in', inV) : ''}
-      ${n.sourceLinks.length ? row('out', outV) : ''}`;
+      ${incoming.length ? `${row('in', inV)}\n${bands(incoming, l => l.source)}` : ''}
+      ${outgoing.length ? `${row('out', outV)}\n${bands(outgoing, l => l.target)}` : ''}`;
   }
 
+  // A band's tooltip. Its share is of the whole source node, hidden bands
+  // included: the node is drawn whole.
   _linkHtml(l, fmt) {
     const o = this.options;
     if (o.linkTooltipFormat) {
       return o.linkTooltipFormat({ link: l.data, source: l.source.data, target: l.target.data });
     }
     const out = l.source.sourceLinks.reduce((s, x) => s + x.value, 0);
-    const share = out ? ` · ${Math.round((l.value / out) * 100)}% of ${esc(this._name(l.source))}` : '';
+    const share = out ? `${tipNum(`${Math.round((l.value / out) * 100)}%`)} of ${esc(this._name(l.source))}` : '';
     const type = l.data.type ? tipSub(esc(o.linkTypes?.[l.data.type]?.label ?? l.data.type)) : '';
-    const label = l.data.label ? `<div>${esc(l.data.label)}</div>` : '';
+    // the band's label and value in a row, its share under them (RC-082)
     return `${tipTitle(`${esc(this._name(l.source))} → ${esc(this._name(l.target))}`)}
-      <div>${esc(fmt(l.value))}${tipSub(share, { tag: 'span' })}</div>
-      ${type}${label}`;
+      ${tipRow(l.data.label ? esc(l.data.label) : '', esc(fmt(l.value)), { note: share })}
+      ${type}`;
   }
 
-  // Visually hidden table: the flows as data, for screen readers.
+  // Visually hidden table: the flows as data (the shown bands), for screen
+  // readers.
   _renderTable(links, fmt = v => v) {
     this._tableEl?.remove();
     this._tableEl = null;
@@ -471,13 +607,6 @@ export class Sankey extends Chart {
     this.container.appendChild(table);
     this._tableEl = table;
   }
-
-  // ─── Cleanup ──────────────────────────────────────────────────────────────
-
-  destroy() {
-    this._tooltip?.destroy();
-    this._tooltip = null;
-    this._tableEl?.remove();
-    super.destroy();
-  }
+  // No destroy() of its own: Chart.destroy() empties the container, the
+  // table with it (D-02).
 }

@@ -80,6 +80,22 @@ describe('C-13: spacing and boxes without host variables', () => {
     expect(await css('#timeseries .rc-chart-range-bar', ['column-gap'])).toEqual({ 'column-gap': '4px' });
   });
 
+  // X-11: the look moved from an inline style to .rc-graph-tool; the box and
+  // the colours are those the inline style drew (K-14: none inline now)
+  it('the Graph tool buttons keep their box and colours from a class', async () => {
+    const props = ['height', 'min-width', 'padding-left', 'border-top-width', 'border-top-color', 'border-top-left-radius',
+      'background-color', 'color', 'font-size', 'line-height', 'cursor'];
+    for (const sel of ['#graph .rc-graph-zoom-controls button', '#graph .rc-graph-fullscreen']) {
+      expect(await css(sel, props), sel).toEqual({
+        height: '26px', 'min-width': '26px', 'padding-left': '6px', 'border-top-width': '1px', 'border-top-color': 'rgb(204, 204, 204)',
+        'border-top-left-radius': '4px', 'background-color': 'rgb(255, 255, 255)', color: 'rgb(0, 0, 0)', 'font-size': '14px',
+        'line-height': '14px', cursor: 'pointer',
+      });
+    }
+    expect(await page.evaluate(() => [...document.querySelectorAll('#graph .rc-graph-tools button, #line .rc-chart-header *, #line .rc-chart-footer *')]
+      .filter(el => el.style.color !== '' || (el.closest('.rc-graph-tools') && el.hasAttribute('style'))).length)).toBe(0);
+  });
+
   it('the title is 16px and MultiChart cells are 32px apart', async () => {
     expect(await css('#line .rc-chart-title', ['font-size'])).toEqual({ 'font-size': '16px' });
     expect(await css('#multi .rc-multichart-grid', ['column-gap'])).toEqual({ 'column-gap': '32px' });
@@ -132,13 +148,40 @@ describe('B-03: the tooltip', () => {
   it('light: the default look, from the CSS fallbacks and the theme', async () => {
     await hoverLine('line');
     const tip = await css('#line .rc-tooltip', TIP);
-    expect(tip['font-size']).toBe('13px');
-    expect(tip['font-family']).toMatch(/^"?Cousine"?, ui-monospace,.*monospace$/);   // Chrome drops the quotes
+    expect(tip['font-size']).toBe('14px');
+    expect(tip['font-family']).toMatch(/^"Fira Sans", system-ui, .*sans-serif$/);   // words in the chart's font (K-15)
     expect(tip).toMatchObject({
-      color: 'rgb(0, 0, 0)', 'background-color': 'rgb(255, 255, 255)', 'border-top-color': 'rgb(224, 224, 224)',
+      color: 'rgb(0, 0, 0)', 'background-color': 'rgb(255, 255, 255)', 'border-top-color': 'rgb(228, 228, 228)',
       'box-shadow': 'rgba(0, 0, 0, 0.1) 0px 2px 8px 0px',
     });
     expect(await css('#line .rc-tooltip-header', ['color', 'font-size'])).toEqual({ color: 'rgb(102, 102, 102)', 'font-size': '13px' });
+  });
+
+  // RC-082 (variant A, 14px): opaque; a 24px line; the name in Fira, the
+  // value in Cousine, right-aligned; the series' mark a 12×2 line.
+  it('RC-082: 14px on a 24px line, opaque; names and the date in Fira, values in Cousine', async () => {
+    await hoverLine('line');
+    await page.waitForFunction(() => getComputedStyle(document.querySelector('#line .rc-tooltip')).opacity === '1');
+    const got = await page.evaluate(() => {
+      const tip = document.querySelector('#line .rc-tooltip');
+      const row = tip.querySelector('.rc-tooltip-row');
+      const cs = el => getComputedStyle(el);
+      const value = row.querySelector('.rc-tooltip-value');
+      const mark = row.querySelector('.rc-tooltip-swatch').getBoundingClientRect();
+      return {
+        size: cs(tip).fontSize, line: cs(tip).lineHeight, opacity: cs(tip).opacity,
+        label: cs(row.querySelector('.rc-tooltip-label')).fontFamily,
+        value: cs(value).fontFamily, digits: cs(value).fontVariantNumeric,
+        flush: Math.round(tip.getBoundingClientRect().right - value.getBoundingClientRect().right),
+        mark: [mark.width, mark.height], date: cs(tip.querySelector('.rc-tooltip-header .rc-num')).fontFamily,
+      };
+    });
+    expect(got).toMatchObject({ size: '14px', line: '24px', opacity: '1', digits: 'tabular-nums', mark: [12, 2] });
+    expect(got.label).toMatch(/^"Fira Sans", system-ui,/);
+    expect(got.value).toMatch(/^"?Cousine"?, ui-monospace,/);
+    // the date on top reads as words, in the text font (the mock-up, 2026-11-18)
+    expect(got.date).toMatch(/^"Fira Sans", system-ui,/);
+    expect(got.flush).toBe(17);                     // the right padding and the border: the value ends the row
   });
 
   it('darkTheme: the dark tooltip, its date header in tooltip.muted', async () => {
@@ -176,7 +219,7 @@ describe('B-03: the tooltip', () => {
       const host = chart.container.getBoundingClientRect();
       const node = [...chart.container.querySelectorAll('.rc-graph-node')].find(n => n.textContent.startsWith('A very'));
       return [200, 860].map(x => {
-        chart._tooltip.show(x, 100, 'x');
+        chart.tooltip.show(x, 100, 'x');
         node.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, clientX: host.left + x, clientY: host.top + 100 }));
         const tip = chart.container.querySelector('.rc-tooltip').getBoundingClientRect();
         const range = document.createRange();
@@ -186,6 +229,61 @@ describe('B-03: the tooltip', () => {
       });
     });
     expect(fits).toEqual([{ width: 314, inside: true }, { width: 314, inside: true }]);   // 280 + padding + border
+  });
+});
+
+// RC-002: setLoading(true) lays a slim bar over the top of the plot. jsdom
+// checks the element, its tokens and aria-busy (test/chart-loading.test.js);
+// the box, the colours and print are here. Each case takes it away again.
+describe('RC-002: the loading bar', () => {
+  const box = sel => page.evaluate(s => {
+    const r = document.querySelector(s).getBoundingClientRect();
+    return { left: r.left, top: r.top, width: r.width, height: r.height };
+  }, sel);
+  const BAR = ['position', 'pointer-events', 'font-size', 'font-family', 'color', 'background-color', 'border-bottom-color', 'opacity', 'text-align', 'display'];
+
+  it('it lies across the top of the plot, in the tooltip\'s colours, and lets the pointer through', async () => {
+    await page.evaluate(() => window.charts.timeseries.setLoading(true));
+    const plot = await box('#timeseries svg > g > rect');               // the crosshair overlay: the plot
+    const bar = await box('#timeseries .rc-chart-loading');
+    expect(bar.left).toBeCloseTo(plot.left, 1);
+    expect(bar.top).toBeCloseTo(plot.top, 1);
+    expect(bar.width).toBeCloseTo(plot.width, 1);
+    expect(bar.height).toBeGreaterThan(15);
+    expect(bar.height).toBeLessThan(30);
+    const look = await css('#timeseries .rc-chart-loading', BAR);
+    expect(look).toMatchObject({
+      position: 'absolute', 'pointer-events': 'none', 'font-size': '12px', color: 'rgb(102, 102, 102)',
+      'background-color': 'rgb(255, 255, 255)', 'border-bottom-color': 'rgb(228, 228, 228)', opacity: '0.9',
+      'text-align': 'center', display: 'block',
+    });
+    expect(look['font-family']).toBe((await css('#timeseries', ['font-family']))['font-family']);   // the chart's text font
+    expect(await page.evaluate(() => document.querySelector('#timeseries').getAttribute('aria-busy'))).toBe('true');
+    await page.evaluate(() => window.charts.timeseries.setLoading(false));
+    expect(await page.evaluate(() => document.querySelector('#timeseries .rc-chart-loading'))).toBeNull();
+  });
+
+  it('darkTheme: the dark tooltip\'s colours', async () => {
+    await page.evaluate(() => window.charts.tipDark.setLoading(true));
+    expect(await css('#tip-dark .rc-chart-loading', ['color', 'background-color', 'border-bottom-color']))
+      .toEqual({ color: 'rgb(136, 136, 136)', 'background-color': 'rgb(26, 26, 26)', 'border-bottom-color': 'rgb(46, 46, 46)' });
+    await page.evaluate(() => window.charts.tipDark.setLoading(false));
+  });
+
+  it('it follows the plot on a narrow card, and is hidden in print', async () => {
+    await page.evaluate(() => window.charts.timeseries.setLoading(true));
+    await page.setViewportSize({ width: 375, height: 900 });
+    await page.waitForTimeout(150);                                    // the ResizeObserver's frame
+    const plot = await box('#timeseries svg > g > rect');
+    const bar = await box('#timeseries .rc-chart-loading');
+    expect(plot.width).toBeLessThan(375);
+    expect(bar.left).toBeCloseTo(plot.left, 1);
+    expect(bar.width).toBeCloseTo(plot.width, 1);
+    await page.emulateMedia({ media: 'print' });
+    expect((await css('#timeseries .rc-chart-loading', ['display'])).display).toBe('none');
+    await page.emulateMedia({ media: 'screen' });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.evaluate(() => window.charts.timeseries.setLoading(false));
   });
 });
 

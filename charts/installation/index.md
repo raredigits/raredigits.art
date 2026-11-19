@@ -15,14 +15,14 @@ D3 is bundled in. You do not need to include it separately.
 **From GitHub** — clone the repo and use the prebuilt file:
 
 <pre class="code-block text-content-caption"><code data-copy>git clone https://github.com/raredigits/rare-charts.git</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy command" data-icon="content_copy"></button></pre>
 
 Copy `rare-charts.js` wherever your project keeps static assets.
 
 **From CDN** — load a release directly, no download required:
 
 <pre class="code-block"><code data-copy>&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@{{ versions.charts }}/rare-charts.min.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
 
 Always name the version. Releases after `v0.9.8` are tagged `v0.9.8_N`, which jsDelivr does not treat as newer, so `@latest` still serves `v0.9.8` — without `HierarchicalBar`, `Sankey` and `MapFlow` — until `v0.9.9`. The readable `rare-charts.js` sits next to the minified file under the same tag.
 
@@ -147,7 +147,7 @@ Or chain steps 2 and 3:
     </tr>
     <tr>
       <td><code>RareCharts.MultiChart</code></td>
-      <td>Two to four <code>Line</code> or <code>Bar</code> charts in one card</td>
+      <td>Two to four charts of any type in one card, with a shared header, legend and footer</td>
     </tr>
     <tr>
       <td><code>RareCharts.Map</code></td>
@@ -180,6 +180,15 @@ Before v0.9.8_6 `RareCharts.d3` was the whole D3 namespace, which kept all of D3
 
 `RareCharts.generateMockPrices(days, startPrice)` makes random price rows (`date`, `value`, `open`, `high`, `low`, `volume`) for demos and sketches. It is a demo helper, **outside the stability guarantee**: its output and signature may change in any release, and it may leave the bundle. Real pages pass their own data.
 
+### Exported utilities
+
+- `RareCharts.VERSION` — the version of the bundle on the page, such as `'{{ versions.charts }}'`.
+- `RareCharts.DOCS_URL` — the address of these docs, `'https://raredigits.art/charts'`.
+- `RareCharts.defaultTimeframes` — the range buttons that `timeframes: true` draws: `['1M', '3M', '6M', '1Y', '2Y', 'ALL']`. Build your own set from it: `timeframes: [...RareCharts.defaultTimeframes.slice(0, -1), 'YTD', 'ALL']`.
+- `RareCharts.defaultTheme`, `darkTheme`, `createTheme` — the themes ([Styles](/charts/styles/)).
+- `RareCharts.fromJson`, `fromCsv`, `fromApi`, `fromArray` — the data adapters ([Data import](/charts/data-import/)).
+- `RareCharts.memorySource`, `linkPresets` — Graph's in-memory data source and its link type presets ([Graph](/charts/graph/)).
+
 ## Fonts and Rare Styles
 
 RareCharts does not need [Rare Styles](/styles/) or any other stylesheet. The chart CSS is bundled in with its own spacing and type variables, so a chart keeps its layout on any page, a blank one included.
@@ -187,7 +196,9 @@ RareCharts does not need [Rare Styles](/styles/) or any other stylesheet. The ch
 The library loads no fonts. Charts use Fira Sans for text and Cousine for numbers when the page provides them, and the system sans-serif and monospace fonts otherwise. Rare Styles self-hosts both families, so a Rare Styles page needs nothing more. On any other page, load them yourself for the same look:
 
 <pre class="code-block"><code data-copy>&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,700;1,400&amp;family=Cousine:wght@400;700&amp;display=swap"&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
+
+The charts read the page's chart tokens where it has them: the fonts from `--chart-font-family` and `--chart-font-family-numeric`, the colors from `--chart-*` ([Styles](/charts/styles/#where-colors-come-from)). Rare Styles sets them since `v0.7.2`; on `v0.7.1` and on other pages the charts take their own values. No Rare Styles version is required.
 
 To change the type system, override the `--rc-*` variables with a selector that outranks the library's `.rc-chart` rule, such as `:root .rc-chart` — see [Styles](/charts/styles/).
 
@@ -200,13 +211,15 @@ The bundle adds its stylesheet to `<head>` as a `<style>` element. A [Content Se
 **2.** Link it with the id `rc-base-styles`. The bundle finds the id and adds no `<style>` of its own:
 
 <pre class="code-block"><code data-copy>&lt;link id="rc-base-styles" rel="stylesheet" href="/assets/rare-charts.css"&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
 
 If the stylesheet reaches the page another way — inside your own CSS bundle, say — turn the injection off before the bundle runs. Under such a policy an inline `<script>` is blocked too, so set it in a script file of your own (or one with the policy's nonce), loaded before `rare-charts.js`:
 
 <pre><code>window.RareChartsConfig = { injectStyles: false };</code></pre>
 
-Everything else the charts style from script — sizes, positions, theme colours — goes through the DOM style API, which the policy allows. One thing it does block: colours written as `style` attributes into the markup of the built-in tooltips (a series colour on its row, a slice colour on its label) and of the Graph details hint — that text then takes the tooltip's or the panel's own colour.
+Without the stylesheet at all the charts still draw, unstyled: the header and footer text take the page's color, and the Graph tool buttons are the page's plain buttons.
+
+Everything else the charts style from script — sizes, positions, theme colours — goes through the DOM style API, which the policy allows. One thing it does block: colours written as `style` attributes into the markup of the built-in tooltips — a row's mark in its series colour, a link type in its own colour in the relation tooltips. Those then take the tooltip's own colours.
 
 ## Minimal working example
 

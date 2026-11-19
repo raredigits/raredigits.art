@@ -39,13 +39,13 @@ Each key in the mapping is the output field name. The value can be:
 
 Whatever the mapping returns, `date` is read as a date (a `Date`, an ISO string or epoch milliseconds) and `value` as a number — with a function as with a field name, so a CSV's `'148.50'` becomes `148.5` either way.
 
-<div class="air-md"></div>
+A date string without a zone (`'2026-01-01'`) is read as local midnight, as the charts read it by default. The adapters take no time zone: for a chart with `timeZone: 'UTC'`, map such a date to epoch milliseconds — `date: row => Date.parse(row.date)` reads `'2026-01-01'` as UTC midnight — or pass the rows' strings to `setData` without an adapter, and the chart reads them in its own zone ([Dates and time zones](/charts/settings/#dates-and-time-zones)).
 
 <pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
 // Chart expects:         { date: Date, value: number }</span>
 
 const mapping = {
-  date:  row => new Date(row.ts),     // parse string to Date
+  date:  row => row.ts,               // '2026-01-01': read as local midnight
   value: row => +row.close,           // coerce string to number
 };</code></pre>
 
@@ -57,7 +57,7 @@ Fetches a JSON file and applies a mapping.
 
 <pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
 const data = await RareCharts.fromJson('/data/prices.json', {
-  date:  row => new Date(row.date),
+  date:  row => row.date,
   value: row => +row.close,
 });
 
@@ -83,7 +83,7 @@ chart.setData(data);</code></pre>
 Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.
 
 <pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
-  date:  row => new Date(row.month),
+  date:  row => row.month,
   value: row => parseFloat(row.revenue_usd),
 });</code></pre>
 
@@ -96,7 +96,7 @@ Fetches from a REST endpoint. Supports custom headers for authenticated APIs an
 **Basic usage:**
 
 <pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
-  date:  row => new Date(row.timestamp),
+  date:  row => row.timestamp,
   value: row => row.count,
 });</code></pre>
 
@@ -104,7 +104,7 @@ Fetches from a REST endpoint. Supports custom headers for authenticated APIs an
 
 <pre><code>const data = await RareCharts.fromApi(
   'https://api.example.com/private/metrics',
-  { date: row => new Date(row.ts), value: row => row.val },
+  { date: row => row.ts, value: row => row.val },
   { headers: { 'Authorization': 'Bearer ' + token } }
 );</code></pre>
 
@@ -112,7 +112,7 @@ Fetches from a REST endpoint. Supports custom headers for authenticated APIs an
 
 <pre><code>const data = await RareCharts.fromApi(
   'https://api.example.com/report',
-  { date: row => new Date(row.period), value: row => row.total },
+  { date: row => row.period, value: row => row.total },
   {
     transform: response => response.results.entries,
   }
@@ -137,7 +137,7 @@ For data that’s already in memory but needs field remapping. Synchronous — 
 const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
 
 const data = RareCharts.fromArray(raw, {
-  date:  row => new Date(row.ts),
+  date:  row => row.ts,
   value: row => row.val,
 });
 
@@ -167,7 +167,7 @@ setInterval(async () => {
 
 | Value type | Behavior | Example |
 |------------|----------|---------|
-| Function | Called with each row; the return value is used (`date` read as a date, `value` as a number) | `row => new Date(row.ts)` |
+| Function | Called with each row; the return value is used (`date` read as a date, `value` as a number) | `row => row.ts.slice(0, 10)` |
 | String | Treated as a field name — `row[fieldName]`; `date` is parsed, `value` coerced to a number | `'close_price'` |
 
 </div>

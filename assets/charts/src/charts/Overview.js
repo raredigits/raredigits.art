@@ -28,17 +28,45 @@
 //                 Y-axis gutter of the charts it sits under
 //   axis        — draw a time axis under the strip (default: false); the
 //                 relation charts (Graph flow, MapFlow) turn it on
+//   timeZone    — 'local' (default) | 'UTC': the zone date strings without a
+//                 zone are read in (rows, extent, setBrush) and the axis ticks
+//                 and names dates in, as on the charts (T-10; the table:
+//                 parseDate in core/utils.js). Under a chart the strip takes
+//                 the chart's own.
+//   ariaLabel   — standalone, the strip's accessible name (the svg gets
+//                 role="img"; default "Chart", as a chart's drawing without a
+//                 title). Under a chart the strip is part of the chart and
+//                 takes no name (RC-023).
+//   theme       — a theme (createTheme, darkTheme) or overrides, merged as a
+//                 chart merges its own (RC-013). Standalone, the strip is an
+//                 .rc-overview — rare-charts.css declares the chart tokens on
+//                 it — and publishes the theme's own values on its element,
+//                 as a chart does on its card (core/paint.js); destroy()
+//                 takes both away. Under a chart it draws with the chart's
+//                 theme object itself, so it follows the chart's colours.
 
 import * as d3 from 'd3';
-import { defaultTheme } from '../core/theme.js';
-import { uid, parseDate, byDate } from '../core/utils.js';
+import { createTheme } from '../core/theme.js';
+import { PAINT, paintOf, publishTheme, readDataColors, restoreStyle } from '../core/paint.js';
+import { uid, parseDate, byDate, resolveTimeZone, timeKit } from '../core/utils.js';
+import { textWidth, applySvgA11y } from '../core/renderHelpers.js';
 
 export class Overview {
   constructor(selector, options = {}) {
     this.container = typeof selector === 'string'
       ? document.querySelector(selector)
       : selector;
-    this.theme  = { ...defaultTheme, ...(options.theme ?? {}) };
+    const theme = options.theme;
+    if (theme?.[PAINT]) {
+      this.theme = theme;
+    } else {
+      this._theme = createTheme(theme ?? {});
+      this._hostStyle = {};
+      this._ownClass = !this.container.closest('.rc-chart') && !this.container.classList.contains('rc-overview');
+      if (this._ownClass) this.container.classList.add('rc-overview');
+      publishTheme(this.container, this._theme, this._hostStyle);
+      this.theme = paintOf(this._theme);
+    }
     this.opts   = {
       height:      options.height     ?? 52,
       area:        options.area,
@@ -46,6 +74,8 @@ export class Overview {
       brushColor:  options.brushColor,
       color:       options.color,
       axis:        !!options.axis,
+      timeZone:    resolveTimeZone(options.timeZone),
+      ariaLabel:   options.ariaLabel,
     };
     this.margin = { top: 6, right: 70, bottom: 16, left: 0, ...(options.margin ?? {}) };
     this._data  = [];
@@ -61,11 +91,13 @@ export class Overview {
   _init() {
     this.container.style.height = this.opts.height + 'px';
     this.svg = d3.select(this.container).append('svg').attr('width', '100%').attr('height', '100%');
+    if (!this.container.closest('.rc-chart')) applySvgA11y(this.svg, { ariaLabel: this.opts.ariaLabel });
     const { left, top } = this.margin;
     this.g      = this.svg.append('g').attr('transform', `translate(${left},${top})`);
     this.gArea  = this.g.append('g');
     this.gLine  = this.g.append('g');
-    this.gAxis  = this.g.append('g').attr('class', 'rc-ov-axis');
+    // the main axis's numeric font, at 10px (K-15: .rc-axis.rc-ov-axis)
+    this.gAxis  = this.g.append('g').attr('class', 'rc-axis rc-ov-axis');
     this.gBrush = this.g.append('g');
 
     this._resizeObserver = new ResizeObserver(() => {
@@ -81,19 +113,27 @@ export class Overview {
     this._onBrush = null;
     this._resizeObserver.disconnect();
     this.container.innerHTML = '';
+    if (this._ownClass) {
+      this.container.classList.remove('rc-overview');
+      if (!this.container.classList.length) this.container.removeAttribute('class');
+      this._ownClass = false;
+    }
+    if (this._hostStyle) restoreStyle(this.container, this._hostStyle);
+    this._hostStyle = null;
   }
 
   setData(data, onBrush, { extent = null } = {}) {
     // Read like a chart's rows (K-04): string and epoch dates parsed, numeric
     // strings coerced, unreadable rows dropped, date order — on a copy.
+    const zone    = this.opts.timeZone;
     this._data    = (Array.isArray(data) ? data : [])
-      .map(d => (d && typeof d === 'object' ? { ...d, date: parseDate(d.date), value: d.value == null || d.value === '' ? NaN : +d.value } : null))
+      .map(d => (d && typeof d === 'object' ? { ...d, date: parseDate(d.date, zone), value: d.value == null || d.value === '' ? NaN : +d.value } : null))
       .filter(d => d && d.date && Number.isFinite(d.value))
       .sort(byDate);
     this._onBrush = onBrush;
     // a zero-span extent (every tie at one instant) has nothing to spread:
     // the strip then spans its own data
-    const span    = Array.isArray(extent) ? [parseDate(extent[0]), parseDate(extent[1])] : null;
+    const span    = Array.isArray(extent) ? [parseDate(extent[0], zone), parseDate(extent[1], zone)] : null;
     this._extent  = span && span[0] && span[1] && +span[1] > +span[0] ? span : null;
     this._render();
     return this;
@@ -101,20 +141,26 @@ export class Overview {
 
   setBrush(extent) {
     if (!this._xScale || !Array.isArray(extent)) return;
-    const a = parseDate(extent[0]), b = parseDate(extent[1]);
+    const a = parseDate(extent[0], this.opts.timeZone), b = parseDate(extent[1], this.opts.timeZone);
     if (!a || !b) return;
     // Clamped to the strip: a selection past either end would lose its handle.
+    // In date order: a page may pass [to, from], which drew a selection of
+    // negative width (RC-069); the charts order the pair themselves.
     const [r0, r1] = this._xScale.range();
     const x = d => Math.min(r1, Math.max(r0, this._xScale(d)));
-    this._lastSelection = [x(a), x(b)];
+    this._lastSelection = a <= b ? [x(a), x(b)] : [x(b), x(a)];
     this._brush.move(this.gBrush, this._lastSelection);
   }
 
   _render() {
+    // standalone, the strip reads its data colours itself; under a chart
+    // the chart has read them for its own render
+    if (this._theme) readDataColors(this.container, this._theme, this.theme);
     const W = this.width, H = this.height;
     const t = this.theme;
 
-    this._xScale = d3.scaleTime().domain(this._extent ?? d3.extent(this._data, d => d.date)).range([0, W]);
+    // d3's local or UTC scale: the axis ticks and names the zone's months (T-10)
+    this._xScale = timeKit(this.opts.timeZone).scale().domain(this._extent ?? d3.extent(this._data, d => d.date)).range([0, W]);
     const yScale = d3.scaleLinear()
       .domain([d3.min(this._data, d => d.value), d3.max(this._data, d => d.value)])
       .range([H, 0]);
@@ -180,7 +226,7 @@ export class Overview {
         .attr('font-family', null)
         .call(g => g.select('.domain').attr('stroke', t.border ?? t.muted))
         .call(g => g.selectAll('.tick line').attr('stroke', t.border ?? t.muted))
-        .call(g => g.selectAll('.tick text').attr('fill', t.muted).attr('font-size', 10));
+        .call(g => g.selectAll('.tick text').attr('fill', t.muted));
       // A label that would run past either end of the strip is dropped
       // rather than cut by the card's edge.
       const { left, right } = this.margin;
@@ -188,7 +234,7 @@ export class Overview {
         const text = els[i].querySelector('text');
         if (!text) return;
         const x = this._xScale(d);
-        const half = (text.getComputedTextLength?.() || String(text.textContent).length * 5.5) / 2;
+        const half = textWidth(text, 5.5) / 2;
         text.style.display = x - half < -left || x + half > W + right ? 'none' : '';
       });
     } else {

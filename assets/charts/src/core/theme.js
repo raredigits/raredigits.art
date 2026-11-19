@@ -3,6 +3,11 @@
 // type sizes and the chart font live in rare-charts.css (--rc-*). Charts read
 // the sizing tokens (strokeWidth, dotRadius, markerSize, barOpacity) as
 // fallbacks — explicit chart and series options take priority.
+// A default colour is a chain (RC-014): the page's --chart-* token, then the
+// literal — 'var(--chart-text-color, #000000)'. rare-charts.css declares the
+// same chains on .rc-chart as --rc-*; keep them in step. A key set to
+// anything else is the theme's own and wins over the page (core/paint.js).
+// null marks a colour derived from the others (surface, map.graticule).
 // map.hoverBrighten (hover: (factor − 1) of the way towards white) and map.graticule (colour of
 // Map's graticule option) are read by Map.
 
@@ -14,43 +19,46 @@ export const defaultTheme = {
   // bg is what the chart sits on: plates behind end and annotation labels,
   // halos and knockouts are painted with it. The page background under Rare
   // Styles, white without it — the fallback keeps fill="var(…)" valid (C-13).
-  bg:      'var(--bg-color, #ffffff)',
-  surface: '#f5f5f5',     // Graph node fills, flow lane bands
+  bg:      'var(--chart-bg, var(--bg-color, #ffffff))',
+  // Graph node fills, flow lane bands: null derives it, the background
+  // with 4% of the text (#f5f5f5 on white).
+  surface: null,
 
   // ── Structure ──────────────────────────────────────────────────────────────
-  grid:      '#e8e8e8',   // horizontal grid lines
-  border:    '#cccccc',   // axis lines, zero baseline
-  crosshair: '#aaaaaa',   // vertical hover line — intentionally subtler than border
+  grid:      'var(--chart-grid-color, #e4e4e4)',   // horizontal grid lines, the Gauge track
+  border:    'var(--chart-axis-color, #cccccc)',   // axis lines, zero baseline
+  crosshair: '#aaaaaa',   // vertical hover line — subtler than border; no token (RC-064)
 
   // ── Text ───────────────────────────────────────────────────────────────────
-  text:  '#000000',       // primary labels
-  muted: '#666666',       // axis tick labels, secondary text
+  text:  'var(--chart-text-color, #000000)',    // primary labels
+  muted: 'var(--chart-label-color, #666666)',   // axis tick labels, secondary text
 
-  // ── Semantic (P&L, deltas, signals) ────────────────────────────────────────
-  positive: '#389e0d',    // gains, up moves
-  negative: '#ff0000',    // losses, down moves
-  accent:   '#00aaff',    // highlights, single-series default
+  // ── Accent ─────────────────────────────────────────────────────────────────
+  // Single-series default, highlights, map regions with data; series 1's colour.
+  accent:   'var(--chart-series-1, #1677ff)',
 
   // ── Series palette ─────────────────────────────────────────────────────────
   // Used in order for multi-series charts; override the full array or per-series.
+  // The palette agreed with Rare Styles, behind the page's --chart-series-1…6.
+  // Charts draw with them resolved to hex (core/paint.js, at every render).
   colors: [
-    '#fa8c16',  // orange
-    '#00aaff',  // blue
-    '#00c97a',  // green
-    '#ffcc00',  // yellow
-    '#cc44ff',  // violet
-    '#ff0000',  // red
+    'var(--chart-series-1, #1677ff)',  // blue (the accent)
+    'var(--chart-series-2, #fa8c16)',  // orange
+    'var(--chart-series-3, #00c97a)',  // green
+    'var(--chart-series-4, #ffcc00)',  // yellow
+    'var(--chart-series-5, #cc44ff)',  // violet
+    'var(--chart-series-6, #ff0000)',  // red
   ],
 
   // ── Typography ─────────────────────────────────────────────────────────────
   // The fallbacks are the --rc-font-family(-numeric) stacks of
   // rare-charts.css; keep them in step. Chart text takes the CSS stack set on
-  // .rc-chart; `font` is only the tooltip's fallback when numericFont is unset.
+  // .rc-chart. In a tooltip `font` sets the words (published as
+  // --rc-tooltip-font when not this one, K-15).
   font:        'var(--rc-font-family, "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
-  // Not used: the tooltip size lives in rare-charts.css (B-03). Removal at 1.0.
-  fontSize:    'var(--rc-font-size-sm, 14px)',
 
-  // The tooltip font family (published as --rc-tooltip-font).
+  // The tooltip's figures (.rc-num: values, percentages, counts, dates;
+  // published as --rc-tooltip-font-numeric when not this one, K-15).
   // Falls back through a chain of common tabular fonts.
   numericFont: 'var(--rc-font-family-numeric, "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace)',
 
@@ -62,24 +70,25 @@ export const defaultTheme = {
   barOpacity:  0.35,
 
   map: {
-    matchFill:      '#00aaff',
-    unmatchedFill:  '#e8e8e8',
+    matchFill:      null,            // null: regions with data take accent
+    unmatchedFill:  'var(--chart-grid-color, #e8e8e8)',
     ocean:          'transparent',   // the card shows through (C-13)
-    border:         '#ffffff',
+    border:         'var(--chart-bg, #ffffff)',
     hoverBrighten:  1.3,
-    graticule:      'rgba(0,0,0,0.08)',
+    graticule:      null,            // null: the text at 8% (rgba(0,0,0,0.08) on black)
   },
 
   // ── Tooltip ────────────────────────────────────────────────────────────────
-  // Colours only: Tooltip.js publishes them as --rc-tooltip-* custom
-  // properties, rare-charts.css sets size, weight and spacing — its var()
-  // fallbacks repeat these values; keep them in step (B-03).
+  // Colours only: rare-charts.css declares them on the card as
+  // --rc-tooltip-* (a theme's own values are published there inline,
+  // core/paint.js) and sets size, weight and spacing — its literals repeat
+  // these values; keep them in step (B-03). A light popover on any surface.
   tooltip: {
-    bg:     '#ffffff',
-    border: '#e0e0e0',
-    text:   '#000000',      // plain rows and subject titles
-    muted:  '#666666',      // dates, percentages, counts — every secondary row
-    shadow: '0 2px 8px rgba(0,0,0,0.10)',
+    bg:     'var(--chart-tooltip-bg, #ffffff)',
+    border: 'var(--chart-tooltip-border, #e4e4e4)',
+    text:   'var(--chart-tooltip-text, #000000)',      // plain rows and subject titles
+    muted:  'var(--chart-tooltip-muted, #666666)',     // dates, percentages, counts — every secondary row
+    shadow: 'var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10))',
     // The row naming what is hovered (date, label, title). null keeps the
     // role look: a date stays muted, a title bold in text. bg draws a band.
     header: { text: null, bg: null },
@@ -87,6 +96,9 @@ export const defaultTheme = {
 };
 
 // ─── Dark preset ─────────────────────────────────────────────────────────────
+// Its colours are its own, plain: a dark chart keeps them on any page or card.
+// It sets no colors, so the series follow the palette (and the page's
+// --chart-series-*); a single series takes its orange accent.
 
 export const darkTheme = createTheme({
   bg:      '#0a0a0a',
@@ -105,7 +117,7 @@ export const darkTheme = createTheme({
     shadow: '0 2px 12px rgba(0,0,0,0.55)',
   },
   map: {
-    matchFill:      '#ff6200',
+    matchFill:      null,            // the accent, #ff6200
     unmatchedFill:  '#1e1e2e',
     ocean:          'transparent',
     border:         '#444455',

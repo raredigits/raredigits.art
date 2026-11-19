@@ -13,7 +13,12 @@
 //
 // Whatever the mapping kind, `date` is then read as a date (Date, ISO string,
 // epoch ms) and `value` as a number; a row where either is present but
-// unreadable is dropped, an empty value ('' or null) is kept.
+// unreadable is dropped, an empty value ('' or null) is kept. A date string
+// without a zone is read in local time, as the charts read it by default
+// (timeZone 'local', T-10): '2026-01-01' is local midnight. The adapters take
+// no zone: for a chart with timeZone 'UTC', map such a date to epoch ms —
+// date: row => Date.parse(row.date), which reads a date-only string as UTC
+// midnight — or hand the rows' strings to setData without an adapter.
 
 import * as d3 from 'd3';
 import { parseDate } from '../core/utils.js';

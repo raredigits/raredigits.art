@@ -13,12 +13,16 @@ import * as d3 from 'd3';
 import { Line } from '../assets/charts/src/charts/Line.js';
 import { DualAxes } from '../assets/charts/src/charts/DualAxes.js';
 import { Bar } from '../assets/charts/src/charts/Bar.js';
-import { Donut } from '../assets/charts/src/charts/Donut.js';
+import { Donut, Pie } from '../assets/charts/src/charts/Donut.js';
 import { Gauge } from '../assets/charts/src/charts/Gauge.js';
 import { HierarchicalBar } from '../assets/charts/src/charts/HierarchicalBar.js';
 import { Sankey } from '../assets/charts/src/charts/Sankey.js';
-import { continueEase } from '../assets/charts/src/core/entryMotion.js';
-import { mount, track } from './helpers.js';
+import { Graph } from '../assets/charts/src/charts/Graph.js';
+import { memorySource } from '../assets/charts/src/graph/source.js';
+import { continueEase, ENTRY_DURATION } from '../assets/charts/src/core/entryMotion.js';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { mount, track, graphCentres } from './helpers.js';
 
 const D = 600;                                // duration, ms
 const motion = { duration: D, ease: 'linear' };
@@ -168,6 +172,30 @@ describe('Line and DualAxes: the draw-in carries on (C-16)', () => {
     expect(attr(c, sel, 'stroke-dasharray')).toEqual([null]);    // once per instance
   });
 
+  it('a dashed line or a band: the whole drawing sweeps in, left to right, the solid line with it', async () => {
+    const band = values.map(v => ({ date: v.date, lower: v.value - 1, upper: v.value + 1 }));
+    const c = track(new Line(mount(null), motion)).setData([
+      { name: 'range', type: 'band', values: band },
+      { name: 'actual', values },
+      { name: 'plan', strokeDash: '5,4', values },
+    ]);
+    const lines = c.container.querySelector('.rc-lines');
+    const clipId = () => (lines.getAttribute('clip-path') ?? '').replace(/^url\(#|\)$/g, '');
+    const width = () => +c.container.querySelector(`#${clipId()} rect`).getAttribute('width');
+    expect(clipId()).not.toBe('');
+    expect(c.container.querySelector('.rc-bands').getAttribute('clip-path')).toBe(lines.getAttribute('clip-path'));
+    expect(attr(c, 'path.rc-line', 'stroke-dashoffset')).toEqual([null, null]);   // no draw-in of its own
+    const start = width();
+    await at(D / 2);
+    c.render();                                 // a render mid-way keeps the share open
+    const half = width();
+    expect(half).toBeGreaterThan(0);
+    await at(D + 50);
+    expect(lines.getAttribute('clip-path')).toBeNull();
+    expect(c.container.querySelector('defs[id$="-sweep-defs"]')).toBeNull();
+    expect(start).toBe(0);                      // opened from nothing
+  });
+
   it('animate: false draws the line whole', () => {
     const c = track(new Line(mount(null), { animate: false })).setData(values);
     expect(attr(c, 'path.rc-line', 'stroke-dasharray')).toEqual([null]);
@@ -210,7 +238,7 @@ describe('Donut, Gauge, HierarchicalBar: the entry carries on (C-16)', () => {
     const c = track(new Donut(mount(null), motion)).setData(tree);
     await at(D + 50);
     const before = c.container.querySelectorAll('.rc-donut-slice').length;
-    c.drillTo(c._focus().children[0]);          // into 'x'
+    c.drillTo('x');
     await at(D + 50 + D / 2);
     const mid = paths(c, '.rc-donut-slice');
     await at(2 * D + 100);
@@ -294,5 +322,107 @@ describe('Sankey: the band fade carries on (C-16)', () => {
   it('animate: false draws the bands at rest', () => {
     const c = track(new Sankey(mount(null), { animate: false, orientation: 'horizontal' })).setData(flows);
     expect(all(op(c), 0.45)).toBe(true);
+  });
+});
+
+// drawLinesIn with timing null (no entry: TimeSeries on every zoom, pan and
+// brush step) leaves the line whole and never measures it — getTotalLength is
+// a layout read that cost a quarter of a 5000-point redraw (RC-080 review).
+describe('drawLinesIn without an entry', () => {
+  it('does not measure the path, and clears any draw-in dashes', async () => {
+    const { drawLinesIn } = await import('../assets/charts/src/core/entryMotion.js');
+    const svg = d3.create('svg');
+    const path = svg.append('path').attr('stroke-dasharray', '10 10').attr('stroke-dashoffset', 5);
+    const measure = vi.fn(() => 100);
+    path.node().getTotalLength = measure;
+    drawLinesIn(path, null);
+    expect(measure).not.toHaveBeenCalled();
+    expect(path.attr('stroke-dasharray')).toBeNull();
+    expect(path.attr('stroke-dashoffset')).toBeNull();
+    drawLinesIn(path, { eased: 0.5, delay: 0, duration: 100, ease: d3.easeLinear });
+    expect(measure).toHaveBeenCalledTimes(1);                 // the entry still measures
+    expect(path.attr('stroke-dasharray')).toBe('100 100');
+  });
+});
+
+// K-08: one entry duration for every chart, 650 ms (ENTRY_DURATION in
+// core/entryMotion.js); Graph's ties and nodes move for 500 ms after a click
+// (GRAPH_TRANSITION), and its first render does not move. No `duration`
+// option, `animate` at its default, no reduced-motion preference (jsdom has
+// no matchMedia). The clock stands still, so every transition the render
+// scheduled is still on its mark (node.__transition) with its duration.
+describe('K-08: one entry duration, 650 ms; Graph moves for 500 ms after a click', () => {
+  const durations = (root, sel) => [...root.querySelectorAll(sel)]
+    .flatMap(n => Object.values(n.__transition ?? {}).map(s => s.duration));
+  const cats   = [{ label: 'A', value: 10 }, { label: 'B', value: 20 }];
+  const dated  = [1, 3, 2].map((value, i) => ({ date: new Date(2026, 0, 1 + i), value }));
+  const tree   = { label: 'All', value: 10, children: [{ label: 'a', value: 6 }, { label: 'b', value: 4 }] };
+  const flows  = { links: [{ source: 'a', target: 'b', value: 3 }, { source: 'a', target: 'c', value: 2 }] };
+
+  it('ENTRY_DURATION is 650', () => {
+    expect(ENTRY_DURATION).toBe(650);
+  });
+
+  it.each([
+    ['Bar',                 () => new Bar(mount(null)).setData(cats),                                     'rect.rc-bar'],
+    ['Bar, horizontal',     () => new Bar(mount(null), { orientation: 'horizontal' }).setData(cats),      'rect.rc-bar'],
+    ['Bar, stacked',        () => new Bar(mount(null)).setData([{ name: 's', values: cats }]),            'rect.rc-bar-seg'],
+    ['HierarchicalBar',     () => new HierarchicalBar(mount(null)).setData(tree),                         '.rc-hbar-bar'],
+    ['Sankey',              () => new Sankey(mount(null), { orientation: 'horizontal' }).setData(flows),  '.rc-sankey-link'],
+    ['Gauge',               () => new Gauge(mount(null), { needle: true }).setData(40),                   '.rc-gauge-fill, .rc-gauge-needle-pointer'],
+    ['Line',                () => new Line(mount(null)).setData(dated),                                   'path.rc-line'],
+    ['DualAxes',            () => new DualAxes(mount(null)).setData([
+                              { name: 'b', type: 'bar', values: dated }, { name: 's', type: 'line', values: dated },
+                            ]),                                                                           'rect.rc-dual-bar, path.rc-dual-line'],
+    ['Donut',               () => new Donut(mount(null)).setData(cats),                                   '.rc-donut-slice'],
+    ['Pie',                 () => new Pie(mount(null)).setData(cats),                                     '.rc-donut-slice'],
+  ])('%s: the entry runs 650 ms', (_name, make, sel) => {
+    vi.spyOn(SVGElement.prototype, 'getTotalLength').mockImplementation(() => 200);   // a line to draw in
+    const c = track(make());
+    const d = durations(c.container, sel);
+    expect(d.length).toBeGreaterThan(0);
+    expect(d.every(v => v === 650)).toBe(true);
+  });
+
+  it('Graph: the first render does not move; a click moves ties and nodes for 500 ms', async () => {
+    // A node's move tweens its transform, which d3 parses through the SVG
+    // transform list when the move starts; jsdom has none, so this test
+    // lends every element an empty one.
+    const own = Object.getOwnPropertyDescriptor(SVGElement.prototype, 'transform');
+    Object.defineProperty(SVGElement.prototype, 'transform', {
+      configurable: true, get: () => ({ baseVal: { consolidate: () => null } }),
+    });
+    const net = {
+      nodes: ['a', 'b', 'c', 'd'].map(id => ({ id, label: id.toUpperCase() })),
+      links: [{ source: 'a', target: 'b' }, { source: 'a', target: 'c' }, { source: 'b', target: 'd' }],
+    };
+    const marks = '.rc-graph-node, .rc-graph-link';
+    const host = mount();
+    try {
+      const g = track(new Graph(host, { dataSource: memorySource(net), depth: 1 }));
+      await g.focus('a').whenReady();
+      expect(durations(host, marks)).toEqual([]);
+      [...host.querySelectorAll('.rc-graph-node')].find(n => n.__data__.id === 'b')
+        .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      await g.whenReady();
+      expect(graphCentres(host)).toEqual(['B']);
+      const d = durations(host, marks);
+      expect(d.length).toBeGreaterThan(0);
+      expect(d.every(v => v === 500)).toBe(true);
+    } finally {
+      d3.selectAll(host.querySelectorAll(marks)).interrupt();
+      if (own) Object.defineProperty(SVGElement.prototype, 'transform', own);
+      else delete SVGElement.prototype.transform;
+    }
+  });
+
+  it('no class keeps a number of its own as the default duration', () => {
+    const root = join(process.cwd(), 'assets/charts/src');
+    const files = readdirSync(root, { recursive: true }).filter(f => f.endsWith('.js'));
+    expect(files).toContain('charts/Gauge.js');
+    const own = /duration\s*\?\?\s*\d/;
+    const offenders = files.flatMap(f => readFileSync(join(root, f), 'utf8').split('\n')
+      .flatMap((line, i) => own.test(line) ? [`${f}:${i + 1}: ${line.trim()}`] : []));
+    expect(offenders).toEqual([]);
   });
 });

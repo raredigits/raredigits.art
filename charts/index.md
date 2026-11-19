@@ -48,7 +48,7 @@ If you write: “<em>Revenue grew from 1.2M to 2.8M, with a dip in March and
   </div>
 </div>
 
-The important part is not the variety, but the consistency. All charts follow a unified configuration model and data structure. Once you understand one, the rest behave predictably.
+The important part is not the variety, but the consistency. Every chart is built the same way: the same constructor and `setData()`, the same text slots, legend, timeframes and time zone, and the same arguments for its formatters. Once you understand one, the rest behave predictably. Where a default differs between chart types, [Settings](/charts/settings/#defaults-across-charts) puts them side by side.
 
 This reduces friction for developers. You learn the logic once and reuse it everywhere. Each chart type, including edge cases and advanced configuration, is documented in its own section.
 

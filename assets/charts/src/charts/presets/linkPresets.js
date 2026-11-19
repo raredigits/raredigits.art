@@ -22,10 +22,10 @@
 // ─── Personal / social connections ───────────────────────────────────────────
 
 export const personal = {
-  professional: { color: '#00aaff', dash: null,  label: 'Professional' },
+  professional: { color: '#1677ff', dash: null,  label: 'Professional' },
   family:       { color: '#00c97a', dash: null,  label: 'Family'       },
   friendship:   { color: '#ffcc00', dash: '5,4', label: 'Friendship'   },
-  investment:   { color: '#ff6200', dash: null,  label: 'Investment'   },
+  investment:   { color: '#fa8c16', dash: null,  label: 'Investment'   },
   philanthropy: { color: '#cc44ff', dash: '2,4', label: 'Philanthropy' },
   education:    { color: '#aaaaaa', dash: '8,4', label: 'Education'    },
 };
@@ -36,10 +36,10 @@ export const personal = {
 export const knowledge = {
   partOf:       { color: '#00c97a', dash: null,  label: 'Part of'      },
   causes:       { color: '#333333', dash: null,  label: 'causes'       },
-  related:      { color: '#00aaff', dash: '5,4', label: 'Related'      },
+  related:      { color: '#1677ff', dash: '5,4', label: 'Related'      },
   example:      { color: '#ffcc00', dash: '2,4', label: 'Example'      },
   contradicts:  { color: '#ff3b5c', dash: '3,3', label: 'Contradicts'  },
-  prerequisite: { color: '#ff6200', dash: null,  label: 'Prerequisite' },
+  prerequisite: { color: '#fa8c16', dash: null,  label: 'Prerequisite' },
   extends:      { color: '#cc44ff', dash: null,  label: 'Extends'      },
 };
 
@@ -47,8 +47,8 @@ export const knowledge = {
 // Companies, subsidiaries, investors, board members.
 
 export const org = {
-  subsidiary:   { color: '#00aaff', dash: null,  label: 'Subsidiary'   },
-  investment:   { color: '#ff6200', dash: null,  label: 'Investment'   },
+  subsidiary:   { color: '#1677ff', dash: null,  label: 'Subsidiary'   },
+  investment:   { color: '#fa8c16', dash: null,  label: 'Investment'   },
   board:        { color: '#00c97a', dash: '5,4', label: 'Board member' },
   partnership:  { color: '#ffcc00', dash: null,  label: 'Partnership'  },
   acquisition:  { color: '#cc44ff', dash: null,  label: 'Acquisition'  },
@@ -59,8 +59,8 @@ export const org = {
 // Microservices, modules, APIs, data flows.
 
 export const tech = {
-  depends:      { color: '#00aaff', dash: null,  label: 'Depends on'   },
-  calls:        { color: '#ff6200', dash: null,  label: 'Calls'        },
+  depends:      { color: '#1677ff', dash: null,  label: 'Depends on'   },
+  calls:        { color: '#fa8c16', dash: null,  label: 'Calls'        },
   dataFlow:     { color: '#00c97a', dash: '5,4', label: 'Data flow'    },
   inherits:     { color: '#cc44ff', dash: null,  label: 'Inherits'     },
   optional:     { color: '#aaaaaa', dash: '3,3', label: 'Optional dep' },
@@ -70,10 +70,10 @@ export const tech = {
 // Ideas, decisions, events — cause and effect.
 
 export const causal = {
-  causes:       { color: '#ff6200', dash: null,  label: 'Causes'       },
+  causes:       { color: '#fa8c16', dash: null,  label: 'Causes'       },
   enables:      { color: '#00c97a', dash: null,  label: 'Enables'      },
   blocks:       { color: '#ff3b5c', dash: '4,3', label: 'Blocks'       },
-  correlates:   { color: '#00aaff', dash: '5,4', label: 'Correlates'   },
+  correlates:   { color: '#1677ff', dash: '5,4', label: 'Correlates'   },
   weakens:      { color: '#ffcc00', dash: '2,3', label: 'Weakens'      },
 };
 

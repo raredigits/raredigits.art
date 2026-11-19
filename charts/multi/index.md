@@ -6,7 +6,7 @@ displaySidebar: true
 permalink: '/charts/multi/'
 ---
 
-`MultiChart` combines two to four charts inside a single block with a shared title, subtitle, legend, and source footer. Each panel is an independent chart instance — a `Line` or a `Bar` — arranged in a CSS grid.
+`MultiChart` combines two to four charts inside a single block with a shared title, subtitle, legend, and source footer. Each panel is an independent chart instance of any chart class — a `Line`, a `Bar`, a `Donut`, a `Sankey`, a `Map` and so on — arranged in a CSS grid.
 
 <div id="multi-chart-market-overview" class="panel panel--bordered text-content-caption"></div>
 
@@ -24,7 +24,7 @@ permalink: '/charts/multi/'
       type:  'Line',
       title: 'Brent Crude',
       data:  brentData,
-      options: { yPrefix: '$', lineColor: '#00aaff' },
+      options: { yPrefix: '$', lineColor: '#1677ff' },
     },
     {
       type:  'Line',
@@ -35,7 +35,7 @@ permalink: '/charts/multi/'
       type:  'Bar',
       title: 'Monthly Volumes',
       data:  volumeData,
-      options: { barColor: '#00aaff' },
+      options: { barColor: '#1677ff' },
     },
   ],
 });</code></pre>
@@ -77,9 +77,30 @@ When you need a third panel, the `span` field on a chart descriptor stretches th
 
 <div id="multi-chart-developer-survey" class="panel panel--bordered text-content-caption"></div>
 
+### Shared legend
+
+The grid's own `legend` works across the cells. An item that names a series of any cell — by `series`, else `name`, else `label`, as on a single chart — is a toggle: a click shows or hides the series of that name in every cell, a double click keeps only that series, and "Show all" brings everything back. The series can come from any class: a line, a stacked bar, a slice, a Sankey link type. An item that names no series stays a caption.
+
+```js
+const grid = new RareCharts.MultiChart('#prices', {
+  legend: [{ label: 'Brent' }, { label: 'WTI' }],
+  onLegendToggle: ({ name, visible, visibleNames }) => console.log(name, visible, visibleNames),
+  charts: [
+    { type: 'Line', title: 'Daily',   data: [{ name: 'Brent', values: daily.brent },   { name: 'WTI', values: daily.wti }] },
+    { type: 'Line', title: 'Monthly', data: [{ name: 'Brent', values: monthly.brent }, { name: 'WTI', values: monthly.wti }] },
+  ],
+});
+
+grid.setSeriesVisible(['Brent']);   // every cell, without onLegendToggle; null shows all
+```
+
+`onLegendToggle` fires on the grid only, and `legendRescale` goes down to every cell that does not set its own. A cell's own `legend` acts on that cell alone, until the next gesture on the shared one: use the shared legend when the cells draw the same series.
+
 ## MultiChart options
 
 Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>legend</code>, <code>legendPosition</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
+
+The grid is a group (`role="group"`) for assistive technology, named by `ariaLabel`, else by the title and subtitle joined with " — ". Each cell’s drawing is named by its own `ariaLabel`, `title` or `subtitle` in `options`, else by the cell `title`, else "Chart".
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -161,15 +182,15 @@ Each object in the `charts` array defines one panel:
     <tbody>
         <tr>
             <td><code>type</code></td>
-            <td><code>'Line'</code> | <code>'Bar'</code></td>
+            <td>string</td>
             <td><code>'Line'</code></td>
-            <td>Chart class to instantiate for this cell. Without <code>type</code> (or with <code>null</code>) the cell is a <code>Line</code>. Any other value also draws a <code>Line</code> and warns in the console — a wrong case such as <code>'bar'</code> included.</td>
+            <td>Chart class to instantiate for this cell, by its name: <code>'Line'</code>, <code>'Bar'</code>, <code>'TimeSeries'</code>, <code>'DualAxes'</code>, <code>'HierarchicalBar'</code>, <code>'Donut'</code>, <code>'Pie'</code>, <code>'Gauge'</code>, <code>'Sankey'</code>, <code>'Graph'</code>, <code>'Map'</code> or <code>'MapFlow'</code>. Without <code>type</code> (or with <code>null</code>) the cell is a <code>Line</code>. Two classes are not cells: <code>'Overview'</code>, the navigator strip (use <code>navigator: true</code> on a time chart), and <code>'MultiChart'</code> (a grid does not nest). They and any other value draw a <code>Line</code> and warn in the console once per cell — a wrong case such as <code>'bar'</code> included.</td>
         </tr>
         <tr>
             <td><code>title</code></td>
             <td>string</td>
             <td>—</td>
-            <td>Label shown above the cell in small uppercase.</td>
+            <td>Label shown above the cell in small uppercase; also the accessible name of the cell’s drawing when its <code>options</code> give no <code>ariaLabel</code>, <code>title</code> or <code>subtitle</code>.</td>
         </tr>
         <tr>
             <td><code>span</code></td>
@@ -187,7 +208,7 @@ Each object in the `charts` array defines one panel:
             <td><code>options</code></td>
             <td>object</td>
             <td>—</td>
-            <td>Forwarded to the child chart constructor. All standard <code>Line</code> and <code>Bar</code> options apply. The grid sets <code>height</code> (<code>chartHeight</code>), <code>animate</code>, <code>theme</code> (the grid’s) and <code>margin.bottom: 26</code> — also with <code>showXAxis: false</code> — unless these options set them.</td>
+            <td>Forwarded to the child chart constructor: every option of the cell’s class applies. The grid sets <code>height</code> (<code>chartHeight</code>), <code>animate</code> and <code>theme</code> (the grid’s) unless these options set them. Under the bottom axis of <code>Line</code>, <code>Bar</code>, <code>DualAxes</code> and <code>TimeSeries</code> it also sets <code>margin.bottom: 26</code> — also with <code>showXAxis: false</code> — unless <code>margin.bottom</code> is set; the other classes keep their own margin.</td>
         </tr>
         <tr>
             <td><code>mobileOptions</code></td>

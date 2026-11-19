@@ -9,8 +9,8 @@
 // `col`, exact `x`/`y`. Stage 2 (0.9.8_6): automatic in-lane layout for
 // nodes without hints (layouts/flowAuto.js), folds that collapse a set of
 // nodes into one +/− meta-node, tie aggregation, a per-lane cap, and time
-// navigation (timeframes / navigator, wired in Graph). Spec:
-// _internal_docs/charts/SPEC-GRAPH-FLOW-INTERNAL.md.
+// navigation (timeframes / navigator, wired in Graph). The decisions:
+// assets/charts/docs/DECISIONS.md §13, Flow view.
 //
 // Parts: layoutFlow() is pure (no DOM) and unit-tested; flowFold.js folds and
 // aggregates (pure); FlowView draws inside the Graph's zoom group and owns
@@ -18,16 +18,25 @@
 
 import * as d3 from 'd3';
 import {
-  applyTimeWindow, linkWidthScale, parallelIndex, resolveLinkType,
+  applyTimeWindow, linkValue, linkWidthScale, parallelIndex, quadBow, quadPoint, resolveLinkType,
 } from '../../core/links.js';
-import { fitTextNode } from '../../core/renderHelpers.js';
-import { escapeHtml as esc, tipBody, tipTitle, tipSub, tipKind } from '../../core/html.js';
+import { estimateTextWidth, placeFirstFree } from '../../core/renderHelpers.js';
+import { escapeHtml as esc, tipBody, tipTitle, tipSub, tipKind, tipNum } from '../../core/html.js';
 import { autoFlowHints } from '../layouts/flowAuto.js';
-import { legendFocus } from '../legendFocus.js';
-import { rovingTabindex, holdsFocus, listStep } from '../roving.js';
+import { renderLegendItems, shapeParts } from '../../core/legend.js';
+import { GRAPH_LEGEND_ALIAS, drawnDash } from '../chrome.js';
+import { rovingTabindex, holdsFocus, listStep, enterPinnedTip } from '../roving.js';
 import { resolveFolds, foldGraph, metaId, META_PREFIX } from './flowFold.js';
 
 // ─── Layout ─────────────────────────────────────────────────────────────────
+
+// A node's lane as given (not yet a lane id): a folded meta-node's `_lane`
+// (its anchor's lane, flowFold.js) wins, else `laneBy` — a field name or a
+// function of the node. Only an undefined `_lane` falls through.
+export function laneOfNode(n, laneBy = 'lane') {
+  if (n._lane !== undefined) return n._lane;
+  return typeof laneBy === 'function' ? laneBy(n) : n[laneBy];
+}
 
 // Positions from hints. Lanes split the width by `weight`; a lane holds
 // sub-columns (`col`, default 0) and rows (`row`: 0 = the main line, ±1, ±2
@@ -53,15 +62,20 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
   captionRoom = 36,   // below a node's edge: label + sub line
   padBottom = pad,    // extra room under the drawing (e.g. zoom controls)
   minPad = 8,         // the least either padding shrinks to (C-38)
+  timeZone = 'local', // the chart's: the automatic hints order ties by start in it
+  hints = null,       // the automatic hints of an earlier call on the same nodes,
+                      // links and lanes (they do not depend on the size): reused
 } = {}) {
-  const laneOf = n => (n._lane !== undefined ? n._lane
-    : typeof laneBy === 'function' ? laneBy(n) : n[laneBy]);
+  // Each node's lane id, resolved once and kept by input position (the
+  // automatic hints below copy a node, never move it to another lane); a
+  // node without a lane stands in the lane ''.
+  const laneIds = nodes.map(n => String(laneOfNode(n, laneBy) ?? ''));
+  const colOf = n => (Number.isInteger(n.col) && n.col >= 0 ? n.col : 0);
 
   // Lanes: declared order first, then any lane only the data mentions.
   const laneList = lanes.map(l => ({ id: String(l.id), label: l.label ?? String(l.id), weight: l.weight, declared: l.weight != null }));
   const known = new Set(laneList.map(l => l.id));
-  nodes.forEach(n => {
-    const id = laneOf(n) == null ? '' : String(laneOf(n));
+  laneIds.forEach(id => {
     if (!known.has(id)) {
       known.add(id);
       laneList.push({ id, label: id, weight: undefined, declared: false });
@@ -72,25 +86,27 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
   // Automatic hints for nodes that carry none.
   let auto = null;
   if (layout === 'auto' && nodes.length) {
-    auto = autoFlowHints({
+    const laneAt = new Map(nodes.map((n, i) => [n, laneIds[i]]));
+    auto = hints ?? autoFlowHints({
       nodes, links,
-      laneOf: n => String(laneOf(n) ?? ''),
+      laneOf: n => laneAt.get(n),
       laneIndex: id => laneIdx.get(id) ?? 0,
+      timeZone,
     }).hints;
     if (auto.size) nodes = nodes.map(n => (auto.has(n.id) ? { ...n, ...auto.get(n.id) } : n));
   }
 
-  const colsOf = new Map();
-  nodes.forEach(n => {
-    const lane = String(laneOf(n) ?? '');
-    const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
-    colsOf.set(lane, Math.max(colsOf.get(lane) ?? 1, c + 1));
+  // Cells: lane × col. Columns per lane (at least one), counted once: they
+  // size an undeclared lane and split each lane's width.
+  const colsPerLane = new Map();
+  nodes.forEach((n, i) => {
+    colsPerLane.set(laneIds[i], Math.max(colsPerLane.get(laneIds[i]) ?? 1, colOf(n) + 1));
   });
   laneList.forEach(l => {
     // undeclared lanes widen with their columns only when the automaton
     // placed something (an empty map is truthy: a fully hinted trace keeps
     // the stage-1 equal widths)
-    if (!l.declared) l.weight = auto?.size ? (colsOf.get(l.id) ?? 1) : 1;
+    if (!l.declared) l.weight = auto?.size ? (colsPerLane.get(l.id) ?? 1) : 1;
     delete l.declared;
   });
   const totalW = laneList.reduce((s, l) => s + l.weight, 0) || 1;
@@ -102,22 +118,14 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
   });
   const laneById = new Map(laneList.map(l => [l.id, l]));
 
-  // Cells: lane × col. Count columns per lane.
-  const colsPerLane = new Map();
-  nodes.forEach(n => {
-    const lane = String(laneOf(n) ?? '');
-    const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
-    colsPerLane.set(lane, Math.max(colsPerLane.get(lane) ?? 1, c + 1));
-  });
-
   // Rows: explicit first, then fill free rows per cell in input order.
   const rowOf = new Map();
   const taken = new Map();   // cell key → Set(rows)
-  const cellKey = n => `${laneOf(n) ?? ''}|${Number.isInteger(n.col) && n.col >= 0 ? n.col : 0}`;
-  nodes.forEach(n => {
+  const cellKey = (n, i) => `${laneIds[i]}|${colOf(n)}`;
+  nodes.forEach((n, i) => {
     if (Number.isFinite(n.row)) {
       rowOf.set(n.id, n.row);
-      const k = cellKey(n);
+      const k = cellKey(n, i);
       if (!taken.has(k)) taken.set(k, new Set());
       taken.get(k).add(n.row);
     }
@@ -126,9 +134,9 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
     yield 0;
     for (let i = 1; ; i++) { yield i; yield -i; }
   };
-  nodes.forEach(n => {
+  nodes.forEach((n, i) => {
     if (rowOf.has(n.id)) return;
-    const k = cellKey(n);
+    const k = cellKey(n, i);
     if (!taken.has(k)) taken.set(k, new Set());
     const used = taken.get(k);
     for (const r of freeRows()) {
@@ -167,10 +175,10 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
   const rowY = r => bandTop + bandOffset + (r - minRow) * rowStep;
 
   const positions = new Map();
-  nodes.forEach(n => {
-    const lane = laneById.get(String(laneOf(n) ?? ''));
-    const cols = colsPerLane.get(lane.id) ?? 1;
-    const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
+  nodes.forEach((n, i) => {
+    const lane = laneById.get(laneIds[i]);
+    const cols = colsPerLane.get(lane.id);
+    const c = colOf(n);
     const laneW = lane.x1 - lane.x0;
     let px = lane.x0 + ((c + 0.5) / cols) * laneW;
     let py = rowY(rowOf.get(n.id) ?? 0);
@@ -191,13 +199,26 @@ export function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
     }
   });
 
-  return { positions, lanes: laneList, top, height, colsPerLane };
+  return { positions, lanes: laneList, top, height, colsPerLane, hints: auto };
 }
 
 // ─── View ───────────────────────────────────────────────────────────────────
 
 const SHAPES = ['circle', 'square', 'diamond', 'stack'];
+// The dash of a tie the page's linkDash marks (an amount derived, not read).
+const LINK_DASH = '6 5';
 const sameSelection = (a, b) => (a?.node ?? null) === (b?.node ?? null) && (a?.link ?? null) === (b?.link ?? null);
+
+// A web font that finishes loading changes every caption's width: the
+// fitted captions (FlowView._fitCaption) start over. One listener for the
+// page, set on the first fit.
+let fontEpoch = 0;
+let fontsWatched = false;
+function watchFonts() {
+  if (fontsWatched) return;
+  fontsWatched = true;
+  try { globalThis.document?.fonts?.addEventListener?.('loadingdone', () => { fontEpoch += 1; }); } catch { /* no FontFaceSet */ }
+}
 
 export class FlowView {
   constructor(graph) {
@@ -205,9 +226,9 @@ export class FlowView {
     this.data = { nodes: [], links: [] };
     this.filter = null;
     this.window = null;
-    // Tie categories hidden from the start (option hiddenLinkTypes); the
-    // legend turns them on and off.
-    this.hiddenTypes = new Set((graph.options.hiddenLinkTypes ?? []).map(String));
+    // The hidden tie categories are the chart's hidden set, graph._hiddenKeys:
+    // seeded from hiddenLinkTypes, turned on and off by the legend and
+    // setLinkTypesVisible, kept across setData.
     this.selected = null;          // { node: id } | { link: id }
     this.labels = graph.options.linkLabels !== false;
     // Fold id → collapsed. Seeded from each fold's `collapsed` (lane-cap
@@ -232,6 +253,84 @@ export class FlowView {
     this.data = { nodes, links };
     this._foldCache = null;
     this._keyList = null;
+    this._layoutCache = null;
+  }
+
+  // ── Caches (K-16) ──
+  // The whole trace's layout does not depend on the filter, the legend or
+  // the time window: a brush move or a legend click reuses it. It is laid
+  // out again for a new payload, size, fold state or lane option, and at a
+  // new size only placed again: the folded trace and the automatic hints
+  // (layouts/flowAuto.js) do not depend on it.
+  _layout(W, H, R) {
+    const o = this.g.options;
+    const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+    const traceKey = [this.data, this._folds(), [...this._collapsed()].join('\u0000'),
+      this._opt('laneBy', 'lane'), o.layout ?? 'auto', JSON.stringify(o.lanes ?? []), this.g._zone(),
+      !!this._opt('aggregateLinks', false), o.linkColorBy];
+    const c = this._layoutCache;
+    if (c && same(c.traceKey, traceKey) && same(c.sizeKey, [W, H, R])) return c;
+    const reuse = c && same(c.traceKey, traceKey) ? c : null;
+    const whole = reuse?.whole ?? this._fold(this.data);
+    const out = layoutFlow(
+      { nodes: whole.nodes, links: whole.links, lanes: o.lanes ?? [] },
+      { width: W, height: H, laneBy: this._opt('laneBy', 'lane'), layout: o.layout ?? 'auto', nodeRadius: R,
+        timeZone: this.g._zone(), hints: reuse?.hints ?? null });
+    this._layoutCache = { traceKey, sizeKey: [W, H, R], whole, ...out };
+    return this._layoutCache;
+  }
+
+  // Captions cut to their room as fitTextNode cuts them — the same strings
+  // measured, the same result — but all at once: every caption is written,
+  // then every one measured, then the ones too wide lose a character each,
+  // and so on. A measure after a write lays the drawing out again, so one
+  // caption at a time cost a layout per character per caption (K-16).
+  // Each result is remembered by kind, room and text, so a redraw at the
+  // same size measures nothing, and an uncut width by kind and text, so at
+  // a new size a caption that fits is not measured again. Where text cannot
+  // be measured (jsdom) this does what fitTextNode does: nothing. A caption
+  // measured 0 px wide (not laid out) is not remembered.
+  _fitCaptions(items) {
+    if (!items.length || !items[0][0].getComputedTextLength) return;
+    watchFonts();
+    if (!this._captions || this._captionEpoch !== fontEpoch || this._captions.size > 5000) {
+      this._captions = new Map();
+      this._captionWidths = new Map();
+      this._captionEpoch = fontEpoch;
+    }
+    const width = node => { try { return node.getComputedTextLength(); } catch { return 0; } };
+    let pending = [];
+    items.forEach(([node, text, room, kind]) => {
+      const full = String(text);
+      const key = `${kind}\u0000${room}\u0000${full}`;
+      const wKey = `${kind}\u0000${full}`;
+      const known = this._captions.get(key);
+      const wide = this._captionWidths.get(wKey);
+      if (known != null || (wide != null && wide <= room)) {
+        node.textContent = known ?? full;
+        if (known == null) this._captions.set(key, full);
+        return;
+      }
+      node.textContent = full;
+      pending.push({ node, full, s: full, room, key, wKey });
+    });
+    let first = true;
+    while (pending.length) {
+      const next = [];
+      pending.forEach(c => {
+        const w = width(c.node);
+        if (c.s.length > 1 && w > c.room) { next.push(c); return; }
+        if (!(w > 0) && c.full) return;
+        this._captions.set(c.key, c.node.textContent);
+        if (first) this._captionWidths.set(c.wKey, w);
+      });
+      next.forEach(c => {
+        c.s = c.s.slice(0, -1).trimEnd();
+        c.node.textContent = `${c.s}…`;
+      });
+      pending = next;
+      first = false;
+    }
   }
 
   clear() {
@@ -241,11 +340,7 @@ export class FlowView {
 
   // ── Option helpers ──
   _opt(name, fallback) { return this.g.options[name] ?? fallback; }
-  _laneOf(n) {
-    if (n._lane !== undefined) return n._lane;
-    const by = this._opt('laneBy', 'lane');
-    return typeof by === 'function' ? by(n) : n[by];
-  }
+  _laneOf(n) { return laneOfNode(n, this._opt('laneBy', 'lane')); }
   _groupCfg(n) { return (this._opt('nodeGroups', {}))[n.group] ?? null; }
   _nodeColor(n, palette) {
     if (n.color) return n.color;
@@ -257,14 +352,24 @@ export class FlowView {
   }
   _shape(n) {
     if (n.fold != null && n.id.startsWith(META_PREFIX)) return 'stack';
+    return this._shapeOfKind(this._kindOf(n));
+  }
+  // A node's kind, by shapeBy: a field name or a function of the node.
+  _kindOf(n) {
     const by = this._opt('shapeBy', 'kind');
-    const key = typeof by === 'function' ? by(n) : n[by];
-    // The nodeShapes map first (an SVG path comes only from there); a kind
-    // that names a built-in shape is that shape; any other kind is a circle.
-    // A kind value is never drawn as a path itself: 'mixer' or 'Multisig'
-    // made an invisible <path d="mixer">.
+    return typeof by === 'function' ? by(n) : n[by];
+  }
+  // The shape a kind draws. The nodeShapes map first (an SVG path comes
+  // only from there); a kind that names a built-in shape is that shape; any
+  // other kind is a circle. A kind value is never drawn as a path itself:
+  // 'mixer' or 'Multisig' made an invisible <path d="mixer">. A map value
+  // that is neither a built-in name nor a path draws a circle, so it is one.
+  _shapeOfKind(key) {
     const map = this._opt('nodeShapes', {}) ?? {};
-    if (key != null && Object.prototype.hasOwnProperty.call(map, key) && map[key] != null) return map[key];
+    if (key != null && Object.prototype.hasOwnProperty.call(map, key) && map[key] != null) {
+      const shape = map[key];
+      return SHAPES.includes(shape) || /^[Mm]/.test(String(shape)) ? shape : 'circle';
+    }
     return SHAPES.includes(key) ? key : 'circle';
   }
   _linkKey(l) {
@@ -273,13 +378,21 @@ export class FlowView {
     return v == null ? 'default' : String(v);
   }
 
+  // The tie categories of the trace, in data order (cached per payload).
+  linkKeys() {
+    return this._keyList ??= [...new Set(this.data.links.map(x => this._linkKey(x)))];
+  }
+
   // A tie's category (by linkColorBy) → { key, color, dash, label }, the
   // rule every relation chart shares (core/links.js resolveLinkType). The
   // Graph's tooltip and details panel ask here, so they name the category
   // the drawing shows.
   typeOf(l) {
-    this._keyList ??= [...new Set(this.data.links.map(x => this._linkKey(x)))];
-    return resolveLinkType(this._opt('linkTypes', {}), this._linkKey(l), { keys: this._keyList, theme: this.g.theme });
+    return this._typeOfKey(this._linkKey(l));
+  }
+
+  _typeOfKey(key) {
+    return resolveLinkType(this._opt('linkTypes', {}), key, { keys: this.linkKeys(), theme: this.g.theme });
   }
 
   // ── Folds ──
@@ -297,8 +410,7 @@ export class FlowView {
       this.data.links.forEach(l => [l.source, l.target].forEach(id => {
         const w = weight.get(id);
         if (!w) return;
-        const v = +l.value;
-        w[0] += Number.isFinite(v) && l.value !== null ? Math.max(0, v) : 0;
+        w[0] += linkValue(l) ?? 0;
         w[1] += 1;
       }));
       const index = new Map(nodes.map((n, i) => [n.id, i]));
@@ -333,6 +445,7 @@ export class FlowView {
       keyOf: l => this._linkKey(l),
       aggregate: !!this._opt('aggregateLinks', false),
       laneOf: n => this._laneOf(n),
+      timeZone: this.g._zone(),
     });
   }
 
@@ -360,11 +473,12 @@ export class FlowView {
     let nodes = this.data.nodes.filter(pass);
     let keep = new Set(nodes.map(n => n.id));
     const shown = this.data.links.filter(l => pass(l) && keep.has(l.source) && keep.has(l.target));
-    let links = shown.filter(l => !this.hiddenTypes.has(this._linkKey(l)));
+    const hidden = this.g._hiddenKeys;
+    let links = shown.filter(l => !hidden.has(this._linkKey(l)));
     // A node whose every tie belongs to a category hidden in the legend goes
     // with them — a decoy address without its fake transfers would just
     // float there. Nodes without any ties stay.
-    if (this.hiddenTypes.size) {
+    if (links.length < shown.length) {
       const hasTie = new Set(), hasVisible = new Set();
       shown.forEach(l => { hasTie.add(l.source); hasTie.add(l.target); });
       links.forEach(l => { hasVisible.add(l.source); hasVisible.add(l.target); });
@@ -372,7 +486,8 @@ export class FlowView {
       keep = new Set(nodes.map(n => n.id));
       links = links.filter(l => keep.has(l.source) && keep.has(l.target));
     }
-    const out = this._fold({ nodes, links: applyTimeWindow(links, this.window, this._opt('timeWindowMode', 'dim')) });
+    const timed = applyTimeWindow(links, this.window, this._opt('timeWindowMode', 'dim'), this.g._zone());
+    const out = this._fold({ nodes, links: timed });
     // Nodes with ties before the time window — as drawn, a folded member by
     // its meta-node, ties inside a fold not counted. A node among them with
     // no tie in the window fades, in 'hide' mode too: there the window
@@ -397,10 +512,7 @@ export class FlowView {
 
     // Positions come from the whole trace (folded as it stands), so the
     // filter, the legend and the time window never move a node.
-    const whole = this._fold(this.data);
-    const { positions, lanes, top, colsPerLane } = layoutFlow(
-      { nodes: whole.nodes, links: whole.links, lanes: o.lanes ?? [] },
-      { width: W, height: H, laneBy: n => this._laneOf(n), layout: o.layout ?? 'auto', nodeRadius: R });
+    const { whole, positions, lanes, colsPerLane } = this._layout(W, H, R);
     const { nodes, links, metas, metaOf, tied } = this._visible();
     const byId = new Map(nodes.map(n => [n.id, n]));
     const resolve = s => this._resolveSelection(s, byId, links, metaOf);
@@ -446,6 +558,9 @@ export class FlowView {
         .text(l => l.label));
 
     // ── Hulls (groups drawn as a soft band through their members) ──
+    // A band, not a convex hull: a group that snakes across lanes (one owner's
+    // wallets on five networks) reads as one stroke; a hull would cover the
+    // lanes between them.
     const hulls = (o.hulls ?? []).map(h => {
       const members = nodes.filter(n =>
         typeof h.members === 'function' ? h.members(n) : (h.members ?? []).includes(n.id));
@@ -493,7 +608,7 @@ export class FlowView {
       if (!o.linkDash) return null;
       // an aggregated tie is dashed only when every tie in it is
       const dashed = l.links ? l.links.every(x => o.linkDash(x)) : o.linkDash(l);
-      return dashed ? '6 5' : null;
+      return dashed ? LINK_DASH : null;
     };
 
     // ids by position: a category may hold characters an id cannot
@@ -519,24 +634,18 @@ export class FlowView {
     const geom = l => {
       const a = positions.get(l.source), b = positions.get(l.target);
       if (!a || !b) return null;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const ux = dx / len, uy = dy / len;
-      const sx = a.x + ux * (R + 2), sy = a.y + uy * (R + 2);
-      const tx = b.x - ux * (R + 4), ty = b.y - uy * (R + 4);
-      const { index = 0, count = 1 } = par.get(l.id) ?? {};
-      const flip = l.source > l.target ? -1 : 1;
-      const fan = count > 1 ? (index - (count - 1) / 2) * 2 * flip : 0;
-      const bend = (l.bend ?? (count > 1 ? 0 : 0.35)) + fan;
-      const off = bend * Math.min(60, len * 0.18);
-      const nx = -uy, ny = ux;
-      const cx = (sx + tx) / 2 + nx * off, cy = (sy + ty) / 2 + ny * off;
+      // A tie bows by its `bend` — 0.35 by default when it is alone, 0 when
+      // it has parallel ties, which fan out from there 2 bends apart. A bend
+      // of 1 is 18% of the distance between the nodes, at most 60 px.
+      const { count = 1, offset = 0 } = par.get(l.id) ?? {};
+      const bend = (l.bend ?? (count > 1 ? 0 : 0.35)) + offset * 2;
+      const q = quadBow(a, b, { from: R + 2, to: R + 4, bow: len => bend * Math.min(60, len * 0.18) });
       // Outward normal of the bow: the side a label can step towards.
-      const side = off >= 0 ? 1 : -1;
+      const side = q.off >= 0 ? 1 : -1;
       return {
-        d: `M${sx},${sy}Q${cx},${cy} ${tx},${ty}`,
-        mid: { x: (sx + 2 * cx + tx) / 4, y: (sy + 2 * cy + ty) / 4 },
-        out: { x: nx * side, y: ny * side },
+        d: q.d,
+        mid: quadPoint(q, 0.5),
+        out: { x: q.n.x * side, y: q.n.y * side },
       };
     };
 
@@ -579,13 +688,13 @@ export class FlowView {
     const boxes = [];
     nodes.forEach(n => {
       const p = positions.get(n.id);
-      const w = Math.min(roomOf(n), Math.max(2 * R, String(n.label ?? n.id).length * 6.6, String(n.sub ?? '').length * 6.4));
+      const w = Math.min(roomOf(n), Math.max(2 * R, estimateTextWidth(n.label ?? n.id, 6.6), estimateTextWidth(n.sub ?? '', 6.4)));
       boxes.push({ x0: p.x - R, x1: p.x + R, y0: p.y - R, y1: p.y + R });
       boxes.push({ x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + R + 2, y1: p.y + R + (n.sub ? 34 : 20) });
     });
     hulls.forEach(h => {
       const x = h.pts[0].x - R, y = Math.max(...h.pts.map(p => p.y)) + R + 48;
-      const w = String(h.label ?? '').length * 6.2;
+      const w = estimateTextWidth(h.label ?? '', 6.2);
       boxes.push({ x0: x, x1: x + w, y0: y - 12, y1: y + 3 });
     });
     const labelAt = new Map();
@@ -593,17 +702,14 @@ export class FlowView {
     labelled.forEach(l => {
       const gm = geom(l);
       if (!gm) return;
-      const w = String(l.label).length * 6.4 + 6, h = 13;
+      const w = estimateTextWidth(l.label, 6.4) + 6, h = 13;
       const tries = [0, 14, 28, 44].map(k => [gm.out.x * k, gm.out.y * k])
-        .concat([[0, -16], [0, 16], [gm.out.x * 44, gm.out.y * 44 - 16]]);
-      for (const [ox, oy] of tries) {
-        const x = gm.mid.x + ox, y = gm.mid.y + oy;
-        const box = { x0: x - w / 2, x1: x + w / 2, y0: y - 4 - h, y1: y - 4 };
-        if (boxes.some(b => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0)) continue;
-        boxes.push(box);
-        labelAt.set(l.id, { x, y });
-        break;
-      }
+        .concat([[0, -16], [0, 16], [gm.out.x * 44, gm.out.y * 44 - 16]])
+        .map(([ox, oy]) => ({ x: gm.mid.x + ox, y: gm.mid.y + oy }));
+      const spot = placeFirstFree(tries, ({ x, y }) => ({ x0: x - w / 2, x1: x + w / 2, y0: y - 4 - h, y1: y - 4 }), boxes);
+      if (!spot) return;
+      boxes.push(spot.box);
+      labelAt.set(l.id, spot.at);
     });
     const placed = labelled.filter(l => labelAt.has(l.id));
     this.gLinkLabels.selectAll('.rc-flow-link-label')
@@ -639,6 +745,9 @@ export class FlowView {
       .attr('aria-expanded', n => { const sw = switchOf(n); return sw ? String(sw.open) : null; })
       .style('cursor', 'pointer')
       .order();
+    // Captions are fitted after every node is built: a measure between two
+    // nodes' DOM writes would lay the drawing out again each time (K-16).
+    const captions = [];
     nodeSel.each((n, i, els) => {
       const g = d3.select(els[i]);
       g.selectAll('*').remove();
@@ -650,25 +759,21 @@ export class FlowView {
         Object.entries({ ...stroke, ...attrs }).forEach(([k, v]) => el.attr(k, v));
         return el;
       };
-      if (shape === 'square') add('rect', { x: -R + 1, y: -R + 1, width: 2 * R - 2, height: 2 * R - 2, rx: 6 });
-      else if (shape === 'diamond') add('path', { d: `M0,${-R - 3}L${R + 3},0L0,${R + 3}L${-R - 3},0z` });
-      else if (shape === 'stack') {
-        add('circle', { cx: 6, cy: -5, r: R - 2, opacity: 0.55 });
-        add('circle', { r: R });
-      } else if (!SHAPES.includes(shape) && /^[Mm]/.test(String(shape))) add('path', { d: shape });
-      else add('circle', { r: R });
+      // The parts of the shape. The legend key draws its glyphs with the same
+      // function (core/legend.js), so a key row shows exactly this shape.
+      shapeParts(shape, R).forEach(([tag, attrs]) => add(tag, attrs));
       // Captions are cut to the node's column width — the full text stays in
       // the tooltip and the accessible name.
       const room = roomOf(n);
       const label = g.append('text').attr('class', 'rc-flow-node-label')
         .attr('y', R + 16).attr('text-anchor', 'middle').attr('fill', t.text)
         .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke');
-      fitTextNode(label.node(), n.label ?? n.id, room);
+      captions.push([label.node(), n.label ?? n.id, room, 'label']);
       if (n.sub) {
         const sub = g.append('text').attr('class', 'rc-flow-node-sub')
           .attr('y', R + 30).attr('text-anchor', 'middle').attr('fill', t.muted)
           .attr('stroke', t.bg).attr('stroke-width', 3).attr('paint-order', 'stroke');
-        fitTextNode(sub.node(), n.sub, room);
+        captions.push([sub.node(), n.sub, room, 'sub']);
       }
       if (n.terminal) {
         g.append('text').attr('class', 'rc-flow-node-sub')
@@ -693,6 +798,7 @@ export class FlowView {
         b.append('title').text(sw.open ? `Collapse ${sw.fold.label ?? sw.fold.id}` : `Expand ${sw.fold.label ?? sw.fold.id}`);
       }
     });
+    this._fitCaptions(captions);
 
     // ── State: dimming (time window) and selection ──
     const apply = () => {
@@ -731,7 +837,6 @@ export class FlowView {
           return sel?.node === n.id ? 4 : 2.5;
         });
     };
-    this._apply = apply;
     this._lastVisible = { nodes, links };
     apply();
 
@@ -788,7 +893,7 @@ export class FlowView {
         const nodeLinks = links.filter(l => l.source === n.id || l.target === n.id);
         const html = o.tooltipFormat
           ? o.tooltipFormat({ node: n, links: nodeLinks })
-          : this._nodeTooltip(n, nodeLinks, nodeById, switchOf(n));
+          : this._nodeTooltip(n, nodeLinks, switchOf(n));
         graph._tooltip.show(mx, my, html);
       })
       .on('mouseout', () => { if (!graph._tooltip.isPinned) graph._tooltip.hide(); });
@@ -842,6 +947,8 @@ export class FlowView {
       })
       .on('keydown', (event, l) => {
         this._pointerFocus = false;
+        // Tab into a tooltip Enter pinned, to its sources (K-23)
+        if (enterPinnedTip(event, graph._tooltip, event.currentTarget)) return;
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();
           pickTie(event, l, tieAt(l));
@@ -876,13 +983,14 @@ export class FlowView {
     // any the user toggled off (so they can be turned back on).
     // Built from the page's filter only — not from what the legend itself
     // hides — so a hidden category (and the nodes hidden with it) can always
-    // be turned back on.
+    // be turned back on. The key after them reads the same nodes and ties,
+    // so it stays put while categories go and come back.
     const pass = item => !this.filter || this.filter(item);
-    const passing = new Set(this.data.nodes.filter(pass).map(n => n.id));
-    const shown = new Set(this.data.links
-      .filter(l => pass(l) && passing.has(l.source) && passing.has(l.target))
-      .map(l => this._linkKey(l)));
-    this._renderLegend(keys.filter(k => shown.has(k)), colorOf, dashOf, palette);
+    const passingNodes = this.data.nodes.filter(pass);
+    const passing = new Set(passingNodes.map(n => n.id));
+    const passingLinks = this.data.links.filter(l => pass(l) && passing.has(l.source) && passing.has(l.target));
+    const shown = new Set(passingLinks.map(l => this._linkKey(l)));
+    this._renderLegend(keys.filter(k => shown.has(k)), palette, this._symbolItems(passingNodes, passingLinks));
 
     // The selection moved or went (a fold, the filter, the legend, the time
     // window): the details panel and onSelect hear about it, as on a click —
@@ -932,7 +1040,7 @@ export class FlowView {
     return [`${name(l.source)} → ${name(l.target)}`, kind, label].filter(v => v != null && v !== '').join(', ');
   }
 
-  _nodeTooltip(n, nodeLinks, nodeById, sw = null) {
+  _nodeTooltip(n, nodeLinks, sw = null) {
     const ins = nodeLinks.filter(l => l.target === n.id);
     const outs = nodeLinks.filter(l => l.source === n.id);
     const group = this._groupCfg(n)?.label ?? n.group;
@@ -944,7 +1052,7 @@ export class FlowView {
       ${group ? tipKind(esc(group), null, 'div') : ''}
       ${n.sub ? tipSub(esc(n.sub)) : ''}
       ${members}
-      ${tipSub(`${ins.length} in · ${outs.length} out`, { section: true })}
+      ${tipSub(`${tipNum(ins.length)} in · ${tipNum(outs.length)} out`, { section: true })}
       ${hint}`);
   }
 
@@ -1004,45 +1112,107 @@ export class FlowView {
       : { link: vis.links.find(l => l.id === s.link) ?? null };
   }
 
-  // Legend: node groups (dots) and tie categories (lines). Clicking a tie
-  // category hides/shows it; positions stay put.
-  _renderLegend(keys, colorOf, dashOf, palette) {
-    const el = this.g._legendEl;
-    if (!el) return;
+  // The key to the drawing (RC-053): static rows after the tie categories,
+  // their marks in the muted text colour. `legendSymbols` gives the words:
+  //   shapes — a row per node shape drawn, named by the kinds that draw it
+  //            (shapeBy), when the nodes draw two or more shapes. Kinds in
+  //            nodeShapes order, then the others as the nodes bring them;
+  //            kinds that share a shape share a row. `shapes: { kind: label }`
+  //            renames a kind, `{ kind: false }` leaves it out, `shapes: false`
+  //            leaves them all out. A fold's stack is no kind: no row
+  //   dash   — words for the ties linkDash dashes: a row with that dash,
+  //            when linkDash dashes a tie
+  //   width  — words for the tie width: a row with a wedge, when a tie has
+  //            a value to size it by (linkWidth.by)
+  // No words, no dash or width row. `legendSymbols: false`: no key.
+  // Not `legendKey`: in the legend a key is an item's identity (data-key,
+  // legendKey() in core/legend.js), and pages read that one.
+  // `nodes`, `links`: what the page's filter lets through, as the list rule
+  // reads them — not the legend's own hiding, the folds or the time window,
+  // so the rows stay put while categories go and come back.
+  _symbolItems(nodes, links) {
     const o = this.g.options;
-    const refocus = legendFocus(el);
-    el.replaceChildren();
-    const groups = o.nodeGroups ?? {};
-    Object.entries(groups).forEach(([key, cfg], i) => {
-      const item = document.createElement('span');
-      item.className = 'rc-legend-item rc-flow-legend-group';
-      item.innerHTML = `<svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="${cfg.color ?? palette[i % palette.length]}"/></svg><span></span>`;
-      item.querySelector('span').textContent = cfg.label ?? key;
-      el.appendChild(item);
-    });
-    const types = o.linkTypes ?? {};
-    keys.forEach(key => {
-      const sample = this.data.links.find(l => this._linkKey(l) === key);
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'rc-legend-item rc-graph-legend-item';
-      button.dataset.type = key;
-      const off = this.hiddenTypes.has(key);
-      button.setAttribute('aria-pressed', String(!off));
-      button.style.opacity = off ? '0.35' : '1';
+    const words = o.legendSymbols;
+    if (words === false) return [];
+    const cfg = words && typeof words === 'object' ? words : {};
+    const text = v => (typeof v === 'string' && v !== '' ? v : null);
+    const row = (label, mark, more) => ({ key: null, label, color: this.g.theme.muted, mark, alias: '', ...more });
+    const items = [];
+
+    if (cfg.shapes !== false) {
+      const names = cfg.shapes && typeof cfg.shapes === 'object' ? cfg.shapes : {};
+      const drawn = new Set();      // the shapes the nodes draw, a kind-less circle too
+      const present = new Set();    // the kinds, as the nodes bring them
+      nodes.forEach(n => {
+        const kind = this._kindOf(n);
+        drawn.add(this._shapeOfKind(kind));
+        if (kind != null && kind !== '') present.add(String(kind));
+      });
+      if (drawn.size >= 2) {
+        const declared = Object.keys(o.nodeShapes ?? {}).filter(k => present.has(k));
+        const labels = new Map();   // shape → its kinds' labels, in order
+        new Set([...declared, ...present]).forEach(kind => {
+          const given = names[kind];      // a string renames the kind, false leaves it out
+          if (given === false) return;
+          const shape = this._shapeOfKind(kind);
+          const label = text(given) ?? kind;
+          if (!labels.has(shape)) labels.set(shape, []);
+          if (!labels.get(shape).includes(label)) labels.get(shape).push(label);
+        });
+        const radius = o.nodeRadius ?? 18;
+        labels.forEach((list, shape) => items.push(row(list.join(', '), 'shape', { shape, radius })));
+      }
+    }
+
+    // a tie whose category has its own dash is drawn with that one (dashOf)
+    const dash = text(cfg.dash);
+    if (dash && typeof o.linkDash === 'function' && links.some(l => !this.typeOf(l).dash && o.linkDash(l))) {
+      items.push(row(dash, 'dashed', { dash: LINK_DASH }));
+    }
+    // the width channel as the drawing reads it (linkWidthScale's default)
+    const width = text(cfg.width);
+    const { by = 'value' } = o.linkWidth ?? {};
+    if (width && links.some(l => linkValue(l, { by }) != null)) items.push(row(width, 'width'));
+    return items;
+  }
+
+  // Legend, through the one legend builder (core/legend.js, D-04): the node
+  // groups as plain labels with a dot, then the tie categories as toggles,
+  // then the key (`symbols`, from _symbolItems). A click, Enter or Space
+  // hides or shows a category's ties, a double click keeps only that
+  // category and a second one brings all back, "Show all" shows while one
+  // is off; positions stay put. The state is the chart's hidden set, the
+  // gestures the base Chart's (_legendGesture): it redraws, then
+  // onLegendToggle. legendInteractive: false lists the categories drawn as
+  // labels. `keys`: the categories offered (the list rule above).
+  _renderLegend(keys, palette, symbols = []) {
+    const graph = this.g;
+    const el = graph._typeLegendEl;
+    if (!el) return;
+    const o = graph.options;
+    const interactive = o.legendInteractive !== false;
+    const hidden = graph._hiddenKeys;
+    const groups = Object.entries(o.nodeGroups ?? {}).map(([key, cfg], i) => ({
+      key: null,
+      label: cfg.label ?? key,
+      color: cfg.color ?? palette[i % palette.length],
+      mark: 'dot',
+      alias: 'rc-flow-legend-group',
+    }));
+    const ties = keys.filter(key => interactive || !hidden.has(key)).map(key => {
       // the category's own style — not one tie's (a derived first tie would
       // make the whole category look dashed)
-      const info = this.typeOf(sample);
-      const dash = info.dash ?? '';
-      button.innerHTML = `<svg width="22" height="12" aria-hidden="true"><line x1="1" y1="6" x2="21" y2="6" stroke="${colorOf(sample)}" stroke-width="3" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg><span></span>`;
-      button.querySelector('span').textContent = info.label;
-      button.addEventListener('click', () => {
-        if (this.hiddenTypes.has(key)) this.hiddenTypes.delete(key);
-        else this.hiddenTypes.add(key);
-        this.g.render();
-      });
-      el.appendChild(button);
+      const info = this._typeOfKey(key);
+      const dash = drawnDash(info.dash);
+      return { key, label: info.label, color: info.color, mark: dash ? 'dashed' : 'line', dash, on: !hidden.has(key) };
     });
-    refocus();
+    renderLegendItems(el, [...groups, ...ties, ...symbols], {
+      interactive,
+      // a category off that the page's filter keeps out of the list still
+      // shows Show all, which clears it too
+      anyHidden: this.linkKeys().some(key => hidden.has(key)),
+      alias: GRAPH_LEGEND_ALIAS,
+      onToggle: info => graph._legendGesture(info, keys),
+    });
   }
 }

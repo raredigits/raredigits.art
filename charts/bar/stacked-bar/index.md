@@ -32,7 +32,7 @@ Values are expected to be **non-negative** — a stacked bar encodes cumulative 
 
 When the story is the *shifting share* rather than the absolute total, normalize every bar to fill the axis: pass `stacked: 'percent'`. Each category then reads as parts of 100%, which makes a changing mix legible even when the totals move underneath it.
 
-<div id="stacked-energy" class="panel panel--bordered text-content-caption margin-b-md"></div>
+<div id="stacked-energy" class="panel panel--bordered text-content-caption"></div>
 
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
     stacked: 'percent',
@@ -44,7 +44,7 @@ Both orientations work. `vertical` (default) reads as composition over time; `ho
 
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', { orientation: 'horizontal' }).setData(series);</code></pre>
 
-A legend is **built automatically** from the series names, colored to match the segments. Pass your own `legend` array to override it — see the <a href="/charts/settings/">Settings</a> page for the legend format.
+A legend is **built automatically** from the series names, colored to match the segments, and each item hides and shows its series: a click toggles it, a double click keeps it alone, *Show all* brings all back. A hidden series leaves the stacks — the segments above close up — and its category keeps its slot. The value axis runs to the tallest stack shown, and `stacked: 'percent'` bars are shares of what is shown; `legendRescale: false` keeps the axis on every series and the percents of the whole bar. Pass your own `legend` array to override the items — see <a href="/charts/settings/#interactive-legend">Interactive legend</a> for the format and the gestures.
 
 ### Colors and tooltips
 

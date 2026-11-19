@@ -147,15 +147,17 @@ describe('TimeSeries: explicit options win', () => {
 
   it('crosshair: false shows neither the crosshair lines nor the tooltip', () => {
     const rows = daily(D(2025, 1, 1), 30);
+    // the vertical crosshair line: the first line in the plot group
+    const crossX = c => c.container.querySelector('svg > g > line');
     const on = track(new TimeSeries(mount(null), {})).setData(rows);
     hover(on.overlay.node());
     expect(on.container.querySelector('.rc-tooltip').classList.contains('is-visible')).toBe(true);
-    expect(on.crossX.style('opacity')).toBe('1');
+    expect(crossX(on).style.opacity).toBe('1');
 
     const off = track(new TimeSeries(mount(null), { crosshair: false })).setData(rows);
     hover(off.overlay.node());
     expect(off.container.querySelector('.rc-tooltip').classList.contains('is-visible')).toBe(false);
-    expect(off.crossX.style('opacity')).toBe('0');
+    expect(crossX(off).style.opacity).toBe('0');
   });
 });
 
@@ -231,11 +233,14 @@ describe('Line default date ticks on short spans (step 6 review)', () => {
     ({ date: new Date(+from + i * 36e5), value: 10 + (i % 5) }));
   const xLabels = c => [...c.gAxisX.selectAll('.tick text').nodes()].map(n => n.textContent);
   it.each([
-    ['36h across one midnight', new Date(2026, 0, 1, 8), 36, ['01/02']],
-    ['20h inside one day',      new Date(2026, 0, 5, 2), 20, ['01/05']],
-    ['26h across two midnights', new Date(2026, 0, 1, 23), 26, ['01/02', '01/03']],
-  ])('%s: one label per midnight, never none, never repeated', (_n, from, h, want) => {
+    ['36h across one midnight', new Date(2026, 0, 1, 8), 36, ['Jan 02']],
+    ['20h inside one day',      new Date(2026, 0, 5, 2), 20, []],
+    ['26h across two midnights', new Date(2026, 0, 1, 23), 26, ['Jan 02', 'Jan 03']],
+  ])('%s: by the span (K-10) — hours, a midnight named by its day, never none', (_n, from, h, days) => {
     const c = track(new Line(mount(null), { animate: false })).setData(hourly(from, h));
-    expect(xLabels(c)).toEqual(want);
+    const labels = xLabels(c);
+    expect(labels.length).toBeGreaterThan(0);                                   // never none
+    expect(labels.filter(l => /^[A-Z][a-z]{2} \d\d$/.test(l))).toEqual(days);      // each midnight names its day
+    expect(labels.every(l => /^[A-Z][a-z]{2} \d\d$|^\d\d:\d\d$/.test(l))).toBe(true);   // the rest, the hour
   });
 });

@@ -7,6 +7,8 @@
        #graph  Graph with a relation-type legend, breadcrumbs, footer tools
        #ctl-chart  a chart whose `controls:` row holds a page checkbox and
                select; #ref holds the same controls outside any chart
+       #custom the custom range (RC-003), its panel open: date fields,
+               their labels and Apply
      `?bare` loads the same page without rare.css: RareCharts alone, the
      oracle each chart control is compared with. -->
 <html lang="en" class="rd">
@@ -34,6 +36,9 @@
         <label><input id="ctl-check" type="checkbox" checked> Show the band</label>
         <label>Scale <select id="ctl-select"><option>Linear</option><option>Log</option></select></label>
       </div>
+
+      <h2>The custom range panel</h2>
+      <div id="custom" class="panel panel--bordered"></div>
 
       <h2>The same controls on the page</h2>
       <div id="ref">
@@ -87,7 +92,15 @@
       title: 'Controls row',
       controls: '#ctl',
     }).setData(days(60)),
+
+    custom: new RareCharts.Line('#custom', {
+      height: 300,
+      animate: false,
+      title: 'Custom range',
+      timeframes: ['ALL', 'CUSTOM'],
+    }).setData(days(200)),
   };
+  window.charts.custom.container.querySelector('.rc-range-custom').click();
 
   // A second view, so the Graph shows its breadcrumbs (two states). The
   // first view is on 'c', the best-connected node.

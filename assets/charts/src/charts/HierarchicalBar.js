@@ -26,7 +26,10 @@
 //   labelAlign     — side by side: 'right' sets every name flush against the
 //                    bars, 'left' indents it by depth (default: 'right');
 //                    stacked, the name is always indented
-//   barHeight      — bar thickness px (default: value-label font size + 2)
+//   barWidth       — bar thickness px (default: value-label font size + 2),
+//                    the name Bar and DualAxes use (RC-056; it was barHeight,
+//                    removed in 0.9.8_7 with no alias — a page that still
+//                    passes it gets a one-time hint and the default)
 //   maxDepth       — deepest level to render, 0-based from the top row (default: no limit)
 //   showValues     — value labels (default: true): side by side in a
 //                    right-aligned column, stacked at the bar end
@@ -36,7 +39,7 @@
 //   missingGlyph   — marker drawn where a value:null node's bar would be (default: '?')
 //   showRemainder / remainderLabel / strict — forwarded to the normalizer
 //   animate        — grow bars from zero on every setData (default: true)
-//   duration       — animation ms (default: 500)
+//   duration       — animation ms (default: 650)
 //   ease           — 'cubicOut' | 'cubicInOut' | 'linear' (default: 'cubicOut')
 //   tooltipFormat  — function(node, info) => html string; the default shows
 //                    the label, the value and its share of the total (the
@@ -59,12 +62,10 @@
 
 import * as d3 from 'd3';
 import { Chart }                 from '../core/Chart.js';
-import { Tooltip }               from '../core/Tooltip.js';
 import { resolveEase, motionDuration } from '../core/utils.js';
-import { EntryMotion, entryTransition } from '../core/entryMotion.js';
-import { applySvgA11y }          from '../core/renderHelpers.js';
+import { EntryMotion, entryTransition, ENTRY_DURATION } from '../core/entryMotion.js';
 import { normalizeHierarchy }    from '../core/hierarchy.js';
-import { escapeHtml, tipHeader, tipMuted } from '../core/html.js';
+import { escapeHtml, tipNum, tipRow } from '../core/html.js';
 
 // Plot width (px) from which a row reads name → bar → value side by side;
 // narrower, the name sits on its own line above the bar (C-28).
@@ -87,7 +88,7 @@ export class HierarchicalBar extends Chart {
 
     this._tree         = null;
     this._entry        = new EntryMotion();   // a growth per dataset (C-16)
-    this._tooltip      = new Tooltip(this.container, this.theme);
+    this.tooltip;   // made now: its element keeps its place in the card
 
     this._initSVG();
   }
@@ -107,11 +108,8 @@ export class HierarchicalBar extends Chart {
   }
 
   _initSVG() {
-    this.svg = d3.select(this.container)
-      .append('svg')
-      .attr('width', '100%')
-      .style('display', 'block');
-    applySvgA11y(this.svg, this.options);
+    // the height follows the rows (render)
+    this._createSvg({ size: 'width', style: { display: 'block' } });
 
     this.g     = this.svg.append('g');
     this.gRows = this.g.append('g');
@@ -167,16 +165,17 @@ export class HierarchicalBar extends Chart {
   }
 
   // info: the row's role fields (K-09) — the node stays the first argument.
-  _tooltipHtml(node, info) {
+  // `color`: the row's own, before hex — a role colour (the root's muted)
+  // gives the dot the tooltip's muted (core/html.js).
+  _tooltipHtml(node, info, color = info.color) {
     if (this.options.tooltipFormat) return this.options.tooltipFormat(node, info);
     const valueFmt = this.options.valueFormat ?? (n => d3.format(',')(n.value));
     const pct = info.percent;
-    const value = node.missing
-      ? tipMuted('not disclosed', 'span')
-      : escapeHtml(valueFmt(node, info));
-    const pctLine = (node.missing || pct == null) ? ''
-      : tipMuted(d3.format('.1%')(pct));
-    return `${tipHeader(escapeHtml(node.label))}<div>${value}</div>${pctLine}`;
+    // the row's dot, its name and value, its share under them (RC-082)
+    return tipRow(escapeHtml(node.label), node.missing ? 'not disclosed' : escapeHtml(valueFmt(node, info)), {
+      swatch: 'dot', color, muted: !!node.missing,
+      note: (node.missing || pct == null) ? '' : tipNum(d3.format('.1%')(pct)),
+    });
   }
 
   render() {
@@ -185,6 +184,11 @@ export class HierarchicalBar extends Chart {
 
     const W = this.width;
     if (W <= 0) return;
+
+    // The colours the formatters get (info.color, hex: the root's muted is a
+    // token) are read here, before any text is measured: a probe in the card
+    // between the measurements changed where a long name wraps in Chrome.
+    this._hex.many(rows.map(r => r.color));
 
     const t          = this.theme;
     // Two layouts (C-28): name → bar → value side by side from SIDE_MIN_WIDTH
@@ -200,7 +204,10 @@ export class HierarchicalBar extends Chart {
     const probe      = this.gRows.append('text').attr('class', 'rc-hbar-value').text('0');
     const fontPx     = parseFloat((typeof getComputedStyle !== 'undefined' && getComputedStyle(probe.node()).fontSize) || '') || 14;
     probe.remove();
-    const barHeight  = this.options.barHeight ?? Math.round(fontPx + 2);
+    if (this.options.barHeight != null) {
+      this._warnOnce('barHeight', 'barHeight was removed in 0.9.8_7 — use barWidth (the name Bar and DualAxes use)');
+    }
+    const barHeight  = this.options.barWidth ?? Math.round(fontPx + 2);
     const labelY     = 14;   // label baseline from the row top
     const barGap     = 6;    // fixed gap below the label. The bar is anchored to the
                              // TOP (label + gap), not the row bottom, so the label↔bar
@@ -209,7 +216,7 @@ export class HierarchicalBar extends Chart {
     const showValues = this.options.showValues ?? true;
     const valueFmt   = this.options.valueFormat ?? (n => d3.format(',')(n.value));
     const glyph      = this.options.missingGlyph ?? '?';
-    const duration   = motionDuration(this.options.duration ?? 500);
+    const duration   = motionDuration(this.options.duration ?? ENTRY_DURATION);
     const ease       = resolveEase(this.options.ease ?? 'cubicOut');
     const phase      = this._entry.phase((this.options.animate ?? true) ? duration : 0);
 
@@ -226,7 +233,7 @@ export class HierarchicalBar extends Chart {
     // laid out) getComputedTextLength gives 0: estimate from the length.
     const meter   = this.gRows.append('text');
     const measure = (text, cls, bold) => {
-      meter.attr('class', cls).attr('font-weight', bold ? 600 : null).text(text);
+      meter.attr('class', cls).attr('font-weight', bold ? 700 : null).text(text);
       const n   = meter.node();
       const len = n.getComputedTextLength ? n.getComputedTextLength() : 0;
       return len > 0 || !text ? len : text.length * fontPx * (bold ? 0.6 : 0.56);
@@ -253,6 +260,7 @@ export class HierarchicalBar extends Chart {
         || measure(words[0], 'rc-hbar-label', bold) > avail) return [fit(text, avail, bold)];
       let first = words[0];
       let k = 1;
+      // the first line is drawn without the space it broke at (below)
       while (k < words.length && measure(`${first} ${words[k]}`, 'rc-hbar-label', bold) <= avail) first += ` ${words[k++]}`;
       return [first, fit(words.slice(k).join(' '), avail, bold)];
     };
@@ -269,12 +277,12 @@ export class HierarchicalBar extends Chart {
     const roots = Array.isArray(this._tree) ? this._tree : [this._tree];
     const total = d3.sum(roots, n => (typeof n?.value === 'number' ? n.value : 0));
     // The role fields every formatter gets second (K-09): the share is
-    // `percent`, the colour the bar's.
+    // `percent`, the colour the bar's as hex (the root's muted included).
     rows.forEach(r => {
       r.info = {
         label:   r.node.label,
         value:   r.node.value,
-        color:   r.color,
+        color:   this._hex(r.color),
         percent: (typeof r.node.value === 'number' && total > 0) ? r.node.value / total : null,
       };
     });
@@ -348,21 +356,26 @@ export class HierarchicalBar extends Chart {
 
     sel.each((r, i, nodes) => {
       const g = d3.select(nodes[i]);
-      const weight = r.parent ? 600 : null;
+      const weight = r.parent ? 700 : null;
 
-      // The name, one tspan per line. A wrapped first line keeps a trailing
-      // space, so the label's textContent still reads as the name.
+      // The name, one tspan per line. The space a name broke at is a tspan of
+      // its own that is not drawn: drawn at the end of the first line, it
+      // set that line a space short of the column's edge, right-aligned
+      // (maintainer, 2026-11-19: 'License agreement with ·'); kept, the
+      // label's textContent still reads as the name.
+      const parts = r.lines.flatMap((d, k) => (k ? [{ gap: true }, { d, k }] : [{ d, k }]));
       g.select('.rc-hbar-label')
         .attr('x', r.labelX).attr('y', r.labelY)
         .attr('text-anchor', flush ? 'end' : null)
         .attr('font-weight', weight)
         .attr('fill', r.node.isRemainder ? t.muted : t.text)
         .selectAll('tspan')
-        .data(r.lines)
+        .data(parts)
         .join('tspan')
-        .attr('x', r.labelX)
-        .attr('dy', (d, k) => (k ? lineH : (side ? '0.35em' : 0)))
-        .text((d, k) => (k < r.lines.length - 1 ? `${d} ` : d));
+        .attr('x', p => (p.gap ? null : r.labelX))
+        .attr('dy', p => (p.gap ? null : p.k ? lineH : (side ? '0.35em' : 0)))
+        .attr('display', p => (p.gap ? 'none' : null))
+        .text(p => (p.gap ? ' ' : p.d));
 
       g.select('.rc-hbar-bar')
         .attr('x', r.barX).attr('y', r.barY)
@@ -399,7 +412,7 @@ export class HierarchicalBar extends Chart {
       // means moving between the label and the bar doesn't flicker the tooltip.
       const move = (event) => {
         const [mx, my] = d3.pointer(event, this.container);
-        this._tooltip.show(mx, my, this._tooltipHtml(r.node, r.info));
+        this._tooltip.show(mx, my, this._tooltipHtml(r.node, r.info, r.color));
       };
       g.style('cursor', 'default')
         .on('mouseenter', (event) => { g.select('.rc-hbar-bar').attr('opacity', Math.min(1, r.opacity + 0.2)); move(event); })

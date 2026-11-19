@@ -1,0 +1,156 @@
+<!doctype html>
+<!-- RareCharts on three hosts (RC-014, K-14): ?host=bare | v071 | v072
+     links no stylesheet, Rare Styles v0.7.1 (served by
+     test/browser/hosts.js) or v0.7.2. Page mode (`<html class="rd">`).
+     Checked by test/browser/charts-hosts.test.js. The same Line on every
+     surface a chart sits on:
+       #page           the page
+       #card           a .card
+       #inverted       a .card-inverted
+       #inverted-card  a .card inside a .card-inverted
+       #dark           darkTheme on the page
+       #dark-inverted  darkTheme on a .card-inverted
+     The SVG roles (RC-064): a Graph (node fills: the surface) and a Map
+     (regions without data, borders) on the page, in a .card, in a
+     .card-inverted, and darkTheme there: g-<surface>, m-<surface>. The
+     payloads (RC-014): one chart of each class with a tooltipFormat that
+     keeps its colours in window.payloads, on the page and on a
+     .card-inverted: p-<class>-page, p-<class>-inverted. The HTML chrome
+     (K-14, RC-061, X-11): a Line with every header and footer part, the
+     timeframes and the Lin/Log switch, a Graph with its tools, "+N" panel
+     and details, a MultiChart cell title, on the page, in a .card, in a
+     .card-inverted, and darkTheme there: c-<surface>-{line,graph,multi};
+     c-prec, a Line for the control tokens' precedence. -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RareCharts on three hosts</title>
+<script>
+  const HOST = new URLSearchParams(location.search).get('host') ?? 'bare';
+  const HREF = { v071: '/assets/css/rare-v0.7.1.css', v072: '/assets/css/rare.css' }[HOST];
+  if (HREF) document.write(`<link id="rare" rel="stylesheet" href="${HREF}">`);
+</script>
+</head>
+<body>
+<main>
+  <div id="page"></div>
+  <div class="card"><div id="card"></div></div>
+  <div class="card-inverted"><div id="inverted"></div></div>
+  <div class="card-inverted"><div class="card"><div id="inverted-card"></div></div></div>
+  <div id="dark"></div>
+  <div class="card-inverted"><div id="dark-inverted"></div></div>
+  <section id="roles">
+    <div id="g-page"></div><div id="m-page"></div>
+    <div class="card"><div id="g-card"></div><div id="m-card"></div></div>
+    <div class="card-inverted"><div id="g-inverted"></div><div id="m-inverted"></div></div>
+    <div class="card-inverted"><div id="g-dark"></div><div id="m-dark"></div></div>
+  </section>
+  <section id="chrome">
+    <div id="c-page"></div>
+    <div class="card"><div id="c-card"></div></div>
+    <div class="card-inverted"><div id="c-inverted"></div></div>
+    <div class="card-inverted"><div id="c-dark"></div></div>
+    <div id="c-prec-wrap"><div id="c-prec"></div></div>
+  </section>
+  <section id="payloads">
+    <div id="pay-page"></div>
+    <div class="card-inverted"><div id="pay-inverted"></div></div>
+  </section>
+</main>
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const DAY = 864e5;
+  const days = n => Array.from({ length: n }, (_, i) => ({
+    date: new Date(Date.UTC(2025, 0, 1) + i * DAY),
+    value: 100 + 10 * Math.sin(i / 9),
+  }));
+  const line = (id, theme) => new RareCharts.Line(`#${id}`, {
+    height: 220, animate: false, title: id, source: 'Source: fixture', theme,
+  }).setData(days(60));
+
+  // Two squares side by side: AA has data, BB has none.
+  const square = (id, x) => ({ type: 'Feature', id, properties: { name: id },
+    geometry: { type: 'Polygon', coordinates: [[[x, 0], [x, 10], [x + 10, 10], [x + 10, 0], [x, 0]]] } });
+  const geoData = { type: 'FeatureCollection', features: [square('AA', 0), square('BB', 10)] };
+  const ties = {
+    nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+    links: [{ source: 'a', target: 'b' }, { source: 'a', target: 'c' }, { source: 'c', target: 'd' }],
+  };
+  const roles = {};
+  for (const [surface, theme] of [['page'], ['card'], ['inverted'], ['dark', RareCharts.darkTheme]]) {
+    roles[`g-${surface}`] = new RareCharts.Graph(`#g-${surface}`, { height: 240, duration: 0, theme }).setData(ties);
+    roles[`m-${surface}`] = new RareCharts.Map(`#m-${surface}`, { height: 200, geoData, projection: 'identity', theme })
+      .setData([{ id: 'AA', value: 1 }]);
+  }
+
+  // Every class, its tooltipFormat keeping the colours it is handed.
+  window.payloads = {};
+  const keep = key => (...args) => {
+    const found = [];
+    const walk = v => {
+      if (Array.isArray(v)) v.forEach(walk);
+      else if (v && typeof v === 'object' && !(v instanceof Date) && !(v instanceof Node)) {
+        for (const [k, x] of Object.entries(v)) (k === 'color' ? found.push(x) : walk(x));
+      }
+    };
+    args.forEach(walk);
+    (window.payloads[key] ??= []).push(...found);
+    return 'payload';
+  };
+  const box = (where, name) => {
+    const el = document.createElement('div');
+    el.id = `p-${name}-${where}`;
+    document.getElementById(`pay-${where}`).appendChild(el);
+    return `#${el.id}`;
+  };
+  const payloadCharts = {};
+  for (const where of ['page', 'inverted']) {
+    const o = name => ({ height: 200, animate: false, tooltipFormat: keep(`${name}-${where}`) });
+    payloadCharts[`line-${where}`] = new RareCharts.Line(box(where, 'line'), o('line'))
+      .setData([{ name: 'A', values: days(30) }, { name: 'B', color: 'var(--chart-series-3, #00c97a)', values: days(30) }]);
+    payloadCharts[`ts-${where}`] = new RareCharts.TimeSeries(box(where, 'ts'), o('ts')).setData(days(30));
+    payloadCharts[`bar-${where}`] = new RareCharts.Bar(box(where, 'bar'), o('bar'))
+      .setData([{ label: 'A', value: 3 }, { label: 'B', value: 2 }]);
+    payloadCharts[`donut-${where}`] = new RareCharts.Donut(box(where, 'donut'), { ...o('donut'), showRemainder: true })
+      .setData({ label: 'Root', value: 10, children: [{ label: 'A', value: 6 }] });
+    payloadCharts[`gauge-${where}`] = new RareCharts.Gauge(box(where, 'gauge'), o('gauge')).setData(40);
+    payloadCharts[`hbar-${where}`] = new RareCharts.HierarchicalBar(box(where, 'hbar'), o('hbar'))
+      .setData({ label: 'Root', value: 10, children: [{ label: 'A', value: 6 }, { label: 'B', value: 4 }] });
+    payloadCharts[`map-${where}`] = new RareCharts.Map(box(where, 'map'), { ...o('map'), geoData, projection: 'identity' })
+      .setData([{ id: 'AA', value: 1 }]);
+  }
+  // The HTML chrome on each surface (K-14).
+  window.chrome = {};
+  const into = (where, name) => {
+    const el = document.getElementById(`c-${where}`).appendChild(document.createElement('div'));
+    el.id = `c-${where}-${name}`;
+    return `#${el.id}`;
+  };
+  for (const [where, theme] of [['page'], ['card'], ['inverted'], ['dark', RareCharts.darkTheme]]) {
+    window.chrome[where] = {
+      line: new RareCharts.Line(into(where, 'line'), {
+        height: 260, animate: false, theme, title: 'Title', subtitle: 'Subtitle', legend: [{ label: 'Series' }],
+        source: 'Source: fixture', note: 'A note.', timeframes: ['1M', 'ALL'], scaleToggle: true,
+      }).setData(days(90)),
+      graph: new RareCharts.Graph(into(where, 'graph'), { height: 320, duration: 0, theme, title: 'Graph', details: true }).setData(ties),
+      multi: new RareCharts.MultiChart(into(where, 'multi'), {
+        animate: false, theme, charts: [{ type: 'Line', title: 'Cell', height: 120, data: days(20) }],
+      }),
+    };
+  }
+  window.chrome.prec = new RareCharts.Line('#c-prec', { height: 200, animate: false, timeframes: ['1M', 'ALL'] }).setData(days(90));
+  window.roles = roles;
+  window.payloadCharts = payloadCharts;
+
+  window.charts = {
+    page:         line('page'),
+    card:         line('card'),
+    inverted:     line('inverted'),
+    invertedCard: line('inverted-card'),
+    dark:         line('dark', RareCharts.darkTheme),
+    darkInverted: line('dark-inverted', RareCharts.darkTheme),
+  };
+</script>
+</body>
+</html>

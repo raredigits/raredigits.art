@@ -88,7 +88,7 @@ Hovering a row shows its label, its value and its share of the total — the roo
 
 ## Hierarchical Bar options
 
-Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.
+Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page. The <code>legend</code> is a caption here: the chart has no series to hide.
 
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -129,10 +129,10 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
             <td>Side by side: <code>'right'</code> sets every name flush against the bars; <code>'left'</code> lines the names up at the left edge, indented by depth. Stacked, the name is always indented.</td>
         </tr>
         <tr>
-            <td><code>barHeight</code></td>
+            <td><code>barWidth</code></td>
             <td>number</td>
             <td>auto (<code>16</code>)</td>
-            <td>Bar thickness in px. By default the value-label font size + 2 — 16px with the standard 14px labels (<code>--rc-font-size-sm</code>).</td>
+            <td>Bar thickness in px, the name Bar and DualAxes use. By default the value-label font size + 2 — 16px with the standard 14px labels (<code>--rc-font-size-sm</code>). Before 0.9.8_7 it was <code>barHeight</code>, which no longer works.</td>
         </tr>
         <tr>
             <td><code>showRoot</code></td>
@@ -206,7 +206,7 @@ Common options shared by all chart types (<code>title</code>, <code>subtitle</co
         <tr>
             <td><code>duration</code></td>
             <td>number</td>
-            <td><code>500</code></td>
+            <td><code>650</code></td>
             <td>Animation duration in ms.</td>
         </tr>
         <tr>

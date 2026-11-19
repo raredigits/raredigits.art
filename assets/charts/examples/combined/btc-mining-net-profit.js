@@ -44,7 +44,7 @@
       name:        'Revenue',
       axis:        'y1',
       type:        'line',
-      color:       '#00aaff',
+      color:       '#1677ff',
       strokeWidth: 1.5,
       values: data.map(r => ({ date: r.date, value: r.revenue })),
     },
@@ -62,14 +62,17 @@
   ];
 
   new RareCharts.DualAxes('#mining-net-profit', {
+    // new Date('2025-02-01') is UTC midnight: name the days in UTC (T-10).
+    timeZone: 'UTC',
     height:   450,
     title:    'Mining vs the Electric Bills',
     subtitle: 'Compounding revenue with electricity costs to find net profit/loss per day',
     source:   'Source: Mining pool summary export, Electricity bills',
 
+    // The label differs from the series name: `series` maps the item to it.
     legend: [
-      { label: 'Electricity Cost', color: '#ff00f5' },
-      { label: 'Revenue',     color: '#00aaff' },
+      { label: 'Electricity Cost', series: 'Electricity', color: '#ff00f5' },
+      { label: 'Revenue',     color: '#1677ff' },
       { label: 'Gain',        color: '#00c97a', type: 'bar' },
       { label: 'Loss',        color: '#ff4455', type: 'bar' },
     ],
@@ -94,21 +97,28 @@
 
     xTickFormat: d => d3.timeFormat('%b')(d),
 
+    // The tooltip's own rows (/charts/settings/#custom-tooltip): revenue and
+    // electricity, then a row the chart does not draw — the day's net, with
+    // the dot of the Gain or Loss bar.
     tooltipFormat: ({ date, points }) => {
-      const get = name => points.find(p => p.name === name)?.value ?? 0;
+      const get   = name => points.find(p => p.name === name)?.value ?? 0;
+      const color = name => series.find(s => s.name === name).color;
+      const usd   = v => '$' + d3.format(',.2f')(v) + '/day';
+      const row   = (mark, name, value) => `
+        <div class="rc-tooltip-row">
+          <span class="rc-tooltip-swatch${mark}" style="--rc-swatch-color:${color(name)}"></span>
+          <span class="rc-tooltip-label">${name === 'Gain' || name === 'Loss' ? 'Net' : name}</span>
+          <span class="rc-tooltip-value rc-num">${value}</span>
+        </div>`;
+
       const revenue = get('Revenue');
       const elec    = get('Electricity');
       const net     = revenue - elec;
-      const netColor = net >= 0 ? '#00c97a' : '#ff4455';
-      const netAbs   = d3.format(',.2f')(Math.abs(net));
-      const netFmt   = (net >= 0 ? '+' : '-') + '$' + netAbs;
 
-      return `
-        <div style="color:#888;margin-bottom:4px">${d3.timeFormat('%b %d, %Y')(date)}</div>
-        <div style="color:#f7931a">Revenue: $${d3.format(',.2f')(revenue)}/day</div>
-        <div style="color:#ff4455">Electricity: $${d3.format(',.2f')(elec)}/day</div>
-        <div style="color:${netColor};font-weight:600;margin-top:4px">Net: ${netFmt}/day</div>
-      `;
+      return `<div class="rc-tooltip-header rc-tooltip-muted">${d3.timeFormat('%b %d, %Y')(date)}</div>`
+        + row('', 'Revenue', usd(revenue))
+        + row('', 'Electricity', usd(elec))
+        + row(' rc-tooltip-swatch--dot', net >= 0 ? 'Gain' : 'Loss', (net >= 0 ? '+' : '-') + usd(Math.abs(net)));
     },
   }).setData(series);
 

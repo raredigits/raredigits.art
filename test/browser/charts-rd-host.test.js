@@ -55,8 +55,8 @@ const CHROME = [
 const without = (list, ...drop) => list.filter((p) => !drop.includes(p));
 
 // Per target, what may not change. Two exclusions are not the button or
-// form system: the Graph tools are painted by the theme with the page's
-// --bg-color (a host token RareCharts reads, CSS-380), and a select's box
+// form system: the Graph tools (.rc-graph-tool, X-11) take the card's
+// background, the page's --chart-bg (CSS-380), and a select's box
 // follows the font size normalize lets it inherit (14px in the controls
 // row, 13.33px without the library).
 const TARGETS = {
@@ -67,12 +67,24 @@ const TARGETS = {
   tools: ['#graph .rc-graph-tools button:not([hidden])', without(CHROME, 'background-color')],
   checkbox: ['#ctl-chart .rc-chart-controls input[type="checkbox"]', [...CHROME, 'appearance', 'width', 'height']],
   select: ['#ctl-chart .rc-chart-controls select', [...CHROME, 'appearance']],
+  // RC-003: the custom range's button and its open panel (a date field's
+  // width follows the face, so its height only)
+  custom: ['#custom .rc-range-custom', CHROME],
+  customPanel: ['#custom .rc-range-panel', CHROME],
+  customLabel: ['#custom .rc-range-label', CHROME],
+  customInput: ['#custom .rc-range-input', [...CHROME, 'appearance', 'height']],
+  customApply: ['#custom .rc-range-apply', [...CHROME, 'appearance', 'height']],
 };
 
-const read = (page, selector, props) => page.evaluate(([s, ps]) => [...document.querySelectorAll(s)].map((el) => {
+// The custom range panel wears the tooltip's tokens (RC-014): on the
+// library, its --chart-tooltip-shadow, a color-mix() — the same black at 10%,
+// serialised as color(srgb …); read here as the rgba() it equals.
+const srgb = (v) => v.replace(/color\(srgb ([\d.]+) ([\d.]+) ([\d.]+) \/ ([\d.]+)\)/g,
+  (_, r, g, b, a) => `rgba(${[r, g, b].map((c) => Math.round(c * 255)).join(', ')}, ${+a})`);
+const read = async (page, selector, props) => (await page.evaluate(([s, ps]) => [...document.querySelectorAll(s)].map((el) => {
   const cs = getComputedStyle(el);
   return Object.fromEntries(ps.map((p) => [p, cs.getPropertyValue(p)]));
-}), [selector, props]);
+}), [selector, props])).map((o) => ('box-shadow' in o ? { ...o, 'box-shadow': srgb(o['box-shadow']) } : o));
 
 // A state forced through the DevTools protocol on every match of a target:
 // no pointer to move, no press that would click.
@@ -111,9 +123,11 @@ describe('CSS-381: RareCharts controls under the gated library', () => {
       tools: document.querySelectorAll('#graph .rc-graph-tools button:not([hidden])').length,
       checkbox: document.querySelectorAll('#ctl-chart .rc-chart-controls input[type="checkbox"]').length,
       select: document.querySelectorAll('#ctl-chart .rc-chart-controls select').length,
+      customInput: document.querySelectorAll('#custom .rc-range-panel .rc-range-input').length,
+      customApply: document.querySelectorAll('#custom .rc-range-panel .rc-range-apply').length,
       rd: document.documentElement.classList.contains('rd') && !!document.getElementById('rare'),
     }));
-    expect(count).toMatchObject({ range: 4, scale: 1, breadcrumbs: 2, checkbox: 1, select: 1, rd: true });
+    expect(count).toMatchObject({ range: 4, scale: 1, breadcrumbs: 2, checkbox: 1, select: 1, customInput: 2, customApply: 1, rd: true });
     expect(count.disabledCrumb).toBe(1); // the current view: RareCharts' own disabled look
     expect(count.legend).toBeGreaterThanOrEqual(2);
     expect(count.tools).toBeGreaterThanOrEqual(3);
@@ -137,7 +151,34 @@ describe('CSS-381: RareCharts controls under the gated library', () => {
     await bare.close();
   });
 
-  it("the range buttons keep RareCharts' own look in every state; the Lin/Log fill survives hover", async () => {
+  // RC-002: the loading bar is a plain div — the library's element rules
+  // must not reach it either
+  it.each([1440, 375])('at %ipx the loading bar looks and sits as RareCharts alone draws it', async (width) => {
+    const [rd, bare] = await pair(width);
+    const BAR = [...CHROME, 'position', 'font-size', 'font-family', 'line-height', 'color', 'text-align', 'margin-top', 'margin-left'];
+    const look = page => page.evaluate((props) => {
+      window.charts.line.setLoading(true);
+      const el = document.querySelector('#line .rc-chart-loading');
+      const cs = getComputedStyle(el);
+      const card = document.querySelector('#line').getBoundingClientRect();
+      const r = el.getBoundingClientRect();
+      return {
+        style: Object.fromEntries(props.map((p) => [p, cs.getPropertyValue(p)])),
+        box: [r.left - card.left, r.top - card.top, r.width, r.height].map(v => Math.round(v * 10) / 10),
+      };
+    }, BAR);
+    const [withLibrary, alone] = [await look(rd), await look(bare)];
+    // the family reads the page's font token since K-15 (Rare Styles' own
+    // stack, Fira Sans first): the same face, a different fallback list
+    const face = st => ({ ...st, 'font-family': st['font-family'].split(',')[0].replace(/"/g, '').trim() });
+    expect(face(withLibrary.style)).toEqual(face(alone.style));
+    expect(withLibrary.box[2]).toBeGreaterThan(0);
+    expect(withLibrary.box[3]).toBeCloseTo(alone.box[3], 1);
+    await rd.close();
+    await bare.close();
+  });
+
+  it("the range buttons keep RareCharts' own look in every state; the Log toggle keeps its look under hover", async () => {
     const { page } = await open(1440);
     const props = ['border-top-color', 'border-top-width', 'border-top-left-radius', 'padding-top', 'padding-left', 'background-color', 'background-image'];
     const [rest] = await read(page, '#line .rc-range-btn:not(.active):not(.rc-scale-btn)', props);
@@ -147,7 +188,9 @@ describe('CSS-381: RareCharts controls under the gated library', () => {
     });
     await force(page, '#line .rc-scale-btn', 'hover');
     const [scale] = await read(page, '#line .rc-scale-btn', props);
-    expect(scale['background-image']).toMatch(/^linear-gradient/);
+    // the Log toggle, off: no fill, under the host's hover too (RC-083; it was the diagonal fill)
+    expect(scale['background-image']).toBe('none');
+    expect(scale['background-color']).toBe('rgba(0, 0, 0, 0)');
     expect(scale['border-top-color']).toBe('rgb(0, 0, 0)');
     await page.close();
   });

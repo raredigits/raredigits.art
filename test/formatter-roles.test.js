@@ -106,14 +106,15 @@ describe('object payloads gain the role fields (K-09)', () => {
 });
 
 describe('a number, row or node first — the role fields second (K-09)', () => {
-  it('TimeSeries: tooltipFormat(row, { date, value, color })', () => {
+  it('TimeSeries: tooltipFormat(row, { date, value, color, level })', () => {
     const tip = recorder('');
     const c = track(new TimeSeries(mount(null), { tooltipFormat: tip.fn, theme: { accent: '#abcdef' } }))
       .setData([{ date: '2026-01-01', value: 1, volume: 7 }, { date: '2026-01-02', value: 2, volume: 9 }]);
     move(c.container.querySelector('svg > g > rect'), 790);
     const [row, info] = tip.calls[0];
     expect(row).toMatchObject({ value: 2, volume: 9 });
-    expect(info).toEqual({ date: row.date, value: 2, color: '#abcdef' });
+    // level: the level drawn (RC-002), null for plain rows
+    expect(info).toEqual({ date: row.date, value: 2, color: '#abcdef', level: null });
   });
 
   it('Bar categories: tooltipFormat and valueFormat get (row, { label, value, color })', () => {

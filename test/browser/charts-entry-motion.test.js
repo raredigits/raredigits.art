@@ -65,3 +65,46 @@ describe('C-16: the entry animation plays through the renders that follow setDat
     expect(nonDecreasing(await run('line', { resizeAt: 250 }))).toBe(true);
   });
 });
+
+// K-08: a chart left without `duration` takes the one entry duration, 650 ms
+// (Bar was 500, Gauge 800). The fixture's charts all pass 600, so these two
+// are built here on the same page and sampled the same way, on every frame.
+const runDefault = name => page.evaluate(n => new Promise(done => {
+  const cats = [{ label: 'Alpha', value: 40 }, { label: 'Beta', value: 75 }, { label: 'Gamma', value: 60 }];
+  const charts = {
+    bar:   [el => new RareCharts.Bar(el).setData(cats),
+            el => +el.querySelector('rect.rc-bar:nth-of-type(2)')?.getAttribute('height')],
+    gauge: [el => new RareCharts.Gauge(el, { needle: true }).setData(70),
+            el => parseFloat(((el.querySelector('.rc-gauge-needle-pointer')?.getAttribute('transform') ?? '')
+              .match(/rotate\(([-\d.e]+)/) ?? [])[1])],
+  };
+  const [build, read] = charts[n];
+  const host = document.createElement('div');
+  host.className = 'host';
+  document.getElementById('stage').replaceChildren(host);
+  const t0 = performance.now();
+  build(host);
+  const samples = [[0, read(host)]];
+  const frame = () => {
+    const t = performance.now() - t0;
+    samples.push([Math.round(t), read(host)]);
+    if (t < 1100) requestAnimationFrame(frame); else done(samples);
+  };
+  requestAnimationFrame(frame);
+}), name);
+
+describe('K-08: without `duration` the entry runs 650 ms', () => {
+  const ENTRY = 650;
+  const FRAME = 17;   // one frame at 60 Hz, rounded up
+
+  // Measured in headless Chrome: the last frame in motion at 626-637 ms, the
+  // first at rest at 643-654 ms; a frame or two of slack either way.
+  it.each(['bar', 'gauge'])('%s: the entry ends at 650 ms', async (name) => {
+    const s = await runDefault(name);
+    const moving = between(s);
+    expect(moving.length).toBeGreaterThanOrEqual(10);
+    expect(nonDecreasing(s)).toBe(true);
+    expect(moving.at(-1)[0]).toBeGreaterThanOrEqual(ENTRY - 2 * FRAME);   // Bar's old 500 ends far sooner
+    expect(settledBy(s)).toBeLessThanOrEqual(ENTRY + 2 * FRAME);          // Gauge's old 800 far later
+  });
+});

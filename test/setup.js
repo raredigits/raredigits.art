@@ -4,6 +4,29 @@
 // Chart.js: `if (this.width > 0 ...) this.render()`). Give every element a
 // fixed box and stub the SVG geometry methods charts measure against, so the
 // real render path actually executes under test.
+//
+// The defaults (S-18): every HTML element 800×400 (clientWidth, offsetWidth,
+// clientHeight; offsetHeight stays jsdom's 0), every SVG text 0 long, every
+// getBBox empty. They are for tests that need *a* width to render and assert
+// nothing about sizes: the smoke, contract, event, theme, accessibility,
+// tooltip-content and data tests (charts-smoke, bundle-smoke, the
+// *-contracts files, map, links, most of graph* and mapflow, …). They are
+// not a layout, and no assertion may ride on them: in a page the navigator
+// strip, the right-hand legend and the tooltip have boxes of their own.
+//
+// A test that asserts on geometry (widths, label fitting and truncation,
+// legend or tooltip placement, margin math, ticks per width) sets the sizes
+// it depends on with test/helpers.js: mount(id, { width, height }) for one
+// container, setGeometry({ width, height, charWidth }) for every element and
+// the text metrics, for that test only. They do in overview,
+// timeseries-navigator, timeframes (the navigator), time-zones (the strip's
+// labels), chart-base (the Map width), tooltip (the C-08 position, the date
+// header), mapflow (the R-12 pin), mapflow-arcs (C-35), bar-width,
+// dual-axes-bars, hbar-layout and circular; bar-category-gutter,
+// entry-motion, multichart, sankey, graph, default-formats and
+// line-timeseries-contracts stub their own sizes; geometry-helpers checks the
+// helpers. Changing 800, 400 or the 0 text length here must not fail any of
+// them.
 
 class ResizeObserverStub {
   observe() {}
@@ -31,7 +54,7 @@ if (typeof SVGElement !== 'undefined') {
 // while the test passed; now they fail the test that caused them, unless it
 // called allowChartErrors(). Other console.error output is left alone.
 import { afterEach } from 'vitest';
-import { recordChartError, cleanupCharts, takeChartErrors } from './helpers.js';
+import { recordChartError, cleanupCharts, restoreGeometry, takeChartErrors } from './helpers.js';
 
 const originalError = console.error;
 console.error = (...args) => {
@@ -44,6 +67,7 @@ afterEach(async () => {
   // errors are charged to this test and not the next one.
   await new Promise(resolve => setTimeout(resolve, 0));
   cleanupCharts();
+  restoreGeometry();
   const errors = takeChartErrors();
   if (errors.length) {
     const first = errors[0].map(a => (a instanceof Error ? a.stack ?? a.message : String(a))).join(' ');

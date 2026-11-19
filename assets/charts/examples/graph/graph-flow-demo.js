@@ -66,41 +66,41 @@
   ];
 
   // start / end come from the period: 'YYYY-MM[-DD] … YYYY-MM[-DD]' or one date.
-  const E = (from, to, asset, kind, amount, usd, count, period, _t0, basis, label, extra = {}) => {
+  const E = (from, to, asset, kind, amount, usd, count, period, basis, label, extra = {}) => {
     const [start, end = start] = period.split(' … ');
     return { from, to, asset, kind, amount, value: usd, count, period, start, end, basis, label, ...extra };
   };
   const links = [
-    E('validator', 'bostrom', 'BOOT', 'income', '≈ 1.1 bn BOOT a week', null, 'weekly', '2023-09 … 2024-08', 0, 'exact', 'commission'),
-    E('bostrom', 'batch-dex', 'BOOT', 'swap', 'staking rewards', null, '187 swaps', '2023-09 … 2024-08', 0, 'exact', 'swap'),
-    E('batch-dex', 'bostrom', 'ATOM', 'swap', '≥ 71.88 ATOM', 627, '—', '2023-09 … 2024-08', 0, 'derived', 'ATOM'),
-    E('bostrom', 'hub', 'ATOM', 'transfer', '71.881632 ATOM', 627, 22, '2023-09-26 … 2024-08-27', 0, 'exact', '71.88 ATOM'),
-    E('hub', 'osmo', 'ATOM', 'transfer', '69.50 ATOM', 608, 21, '2023-09-26 … 2024-04-10', 0, 'exact', '69.50 ATOM'),
-    E('osmo', 'swap-dex', 'ATOM', 'swap', '61.38 ATOM', 530, 15, '2023-09-26 … 2023-12-27', 0, 'exact', '61.38 ATOM'),
-    E('swap-dex', 'osmo', 'ETH', 'swap', '0.27411194 wrapped ETH', 517, 15, '2023-09-26 … 2023-12-27', 0, 'exact', '0.274 ETH'),
-    E('osmo', 'perps-dex', 'ETH', 'deposit', '0.692319 wrapped ETH', 1381, 10, '2023-09-26 … 2023-12-05', 0, 'exact', '0.692 in'),
-    E('perps-dex', 'osmo', 'ETH', 'withdraw', '0.69231905 + yield 0.00023598 wrapped ETH', 1438, 8, '2023-09-30 … 2023-12-12', 0, 'exact', '0.693 out'),
-    E('osmo', 'neutron', 'ETH', 'transfer', '0.11566675 wrapped ETH', 181, 1, '2023-10-10', 1, 'exact', '0.1157'),
-    E('neutron', 'osmo', 'ETH', 'transfer', '0.11683505 wrapped ETH', 212, 1, '2023-10-31', 1, 'exact', '0.1168'),
-    E('osmo', 'kujira', 'ETH', 'transfer', '0.27551622 wrapped ETH', 686, 1, '2024-01-19', 4, 'exact', '0.2755 ETH'),
-    E('kujira', 'bridge', 'ETH', 'bridge', '0.27669243 wrapped ETH', 632, 1, '2024-01-31', 4, 'exact', '0.2767 ETH'),
-    E('bridge', 'bridge-fee', 'ETH', 'fee', '0.025062 ETH', 57, 1, '2024-01-31', 4, 'exact', '0.0251'),
-    E('bridge', 'eth', 'ETH', 'bridge', '0.25163043 ETH', 575, 1, '2024-01-31', 4, 'exact', '0.2516 ETH'),
-    E('eth', 'crowdfunding', 'ETH', 'payment', '0.245 ETH → 245 000 project tokens', 560, 1, '2024-01-31', 4, 'exact', '0.245 ETH'),
+    E('validator', 'bostrom', 'BOOT', 'income', '≈ 1.1 bn BOOT a week', null, 'weekly', '2023-09 … 2024-08', 'exact', 'commission'),
+    E('bostrom', 'batch-dex', 'BOOT', 'swap', 'staking rewards', null, '187 swaps', '2023-09 … 2024-08', 'exact', 'swap'),
+    E('batch-dex', 'bostrom', 'ATOM', 'swap', '≥ 71.88 ATOM', 627, '—', '2023-09 … 2024-08', 'derived', 'ATOM'),
+    E('bostrom', 'hub', 'ATOM', 'transfer', '71.881632 ATOM', 627, 22, '2023-09-26 … 2024-08-27', 'exact', '71.88 ATOM'),
+    E('hub', 'osmo', 'ATOM', 'transfer', '69.50 ATOM', 608, 21, '2023-09-26 … 2024-04-10', 'exact', '69.50 ATOM'),
+    E('osmo', 'swap-dex', 'ATOM', 'swap', '61.38 ATOM', 530, 15, '2023-09-26 … 2023-12-27', 'exact', '61.38 ATOM'),
+    E('swap-dex', 'osmo', 'ETH', 'swap', '0.27411194 wrapped ETH', 517, 15, '2023-09-26 … 2023-12-27', 'exact', '0.274 ETH'),
+    E('osmo', 'perps-dex', 'ETH', 'deposit', '0.692319 wrapped ETH', 1381, 10, '2023-09-26 … 2023-12-05', 'exact', '0.692 in'),
+    E('perps-dex', 'osmo', 'ETH', 'withdraw', '0.69231905 + yield 0.00023598 wrapped ETH', 1438, 8, '2023-09-30 … 2023-12-12', 'exact', '0.693 out'),
+    E('osmo', 'neutron', 'ETH', 'transfer', '0.11566675 wrapped ETH', 181, 1, '2023-10-10', 'exact', '0.1157'),
+    E('neutron', 'osmo', 'ETH', 'transfer', '0.11683505 wrapped ETH', 212, 1, '2023-10-31', 'exact', '0.1168'),
+    E('osmo', 'kujira', 'ETH', 'transfer', '0.27551622 wrapped ETH', 686, 1, '2024-01-19', 'exact', '0.2755 ETH'),
+    E('kujira', 'bridge', 'ETH', 'bridge', '0.27669243 wrapped ETH', 632, 1, '2024-01-31', 'exact', '0.2767 ETH'),
+    E('bridge', 'bridge-fee', 'ETH', 'fee', '0.025062 ETH', 57, 1, '2024-01-31', 'exact', '0.0251'),
+    E('bridge', 'eth', 'ETH', 'bridge', '0.25163043 ETH', 575, 1, '2024-01-31', 'exact', '0.2516 ETH'),
+    E('eth', 'crowdfunding', 'ETH', 'payment', '0.245 ETH → 245 000 project tokens', 560, 1, '2024-01-31', 'exact', '0.245 ETH'),
     // crowdsale
-    E('crowd', 'crowdfunding', 'ETH', 'payment', '96.92122755 ETH', 224847, 226, '2024-01-30 … 2024-02-01', 4, 'exact', '96.92 ETH', { crowd: true }),
-    E('largest-backer', 'crowdfunding', 'ETH', 'payment', '10 ETH', 23462, 1, '2024-01-30', 4, 'exact', '10 ETH', { crowd: true }),
-    E('crowdfunding', 'platform-fee', 'ETH', 'fee', '2.62844457 ETH', 6108, 6, '2024-01-30 … 2024-02-01', 4, 'exact', '2.63 ETH', { crowd: true }),
-    E('crowdfunding', 'owner', 'ETH', 'payout', '105.13778298 ETH (after 2.5 %)', 244325, 6, '2024-01-30 … 2024-02-01', 4, 'exact', '105.14 ETH', { crowd: true }),
-    E('owner', 'largest-backer', 'ETH', 'refund', '10 ETH', 23034, 1, '2024-02-01', 5, 'exact', '10 ETH back', { crowd: true }),
-    E('owner', 'team', 'ETH', 'transfer', '47.41685 ETH', 110289, 2, '2024-01-30 … 2024-02-01', 4, 'exact', '47.42 ETH', { crowd: true }),
-    E('owner', 'exchange', 'ETH', 'transfer', '49.142107 ETH via 0xe5ca…ab96', 114447, 4, '2024-01-30 … 2024-02-07', 4, 'exact', '49.14 ETH', { crowd: true }),
-    E('team', 'exchange', 'ETH', 'transfer', '47.37678 ETH via 0x054c…1459', 110286, 2, '2024-01-30 … 2024-02-02', 4, 'exact', '47.38 ETH', { crowd: true }),
-    E('team', 'distributor', 'TOKEN', 'distribution', '4 516 635.21 tokens', 103135, 1, '2026-04-22', 31, 'exact', '4.52 M tokens', { crowd: true }),
-    E('distributor', 'crowd', 'TOKEN', 'distribution', '4 505 186.30 tokens, 206 addresses', 102874, 206, '2026-04-22', 31, 'exact', '4.51 M tokens', { crowd: true }),
-    E('distributor', 'eth', 'TOKEN', 'distribution', '11 448.90771 tokens', 261, 1, '2026-04-22', 31, 'exact', '11 449 tokens'),
+    E('crowd', 'crowdfunding', 'ETH', 'payment', '96.92122755 ETH', 224847, 226, '2024-01-30 … 2024-02-01', 'exact', '96.92 ETH', { crowd: true }),
+    E('largest-backer', 'crowdfunding', 'ETH', 'payment', '10 ETH', 23462, 1, '2024-01-30', 'exact', '10 ETH', { crowd: true }),
+    E('crowdfunding', 'platform-fee', 'ETH', 'fee', '2.62844457 ETH', 6108, 6, '2024-01-30 … 2024-02-01', 'exact', '2.63 ETH', { crowd: true }),
+    E('crowdfunding', 'owner', 'ETH', 'payout', '105.13778298 ETH (after 2.5 %)', 244325, 6, '2024-01-30 … 2024-02-01', 'exact', '105.14 ETH', { crowd: true }),
+    E('owner', 'largest-backer', 'ETH', 'refund', '10 ETH', 23034, 1, '2024-02-01', 'exact', '10 ETH back', { crowd: true }),
+    E('owner', 'team', 'ETH', 'transfer', '47.41685 ETH', 110289, 2, '2024-01-30 … 2024-02-01', 'exact', '47.42 ETH', { crowd: true }),
+    E('owner', 'exchange', 'ETH', 'transfer', '49.142107 ETH via 0xe5ca…ab96', 114447, 4, '2024-01-30 … 2024-02-07', 'exact', '49.14 ETH', { crowd: true }),
+    E('team', 'exchange', 'ETH', 'transfer', '47.37678 ETH via 0x054c…1459', 110286, 2, '2024-01-30 … 2024-02-02', 'exact', '47.38 ETH', { crowd: true }),
+    E('team', 'distributor', 'TOKEN', 'distribution', '4 516 635.21 tokens', 103135, 1, '2026-04-22', 'exact', '4.52 M tokens', { crowd: true }),
+    E('distributor', 'crowd', 'TOKEN', 'distribution', '4 505 186.30 tokens, 206 addresses', 102874, 206, '2026-04-22', 'exact', '4.51 M tokens', { crowd: true }),
+    E('distributor', 'eth', 'TOKEN', 'distribution', '11 448.90771 tokens', 261, 1, '2026-04-22', 'exact', '11 449 tokens'),
     // noise
-    E('owner', 'look-alike', 'ETH', 'noise', 'fake token, 2 transfers', null, 2, '2024-01-30 … 2024-02-01', 4, 'exact', 'fake token', { crowd: true, noise: true }),
+    E('owner', 'look-alike', 'ETH', 'noise', 'fake token, 2 transfers', null, 2, '2024-01-30 … 2024-02-01', 'exact', 'fake token', { crowd: true, noise: true }),
   ];
 
   const GROUPS = {
@@ -162,7 +162,7 @@
     } else if (link) {
       panel.innerHTML = `<p class="rc-graph-details-kind">${esc(link.kind)} · ${esc(link.asset)}</p>
         <h4>${nameOf(link.source)} → ${nameOf(link.target)}</h4>
-        <dl>${row('Amount', esc(link.amount))}${row('In USD', link.value == null ? 'not valued' : '≈ ' + link.value.toLocaleString('en-US'))}${row('Transfers', esc(link.count))}${row('Period', esc(link.period))}${row('Basis', link.basis === 'derived' ? 'derived (block events)' : 'chain transactions')}</dl>`;
+        <dl>${row('Amount', esc(link.amount))}${row('In USD', link.value == null ? 'not valued' : '≈ $' + link.value.toLocaleString('en-US'))}${row('Transfers', esc(link.count))}${row('Period', esc(link.period))}${row('Basis', link.basis === 'derived' ? 'derived (block events)' : 'chain transactions')}</dl>`;
     } else {
       panel.innerHTML = `<p class="rc-graph-details-kind">Hint</p><h4>Nothing selected</h4>
         <p>Select a node to see its address and flows, or a tie to see amount, USD, transfers and period.</p>`;
@@ -179,8 +179,15 @@
     linkColorBy: l => (l.kind === 'noise' ? 'noise' : l.asset),
     linkTypes: ASSETS,
     linkWidth: { by: 'value', scale: 'sqrt', min: 1.6, max: 22 },
+    valueFormat: v => '$' + v.toLocaleString('en-US'),   // value is USD
     linkDash: l => l.basis === 'derived' || l.kind === 'noise',
-    hiddenLinkTypes: ['noise'],
+    // The key to the drawing after the asset toggles (RC-053): a row per node
+    // shape, a dashed row, a width wedge.
+    legendSymbols: {
+      shapes: { wallet: 'Wallet', contract: 'Contract', exchange: 'Exchange', crowd: 'Many addresses' },
+      dash: 'Derived or fake',   // linkDash dashes derived amounts and the noise ties
+      width: 'USD value',
+    },
     folds: FOLDS,
   };
 
@@ -209,8 +216,6 @@
     source: 'Demo data based on a public on-chain trace',
     hulls: OWNER_HULL,
     onSelect: renderPanel,
-    // The decoy's fake transfers start hidden (common.hiddenLinkTypes); the
-    // legend's "address poisoning" item reveals them.
     timeframes: TIMEFRAMES,
     navigator: true,
     details: '#graph-flow-demo-panel',        // the page's details panel: beside the drawing when wide

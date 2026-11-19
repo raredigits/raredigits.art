@@ -1,14 +1,38 @@
 // RareCharts — Tooltip
-// Shared tooltip used by all chart types.
-// Colors come from theme.tooltip, published on the element as --rc-tooltip-*;
-// size, weight and spacing are rare-charts.css (.rc-tooltip and its row
-// classes, which the default HTML builds with core/html.js).
+// Shared tooltip used by all chart types. A chart has one, made by the base
+// Chart's `tooltip` getter and taken down by Chart.destroy().
+// Colours come from the card: rare-charts.css declares --rc-tooltip-* on
+// .rc-chart (the page's --chart-tooltip-* first, then the light defaults) and
+// the chart publishes its theme's own values there (core/paint.js); the
+// element inherits them. Size, weight and spacing are rare-charts.css
+// (.rc-tooltip and its row classes, which the default HTML builds with
+// core/html.js).
 //
 // Two modes. show()/hide() is the hover tooltip every chart uses: it follows
 // the pointer and takes no pointer events. pin() is opt-in (relation charts
 // pin a link's tooltip on click): the tooltip stays put, accepts pointer
 // events so links inside it work, and closes on a click elsewhere or Escape.
 // While pinned, hover show()/hide() calls are ignored.
+
+// Custom properties, not inline styles, so a page rule that outranks
+// .rc-tooltip (.rc-chart .rc-tooltip) restyles it (B-03, C-23). null takes
+// the chart token (text, muted, bg, border; shadow: none); an empty value
+// leaves the property unset and the CSS fallback applies.
+const setToken = (el, name, v) => { if (v != null && v !== '') el.style.setProperty(name, String(v)); };
+
+// The tooltip's font and colours as --rc-tooltip-* on `el`, for the boxes
+// that wear the tooltip's look without being one: the zoom hint
+// (core/zoomGesture.js), the custom range panel and the loading bar.
+export function setTooltipTokens(el, theme) {
+  const tt = theme.tooltip ?? {};
+  setToken(el, '--rc-tooltip-font',   theme.font);
+  setToken(el, '--rc-tooltip-font-numeric', theme.numericFont);
+  setToken(el, '--rc-tooltip-text',   tt.text   ?? theme.text);
+  setToken(el, '--rc-tooltip-muted',  tt.muted  ?? theme.muted);
+  setToken(el, '--rc-tooltip-bg',     tt.bg     ?? theme.bg);
+  setToken(el, '--rc-tooltip-border', tt.border ?? theme.border);
+  setToken(el, '--rc-tooltip-shadow', tt.shadow ?? 'none');
+}
 
 export class Tooltip {
   constructor(container, theme) {
@@ -17,26 +41,11 @@ export class Tooltip {
     this._pinned = false;
     this._onClose = null;
 
-    const tt = theme.tooltip ?? {};
+    const header = theme.tooltip?.header ?? {};
 
     this.el = document.createElement('div');
     this.el.className = 'rc-tooltip';
-
-    // The theme is published as custom properties, not inline styles, so a
-    // page rule that outranks .rc-tooltip (.rc-chart .rc-tooltip) restyles
-    // it; destroy() needs no cleanup — the element goes (B-03, C-23).
-    // null takes the chart token (text, muted, bg, border; shadow: none); an
-    // empty value leaves the property unset and the CSS fallback applies.
-    const header = tt.header ?? {};
-    const set = (name, v) => { if (v != null && v !== '') this.el.style.setProperty(name, String(v)); };
-    set('--rc-tooltip-font',        theme.numericFont ?? theme.font);
-    set('--rc-tooltip-text',        tt.text   ?? theme.text);
-    set('--rc-tooltip-muted',       tt.muted  ?? theme.muted);
-    set('--rc-tooltip-bg',          tt.bg     ?? theme.bg);
-    set('--rc-tooltip-border',      tt.border ?? theme.border);
-    set('--rc-tooltip-shadow',      tt.shadow ?? 'none');
-    set('--rc-tooltip-header-text', header.text);
-    set('--rc-tooltip-header-bg',   header.bg);
+    // the colours, header ones included, are the card's (core/paint.js)
     if (header.bg != null && header.bg !== '') this.el.classList.add('rc-tooltip--header-band');
 
     container.appendChild(this.el);
@@ -104,11 +113,16 @@ export class Tooltip {
     this.el.innerHTML = html;
     this.el.classList.add('is-visible');
 
-    // Clamp to container bounds — don't let the tooltip bleed outside
-    const maxX = this._container.clientWidth  - this.el.offsetWidth  - 12;
+    // Clamp to container bounds — don't let the tooltip bleed outside.
+    // 12px right of the pointer; where that runs past the card, 12px left
+    // of it instead (RC-070): clamped against the right edge it slid back
+    // over the point being read.
+    const width = this.el.offsetWidth;
+    const maxX = this._container.clientWidth  - width - 12;
     const maxY = this._container.clientHeight - this.el.offsetHeight - 8;
+    const left = x + 12 <= maxX ? x + 12 : Math.max(8, x - 12 - width);
 
-    this.el.style.left = `${Math.min(x + 12, maxX)}px`;
+    this.el.style.left = `${left}px`;
     this.el.style.top  = `${Math.min(Math.max(y - 20, 8), maxY)}px`;
   }
 }

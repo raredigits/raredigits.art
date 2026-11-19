@@ -1,0 +1,125 @@
+<!doctype html>
+<!-- The interactive legend in a real browser (legend spec §13, S11; RC-054,
+     RC-063). Checked by test/browser/charts-legend.test.js.
+     ?host=bare | v071 | v072 links no stylesheet, Rare Styles v0.7.1 (served
+     by test/browser/hosts.js) or v0.7.2. Page mode (`<html class="rd">`).
+       #line    Line, three named series, the legend on top: the gestures
+       #right   the same Line with legendPosition 'right' (the column)
+       #chrome  the same Line with Carol hidden by setSeriesVisible: an item
+                on, an item off and Show all, for the host comparison
+       one chart of each class with a series legend, each with the key the
+       test hides and the marks that key draws (window.cases):
+       #dual DualAxes, #ts TimeSeries, #bar stacked Bar, #donut Donut,
+       #sankey Sankey (the auto legend), #flow Graph's flow view (the type
+       legend), #mapflow MapFlow (the type legend), #multi MultiChart (the
+       shared legend over two cells). -->
+<html lang="en" class="rd">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RareCharts legend</title>
+<script>
+  const HOST = new URLSearchParams(location.search).get('host') ?? 'bare';
+  const HREF = { v071: '/assets/css/rare-v0.7.1.css', v072: '/assets/css/rare.css' }[HOST];
+  if (HREF) document.write(`<link id="rare" rel="stylesheet" href="${HREF}">`);
+</script>
+<style>
+  main > div { width: 900px; margin: 0 0 24px; }
+</style>
+</head>
+<body>
+<main>
+  <div id="line"></div>
+  <div id="right"></div>
+  <div id="chrome"></div>
+  <div id="dual"></div>
+  <div id="ts"></div>
+  <div id="bar"></div>
+  <div id="donut"></div>
+  <div id="sankey"></div>
+  <div id="flow"></div>
+  <div id="mapflow"></div>
+  <div id="multi"></div>
+</main>
+<script src="/assets/charts/rare-charts.js"></script>
+<script>
+  const R = RareCharts;
+  const day = i => new Date(Date.UTC(2026, 0, 1 + i));
+  const vals = values => values.map((value, i) => ({ date: day(i), value }));
+  const A = { name: 'Alice', color: '#1677ff', values: vals([10, 12, 14, 13, 16]) };
+  const B = { name: 'Bob',   color: '#fa8c16', values: vals([30, 28, 35, 33, 40]) };
+  const C = { name: 'Carol', color: '#52c41a', values: vals([20, 22, 21, 25, 24]) };
+  const LEGEND = [{ label: 'Alice' }, { label: 'Bob' }, { label: 'Carol' }];
+  const base = { animate: false, height: 260, timeZone: 'UTC' };
+
+  const square = (x, y) => [[[x, y], [x, y + 10], [x + 10, y + 10], [x + 10, y], [x, y]]];
+  const geoData = { type: 'FeatureCollection', features: [
+    { type: 'Feature', id: 'AA', properties: { name: 'Alpha' }, geometry: { type: 'Polygon', coordinates: square(0, 40) } },
+    { type: 'Feature', id: 'BB', properties: { name: 'Beta' }, geometry: { type: 'Polygon', coordinates: square(30, 40) } },
+  ] };
+  const cats = [{ label: 'North', value: 4 }, { label: 'South', value: 6 }, { label: 'East', value: 5 }];
+
+  window.charts = {
+    line:   new R.Line('#line', { ...base, title: 'Gestures', legend: LEGEND }).setData([A, B, C]),
+    right:  new R.Line('#right', { ...base, title: 'Column', legend: LEGEND, legendPosition: 'right' }).setData([A, B, C]),
+    chrome: new R.Line('#chrome', { ...base, title: 'Chrome', legend: LEGEND }).setData([A, B, C]).setSeriesVisible(['Alice', 'Bob']),
+    dual: new R.DualAxes('#dual', { ...base, legend: [{ label: 'Vol' }, { label: 'Price' }] }).setData([
+      { name: 'Vol', axis: 'y1', type: 'bar', values: A.values },
+      { name: 'Price', axis: 'y2', type: 'line', values: B.values },
+    ]),
+    ts: new R.TimeSeries('#ts', { ...base, seriesName: 'BTC', legend: [{ label: 'BTC' }] }).setData(A.values),
+    bar: new R.Bar('#bar', { ...base, legend: [{ label: 'Plan' }, { label: 'Actual' }] }).setData([
+      { name: 'Plan', values: cats }, { name: 'Actual', values: cats },
+    ]),
+    donut: new R.Donut('#donut', { ...base, legend: cats.map(c => ({ label: c.label })) }).setData(cats),
+    sankey: new R.Sankey('#sankey', {
+      ...base, linkColor: 'type',
+      linkTypes: { loan: { color: '#1677ff', label: 'Loan' }, gift: { color: '#fa8c16', label: 'Gift' } },
+    }).setData({ links: [
+      { source: 'A', target: 'B', value: 5, type: 'loan' },
+      { source: 'A', target: 'C', value: 3, type: 'gift' },
+      { source: 'B', target: 'D', value: 2, type: 'loan' },
+    ] }),
+    flow: new R.Graph('#flow', {
+      view: 'flow', duration: 0, height: 360, laneBy: 'lane', timeZone: 'UTC',
+      lanes: [{ id: 'l1', label: 'One' }, { id: 'l2', label: 'Two' }],
+      linkTypes: { x: { color: '#6c58b5', label: 'X' }, y: { color: '#2c5d8f', label: 'Y' } },
+    }).setData({
+      nodes: [
+        { id: 'a', label: 'A', lane: 'l1' }, { id: 'b', label: 'B', lane: 'l2' }, { id: 'c', label: 'C', lane: 'l2' },
+      ],
+      links: [
+        { from: 'a', to: 'b', type: 'x', value: 5, start: '2024-01' },
+        { from: 'a', to: 'c', type: 'y', value: 2, start: '2024-02' },
+      ],
+    }),
+    mapflow: new R.MapFlow('#mapflow', {
+      projection: 'mercator', geoData, height: 300,
+      linkTypes: { goods: { color: '#8a5a2b', label: 'goods' }, silver: { color: '#5b6b7d', label: 'silver', dash: '6 4' } },
+    }).setData({
+      nodes: [{ id: 'W', label: 'West', country: 'AA' }, { id: 'E', label: 'East', country: 'BB' }],
+      links: [{ source: 'W', target: 'E', value: 3, type: 'goods' }, { source: 'E', target: 'W', value: 1, type: 'silver' }],
+    }),
+    multi: new R.MultiChart('#multi', {
+      animate: false, title: 'Shared', legend: [{ label: 'Alice' }, { label: 'Bob' }],
+      charts: [{ type: 'Line', data: [A, B] }, { type: 'Line', data: [B] }],
+    }),
+  };
+
+  // [chart id, the key the test hides, the marks that key's series draws among]
+  window.cases = [
+    ['line', 'Bob', 'path.rc-line'],
+    ['dual', 'Price', 'path.rc-dual-line, .rc-dual-bar'],
+    ['ts', 'BTC', 'path.rc-ts-line'],
+    ['bar', 'Actual', 'rect.rc-bar-seg'],
+    ['donut', 'South', '.rc-donut-slices path'],
+    ['sankey', 'loan', '.rc-sankey-link'],
+    ['flow', 'x', '.rc-flow-link'],
+    ['mapflow', 'silver', '.rc-mapflow-link'],
+    ['multi', 'Bob', 'path.rc-line'],
+  ];
+
+  window.ready = Promise.all([window.charts.flow.whenReady(), window.charts.mapflow.whenReady()]);
+</script>
+</body>
+</html>
