@@ -4,7 +4,7 @@
   const series = [
     {
       name: 'Revenue',
-      color: '#00aaff',
+      color: '#1677ff',
       values: [
         { date: '2024-01-01', value: 1.2 },
         { date: '2024-02-01', value: 1.35 },
@@ -27,7 +27,7 @@
     title: 'Revenue Performance',
     subtitle: 'Total revenue growth over 2024',
     legend: [
-      { label: 'Revenue, millions USD', color: '#00aaff' },
+      { label: 'Revenue, millions USD', color: '#1677ff' },
     ],
     source: 'Source: Internal accounting data',
 
@@ -38,7 +38,6 @@
       if (Math.abs(v) < 1e-6) return '0';
       return d3.format('.1f')(v) + 'M';
     },
-    xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
     curve: 'linear',
   }).setData(series);

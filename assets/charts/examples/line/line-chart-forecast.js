@@ -9,8 +9,8 @@
   // One hue throughout — the canonical forecast convention: the past is a solid
   // line, the future continues dashed, and the P10–P90 cone is the same hue
   // shaded. Reads cleanly on both light and dark themes.
-  const ACTUAL  = '#00aaff'; // realized revenue — solid
-  const FCAST   = '#00aaff'; // forecast — dashed P50 + shaded band
+  const ACTUAL  = '#1677ff'; // realized revenue — solid
+  const FCAST   = '#1677ff'; // forecast — dashed P50 + shaded band
 
   const actuals = [
     { date: '2024-01-01', value: 1.00 },

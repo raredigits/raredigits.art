@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -452,7 +452,7 @@ chart.setData([
     {
         name: 'Confidence range',
         type: 'band',
-        color: '#00aaff',
+        color: '#1677ff',
         fillOpacity: 0.15,
         values: [
             { date: '2025-01-01', lower: 86,  upper: 114 },
@@ -462,7 +462,7 @@ chart.setData([
     },
     {
         name: 'Estimate',
-        color: '#00aaff',
+        color: '#1677ff',
         values: [
             { date: '2025-01-01', value: 100 },
             { date: '2025-02-01', value: 118 },
@@ -492,8 +492,7 @@ chart.setData([
 <li>a dashed line for the <strong>P50</strong> central path, starting at the same anchor so the two lines connect</li>
 <li>a vertical <a href="/charts/line/annotations/">annotation</a> marking the forecast cut-over</li>
 </ul>
-<div class="air-md"></div>
-<pre class="text-content-caption"><code>const FCAST = '#00aaff';
+<pre class="text-content-caption"><code>const FCAST = '#1677ff';
 
 new RareCharts.Line('#chart', {
     curve: 'monotone',
@@ -503,7 +502,7 @@ new RareCharts.Line('#chart', {
     ],
 }).setData([
     { name: 'P10–P90 range', type: 'band', color: FCAST, fillOpacity: 0.16, values: band },
-    { name: 'Actuals',        color: '#00aaff', strokeWidth: 2.5, values: actuals },
+    { name: 'Actuals',        color: '#1677ff', strokeWidth: 2.5, values: actuals },
     { name: 'Forecast (P50)', color: FCAST, strokeDash: '5,4', values: p50 },
 ]);</code>
 </pre>
@@ -512,12 +511,12 @@ new RareCharts.Line('#chart', {
     <div class="sidenote">
         <p>A band only needs the two boundaries you already compute. If your model emits quantiles, map the outer pair to <code>lower</code>/<code>upper</code> and pass the median as an ordinary line.</p>
     </div>
-    <p>When everything shares one color, the legend has to carry the distinction. Set `type` on each legend entry so its swatch matches what is on screen — a solid rule, a dashed rule, or a filled square:</p>
+    <p>When everything shares one color, the legend has to carry the distinction. Set <code>type</code> on each legend entry so its swatch matches what is on screen — a solid rule, a dashed rule, or a filled square:</p>
 </div>
 <pre class="text-content-caption"><code>legend: [
-    { label: 'Actuals',        color: '#00aaff' },                   <span class="code-comment">// solid line</span>
-    { label: 'Forecast (P50)', color: '#00aaff', type: 'dashed' },   <span class="code-comment">// dashed line</span>
-    { label: 'P10–P90 range',  color: '#00aaff', type: 'band' },     <span class="code-comment">// filled square</span>
+    { label: 'Actuals',        color: '#1677ff' },                   <span class="code-comment">// solid line</span>
+    { label: 'Forecast (P50)', color: '#1677ff', type: 'dashed' },   <span class="code-comment">// dashed line</span>
+    { label: 'P10–P90 range',  color: '#1677ff', type: 'band' },     <span class="code-comment">// filled square</span>
 ]</code>
 </pre>
 <p>Stacking several bands — for example P10–P90 around an inner P25–P75 — is just two band series with different opacities. Draw the wider, lighter range first so the tighter one reads on top.</p>
@@ -593,7 +592,7 @@ new RareCharts.Line('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -411,11 +411,11 @@
 <h2 id="getting-the-file">Getting the file</h2>
 <p><strong>From GitHub</strong> — clone the repo and use the prebuilt file:</p>
 <pre class="code-block text-content-caption"><code data-copy="">git clone https://github.com/raredigits/rare-charts.git</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy command" data-icon="content_copy"></button></pre>
 <p>Copy <code>rare-charts.js</code> wherever your project keeps static assets.</p>
 <p><strong>From CDN</strong> — load a release directly, no download required:</p>
-<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_6/rare-charts.min.js"&gt;&lt;/script&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<pre class="code-block"><code data-copy="">&lt;script src="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_7/rare-charts.min.js"&gt;&lt;/script&gt;</code>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
 <p>Always name the version. Releases after <code>v0.9.8</code> are tagged <code>v0.9.8_N</code>, which jsDelivr does not treat as newer, so <code>@latest</code> still serves <code>v0.9.8</code> — without <code>HierarchicalBar</code>, <code>Sankey</code> and <code>MapFlow</code> — until <code>v0.9.9</code>. The readable <code>rare-charts.js</code> sits next to the minified file under the same tag.</p>
 <h2 id="where-to-put-the-script-tag">Where to put the script tag</h2>
 <p>Two standard options, both work fine.</p>
@@ -519,7 +519,7 @@
     </tr>
     <tr>
       <td><code>RareCharts.MultiChart</code></td>
-      <td>Two to four <code>Line</code> or <code>Bar</code> charts in one card</td>
+      <td>Two to four charts of any type in one card, with a shared header, legend and footer</td>
     </tr>
     <tr>
       <td><code>RareCharts.Map</code></td>
@@ -546,21 +546,32 @@
 yTickFormat: v => '$' + d3.format(',.0f')(v)</code></pre>
 <p>Before v0.9.8_6 <code>RareCharts.d3</code> was the whole D3 namespace, which kept all of D3 in the bundle; the subset adds nothing the charts do not use themselves. A page that needs more of D3 — selections, shapes, geo — loads D3 itself.</p>
 <p><code>RareCharts.generateMockPrices(days, startPrice)</code> makes random price rows (<code>date</code>, <code>value</code>, <code>open</code>, <code>high</code>, <code>low</code>, <code>volume</code>) for demos and sketches. It is a demo helper, <strong>outside the stability guarantee</strong>: its output and signature may change in any release, and it may leave the bundle. Real pages pass their own data.</p>
+<h3 id="exported-utilities">Exported utilities</h3>
+<ul>
+<li><code>RareCharts.VERSION</code> — the version of the bundle on the page, such as <code>'v0.9.8_7'</code>.</li>
+<li><code>RareCharts.DOCS_URL</code> — the address of these docs, <code>'https://raredigits.art/charts'</code>.</li>
+<li><code>RareCharts.defaultTimeframes</code> — the range buttons that <code>timeframes: true</code> draws: <code>['1M', '3M', '6M', '1Y', '2Y', 'ALL']</code>. Build your own set from it: <code>timeframes: [...RareCharts.defaultTimeframes.slice(0, -1), 'YTD', 'ALL']</code>.</li>
+<li><code>RareCharts.defaultTheme</code>, <code>darkTheme</code>, <code>createTheme</code> — the themes (<a href="/charts/styles/">Styles</a>).</li>
+<li><code>RareCharts.fromJson</code>, <code>fromCsv</code>, <code>fromApi</code>, <code>fromArray</code> — the data adapters (<a href="/charts/data-import/">Data import</a>).</li>
+<li><code>RareCharts.memorySource</code>, <code>linkPresets</code> — Graph's in-memory data source and its link type presets (<a href="/charts/graph/">Graph</a>).</li>
+</ul>
 <h2 id="fonts-and-rare-styles">Fonts and Rare Styles</h2>
 <p>RareCharts does not need <a href="/styles/">Rare Styles</a> or any other stylesheet. The chart CSS is bundled in with its own spacing and type variables, so a chart keeps its layout on any page, a blank one included.</p>
 <p>The library loads no fonts. Charts use Fira Sans for text and Cousine for numbers when the page provides them, and the system sans-serif and monospace fonts otherwise. Rare Styles self-hosts both families, so a Rare Styles page needs nothing more. On any other page, load them yourself for the same look:</p>
 <pre class="code-block"><code data-copy="">&lt;link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,400;0,700;1,400&amp;family=Cousine:wght@400;700&amp;display=swap"&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
+<p>The charts read the page's chart tokens where it has them: the fonts from <code>--chart-font-family</code> and <code>--chart-font-family-numeric</code>, the colors from <code>--chart-*</code> (<a href="/charts/styles/#where-colors-come-from">Styles</a>). Rare Styles sets them since <code>v0.7.2</code>; on <code>v0.7.1</code> and on other pages the charts take their own values. No Rare Styles version is required.</p>
 <p>To change the type system, override the <code>--rc-*</code> variables with a selector that outranks the library's <code>.rc-chart</code> rule, such as <code>:root .rc-chart</code> — see <a href="/charts/styles/">Styles</a>.</p>
 <h2 id="strict-content-security-policy">Strict Content Security Policy</h2>
 <p>The bundle adds its stylesheet to <code>&lt;head&gt;</code> as a <code>&lt;style&gt;</code> element. A <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP">Content Security Policy</a> without <code>'unsafe-inline'</code> in <code>style-src</code> blocks it, and the charts lose their layout. Serve the stylesheet as a file instead:</p>
-<p><strong>1.</strong> Take <code>rare-charts.css</code> of the same version as your bundle. Each release publishes it next to the bundle — <code>https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_6/rare-charts.css</code> — if your policy allows that origin in <code>style-src</code>; otherwise save it with your other static files (the copy at <a href="/assets/charts/rare-charts.css"><code>/assets/charts/rare-charts.css</code></a> is the one these pages document, <code>v0.9.8_6</code>) and take it again when you update the bundle.</p>
+<p><strong>1.</strong> Take <code>rare-charts.css</code> of the same version as your bundle. Each release publishes it next to the bundle — <code>https://cdn.jsdelivr.net/gh/raredigits/rare-charts@v0.9.8_7/rare-charts.css</code> — if your policy allows that origin in <code>style-src</code>; otherwise save it with your other static files (the copy at <a href="/assets/charts/rare-charts.css"><code>/assets/charts/rare-charts.css</code></a> is the one these pages document, <code>v0.9.8_7</code>) and take it again when you update the bundle.</p>
 <p><strong>2.</strong> Link it with the id <code>rc-base-styles</code>. The bundle finds the id and adds no <code>&lt;style&gt;</code> of its own:</p>
 <pre class="code-block"><code data-copy="">&lt;link id="rc-base-styles" rel="stylesheet" href="/assets/rare-charts.css"&gt;</code>
-<button class="copy-data-icon rd-js-copy" title="Copy link" data-icon="content_copy"></button></pre>
+<button class="copy-data-icon rd-js-copy" title="Copy markup" data-icon="content_copy"></button></pre>
 <p>If the stylesheet reaches the page another way — inside your own CSS bundle, say — turn the injection off before the bundle runs. Under such a policy an inline <code>&lt;script&gt;</code> is blocked too, so set it in a script file of your own (or one with the policy's nonce), loaded before <code>rare-charts.js</code>:</p>
 <pre><code>window.RareChartsConfig = { injectStyles: false };</code></pre>
-<p>Everything else the charts style from script — sizes, positions, theme colours — goes through the DOM style API, which the policy allows. One thing it does block: colours written as <code>style</code> attributes into the markup of the built-in tooltips (a series colour on its row, a slice colour on its label) and of the Graph details hint — that text then takes the tooltip's or the panel's own colour.</p>
+<p>Without the stylesheet at all the charts still draw, unstyled: the header and footer text take the page's color, and the Graph tool buttons are the page's plain buttons.</p>
+<p>Everything else the charts style from script — sizes, positions, theme colours — goes through the DOM style API, which the policy allows. One thing it does block: colours written as <code>style</code> attributes into the markup of the built-in tooltips — a row's mark in its series colour, a link type in its own colour in the relation tooltips. Those then take the tooltip's own colours.</p>
 <h2 id="minimal-working-example">Minimal working example</h2>
 <pre class="text-content-caption"><code>&lt;div id="chart"&gt;&lt;/div&gt;
 
@@ -587,7 +598,7 @@ yTickFormat: v => '$' + d3.format(',.0f')(v)</code></pre>
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

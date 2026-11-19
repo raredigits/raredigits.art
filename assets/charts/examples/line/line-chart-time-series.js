@@ -1,3 +1,7 @@
+// Needs the page around it: the quote header (#hd-price, #hd-change) and the
+// KPI row (#s-open … #s-vol) are the docs page's markup, laid out by Rare
+// Styles (.panel__row, .stat) and the site's .price-chart-* rules
+// (assets/css/rare-website.css). The chart itself needs none of them.
 (async () => {
   const { d3 } = RareCharts;
   const data = RareCharts.generateMockPrices(730, 162);
@@ -9,20 +13,18 @@
   // ── Header ─────────────────────────────────
   document.getElementById('hd-price').textContent = '$' + last.value.toFixed(2);
 
+  // The day's change is a Rare Styles stat with the delta chip: an arrow up or
+  // down in the positive or negative colour (.stat--delta-up / -down, v0.7.2).
+  // .price-chart-* is the docs site's own layout (assets/css/rare-website.css).
   const chgEl = document.getElementById('hd-change');
-  chgEl.textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${pct.toFixed(2)}%)`;
-  // .price-chart-* styles live in the site stylesheet, assets/css/rare-website.css
-  chgEl.className = 'price-chart-change ' + (chg >= 0 ? 'up' : 'down');
+  chgEl.querySelector('.stat__value').textContent = `${chg >= 0 ? '+' : ''}${chg.toFixed(2)} (${pct.toFixed(2)}%)`;
+  chgEl.className = 'price-chart-change stat stat--delta-' + (chg >= 0 ? 'up' : 'down');
 
   // ── Stats ──────────────────────────────────
   document.getElementById('s-open').textContent = '$' + last.open.toFixed(2);
   document.getElementById('s-high').textContent = '$' + last.high.toFixed(2);
   document.getElementById('s-low').textContent  = '$' + last.low.toFixed(2);
   document.getElementById('s-vol').textContent  = d3.format('.2s')(last.volume);
-  const yearAgo  = new Date(+last.date - 365 * 864e5);
-  const lastYear = data.filter(d => d.date >= yearAgo);
-  document.getElementById('s-52h').textContent  = '$' + d3.max(lastYear, d => d.high).toFixed(2);
-  document.getElementById('s-52l').textContent  = '$' + d3.min(lastYear, d => d.low).toFixed(2);
 
   // ── TimeSeries ─────────────────────────────
   const mainChart = new RareCharts.TimeSeries('#timeseriesChart', {
@@ -38,14 +40,21 @@
     },
     timeframes: true,
     defaultTimeframe: '1Y',
-    tooltipFormat: d => {
-      const c     = d.value - d.open;
-      const p     = (c / d.open * 100).toFixed(2);
-      const color = c >= 0 ? RareCharts.defaultTheme.positive : RareCharts.defaultTheme.negative;
+    // The tooltip's own rows (/charts/settings/#custom-tooltip): the price
+    // row, and under it a note with the day's change, green or red, and the
+    // volume — fields of the row the default tooltip does not show.
+    tooltipFormat: (d, { color }) => {
+      const c  = d.value - d.open;
+      const p  = (c / d.open * 100).toFixed(2);
+      const up = c >= 0 ? '#389e0d' : '#ff0000';   // up green, down red
       return `
-        <div>${d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
-        <div style="color:${color}">$${d.value.toFixed(2)}</div>
-        <div>${c >= 0 ? '+' : ''}${c.toFixed(2)} (${p}%)  VOL ${d3.format('.2s')(d.volume)}</div>
+        <div class="rc-tooltip-header rc-tooltip-muted">${d3.timeFormat('%b %d, %Y')(d.date)}</div>
+        <div class="rc-tooltip-row">
+          <span class="rc-tooltip-swatch" style="--rc-swatch-color:${color}"></span>
+          <span class="rc-tooltip-label">Close</span>
+          <span class="rc-tooltip-value rc-num">$${d.value.toFixed(2)}</span>
+          <span class="rc-tooltip-note"><span style="color:${up}">${c >= 0 ? '+' : ''}${c.toFixed(2)} (${p}%)</span> · Vol ${d3.format('.2s')(d.volume)}</span>
+        </div>
       `;
     },
   });

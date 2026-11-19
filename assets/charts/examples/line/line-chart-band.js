@@ -6,7 +6,7 @@
   // band primitive on its own: a filled ribbon between `lower` and `upper`,
   // with an ordinary line series drawn on top as the central estimate.
 
-  const ACCENT = '#00aaff';
+  const ACCENT = '#1677ff';
 
   const estimate = [
     { date: '2025-01-01', value: 100 },

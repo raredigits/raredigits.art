@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -476,7 +476,7 @@
   ],
 });</code></pre>
 <h2 id="hierarchical-bar-options">Hierarchical Bar options</h2>
-<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page.</p>
+<p>Common options shared by all chart types (<code>title</code>, <code>subtitle</code>, <code>source</code>, <code>note</code>, <code>controls</code>, <code>theme</code>) are documented on the <a href="/charts/settings/">Settings</a> page. The <code>legend</code> is a caption here: the chart has no series to hide.</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
     <thead>
@@ -516,10 +516,10 @@
             <td>Side by side: <code>'right'</code> sets every name flush against the bars; <code>'left'</code> lines the names up at the left edge, indented by depth. Stacked, the name is always indented.</td>
         </tr>
         <tr>
-            <td><code>barHeight</code></td>
+            <td><code>barWidth</code></td>
             <td>number</td>
             <td>auto (<code>16</code>)</td>
-            <td>Bar thickness in px. By default the value-label font size + 2 — 16px with the standard 14px labels (<code>--rc-font-size-sm</code>).</td>
+            <td>Bar thickness in px, the name Bar and DualAxes use. By default the value-label font size + 2 — 16px with the standard 14px labels (<code>--rc-font-size-sm</code>). Before 0.9.8_7 it was <code>barHeight</code>, which no longer works.</td>
         </tr>
         <tr>
             <td><code>showRoot</code></td>
@@ -593,7 +593,7 @@
         <tr>
             <td><code>duration</code></td>
             <td>number</td>
-            <td><code>500</code></td>
+            <td><code>650</code></td>
             <td>Animation duration in ms.</td>
         </tr>
         <tr>
@@ -627,7 +627,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

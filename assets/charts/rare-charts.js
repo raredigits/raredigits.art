@@ -1,4 +1,4 @@
-/*! RareCharts v0.9.8_6 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link); no fonts are loaded - Fira Sans/Cousine when the page has them, system fonts otherwise. Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, MapFlow, Sankey. Relation charts (Graph, Sankey, MapFlow) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Graph flow: nodes without row/col/x/y hints are laid out automatically (layout: 'auto'); folds collapse node sets into +/- meta-nodes (collapse/expand(id)); timeframes and navigator pick a period over the ties' start/end; ties outside it dim (timeWindowMode: 'hide' hides them). MapFlow nodes: coords [lon, lat] or country (feature id); setTimeWindow(from, to). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Log Y scale: yScale: 'log' (Line, TimeSeries) or y1Scale/y2Scale (DualAxes); switch with setYScale() or the built-in Lin/Log button (scaleToggle), listen with onScaleChange(fn). Every chart class except the standalone Overview has whenReady(), a promise resolved with the chart once it has drawn what it loads (Graph requests and layout, Map/MapFlow geometry; others at once). Strict CSP: set window.RareChartsConfig = { injectStyles: false } before the bundle and link rare-charts.css. Runtime version: RareCharts.VERSION */
+/*! RareCharts v0.9.8_7 | Docs: https://raredigits.art/charts | Global: RareCharts; d3 and CSS are bundled in (no extra script/link); no fonts are loaded - Fira Sans/Cousine when the page has them, system fonts otherwise. Usage: new RareCharts.<Type>(selector, options).setData(data) - the container element must already exist. Types: Line, TimeSeries, Overview, Bar, HierarchicalBar, DualAxes, Donut, Pie, Gauge, Graph (views ego|path|cluster|flow), MultiChart, Map, MapFlow, Sankey. Relation charts (Graph, Sankey, MapFlow) share { nodes, links: [{ source, target, ... }] } (from/to accepted). Graph flow: nodes without row/col/x/y hints are laid out automatically (layout: 'auto'); folds collapse node sets into +/- meta-nodes (collapse/expand(id)); timeframes and navigator pick a period over the ties' start/end; ties outside it dim (timeWindowMode: 'hide' hides them). MapFlow nodes: coords [lon, lat] or country (feature id); setTimeWindow(from, to). Data shape is per-type (see docs); load or remap external data with RareCharts.fromJson|fromCsv|fromApi|fromArray. Text slots title/subtitle/legend/source/note are options - feed them, don't hardcode; put your own inputs inside the card with the controls option (element or selector), and use Graph's details option for a node/tie details panel: https://raredigits.art/charts/settings/. Dates: a date-only string ('2024-03-01') is local midnight; for data in UTC days set timeZone: 'UTC' (Line, DualAxes, TimeSeries, dated Bar, Overview, Graph flow, MapFlow). TimeSeries: setData({ hour, day, month, ... }) hands over several bucket sizes and the chart draws the one that fits the window; timeframes count back from timeframeAnchor ('dataEnd' | 'now' | date); 'CUSTOM' in timeframes opens a date range; compare: 'previousPeriod' | 'previousYear'. Legends are interactive by default: an item that names a series toggles it (double click keeps one, Show all restores; legendInteractive: false for a static legend); setSeriesVisible(names | null) from code (Graph, MapFlow, Sankey: setLinkTypesVisible), onLegendToggle(fn) to listen. Bar picks its mode from the first row: a values array is stacked, date + value a time axis, anything else categories. Map: onRegionClick(fn) makes data regions buttons. Formatters get (value, info) - info carries label, value, date, color (hex), percent, series as they apply; valueFormat (v => string) prints values on Bar labels, Sankey, Graph and MapFlow. Colours: no stylesheet is required; the charts read the page's --chart-* tokens when it has them (Rare Styles sets them), and createTheme(overrides) / defaultTheme / darkTheme set a theme of their own. RareCharts.d3 is a subset (format, timeFormat, utcFormat, scales, time intervals, color) - load D3 itself for selections, shapes or geo. Log Y scale: yScale: 'log' (Line, TimeSeries) or y1Scale/y2Scale (DualAxes); switch with setYScale() or the built-in Log toggle (scaleToggle), listen with onScaleChange(fn). Removed in v0.9.8_7: viewSteps (use timeframes), HierarchicalBar barHeight (use barWidth), Graph interactiveLegend (use legendInteractive). Every chart class except the standalone Overview has whenReady(), a promise resolved with the chart once it has drawn what it loads (Graph requests and layout, Map/MapFlow geometry; others at once). Strict CSP: set window.RareChartsConfig = { injectStyles: false } before the bundle and link rare-charts.css. Runtime version: RareCharts.VERSION */
 var RareCharts = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -2390,17 +2390,14 @@ var RareCharts = (() => {
   // assets/charts/rare-charts.css
   var rare_charts_default = `/* RareCharts \u2014 rare-charts.css
    Structure, positioning and spacing; the bundle injects it into <head>.
-   Chart colours come from the theme (JS). The few host colours read here
-   (buttons, panels) all have fallbacks, so a page without Rare Styles works.
+   The chart tokens (--rc-*, below) read the page's --chart-* first and end
+   in a literal; a theme's own values are written inline on the card. Every
+   host colour read here has a fallback, so a page without Rare Styles works.
    No fonts are loaded: the page supplies them (README, "Fonts"). */
 
 /* \u2500\u2500\u2500 Chart wrapper \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-chart {
-  /* Fira Sans / Cousine when the page has them (Rare Styles self-hosts both),
-     system fonts otherwise \u2014 the library loads no webfont (K-01). */
-  --rc-font-family: "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --rc-font-family-numeric: "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   --rc-font-size: 16px;
   --rc-font-size-sm: 14px;
   /* Spacing \u2014 the Rare Styles scale at its 16px unit, fixed, so a chart
@@ -2409,11 +2406,15 @@ var RareCharts = (() => {
   --rc-space-sm: 8px;
   --rc-space-md: 16px;
   --rc-space-lg: 32px;
-  /* Lin/Log switch fill \u2014 an explicit colour, not the page's --border-color,
-     which some hosts set to black (the label then disappears). */
-  --rc-scale-btn-fill: #ccc;
   /* Set once: subtitle, legend, source, note and controls inherit it (C-14). */
   font-family: var(--rc-font-family);
+  /* The chart's own line height on any page (K-15): the controls, the cell
+     titles, the Graph notes and the "+N" rows inherit it. */
+  line-height: 24px;
+  /* The card's text (K-14): what the chart writes in HTML inherits it \u2014 the
+     Graph and MapFlow legends, the breadcrumbs, the details panel, the tool
+     notes, the controls slot, a currentColor focus ring. */
+  color: var(--rc-text);
   /* The header follows the card's width, not the window's (K-17): a narrow
      card on a wide screen stacks it too. The card takes its width from its
      parent, as a block, a grid cell or a stretched flex item does. */
@@ -2424,7 +2425,88 @@ var RareCharts = (() => {
   /* Keep the chart card as the outer clipping boundary for tooltips/overlays.
      In-chart labels that need to extend past the SVG box use svg{overflow:visible}. */
   overflow: hidden;
+  /* Host independence (C-13): the card's size counts its padding and border,
+     as on a Rare Styles page (RC-016; a content-box host got less plot and
+     overflowing rows), and the page's text alignment stays out (RC-065: a
+     right-aligned sidenote pushed a title right and a source left). */
+  box-sizing: border-box;
+  text-align: start;
 }
+
+/* The library's own boxes count their padding and border too (RC-016). */
+.rc-chart :is(.rc-tooltip, .rc-range-btn, .rc-range-panel, .rc-range-input, .rc-range-apply,
+    .rc-legend-item, .rc-legend-reset, .rc-graph-tool, .rc-graph-overflow, .rc-graph-overflow *,
+    .rc-chart-loading, .rc-zoom-hint) {
+  box-sizing: border-box;
+}
+
+/* A link in a chart \u2014 the source line, a tooltip, the details panel \u2014 keeps
+   the chart's look: no host link fill rising under it on hover (RC-017). */
+.rc-chart a,
+.rc-chart a:hover {
+  background: none;
+}
+
+/* \u2500\u2500\u2500 Chart tokens (RC-014, K-14, RC-064) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* Role colours, each a chain: the page's --chart-* token, an older page
+   token only where 0.9.8_6 already read one, then the literal of
+   defaultTheme (core/theme.js; test/charts-css.test.js keeps them in step).
+   Declared on every card, so a .card or .card-inverted that restates the
+   --chart-* tokens drives the charts in it. A theme's own values are
+   published inline on the card (core/paint.js) and win. A standalone
+   Overview is an .rc-overview; under a chart it inherits the chart's. */
+.rc-chart,
+.rc-overview {
+  /* Fonts (RC-014): the page's chart fonts, else Fira Sans / Cousine when the
+     page has them (Rare Styles self-hosts both), else system fonts \u2014 the
+     library loads no webfont (K-01). */
+  --rc-font-family: var(--chart-font-family, "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif);
+  --rc-font-family-numeric: var(--chart-font-family-numeric, "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace);
+
+  /* Roles (RC-014, RC-064). */
+  --rc-bg:        var(--chart-bg, var(--bg-color, #ffffff));
+  --rc-text:      var(--chart-text-color, #000000);
+  --rc-muted:     var(--chart-label-color, #666666);
+  --rc-border:    var(--chart-axis-color, #cccccc);
+  --rc-grid:      var(--chart-grid-color, #e4e4e4);
+  --rc-crosshair: #aaaaaa;
+  /* From the tokens, not from --rc-bg: a page with the old tokens only keeps #f5f5f5. */
+  --rc-surface:   color-mix(in srgb, var(--chart-bg, #ffffff) 96%, var(--chart-text-color, #000000));
+  --rc-accent:    var(--chart-series-1, #1677ff);
+
+  /* Controls (RC-061): each keeps the old page token 0.9.8_6 read. */
+  --rc-control-text:         var(--chart-control-text, var(--text-color-light, #666666));
+  --rc-control-border:       var(--chart-control-border, var(--border-color, #cccccc));
+  --rc-control-hover-border: var(--chart-control-hover-border, var(--primary-color, #000000));
+  --rc-control-active-text:  var(--chart-control-active-text, var(--primary-text-color, #000000));
+  --rc-control-active-bg:    var(--chart-control-active-bg, var(--white, #ffffff));
+  --rc-focus-ring:           var(--chart-focus-ring, currentColor);
+
+  /* The tooltip: a popover with its own light surface, on a dark card too. */
+  --rc-tooltip-bg:     var(--chart-tooltip-bg, #ffffff);
+  --rc-tooltip-border: var(--chart-tooltip-border, #e4e4e4);
+  --rc-tooltip-text:   var(--chart-tooltip-text, #000000);
+  --rc-tooltip-muted:  var(--chart-tooltip-muted, #666666);
+  --rc-tooltip-shadow: var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
+  /* Set only by a theme (its fonts, its header colours); each card starts
+     without them, so a chart inside another never takes the outer one's. */
+  --rc-tooltip-font:        initial;
+  --rc-tooltip-font-numeric: initial;
+  --rc-tooltip-header-text: initial;
+  --rc-tooltip-header-bg:   initial;
+
+  /* The map (RC-064: on a dark card the map follows the tokens). */
+  --rc-map-unmatched-fill: var(--chart-grid-color, #e8e8e8);
+  --rc-map-border:         var(--chart-bg, #ffffff);
+  --rc-map-graticule:      color-mix(in srgb, var(--chart-text-color, #000000) 8%, transparent);
+}
+
+@supports not (color: color-mix(in srgb, red, red)) {
+  .rc-chart,
+  .rc-overview { --rc-surface: #f5f5f5; --rc-map-graticule: rgba(0,0,0,0.08); }
+}
+
+/* \u2500\u2500\u2500 Card layout \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-chart > .rc-chart-header { order: 0; }
 .rc-graph-breadcrumbs        { order: 1; }
@@ -2465,12 +2547,26 @@ var RareCharts = (() => {
   overflow: visible;
 }
 
-.rc-chart-header,
-.rc-chart-subtitle,
-.rc-legend,
-.rc-chart-source {
-  color: var(--primary-color, currentColor);
+.rc-chart-navigator svg { overflow: visible; }  /* brush handles at a 0px margin stay whole */
+
+/* The header and footer text in the card's tokens (K-14, RC-061). Two
+   classes: a host's h5, p, cite or \`.content h5\` rule does not reach them. */
+.rc-chart .rc-chart-title,
+.rc-chart .rc-chart-subtitle,
+.rc-chart .rc-legend,
+.rc-chart .rc-chart-source {
+  color: var(--rc-text);
 }
+
+.rc-chart .rc-chart-note {
+  color: var(--rc-muted);
+}
+
+/* Line heights the host cannot change (K-15): a host's h5 rule targets the
+   title itself (a sidenote's 1.4 gave 22.4px), and a <cite> took 1.5 from
+   Rare Styles v0.7.2 (21px instead of 18.2px). */
+.rc-chart .rc-chart-title  { line-height: 24px; }
+.rc-chart .rc-chart-source { line-height: 1.3; }
 
 /* \u2500\u2500\u2500 Header \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
@@ -2523,6 +2619,561 @@ var RareCharts = (() => {
 .rc-chart > .rc-chart-header > .rc-chart-range-row { grid-area: range; }
 .rc-chart > .rc-chart-header > .rc-legend          { grid-area: legend; }
 
+.rc-chart-range-row {
+  grid-area: range;
+  justify-self: end;
+  align-self: start;
+  min-width: max-content;
+  padding-right: 60px;
+  position: relative;
+}
+
+/* The Log toggle: pinned right, in the 60px the row keeps free above the
+   Y-axis labels, level with the first line of timeframes \u2014 which stay where
+   they are. Without timeframes the row holds just the button, at the right. */
+.rc-chart-range-row--scale .rc-scale-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.rc-chart-range-row--scale-only {
+  padding-right: 0;
+}
+
+/* No Y-axis gutter on the right (Map, MapFlow, Graph): flush to the edge. */
+.rc-chart-range-row--flush {
+  padding-right: 0;
+}
+
+/* A card 460px wide or narrower stacks its header: the buttons move under the
+   subtitle (K-17; kept at 460 by the maintainer, 2026-11-17). A wider card
+   stacks it too when the title would be cut beside the buttons, or the
+   subtitle squeezed past two lines \u2014 the rc-chart-header--stacked class
+   Chart._fitHeader sets (RC-066), below. */
+@container rc-chart (max-width: 460px) {
+  .rc-chart-header {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "subtitle"
+      "range"
+      "legend";
+  }
+
+  .rc-chart-range-row {
+    justify-self: start;
+    min-width: 0;
+    padding-right: 0;
+  }
+
+  /* Narrow card: the timeframes keep their place on the left and wrap
+     before the Log toggle, which stays pinned right. */
+  .rc-chart-range-row--scale {
+    justify-self: stretch;
+    padding-right: 60px;
+  }
+
+  .rc-chart-range-row--scale-only {
+    justify-self: end;
+  }
+
+  /* Narrower range buttons (RC-058, maintainer 2026-11-17): six presets
+     keep one row on a phone, and the card wins back the second row. Two
+     classes: the base rule comes later in this file. */
+  .rc-chart-range-bar .rc-range-btn {
+    padding-left: var(--rc-space-sm);
+    padding-right: var(--rc-space-sm);
+  }
+}
+
+/* The same stacked header on a wider card whose title would be cut beside
+   the buttons ('SIT\u2026' at 600\u2013800 px on TimeSeries, 600\u2013900 on the big flow),
+   or whose subtitle, squeezed beside them, runs past two lines (RC-066,
+   maintainer 2026-11-17/18). */
+.rc-chart-header.rc-chart-header--stacked {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "subtitle"
+    "range"
+    "legend";
+}
+
+.rc-chart-header--stacked > .rc-chart-range-row {
+  justify-self: start;
+  min-width: 0;
+  padding-right: 0;
+}
+
+.rc-chart-header--stacked > .rc-chart-range-row--scale {
+  justify-self: stretch;
+  padding-right: 60px;
+}
+
+.rc-chart-header--stacked > .rc-chart-range-row--scale-only {
+  justify-self: end;
+}
+
+/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-chart-range-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rc-space-xs);
+  align-items: center;
+}
+
+.rc-range-btn {
+  background: none;
+  /* the chart font, not the UA button font (C-14); the shorthand resets the
+     size, so it comes first */
+  font: inherit;
+  font-size: var(--rc-font-size-sm);
+  /* the shorthand also takes the page's line-height; keep the button's own */
+  line-height: 1.15;
+  border: 1px solid var(--rc-control-border);
+  border-radius: var(--rc-space-xs);
+  padding: var(--rc-space-sm) var(--rc-space-md);
+  /* no margin or shadow a host's button rule gives (X-08) */
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background-color 0.1s, border-color 0.1s;
+  color: var(--rc-control-text);
+}
+
+/* A host's button:active / :focus fill, frame, colour and shadow stay out
+   (classless host stylesheets such as Pico or Water.css; X-08, maintainer
+   2026-11-19): the button as at rest. Before :hover and the pressed state,
+   which win at the same weight. */
+.rc-range-btn:is(:active, :focus) {
+  color: var(--rc-control-text);
+  border-color: var(--rc-control-border);
+  background-color: transparent;
+  box-shadow: none;
+}
+
+.rc-range-btn:hover {
+  color: var(--rc-control-active-text);
+  border-color: var(--rc-control-hover-border);
+  /* the button's own background, not a host button:hover one (C-24, G3:
+     Rare Styles v0.7.1's fill) */
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* The pressed timeframe: aria-pressed (K-06). The code still sets \`.active\`
+   beside it for pages that select it, until 0.9.9; nothing here does. */
+.rc-range-btn[aria-pressed="true"] {
+  color: var(--rc-control-active-text);
+  background-color: var(--rc-control-active-bg);
+  border-color: var(--rc-control-hover-border);
+}
+
+/* The "Log" toggle (RC-083): a range button with a fixed label, pressed
+   (aria-pressed) while the axis is logarithmic. A lone toggle has no
+   neighbour to compare with, so its two states differ plainly (maintainer,
+   2026-11-18, variant C): off (a linear axis) \u2014 transparent, only the
+   outline, muted text; on (logarithmic) \u2014 filled with the accent, white
+   text, hovered or not. Three classes, so a
+   host button:hover background cannot reach it (C-24). Narrower than a
+   timeframe button, so it fits the 60px above the Y labels. */
+.rc-range-btn.rc-scale-btn {
+  padding-left: var(--rc-space-sm);
+  padding-right: var(--rc-space-sm);
+  text-align: center;
+  color: var(--rc-muted);
+  background-color: transparent;
+}
+
+.rc-range-btn.rc-scale-btn[aria-pressed="true"],
+.rc-range-btn.rc-scale-btn[aria-pressed="true"]:hover {
+  color: #ffffff;
+  background-color: var(--rc-accent);
+  border-color: var(--rc-accent);
+}
+
+/* \u2500\u2500\u2500 Custom range (RC-003) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* 'CUSTOM' in timeframes: a range button like its neighbours
+   (.rc-range-btn.rc-range-custom, aria-expanded while open) that opens a
+   small panel under itself \u2014 From and To date fields and Apply
+   (core/customRange.js).
+
+   The panel: the tooltip's colours, border and shadow (--rc-tooltip-*, set
+   on it from the theme: dark with darkTheme) and theme.border on its fields
+   (--rc-range-border). The code places it under the button, inside the
+   card, and keeps it as wide as the card's content at most (max-width): its
+   own width is its content's, not what the narrow range row leaves it. Over
+   the tooltip; in the range bar, after its button, so Tab runs from the
+   button into it. Made on open and removed on close: a chart at rest has
+   none. */
+.rc-range-panel {
+  position: absolute;
+  z-index: 101;
+  box-sizing: border-box;
+  width: max-content;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--rc-space-sm);
+  margin: 0;
+  padding: var(--rc-space-sm);
+  font-size: var(--rc-font-size-sm);
+  font-weight: normal;
+  line-height: 1.15;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--rc-tooltip-text, #000000);
+  background: var(--rc-tooltip-bg, #ffffff);
+  border: 1px solid var(--rc-tooltip-border, #e4e4e4);
+  box-shadow: var(--rc-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
+}
+
+/* It takes the focus only to keep it from a press on its padding. */
+.rc-range-panel:focus {
+  outline: none;
+}
+
+/* A phone zooms the page into a field under 16px when it takes focus. */
+@media (pointer: coarse) {
+  .rc-range-panel {
+    font-size: var(--rc-font-size);
+  }
+}
+
+/* "From", "To": host label rules (a bold block with a margin) stop here.
+   One class: no host styles a label's states, and one class outranks the
+   \`label\` element rule (X-08's hostile host). */
+.rc-range-label {
+  display: block;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--rc-tooltip-muted, #666666);
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: none;
+  cursor: default;
+}
+
+/* The date fields and Apply: the full reset at a doubled class, every
+   state listed (the G1 pattern, RC-032; as the legend buttons): a host's
+   form and button rules \u2014 Rare Styles v0.7.1's \`button\` and \`button:hover\`,
+   a bare page's UA chrome \u2014 never reach them, and they look the same on
+   any page. Their own look comes with the reset: a 1px theme.border frame
+   on the fields, a frame in the text colour on Apply, the panel's
+   background through both. The focus ring is the rule after. */
+.rc-range-input.rc-range-input,
+.rc-range-input.rc-range-input:hover,
+.rc-range-input.rc-range-input:focus,
+.rc-range-input.rc-range-input:active {
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  min-height: calc(1.15em + 2 * var(--rc-space-xs) + 2px);
+  margin: 0;
+  padding: var(--rc-space-xs) var(--rc-space-sm);
+  border: 1px solid var(--rc-range-border, #cccccc);
+  border-radius: var(--rc-space-xs);
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  text-decoration: none;
+  text-transform: none;
+  vertical-align: middle;
+  opacity: 1;
+  cursor: text;
+  user-select: text;
+  transition: none;
+  transform: none;
+}
+
+.rc-range-apply.rc-range-apply,
+.rc-range-apply.rc-range-apply:hover,
+.rc-range-apply.rc-range-apply:focus,
+.rc-range-apply.rc-range-apply:active {
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  grid-column: 1 / -1;
+  justify-self: end;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+  padding: var(--rc-space-xs) var(--rc-space-md);
+  border: 1px solid currentColor;
+  border-radius: var(--rc-space-xs);
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-align: center;
+  text-decoration: none;
+  text-transform: none;
+  vertical-align: middle;
+  opacity: 1;
+  cursor: pointer;
+  transition: none;
+  transform: none;
+}
+
+/* An empty field: Apply waits. After the reset, at its specificity. */
+.rc-range-apply.rc-range-apply:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.rc-range-input.rc-range-input:focus-visible,
+.rc-range-apply.rc-range-apply:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
+/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+.rc-legend {
+  grid-area: legend;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  /* wrapped lines sit close; items keep their horizontal spacing */
+  column-gap: var(--rc-space-md);
+  row-gap: 2px;
+  line-height: 1.3;
+  font-size: var(--rc-font-size-sm);
+  user-select: none;
+}
+
+.rc-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* An item that toggles a series is a <button aria-pressed> (src/core/
+   legend.js), a static one a <div>; "Show all" is a <button
+   class="rc-legend-reset">. The full reset at a doubled class (the G1
+   pattern, RC-054): no host button rule reaches them in any state \u2014 Rare
+   Styles' \`button:hover\`, a bare page's UA chrome \u2014 so a button draws the
+   same box as a div. On a div it changes nothing. One item size everywhere:
+   18.2px (14px \xD7 1.3), the Graph, flow and MapFlow legends included. */
+.rc-legend-item.rc-legend-item,
+.rc-legend-item.rc-legend-item:hover,
+.rc-legend-item.rc-legend-item:active,
+.rc-legend-reset.rc-legend-reset,
+.rc-legend-reset.rc-legend-reset:hover,
+.rc-legend-reset.rc-legend-reset:active {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  text-transform: none;
+  text-align: inherit;
+  text-decoration: none;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  vertical-align: baseline;
+  transition: none;
+  transform: none;
+}
+
+button.rc-legend-item,
+.rc-legend-reset {
+  cursor: pointer;
+  position: relative;
+  touch-action: manipulation;              /* a double tap isolates, never zooms */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The hit area reaches 3px above and below the item, into the row gap. */
+button.rc-legend-item::before,
+.rc-legend-reset::before {
+  content: '';
+  position: absolute;
+  inset: -3px 0;
+}
+
+/* Off: the swatch and the label dim, not the item \u2014 its focus ring keeps
+   full contrast. The state is aria-pressed alone (K-06). */
+.rc-legend-item[aria-pressed="false"] > * {
+  opacity: 0.35;
+}
+
+/* "Show all": the last child while the legend holds a toggle, hidden while
+   nothing is off. Its text is a <span>, so the dimmed look leaves its focus
+   ring at full contrast. */
+.rc-legend-reset {
+  display: inline-flex;
+  align-items: center;
+}
+
+.rc-legend-reset > span {
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+/* our display rule above beats the UA's [hidden] */
+.rc-legend-reset[hidden] {
+  display: none;
+}
+
+/* In the right-hand column Show all is always laid out \u2014 invisible while
+   nothing is off \u2014 and gives its height and the gap back, so the centred
+   items never move when it shows. */
+.rc-chart-legend-aside .rc-legend-reset[hidden] {
+  display: inline-flex;
+  visibility: hidden;
+}
+
+.rc-chart-legend-aside .rc-legend-reset {
+  margin-bottom: calc(-1.3em - var(--rc-space-sm));
+}
+
+.rc-legend[aria-busy="true"] :is(button.rc-legend-item, .rc-legend-reset) {
+  cursor: progress;
+}
+
+/* The legend itself takes focus only as a last resort (its focused item
+   went away); it shows no ring. */
+.rc-legend:focus {
+  outline: none;
+}
+
+/* Swatches take their colour from --rc-swatch-color, which the legend
+   builder sets on each (D-04): no inline background anywhere. */
+.rc-legend-line,
+.rc-legend-dot,
+.rc-legend-band {
+  background: var(--rc-swatch-color, currentColor);
+}
+
+/* Line \u2014 for line series */
+.rc-legend-line {
+  width: 16px;
+  height: 2px;
+  display: inline-block;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Dashed line \u2014 for forecast / projected series. A repeating gradient keeps
+   the swatch a thin rule; the dash is 5/3 unless the item gives its own
+   (--rc-swatch-dash / --rc-swatch-gap: a category's own first dash pair). */
+.rc-legend-line--dashed {
+  background: repeating-linear-gradient(90deg,
+    var(--rc-swatch-color, currentColor) 0 var(--rc-swatch-dash, 5px),
+    transparent var(--rc-swatch-dash, 5px) calc(var(--rc-swatch-dash, 5px) + var(--rc-swatch-gap, 3px)));
+}
+
+/* Dot \u2014 for bar / donut / scatter */
+.rc-legend-dot {
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
+  display: inline-block;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
+.rc-legend-band {
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
+  display: inline-block;
+  border-radius: 2px;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* A glyph swatch (RC-053: a node shape at 12\xD712, a width wedge at 16\xD712) is
+   an inline svg filled with the swatch colour. */
+.rc-legend-item > svg {
+  flex-shrink: 0;
+  fill: var(--rc-swatch-color, currentColor);
+}
+
+/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/*
+ * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
+ * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended
+ * before _initSVG runs). Explicit rows fix placement regardless of DOM order
+ * \u2014 the page's controls included: left to auto-placement they went below
+ * the footer whenever the navigator took its row (K-19).
+ */
+
+.rc-chart--legend-right {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto auto auto;  /* header | chart | navigator | controls | footer */
+}
+
+/* Pin each element to its row \u2014 overrides DOM insertion order */
+.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
+.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
+.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
+.rc-chart--legend-right > .rc-chart-controls  { grid-column: 1; grid-row: 4; }
+.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }
+
+/* Aside spans the full chart block in column 2 */
+.rc-chart--legend-right > .rc-chart-legend-aside {
+  grid-column: 2;
+  grid-row: 1 / 6;
+  display: flex;
+  align-items: center;
+  padding-left: var(--rc-space-lg);
+}
+
+/* Stack legend items vertically when in aside */
+.rc-chart-legend-aside .rc-legend {
+  flex-direction: column;
+  gap: var(--rc-space-sm);
+}
+
+/* \u2500\u2500\u2500 Focus ring (RC-015) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+/* One focus ring for every button a chart draws (RC-015): its legend items
+   and "Show all", the range buttons and the Log toggle, the Graph tools and
+   their "+N more" / "N hidden" notes (X-08), breadcrumbs and "+N more" list
+   \u2014 keyboard focus only, in --rc-focus-ring
+   (the page's --chart-focus-ring, else the text colour), so one card never
+   shows two focus styles. The :is() takes its most specific selector, two
+   classes, so a host's button:focus-visible ring does not win. The custom
+   range's fields keep their own (currentColor, on the tooltip's surface). */
+:is(button.rc-legend-item, .rc-legend-reset, .rc-range-btn, .rc-graph-tools .rc-graph-tool,
+    .rc-graph-tools .rc-graph-note, .rc-graph-tools .rc-graph-hidden-note,
+    .rc-graph-breadcrumbs button, .rc-graph-overflow button):focus-visible {
+  outline: 2px solid var(--rc-focus-ring);
+  outline-offset: 2px;
+}
+
 /* \u2500\u2500\u2500 Footer \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-chart-footer {
@@ -2560,8 +3211,8 @@ var RareCharts = (() => {
 }
 
 /* Note \u2014 disclaimers, caveats, editorial context. Sits below the source.
-   Wraps freely (unlike source) since it can be a sentence or two; color is
-   set from theme.muted in JS so it reads as secondary to the source. */
+   Wraps freely (unlike source) since it can be a sentence or two; in the
+   muted colour (above) so it reads as secondary to the source. */
 .rc-chart-note {
   font-size: var(--rc-font-size-sm);
   font-weight: initial;
@@ -2576,303 +3227,56 @@ var RareCharts = (() => {
   margin-top: 0;
 }
 
-.rc-chart-navigator {
-  width: auto;
+/* Footer row with tools (Graph zoom): source on the left, controls pinned
+   right, a note (if any) on its own line below. */
+.rc-chart-footer--tools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--rc-space-sm);
 }
+.rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }
 
-.rc-chart-navigator svg { overflow: visible; }  /* brush handles at a 0px margin stay whole */
-/* The page's own details panel: host element rules (h4, p\u2026) beat the font
-   the panel inherits, so it is set on every element inside. */
-.rc-graph-details,
-.rc-graph-details * { font-family: var(--rc-font-family); }
-
-.rc-chart-range-row {
-  grid-area: range;
-  justify-self: end;
-  align-self: start;
-  min-width: max-content;
-  padding-right: 60px;
-  position: relative;
-}
-
-/* Lin/Log switch: pinned right, in the 60px the row keeps free above the
-   Y-axis labels, level with the first line of timeframes \u2014 which stay where
-   they are. Without timeframes the row holds just the button, at the right. */
-.rc-chart-range-row--scale .rc-scale-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-.rc-chart-range-row--scale-only {
-  padding-right: 0;
-}
-
-/* No Y-axis gutter on the right (Map, MapFlow, Graph): flush to the edge. */
-.rc-chart-range-row--flush {
-  padding-right: 0;
-}
-
-/* \u2500\u2500\u2500 Legend \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-legend {
-  grid-area: legend;
-  padding: 0;
+/* Controls slot (option \`controls\`): page controls inside the card, between
+   the drawing and the footer. Compact, wrapping, small type. */
+.rc-chart-controls {
   display: flex;
   flex-wrap: wrap;
-  /* wrapped lines sit close; items keep their horizontal spacing */
-  column-gap: var(--rc-space-md);
-  row-gap: 2px;
-  line-height: 1.3;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 8px 0 2px;
   font-size: var(--rc-font-size-sm);
-  user-select: none;
 }
-
-/* A card 460px wide or narrower stacks its header: the buttons move under the
-   subtitle (K-17). The old breakpoint was the window's 768px, where the
-   narrowest card it kept side by side on the docs site is 473px wide. */
-@container rc-chart (max-width: 460px) {
-  .rc-chart-header {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas:
-      "title"
-      "subtitle"
-      "range"
-      "legend";
-  }
-
-  .rc-chart-range-row {
-    justify-self: start;
-    min-width: 0;
-    padding-right: 0;
-  }
-
-  /* Narrow card: the timeframes keep their place on the left and wrap
-     before the Lin/Log button, which stays pinned right. */
-  .rc-chart-range-row--scale {
-    justify-self: stretch;
-    padding-right: 60px;
-  }
-
-  .rc-chart-range-row--scale-only {
-    justify-self: end;
-  }
-}
-
-.rc-legend-item {
+.rc-chart-controls label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  white-space: nowrap;
-  cursor: default;
-}
-
-/* Text-like chart controls: no button chrome in any state.
-   A host stylesheet may style every <button> \u2014 Rare Styles' \`button:hover\`
-   adds a border and background, and its element+pseudo-class selector beats
-   a single class. Doubling the class (and listing the states) wins without
-   !important; only the cursor changes on hover. Keyboard focus keeps its
-   outline (rule below). */
-.rc-graph-legend-item.rc-graph-legend-item,
-.rc-graph-legend-reset.rc-graph-legend-reset,
-.rc-graph-breadcrumbs.rc-graph-breadcrumbs button,
-.rc-graph-tools .rc-graph-note.rc-graph-note,
-.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-.rc-graph-legend-item.rc-graph-legend-item:hover,
-.rc-graph-legend-item.rc-graph-legend-item:active,
-.rc-graph-legend-reset.rc-graph-legend-reset:hover,
-.rc-graph-legend-reset.rc-graph-legend-reset:active,
-.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:hover,
-.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:active,
-.rc-graph-tools .rc-graph-note.rc-graph-note:hover,
-.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note:hover {
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-/* Graph legend items are controls, not static labels. */
-.rc-graph-legend-item,
-.rc-graph-legend-reset {
-  appearance: none;
-  border: 0;
-  padding: 2px 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-}
-
-.rc-graph-legend-item:not(:disabled),
-.rc-graph-legend-reset {
-  cursor: pointer;
-}
-
-.rc-graph-legend-item:disabled { cursor: default; }
-
-.rc-graph-legend-item:focus-visible,
-.rc-graph-legend-reset:focus-visible,
-.rc-graph-breadcrumbs button:focus-visible,
-.rc-graph-overflow button:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
-}
-
-.rc-graph-legend-reset {
-  text-decoration: underline;
-  opacity: 0.7;
-}
-
-.rc-graph-breadcrumbs {
-  display: block;
-  padding: 4px 0;
-  font-size: 11px;
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.rc-graph-breadcrumbs[hidden],
-.rc-graph-overflow[hidden] { display: none; }
-
-.rc-graph-breadcrumbs button {
-  /* inline: a site stylesheet may make every <button> a block (Rare Styles
-     does, Q-04) \u2014 the trail must stay on one line */
-  display: inline;
-  width: auto;
   margin: 0;
-  appearance: none;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: inherit;
-  font: inherit;
   cursor: pointer;
 }
-
-.rc-graph-breadcrumbs button:disabled {
-  cursor: default;
-  font-weight: bold;
-  opacity: 1;
-}
-
-.rc-graph-overflow {
-  position: absolute;
-  z-index: 4;
-  right: 8px;
-  bottom: 40px;
-  width: min(320px, calc(100% - 120px));
-  max-height: min(300px, 55%);
-  overflow: hidden;
-  padding: 12px;
-  border: 1px solid rgba(127, 127, 127, 0.35);
-  border-radius: 6px;
-  background: #fff;
-  color: var(--primary-color, #111);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
-  font-size: 12px;
-}
-
-.rc-graph-overflow-title {
-  padding-right: 28px;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.rc-graph-overflow-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: 240px;
-  overflow: auto;
-}
-
-.rc-graph-overflow-item {
-  appearance: none;
-  width: 100%;
-  border: 0;
-  border-radius: 3px;
-  padding: 6px 8px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
-/* list rows keep their hover tint, but never a host button border */
-.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:hover,
-.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close:hover { border: 0; box-shadow: none; }
-
-.rc-graph-overflow-close {
-  position: absolute;
-  top: 6px;
-  right: 7px;
-  appearance: none;
-  border: 0;
-  padding: 2px 5px;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-/* Line \u2014 for line series */
-.rc-legend-line {
-  width: 16px;
-  height: 2px;
-  display: inline-block;
-  border-radius: 1px;
-  flex-shrink: 0;
-}
-
-/* Dashed line \u2014 for forecast / projected series */
-.rc-legend-line--dashed {
-  background-color: transparent;
-}
-
-/* Dot \u2014 for bar / donut / scatter */
-.rc-legend-dot {
-  width: var(--rc-space-sm);
-  height: var(--rc-space-sm);
-  display: inline-block;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-/* Band \u2014 filled square for shaded ranges (confidence intervals, envelopes) */
-.rc-legend-band {
-  width: var(--rc-space-sm);
-  height: var(--rc-space-sm);
-  display: inline-block;
-  border-radius: 2px;
-  opacity: 0.85;
-  flex-shrink: 0;
-}
+.rc-chart-controls input { margin: 0; }
+.rc-chart-controls label:has(input:disabled) { opacity: 0.45; cursor: default; }
+.rc-chart-controls output { font-variant-numeric: tabular-nums; min-width: 7ch; }
 
 /* \u2500\u2500\u2500 Tooltip \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/* Colours: Tooltip.js publishes theme.tooltip on the element as
-   --rc-tooltip-*; the fallbacks here are defaultTheme.tooltip, keep them in
-   step. Size, weight and spacing live here (B-03, C-23): a page rule that
-   outranks .rc-tooltip \u2014 .rc-chart .rc-tooltip \u2014 restyles any of it.
-   No line-height: the tooltip takes the page's. */
+/* Colours: --rc-tooltip-*, inherited from the card (the chart tokens above;
+   a theme's own values inline on the card); the fallbacks here are
+   defaultTheme.tooltip, keep them in step. Size, weight and spacing live
+   here (B-03, C-23): a page rule that outranks .rc-tooltip \u2014 .rc-chart
+   .rc-tooltip \u2014 restyles any of it.
+   Words in the chart's font, figures in the numeric one (.rc-num, K-15);
+   14px and a 24px line on any page (RC-082). */
 
 .rc-tooltip {
   position: absolute;
   pointer-events: none;
   padding: var(--rc-space-sm) var(--rc-space-md);
-  font-family: var(--rc-tooltip-font, var(--rc-font-family-numeric));
-  font-size: 13px;
+  font-family: var(--rc-tooltip-font, var(--rc-font-family));
+  font-size: 14px;
+  line-height: 24px;
   color: var(--rc-tooltip-text, #000000);
   background: var(--rc-tooltip-bg, #ffffff);
-  border: 1px solid var(--rc-tooltip-border, #e0e0e0);
+  border: 1px solid var(--rc-tooltip-border, #e4e4e4);
   box-shadow: var(--rc-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
   opacity: 0;
   transition: opacity 0.1s;
@@ -2880,15 +3284,92 @@ var RareCharts = (() => {
   z-index: 100;
 }
 
+/* A figure \u2014 a value, a percentage, a count, a range, a date \u2014 in the
+   numeric font with tabular digits (K-15). The built-in tooltips wrap every
+   figure in it; a tooltipFormat may use it too. */
+.rc-num {
+  font-family: var(--rc-tooltip-font-numeric, var(--rc-font-family-numeric));
+  font-variant-numeric: tabular-nums;
+}
+
+/* The date on top and the note under a row read as words, in the tooltip's
+   text font, as in the maintainer's mock-up (2026-11-18); only the values in
+   the rows stay in the numeric font. */
+.rc-tooltip-header .rc-num,
+.rc-tooltip-note .rc-num {
+  font-family: inherit;
+}
+
 /* Rows of the built-in tooltips (core/html.js); a tooltipFormat may use them.
-   The header names what is hovered: a date stays muted, a title bold \u2014
-   theme.tooltip.header.text recolours both; an inline data colour wins. */
+   The header names what is hovered: a date or a category small and muted
+   above the rows, a title bold \u2014 theme.tooltip.header.text recolours both;
+   an inline data colour wins. */
 .rc-tooltip-header {
   color: var(--rc-tooltip-header-text, currentColor);
 }
 
 .rc-tooltip-header.rc-tooltip-muted {
   color: var(--rc-tooltip-header-text, var(--rc-tooltip-muted, #666666));
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* One row per series (RC-082): the series' mark in its colour, its name in
+   the tooltip's text colour, the value right-aligned in figures; an optional
+   note under the name, small and muted (a comparison's date and change, a
+   share). Rows share the tooltip's width, so their values line up. */
+.rc-tooltip-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  column-gap: var(--rc-space-sm);
+  align-items: center;
+}
+
+.rc-tooltip-row--plain {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.rc-tooltip-row > .rc-tooltip-value {
+  padding-left: var(--rc-space-sm);
+  text-align: right;
+}
+
+.rc-tooltip-note {
+  grid-column: -3 / -1;
+  margin-top: -4px;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--rc-tooltip-muted, #666666);
+}
+
+/* The series' mark: a line, a dashed line (a comparison, a dashed series), a
+   square for a band, a dot for a bar or a slice \u2014 in --rc-swatch-color, or
+   the tooltip's text without one (muted for a role colour). */
+.rc-tooltip-swatch {
+  justify-self: start;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--rc-swatch-color, currentColor);
+}
+
+.rc-tooltip-swatch--dashed {
+  background: repeating-linear-gradient(90deg,
+    var(--rc-swatch-color, currentColor) 0 4px, transparent 4px 7px);
+  border-radius: 0;
+}
+
+.rc-tooltip-swatch--band {
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
+  border-radius: 2px;
+  opacity: 0.35;
+}
+
+.rc-tooltip-swatch--dot {
+  width: var(--rc-space-sm);
+  height: var(--rc-space-sm);
+  border-radius: 50%;
 }
 
 .rc-tooltip-title {
@@ -2931,12 +3412,6 @@ var RareCharts = (() => {
   overflow-wrap: break-word;
 }
 
-/* TimeSeries: the value under the date */
-.rc-tooltip-value {
-  font-size: 14px;
-  font-weight: bold;
-}
-
 /* theme.tooltip.header.bg: the header as a band across the top */
 .rc-tooltip--header-band .rc-tooltip-header {
   background: var(--rc-tooltip-header-bg, transparent);
@@ -2944,8 +3419,17 @@ var RareCharts = (() => {
   padding: var(--rc-space-xs) var(--rc-space-md);
 }
 
+/* Opaque (RC-082): the plot never shows through the rows. */
 .rc-tooltip.is-visible {
-  opacity: 0.9;
+  opacity: 1;
+}
+
+/* A closed tooltip is out of reach, not only out of sight: its links (a
+   tie's sources) left the Tab order only with visibility. It turns hidden
+   once the 0.1 s fade has run, and visible at once when it opens. */
+.rc-tooltip:not(.is-visible, .is-pinned) {
+  visibility: hidden;
+  transition: opacity 0.1s, visibility 0s linear 0.1s;
 }
 
 /* Pinned (opt-in, relation charts): stays put, takes pointer events so links
@@ -2961,6 +3445,58 @@ var RareCharts = (() => {
 .rc-tooltip a {
   color: inherit;
   text-decoration: underline;
+}
+
+/* \u2500\u2500\u2500 Zoom hint (T-09) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* "Hold Ctrl to zoom" / "Use two fingers to move", centred on a zoomable
+   plot after a plain wheel or a one-finger drag (core/zoomGesture.js sets
+   left/top and the --rc-tooltip-* tokens). The tooltip's colours, border and
+   shadow, in the chart's text font; absolute, so nothing moves, and it never
+   takes the pointer. Made on first need: a chart at rest has none. */
+.rc-zoom-hint {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  padding: var(--rc-space-xs) var(--rc-space-sm);
+  font-size: 14px;   /* as the tooltip, whose look it wears (RC-082) */
+  color: var(--rc-tooltip-text, #000000);
+  background: var(--rc-tooltip-bg, #ffffff);
+  border: 1px solid var(--rc-tooltip-border, #e4e4e4);
+  box-shadow: var(--rc-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+.rc-zoom-hint.is-visible {
+  opacity: 0.9;
+}
+
+/* \u2500\u2500\u2500 Loading bar (RC-002) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* setLoading(true): "Loading\u2026" in a slim bar across the top of the plot
+   while the page fetches rows; the drawing stays under it. Chart.js sets
+   left, top and width (the plot in the card) and the --rc-tooltip-* tokens,
+   so it wears the tooltip's colours in any theme (dark with darkTheme). In
+   the chart's text font; absolute, so nothing moves, and it never takes the
+   pointer: the crosshair works through it. Made by setLoading(true) and
+   removed by setLoading(false): a chart at rest has none. */
+.rc-chart-loading {
+  position: absolute;
+  box-sizing: border-box;
+  pointer-events: none;
+  padding: 2px var(--rc-space-sm);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--rc-tooltip-muted, #666666);
+  background: var(--rc-tooltip-bg, #ffffff);
+  border-bottom: 1px solid var(--rc-tooltip-border, #e4e4e4);
+  opacity: 0.9;
+  z-index: 99;
 }
 
 /* \u2500\u2500\u2500 SVG elements \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
@@ -2994,6 +3530,11 @@ var RareCharts = (() => {
   font-family: var(--rc-font-family);
 }
 
+/* The navigator's time labels (K-15): the main axis's numeric font, smaller. */
+.rc-axis.rc-ov-axis text {
+  font-size: 10px;
+}
+
 /* Numeric SVG text set by charts (bar value labels, donut percents, center
    totals). Regular-font text inherits the svg default, so only these need the
    numeric family. Center texts keep their computed size (set in JS). */
@@ -3010,25 +3551,12 @@ var RareCharts = (() => {
   font-weight: bold;
 }
 
-/* Graph (experimental) SVG labels. */
-.rc-graph-node-label { font-size: 11px; }
-
-.rc-graph-sector-label,
-.rc-graph-note,
-.rc-graph-row-label,
-.rc-graph-hidden-note {
-  font-size: 10px;
+/* A gauge's dial stands in the middle of its card, so do its title, subtitle
+   and source. Before RC-065 they took it from the page; now the chart says it
+   (maintainer, 2026-11-19). Two classes: the card's text-align: start is one. */
+.rc-chart.rc-chart--gauge {
+  text-align: center;
 }
-
-.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }
-.rc-graph-row-label    { letter-spacing: 0.05em; }
-.rc-graph-note,
-.rc-graph-hidden-note  { text-decoration: underline; }
-
-/* Graph nodes take keyboard focus (K-20); the outline is for the keyboard,
-   a click shows the hover ring. */
-.rc-graph-node:focus { outline: none; }
-.rc-graph-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
 
 /* Axis titles (used in DualAxes) */
 .rc-axis-title {
@@ -3084,44 +3612,6 @@ var RareCharts = (() => {
   dominant-baseline: text-after-edge;
 }
 
-/* \u2500\u2500\u2500 Legend aside (right column layout) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-/*
- * Without explicit grid-row, SVG lands in an auto-sized row (height: 0)
- * because the DOM order is: header \u2192 aside \u2192 footer \u2192 svg (aside is appended
- * before _initSVG runs). Explicit rows fix placement regardless of DOM order
- * \u2014 the page's controls included: left to auto-placement they went below
- * the footer whenever the navigator took its row (K-19).
- */
-
-.rc-chart--legend-right {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto 1fr auto auto auto;  /* header | chart | navigator | controls | footer */
-}
-
-/* Pin each element to its row \u2014 overrides DOM insertion order */
-.rc-chart--legend-right > .rc-chart-header { grid-column: 1; grid-row: 1; }
-.rc-chart--legend-right > svg              { grid-column: 1; grid-row: 2; }
-.rc-chart--legend-right > .rc-chart-navigator { grid-column: 1; grid-row: 3; }
-.rc-chart--legend-right > .rc-chart-controls  { grid-column: 1; grid-row: 4; }
-.rc-chart--legend-right > .rc-chart-footer { grid-column: 1; grid-row: 5; }
-
-/* Aside spans the full chart block in column 2 */
-.rc-chart--legend-right > .rc-chart-legend-aside {
-  grid-column: 2;
-  grid-row: 1 / 6;
-  display: flex;
-  align-items: center;
-  padding-left: var(--rc-space-lg);
-}
-
-/* Stack legend items vertically when in aside */
-.rc-chart-legend-aside .rc-legend {
-  flex-direction: column;
-  gap: var(--rc-space-sm);
-  padding: 0;
-}
-
 /* \u2500\u2500\u2500 MultiChart \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 
 .rc-multichart-grid {
@@ -3149,6 +3639,7 @@ var RareCharts = (() => {
 }
 
 .rc-multichart-cell-title {
+  color: var(--rc-text);
   font-size: var(--rc-font-size-sm);
   font-weight: bold;
   text-transform: uppercase;
@@ -3159,71 +3650,38 @@ var RareCharts = (() => {
   margin-bottom: 4px;
 }
 
-/* \u2500\u2500\u2500 Range bar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-
-.rc-chart-range-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--rc-space-xs);
-  align-items: center;
-}
-
-.rc-range-btn {
-  background: none;
-  /* the chart font, not the UA button font (C-14); the shorthand resets the
-     size, so it comes first */
-  font: inherit;
-  font-size: var(--rc-font-size-sm);
-  /* the shorthand also takes the page's line-height; keep the button's own */
-  line-height: 1.15;
-  border: 1px solid var(--border-color, #ccc);
-  border-radius: var(--rc-space-xs);
-  padding: var(--rc-space-sm) var(--rc-space-md);
+/* \u2500\u2500\u2500 Map regions (B-06) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+/* With onRegionClick a region with data is a button: a pointer, and on
+   keyboard focus the chart's focus ring as its outline stroke (an SVG path
+   has no box to outline). Without the option no region has the class. */
+.rc-map-feature--clickable {
   cursor: pointer;
-  transition: background-color 0.1s, border-color 0.1s;
-  color: var(--text-color-light, #666);
 }
 
-.rc-range-btn:hover {
-  color: var(--primary-text-color, #000);
-  border-color: var(--primary-color, #000);
-  /* the button's own background, not a host button:hover one (C-24) */
-  background-color: transparent;
+.rc-map-feature--clickable:focus {
+  outline: none;
 }
 
-.rc-range-btn.active {
-  color: var(--primary-text-color, #000);
-  background-color: var(--white, #fff);
-  border-color: var(--primary-color, #000);
+.rc-map-feature--clickable:focus-visible {
+  stroke: var(--rc-focus-ring);
+  stroke-width: 2px;
 }
 
-/* Lin/Log switch \u2014 a range button split on the diagonal: the upper-left half
-   filled in --rc-scale-btn-fill, so it reads as a switch rather than one more
-   timeframe. The fill flips to the lower-right half on the log scale. Two
-   classes, so a host button:hover background cannot wipe the fill (C-24). */
-.rc-range-btn.rc-scale-btn {
-  background-image: linear-gradient(135deg, var(--rc-scale-btn-fill) 50%, transparent 50%);
-  /* narrower than a timeframe button, so it fits the 60px above the Y labels */
-  padding-left: var(--rc-space-sm);
-  padding-right: var(--rc-space-sm);
-}
+/* \u2500\u2500\u2500 Sankey \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-sankey-label { font-size: 11px; }
+.rc-sankey-node:focus-visible { outline: 2px solid var(--rc-focus-ring); outline-offset: 2px; }
 
-.rc-range-btn.rc-scale-btn[data-scale="log"] {
-  background-image: linear-gradient(135deg, transparent 50%, var(--rc-scale-btn-fill) 50%);
-}
-
-/* One width for both states: the other label sits under this one, unseen and
-   0px tall, so the button is as wide as the wider label ("Log" > "Lin"). */
-.rc-range-btn.rc-scale-btn {
-  text-align: center;
-}
-
-.rc-range-btn.rc-scale-btn::after {
-  content: attr(data-alt);
-  display: block;
-  height: 0;
+/* \u2500\u2500\u2500 Screen-reader-only content (data-table fallbacks) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
   overflow: hidden;
-  visibility: hidden;
+  clip-path: inset(50%);   /* RC-020: \`clip\` is deprecated */
+  white-space: nowrap;
+  border: 0;
 }
 
 /* \u2500\u2500\u2500 Reduced motion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
@@ -3239,51 +3697,144 @@ var RareCharts = (() => {
   }
 }
 
-/* \u2500\u2500\u2500 Screen-reader-only content (data-table fallbacks) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
+
+/* \u2500\u2500\u2500 Graph (experimental) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+
+/* Text-like chart controls: no button chrome in any state (G1).
+   A host stylesheet may style every <button> \u2014 Rare Styles v0.7.1's
+   \`button:hover\` adds a border and background, and its element+pseudo-class
+   selector beats a single class. Doubling the class (and listing the states)
+   wins without !important; only the cursor changes on hover. Rare Styles
+   v0.7.2 no longer reaches a chart; the guard stays for v0.7.1 hosts and any
+   page (RC-032, maintainer 2026-11-18; X-08's hostile host). Keyboard focus
+   keeps its outline (rule above). The Graph, flow and MapFlow legends are the
+   legend builder's (.rc-legend-item, .rc-legend-reset above). */
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button,
+.rc-graph-tools .rc-graph-note.rc-graph-note,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note {
   border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:hover,
+.rc-graph-breadcrumbs.rc-graph-breadcrumbs button:active,
+.rc-graph-tools .rc-graph-note.rc-graph-note:hover,
+.rc-graph-tools .rc-graph-hidden-note.rc-graph-hidden-note:hover {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-/* \u2500\u2500\u2500 Sankey \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-sankey-label { font-size: 11px; }
-.rc-sankey-node:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
-
-/* \u2500\u2500\u2500 Graph flow view \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
-.rc-flow-node-label { font-size: 12px; }
-.rc-flow-node-sub,
-.rc-flow-link-label { font-size: 11px; }
-.rc-flow-hull-label { font-size: 11px; }
-/* Mouse clicks select (the ring shows it); the outline is for keyboard focus */
-.rc-flow-node:focus { outline: none; }
-.rc-flow-node:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
-/* A tie focused from the keyboard (K-20): its hit stroke shows, faint */
-.rc-flow-link-hit:focus { outline: none; }
-.rc-flow-link-hit:focus-visible { stroke: currentColor; stroke-opacity: 0.25; }
-.rc-flow-fold-switch:hover circle { stroke-width: 2.2; }
-
-/* \u2500\u2500\u2500 MapFlow \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
-.rc-mapflow-label { font-size: 12px; }
-.rc-mapflow-link-hit:focus { outline: none; }
-.rc-mapflow-link-hit:focus-visible { stroke: currentColor; stroke-opacity: 0.25; }
-
-/* Footer row with tools (Graph zoom): source on the left, controls pinned
-   right, a note (if any) on its own line below. */
-.rc-chart-footer--tools {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  column-gap: var(--rc-space-sm);
+.rc-graph-breadcrumbs {
+  display: block;
+  padding: 4px 0;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.rc-chart-footer--tools > .rc-chart-note { grid-column: 1 / -1; }
+
+.rc-graph-breadcrumbs[hidden],
+.rc-graph-overflow[hidden] { display: none; }
+
+.rc-graph-breadcrumbs button {
+  /* inline (G2): a host stylesheet may make every <button> a block (Rare
+     Styles v0.7.1 does: display: block, width: fit-content) \u2014 the trail
+     must stay on one line. No frame or fill: G1 above. */
+  display: inline;
+  width: auto;
+  margin: 0;
+  appearance: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.rc-graph-breadcrumbs button:disabled {
+  cursor: default;
+  font-weight: bold;
+  opacity: 1;
+}
+
+.rc-graph-overflow {
+  position: absolute;
+  z-index: 4;
+  right: 8px;
+  bottom: 40px;
+  width: min(320px, calc(100% - 120px));
+  max-height: min(300px, 55%);
+  overflow: hidden;
+  padding: 12px;
+  /* drawn like the tooltip (RC-064): a light popover on a dark card too */
+  border: 1px solid var(--rc-tooltip-border, #e4e4e4);
+  border-radius: 0;
+  background: var(--rc-tooltip-bg, #ffffff);
+  color: var(--rc-tooltip-text, #000000);
+  box-shadow: var(--rc-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10));
+  font-size: 12px;
+}
+
+.rc-graph-overflow-title {
+  padding-right: 28px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.rc-graph-overflow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.rc-graph-overflow-item {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 3px;
+  padding: 6px 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* List rows keep their hover tint, but never a host button's frame, shadow,
+   colour or :active / :focus fill; the close button takes none of them
+   either, nor a host's corner radius (RC-018, G5: Rare Styles v0.7.1's
+   button rules; X-08's classless hosts, maintainer 2026-11-19). Doubled
+   classes: they outrank an element + state selector. */
+.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item,
+.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close { margin: 0; box-shadow: none; }
+.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close { border-radius: 0; }
+.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:is(:hover, :active, :focus),
+.rc-graph-overflow .rc-graph-overflow-close.rc-graph-overflow-close:is(:hover, :active, :focus) {
+  border: 0;
+  box-shadow: none;
+  color: inherit;
+  background: transparent;
+}
+.rc-graph-overflow .rc-graph-overflow-item.rc-graph-overflow-item:hover { background: rgba(127, 127, 127, 0.12); }
+
+.rc-graph-overflow-close {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  appearance: none;
+  border: 0;
+  padding: 2px 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
 .rc-graph-tools {
   grid-column: 2;
   grid-row: 1;
@@ -3293,14 +3844,33 @@ var RareCharts = (() => {
   justify-self: end;
 }
 .rc-graph-zoom-controls { display: flex; gap: 4px; }
-/* font: the chart font, not the UA button font (C-14); Graph sets the size inline */
+/* Every button of the row, the notes included (G6): the chart font, not
+   the UA button font (C-14; .rc-graph-tool sets the size), and no margin or
+   width a host's button rule gives (X-08's hostile host: a block with a
+   margin). The display computes to block in this flex row either way. */
 .rc-graph-tools button { display: inline-block; margin: 0; width: auto; font: inherit; }
 .rc-graph-tools button[hidden] { display: none; }
+/* Zoom in / out, reset, full screen (X-11): in the card's tokens. Two
+   classes outrank a host's button:hover (Rare Styles v0.7.1), so the button
+   looks the same in every state, as when the look was inline. */
+.rc-graph-tools .rc-graph-tool {
+  height: 26px;
+  min-width: 26px;
+  padding: 0 6px;
+  border: 1px solid var(--rc-control-border);
+  border-radius: 4px;
+  background: var(--rc-bg);
+  color: var(--rc-text);
+  box-shadow: none;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+/* The "+N more" and "N hidden" notes: underlined text (no frame or fill:
+   G1 above). */
 .rc-graph-tools .rc-graph-note,
 .rc-graph-tools .rc-graph-hidden-note {
   appearance: none;
-  border: 0;
-  background: transparent;
   padding: 0 4px;
   color: inherit;
   font: inherit;
@@ -3309,7 +3879,9 @@ var RareCharts = (() => {
   opacity: 0.75;
   cursor: pointer;
 }
-/* Full screen: the card fills the screen (native API or overlay fallback). */
+/* Full screen: the card fills the screen (native API or overlay fallback).
+   The overlay's position outranks a host's rule on the card; in native full
+   screen the browser's own :fullscreen rule places it (X-11). */
 .rc-graph--fullscreen {
   position: fixed !important;
   inset: 0;
@@ -3319,31 +3891,8 @@ var RareCharts = (() => {
   margin: 0;
   padding: 16px;
   box-sizing: border-box;
-  background: var(--bg-color, #fff);
+  background: var(--rc-bg, #ffffff);
 }
-.rc-graph--fullscreen:fullscreen { position: static !important; }
-
-/* Controls slot (option \`controls\`): page controls inside the card, between
-   the drawing and the footer. Compact, wrapping, small type. */
-.rc-chart-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 16px;
-  padding: 8px 0 2px;
-  font-size: var(--rc-font-size-sm);
-}
-.rc-chart-controls label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  cursor: pointer;
-}
-.rc-chart-controls input { margin: 0; }
-.rc-chart-controls label.is-disabled,
-.rc-chart-controls label:has(input:disabled) { opacity: 0.45; cursor: default; }
-.rc-chart-controls output { font-variant-numeric: tabular-nums; min-width: 7ch; }
 
 /* \u2500\u2500\u2500 Graph details panel (option \`details\`) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
 .rc-graph-details {
@@ -3364,6 +3913,11 @@ var RareCharts = (() => {
   flex: 0 0 auto;
   border-top: 1px solid rgba(127, 127, 127, 0.25);
 }
+/* The page's own details panel: host element rules (h4, p\u2026) beat the font
+   the panel inherits, so it is set on every element inside. */
+.rc-graph-details,
+.rc-graph-details * { font-family: var(--rc-font-family); }
+
 .rc-graph-details h4 { margin: 2px 0 6px; font-size: 15px; line-height: 1.25; text-transform: none; }
 .rc-graph-details p { margin: 0 0 6px; }
 .rc-graph-details .rc-graph-details-kind {
@@ -3388,11 +3942,67 @@ var RareCharts = (() => {
 .rc-graph-details .rc-graph-details-ties { list-style: none; padding-left: 0; }
 .rc-graph-details a { color: inherit; text-decoration: underline; }
 
+/* Graph (experimental) SVG labels. */
+.rc-graph-node-label { font-size: 11px; }
+
+.rc-graph-sector-label,
+.rc-graph-row-label {
+  font-size: 10px;
+}
+
+.rc-graph-sector-label { letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-graph-row-label    { letter-spacing: 0.05em; }
+
+/* Graph and flow nodes take keyboard focus (K-20); the outline is for the
+   keyboard, a click selects (the hover ring shows it). */
+.rc-graph-node:focus,
+.rc-flow-node:focus { outline: none; }
+.rc-graph-node:focus-visible,
+.rc-flow-node:focus-visible { outline: 2px solid var(--rc-focus-ring); outline-offset: 4px; }
+/* A tie focused from the keyboard (K-20 flow, K-23 Graph, MapFlow): its
+   keyboard target or hit stroke shows, faint. */
+.rc-graph-link-key:focus,
+.rc-flow-link-hit:focus,
+.rc-mapflow-link-hit:focus { outline: none; }
+.rc-graph-link-key:focus-visible,
+.rc-flow-link-hit:focus-visible,
+.rc-mapflow-link-hit:focus-visible { stroke: var(--rc-focus-ring); stroke-opacity: 0.25; }
+
+/* \u2500\u2500\u2500 Graph flow view \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-flow-lane-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.rc-flow-node-label { font-size: 12px; }
+.rc-flow-node-sub,
+.rc-flow-link-label { font-size: 11px; }
+.rc-flow-hull-label { font-size: 11px; }
+.rc-flow-fold-switch:hover circle { stroke-width: 2.2; }
+
+/* \u2500\u2500\u2500 MapFlow \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 */
+.rc-mapflow-label { font-size: 12px; }
+
+/* \u2500\u2500\u2500 Print \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+   What only makes sense on a screen (RC-019): the range buttons and the Log
+   toggle, the Graph tools and the "+N" panel, Show all, the tooltip, and the
+   hint, loading bar and custom-range panel. Rare Styles' print module hides
+   page controls, not a chart's. Last in the file, so no screen rule that
+   shows a part (.rc-graph-tools' display: flex) comes after it (X-08,
+   maintainer 2026-11-19). */
+@media print {
+  .rc-chart-range-row,
+  .rc-graph-tools,
+  .rc-graph-overflow,
+  .rc-legend-reset,
+  .rc-tooltip,
+  .rc-zoom-hint,
+  .rc-chart-loading,
+  .rc-range-panel {
+    display: none;
+  }
+}
 `;
 
   // assets/charts/src/version.json
   var version_default = {
-    version: "v0.9.8_6"
+    version: "v0.9.8_7"
   };
 
   // node_modules/d3-array/src/ascending.js
@@ -4712,11 +5322,6 @@ var RareCharts = (() => {
   // node_modules/d3-selection/src/select.js
   function select_default2(selector) {
     return typeof selector === "string" ? new Selection([[document.querySelector(selector)]], [document.documentElement]) : new Selection([[selector]], root);
-  }
-
-  // node_modules/d3-selection/src/create.js
-  function create_default(name) {
-    return select_default2(creator_default(name).call(document.documentElement));
   }
 
   // node_modules/d3-selection/src/sourceEvent.js
@@ -10862,6 +11467,11 @@ var RareCharts = (() => {
     return initRange.apply(calendar(timeTicks, timeTickInterval, timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute, second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
   }
 
+  // node_modules/d3-scale/src/utcTime.js
+  function utcTime() {
+    return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
+  }
+
   // node_modules/d3-shape/src/constant.js
   function constant_default5(x2) {
     return function constant() {
@@ -12081,52 +12691,51 @@ var RareCharts = (() => {
     // bg is what the chart sits on: plates behind end and annotation labels,
     // halos and knockouts are painted with it. The page background under Rare
     // Styles, white without it — the fallback keeps fill="var(…)" valid (C-13).
-    bg: "var(--bg-color, #ffffff)",
-    surface: "#f5f5f5",
-    // Graph node fills, flow lane bands
+    bg: "var(--chart-bg, var(--bg-color, #ffffff))",
+    // Graph node fills, flow lane bands: null derives it, the background
+    // with 4% of the text (#f5f5f5 on white).
+    surface: null,
     // ── Structure ──────────────────────────────────────────────────────────────
-    grid: "#e8e8e8",
-    // horizontal grid lines
-    border: "#cccccc",
+    grid: "var(--chart-grid-color, #e4e4e4)",
+    // horizontal grid lines, the Gauge track
+    border: "var(--chart-axis-color, #cccccc)",
     // axis lines, zero baseline
     crosshair: "#aaaaaa",
-    // vertical hover line — intentionally subtler than border
+    // vertical hover line — subtler than border; no token (RC-064)
     // ── Text ───────────────────────────────────────────────────────────────────
-    text: "#000000",
+    text: "var(--chart-text-color, #000000)",
     // primary labels
-    muted: "#666666",
+    muted: "var(--chart-label-color, #666666)",
     // axis tick labels, secondary text
-    // ── Semantic (P&L, deltas, signals) ────────────────────────────────────────
-    positive: "#389e0d",
-    // gains, up moves
-    negative: "#ff0000",
-    // losses, down moves
-    accent: "#00aaff",
-    // highlights, single-series default
+    // ── Accent ─────────────────────────────────────────────────────────────────
+    // Single-series default, highlights, map regions with data; series 1's colour.
+    accent: "var(--chart-series-1, #1677ff)",
     // ── Series palette ─────────────────────────────────────────────────────────
     // Used in order for multi-series charts; override the full array or per-series.
+    // The palette agreed with Rare Styles, behind the page's --chart-series-1…6.
+    // Charts draw with them resolved to hex (core/paint.js, at every render).
     colors: [
-      "#fa8c16",
+      "var(--chart-series-1, #1677ff)",
+      // blue (the accent)
+      "var(--chart-series-2, #fa8c16)",
       // orange
-      "#00aaff",
-      // blue
-      "#00c97a",
+      "var(--chart-series-3, #00c97a)",
       // green
-      "#ffcc00",
+      "var(--chart-series-4, #ffcc00)",
       // yellow
-      "#cc44ff",
+      "var(--chart-series-5, #cc44ff)",
       // violet
-      "#ff0000"
+      "var(--chart-series-6, #ff0000)"
       // red
     ],
     // ── Typography ─────────────────────────────────────────────────────────────
     // The fallbacks are the --rc-font-family(-numeric) stacks of
     // rare-charts.css; keep them in step. Chart text takes the CSS stack set on
-    // .rc-chart; `font` is only the tooltip's fallback when numericFont is unset.
+    // .rc-chart. In a tooltip `font` sets the words (published as
+    // --rc-tooltip-font when not this one, K-15).
     font: 'var(--rc-font-family, "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
-    // Not used: the tooltip size lives in rare-charts.css (B-03). Removal at 1.0.
-    fontSize: "var(--rc-font-size-sm, 14px)",
-    // The tooltip font family (published as --rc-tooltip-font).
+    // The tooltip's figures (.rc-num: values, percentages, counts, dates;
+    // published as --rc-tooltip-font-numeric when not this one, K-15).
     // Falls back through a chain of common tabular fonts.
     numericFont: 'var(--rc-font-family-numeric, "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace)',
     // ── Sizing defaults ────────────────────────────────────────────────────────
@@ -12138,26 +12747,29 @@ var RareCharts = (() => {
     // per-point marker size
     barOpacity: 0.35,
     map: {
-      matchFill: "#00aaff",
-      unmatchedFill: "#e8e8e8",
+      matchFill: null,
+      // null: regions with data take accent
+      unmatchedFill: "var(--chart-grid-color, #e8e8e8)",
       ocean: "transparent",
       // the card shows through (C-13)
-      border: "#ffffff",
+      border: "var(--chart-bg, #ffffff)",
       hoverBrighten: 1.3,
-      graticule: "rgba(0,0,0,0.08)"
+      graticule: null
+      // null: the text at 8% (rgba(0,0,0,0.08) on black)
     },
     // ── Tooltip ────────────────────────────────────────────────────────────────
-    // Colours only: Tooltip.js publishes them as --rc-tooltip-* custom
-    // properties, rare-charts.css sets size, weight and spacing — its var()
-    // fallbacks repeat these values; keep them in step (B-03).
+    // Colours only: rare-charts.css declares them on the card as
+    // --rc-tooltip-* (a theme's own values are published there inline,
+    // core/paint.js) and sets size, weight and spacing — its literals repeat
+    // these values; keep them in step (B-03). A light popover on any surface.
     tooltip: {
-      bg: "#ffffff",
-      border: "#e0e0e0",
-      text: "#000000",
+      bg: "var(--chart-tooltip-bg, #ffffff)",
+      border: "var(--chart-tooltip-border, #e4e4e4)",
+      text: "var(--chart-tooltip-text, #000000)",
       // plain rows and subject titles
-      muted: "#666666",
+      muted: "var(--chart-tooltip-muted, #666666)",
       // dates, percentages, counts — every secondary row
-      shadow: "0 2px 8px rgba(0,0,0,0.10)",
+      shadow: "var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10))",
       // The row naming what is hovered (date, label, title). null keeps the
       // role look: a date stays muted, a title bold in text. bg draws a band.
       header: { text: null, bg: null }
@@ -12180,7 +12792,8 @@ var RareCharts = (() => {
       shadow: "0 2px 12px rgba(0,0,0,0.55)"
     },
     map: {
-      matchFill: "#ff6200",
+      matchFill: null,
+      // the accent, #ff6200
       unmatchedFill: "#1e1e2e",
       ocean: "transparent",
       border: "#444455",
@@ -12207,14 +12820,457 @@ var RareCharts = (() => {
     };
   }
 
+  // assets/charts/src/core/paint.js
+  var PAINT = /* @__PURE__ */ Symbol("rc.paint");
+  var HEX = /* @__PURE__ */ Symbol("rc.hex");
+  var ROLE_KEYS = ["bg", "surface", "grid", "border", "crosshair", "text", "muted", "accent"];
+  var TOOLTIP_KEYS = ["bg", "border", "text", "muted", "shadow"];
+  var HEADER_KEYS = ["text", "bg"];
+  var MAP_KEYS = ["matchFill", "unmatchedFill", "ocean", "border", "graticule"];
+  var set3 = (v) => v != null && v !== "";
+  var sameColors = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((c, i) => c === b[i]);
+  var own = (v, d) => set3(v) && (Array.isArray(v) ? !sameColors(v, d) : v !== d);
+  function ownColors(spec) {
+    const d = defaultTheme;
+    const out = [];
+    for (const k of ROLE_KEYS) if (own(spec[k], d[k])) out.push(k);
+    if (own(spec.colors, d.colors)) out.push("colors");
+    for (const k of TOOLTIP_KEYS) if (own(spec.tooltip?.[k], d.tooltip[k])) out.push(`tooltip.${k}`);
+    for (const k of HEADER_KEYS) if (own(spec.tooltip?.header?.[k], d.tooltip.header[k])) out.push(`tooltip.header.${k}`);
+    for (const k of MAP_KEYS) if (own(spec.map?.[k], d.map[k])) out.push(`map.${k}`);
+    return out;
+  }
+  function themeProperties(spec) {
+    const owned = new Set(ownColors(spec));
+    const out = [];
+    const put = (name, value) => out.push([name, String(value)]);
+    for (const k of ROLE_KEYS) if (owned.has(k)) put(`--rc-${k}`, spec[k]);
+    const bg = owned.has("bg"), text = owned.has("text");
+    if (!owned.has("surface") && (bg || text)) put("--rc-surface", "color-mix(in srgb, var(--rc-bg) 96%, var(--rc-text))");
+    if (bg) {
+      put("--rc-control-text", "var(--rc-muted)");
+      put("--rc-control-border", "var(--rc-border)");
+      put("--rc-control-hover-border", "var(--rc-text)");
+      put("--rc-control-active-text", "var(--rc-text)");
+      put("--rc-control-active-bg", "var(--rc-bg)");
+    }
+    const map2 = spec.map ?? {};
+    if (owned.has("map.unmatchedFill")) put("--rc-map-unmatched-fill", map2.unmatchedFill);
+    else if (owned.has("grid")) put("--rc-map-unmatched-fill", "var(--rc-grid)");
+    if (owned.has("map.border")) put("--rc-map-border", map2.border);
+    else if (bg) put("--rc-map-border", "var(--rc-bg)");
+    if (owned.has("map.graticule")) put("--rc-map-graticule", map2.graticule);
+    else if (text) put("--rc-map-graticule", "color-mix(in srgb, var(--rc-text) 8%, transparent)");
+    const tip = spec.tooltip ?? {};
+    for (const k of TOOLTIP_KEYS) {
+      if (tip[k] === null) put(`--rc-tooltip-${k}`, k === "shadow" ? "none" : `var(--rc-${k})`);
+      else if (owned.has(`tooltip.${k}`)) put(`--rc-tooltip-${k}`, tip[k]);
+    }
+    for (const k of HEADER_KEYS) if (owned.has(`tooltip.header.${k}`)) put(`--rc-tooltip-header-${k}`, tip.header[k]);
+    if (set3(spec.font) && spec.font !== defaultTheme.font) put("--rc-tooltip-font", spec.font);
+    if (set3(spec.numericFont) && spec.numericFont !== defaultTheme.numericFont) put("--rc-tooltip-font-numeric", spec.numericFont);
+    return out;
+  }
+  function publishTheme(el, spec, saved = null) {
+    const props = themeProperties(spec);
+    for (const [name, value] of props) {
+      if (saved && !(name in saved)) saved[name] = [el.style.getPropertyValue(name), el.style.getPropertyPriority(name)];
+      el.style.setProperty(name, value);
+    }
+    return props.map(([name]) => name);
+  }
+  function restoreStyle(el, saved) {
+    for (const [name, [value, priority]] of Object.entries(saved)) {
+      if (value) el.style.setProperty(name, value, priority);
+      else el.style.removeProperty(name);
+    }
+    if (!el.getAttribute("style")) el.removeAttribute("style");
+  }
+  var PAINT_ROLES = ["bg", "surface", "grid", "border", "crosshair", "text", "muted"];
+  var PAINT_MAP = { unmatchedFill: "map-unmatched-fill", border: "map-border", graticule: "map-graticule" };
+  var DERIVED_LITERALS = { surface: "#f5f5f5", "map.graticule": "rgba(0,0,0,0.08)" };
+  var at = (obj, path2) => path2.split(".").reduce((o, k) => o?.[k], obj);
+  function paintOf(spec, { hex: hex2 = null } = {}) {
+    const owned = new Set(ownColors(spec));
+    const literal = (path2) => owned.has(path2) ? at(spec, path2) : chainLiteral(at(defaultTheme, path2)) ?? DERIVED_LITERALS[path2];
+    const p = { ...spec };
+    for (const k of PAINT_ROLES) p[k] = `var(--rc-${k}, ${literal(k)})`;
+    p.map = { ...spec.map };
+    for (const [k, name] of Object.entries(PAINT_MAP)) p.map[k] = `var(--rc-${name}, ${literal(`map.${k}`)})`;
+    p.map.matchFill = owned.has("map.matchFill") ? spec.map.matchFill : null;
+    p.colors = Array.isArray(spec.colors) ? [...spec.colors] : [];
+    Object.defineProperty(p, PAINT, { value: true });
+    if (hex2) Object.defineProperty(p, HEX, { value: hex2 });
+    return p;
+  }
+  function hexOf(paint) {
+    return paint?.[HEX] ?? ((c) => c);
+  }
+  function readDataColors(el, spec, paint) {
+    const hex2 = paint[HEX] ?? makeHex(el);
+    hex2.reset();
+    const owned = new Set(ownColors(spec));
+    const accent = owned.has("accent") ? spec.accent : `var(--rc-accent, ${defaultTheme.accent})`;
+    const colors = owned.has("colors") ? spec.colors : defaultTheme.colors;
+    const [a, ...cs] = hex2.many([accent, ...colors]);
+    paint.accent = a;
+    if (!Array.isArray(paint.colors)) paint.colors = [];
+    paint.colors.splice(0, paint.colors.length, ...cs);
+    return paint;
+  }
+  var byte = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, "0");
+  var channel = (s) => s.endsWith("%") ? parseFloat(s) * 2.55 : parseFloat(s);
+  var alphaOf = (s) => s == null ? 1 : s.endsWith("%") ? parseFloat(s) / 100 : parseFloat(s);
+  function toHex(computed) {
+    if (typeof computed !== "string") return null;
+    const s = computed.trim().toLowerCase();
+    let rgb2, a;
+    let m = s.match(/^rgba?\(\s*([^)]*)\)$/);
+    if (m) {
+      const parts = m[1].split(/\s*[,/]\s*|\s+/).filter(Boolean);
+      if (parts.length < 3 || parts.length > 4) return null;
+      rgb2 = parts.slice(0, 3).map(channel);
+      a = alphaOf(parts[3]);
+    } else if (m = s.match(/^color\(\s*srgb\s+([^)]*)\)$/)) {
+      const [body, alpha] = m[1].split("/").map((p) => p.trim());
+      const parts = body.split(/\s+/).filter(Boolean);
+      if (parts.length !== 3) return null;
+      rgb2 = parts.map((p) => (p.endsWith("%") ? parseFloat(p) / 100 : parseFloat(p)) * 255);
+      a = alphaOf(alpha);
+    } else return null;
+    if (![...rgb2, a].every(Number.isFinite)) return null;
+    const hex2 = `#${rgb2.map(byte).join("")}`;
+    return a >= 1 ? hex2 : hex2 + byte(a * 255);
+  }
+  function chainLiteral(v) {
+    let s = typeof v === "string" ? v.trim() : v;
+    while (typeof s === "string" && s.startsWith("var(") && s.endsWith(")")) {
+      let depth = 0, comma = -1;
+      for (let i = 3; i < s.length - 1; i++) {
+        if (s[i] === "(") depth++;
+        else if (s[i] === ")") depth--;
+        else if (s[i] === "," && depth === 1) {
+          comma = i;
+          break;
+        }
+      }
+      if (comma < 0) return null;
+      s = s.slice(comma + 1, -1).trim();
+    }
+    return s;
+  }
+  function varRefs(s) {
+    const out = [];
+    let i = 0;
+    while ((i = s.indexOf("var(", i)) > -1) {
+      let depth = 0, comma = -1, j = i + 3;
+      for (; j < s.length; j++) {
+        if (s[j] === "(") depth++;
+        else if (s[j] === ")" && --depth === 0) break;
+        else if (s[j] === "," && depth === 1 && comma < 0) comma = j;
+      }
+      if (j >= s.length) return null;
+      const name = s.slice(i + 4, comma > -1 ? comma : j).trim();
+      out.push([i, j + 1, name, comma > -1 ? s.slice(comma + 1, j).trim() : null]);
+      i = j + 1;
+    }
+    return out;
+  }
+  function substitute(el, s, depth = 0) {
+    if (depth > 8) return null;
+    const refs = varRefs(s);
+    if (refs == null) return null;
+    if (!refs.length) return s;
+    let cs = null;
+    try {
+      cs = el && typeof getComputedStyle === "function" ? getComputedStyle(el) : null;
+    } catch {
+      cs = null;
+    }
+    let out = "", from = 0;
+    for (const [a, b, name, fb] of refs) {
+      const own2 = cs?.getPropertyValue?.(name)?.trim() || "";
+      const v = substitute(el, own2 || fb || "", depth + 1);
+      if (!v) return null;
+      out += s.slice(from, a) + v;
+      from = b;
+    }
+    return out + s.slice(from);
+  }
+  var d3Hex = (s) => {
+    const c = s ? color(s) : null;
+    return c ? c.opacity < 1 ? c.formatHex8() : c.formatHex() : null;
+  };
+  var canvasCtx;
+  function canvasHex(computed) {
+    try {
+      canvasCtx ??= Object.assign(document.createElement("canvas"), { width: 1, height: 1 }).getContext("2d", { willReadFrequently: true }) ?? null;
+    } catch {
+      canvasCtx = null;
+    }
+    if (!canvasCtx) return null;
+    canvasCtx.clearRect(0, 0, 1, 1);
+    canvasCtx.fillStyle = "#000";
+    canvasCtx.fillStyle = computed;
+    canvasCtx.fillRect(0, 0, 1, 1);
+    const [r, g, b, a8] = canvasCtx.getImageData(0, 0, 1, 1).data;
+    const m = computed.match(/\/\s*([\d.]+%?)\s*\)\s*$/);
+    const a = m ? alphaOf(m[1]) : a8 / 255;
+    const hex2 = `#${[r, g, b].map(byte).join("")}`;
+    return a >= 1 ? hex2 : hex2 + byte(a * 255);
+  }
+  var PROBE_CSS = "position:absolute;width:0;height:0;overflow:hidden;visibility:hidden;pointer-events:none";
+  function makeHex(el) {
+    const cache = /* @__PURE__ */ new Map();
+    let warned = false;
+    const passes = (c) => {
+      if (typeof c !== "string") return true;
+      const s = c.trim();
+      return s === "none" || s === "transparent" || /^url\(/i.test(s);
+    };
+    const plain = (s) => !s.includes("var(") && color(s) != null;
+    const probe = (list) => {
+      const out = list.map(() => null);
+      if (!el?.isConnected || typeof getComputedStyle !== "function") return out;
+      const box = document.createElement("i");
+      box.setAttribute("aria-hidden", "true");
+      box.style.cssText = PROBE_CSS;
+      const kids = list.map((c) => {
+        const i = document.createElement("i");
+        i.style.color = c;
+        return box.appendChild(i);
+      });
+      el.appendChild(box);
+      try {
+        kids.forEach((i, k) => {
+          if (!i.style.color) return;
+          const v = getComputedStyle(i).color;
+          if (!v || v.includes("var(")) return;
+          out[k] = toHex(v) ?? canvasHex(v);
+        });
+      } finally {
+        box.remove();
+      }
+      return out;
+    };
+    const settle = (c, read) => {
+      const s = c.trim();
+      const out = read ?? d3Hex(substitute(el, s));
+      if (out != null) return out;
+      const lit = chainLiteral(s);
+      if (lit != null && lit !== s && color(lit)) return lit;
+      if (!warned) {
+        warned = true;
+        console.warn(`RareCharts: cannot read the colour "${c}"`);
+      }
+      return c;
+    };
+    const many = (list) => {
+      const todo = [...new Set(list.filter((c) => !passes(c) && !cache.has(c) && !plain(c.trim())))];
+      if (todo.length) {
+        const read = probe(todo.map((c) => c.trim()));
+        todo.forEach((c, k) => cache.set(c, settle(c, read[k])));
+      }
+      return list.map(hex2);
+    };
+    const hex2 = (c) => {
+      if (passes(c)) return c;
+      if (cache.has(c)) return cache.get(c);
+      if (plain(c.trim())) {
+        cache.set(c, c);
+        return c;
+      }
+      return many([c])[0];
+    };
+    hex2.many = many;
+    hex2.reset = () => cache.clear();
+    return hex2;
+  }
+
   // assets/charts/src/core/utils.js
-  function parseDate(v) {
+  var _warnedTimeZones = /* @__PURE__ */ new Set();
+  function resolveTimeZone(v) {
+    if (v == null) return "local";
+    const s = typeof v === "string" ? v.trim().toUpperCase() : "";
+    if (s === "UTC") return "UTC";
+    if (s === "LOCAL") return "local";
+    const key = String(v);
+    if (!_warnedTimeZones.has(key)) {
+      _warnedTimeZones.add(key);
+      console.warn(`RareCharts: timeZone "${key}" is not supported \u2014 use 'local' (the default) or 'UTC'. Dates are read in local time.`);
+    }
+    return "local";
+  }
+  var INTERVAL_NAMES = Object.freeze(["minute", "hour", "day", "week", "month", "quarter", "year"]);
+  var WEEKDAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+  function weekdayOf(v) {
+    if (Number.isInteger(v) && v >= 0 && v <= 6) return v;
+    const i = typeof v === "string" ? WEEKDAY_NAMES.indexOf(v.trim().toLowerCase()) : -1;
+    return i >= 0 ? i : null;
+  }
+  function resolveWeekStart(v) {
+    return weekdayOf(v) ?? 1;
+  }
+  function quarterInterval(month, utc) {
+    const monthOf = (date2) => utc ? date2.getUTCMonth() : date2.getMonth();
+    return timeInterval(
+      (date2) => {
+        const m = monthOf(date2);
+        if (utc) date2.setUTCMonth(m - m % 3, 1);
+        else date2.setMonth(m - m % 3, 1);
+        date2.setTime(+month.floor(date2));
+      },
+      (date2, step) => {
+        date2.setTime(+month.offset(date2, step * 3));
+      },
+      (start2, end) => month.count(start2, end) / 3,
+      (date2) => Math.floor(monthOf(date2) / 3)
+    );
+  }
+  function zoneKit(zone, scale, format2, intervals, weeks) {
+    return Object.freeze({
+      zone,
+      scale,
+      format: format2,
+      ...intervals,
+      week: weeks[1],
+      interval(name, weekStart = 1) {
+        if (name === "week") return weeks[resolveWeekStart(weekStart)];
+        return INTERVAL_NAMES.includes(name) ? intervals[name] : null;
+      }
+    });
+  }
+  var LOCAL_TIME = zoneKit("local", time, timeFormat, {
+    day: timeDay,
+    month: timeMonth,
+    year: timeYear,
+    minute: timeMinute,
+    hour: timeHour,
+    quarter: quarterInterval(timeMonth, false)
+  }, [timeSunday, timeMonday, timeTuesday, timeWednesday, timeThursday, timeFriday, timeSaturday]);
+  var UTC_TIME = zoneKit("UTC", utcTime, utcFormat, {
+    day: utcDay,
+    month: utcMonth,
+    year: utcYear,
+    minute: utcMinute,
+    hour: utcHour,
+    quarter: quarterInterval(utcMonth, true)
+  }, [utcSunday, utcMonday, utcTuesday, utcWednesday, utcThursday, utcFriday, utcSaturday]);
+  function timeKit(timeZone = "local") {
+    return timeZone === "UTC" ? UTC_TIME : LOCAL_TIME;
+  }
+  var CALENDAR = /^([+-]\d{6}|\d{4})(?:([-/])(\d{1,2})(?:\2(\d{1,2})(?:[T ](\d{1,2}):(\d{2})(?::(\d{2})(?:[.,](\d+))?)?)?)?)?$/;
+  function calendarDate([y2, mo, d, h, mi, s, ms], utc) {
+    const dt = /* @__PURE__ */ new Date(0);
+    if (utc) {
+      dt.setUTCFullYear(y2, mo, d);
+      dt.setUTCHours(h, mi, s, ms);
+    } else {
+      dt.setFullYear(y2, mo, d);
+      dt.setHours(h, mi, s, ms);
+    }
+    return dt;
+  }
+  function calendarMidnight(y2, m = 0, d = 1, timeZone = "local") {
+    return calendarDate([y2, m, d, 0, 0, 0, 0], timeZone === "UTC");
+  }
+  function readCalendar(text, utc) {
+    const m = CALENDAR.exec(text.trim());
+    if (!m) return void 0;
+    const [, y2, , mo = "1", d = "1", h = "0", mi = "0", s = "0", frac = ""] = m;
+    const month = +mo, day = +d, hour = +h, minute = +mi, second2 = +s;
+    const ms = frac ? Math.floor(+`0.${frac}` * 1e3) : 0;
+    if (month < 1 || month > 12 || day < 1 || day > 31 || minute > 59 || second2 > 59) return null;
+    if (hour > 24 || hour === 24 && (minute || second2 || ms)) return null;
+    return calendarDate([+y2, month - 1, day, hour, minute, second2, ms], utc);
+  }
+  function parseDate(v, timeZone = "local") {
     if (v == null || v === "" || typeof v === "boolean") return null;
-    const dt = v instanceof Date ? v : new Date(v);
+    if (v instanceof Date) return Number.isNaN(+v) ? null : v;
+    if (typeof v === "string") {
+      const dt2 = readCalendar(v, timeZone === "UTC");
+      if (dt2 !== void 0) return dt2;
+    }
+    const dt = new Date(v);
     return Number.isNaN(+dt) ? null : dt;
   }
   var byDate = (a, b) => a.date - b.date;
-  function clampDateExtent(extent2, fullExtent, parse = parseDate) {
+  function daysInMonth(y2, m) {
+    const dt = /* @__PURE__ */ new Date(0);
+    dt.setUTCFullYear(y2, m + 1, 0);
+    return dt.getUTCDate();
+  }
+  function offsetCalendar(date2, unit2, amount, timeZone = "local") {
+    const utc = timeZone === "UTC";
+    const out = /* @__PURE__ */ new Date(+date2);
+    const y2 = utc ? out.getUTCFullYear() : out.getFullYear();
+    const m = utc ? out.getUTCMonth() : out.getMonth();
+    const d = utc ? out.getUTCDate() : out.getDate();
+    const set4 = (yy, mm, dd) => utc ? out.setUTCFullYear(yy, mm, dd) : out.setFullYear(yy, mm, dd);
+    if (unit2 === "D" || unit2 === "W") {
+      set4(y2, m, d + amount * (unit2 === "W" ? 7 : 1));
+      return out;
+    }
+    if (unit2 !== "M" && unit2 !== "Y") return null;
+    const months = m + amount * (unit2 === "Y" ? 12 : 1);
+    const ty = y2 + Math.floor(months / 12);
+    const tm = (months % 12 + 12) % 12;
+    set4(ty, tm, Math.min(d, daysInMonth(ty, tm)));
+    return out;
+  }
+  function stepInterval(name, date2, k, timeZone = "local") {
+    switch (name) {
+      case "minute":
+        return new Date(+date2 + k * MINUTE);
+      case "hour":
+        return new Date(+date2 + k * HOUR);
+      case "day":
+        return offsetCalendar(date2, "D", k, timeZone);
+      case "week":
+        return offsetCalendar(date2, "W", k, timeZone);
+      case "month":
+        return offsetCalendar(date2, "M", k, timeZone);
+      case "quarter":
+        return offsetCalendar(date2, "M", 3 * k, timeZone);
+      case "year":
+        return offsetCalendar(date2, "Y", k, timeZone);
+      default:
+        return null;
+    }
+  }
+  function intervalOfStep(a, b, kit) {
+    const dt = b - a;
+    if (dt === MINUTE) return "minute";
+    if (dt === HOUR) return "hour";
+    const days = (lo, hi) => dt >= lo * DAY - HOUR && dt <= hi * DAY + HOUR;
+    if (days(1, 1) && kit.day.count(a, b) === 1) return "day";
+    if (days(7, 7) && kit.day.count(a, b) === 7) return "week";
+    const months = kit.month.count(a, b);
+    if (months === 1 && days(28, 31)) return "month";
+    if (months === 3 && days(89, 92)) return "quarter";
+    if (months === 12 && days(365, 366)) return "year";
+    return null;
+  }
+  function inferInterval(rows, timeZone = "local") {
+    const kit = timeKit(timeZone);
+    const counts = /* @__PURE__ */ new Map();
+    for (let i = 1; i < (rows?.length ?? 0); i++) {
+      const a = rows[i - 1].date, b = rows[i].date;
+      if (!(b > a)) continue;
+      const key = intervalOfStep(a, b, kit) ?? b - a;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+    }
+    let best = null, most = 0, tie = false;
+    for (const [key, n] of counts) {
+      if (n > most) {
+        best = key;
+        most = n;
+        tie = false;
+      } else if (n === most) tie = true;
+    }
+    return !tie && typeof best === "string" ? best : null;
+  }
+  function clampDateExtent(extent2, fullExtent, parse = (v) => parseDate(v)) {
     if (!Array.isArray(extent2) || extent2.length < 2) return null;
     const start2 = parse(extent2[0], false);
     const end = parse(extent2[1], true);
@@ -12232,7 +13288,7 @@ var RareCharts = (() => {
     if (from > to) return null;
     return [new Date(from), new Date(to)];
   }
-  function resolveTimeframeExtent(step, fullExtent, parse = parseDate) {
+  function resolveTimeframeExtent(step, fullExtent, parse = (v) => parseDate(v), timeZone = "local", { anchor = null, weekStart = 1 } = {}) {
     if (!step || !Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
     const fullStart = parseDate(fullExtent[0]);
     const fullEnd = parseDate(fullExtent[1]);
@@ -12245,21 +13301,23 @@ var RareCharts = (() => {
     const key = String(cfg.key ?? cfg.label ?? "").trim().toUpperCase();
     if (!key) return null;
     if (key === "ALL" || key === "MAX") return [fullStart, fullEnd];
-    const start2 = new Date(fullEnd);
-    if (key === "YTD") {
-      start2.setMonth(0, 1);
-      start2.setHours(0, 0, 0, 0);
-      return clampDateExtent([start2, fullEnd], fullExtent);
+    const end = parseDate(anchor) ?? fullEnd;
+    const tz = timeKit(timeZone);
+    const until = (start2) => clampDateExtent([start2, end], fullExtent);
+    switch (key) {
+      case "TODAY":
+        return until(tz.day.floor(end));
+      case "WTD":
+        return until(tz.interval("week", weekStart).floor(end));
+      case "MTD":
+        return until(tz.month.floor(end));
+      case "YTD":
+        return until(tz.year.floor(end));
     }
-    const match = key.match(/^(\d+)\s*([DWMY])$/);
+    const match = key.match(/^(\d+)\s*([HDWMY])$/);
     if (!match) return null;
-    const amount = +match[1];
-    const unit2 = match[2];
-    if (unit2 === "D") start2.setDate(start2.getDate() - amount);
-    if (unit2 === "W") start2.setDate(start2.getDate() - amount * 7);
-    if (unit2 === "M") start2.setMonth(start2.getMonth() - amount);
-    if (unit2 === "Y") start2.setFullYear(start2.getFullYear() - amount);
-    return clampDateExtent([start2, fullEnd], fullExtent);
+    const n = +match[1];
+    return until(match[2] === "H" ? new Date(+end - n * HOUR) : offsetCalendar(end, match[2], -n, timeZone));
   }
   function extentEquals(a, b) {
     if (!Array.isArray(a) || !Array.isArray(b) || !a[0] || !a[1] || !b[0] || !b[1]) return false;
@@ -12279,8 +13337,19 @@ var RareCharts = (() => {
       `RareCharts: axis title "${str}" is wider than its axis margin and was truncated. Axis titles are meant to be terse units (e.g. "PRICE", "N \xB7 K HLX") \u2014 shorten the label, widen the margin, or set axisTitleMaxLength to cap it explicitly.`
     );
   }
-  function resolveCurve(name, tension = 0) {
-    switch (name) {
+  var CURVE_NAMES = /* @__PURE__ */ new Set(["linear", "monotone", "basis", "cardinal", "step", "stepBefore", "stepAfter"]);
+  function curveName(name, fallback = "linear") {
+    if (CURVE_NAMES.has(name)) return name;
+    const drawn = CURVE_NAMES.has(fallback) ? fallback : "linear";
+    if (name != null && name !== "" && !_warnedCurves.has(String(name))) {
+      _warnedCurves.add(String(name));
+      console.warn(`RareCharts: curve "${name}" is not one of ${[...CURVE_NAMES].join(", ")} \u2014 drawing ${drawn}.`);
+    }
+    return drawn;
+  }
+  var _warnedCurves = /* @__PURE__ */ new Set();
+  function resolveCurve(name, tension = 0, fallback = "linear") {
+    switch (curveName(name, fallback)) {
       case "monotone":
         return monotoneX;
       case "basis":
@@ -12293,7 +13362,6 @@ var RareCharts = (() => {
         return stepBefore;
       case "stepAfter":
         return stepAfter;
-      case "linear":
       default:
         return linear_default;
     }
@@ -12338,6 +13406,22 @@ var RareCharts = (() => {
     if (ticks2.length < 2) ticks2 = ticks(lo, hi, count * 2);
     return ticks2.length >= 2 ? ticks2 : [lo, hi];
   }
+  function barValueDomain(min4, max4, { pad: pad3 = 0.08, tickValues = null } = {}) {
+    let lo = Math.min(0, min4 ?? 0);
+    let hi = Math.max(0, max4 ?? 0);
+    const span = hi - lo;
+    if (span > 0) {
+      if (hi > 0) hi += span * pad3;
+      if (lo < 0) lo -= span * pad3;
+    } else {
+      [lo, hi] = [0, 1];
+    }
+    if (tickValues?.length) {
+      lo = Math.min(lo, min(tickValues));
+      hi = Math.max(hi, max(tickValues));
+    }
+    return [lo, hi];
+  }
   function logPaddedDomain(min4, max4, pad3 = 0.08) {
     const f = max4 > min4 ? Math.pow(max4 / min4, pad3) : Math.pow(10, 0.05);
     return [min4 / f, max4 * f];
@@ -12381,6 +13465,7 @@ var RareCharts = (() => {
     if (!Number.isFinite(n)) return String(v);
     return Math.abs(n) >= 1e3 ? format(".3~s")(n) : format(".3~r")(n);
   }
+  var MINUTE = 6e4;
   var HOUR = 36e5;
   var DAY = 864e5;
   function spanTimeFormat(extent2) {
@@ -12392,14 +13477,36 @@ var RareCharts = (() => {
     if (span <= 1827 * DAY) return "%b '%y";
     return "%Y";
   }
-  function spanTimeFormatter(extent2) {
+  function spanTimeFormatter(extent2, timeZone = "local") {
+    const tz = timeKit(timeZone);
     const spec = spanTimeFormat(extent2);
-    const f = timeFormat(spec);
+    const f = tz.format(spec);
     if (spec !== "%H:%M") return f;
-    const day = timeFormat("%b %d");
-    return (d) => +timeDay.floor(d) === +d ? day(d) : f(d);
+    const day = tz.format("%b %d");
+    return (d) => +tz.day.floor(d) === +d ? day(d) : f(d);
   }
-  function normalizeAnnotations(list) {
+  function bucketDateText(date2, interval2, timeZone = "local", { year = true } = {}) {
+    const utc = timeZone === "UTC";
+    const tz = timeKit(timeZone);
+    const day = () => date2.toLocaleDateString("en-US", { ...year ? { year: "numeric" } : {}, month: "short", day: "numeric", ...utc ? { timeZone: "UTC" } : {} });
+    const yy = year ? ` ${tz.format("%Y")(date2)}` : "";
+    switch (interval2) {
+      case "minute":
+      case "hour":
+        return `${day()}, ${tz.format("%H:%M")(date2)}`;
+      case "week":
+        return `Week of ${day()}`;
+      case "month":
+        return `${tz.format("%B")(date2)}${yy}`;
+      case "quarter":
+        return `Q${Math.floor((utc ? date2.getUTCMonth() : date2.getMonth()) / 3) + 1}${yy}`;
+      case "year":
+        return tz.format("%Y")(date2);
+      default:
+        return day();
+    }
+  }
+  function normalizeAnnotations(list, timeZone = "local") {
     if (!Array.isArray(list)) return [];
     return list.map((a) => {
       if (!a || typeof a !== "object") return null;
@@ -12438,8 +13545,8 @@ var RareCharts = (() => {
         };
       }
       if (a.from != null || a.to != null) {
-        const from = parseDate(a.from);
-        const to = parseDate(a.to);
+        const from = parseDate(a.from, timeZone);
+        const to = parseDate(a.to, timeZone);
         if (!from || !to) return null;
         const lo = from <= to ? from : to;
         const hi = from <= to ? to : from;
@@ -12455,7 +13562,7 @@ var RareCharts = (() => {
           labelColor: a.labelColor ?? null
         };
       }
-      const date2 = parseDate(a.date);
+      const date2 = parseDate(a.date, timeZone);
       if (!date2) return null;
       return {
         kind: "point",
@@ -12466,6 +13573,11 @@ var RareCharts = (() => {
         labelColor: a.labelColor ?? null
       };
     }).filter(Boolean);
+  }
+  function annotationRoom(options = {}, labelled = true) {
+    const annotations = normalizeAnnotations(options.annotations, resolveTimeZone(options.timeZone));
+    const labelHeight = options.annotationLabelHeight ?? 22;
+    return { annotations, labelHeight, top: annotations.length && labelled ? labelHeight + 4 : 0 };
   }
   function prefersReducedMotion() {
     return typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -12485,1239 +13597,125 @@ var RareCharts = (() => {
     }
   }
 
-  // assets/charts/src/core/links.js
-  function endpoints(raw) {
-    const source = raw.source ?? raw.from;
-    const target = raw.target ?? raw.to;
-    if (source == null || target == null) return null;
-    return { source: String(source), target: String(target) };
+  // assets/charts/src/core/seriesPath.js
+  var readNumber = (v) => v == null || v === "" || typeof v === "boolean" ? NaN : +v;
+  function normalizePoints(rows, { fields = ["value"], keep = false, timeZone = "local", keepNull = false } = {}) {
+    return (Array.isArray(rows) ? rows : []).flatMap((d) => {
+      if (!d || typeof d !== "object") return [];
+      const date2 = parseDate(d.date, timeZone);
+      if (!date2) return [];
+      const out = keep ? { ...d, date: date2 } : { date: date2 };
+      for (const f of fields) {
+        if (keepNull && d[f] === null) {
+          out[f] = null;
+          continue;
+        }
+        const v = readNumber(d[f]);
+        if (!Number.isFinite(v)) return [];
+        out[f] = v;
+      }
+      return [out];
+    }).sort(byDate);
   }
-  var tieKey = (source, target, type2) => `${source}\u2192${target}|${type2 ?? "default"}`;
-  function normalizeLinks(list, { warn = true, ids = "payload" } = {}) {
-    if (!Array.isArray(list)) return [];
-    const seen = /* @__PURE__ */ new Map();
-    const used = new Set(list.filter((l) => l?.id != null).map((l) => String(l.id)));
+  function normalizeLineSeries(s, idx, { color: color2, type: type2 = "line", axis: axis2, timeZone = "local" } = {}) {
+    const width = readNumber(s.strokeWidth);
+    const out = {
+      ...s,
+      name: s.name ?? `Series ${idx + 1}`,
+      color: s.color ?? color2,
+      type: type2,
+      // Absent or unreadable → undefined: render keeps its default width.
+      strokeWidth: Number.isFinite(width) ? width : void 0,
+      values: normalizePoints(s.values, { fields: type2 === "band" ? ["lower", "upper"] : ["value"], timeZone })
+    };
+    if (axis2) out.axis = axis2;
+    if (type2 === "band") out.fillOpacity = s.fillOpacity ?? s.areaOpacity;
+    return out;
+  }
+  var isGap = (d) => d.value === null;
+  var MAX_FILLED_BUCKETS = 1e5;
+  function fillGaps(rows, {
+    gaps = "join",
+    interval: interval2 = null,
+    timeZone = "local",
+    weekStart = 1,
+    until = null,
+    limit = MAX_FILLED_BUCKETS
+  } = {}) {
+    if (gaps !== "zero" && gaps !== "break") return { rows, capped: false };
+    const bucket = interval2 ? timeKit(timeZone).interval(interval2, weekStart) : null;
+    const missing = gaps === "zero" ? 0 : null;
     const out = [];
-    list.forEach((raw, i) => {
-      if (!raw || typeof raw !== "object") return;
-      const ends = endpoints(raw);
-      if (!ends) {
-        if (warn) console.warn(`RareCharts: link #${i} has no source/target \u2014 dropped`);
-        return;
-      }
-      const { from, to, ...rest } = raw;
-      const link2 = { ...rest, ...ends };
-      if (link2.id == null && ids === "tie") {
-        link2.id = tieKey(ends.source, ends.target, link2.type);
-      } else if (link2.id == null) {
-        const pairId = JSON.stringify([ends.source, ends.target]);
-        const pair = `${ends.source}\u2192${ends.target}`;
-        let n = seen.get(pairId) ?? 0;
-        while (used.has(`${pair}#${n}`)) n++;
-        seen.set(pairId, n + 1);
-        link2.id = `${pair}#${n}`;
-      } else {
-        link2.id = String(link2.id);
-      }
-      used.add(link2.id);
-      out.push(link2);
-    });
-    return out;
-  }
-  function normalizeRelationData(data = {}, {
-    unknownEndpoints = "keep",
-    onUnknown = null,
-    accept = null,
-    ids = "payload",
-    warn = true
-  } = {}) {
-    const nodes = (data.nodes ?? []).map((n) => ({ ...n, id: String(n.id) }));
-    let links = normalizeLinks(data.links ?? data.flows ?? [], { warn, ids });
-    if (accept) links = links.map((l) => accept(l)).filter((l) => l != null);
-    if (unknownEndpoints === "create" || unknownEndpoints === "drop") {
-      const known = new Set(nodes.map((n) => n.id));
-      if (unknownEndpoints === "create") {
-        links.forEach((l) => [l.source, l.target].forEach((id2) => {
-          if (!known.has(id2)) {
-            known.add(id2);
-            nodes.push({ id: id2 });
-          }
-        }));
-      } else {
-        links = links.filter((l) => {
-          if (known.has(l.source) && known.has(l.target)) return true;
-          onUnknown?.(l);
-          return false;
-        });
-      }
-    }
-    return { ...data, nodes, links };
-  }
-  function parseTime(v, { end = false } = {}) {
-    if (v == null || v === "") return null;
-    if (v instanceof Date) return Number.isNaN(+v) ? null : +v;
-    const utc = (y2, m2) => {
-      const d = new Date(Date.UTC(2e3, 0, 1));
-      d.setUTCFullYear(y2 + Math.floor(m2 / 12), (m2 % 12 + 12) % 12, 1);
-      return +d;
-    };
-    const period = (y2, m2 = null) => {
-      if (!end) return utc(y2, m2 ?? 0);
-      return m2 == null ? utc(y2 + 1, 0) - 1 : utc(y2, m2 + 1) - 1;
-    };
-    if (typeof v === "number") {
-      if (!Number.isFinite(v)) return null;
-      return Math.abs(v) < 1e4 ? period(Math.trunc(v)) : v;
-    }
-    const s = String(v).trim();
-    let m = /^(-?\d{1,4})$/.exec(s);
-    if (m) return period(+m[1]);
-    m = /^(\d{4})-(\d{2})$/.exec(s);
-    if (m) return period(+m[1], +m[2] - 1);
-    const t = Date.parse(s);
-    return Number.isNaN(t) ? null : t;
-  }
-  function linkInWindow(link2, from, to) {
-    const ls = parseTime(link2.start);
-    const le = parseTime(link2.end, { end: true });
-    const ws = parseTime(from);
-    const we = parseTime(to, { end: true });
-    if (we != null && ls != null && ls > we) return false;
-    if (ws != null && le != null && le < ws) return false;
-    return true;
-  }
-  function applyTimeWindow(links, window2, mode = "hide") {
-    if (!window2 || window2.from == null && window2.to == null) return links;
-    if (mode === "dim") {
-      return links.map((l) => linkInWindow(l, window2.from, window2.to) ? l : { ...l, _dim: true });
-    }
-    return links.filter((l) => linkInWindow(l, window2.from, window2.to));
-  }
-  function linkTimeExtent(links) {
-    let lo = Infinity, hi = -Infinity;
-    (links ?? []).forEach((l) => {
-      const s = parseTime(l.start), e = parseTime(l.end, { end: true });
-      [s, e].forEach((v) => {
-        if (v != null) {
-          lo = Math.min(lo, v);
-          hi = Math.max(hi, v);
-        }
-      });
-    });
-    return Number.isFinite(lo) ? [new Date(lo), new Date(hi)] : null;
-  }
-  function activeLinkSeries(links, extent2 = linkTimeExtent(links)) {
-    if (!extent2) return null;
-    const span = +extent2[1] - +extent2[0];
-    const DAY2 = 864e5;
-    const interval2 = span < 120 * DAY2 ? utcDay : span < 50 * 365 * DAY2 ? utcMonth : utcYear;
-    const ticks2 = interval2.range(interval2.floor(extent2[0]), interval2.offset(interval2.floor(extent2[1]), 1));
-    if (ticks2.length < 2) ticks2.push(interval2.offset(ticks2[0] ?? interval2.floor(extent2[0]), 1));
-    const spans = (links ?? []).map((l) => [
-      parseTime(l.start) ?? -Infinity,
-      parseTime(l.end, { end: true }) ?? Infinity
-    ]);
-    const series = ticks2.map((date2) => {
-      const a = +date2, b = +interval2.offset(date2, 1) - 1;
-      return { date: date2, value: spans.filter(([s, e]) => s <= b && e >= a).length };
-    });
-    series[0] = { ...series[0], date: new Date(Math.max(+series[0].date, +extent2[0])) };
-    const last = series[series.length - 1];
-    if (+extent2[1] > +last.date) series.push({ date: /* @__PURE__ */ new Date(+extent2[1]), value: last.value });
-    return series;
-  }
-  function linkWidthScale(links, {
-    by = "value",
-    scale = "sqrt",
-    min: min4 = 1,
-    max: max4 = 12
-  } = {}) {
-    const val = (l) => {
-      const v = typeof by === "function" ? by(l) : l?.[by];
-      return Number.isFinite(+v) && v !== null && v !== "" ? Math.max(0, +v) : null;
-    };
-    const top2 = max(links ?? [], val) ?? 0;
-    const s = (scale === "linear" ? linear3() : sqrt2()).domain([0, top2 || 1]).range([min4, max4]).clamp(true);
-    return (l) => {
-      const v = val(l);
-      return v == null ? min4 : s(v);
-    };
-  }
-  function resolveLinkType(types, key, { keys = [], theme = {} } = {}) {
-    const k = key == null || key === "" ? "default" : String(key);
-    const cfg = types?.[k] ?? null;
-    const muted = theme.muted ?? "#888888";
-    const taken = new Set(Object.values(types ?? {}).map((c) => c?.color).filter(Boolean));
-    const free = (theme.colors ?? []).filter((c) => !taken.has(c));
-    const undescribed = keys.filter((x2) => x2 !== "default" && !types?.[x2]);
-    const i = undescribed.indexOf(k);
-    return {
-      key: k,
-      color: cfg?.color ?? (k === "default" || i < 0 ? muted : free[i] ?? muted),
-      dash: cfg?.dash ?? null,
-      label: cfg?.label ?? (k === "default" ? "connection" : k)
-    };
-  }
-  var pairKey = (a, b) => a < b ? `${a}|${b}` : `${b}|${a}`;
-  var upairKey = (a, b) => JSON.stringify(a < b ? [String(a), String(b)] : [String(b), String(a)]);
-  function dedupeUndirected(links) {
-    const seen = /* @__PURE__ */ new Set();
-    return links.filter((l) => {
-      const key = JSON.stringify([upairKey(l.source, l.target), String(l.type ?? "default")]);
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
-  }
-  function parallelIndex(links) {
-    const groups2 = /* @__PURE__ */ new Map();
-    links.forEach((l) => {
-      const k = upairKey(l.source, l.target);
-      if (!groups2.has(k)) groups2.set(k, []);
-      groups2.get(k).push(l);
-    });
-    const out = /* @__PURE__ */ new Map();
-    groups2.forEach((group2) => {
-      group2.forEach((l, index2) => out.set(l.id, { index: index2, count: group2.length }));
-    });
-    return out;
-  }
-
-  // assets/charts/src/charts/Overview.js
-  var Overview = class {
-    constructor(selector, options = {}) {
-      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
-      this.theme = { ...defaultTheme, ...options.theme ?? {} };
-      this.opts = {
-        height: options.height ?? 52,
-        area: options.area,
-        areaColor: options.areaColor,
-        brushColor: options.brushColor,
-        color: options.color,
-        axis: !!options.axis
-      };
-      this.margin = { top: 6, right: 70, bottom: 16, left: 0, ...options.margin ?? {} };
-      this._data = [];
-      this._uid = uid("rc");
-      this._init();
-    }
-    get width() {
-      return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
-    }
-    get height() {
-      return Math.max(0, this.opts.height - this.margin.top - this.margin.bottom);
-    }
-    _init() {
-      this.container.style.height = this.opts.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      const { left: left2, top: top2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
-      this.gArea = this.g.append("g");
-      this.gLine = this.g.append("g");
-      this.gAxis = this.g.append("g").attr("class", "rc-ov-axis");
-      this.gBrush = this.g.append("g");
-      this._resizeObserver = new ResizeObserver(() => {
-        if (this._data.length) this._render();
-      });
-      this._resizeObserver.observe(this.container);
-    }
-    // After destroy() the page's onBrush never fires — not even for a drag
-    // that ends after it: d3 finishes a gesture on window listeners (C-33).
-    destroy() {
-      this._destroyed = true;
-      this._onBrush = null;
-      this._resizeObserver.disconnect();
-      this.container.innerHTML = "";
-    }
-    setData(data, onBrush, { extent: extent2 = null } = {}) {
-      this._data = (Array.isArray(data) ? data : []).map((d) => d && typeof d === "object" ? { ...d, date: parseDate(d.date), value: d.value == null || d.value === "" ? NaN : +d.value } : null).filter((d) => d && d.date && Number.isFinite(d.value)).sort(byDate);
-      this._onBrush = onBrush;
-      const span = Array.isArray(extent2) ? [parseDate(extent2[0]), parseDate(extent2[1])] : null;
-      this._extent = span && span[0] && span[1] && +span[1] > +span[0] ? span : null;
-      this._render();
-      return this;
-    }
-    setBrush(extent2) {
-      if (!this._xScale || !Array.isArray(extent2)) return;
-      const a = parseDate(extent2[0]), b = parseDate(extent2[1]);
-      if (!a || !b) return;
-      const [r0, r1] = this._xScale.range();
-      const x2 = (d) => Math.min(r1, Math.max(r0, this._xScale(d)));
-      this._lastSelection = [x2(a), x2(b)];
-      this._brush.move(this.gBrush, this._lastSelection);
-    }
-    _render() {
-      const W = this.width, H = this.height;
-      const t = this.theme;
-      this._xScale = time().domain(this._extent ?? extent(this._data, (d) => d.date)).range([0, W]);
-      const yScale = linear3().domain([min(this._data, (d) => d.value), max(this._data, (d) => d.value)]).range([H, 0]);
-      const line = line_default2().x((d) => this._xScale(d.date)).y((d) => yScale(d.value)).curve(monotoneX);
-      const area = area_default3().x((d) => this._xScale(d.date)).y0(H).y1((d) => yScale(d.value)).curve(monotoneX);
-      const areaOpt = this.opts.area;
-      const solidOpacity = typeof areaOpt === "number" ? areaOpt : null;
-      const lineColor = this.opts.color ?? t.border;
-      const areaColor = this.opts.areaColor ?? t.accent;
-      const brushColor = this.opts.brushColor ?? t.text;
-      if (areaOpt === false) {
-        this.gArea.selectAll("*").remove();
-      } else if (solidOpacity !== null) {
-        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", areaColor).attr("fill-opacity", solidOpacity);
-      } else {
-        const gradId = `${this._uid}-ov-grad`;
-        let grad = this.svg.select(".rc-ov-grad");
-        if (grad.empty()) {
-          grad = this.svg.append("defs").append("linearGradient").attr("id", gradId).attr("class", "rc-ov-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
-          grad.append("stop").attr("offset", "0%").attr("stop-opacity", 0.18);
-          grad.append("stop").attr("offset", "100%").attr("stop-opacity", 0);
-        }
-        grad.selectAll("stop").attr("stop-color", areaColor);
-        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", `url(#${gradId})`).attr("fill-opacity", 1);
-      }
-      this.gLine.selectAll(".rc-ov-line").data([this._data]).join("path").attr("class", "rc-ov-line").attr("d", line).attr("fill", "none").attr("stroke", lineColor).attr("stroke-width", 1);
-      if (this.opts.axis) {
-        this.gAxis.attr("transform", `translate(0,${H})`).call(axisBottom(this._xScale).ticks(Math.max(2, Math.floor(W / 90))).tickSizeOuter(0).tickSize(3)).attr("font-family", null).call((g) => g.select(".domain").attr("stroke", t.border ?? t.muted)).call((g) => g.selectAll(".tick line").attr("stroke", t.border ?? t.muted)).call((g) => g.selectAll(".tick text").attr("fill", t.muted).attr("font-size", 10));
-        const { left: left2, right: right2 } = this.margin;
-        this.gAxis.selectAll(".tick").each((d, i, els) => {
-          const text = els[i].querySelector("text");
-          if (!text) return;
-          const x2 = this._xScale(d);
-          const half = (text.getComputedTextLength?.() || String(text.textContent).length * 5.5) / 2;
-          text.style.display = x2 - half < -left2 || x2 + half > W + right2 ? "none" : "";
-        });
-      } else {
-        this.gAxis.selectAll("*").remove();
-      }
-      this._brush = brushX().extent([[0, 0], [W, H]]).on("start brush end", (event) => {
-        if (!event.sourceEvent || this._destroyed) return;
-        if (event.type === "start") {
-          this._gestureMoved = false;
+    let filled = 0, capped = false;
+    const fillAfter = (from, to, inclusive) => {
+      const end = +bucket.floor(to);
+      for (let k = 1; ; k++) {
+        const date2 = stepInterval(interval2, from, k, timeZone);
+        const b = +bucket.floor(date2);
+        if (inclusive ? date2 > to || b > end : date2 >= to || b >= end) return;
+        if (filled >= limit) {
+          capped = true;
           return;
         }
-        const sel = event.selection;
-        const invert = (s) => [this._xScale.invert(s[0]), this._xScale.invert(s[1])];
-        if (!sel || sel[1] - sel[0] < 1) {
-          if (event.type === "end" && this._lastSelection) {
-            this.gBrush.call(this._brush.move, this._lastSelection);
-            if (this._gestureMoved) this._onBrush?.(invert(this._lastSelection), { final: true });
-          }
-          return;
-        }
-        this._lastSelection = sel;
-        this._gestureMoved = true;
-        this._onBrush?.(invert(sel), { final: event.type === "end" });
-      });
-      this.gBrush.call(this._brush).call((g) => {
-        g.select(".selection").attr("fill", t.text).attr("fill-opacity", 0.015).attr("stroke", brushColor).attr("stroke-width", 1);
-        g.selectAll(".handle").attr("fill", brushColor).attr("opacity", 0.7);
-        g.select(".overlay").attr("fill", t.text).attr("fill-opacity", 0.2);
-      });
-    }
-  };
-
-  // assets/charts/src/core/Chart.js
-  var defaultTimeframes = ["1M", "3M", "6M", "1Y", "2Y", "ALL"];
-  var HOST_STYLE_PROPS = ["height", "overflow", "overflow-x", "position"];
-  var MIN_PLOT_HEIGHT = 80;
-  var nextFrame = (fn) => typeof requestAnimationFrame === "function" ? { raf: requestAnimationFrame(fn) } : { timer: setTimeout(fn, 16) };
-  var cancelFrame = (f) => {
-    if (f?.raf != null) cancelAnimationFrame(f.raf);
-    else if (f?.timer != null) clearTimeout(f.timer);
-  };
-  var isFullStep = (step) => !Array.isArray(step.range) && ["ALL", "MAX"].includes(String(step.key ?? step.label ?? "").trim().toUpperCase());
-  var Chart = class {
-    constructor(selector, options = {}) {
-      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
-      if (!this.container) {
-        throw new Error(`RareCharts: element not found \u2014 "${selector}"`);
+        out.push({ date: date2, value: missing });
+        filled++;
       }
-      this._hostClasses = new Set(this.container.classList);
-      this._hostStyle = Object.fromEntries(HOST_STYLE_PROPS.map((p) => [p, [
-        this.container.style.getPropertyValue(p),
-        this.container.style.getPropertyPriority(p)
-      ]]));
-      this._adopted = [];
-      this._destroyed = false;
-      this._uid = uid("rc");
-      const render = this.render;
-      this.render = (...args) => this._destroyed ? void 0 : render.apply(this, args);
-      this.container.classList.add("rc-chart");
-      this.theme = createTheme(options.theme ?? {});
-      this.options = options;
-      const m = options.margin ?? {};
-      this.margin = {
-        top: m.top ?? 0,
-        right: m.right ?? 0,
-        bottom: m.bottom ?? 0,
-        left: m.left ?? 0
-      };
-      this._headerEl = null;
-      this._titleEl = null;
-      this._subtitleEl = null;
-      this._legendEl = null;
-      this._legendAsideEl = null;
-      this._footerEl = null;
-      this._sourceEl = null;
-      this._noteEl = null;
-      this._rangeRowEl = null;
-      this._rangeBarEl = null;
-      this._timeframeButtons = [];
-      this._navigatorEl = null;
-      this._navigator = null;
-      this._viewExtent = null;
-      this._activeTimeframe = null;
-      this._selectedTimeframe = null;
-      this._onViewChangeCb = null;
-      this._onScaleChangeCb = null;
-      this._scaleButton = null;
-      this._renderHeader();
-      this._renderFooter();
-      this._renderControls();
-      this._ensureNavigator();
-      this._resizeObserver = new ResizeObserver(() => {
-        if (this._resizeFrame) return;
-        this._resizeFrame = nextFrame(() => {
-          this._resizeFrame = null;
-          this._onResize();
-        });
-      });
-      this._resizeObserver.observe(this.container);
-      if (typeof document !== "undefined" && document.fonts?.ready) {
-        document.fonts.ready.then(() => {
-          if (this._destroyed) return;
-          try {
-            this.render();
-          } catch {
-          }
-        });
-      }
-    }
-    // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
-    _renderHeader() {
-      const hasTitle = !!this.options.title;
-      const hasSubtitle = !!this.options.subtitle;
-      const hasLegend = this.options.legend != null;
-      const hasTimeframes = this._getTimeframeOptions().length > 0;
-      const scaleToggle = this._getScaleToggle();
-      const hasRangeBar = hasTimeframes || !!scaleToggle;
-      const legendRight = this.options.legendPosition === "right";
-      if (!hasTitle && !hasSubtitle && !hasLegend && !hasRangeBar) return;
-      if (hasLegend) {
-        this._legendEl = document.createElement("div");
-        this._legendEl.className = "rc-legend";
-        const legend = this.options.legend;
-        if (Array.isArray(legend)) {
-          legend.forEach((item) => {
-            const el = document.createElement("div");
-            el.className = "rc-legend-item";
-            const indicator = document.createElement("span");
-            const color2 = item.color ?? this.theme.accent;
-            if (item.type === "band") {
-              indicator.className = "rc-legend-band";
-              indicator.style.background = color2;
-            } else if (item.type === "bar" || item.type === "dot") {
-              indicator.className = "rc-legend-dot";
-              indicator.style.background = color2;
-            } else if (item.type === "dashed" || item.dash) {
-              indicator.className = "rc-legend-line rc-legend-line--dashed";
-              indicator.style.backgroundImage = `repeating-linear-gradient(90deg, ${color2} 0 5px, transparent 5px 8px)`;
-            } else {
-              indicator.className = "rc-legend-line";
-              indicator.style.background = color2;
-            }
-            const text = document.createElement("span");
-            text.textContent = item.label ?? item.name ?? "";
-            text.style.color = this.theme.text;
-            el.appendChild(indicator);
-            el.appendChild(text);
-            this._legendEl.appendChild(el);
-          });
-        } else if (legend instanceof HTMLElement) {
-          this._legendEl.appendChild(legend);
-        } else if (typeof legend === "string") {
-          this._legendEl.innerHTML = legend;
-        } else {
-          this._legendEl.textContent = String(legend);
-        }
-      }
-      if (hasLegend && legendRight) {
-        if (this._legendAsideEl?.parentNode) this._legendAsideEl.remove();
-        this._legendAsideEl = document.createElement("div");
-        this._legendAsideEl.className = "rc-chart-legend-aside";
-        this._legendAsideEl.appendChild(this._legendEl);
-        this.container.classList.add("rc-chart--legend-right");
-        this.container.appendChild(this._legendAsideEl);
-      }
-      if (hasTitle || hasSubtitle || hasLegend && !legendRight || hasRangeBar) {
-        if (this._headerEl?.parentNode) this._headerEl.remove();
-        this._headerEl = document.createElement("div");
-        this._headerEl.className = "rc-chart-header";
-        if (hasTitle) {
-          this._titleEl = document.createElement("h5");
-          this._titleEl.className = "rc-chart-title";
-          this._titleEl.textContent = this.options.title;
-          this._titleEl.style.color = this.theme.text;
-          this._headerEl.appendChild(this._titleEl);
-        }
-        if (hasSubtitle) {
-          this._subtitleEl = document.createElement("p");
-          this._subtitleEl.className = "rc-chart-subtitle";
-          this._subtitleEl.textContent = this.options.subtitle;
-          this._subtitleEl.style.color = this.theme.text;
-          this._headerEl.appendChild(this._subtitleEl);
-        }
-        if (hasLegend && !legendRight) {
-          this._headerEl.appendChild(this._legendEl);
-        }
-        this.container.insertBefore(this._headerEl, this.container.firstChild);
-      }
-      if (hasRangeBar) {
-        if (this._rangeRowEl?.parentNode) this._rangeRowEl.remove();
-        this._rangeRowEl = document.createElement("div");
-        this._rangeRowEl.className = "rc-chart-range-row";
-        if (!this.margin.right) this._rangeRowEl.classList.add("rc-chart-range-row--flush");
-        if (hasTimeframes) {
-          this._rangeBarEl = document.createElement("div");
-          this._rangeBarEl.className = "rc-chart-range-bar";
-          this._timeframeButtons = this._getTimeframeOptions().map((step) => {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "rc-range-btn";
-            btn.textContent = step.label ?? step.key ?? "";
-            btn.dataset.timeframe = step.key ?? step.label ?? "";
-            btn.addEventListener("click", () => this.setTimeframe(step.key ?? step.label ?? ""));
-            this._rangeBarEl.appendChild(btn);
-            return btn;
-          });
-          this._rangeRowEl.appendChild(this._rangeBarEl);
-        }
-        if (scaleToggle) {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "rc-range-btn rc-scale-btn";
-          btn.addEventListener("click", () => this.setYScale(this._isLogScale(scaleToggle.axis) ? "linear" : "log", { axis: scaleToggle.axis }));
-          this._rangeRowEl.classList.add(hasTimeframes ? "rc-chart-range-row--scale" : "rc-chart-range-row--scale-only");
-          this._rangeRowEl.appendChild(btn);
-          this._scaleButton = btn;
-          this._syncScaleButton();
-        }
-        this._headerEl.appendChild(this._rangeRowEl);
-      }
-    }
-    // ── Y scale switch ───────────────────────────────────────────────────────
-    // `scaleToggle` adds one Lin/Log button to the header — pinned right, above
-    // the Y-axis labels — for charts that have setYScale(). Accepts true, an axis name
-    // ('y1' | 'y2' | 'both', DualAxes), or { axis?, labels?: { linear?, log? } }.
-    _getScaleToggle() {
-      const opt = this.options.scaleToggle;
-      if (!opt || typeof this.setYScale !== "function") return null;
-      const cfg = typeof opt === "object" ? opt : typeof opt === "string" ? { axis: opt } : {};
-      return {
-        axis: cfg.axis ?? this._defaultScaleAxis(),
-        labels: { linear: cfg.labels?.linear ?? "Lin", log: cfg.labels?.log ?? "Log" }
-      };
-    }
-    // The axis the switch drives and how to read its state; charts with a log
-    // scale override both.
-    _defaultScaleAxis() {
-      return "y";
-    }
-    _isLogScale(_axis) {
-      return false;
-    }
-    _syncScaleButton() {
-      const btn = this._scaleButton;
-      if (!btn) return;
-      const cfg = this._getScaleToggle();
-      const log3 = this._isLogScale(cfg.axis);
-      btn.textContent = cfg.labels[log3 ? "log" : "linear"];
-      btn.dataset.alt = cfg.labels[log3 ? "linear" : "log"];
-      btn.dataset.scale = log3 ? "log" : "linear";
-      btn.title = `Switch to ${log3 ? "linear" : "logarithmic"} scale`;
-    }
-    // Called by setYScale(): keeps the button in step and tells the page.
-    _scaleChanged(scale, axis2, silent) {
-      this._syncScaleButton();
-      if (!silent) this._emit(this._onScaleChangeCb, { scale, axis: axis2 });
-    }
-    // Every page callback goes through here: after destroy() none fires — a
-    // drag that ends after it, a late frame or fetch, a held button (C-33).
-    _emit(fn, ...args) {
-      if (this._destroyed || typeof fn !== "function") return void 0;
-      return fn.apply(this, args);
-    }
-    // A promise that settles once the chart has drawn what it loads (Graph:
-    // its queued fetches and layout; Map, MapFlow: the geometry) and resolves
-    // with the chart. A class with async work sets this._ready to its
-    // promise; the others draw on setData, so theirs resolves at once (K-12).
-    whenReady() {
-      return Promise.resolve(this._ready).then(() => this);
-    }
-    onScaleChange(fn) {
-      this._onScaleChangeCb = fn;
-      return this;
-    }
-    // ── Footer (Source) ───────────────────────────────────────────────────────
-    _renderFooter() {
-      const hasSource = !!this.options.source;
-      const hasNote = !!this.options.note;
-      if (!hasSource && !hasNote) return;
-      if (this._footerEl?.parentNode) this._footerEl.remove();
-      this._footerEl = document.createElement("div");
-      this._footerEl.className = "rc-chart-footer";
-      if (hasSource) {
-        this._sourceEl = document.createElement("cite");
-        this._sourceEl.className = "rc-chart-source";
-        this._sourceEl.style.color = this.theme.text;
-        const src = this.options.source;
-        if (Array.isArray(src)) this._sourceEl.classList.add("rc-chart-source--rich");
-        this._renderAttribution(this._sourceEl, src);
-        this._footerEl.appendChild(this._sourceEl);
-      }
-      if (hasNote) {
-        this._noteEl = document.createElement("p");
-        this._noteEl.className = "rc-chart-note";
-        this._noteEl.style.color = this.theme.muted;
-        const note = this.options.note;
-        if (note instanceof HTMLElement) {
-          this._noteEl.appendChild(note);
-        } else {
-          this._noteEl.textContent = String(note);
-        }
-        this._footerEl.appendChild(this._noteEl);
-      }
-      this.container.appendChild(this._footerEl);
-    }
-    // ── Controls slot ────────────────────────────────────────────────────────
-    // Page-owned controls (filters, sliders, toggles) that drive the chart,
-    // shown inside the card between the drawing and the footer — so they read
-    // as part of the chart, not as stray markup above it. Pass an element or
-    // a selector; the element is moved in as is (its listeners keep working).
-    _renderControls() {
-      const c = this.options.controls;
-      if (!c) return;
-      const el = typeof c === "string" ? document.querySelector(c) : c;
-      if (!(el instanceof HTMLElement)) return;
-      this._adoptPageElement(el, (e) => e.classList.remove("rc-chart-controls"));
-      el.classList.add("rc-chart-controls");
-      this._controlsEl = el;
-      this.container.appendChild(el);
-    }
-    // A page-owned element the chart moves into its card (controls, a Graph
-    // details panel): destroy() puts it back where the page had it, undoing
-    // the chart's changes with `cleanup` — but only while the chart still holds
-    // it. One the page has moved meanwhile, or given to a new chart, stays.
-    _adoptPageElement(el, cleanup = null) {
-      this._adopted.push({ el, parent: el.parentNode, next: el.nextSibling, cleanup });
-    }
-    _returnPageElements() {
-      this._adopted.forEach(({ el, parent, next, cleanup }) => {
-        if (el.parentNode !== this.container) return;
-        cleanup?.(el);
-        if (parent && parent !== this.container && parent.isConnected) {
-          parent.insertBefore(el, next && next.parentNode === parent ? next : null);
-        } else {
-          el.remove();
-        }
-      });
-      this._adopted = [];
-    }
-    /**
-     * Render a source/attribution value into `el`. Accepts:
-     *   string                         → plain text
-     *   HTMLElement                    → appended as-is
-     *   { text, href }                 → an <a> opening in a new tab
-     *   { text }                       → plain text (no href, no link)
-     *   Array<string | { text, href } | HTMLElement>
-     *                                  → each part in sequence, so a footer can mix
-     *                                    several links and unlinked text on one line
-     *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
-     * Links inherit the source text color and are distinguished by an underline.
-     */
-    _renderAttribution(el, value) {
-      const appendPart = (part) => {
-        if (part == null) return;
-        if (part instanceof HTMLElement) {
-          el.appendChild(part);
-          return;
-        }
-        if (typeof part === "object" && part.href) {
-          const a = document.createElement("a");
-          a.href = part.href;
-          a.textContent = part.text ?? part.href;
-          a.target = "_blank";
-          a.rel = "noopener noreferrer";
-          el.appendChild(a);
-          return;
-        }
-        if (typeof part === "object") {
-          if (part.text != null) el.appendChild(document.createTextNode(String(part.text)));
-          return;
-        }
-        el.appendChild(document.createTextNode(String(part)));
-      };
-      if (Array.isArray(value)) value.forEach(appendPart);
-      else appendPart(value);
-    }
-    // ── Dimensions ────────────────────────────────────────────────────────────
-    get width() {
-      const legendW = this._legendAsideEl ? this._legendAsideEl.offsetWidth : 0;
-      const cs = window.getComputedStyle(this.container);
-      const padH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
-      return Math.max(0, this.container.clientWidth - padH - this.margin.left - this.margin.right - legendW);
-    }
-    get height() {
-      const shown = (el) => el && el.style.display !== "none";
-      const headerH = shown(this._headerEl) ? this._headerEl.offsetHeight + 8 : 0;
-      const navigatorH = shown(this._navigatorEl) ? this._navigatorEl.offsetHeight + 8 : 0;
-      const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
-      const controlsH = this._controlsEl ? this._controlsEl.offsetHeight : 0;
-      const cs = window.getComputedStyle(this.container);
-      const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-      const h = this.options.height ?? this.container.clientHeight;
-      const plot = h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH - controlsH;
-      return Math.max(0, this._keepPlotHeight(h, plot));
-    }
-    // A narrow card wraps its title, buttons, legend and footer onto more
-    // lines, and they take the plot's share of `height` — down to nothing
-    // (C-32). Below MIN_PLOT_HEIGHT the card grows instead, so the plot keeps
-    // that much; once the parts fit again it returns to `height`. Only a card
-    // at the height the chart gave it (or grew it to) is touched: a height the
-    // page or the chart itself manages (a Graph details panel) stays, and a
-    // card without one (Map) grows with its drawing.
-    _keepPlotHeight(h, plot) {
-      if (this.options.height == null) return plot;
-      const style = this.container.style;
-      if (!style.height) return Math.max(plot, MIN_PLOT_HEIGHT);
-      const given = `${h}px`;
-      if (style.height !== given && style.height !== this._grownHeight) return plot;
-      const want = plot < MIN_PLOT_HEIGHT ? `${h + MIN_PLOT_HEIGHT - plot}px` : given;
-      if (style.height !== want) style.height = want;
-      this._grownHeight = want === given ? null : want;
-      return Math.max(plot, MIN_PLOT_HEIGHT);
-    }
-    _onResize() {
-      if (this.width > 0 && this.height > 0) this.render();
-    }
-    // viewSteps is the old name of timeframes: deprecated, removal planned for
-    // 0.9.9 (K-04). It still works — timeframes wins when both are set — and
-    // warns once per chart.
-    _getTimeframeOptions() {
-      if (this.options.viewSteps != null && !this._warnedViewSteps) {
-        this._warnedViewSteps = true;
-        console.warn("RareCharts: viewSteps is deprecated \u2014 use timeframes");
-      }
-      const stepsOpt = this.options.timeframes ?? this.options.viewSteps ?? [];
-      const steps = stepsOpt === true ? defaultTimeframes : stepsOpt;
-      return (Array.isArray(steps) ? steps : []).map((step) => typeof step === "string" ? { key: step, label: step } : step).filter((step) => !!(step?.key ?? step?.label));
-    }
-    // ── Time of relation charts ──────────────────────────────────────────────
-    // Graph's flow view and MapFlow hold ties with start / end rather than a
-    // dated series. They say so with _isLinkTimeChart() (known at construction:
-    // the navigator is built in this constructor) and hand over their ties with
-    // _timeLinks(); the base then provides the time scale over them — data
-    // extent, navigator series, the setTimeWindow ⇄ view link and the render
-    // sync — once for both.
-    _isLinkTimeChart() {
-      return false;
-    }
-    _timeLinks() {
-      return null;
-    }
-    _hasTimeNav() {
-      return this._isLinkTimeChart() && (this._getTimeframeOptions().length > 0 || this._hasNavigatorEnabled());
-    }
-    // How a view bound (setView, defaultView, a timeframe range) is read. Time
-    // series take Dates, ISO strings and epoch ms; relation charts read bounds
-    // like their ties' start / end: a number below 10000 is a year, 'YYYY' and
-    // 'YYYY-MM' are periods, and an upper bound runs to the period's end.
-    _parseViewBound(v, isEnd = false) {
-      if (!this._isLinkTimeChart()) return parseDate(v);
-      const t = parseTime(v, { end: isEnd });
-      return t == null ? null : new Date(t);
-    }
-    // setTimeWindow(from, to) on a relation chart with a time scale: the window
-    // becomes the view, so the buttons and the brush follow it.
-    _timeWindowAsView(from, to) {
-      const full = this._getDataExtent();
-      const a = this._parseViewBound(from, false), b = this._parseViewBound(to, true);
-      if (!a && !b) return this.setView(full);
-      return this.setView([a ?? full?.[0], b ?? full?.[1]]);
-    }
-    // At render: buttons and navigator follow the view; returns the window the
-    // drawing applies ({ from, to }, or null for the whole span).
-    _syncLinkTimeView() {
-      const full = this._getDataExtent();
-      const view = this._resolveViewExtent(full);
-      this._syncTimeframeButtons(full, view);
-      this._syncNavigator();
-      return view && !extentEquals(view, full) ? { from: view[0], to: view[1] } : null;
-    }
-    // Extent and navigator series of the ties, worked out once per data set
-    // (the array is replaced on setData) rather than on every render — a
-    // brush drag renders many times over the same ties (K-16).
-    _linkTime() {
-      const links = this._timeLinks();
-      if (!links) return null;
-      if (this._linkTimeCache?.links !== links) {
-        this._linkTimeCache = { links, extent: linkTimeExtent(links), series: void 0 };
-      }
-      return this._linkTimeCache;
-    }
-    _getDataExtent() {
-      return this._linkTime()?.extent ?? null;
-    }
-    _getNavigatorData() {
-      const t = this._linkTime();
-      if (!t) return null;
-      if (t.series === void 0) t.series = activeLinkSeries(t.links, t.extent);
-      return t.series;
-    }
-    // true or an options object turns the strip on; anything else (false,
-    // null, 0, '') leaves it off.
-    _hasNavigatorEnabled() {
-      const n = this.options.navigator;
-      return n === true || n !== null && typeof n === "object";
-    }
-    // The navigator lines up with the plot: its side margins default to the
-    // chart's own (a relation chart's drawing has no axis gutter — it keeps
-    // 6px for the brush handles and shows a time axis). A user `navigator`
-    // object is merged over that, margin side by side.
-    _getNavigatorOptions() {
-      const user = typeof this.options.navigator === "object" ? this.options.navigator : {};
-      const base = this._isLinkTimeChart() ? { axis: true, margin: { left: 6, right: 6 } } : { margin: { left: this.margin.left, right: this.margin.right } };
-      return { ...base, ...user, margin: { ...base.margin, ...user.margin ?? {} } };
-    }
-    _ensureNavigator() {
-      if (this._destroyed || !this._hasNavigatorEnabled()) return null;
-      if (this._navigatorEl) return this._navigatorEl;
-      this._navigatorEl = document.createElement("div");
-      this._navigatorEl.className = "rc-chart-navigator";
-      if (this._footerEl?.parentNode === this.container) {
-        this.container.insertBefore(this._navigatorEl, this._footerEl);
-      } else {
-        this.container.appendChild(this._navigatorEl);
-      }
-      this._navigator = new Overview(this._navigatorEl, {
-        theme: this.theme,
-        ...this._getNavigatorOptions()
-      });
-      return this._navigatorEl;
-    }
-    _syncNavigator() {
-      if (this._destroyed || !this._hasNavigatorEnabled()) return;
-      const data = this._getNavigatorData();
-      if (!Array.isArray(data) || !data.length) {
-        if (this._navigatorEl) this._navigatorEl.style.display = "none";
-        return;
-      }
-      this._ensureNavigator();
-      this._navigatorEl.style.display = "";
-      this._navigator.setData(
-        data,
-        (extent2, { final = false } = {}) => this._onNavigatorBrush(extent2, final),
-        { extent: this._getDataExtent() }
-      );
-      const view = this.getView();
-      if (view) this._navigator.setBrush(view);
-    }
-    // A drag fires an event on every pointer move, and each one used to
-    // re-render the chart — a flow layout, the strip (K-16). Live moves now
-    // land once per animation frame, the latest window winning, silently; the
-    // drag's end applies at once and reports through onViewChange, like the
-    // buttons do.
-    _onNavigatorBrush(extent2, final) {
-      if (this._destroyed) return;
-      if (final) {
-        cancelFrame(this._brushFrame);
-        this._brushFrame = null;
-        this._pendingBrush = null;
-        this.setView(extent2);
-        return;
-      }
-      this._pendingBrush = extent2;
-      if (this._brushFrame) return;
-      this._brushFrame = nextFrame(() => {
-        const pending = this._pendingBrush;
-        this._brushFrame = null;
-        this._pendingBrush = null;
-        if (pending && !this._destroyed) this.setView(pending, { silent: true });
-      });
-    }
-    _resolveDefaultView(fullExtent) {
-      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
-      const parse = (v, isEnd) => this._parseViewBound(v, isEnd);
-      if (Array.isArray(this.options.defaultView)) {
-        return clampDateExtent(this.options.defaultView, fullExtent, parse);
-      }
-      if (this.options.defaultTimeframe) {
-        return resolveTimeframeExtent(this._findTimeframe(this.options.defaultTimeframe), fullExtent, parse);
-      }
-      return null;
-    }
-    _resolveViewExtent(fullExtent) {
-      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
-      if (this._viewExtent) {
-        return clampDateExtent(this._viewExtent, fullExtent) ?? clampDateExtent(this._viewExtent, null);
-      }
-      return this._resolveDefaultView(fullExtent) ?? clampDateExtent(fullExtent, fullExtent);
-    }
-    // A timeframe step by key, from the chart's own list (custom
-    // { key, label, range } steps included); an unknown key is returned as is,
-    // so preset keys ('1Y', 'YTD', 'ALL') still resolve.
-    _findTimeframe(key) {
-      if (key && typeof key === "object") return key;
-      return this._getTimeframeOptions().find((step) => (step.key ?? step.label) === key) ?? key;
-    }
-    // After setData: a chosen timeframe re-applies to the new data (the last
-    // 3M of the new range, not the old dates); any other view that no longer
-    // meets the data falls back to the full extent (_resolveViewExtent).
-    _refreshViewForData() {
-      const full = this._getDataExtent();
-      if (full && this._selectedTimeframe) {
-        const step = this._findTimeframe(this._selectedTimeframe);
-        this._viewExtent = resolveTimeframeExtent(step, full, (v, e) => this._parseViewBound(v, e)) ?? this._viewExtent;
-      }
-      if (full && this._viewExtent && !clampDateExtent(this._viewExtent, full)) this._viewExtent = null;
-      this._syncTimeframeButtons(full);
-    }
-    _syncTimeframeButtons(fullExtent, viewExtent = null) {
-      if (!this._timeframeButtons.length) return;
-      const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
-      const parse = (v, isEnd) => this._parseViewBound(v, isEnd);
-      const matchingSteps = this._getTimeframeOptions().filter(
-        (step) => extentEquals(resolveTimeframeExtent(step, fullExtent, parse), resolvedView)
-      );
-      const chosen = this._selectedTimeframe ?? this._defaultTimeframeKey();
-      const selectedMatch = chosen ? matchingSteps.find((step) => (step.key ?? step.label) === chosen) : null;
-      const fullMatch = extentEquals(resolvedView, fullExtent) ? matchingSteps.find(isFullStep) : null;
-      const active = selectedMatch ?? fullMatch ?? matchingSteps[0];
-      const activeKey = active ? active.key ?? active.label ?? null : null;
-      this._activeTimeframe = activeKey;
-      this._timeframeButtons.forEach((btn) => {
-        btn.classList.toggle("active", btn.dataset.timeframe === activeKey);
-      });
-    }
-    // The defaultTimeframe's key while the default view is in force — no
-    // window set since (a button, the brush, setView) and no defaultView,
-    // which wins over it.
-    _defaultTimeframeKey() {
-      const d = this.options.defaultTimeframe;
-      if (!d || this._viewExtent || Array.isArray(this.options.defaultView)) return null;
-      return typeof d === "object" ? d.key ?? d.label ?? null : d;
-    }
-    setView(extent2, { silent = false, preserveSelectedTimeframe = false } = {}) {
-      const parsed = Array.isArray(extent2) ? [this._parseViewBound(extent2[0], false), this._parseViewBound(extent2[1], true)] : null;
-      this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
-      if (!preserveSelectedTimeframe) this._selectedTimeframe = null;
-      this._syncTimeframeButtons(this._getDataExtent());
-      this.render();
-      const resolved = this._resolveViewExtent(this._getDataExtent());
-      if (!silent && resolved) this._emit(this._onViewChangeCb, resolved);
-      return this;
-    }
-    getView() {
-      return this._resolveViewExtent(this._getDataExtent());
-    }
-    setTimeframe(key, { silent = false } = {}) {
-      const fullExtent = this._getDataExtent();
-      const step = this._findTimeframe(key);
-      const extent2 = resolveTimeframeExtent(step, fullExtent, (v, e) => this._parseViewBound(v, e));
-      if (!extent2) return this;
-      this._selectedTimeframe = typeof key === "string" ? key : step.key ?? step.label ?? null;
-      return this.setView(extent2, { silent, preserveSelectedTimeframe: true });
-    }
-    // Empty state — no data, or nothing in the current window: the drawing
-    // layers the class lists in _dataLayers() are cleared (marks, axes, grid,
-    // labels, annotations), tooltip and crosshair hidden, and the header
-    // buttons and the navigator synced (the navigator hides without data).
-    // Title, legend and footer stay.
-    _renderEmpty() {
-      this._dataLayers().forEach((g) => g?.selectAll("*").remove());
-      this._crosshair?.unbind?.();
-      this._tooltip?.hide?.();
-      this._syncTimeframeButtons(this._getDataExtent());
-      this._syncNavigator();
-    }
-    _dataLayers() {
-      return [];
-    }
-    onViewChange(fn) {
-      this._onViewChangeCb = fn;
-      return this;
-    }
-    render() {
-      throw new Error("render() must be implemented");
-    }
-    // Tear down: stop observers and late renders (fonts, fetches, queued
-    // tasks check _destroyed), hand the page's own controls element back to
-    // where it was, empty the container and restore its class and style.
-    destroy() {
-      this._destroyed = true;
-      cancelFrame(this._brushFrame);
-      this._brushFrame = null;
-      cancelFrame(this._resizeFrame);
-      this._resizeFrame = null;
-      this._pendingBrush = null;
-      this._onViewChangeCb = null;
-      this._onScaleChangeCb = null;
-      this._resizeObserver.disconnect();
-      this._returnPageElements();
-      this._controlsEl = null;
-      this.container.innerHTML = "";
-      [...this.container.classList].filter((c) => c.startsWith("rc-") && !this._hostClasses.has(c)).forEach((c) => this.container.classList.remove(c));
-      if (!this.container.classList.length && !this._hostClasses.size) this.container.removeAttribute("class");
-      HOST_STYLE_PROPS.forEach((p) => {
-        const [value, priority] = this._hostStyle[p];
-        if (value) this.container.style.setProperty(p, value, priority);
-        else this.container.style.removeProperty(p);
-      });
-      if (!this.container.getAttribute("style")) this.container.removeAttribute("style");
-      this._headerEl = null;
-      this._titleEl = null;
-      this._subtitleEl = null;
-      this._legendEl = null;
-      this._legendAsideEl = null;
-      this._footerEl = null;
-      this._sourceEl = null;
-      this._noteEl = null;
-      this._rangeRowEl = null;
-      this._rangeBarEl = null;
-      this._timeframeButtons = [];
-      this._scaleButton = null;
-      if (this._navigator) this._navigator.destroy();
-      this._navigator = null;
-      this._navigatorEl = null;
-    }
-  };
-
-  // assets/charts/src/core/Tooltip.js
-  var Tooltip = class {
-    constructor(container, theme) {
-      this._container = container;
-      this.theme = theme;
-      this._pinned = false;
-      this._onClose = null;
-      const tt = theme.tooltip ?? {};
-      this.el = document.createElement("div");
-      this.el.className = "rc-tooltip";
-      const header = tt.header ?? {};
-      const set3 = (name, v) => {
-        if (v != null && v !== "") this.el.style.setProperty(name, String(v));
-      };
-      set3("--rc-tooltip-font", theme.numericFont ?? theme.font);
-      set3("--rc-tooltip-text", tt.text ?? theme.text);
-      set3("--rc-tooltip-muted", tt.muted ?? theme.muted);
-      set3("--rc-tooltip-bg", tt.bg ?? theme.bg);
-      set3("--rc-tooltip-border", tt.border ?? theme.border);
-      set3("--rc-tooltip-shadow", tt.shadow ?? "none");
-      set3("--rc-tooltip-header-text", header.text);
-      set3("--rc-tooltip-header-bg", header.bg);
-      if (header.bg != null && header.bg !== "") this.el.classList.add("rc-tooltip--header-band");
-      container.appendChild(this.el);
-      this._onDocPointer = (event) => {
-        if (this._pinned && !this.el.contains(event.target)) this.unpin();
-      };
-      this._onDocKey = (event) => {
-        if (this._pinned && event.key === "Escape") this.unpin();
-      };
-    }
-    get isPinned() {
-      return this._pinned;
-    }
-    show(x2, y2, html) {
-      if (this._pinned) return;
-      this._place(x2, y2, html);
-    }
-    hide() {
-      if (this._pinned) return;
-      this.el.classList.remove("is-visible");
-    }
-    // Pin at (x, y). Re-pinning replaces the content in place. `onClose` runs
-    // once when the pin is released (outside click, Escape, or unpin()).
-    pin(x2, y2, html, { onClose = null } = {}) {
-      const wasPinned = this._pinned;
-      if (wasPinned) this._releaseCallback();
-      this._pinned = true;
-      this._onClose = onClose;
-      this.el.classList.add("is-pinned");
-      this._place(x2, y2, html);
-      if (!wasPinned) {
-        setTimeout(() => {
-          if (!this._pinned) return;
-          document.addEventListener("pointerdown", this._onDocPointer, true);
-          document.addEventListener("keydown", this._onDocKey);
-        }, 0);
-      }
-    }
-    unpin() {
-      if (!this._pinned) return;
-      this._pinned = false;
-      this.el.classList.remove("is-pinned", "is-visible");
-      document.removeEventListener("pointerdown", this._onDocPointer, true);
-      document.removeEventListener("keydown", this._onDocKey);
-      this._releaseCallback();
-    }
-    destroy() {
-      this.unpin();
-      this.el.remove();
-    }
-    _releaseCallback() {
-      const cb = this._onClose;
-      this._onClose = null;
-      if (cb) cb();
-    }
-    _place(x2, y2, html) {
-      this.el.innerHTML = html;
-      this.el.classList.add("is-visible");
-      const maxX = this._container.clientWidth - this.el.offsetWidth - 12;
-      const maxY = this._container.clientHeight - this.el.offsetHeight - 8;
-      this.el.style.left = `${Math.min(x2 + 12, maxX)}px`;
-      this.el.style.top = `${Math.min(Math.max(y2 - 20, 8), maxY)}px`;
-    }
-  };
-
-  // assets/charts/src/core/html.js
-  var ENTITIES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-  var escapeHtml = (v) => v == null ? "" : String(v).replace(/[&<>"']/g, (c) => ENTITIES[c]);
-  var safeUrl = (url) => typeof url === "string" && /^(https?:|\/|#)/i.test(url.trim());
-  var classes = (...names) => names.filter(Boolean).join(" ");
-  var colorStyle = (color2) => color2 ? ` style="color:${escapeHtml(color2)}"` : "";
-  var tipHeader = (html, { color: color2 = null, muted = false, title = false } = {}) => `<div class="${classes("rc-tooltip-header", muted && "rc-tooltip-muted", title && "rc-tooltip-title")}"${colorStyle(color2)}>${html}</div>`;
-  var tipTitle = (html) => tipHeader(html, { title: true });
-  var tipMuted = (html, tag = "div") => `<${tag} class="rc-tooltip-muted">${html}</${tag}>`;
-  var tipSub = (html, { section = false, tag = "div" } = {}) => `<${tag} class="${classes("rc-tooltip-sub", section && "rc-tooltip-section")}">${html}</${tag}>`;
-  var tipKind = (html, color2 = null, tag = "span") => `<${tag} class="${classes("rc-tooltip-kind", !color2 && "rc-tooltip-muted")}"${colorStyle(color2)}>${html}</${tag}>`;
-  var tipBody = (html) => `<div class="rc-tooltip-body">${html}</div>`;
-  function tipSources(sources) {
-    const list = Array.isArray(sources) ? sources : [];
-    if (!list.length) return "";
-    return `<div class="rc-tooltip-small rc-tooltip-section">${list.map((src) => {
-      const url = typeof src === "string" ? src : src?.url;
-      const title = typeof src === "string" ? src : src?.title ?? src?.url;
-      return safeUrl(url) ? `<div><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></div>` : `<div>${escapeHtml(title ?? "")}</div>`;
-    }).join("")}</div>`;
-  }
-  function linkTooltipHtml({ from, to, ties }) {
-    const detail = (l) => {
-      const rows = [];
-      if (l.label) rows.push(`<div>${escapeHtml(l.label)}</div>`);
-      if (l.value != null && l.value !== "") {
-        rows.push(tipSub(escapeHtml(typeof l.value === "number" ? l.value.toLocaleString() : l.value)));
-      }
-      if (l.start != null || l.end != null) {
-        rows.push(tipSub([l.start, l.end].filter((v) => v != null && v !== "").map(escapeHtml).join(" \u2013 ")));
-      }
-      return rows.join("") + tipSources(l.sources);
     };
-    const tie = ({ link: link2, kind }) => `<div class="rc-tooltip-section">${kind ? tipKind(escapeHtml(kind.label), kind.color) : ""}${detail(link2)}</div>`;
-    return tipBody(`${tipTitle(`${escapeHtml(from)} \u2192 ${escapeHtml(to)}`)}${ties.map(tie).join("")}`);
+    rows.forEach((d, i) => {
+      out.push(isGap(d) && missing !== null ? { ...d, value: missing } : d);
+      if (!bucket || capped) return;
+      const next = rows[i + 1];
+      if (next) fillAfter(d.date, next.date, false);
+      else if (until) fillAfter(d.date, until, true);
+    });
+    return { rows: out, capped };
   }
-
-  // assets/charts/src/core/Crosshair.js
-  var Crosshair = class {
-    /**
-     * @param {d3.Selection}  g        — parent <g> for crosshair elements
-     * @param {d3.Selection}  overlay  — transparent rect for mouse events
-     * @param {Tooltip}       tooltip  — RareCharts Tooltip instance
-     * @param {object}        theme
-     */
-    constructor(g, overlay, tooltip, theme) {
-      this._g = g;
-      this._overlay = overlay;
-      this._tooltip = tooltip;
-      this._theme = theme;
-      this._line = g.append("line").attr("class", "rc-cross-line").attr("opacity", 0);
-      this._dots = g.append("g").attr("class", "rc-cross-dots");
-    }
-    /**
-     * Bind (or update) crosshair behaviour to the overlay rect.
-     *
-     * @param {object} ctx
-     * @param {number}       ctx.W           — chart width
-     * @param {number}       ctx.H           — chart height
-     * @param {Function}     ctx.x           — d3 time scale
-     * @param {Function}     ctx.scaleFor    — (series) => d3 y-scale for that series
-     * @param {Function}     ctx.formatFor   — (series, value) => formatted string
-     * @param {Array}        ctx.series      — all series (line + bar)
-     * @param {boolean}      ctx.enabled     — show crosshair (default true)
-     * @param {Function}     ctx.tooltipFmt  — optional custom html builder
-     */
-    bind({ W, H, x: x2, scaleFor, formatFor, series, enabled = true, tooltipFmt }) {
-      const t = this._theme;
-      this._overlay.attr("width", W).attr("height", H);
-      this._line.attr("y1", 0).attr("y2", H).attr("stroke", t.crosshair).attr("stroke-dasharray", "2,3");
-      if (!enabled) {
-        this._overlay.on("mousemove", null).on("mouseleave", null);
-        return;
-      }
-      const bisect = bisector((d) => d.date).left;
-      const pickNearest = (vals, dt) => {
-        const i = bisect(vals, dt, 1);
-        const a = vals[i - 1];
-        const b = vals[i];
-        if (!a) return b;
-        if (!b) return a;
-        return dt - a.date < b.date - dt ? a : b;
-      };
-      const move = (event) => {
-        const [mx] = pointer_default(event, this._overlay.node());
-        const [d0, d1] = x2.domain();
-        const dt = new Date(Math.min(Math.max(+x2.invert(mx), +d0), +d1));
-        const points = series.map((s) => {
-          const d = pickNearest(s.values, dt);
-          if (!d) return null;
-          if (dt < s.values[0].date || dt > s.values[s.values.length - 1].date) return null;
-          if (s.type === "band") {
-            return {
-              name: s.name,
-              series: s.name,
-              type: "band",
-              color: s.color,
-              date: d.date,
-              lower: d.lower,
-              upper: d.upper,
-              fmt: `${formatFor(s, d.lower)} \u2013 ${formatFor(s, d.upper)}`
-            };
-          }
-          const fmt = formatFor(s, d.value);
-          return { name: s.name, series: s.name, axis: s.axis, type: s.type, color: s.color, date: d.date, value: d.value, fmt };
-        }).filter(Boolean);
-        if (!points.length) {
-          this._line.attr("opacity", 0);
-          this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
-          this._tooltip.hide();
-          return;
+  function filterLogSeries(series, extent2, isLog, breaks = () => false) {
+    const [from, to] = extent2;
+    let skipped = 0;
+    const placeable = (s, d) => s.type === "band" ? d.lower > 0 && d.upper > 0 : d.value > 0;
+    const kept = series.map((s) => {
+      const log3 = !!isLog(s);
+      const gapOnSkip = log3 && !!breaks(s);
+      const values = [];
+      for (const d of s.values) {
+        if (d.date < from || d.date > to) continue;
+        if (log3 && !isGap(d) && !placeable(s, d)) {
+          skipped++;
+          if (gapOnSkip) values.push({ ...d, value: null });
+          continue;
         }
-        this._line.attr("x1", mx).attr("x2", mx).attr("opacity", 1);
-        this._dots.selectAll(".rc-cross-dot").data(points.filter((p) => p.type !== "bar" && p.type !== "band"), (p) => p.name).join("circle").attr("class", "rc-cross-dot").attr("r", t.dotRadius ?? 3).attr("fill", (p) => p.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (p) => x2(p.date)).attr("cy", (p) => scaleFor(p)(p.value)).attr("opacity", 1);
-        const payload = { date: points[0]?.date, points };
-        const html = tooltipFmt ? tooltipFmt(payload) : tipHeader(timeFormat("%b %d, %Y")(payload.date), { muted: true }) + points.map(
-          (p) => `<div style="color:${escapeHtml(p.color)}">${escapeHtml(p.name)}: ${escapeHtml(p.fmt)}</div>`
-        ).join("");
-        const [px, py] = pointer_default(event, this._overlay.node().closest(".rc-chart") ?? this._overlay.node().parentElement);
-        this._tooltip.show(px, py, html);
-      };
-      const leave = () => {
-        this._line.attr("opacity", 0);
-        this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
-        this._tooltip.hide();
-      };
-      this._overlay.on("mousemove", move).on("mouseleave", leave);
-    }
-    hide() {
-      this._line.attr("opacity", 0);
-      this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
-      this._tooltip.hide();
-    }
-    // Empty chart: hide, and drop the hover handlers — they hold the last
-    // series and scale. The next bind() attaches fresh ones.
-    unbind() {
-      this._overlay.on("mousemove", null).on("mouseleave", null);
-      this.hide();
-    }
-  };
+        values.push(d);
+      }
+      return { ...s, values };
+    }).filter((s) => s.values.some((d) => !isGap(d)));
+    return { series: kept, skipped };
+  }
+  function baselineValue(baseline, domain) {
+    if (typeof baseline === "number" && Number.isFinite(baseline)) return baseline;
+    if (baseline === "min") return domain[0];
+    return 0;
+  }
+  function linePath(series, x2, y2, defaultCurve = "linear", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    return line_default2().defined((d) => !isGap(d)).x((d) => x2(d.date)).y((d) => y2(d.value)).curve(curve)(series.values);
+  }
+  function areaPath(series, x2, y2, defaultCurve = "linear", globalBaseline = "zero", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    const domain = y2.domain();
+    let base = baselineValue(series.areaBaseline ?? globalBaseline, domain);
+    if (typeof y2.base === "function" && !(base > 0)) base = domain[0];
+    const lo = Math.min(domain[0], domain[1]), hi = Math.max(domain[0], domain[1]);
+    base = Math.min(Math.max(base, lo), hi);
+    return area_default3().x((d) => x2(d.date)).y0(y2(base)).y1((d) => y2(d.value)).curve(curve)(series.values);
+  }
+  function bandPath(series, x2, y2, defaultCurve = "linear", tension = 0) {
+    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
+    return area_default3().x((d) => x2(d.date)).y0((d) => y2(d.lower)).y1((d) => y2(d.upper)).curve(curve)(series.values);
+  }
 
   // assets/charts/src/core/entryMotion.js
+  var ENTRY_DURATION = 650;
   var EntryMotion = class {
     constructor() {
       this.reset();
@@ -13802,7 +13800,7 @@ var RareCharts = (() => {
   function drawLinesIn(paths, timing) {
     paths.each(function() {
       const p = select_default2(this).interrupt();
-      const total = this.getTotalLength?.() ?? 0;
+      const total = timing ? this.getTotalLength?.() ?? 0 : 0;
       if (!timing || !total) {
         p.attr("stroke-dasharray", null).attr("stroke-dashoffset", null);
         return;
@@ -13812,59 +13810,20 @@ var RareCharts = (() => {
       });
     });
   }
-
-  // assets/charts/src/core/seriesPath.js
-  var readNumber = (v) => v == null || v === "" || typeof v === "boolean" ? NaN : +v;
-  function normalizePoints(rows, { fields = ["value"], keep = false } = {}) {
-    return (Array.isArray(rows) ? rows : []).flatMap((d) => {
-      if (!d || typeof d !== "object") return [];
-      const date2 = parseDate(d.date);
-      if (!date2) return [];
-      const out = keep ? { ...d, date: date2 } : { date: date2 };
-      for (const f of fields) {
-        const v = readNumber(d[f]);
-        if (!Number.isFinite(v)) return [];
-        out[f] = v;
-      }
-      return [out];
-    }).sort(byDate);
-  }
-  function normalizeLineSeries(s, idx, { color: color2, type: type2 = "line", axis: axis2 } = {}) {
-    const width = readNumber(s.strokeWidth);
-    const out = {
-      ...s,
-      name: s.name ?? `Series ${idx + 1}`,
-      color: s.color ?? color2,
-      type: type2,
-      // Absent or unreadable → undefined: render keeps its default width.
-      strokeWidth: Number.isFinite(width) ? width : void 0,
-      values: normalizePoints(s.values, { fields: type2 === "band" ? ["lower", "upper"] : ["value"] })
+  function sweepIn(svg, groups2, id2, box, timing) {
+    const defsId = `${id2}-defs`;
+    const off = () => {
+      groups2.forEach((g) => g.attr("clip-path", null));
+      svg.select(`#${defsId}`).remove();
     };
-    if (axis2) out.axis = axis2;
-    if (type2 === "band") out.fillOpacity = s.fillOpacity ?? s.areaOpacity;
-    return out;
-  }
-  function baselineValue(baseline, domain) {
-    if (typeof baseline === "number" && Number.isFinite(baseline)) return baseline;
-    if (baseline === "min") return domain[0];
-    return 0;
-  }
-  function linePath(series, x2, y2, defaultCurve = "linear", tension = 0) {
-    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
-    return line_default2().x((d) => x2(d.date)).y((d) => y2(d.value)).curve(curve)(series.values);
-  }
-  function areaPath(series, x2, y2, defaultCurve = "linear", globalBaseline = "zero", tension = 0) {
-    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
-    const domain = y2.domain();
-    let base = baselineValue(series.areaBaseline ?? globalBaseline, domain);
-    if (typeof y2.base === "function" && !(base > 0)) base = domain[0];
-    const lo = Math.min(domain[0], domain[1]), hi = Math.max(domain[0], domain[1]);
-    base = Math.min(Math.max(base, lo), hi);
-    return area_default3().x((d) => x2(d.date)).y0(y2(base)).y1((d) => y2(d.value)).curve(curve)(series.values);
-  }
-  function bandPath(series, x2, y2, defaultCurve = "linear", tension = 0) {
-    const curve = resolveCurve(series.curve ?? defaultCurve, tension);
-    return area_default3().x((d) => x2(d.date)).y0((d) => y2(d.lower)).y1((d) => y2(d.upper)).curve(curve)(series.values);
+    if (!timing || !(box.width > 0)) {
+      off();
+      return;
+    }
+    let defs = svg.select(`#${defsId}`);
+    if (defs.empty()) defs = svg.insert("defs", ":first-child").attr("id", defsId);
+    defs.selectAll("clipPath").data([0]).join("clipPath").attr("id", id2).selectAll("rect").data([0]).join("rect").attr("x", box.x).attr("y", box.y).attr("height", box.height).interrupt().attr("width", box.width * timing.eased).transition().delay(timing.delay).duration(timing.duration).ease(timing.ease).attr("width", box.width).on("end", off);
+    groups2.forEach((g) => g.attr("clip-path", `url(#${id2})`));
   }
 
   // assets/charts/src/core/renderHelpers.js
@@ -13877,6 +13836,29 @@ var RareCharts = (() => {
       node.textContent = s + "\u2026";
     }
   }
+  function estimateTextWidth(text, perChar) {
+    return String(text ?? "").length * perChar;
+  }
+  function textWidth(node, perChar, text = node?.textContent) {
+    let w = 0;
+    try {
+      w = node?.getComputedTextLength?.() ?? 0;
+    } catch {
+      w = 0;
+    }
+    return w > 0 ? w : estimateTextWidth(text, perChar);
+  }
+  function boxesOverlap(a, b) {
+    return a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0;
+  }
+  function placeFirstFree(candidates, boxOf, obstacles, { bounds } = {}) {
+    for (const at2 of candidates) {
+      const box = boxOf(at2);
+      if (bounds && (box.x0 < bounds.x0 || box.x1 > bounds.x1 || box.y0 < bounds.y0 || box.y1 > bounds.y1)) continue;
+      if (!obstacles.some((b) => boxesOverlap(box, b))) return { at: at2, box };
+    }
+    return null;
+  }
   function applySvgA11y(svg, options = {}) {
     if (!svg) return;
     const explicit = typeof options.ariaLabel === "string" ? options.ariaLabel.trim() : "";
@@ -13885,8 +13867,16 @@ var RareCharts = (() => {
     svg.attr("role", "img").attr("aria-label", label);
   }
   function renderGrid(g, scale, W, ticks2, theme, tickValues = null) {
-    const axis2 = tickValues ? axisLeft(scale).tickValues(tickValues).tickSize(-W).tickFormat("") : axisLeft(scale).ticks(ticks2).tickSize(-W).tickFormat("");
-    g.call(axis2).call((sel) => {
+    drawGrid(g, axisLeft(scale), W, ticks2, theme, tickValues);
+  }
+  function renderGridX(g, scale, H, ticks2, theme, tickValues = null) {
+    g.attr("transform", `translate(0,${H})`);
+    drawGrid(g, axisBottom(scale), H, ticks2, theme, tickValues);
+  }
+  function drawGrid(g, axis2, size, ticks2, theme, tickValues) {
+    if (tickValues) axis2.tickValues(tickValues);
+    else axis2.ticks(ticks2);
+    g.call(axis2.tickSize(-size).tickFormat("")).call((sel) => {
       sel.selectAll("line").attr("stroke", theme.grid);
       sel.select(".domain").remove();
       sel.selectAll("text").remove();
@@ -13897,8 +13887,9 @@ var RareCharts = (() => {
     const hasZero = lo < 0 && hi > 0;
     g.selectAll(".rc-zero-line").data(hasZero ? [0] : []).join("line").attr("class", "rc-zero-line").attr("x1", 0).attr("x2", W).attr("y1", scale(0)).attr("y2", scale(0)).attr("stroke", theme.border);
   }
-  function dayTicks([d0, d1], max4) {
-    const days = timeDay.range(timeDay.ceil(d0), +d1 + 1);
+  function dayTicks([d0, d1], max4, timeZone = "local") {
+    const { day } = timeKit(timeZone);
+    const days = day.range(day.ceil(d0), +d1 + 1);
     if (days.length >= max4) return null;
     return days.length ? days : [d0];
   }
@@ -13920,6 +13911,7 @@ var RareCharts = (() => {
     const minGap = 8;
     let attempts = 5;
     let count = ticks2;
+    g.selectAll("text[data-rc-thin]").attr("display", null).attr("data-rc-thin", null);
     while (attempts-- > 0) {
       const labels = g.selectAll("text").nodes();
       if (labels.length <= 2) break;
@@ -13936,13 +13928,48 @@ var RareCharts = (() => {
       if (!overlap) break;
       const newCount = Math.max(1, Math.floor(Math.min(count, labels.length) / 2));
       if (newCount >= count) break;
-      count = newCount;
       apply(newCount);
+      if (g.selectAll("text").size() < 2) {
+        apply(count);
+        const texts = g.selectAll("text").nodes();
+        const rects = texts.map((t) => t.getBoundingClientRect());
+        const k = thinStep(rects.map((r) => (r.left + r.right) / 2), rects.map((r) => r.width), minGap);
+        if (k > 1) texts.forEach((t, i) => {
+          if (i % k) t.setAttribute("display", "none");
+          if (i % k) t.setAttribute("data-rc-thin", "");
+        });
+        break;
+      }
+      count = newCount;
     }
+  }
+  function thinStep(centres, widths, minGap = 8) {
+    const n = centres.length;
+    if (!widths.some((v) => v > 0)) return 1;
+    const clears = (k2) => {
+      for (let i = 0; i + k2 < n; i += k2) {
+        if (centres[i + k2] - centres[i] - (widths[i] + widths[i + k2]) / 2 < minGap - 1e-9) return false;
+      }
+      return true;
+    };
+    let k = 1;
+    while (k < n - 1 && !clears(k)) k++;
+    return k;
+  }
+  function thinBandLabels(g, scale, { minGap = 8 } = {}) {
+    const texts = g.selectAll(".tick text").nodes();
+    texts.forEach((t) => t.removeAttribute("display"));
+    const step = scale.step?.() ?? 0;
+    if (!(step > 0)) return 1;
+    const k = thinStep(texts.map((_, i) => i * step), texts.map((t) => t.getComputedTextLength?.() || 0), minGap);
+    if (k > 1) texts.forEach((t, i) => {
+      if (i % k) t.setAttribute("display", "none");
+    });
+    return k;
   }
   function keepEdgeLabelsInside(g) {
     const svg = g.node()?.ownerSVGElement;
-    const labels = g.selectAll("text").nodes();
+    const labels = g.selectAll("text").nodes().filter((n) => !n.hasAttribute("data-rc-thin"));
     if (!svg || !labels.length) return;
     const box = svg.getBoundingClientRect();
     if (!(box.width > 0)) return;
@@ -13963,35 +13990,50 @@ var RareCharts = (() => {
     const r1 = last.getBoundingClientRect();
     if (r1.width > 0 && r1.right > box.right) shift(last, labels[labels.length - 2], box.right - r1.right);
   }
-  function renderAxisYRight(g, scale, W, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
-    const axis2 = tickValues ? axisRight(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisRight(scale).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
+  function renderAxisY(g, scale, {
+    side = "right",
+    width = 0,
+    ticks: ticks2 = 4,
+    tickValues = null,
+    tickFormat: tickFormat2,
+    labelsOnly = true,
+    theme,
+    padding = 8
+  } = {}) {
+    const right2 = side !== "left";
+    const axis2 = (right2 ? axisRight : axisLeft)(scale).tickSize(0).tickPadding(padding).tickFormat(tickFormat2);
+    if (tickValues) axis2.tickValues(tickValues);
+    else axis2.ticks(ticks2);
     g.classed("rc-axis", true);
-    g.attr("transform", `translate(${W},0)`).call(axis2).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "start").attr("x", 8);
-      if (labelsOnly) {
-        sel.select(".domain").remove();
-        sel.selectAll("line").remove();
-      } else {
-        sel.select(".domain").attr("stroke", theme.border);
-        sel.selectAll("line").remove();
-      }
+    g.attr("transform", `translate(${right2 ? width : 0},0)`).call(axis2).call((sel) => {
+      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", right2 ? "start" : "end").attr("x", right2 ? padding : -padding);
+      if (labelsOnly) sel.select(".domain").remove();
+      else sel.select(".domain").attr("stroke", theme.border);
+      sel.selectAll("line").remove();
     });
   }
-  function renderAxisYLeft(g, scale, ticks2, tickFormat2, labelsOnly = true, theme, tickValues = null) {
-    const axis2 = tickValues ? axisLeft(scale).tickValues(tickValues).tickSize(0).tickPadding(8).tickFormat(tickFormat2) : axisLeft(scale).ticks(ticks2).tickSize(0).tickPadding(8).tickFormat(tickFormat2);
-    g.classed("rc-axis", true);
-    g.attr("transform", "translate(0,0)").call(axis2).call((sel) => {
-      sel.selectAll("text").attr("fill", theme.muted).attr("text-anchor", "end").attr("x", -8);
-      if (labelsOnly) {
-        sel.select(".domain").remove();
-        sel.selectAll("line").remove();
-      } else {
-        sel.select(".domain").attr("stroke", theme.border);
-        sel.selectAll("line").remove();
-      }
-    });
+  function drawLineSeries(g, lines, {
+    x: x2,
+    yFor,
+    curve,
+    tension,
+    area,
+    areaOpacity,
+    areaBaseline,
+    dash,
+    width,
+    classes: classes3,
+    timing
+  }) {
+    if (classes3.area) {
+      g.selectAll(`.${classes3.area}`).data(lines.filter((s) => (s.area ?? area) === true), (s) => s.name).join("path").attr("class", classes3.area).attr("d", (s) => areaPath(s, x2, yFor(s), curve, areaBaseline, tension)).attr("fill", (s) => s.color).attr("opacity", (s) => s.areaOpacity ?? areaOpacity);
+    }
+    const dashOf = (s) => resolveStrokeDash(s.strokeDash ?? dash);
+    const paths = g.selectAll(`.${classes3.line}`).data(lines, (s) => s.name).join("path").attr("class", classes3.line).attr("fill", "none").attr("stroke", (s) => s.color).attr("stroke-width", (s) => s.strokeWidth ?? width).attr("stroke-dasharray", dashOf).attr("d", (s) => linePath(s, x2, yFor(s), curve, tension));
+    paths.filter((s) => dashOf(s)).interrupt().attr("stroke-dasharray", dashOf).attr("stroke-dashoffset", null);
+    drawLinesIn(paths.filter((s) => !dashOf(s)), timing);
   }
-  function renderEndLabels(g, series, yScale, W, tickFormat2, theme) {
+  function renderEndLabels(g, series, yScale, W, tickFormat2, theme, { axis: axis2 = null } = {}) {
     g.selectAll("*").remove();
     const points = series.filter((s) => s.type !== "bar").map((s) => {
       const d = s.values[s.values.length - 1];
@@ -14005,6 +14047,21 @@ var RareCharts = (() => {
       const px = 2, py = 0;
       select_default2(this).select("rect").attr("x", bbox.x - px).attr("y", bbox.y - py).attr("width", bbox.width + px * 4).attr("height", bbox.height + py * 8);
     });
+    if (axis2) {
+      const height = (el) => el.getBBox?.().height || 12;
+      const labels = [];
+      groups2.each(function(d) {
+        labels.push({ y: yScale(d.value), h: height(select_default2(this).select("text").node()) });
+      });
+      axis2.selectAll(".tick").each(function() {
+        const m = /translate\(\s*[-\d.e]+\s*[, ]\s*([-\d.e]+)/.exec(this.getAttribute("transform") ?? "");
+        const text = select_default2(this).select("text");
+        if (!m || text.empty()) return;
+        const y2 = +m[1], h = height(text.node());
+        const covered = labels.some((l) => Math.abs(l.y - y2) < (l.h + h) / 2 + 2);
+        text.attr("visibility", covered ? "hidden" : null);
+      });
+    }
   }
   function renderAxisTitles(g, W, y1Title, y2Title, theme, opts = {}) {
     const titles = [];
@@ -14173,32 +14230,2658 @@ var RareCharts = (() => {
     });
   }
 
+  // assets/charts/src/core/links.js
+  function endpoints(raw) {
+    const source = raw.source ?? raw.from;
+    const target = raw.target ?? raw.to;
+    if (source == null || target == null) return null;
+    return { source: String(source), target: String(target) };
+  }
+  var tieKey = (source, target, type2) => `${source}\u2192${target}|${type2 ?? "default"}`;
+  function normalizeLinks(list, { warn = true, ids = "payload" } = {}) {
+    if (!Array.isArray(list)) return [];
+    const seen = /* @__PURE__ */ new Map();
+    const used = new Set(list.filter((l) => l?.id != null).map((l) => String(l.id)));
+    const out = [];
+    list.forEach((raw, i) => {
+      if (!raw || typeof raw !== "object") return;
+      const ends = endpoints(raw);
+      if (!ends) {
+        if (warn) console.warn(`RareCharts: link #${i} has no source/target \u2014 dropped`);
+        return;
+      }
+      const { from, to, ...rest } = raw;
+      const link2 = { ...rest, ...ends };
+      if (link2.id == null && ids === "tie") {
+        link2.id = tieKey(ends.source, ends.target, link2.type);
+      } else if (link2.id == null) {
+        const pairId = JSON.stringify([ends.source, ends.target]);
+        const pair = `${ends.source}\u2192${ends.target}`;
+        let n = seen.get(pairId) ?? 0;
+        while (used.has(`${pair}#${n}`)) n++;
+        seen.set(pairId, n + 1);
+        link2.id = `${pair}#${n}`;
+      } else {
+        link2.id = String(link2.id);
+      }
+      used.add(link2.id);
+      out.push(link2);
+    });
+    return out;
+  }
+  function normalizeRelationData(data = {}, {
+    unknownEndpoints = "keep",
+    onUnknown = null,
+    accept = null,
+    ids = "payload",
+    warn = true
+  } = {}) {
+    const nodes = (data.nodes ?? []).map((n) => ({ ...n, id: String(n.id) }));
+    let links = normalizeLinks(data.links ?? data.flows ?? [], { warn, ids });
+    if (accept) links = links.map((l) => accept(l)).filter((l) => l != null);
+    if (unknownEndpoints === "create" || unknownEndpoints === "drop") {
+      const known = new Set(nodes.map((n) => n.id));
+      if (unknownEndpoints === "create") {
+        links.forEach((l) => [l.source, l.target].forEach((id2) => {
+          if (!known.has(id2)) {
+            known.add(id2);
+            nodes.push({ id: id2 });
+          }
+        }));
+      } else {
+        links = links.filter((l) => {
+          if (known.has(l.source) && known.has(l.target)) return true;
+          onUnknown?.(l);
+          return false;
+        });
+      }
+    }
+    return { ...data, nodes, links };
+  }
+  function parseTime(v, { end = false, timeZone = "local" } = {}) {
+    if (v == null || v === "") return null;
+    if (v instanceof Date) return Number.isNaN(+v) ? null : +v;
+    const at2 = (y2, m2) => +calendarMidnight(y2, m2, 1, timeZone);
+    const period = (y2, m2 = null) => {
+      if (!end) return at2(y2, m2 ?? 0);
+      return m2 == null ? at2(y2 + 1, 0) - 1 : at2(y2, m2 + 1) - 1;
+    };
+    if (typeof v === "number") {
+      if (!Number.isFinite(v)) return null;
+      return Math.abs(v) < 1e4 ? period(Math.trunc(v)) : v;
+    }
+    const s = String(v).trim();
+    let m = /^(-?\d{1,4})$/.exec(s);
+    if (m) return period(+m[1]);
+    m = /^(\d{4})-(\d{2})$/.exec(s);
+    if (m) return period(+m[1], +m[2] - 1);
+    const d = parseDate(s, timeZone);
+    return d == null ? null : +d;
+  }
+  function linkInWindow(link2, from, to, timeZone = "local") {
+    const ls = parseTime(link2.start, { timeZone });
+    const le = parseTime(link2.end, { end: true, timeZone });
+    const ws = parseTime(from, { timeZone });
+    const we = parseTime(to, { end: true, timeZone });
+    if (we != null && ls != null && ls > we) return false;
+    if (ws != null && le != null && le < ws) return false;
+    return true;
+  }
+  function applyTimeWindow(links, window2, mode = "hide", timeZone = "local") {
+    if (!window2 || window2.from == null && window2.to == null) return links;
+    const inside = (l) => linkInWindow(l, window2.from, window2.to, timeZone);
+    if (mode === "dim") {
+      return links.map((l) => inside(l) ? l : { ...l, _dim: true });
+    }
+    return links.filter(inside);
+  }
+  function linkTimeExtent(links, timeZone = "local") {
+    let lo = Infinity, hi = -Infinity;
+    (links ?? []).forEach((l) => {
+      const s = parseTime(l.start, { timeZone }), e = parseTime(l.end, { end: true, timeZone });
+      [s, e].forEach((v) => {
+        if (v != null) {
+          lo = Math.min(lo, v);
+          hi = Math.max(hi, v);
+        }
+      });
+    });
+    return Number.isFinite(lo) ? [new Date(lo), new Date(hi)] : null;
+  }
+  function activeLinkSeries(links, extent2, timeZone = "local") {
+    if (extent2 === void 0) extent2 = linkTimeExtent(links, timeZone);
+    if (!extent2) return null;
+    const span = +extent2[1] - +extent2[0];
+    const DAY2 = 864e5;
+    const tz = timeKit(timeZone);
+    const interval2 = span < 120 * DAY2 ? tz.day : span < 50 * 365 * DAY2 ? tz.month : tz.year;
+    const ticks2 = interval2.range(interval2.floor(extent2[0]), interval2.offset(interval2.floor(extent2[1]), 1));
+    if (ticks2.length < 2) ticks2.push(interval2.offset(ticks2[0] ?? interval2.floor(extent2[0]), 1));
+    const spans = (links ?? []).map((l) => [
+      parseTime(l.start, { timeZone }) ?? -Infinity,
+      parseTime(l.end, { end: true, timeZone }) ?? Infinity
+    ]);
+    const series = ticks2.map((date2) => {
+      const a = +date2, b = +interval2.offset(date2, 1) - 1;
+      return { date: date2, value: spans.filter(([s, e]) => s <= b && e >= a).length };
+    });
+    series[0] = { ...series[0], date: new Date(Math.max(+series[0].date, +extent2[0])) };
+    const last = series[series.length - 1];
+    if (+extent2[1] > +last.date) series.push({ date: /* @__PURE__ */ new Date(+extent2[1]), value: last.value });
+    return series;
+  }
+  function linkValue(link2, { by = "value", min: min4 = 0 } = {}) {
+    const v = typeof by === "function" ? by(link2) : link2?.[by];
+    return v == null || v === "" || !Number.isFinite(+v) ? null : Math.max(min4, +v);
+  }
+  function linkValueText(link2, format2) {
+    const v = linkValue(link2, { min: -Infinity });
+    if (v != null) return typeof format2 === "function" ? String(format2(v) ?? "") : v.toLocaleString();
+    return link2?.value == null ? "" : String(link2.value);
+  }
+  var linkWeight = (link2, fallback = 0.5) => link2.weight ?? link2.strength ?? fallback;
+  function linkWidthScale(links, {
+    by = "value",
+    scale = "sqrt",
+    min: min4 = 1,
+    max: max4 = 12
+  } = {}) {
+    const val = (l) => linkValue(l, { by });
+    const top2 = max(links ?? [], val) ?? 0;
+    const s = (scale === "linear" ? linear3() : sqrt2()).domain([0, top2 || 1]).range([min4, max4]).clamp(true);
+    return (l) => {
+      const v = val(l);
+      return v == null ? min4 : s(v);
+    };
+  }
+  function resolveLinkType(types, key, { keys = [], theme = {} } = {}) {
+    const k = key == null || key === "" ? "default" : String(key);
+    const cfg = types?.[k] ?? null;
+    const muted = theme.muted ?? "#888888";
+    const hex2 = hexOf(theme);
+    const taken = new Set(Object.values(types ?? {}).map((c) => c?.color).filter(Boolean).map(hex2));
+    const free = (theme.colors ?? []).filter((c) => !taken.has(c));
+    const undescribed = keys.filter((x2) => x2 !== "default" && !types?.[x2]);
+    const i = undescribed.indexOf(k);
+    return {
+      key: k,
+      color: cfg?.color ?? (k === "default" || i < 0 ? muted : free[i] ?? muted),
+      dash: cfg?.dash ?? null,
+      label: cfg?.label ?? (k === "default" ? "connection" : k)
+    };
+  }
+  var pairKey = (a, b) => a < b ? `${a}|${b}` : `${b}|${a}`;
+  var upairKey = (a, b) => JSON.stringify(a < b ? [String(a), String(b)] : [String(b), String(a)]);
+  function dedupeUndirected(links) {
+    const seen = /* @__PURE__ */ new Set();
+    return links.filter((l) => {
+      const key = JSON.stringify([upairKey(l.source, l.target), String(l.type ?? "default")]);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+  function parallelIndex(links, { directed = false } = {}) {
+    const groups2 = /* @__PURE__ */ new Map();
+    links.forEach((l) => {
+      const k = directed ? JSON.stringify([String(l.source), String(l.target)]) : upairKey(l.source, l.target);
+      if (!groups2.has(k)) groups2.set(k, []);
+      groups2.get(k).push(l);
+    });
+    const out = /* @__PURE__ */ new Map();
+    groups2.forEach((group2) => {
+      const count = group2.length, centre = (count - 1) / 2;
+      group2.forEach((l, index2) => {
+        const against = !directed && l.source > l.target;
+        out.set(l.id, { index: index2, count, offset: against ? centre - index2 : index2 - centre });
+      });
+    });
+    return out;
+  }
+  function groupTies(links, {
+    tie = (l) => [l.source, l.target, String(l.type ?? "default")],
+    onRepeat = null
+  } = {}) {
+    const groups2 = /* @__PURE__ */ new Map();
+    const out = [];
+    (links ?? []).forEach((l) => {
+      const ends = tie(l);
+      if (ends == null) {
+        out.push(l);
+        return;
+      }
+      const key = JSON.stringify(ends);
+      const group2 = groups2.get(key);
+      if (group2) {
+        group2.links.push(l);
+        onRepeat?.(l, group2);
+        return;
+      }
+      const fresh = { key, source: ends[0], target: ends[1], links: [l] };
+      groups2.set(key, fresh);
+      out.push(fresh);
+    });
+    return out;
+  }
+  function chord(p02, p1) {
+    const dx = p1.x - p02.x, dy = p1.y - p02.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len, uy = dy / len;
+    return { len, u: { x: ux, y: uy }, n: { x: -uy, y: ux } };
+  }
+  function quadBow(a, b, { from = 0, to = 0, bow = 0 } = {}) {
+    const { len, u, n } = chord(a, b);
+    const off = typeof bow === "function" ? bow(len) : bow;
+    const along = (p, k) => k !== 0 ? { x: p.x + u.x * k, y: p.y + u.y * k } : { x: p.x, y: p.y };
+    const s = along(a, from), e = along(b, -to);
+    const c = { x: (s.x + e.x) / 2 + n.x * off, y: (s.y + e.y) / 2 + n.y * off };
+    return { s, e, c, off, len, u, n, d: `M${s.x},${s.y}Q${c.x},${c.y} ${e.x},${e.y}` };
+  }
+  function quadPoint({ s, c, e }, t) {
+    return {
+      x: (1 - t) ** 2 * s.x + 2 * (1 - t) * t * c.x + t ** 2 * e.x,
+      y: (1 - t) ** 2 * s.y + 2 * (1 - t) * t * c.y + t ** 2 * e.y
+    };
+  }
+  function sineBow(pts, bow) {
+    const [x06, y06] = pts[0], [x12, y12] = pts[pts.length - 1];
+    const { len, n } = chord({ x: x06, y: y06 }, { x: x12, y: y12 });
+    const amp = typeof bow === "function" ? bow(len) : bow;
+    const s = [0];
+    for (let i = 1; i < pts.length; i++) s.push(s[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+    const total = s[s.length - 1] || 1;
+    return pts.map(([x2, y2], i) => {
+      const k = Math.sin(Math.PI * (s[i] / total)) * amp;
+      return [x2 + n.x * k, y2 + n.y * k];
+    });
+  }
+
+  // assets/charts/src/core/legend.js
+  var HIDE_DELAY_MS = 250;
+  var CLS = {
+    item: "rc-legend-item",
+    reset: "rc-legend-reset",
+    line: "rc-legend-line",
+    dashed: "rc-legend-line rc-legend-line--dashed",
+    dot: "rc-legend-dot",
+    band: "rc-legend-band"
+  };
+  var MARKS = /* @__PURE__ */ new Set(["line", "dashed", "dot", "band", "shape", "width"]);
+  var DEFAULT_DASH = [5, 3];
+  var SHAPES = ["circle", "square", "diamond", "stack"];
+  var SHAPE_RADIUS = 18;
+  var SVG_NS = "http://www.w3.org/2000/svg";
+  var RESET_TEXT = "Show all";
+  var GROUP_LABEL = "Legend";
+  function legendKey(item) {
+    if (item == null || typeof item !== "object" || item.series === false) return null;
+    const key = item.series ?? item.name ?? item.label;
+    return key == null ? null : String(key);
+  }
+  function nextVisible(keys, visible, action, key) {
+    const all = [...keys];
+    const on = new Set(visible ?? []);
+    const shown = all.filter((k) => on.has(k));
+    if (action === "showAll") return { visible: all, kind: "showAll" };
+    const known = all.includes(key);
+    if (action === "double") {
+      if (shown.length === 1 && shown[0] === key) return { visible: all, kind: "restore" };
+      return { visible: known ? [key] : shown, kind: "isolate" };
+    }
+    return { visible: all.filter((k) => k === key ? !on.has(k) : on.has(k)), kind: "toggle" };
+  }
+  function shapeParts(shape, R = SHAPE_RADIUS) {
+    if (shape === "square") return [["rect", { x: -R + 1, y: -R + 1, width: 2 * R - 2, height: 2 * R - 2, rx: 6 }]];
+    if (shape === "diamond") return [["path", { d: `M0,${-R - 3}L${R + 3},0L0,${R + 3}L${-R - 3},0z` }]];
+    if (shape === "stack") return [["circle", { cx: 6, cy: -5, r: R - 2, opacity: 0.55 }], ["circle", { r: R }]];
+    if (!SHAPES.includes(shape) && /^[Mm]/.test(String(shape))) return [["path", { d: String(shape) }]];
+    return [["circle", { r: R }]];
+  }
+  function dashPair(dash) {
+    let list = dash;
+    if (typeof dash === "number") list = [dash];
+    else if (typeof dash === "string") list = (resolveStrokeDash(dash) ?? "").split(/[\s,]+/);
+    if (!Array.isArray(list)) return DEFAULT_DASH;
+    const n = list.filter((v) => v !== "" && v != null).map(Number).filter((v) => Number.isFinite(v) && v >= 0);
+    if (!n.length) return DEFAULT_DASH;
+    return [n[0], n.length > 1 ? n[1] : n[0]];
+  }
+  var STATE = /* @__PURE__ */ new WeakMap();
+  var META = /* @__PURE__ */ new WeakMap();
+  function renderLegendItems(el, items, opts = {}) {
+    const s = stateOf(el);
+    const doc = el.ownerDocument;
+    const interactive = opts.interactive !== false;
+    const alias = opts.alias ?? {};
+    const ctx = { alias, labelStyle: opts.labelStyle ?? null };
+    s.opts = opts;
+    const active = doc.activeElement;
+    const focused = active && active !== el && el.contains(active) ? active : null;
+    const before = [...el.children];
+    const specs = specsOf(items, interactive);
+    const toggles = /* @__PURE__ */ new Map();
+    const labels = [];
+    const desired = [];
+    let nextLabel = 0;
+    for (const sp of specs) {
+      let node;
+      if (sp.toggle) {
+        node = s.toggles.get(sp.key) ?? makeItem(doc, true);
+        toggles.set(sp.key, node);
+      } else {
+        node = s.labels[nextLabel++] ?? makeItem(doc, false);
+        labels.push(node);
+      }
+      updateItem(node, sp, ctx);
+      desired.push(node);
+    }
+    let reset = null;
+    if (interactive && toggles.size) {
+      reset = s.reset ?? makeReset(doc);
+      const cls = classes(CLS.reset, alias.reset);
+      if (reset.className !== cls) reset.className = cls;
+      const show = !!opts.anyHidden || specs.some((sp) => sp.toggle && !sp.on);
+      if (reset.hidden === show) reset.hidden = !show;
+      desired.push(reset);
+    }
+    const keep = new Set(desired);
+    [...el.childNodes].forEach((n) => {
+      if (!keep.has(n)) n.remove();
+    });
+    desired.forEach((n, i) => {
+      if (el.childNodes[i] !== n) el.insertBefore(n, el.childNodes[i] ?? null);
+    });
+    if (toggles.size) {
+      setAttr(el, "role", "group");
+      setAttr(el, "aria-label", GROUP_LABEL);
+      s.grouped = true;
+    } else if (s.grouped) {
+      setAttr(el, "role", null);
+      setAttr(el, "aria-label", null);
+      s.grouped = false;
+    }
+    setAttr(el, "aria-busy", opts.busy ? "true" : null);
+    s.toggles = toggles;
+    s.labels = labels;
+    s.reset = reset;
+    s.keys = [...toggles.keys()];
+    s.visible = new Set(specs.filter((sp) => sp.toggle && sp.on).map((sp) => sp.key));
+    if (s.pending && !toggles.has(s.pending.key)) cancelPending(s);
+    if (focused) keepFocus(el, s, focused, before);
+    return el;
+  }
+  function stateOf(el) {
+    let s = STATE.get(el);
+    if (s) return s;
+    s = {
+      opts: {},
+      keys: [],
+      // toggle keys, in order
+      visible: /* @__PURE__ */ new Set(),
+      // the toggle keys shown (the `on` flags last written)
+      toggles: /* @__PURE__ */ new Map(),
+      // key → button
+      labels: [],
+      // static items, in order
+      reset: null,
+      // Show all
+      pending: null,
+      // { key, timer }: a pointer hide waiting HIDE_DELAY_MS
+      snap: null,
+      // the last pointer click: { key, visible, committed, doubled, prior }
+      grouped: false
+    };
+    STATE.set(el, s);
+    el.addEventListener("click", (e) => onClick(el, s, e));
+    el.addEventListener("dblclick", (e) => onDblClick(el, s, e));
+    return s;
+  }
+  function specsOf(items, interactive) {
+    const seen = /* @__PURE__ */ new Set();
+    return (Array.isArray(items) ? items : []).map((it) => {
+      const item = it ?? {};
+      const given = item.key == null ? null : String(item.key);
+      const key = given != null && !seen.has(given) ? given : null;
+      if (key != null) seen.add(key);
+      const mark = MARKS.has(item.mark) ? item.mark : "line";
+      return {
+        key,
+        toggle: interactive && key != null,
+        label: String(item.label ?? given ?? ""),
+        color: item.color ?? null,
+        mark,
+        dash: mark === "dashed" ? dashPair(item.dash) : null,
+        shape: mark === "shape" ? item.shape ?? "circle" : null,
+        radius: mark === "shape" && Number.isFinite(item.radius) && item.radius > 0 ? item.radius : SHAPE_RADIUS,
+        on: item.on !== false,
+        alias: item.alias
+      };
+    });
+  }
+  var classes = (...list) => list.filter(Boolean).join(" ");
+  function setAttr(node, name, value) {
+    if (value == null) {
+      if (node.hasAttribute(name)) node.removeAttribute(name);
+    } else if (node.getAttribute(name) !== value) {
+      node.setAttribute(name, value);
+    }
+  }
+  function setStyle(node, prop, value) {
+    if (value == null) {
+      if (node.style.getPropertyValue(prop) !== "") node.style.removeProperty(prop);
+    } else if (node.style.getPropertyValue(prop) !== value) {
+      node.style.setProperty(prop, value);
+    }
+  }
+  function makeItem(doc, toggle) {
+    const node = doc.createElement(toggle ? "button" : "div");
+    if (toggle) node.type = "button";
+    return node;
+  }
+  function makeReset(doc) {
+    const node = doc.createElement("button");
+    node.type = "button";
+    const text = doc.createElement("span");
+    text.textContent = RESET_TEXT;
+    node.appendChild(text);
+    return node;
+  }
+  function updateItem(node, sp, ctx) {
+    let meta = META.get(node);
+    if (!meta) META.set(node, meta = {});
+    const cls = classes(CLS.item, sp.alias ?? ctx.alias.item);
+    if (node.className !== cls) node.className = cls;
+    setAttr(node, "data-key", sp.key);
+    setAttr(node, "data-type", ctx.alias.dataType ? sp.key : null);
+    if (sp.toggle) setAttr(node, "aria-pressed", String(sp.on));
+    updateLabel(node, sp, meta, ctx.labelStyle);
+    updateSwatch(node, sp, meta);
+  }
+  function updateLabel(node, sp, meta, labelStyle) {
+    let span = meta.label;
+    if (!span || span.parentNode !== node) {
+      span = node.ownerDocument.createElement("span");
+      node.appendChild(span);
+      meta.label = span;
+      meta.styleSig = void 0;
+      meta.styleProps = [];
+    }
+    if (span.textContent !== sp.label) span.textContent = sp.label;
+    const sig = labelStyle ? JSON.stringify(labelStyle) : "";
+    if (meta.styleSig === sig) return;
+    const props = labelStyle ? Object.keys(labelStyle).map((k) => [k.startsWith("--") ? k : k.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`), labelStyle[k]]) : [];
+    meta.styleProps.filter((p) => !props.some(([q]) => q === p)).forEach((p) => setStyle(span, p, null));
+    props.forEach(([p, v]) => setStyle(span, p, v == null ? null : String(v)));
+    meta.styleProps = props.map(([p]) => p);
+    meta.styleSig = sig;
+  }
+  function updateSwatch(node, sp, meta) {
+    const glyph = sp.mark === "shape" || sp.mark === "width";
+    const sig = sp.mark === "shape" ? `shape|${sp.shape}|${sp.radius}` : glyph ? "width" : "span";
+    let sw = meta.swatch;
+    if (!sw || sw.parentNode !== node || meta.swatchSig !== sig) {
+      const fresh = glyph ? makeGlyph(node.ownerDocument, sp) : makeSpanSwatch(node.ownerDocument, sp.mark);
+      if (sw && sw.parentNode === node) node.replaceChild(fresh, sw);
+      else node.insertBefore(fresh, meta.label);
+      sw = meta.swatch = fresh;
+      meta.swatchSig = sig;
+    }
+    if (!glyph) {
+      const cls = CLS[sp.mark] ?? CLS.line;
+      if (sw.className !== cls) sw.className = cls;
+    }
+    setStyle(sw, "--rc-swatch-color", sp.color == null ? null : String(sp.color));
+    const custom3 = sp.dash && !(sp.dash[0] === DEFAULT_DASH[0] && sp.dash[1] === DEFAULT_DASH[1]);
+    setStyle(sw, "--rc-swatch-dash", custom3 ? `${sp.dash[0]}px` : null);
+    setStyle(sw, "--rc-swatch-gap", custom3 ? `${sp.dash[1]}px` : null);
+  }
+  function makeSpanSwatch(doc, mark) {
+    const span = doc.createElement("span");
+    span.className = CLS[mark] ?? CLS.line;
+    span.setAttribute("aria-hidden", "true");
+    return span;
+  }
+  function makeGlyph(doc, sp) {
+    const width = sp.mark === "width" ? 16 : 12;
+    const holder = doc.createElement("span");
+    holder.innerHTML = `<svg width="${width}" height="12" aria-hidden="true"></svg>`;
+    const svg = holder.firstChild;
+    const parts = sp.mark === "width" ? [["path", { d: "M0,5L16,2L16,10L0,7Z" }]] : shapeParts(sp.shape, sp.radius);
+    if (sp.mark === "shape") {
+      const half = sp.radius + 4;
+      svg.setAttribute("viewBox", `${-half} ${-half} ${2 * half} ${2 * half}`);
+    }
+    parts.forEach(([tag, attrs]) => {
+      const part = doc.createElementNS(SVG_NS, tag);
+      Object.entries(attrs).forEach(([k, v]) => part.setAttribute(k, String(v)));
+      svg.appendChild(part);
+    });
+    return svg;
+  }
+  function keepFocus(el, s, focused, before) {
+    const toggles = new Set(s.toggles.values());
+    const stays = focused.parentNode === el && (toggles.has(focused) || focused === s.reset && !focused.hidden);
+    if (stays) {
+      if (el.ownerDocument.activeElement !== focused) focused.focus({ preventScroll: true });
+      return;
+    }
+    const at2 = before.indexOf(focused);
+    let target = null;
+    for (let k = at2 - 1; k >= 0 && !target; k--) if (toggles.has(before[k])) target = before[k];
+    for (let k = at2 + 1; k < before.length && !target; k++) if (toggles.has(before[k])) target = before[k];
+    if (!target) {
+      if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
+      target = el;
+    }
+    target.focus({ preventScroll: true });
+  }
+  function buttonOf(el, event) {
+    const node = event.target?.closest?.("button");
+    return node && node.parentNode === el ? node : null;
+  }
+  function onClick(el, s, event) {
+    const node = buttonOf(el, event);
+    if (!node) return;
+    if (node === s.reset) {
+      cancelPending(s);
+      s.snap = null;
+      commit(el, s, nextVisible(s.keys, s.visible, "showAll"), null, false);
+      return;
+    }
+    const key = node.getAttribute("data-key");
+    if (key == null) return;
+    const detail = event.detail || 0;
+    if (detail >= 3) return;
+    if (detail === 2 && s.snap?.key === key) {
+      if (!s.snap.doubled) double(el, s, key, s.snap, s.snap.committed);
+      return;
+    }
+    if (detail === 0) {
+      flushPending(el, s);
+      s.snap = null;
+      if (s.toggles.has(key)) commit(el, s, nextVisible(s.keys, s.visible, "toggle", key), key, false);
+      return;
+    }
+    if (s.pending?.key === key) {
+      cancelPending(s);
+      if (s.snap) s.snap.prior = null;
+      return;
+    }
+    flushPending(el, s);
+    if (!s.toggles.has(key)) return;
+    const last = s.snap;
+    const snap = {
+      key,
+      visible: new Set(s.visible),
+      committed: false,
+      doubled: false,
+      // the click before, on this item: the first of a pair for the dblclick fallback
+      prior: last && last.key === key && !last.doubled ? last : null
+    };
+    s.snap = snap;
+    if (s.visible.has(key)) {
+      const timer2 = setTimeout(() => {
+        s.pending = null;
+        snap.committed = true;
+        hideNow(el, s, key);
+      }, HIDE_DELAY_MS);
+      s.pending = { key, timer: timer2 };
+    } else {
+      snap.committed = true;
+      commit(el, s, nextVisible(s.keys, s.visible, "toggle", key), key, false);
+    }
+  }
+  function onDblClick(el, s, event) {
+    const key = buttonOf(el, event)?.getAttribute("data-key");
+    const snap = s.snap;
+    if (key == null || !snap || snap.key !== key || snap.doubled) return;
+    const first = snap.prior ?? snap;
+    double(el, s, key, first, first.committed || snap.committed);
+  }
+  function double(el, s, key, first, replaces) {
+    cancelPending(s);
+    if (s.snap) s.snap.doubled = true;
+    first.doubled = true;
+    commit(el, s, nextVisible(s.keys, first.visible, "double", key), key, replaces);
+  }
+  function hideNow(el, s, key) {
+    if (!s.visible.has(key)) return;
+    commit(el, s, nextVisible(s.keys, s.visible, "toggle", key), key, false);
+  }
+  function cancelPending(s) {
+    if (!s.pending) return;
+    clearTimeout(s.pending.timer);
+    s.pending = null;
+  }
+  function flushPending(el, s) {
+    if (!s.pending) return;
+    const { key } = s.pending;
+    cancelPending(s);
+    hideNow(el, s, key);
+  }
+  function commit(el, s, result, key, replaces) {
+    s.visible = new Set(result.visible);
+    for (const [k, node] of s.toggles) setAttr(node, "aria-pressed", String(s.visible.has(k)));
+    if (s.reset) {
+      if (result.kind === "showAll") {
+        const doc = el.ownerDocument;
+        const hadFocus = doc.activeElement === s.reset;
+        const before = [...el.children];
+        if (!s.reset.hidden) s.reset.hidden = true;
+        if (hadFocus) keepFocus(el, s, s.reset, before);
+      } else if (s.reset.hidden && s.keys.some((k) => !s.visible.has(k))) {
+        s.reset.hidden = false;
+      }
+    }
+    s.opts.onToggle?.({ kind: result.kind, key, visibleKeys: [...result.visible], replaces: !!replaces });
+  }
+
+  // assets/charts/src/core/Tooltip.js
+  var setToken = (el, name, v) => {
+    if (v != null && v !== "") el.style.setProperty(name, String(v));
+  };
+  function setTooltipTokens(el, theme) {
+    const tt = theme.tooltip ?? {};
+    setToken(el, "--rc-tooltip-font", theme.font);
+    setToken(el, "--rc-tooltip-font-numeric", theme.numericFont);
+    setToken(el, "--rc-tooltip-text", tt.text ?? theme.text);
+    setToken(el, "--rc-tooltip-muted", tt.muted ?? theme.muted);
+    setToken(el, "--rc-tooltip-bg", tt.bg ?? theme.bg);
+    setToken(el, "--rc-tooltip-border", tt.border ?? theme.border);
+    setToken(el, "--rc-tooltip-shadow", tt.shadow ?? "none");
+  }
+  var Tooltip = class {
+    constructor(container, theme) {
+      this._container = container;
+      this.theme = theme;
+      this._pinned = false;
+      this._onClose = null;
+      const header = theme.tooltip?.header ?? {};
+      this.el = document.createElement("div");
+      this.el.className = "rc-tooltip";
+      if (header.bg != null && header.bg !== "") this.el.classList.add("rc-tooltip--header-band");
+      container.appendChild(this.el);
+      this._onDocPointer = (event) => {
+        if (this._pinned && !this.el.contains(event.target)) this.unpin();
+      };
+      this._onDocKey = (event) => {
+        if (this._pinned && event.key === "Escape") this.unpin();
+      };
+    }
+    get isPinned() {
+      return this._pinned;
+    }
+    show(x2, y2, html) {
+      if (this._pinned) return;
+      this._place(x2, y2, html);
+    }
+    hide() {
+      if (this._pinned) return;
+      this.el.classList.remove("is-visible");
+    }
+    // Pin at (x, y). Re-pinning replaces the content in place. `onClose` runs
+    // once when the pin is released (outside click, Escape, or unpin()).
+    pin(x2, y2, html, { onClose = null } = {}) {
+      const wasPinned = this._pinned;
+      if (wasPinned) this._releaseCallback();
+      this._pinned = true;
+      this._onClose = onClose;
+      this.el.classList.add("is-pinned");
+      this._place(x2, y2, html);
+      if (!wasPinned) {
+        setTimeout(() => {
+          if (!this._pinned) return;
+          document.addEventListener("pointerdown", this._onDocPointer, true);
+          document.addEventListener("keydown", this._onDocKey);
+        }, 0);
+      }
+    }
+    unpin() {
+      if (!this._pinned) return;
+      this._pinned = false;
+      this.el.classList.remove("is-pinned", "is-visible");
+      document.removeEventListener("pointerdown", this._onDocPointer, true);
+      document.removeEventListener("keydown", this._onDocKey);
+      this._releaseCallback();
+    }
+    destroy() {
+      this.unpin();
+      this.el.remove();
+    }
+    _releaseCallback() {
+      const cb = this._onClose;
+      this._onClose = null;
+      if (cb) cb();
+    }
+    _place(x2, y2, html) {
+      this.el.innerHTML = html;
+      this.el.classList.add("is-visible");
+      const width = this.el.offsetWidth;
+      const maxX = this._container.clientWidth - width - 12;
+      const maxY = this._container.clientHeight - this.el.offsetHeight - 8;
+      const left2 = x2 + 12 <= maxX ? x2 + 12 : Math.max(8, x2 - 12 - width);
+      this.el.style.left = `${left2}px`;
+      this.el.style.top = `${Math.min(Math.max(y2 - 20, 8), maxY)}px`;
+    }
+  };
+
+  // assets/charts/src/core/zoomGesture.js
+  var ZOOM_HINT_MS = 1200;
+  var TAP_DISTANCE = 10;
+  var pageTouches = /* @__PURE__ */ new WeakSet();
+  var d3Filter = (event) => (!event.ctrlKey || event.type === "wheel") && !event.button;
+  function zoomFilter(event) {
+    if (event.type === "wheel") return !!(event.ctrlKey || event.metaKey);
+    if (event.type === "touchstart") {
+      return (event.touches?.length ?? 0) >= 2 && !pageTouches.has(this) && d3Filter(event);
+    }
+    return d3Filter(event);
+  }
+  function isApplePlatform(nav = globalThis.navigator) {
+    const platform = nav?.userAgentData?.platform || nav?.platform || "";
+    return /mac|iphone|ipad|ipod|ios/i.test(platform);
+  }
+  function zoomHintText(kind, nav) {
+    if (kind === "touch") return "Use two fingers to move";
+    return `Hold ${isApplePlatform(nav) ? "\u2318" : "Ctrl"} to zoom`;
+  }
+  function boxInCard(el, container) {
+    const r = el.getBoundingClientRect();
+    const c = container.getBoundingClientRect();
+    const left2 = Math.max(r.left, c.left), right2 = Math.min(r.right, c.right);
+    const top2 = Math.max(r.top, c.top), bottom2 = Math.min(r.bottom, c.bottom);
+    const ox = c.left + container.clientLeft - container.scrollLeft;
+    const oy = c.top + container.clientTop - container.scrollTop;
+    return { x: left2 - ox, y: top2 - oy, width: Math.max(0, right2 - left2), height: Math.max(0, bottom2 - top2) };
+  }
+  var ZoomHint = class {
+    constructor(container, theme, box) {
+      this._container = container;
+      this._theme = theme;
+      this._box = box;
+      this._timer = null;
+      this.el = null;
+    }
+    show(kind) {
+      if (!this.el) this.el = this._create();
+      const text = zoomHintText(kind);
+      if (this.el.textContent !== text) this.el.textContent = text;
+      if (!this.el.classList.contains("is-visible")) {
+        const b = this._box();
+        this.el.style.left = `${b.x + b.width / 2}px`;
+        this.el.style.top = `${b.y + b.height / 2}px`;
+        this.el.classList.add("is-visible");
+      }
+      clearTimeout(this._timer);
+      this._timer = setTimeout(() => this.hide(), ZOOM_HINT_MS);
+    }
+    hide() {
+      clearTimeout(this._timer);
+      this._timer = null;
+      this.el?.classList.remove("is-visible");
+    }
+    destroy() {
+      this.hide();
+      this.el?.remove();
+      this.el = null;
+    }
+    _create() {
+      const el = document.createElement("div");
+      el.className = "rc-zoom-hint";
+      el.setAttribute("aria-hidden", "true");
+      setTooltipTokens(el, this._theme);
+      this._container.appendChild(el);
+      return el;
+    }
+  };
+  function zoomWheelDelta(event) {
+    const unit2 = event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 2e-3;
+    const pinch = event.ctrlKey && event.deltaMode === 0 && Math.abs(event.deltaY) < 50;
+    return -event.deltaY * unit2 * (pinch ? 10 : 1);
+  }
+  function bindZoom(selection2, zoom, { container, theme, box = null }) {
+    zoom.filter(zoomFilter).wheelDelta(zoomWheelDelta);
+    selection2.call(zoom);
+    const node = selection2.node();
+    const hint = new ZoomHint(container, theme, box ?? (() => boxInCard(node, container)));
+    zoom.on("start.rc-hint", () => hint.hide());
+    selection2.on("wheel.rc-hint", (event) => {
+      if (!event.ctrlKey && !event.metaKey) hint.show("wheel");
+    }, { passive: true });
+    if (!zoom.touchable().call(node)) return hint;
+    let start2 = null;
+    selection2.style("touch-action", "pan-x pan-y").on("touchstart.rc-hint", (event) => {
+      const t = event.touches;
+      start2 = t.length === 1 ? [t[0].clientX, t[0].clientY] : null;
+    }, { passive: true }).on("touchmove.rc-hint", (event) => {
+      const t = event.touches;
+      if (t.length !== 1 || !start2 || event.defaultPrevented) return;
+      if (!event.cancelable) pageTouches.add(node);
+      if (Math.hypot(t[0].clientX - start2[0], t[0].clientY - start2[1]) > TAP_DISTANCE) hint.show("touch");
+    }, { passive: true }).on("touchend.rc-hint touchcancel.rc-hint", (event) => {
+      if (event.touches.length) return;
+      start2 = null;
+      pageTouches.delete(node);
+    }, { passive: true });
+    return hint;
+  }
+
+  // assets/charts/src/core/customRange.js
+  var CUSTOM_LABEL = "Custom";
+  var GAP = 4;
+  function isCustomStep(step) {
+    if (step == null) return false;
+    const cfg = typeof step === "string" ? { key: step } : step;
+    if (typeof cfg !== "object" || Array.isArray(cfg.range)) return false;
+    return String(cfg.key ?? cfg.label ?? "").trim().toUpperCase() === "CUSTOM";
+  }
+  function dayValue(date2, zone = "local") {
+    return timeKit(zone).format("%Y-%m-%d")(date2);
+  }
+  function dayRange(from, to, zone = "local") {
+    if (!from || !to) return null;
+    const day = timeKit(zone).day;
+    const [lo, hi] = +from <= +to ? [from, to] : [to, from];
+    return [day.floor(lo), new Date(+day.offset(day.floor(hi), 1) - 1)];
+  }
+  function rangeTitle(range3, zone = "local") {
+    return `${bucketDateText(range3[0], "day", zone)} \u2013 ${bucketDateText(range3[1], "day", zone)}`;
+  }
+  function schemeOf(colour) {
+    const c = colour == null ? null : color(String(colour));
+    return c ? hsl(c).l < 0.5 ? "dark" : "light" : null;
+  }
+  var RangePanel = class {
+    constructor(button, { container, theme, zone, onApply }) {
+      this._button = button;
+      this._container = container;
+      this._theme = theme;
+      this._zone = zone;
+      this._onApply = onApply;
+      this._destroyed = false;
+      this.el = null;
+      this._onButtonKey = (event) => {
+        if (this.el && event.key === "Escape") {
+          event.preventDefault();
+          this.close();
+        }
+      };
+      button.addEventListener("keydown", this._onButtonKey);
+      this._onDocPointer = (event) => {
+        if (!this.el || this.el.contains(event.target) || button.contains(event.target)) return;
+        this.close();
+        setTimeout(() => {
+          const at2 = document.activeElement;
+          if (!this._destroyed && (!at2 || at2 === document.body) && button.isConnected) button.focus({ preventScroll: true });
+        }, 0);
+      };
+    }
+    get isOpen() {
+      return !!this.el;
+    }
+    get button() {
+      return this._button;
+    }
+    // view, full: [Date, Date] or null — the chart's view and full extent.
+    open(view, full) {
+      if (this.el || this._destroyed) return;
+      const el = document.createElement("div");
+      el.className = "rc-range-panel";
+      el.setAttribute("role", "dialog");
+      el.setAttribute("aria-label", "Custom range");
+      el.tabIndex = -1;
+      setTooltipTokens(el, this._theme);
+      if (this._theme.border) el.style.setProperty("--rc-range-border", String(this._theme.border));
+      const scheme = schemeOf(hexOf(this._theme)(this._theme.tooltip?.bg ?? this._theme.bg));
+      if (scheme) el.style.colorScheme = scheme;
+      const id2 = uid("rc-range");
+      const field = (name, text) => {
+        const label = document.createElement("label");
+        label.className = "rc-range-label";
+        label.htmlFor = `${id2}-${name}`;
+        label.textContent = text;
+        const input = document.createElement("input");
+        input.className = "rc-range-input";
+        input.type = "date";
+        input.id = `${id2}-${name}`;
+        el.append(label, input);
+        return input;
+      };
+      const from = field("from", "From");
+      const to = field("to", "To");
+      const apply = document.createElement("button");
+      apply.type = "button";
+      apply.className = "rc-range-apply";
+      apply.textContent = "Apply";
+      el.appendChild(apply);
+      const min4 = full ? dayValue(full[0], this._zone) : "";
+      const max4 = full ? dayValue(full[1], this._zone) : "";
+      [from, to].forEach((input) => {
+        if (min4) input.min = min4;
+        if (max4) input.max = max4;
+      });
+      if (view) {
+        from.value = dayValue(view[0], this._zone);
+        to.value = dayValue(view[1], this._zone);
+      }
+      const sync = () => {
+        apply.disabled = !from.value || !to.value;
+      };
+      const within = (v) => min4 && v < min4 ? min4 : max4 && v > max4 ? max4 : v;
+      const commit2 = () => {
+        if (apply.disabled) return;
+        const [a, b] = [within(from.value), within(to.value)];
+        this.close();
+        this._onApply(a, b);
+      };
+      from.addEventListener("input", sync);
+      to.addEventListener("input", sync);
+      from.addEventListener("change", sync);
+      to.addEventListener("change", sync);
+      apply.addEventListener("click", commit2);
+      el.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          this.close();
+        } else if (event.key === "Enter") {
+          event.preventDefault();
+          commit2();
+        }
+      });
+      el.addEventListener("focusout", (event) => {
+        const next = event.relatedTarget;
+        if (this.el && next && !el.contains(next) && next !== this._button) this.close({ focus: false });
+      });
+      sync();
+      this.el = el;
+      this._button.after(el);
+      this._button.setAttribute("aria-expanded", "true");
+      document.addEventListener("pointerdown", this._onDocPointer, true);
+      this.place();
+      from.focus({ preventScroll: true });
+    }
+    // `focus`: give the focus back to the button (Escape, Apply, a press
+    // outside); false when it has gone elsewhere (Tab).
+    close({ focus = true } = {}) {
+      if (!this.el) return;
+      const el = this.el;
+      this.el = null;
+      document.removeEventListener("pointerdown", this._onDocPointer, true);
+      this._button.setAttribute("aria-expanded", "false");
+      if (focus && this._button.isConnected) this._button.focus({ preventScroll: true });
+      el.remove();
+    }
+    // Under the button, GAP px down, its right edge on the button's, and
+    // inside the card's content box: the card clips what leaves it. A card
+    // too short for it below the button (a small chart whose header wraps on
+    // a phone) lifts it until it fits, over the buttons, rather than cut off
+    // Apply. Run on open and after every render (a resize, a header that
+    // wraps).
+    place() {
+      const el = this.el;
+      if (!el) return;
+      const card = this._container;
+      const c = card.getBoundingClientRect();
+      const cs = getComputedStyle(card);
+      const px = (v) => parseFloat(v) || 0;
+      const left2 = c.left + card.clientLeft + px(cs.paddingLeft);
+      const right2 = c.left + card.clientLeft + card.clientWidth - px(cs.paddingRight);
+      const top2 = c.top + card.clientTop + px(cs.paddingTop);
+      const bottom2 = c.top + card.clientTop + card.clientHeight - px(cs.paddingBottom);
+      el.style.maxWidth = `${Math.max(0, right2 - left2)}px`;
+      const b = this._button.getBoundingClientRect();
+      const { width: w, height: h } = el.getBoundingClientRect();
+      const x2 = Math.max(left2, Math.min(b.right - w, right2 - w));
+      const y2 = Math.max(top2, Math.min(b.bottom + GAP, bottom2 - h));
+      const frame2 = el.offsetParent ?? card;
+      const f = frame2.getBoundingClientRect();
+      el.style.left = `${x2 - f.left - frame2.clientLeft}px`;
+      el.style.top = `${y2 - f.top - frame2.clientTop}px`;
+    }
+    destroy() {
+      this.close({ focus: false });
+      this._destroyed = true;
+      this._button.removeEventListener("keydown", this._onButtonKey);
+    }
+  };
+
+  // assets/charts/src/charts/Overview.js
+  var Overview = class {
+    constructor(selector, options = {}) {
+      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
+      const theme = options.theme;
+      if (theme?.[PAINT]) {
+        this.theme = theme;
+      } else {
+        this._theme = createTheme(theme ?? {});
+        this._hostStyle = {};
+        this._ownClass = !this.container.closest(".rc-chart") && !this.container.classList.contains("rc-overview");
+        if (this._ownClass) this.container.classList.add("rc-overview");
+        publishTheme(this.container, this._theme, this._hostStyle);
+        this.theme = paintOf(this._theme);
+      }
+      this.opts = {
+        height: options.height ?? 52,
+        area: options.area,
+        areaColor: options.areaColor,
+        brushColor: options.brushColor,
+        color: options.color,
+        axis: !!options.axis,
+        timeZone: resolveTimeZone(options.timeZone),
+        ariaLabel: options.ariaLabel
+      };
+      this.margin = { top: 6, right: 70, bottom: 16, left: 0, ...options.margin ?? {} };
+      this._data = [];
+      this._uid = uid("rc");
+      this._init();
+    }
+    get width() {
+      return Math.max(0, this.container.clientWidth - this.margin.left - this.margin.right);
+    }
+    get height() {
+      return Math.max(0, this.opts.height - this.margin.top - this.margin.bottom);
+    }
+    _init() {
+      this.container.style.height = this.opts.height + "px";
+      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
+      if (!this.container.closest(".rc-chart")) applySvgA11y(this.svg, { ariaLabel: this.opts.ariaLabel });
+      const { left: left2, top: top2 } = this.margin;
+      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this.gArea = this.g.append("g");
+      this.gLine = this.g.append("g");
+      this.gAxis = this.g.append("g").attr("class", "rc-axis rc-ov-axis");
+      this.gBrush = this.g.append("g");
+      this._resizeObserver = new ResizeObserver(() => {
+        if (this._data.length) this._render();
+      });
+      this._resizeObserver.observe(this.container);
+    }
+    // After destroy() the page's onBrush never fires — not even for a drag
+    // that ends after it: d3 finishes a gesture on window listeners (C-33).
+    destroy() {
+      this._destroyed = true;
+      this._onBrush = null;
+      this._resizeObserver.disconnect();
+      this.container.innerHTML = "";
+      if (this._ownClass) {
+        this.container.classList.remove("rc-overview");
+        if (!this.container.classList.length) this.container.removeAttribute("class");
+        this._ownClass = false;
+      }
+      if (this._hostStyle) restoreStyle(this.container, this._hostStyle);
+      this._hostStyle = null;
+    }
+    setData(data, onBrush, { extent: extent2 = null } = {}) {
+      const zone = this.opts.timeZone;
+      this._data = (Array.isArray(data) ? data : []).map((d) => d && typeof d === "object" ? { ...d, date: parseDate(d.date, zone), value: d.value == null || d.value === "" ? NaN : +d.value } : null).filter((d) => d && d.date && Number.isFinite(d.value)).sort(byDate);
+      this._onBrush = onBrush;
+      const span = Array.isArray(extent2) ? [parseDate(extent2[0], zone), parseDate(extent2[1], zone)] : null;
+      this._extent = span && span[0] && span[1] && +span[1] > +span[0] ? span : null;
+      this._render();
+      return this;
+    }
+    setBrush(extent2) {
+      if (!this._xScale || !Array.isArray(extent2)) return;
+      const a = parseDate(extent2[0], this.opts.timeZone), b = parseDate(extent2[1], this.opts.timeZone);
+      if (!a || !b) return;
+      const [r0, r1] = this._xScale.range();
+      const x2 = (d) => Math.min(r1, Math.max(r0, this._xScale(d)));
+      this._lastSelection = a <= b ? [x2(a), x2(b)] : [x2(b), x2(a)];
+      this._brush.move(this.gBrush, this._lastSelection);
+    }
+    _render() {
+      if (this._theme) readDataColors(this.container, this._theme, this.theme);
+      const W = this.width, H = this.height;
+      const t = this.theme;
+      this._xScale = timeKit(this.opts.timeZone).scale().domain(this._extent ?? extent(this._data, (d) => d.date)).range([0, W]);
+      const yScale = linear3().domain([min(this._data, (d) => d.value), max(this._data, (d) => d.value)]).range([H, 0]);
+      const line = line_default2().x((d) => this._xScale(d.date)).y((d) => yScale(d.value)).curve(monotoneX);
+      const area = area_default3().x((d) => this._xScale(d.date)).y0(H).y1((d) => yScale(d.value)).curve(monotoneX);
+      const areaOpt = this.opts.area;
+      const solidOpacity = typeof areaOpt === "number" ? areaOpt : null;
+      const lineColor = this.opts.color ?? t.border;
+      const areaColor = this.opts.areaColor ?? t.accent;
+      const brushColor = this.opts.brushColor ?? t.text;
+      if (areaOpt === false) {
+        this.gArea.selectAll("*").remove();
+      } else if (solidOpacity !== null) {
+        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", areaColor).attr("fill-opacity", solidOpacity);
+      } else {
+        const gradId = `${this._uid}-ov-grad`;
+        let grad = this.svg.select(".rc-ov-grad");
+        if (grad.empty()) {
+          grad = this.svg.append("defs").append("linearGradient").attr("id", gradId).attr("class", "rc-ov-grad").attr("x1", "0").attr("x2", "0").attr("y1", "0").attr("y2", "1");
+          grad.append("stop").attr("offset", "0%").attr("stop-opacity", 0.18);
+          grad.append("stop").attr("offset", "100%").attr("stop-opacity", 0);
+        }
+        grad.selectAll("stop").attr("stop-color", areaColor);
+        this.gArea.selectAll(".rc-ov-area").data([this._data]).join("path").attr("class", "rc-ov-area").attr("d", area).attr("fill", `url(#${gradId})`).attr("fill-opacity", 1);
+      }
+      this.gLine.selectAll(".rc-ov-line").data([this._data]).join("path").attr("class", "rc-ov-line").attr("d", line).attr("fill", "none").attr("stroke", lineColor).attr("stroke-width", 1);
+      if (this.opts.axis) {
+        this.gAxis.attr("transform", `translate(0,${H})`).call(axisBottom(this._xScale).ticks(Math.max(2, Math.floor(W / 90))).tickSizeOuter(0).tickSize(3)).attr("font-family", null).call((g) => g.select(".domain").attr("stroke", t.border ?? t.muted)).call((g) => g.selectAll(".tick line").attr("stroke", t.border ?? t.muted)).call((g) => g.selectAll(".tick text").attr("fill", t.muted));
+        const { left: left2, right: right2 } = this.margin;
+        this.gAxis.selectAll(".tick").each((d, i, els) => {
+          const text = els[i].querySelector("text");
+          if (!text) return;
+          const x2 = this._xScale(d);
+          const half = textWidth(text, 5.5) / 2;
+          text.style.display = x2 - half < -left2 || x2 + half > W + right2 ? "none" : "";
+        });
+      } else {
+        this.gAxis.selectAll("*").remove();
+      }
+      this._brush = brushX().extent([[0, 0], [W, H]]).on("start brush end", (event) => {
+        if (!event.sourceEvent || this._destroyed) return;
+        if (event.type === "start") {
+          this._gestureMoved = false;
+          return;
+        }
+        const sel = event.selection;
+        const invert = (s) => [this._xScale.invert(s[0]), this._xScale.invert(s[1])];
+        if (!sel || sel[1] - sel[0] < 1) {
+          if (event.type === "end" && this._lastSelection) {
+            this.gBrush.call(this._brush.move, this._lastSelection);
+            if (this._gestureMoved) this._onBrush?.(invert(this._lastSelection), { final: true });
+          }
+          return;
+        }
+        this._lastSelection = sel;
+        this._gestureMoved = true;
+        this._onBrush?.(invert(sel), { final: event.type === "end" });
+      });
+      this.gBrush.call(this._brush).call((g) => {
+        g.select(".selection").attr("fill", t.text).attr("fill-opacity", 0.015).attr("stroke", brushColor).attr("stroke-width", 1);
+        g.selectAll(".handle").attr("fill", brushColor).attr("opacity", 0.7);
+        g.select(".overlay").attr("fill", t.text).attr("fill-opacity", 0.2);
+      });
+    }
+  };
+
+  // assets/charts/src/core/Chart.js
+  var defaultTimeframes = ["1M", "3M", "6M", "1Y", "2Y", "ALL"];
+  var HOST_STYLE_PROPS = ["height", "overflow", "overflow-x", "position"];
+  var MIN_PLOT_HEIGHT = 80;
+  var nextFrame = (fn) => typeof requestAnimationFrame === "function" ? { raf: requestAnimationFrame(fn) } : { timer: setTimeout(fn, 16) };
+  var cancelFrame = (f) => {
+    if (f?.raf != null) cancelAnimationFrame(f.raf);
+    else if (f?.timer != null) clearTimeout(f.timer);
+  };
+  var isFullStep = (step) => !Array.isArray(step.range) && ["ALL", "MAX"].includes(String(step.key ?? step.label ?? "").trim().toUpperCase());
+  var markOf = (item, series = null) => {
+    if (item.type === "band") return "band";
+    if (item.type === "bar" || item.type === "dot") return "dot";
+    if (item.type === "dashed" || item.dash) return "dashed";
+    if (item.type == null && item.dash == null && series?.dashed === true) return "dashed";
+    return "line";
+  };
+  var Chart = class {
+    constructor(selector, options = {}) {
+      this.container = typeof selector === "string" ? document.querySelector(selector) : selector;
+      if (!this.container) {
+        throw new Error(`RareCharts: element not found \u2014 "${selector}"`);
+      }
+      this._hostClasses = new Set(this.container.classList);
+      this._hostStyle = Object.fromEntries(HOST_STYLE_PROPS.map((p) => [p, [
+        this.container.style.getPropertyValue(p),
+        this.container.style.getPropertyPriority(p)
+      ]]));
+      this._adopted = [];
+      this._destroyed = false;
+      this._uid = uid("rc");
+      const render = this.render;
+      this.render = (...args) => {
+        if (this._destroyed) return void 0;
+        this._readDataColors();
+        this._syncLegend();
+        const out = render.apply(this, args);
+        if (this._loadingEl) this._placeLoading();
+        if (this._rangePanel?.isOpen) this._rangePanel.place();
+        return out;
+      };
+      this._hiddenKeys = /* @__PURE__ */ new Set();
+      this.container.classList.add("rc-chart");
+      this._theme = createTheme(options.theme ?? {});
+      publishTheme(this.container, this._theme, this._hostStyle);
+      this._hex = makeHex(this.container);
+      this.theme = paintOf(this._theme, { hex: this._hex });
+      this._readDataColors();
+      const setData = this.setData;
+      if (typeof setData === "function") {
+        this.setData = (...args) => {
+          if (!this._destroyed) this._readDataColors();
+          return setData.apply(this, args);
+        };
+      }
+      this.options = options;
+      this._timeZone = resolveTimeZone(options.timeZone);
+      const m = options.margin ?? {};
+      this.margin = {
+        top: m.top ?? 0,
+        right: m.right ?? 0,
+        bottom: m.bottom ?? 0,
+        left: m.left ?? 0
+      };
+      this._headerEl = null;
+      this._titleEl = null;
+      this._subtitleEl = null;
+      this._legendEl = null;
+      this._legendAsideEl = null;
+      this._footerEl = null;
+      this._sourceEl = null;
+      this._noteEl = null;
+      this._rangeRowEl = null;
+      this._rangeBarEl = null;
+      this._timeframeButtons = [];
+      this._navigatorEl = null;
+      this._navigator = null;
+      this._viewExtent = null;
+      this._selectedTimeframe = null;
+      this._customRange = null;
+      this._rangePanel = null;
+      this._now = null;
+      this._onViewChangeCb = null;
+      this._onScaleChangeCb = null;
+      this._scaleButton = null;
+      this._tooltip = null;
+      this._loadingEl = null;
+      this._renderHeader();
+      this._renderFooter();
+      this._renderControls();
+      this._ensureNavigator();
+      this._resizeObserver = new ResizeObserver(() => {
+        if (this._resizeFrame) return;
+        this._resizeFrame = nextFrame(() => {
+          this._resizeFrame = null;
+          this._onResize();
+        });
+      });
+      this._resizeObserver.observe(this.container);
+      if (typeof document !== "undefined" && document.fonts?.ready) {
+        document.fonts.ready.then(() => {
+          if (this._destroyed) return;
+          try {
+            this.render();
+          } catch {
+          }
+        });
+      }
+    }
+    // ── Header (Title / Subtitle / Legend) ───────────────────────────────────
+    _renderHeader() {
+      const hasTitle = !!this.options.title;
+      const hasSubtitle = !!this.options.subtitle;
+      const hasLegend = this.options.legend != null;
+      const hasTimeframes = this._getTimeframeOptions().length > 0;
+      const scaleToggle = this._getScaleToggle();
+      const hasRangeBar = hasTimeframes || !!scaleToggle;
+      const legendRight = this.options.legendPosition === "right";
+      if (!hasTitle && !hasSubtitle && !hasLegend && !hasRangeBar) return;
+      if (hasLegend) {
+        this._legendEl = document.createElement("div");
+        this._legendEl.className = "rc-legend";
+        const legend = this.options.legend;
+        if (Array.isArray(legend)) {
+          renderLegendItems(this._legendEl, this._headerLegendItems(null), { interactive: false });
+        } else if (legend instanceof HTMLElement) {
+          this._legendEl.appendChild(legend);
+        } else if (typeof legend === "string") {
+          this._legendEl.innerHTML = legend;
+        } else {
+          this._legendEl.textContent = String(legend);
+        }
+      }
+      if (hasLegend && legendRight) {
+        if (this._legendAsideEl?.parentNode) this._legendAsideEl.remove();
+        this._legendAsideEl = document.createElement("div");
+        this._legendAsideEl.className = "rc-chart-legend-aside";
+        this._legendAsideEl.appendChild(this._legendEl);
+        this.container.classList.add("rc-chart--legend-right");
+        this.container.appendChild(this._legendAsideEl);
+      }
+      if (hasTitle || hasSubtitle || hasLegend && !legendRight || hasRangeBar) {
+        if (this._headerEl?.parentNode) this._headerEl.remove();
+        this._headerEl = document.createElement("div");
+        this._headerEl.className = "rc-chart-header";
+        if (hasTitle) {
+          this._titleEl = document.createElement("h5");
+          this._titleEl.className = "rc-chart-title";
+          this._titleEl.textContent = this.options.title;
+          this._headerEl.appendChild(this._titleEl);
+        }
+        if (hasSubtitle) {
+          this._subtitleEl = document.createElement("p");
+          this._subtitleEl.className = "rc-chart-subtitle";
+          this._subtitleEl.textContent = this.options.subtitle;
+          this._headerEl.appendChild(this._subtitleEl);
+        }
+        if (hasLegend && !legendRight) {
+          this._headerEl.appendChild(this._legendEl);
+        }
+        this.container.insertBefore(this._headerEl, this.container.firstChild);
+      }
+      if (hasRangeBar) {
+        if (this._rangeRowEl?.parentNode) this._rangeRowEl.remove();
+        this._rangeRowEl = document.createElement("div");
+        this._rangeRowEl.className = "rc-chart-range-row";
+        if (!this.margin.right) this._rangeRowEl.classList.add("rc-chart-range-row--flush");
+        if (hasTimeframes) {
+          this._rangeBarEl = document.createElement("div");
+          this._rangeBarEl.className = "rc-chart-range-bar";
+          this._timeframeButtons = this._getTimeframeOptions().map((step) => {
+            const key = step.key ?? step.label ?? "";
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "rc-range-btn";
+            btn.textContent = step.label ?? step.key ?? "";
+            btn.dataset.timeframe = key;
+            btn.setAttribute("aria-pressed", "false");
+            if (isCustomStep(step)) {
+              btn.className = "rc-range-btn rc-range-custom";
+              btn.setAttribute("aria-haspopup", "dialog");
+              btn.setAttribute("aria-expanded", "false");
+              btn.addEventListener("click", () => this._toggleRangePanel(btn, key));
+            } else {
+              btn.addEventListener("click", () => this.setTimeframe(key));
+            }
+            this._rangeBarEl.appendChild(btn);
+            return btn;
+          });
+          this._rangeRowEl.appendChild(this._rangeBarEl);
+        }
+        if (scaleToggle) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "rc-range-btn rc-scale-btn";
+          btn.addEventListener("click", () => this.setYScale(this._isLogScale(scaleToggle.axis) ? "linear" : "log", { axis: scaleToggle.axis }));
+          this._rangeRowEl.classList.add(hasTimeframes ? "rc-chart-range-row--scale" : "rc-chart-range-row--scale-only");
+          this._rangeRowEl.appendChild(btn);
+          this._scaleButton = btn;
+          this._syncScaleButton();
+        }
+        this._headerEl.appendChild(this._rangeRowEl);
+      }
+    }
+    // ── Legend: items, series and the hidden set ─────────────────────────────
+    // The header legend is drawn by the one legend builder (core/legend.js,
+    // D-04). An item names its series by `series`, else `name`, else `label`;
+    // `series: false` keeps it a caption. An item that names a series in the
+    // data is a toggle, the others are labels. A class with a series legend
+    // lists its series (_legendSeries) and draws only the shown ones
+    // (_isShown); the base keeps the hidden set and answers the gestures.
+    // The series the legend shows and hides, in data order: [{ key, color,
+    // dashed? }]. None by default: the class has no series legend, every item
+    // a label.
+    _legendSeries() {
+      return [];
+    }
+    // The key of a header legend item when it names a series in `present`
+    // (a Map key → series), else null. A class whose items match otherwise
+    // (Donut: an item's id against the slice ids) overrides it.
+    _legendKeyOf(item, present) {
+      const key = legendKey(item);
+      return key != null && present.has(key) ? key : null;
+    }
+    // Whether the value axes follow the shown series (legendRescale, default
+    // true) or keep every series in view.
+    _legendRescale() {
+      return this.options.legendRescale !== false;
+    }
+    _isShown(key) {
+      return !this._hiddenKeys.has(key);
+    }
+    // A class that pins a tooltip lets go of an item that was just hidden.
+    _unpinHidden() {
+    }
+    // _legendSeries() as a Map key → series, keys as strings; the first of a
+    // repeated key wins.
+    _legendPresent() {
+      const present = /* @__PURE__ */ new Map();
+      (this._legendSeries() ?? []).forEach((s) => {
+        const key = s?.key == null ? null : String(s.key);
+        if (key != null && !present.has(key)) present.set(key, s);
+      });
+      return present;
+    }
+    // The builder's items for an array `legend`. `present` null — the header
+    // being built, before the class's own fields exist — makes every item a
+    // label. The colour is the item's, else its series', else the fallback.
+    _headerLegendItems(present) {
+      return this.options.legend.map((entry) => {
+        const item = entry ?? {};
+        const key = present ? this._legendKeyOf(item, present) : null;
+        return {
+          key,
+          label: item.label ?? item.name ?? "",
+          color: item.color ?? (key != null ? present.get(key)?.color : null) ?? this._legendFallbackColor(),
+          mark: markOf(item, key != null ? present.get(key) : null),
+          on: key == null || this._isShown(key)
+        };
+      });
+    }
+    // The accent and the series palette as hex, in place on this.theme
+    // (core/paint.js); the hex() cache starts again.
+    _readDataColors() {
+      readDataColors(this.container, this._theme, this.theme);
+    }
+    // The colour of a legend item that has none of its own and no series
+    // drawn to take it from: the accent, as the card's token (K-14), so a
+    // theme's own accent applies (Donut: grey, see there).
+    _legendFallbackColor() {
+      return "var(--rc-accent, #1677ff)";
+    }
+    // Run before every render (the wrapper in the constructor), resize and
+    // brush frames included: the header legend follows the data and the
+    // hidden set. The builder writes only what changed, and keeps focus.
+    // `legendInteractive: false` keeps every item a label and leaves out the
+    // series the chart does not draw. A string or element legend is the
+    // page's own and is left alone.
+    _syncLegend() {
+      const el = this._legendEl;
+      const legend = this.options.legend;
+      if (!el || !Array.isArray(legend)) return;
+      const present = this._legendPresent();
+      let items = this._headerLegendItems(present);
+      this._warnUnmappedLegend(legend, items);
+      const interactive = this.options.legendInteractive !== false;
+      if (!interactive) items = items.filter((item) => item.on);
+      const listed = [...new Set(items.filter((item) => item.key != null).map((item) => item.key))];
+      renderLegendItems(el, items, {
+        interactive,
+        anyHidden: [...present.keys()].some((key) => this._hiddenKeys.has(key)),
+        onToggle: (info) => this._legendGesture(info, listed)
+      });
+    }
+    // When some items name a series and another names one that is not in the
+    // data, that one is most likely a typo: say so, once per item. A legend
+    // where nothing maps (a caption, a class without a series legend) stays
+    // quiet, and so does an item with `series: false`.
+    _warnUnmappedLegend(legend, items) {
+      if (!items.some((item) => item.key != null)) return;
+      items.forEach((item, i) => {
+        const name = item.key == null ? legendKey(legend[i]) : null;
+        if (name == null || this._legendWarned?.has(name)) return;
+        (this._legendWarned ??= /* @__PURE__ */ new Set()).add(name);
+        console.warn(`RareCharts.${this._chartName()}: legend item "${item.label || name}" names no series \u2014 set \`series\` to the series name, or \`series: false\` for a caption`);
+      });
+    }
+    // The class's public name, for console messages: looked up in the bundle's
+    // global, as the minified bundle renames classes; outside the bundle (tests,
+    // ES imports) and for a page's own subclass, the class's own name.
+    _chartName() {
+      const ns = globalThis.RareCharts;
+      const name = ns && typeof ns === "object" ? Object.keys(ns).find((k) => ns[k] === this.constructor) : null;
+      return name ?? this.constructor.name;
+    }
+    // A committed legend gesture (the builder's onToggle). `listed`: the keys
+    // this legend toggles — a gesture changes only those, so a series with no
+    // item cannot be hidden for good by a double click; Show all clears every
+    // hidden key, dormant ones too. The chart redraws (the render syncs the
+    // legend), then tells the page: onLegendToggle({ name, visible,
+    // visibleNames }) — name null for Show all, visible true after a double
+    // click, visibleNames the shown keys in the data, in data order.
+    _legendGesture({ kind, key, visibleKeys }, listed) {
+      if (this._destroyed) return;
+      const changed = new Set(listed);
+      if (kind === "showAll") {
+        this._hiddenKeys.forEach((k) => changed.add(k));
+        this._hiddenKeys.clear();
+      } else {
+        const visible = new Set(visibleKeys);
+        listed.forEach((k) => visible.has(k) ? this._hiddenKeys.delete(k) : this._hiddenKeys.add(k));
+      }
+      this._hiddenChanged(changed);
+      this._emit(this.options.onLegendToggle, {
+        name: kind === "showAll" ? null : key,
+        visible: kind === "toggle" ? visibleKeys.includes(key) : true,
+        visibleNames: this._visibleLegendKeys()
+      });
+    }
+    // The keys in the data that are shown, in data order.
+    _visibleLegendKeys() {
+      return [...this._legendPresent().keys()].filter((key) => this._isShown(key));
+    }
+    // The visibility setters (setSeriesVisible, setLinkTypesVisible) in one:
+    // a list shows those keys and hides every other key in the data (hidden
+    // keys no longer in the data drop); null shows everything. The chart
+    // redraws; no event — a page that mirrors one chart into another from
+    // onLegendToggle cannot loop.
+    _setVisibleKeys(list) {
+      const shown = list == null ? null : new Set((typeof list === "string" ? [list] : [...list]).map(String));
+      const present = shown ? [...this._legendPresent().keys()] : [];
+      const changed = /* @__PURE__ */ new Set([...this._hiddenKeys, ...present]);
+      this._hiddenKeys.clear();
+      present.forEach((key) => {
+        if (!shown.has(key)) this._hiddenKeys.add(key);
+      });
+      this._hiddenChanged(changed);
+      return this;
+    }
+    // The hidden set changed for `keys` (a gesture, a setter): the chart lets
+    // go of a pinned item that is now hidden and redraws. MultiChart passes
+    // the change on to its cells.
+    _hiddenChanged(_keys) {
+      this._unpinHidden();
+      this.render();
+    }
+    // ── Y scale switch ───────────────────────────────────────────────────────
+    // `scaleToggle` adds one "Log" toggle to the header — pinned right, above
+    // the Y-axis labels — for charts that have setYScale(): pressed while the
+    // axis is logarithmic. Accepts true, an axis name ('y1' | 'y2' | 'both',
+    // DualAxes), or { axis?, labels?: { log? } } — labels.log is its text;
+    // labels.linear is still read, for pages that pass it, and not shown.
+    _getScaleToggle() {
+      const opt = this.options.scaleToggle;
+      if (!opt || typeof this.setYScale !== "function") return null;
+      const cfg = typeof opt === "object" ? opt : typeof opt === "string" ? { axis: opt } : {};
+      return {
+        axis: cfg.axis ?? this._defaultScaleAxis(),
+        labels: { linear: cfg.labels?.linear ?? "Lin", log: cfg.labels?.log ?? "Log" }
+      };
+    }
+    // The axis the switch drives and how to read its state; charts with a log
+    // scale override both.
+    _defaultScaleAxis() {
+      return "y";
+    }
+    _isLogScale(_axis) {
+      return false;
+    }
+    _syncScaleButton() {
+      const btn = this._scaleButton;
+      if (!btn) return;
+      const cfg = this._getScaleToggle();
+      const log3 = this._isLogScale(cfg.axis);
+      btn.textContent = cfg.labels.log;
+      btn.setAttribute("aria-pressed", String(log3));
+      btn.dataset.scale = log3 ? "log" : "linear";
+      btn.title = "Logarithmic scale";
+    }
+    // Called by setYScale(): keeps the button in step and tells the page.
+    _scaleChanged(scale, axis2, silent) {
+      this._syncScaleButton();
+      if (!silent) this._emit(this._onScaleChangeCb, { scale, axis: axis2 });
+    }
+    // Every page callback goes through here: after destroy() none fires — a
+    // drag that ends after it, a late frame or fetch, a held button (C-33).
+    _emit(fn, ...args) {
+      if (this._destroyed || typeof fn !== "function") return void 0;
+      return fn.apply(this, args);
+    }
+    // A promise that settles once the chart has drawn what it loads (Graph:
+    // its queued fetches and layout; Map, MapFlow: the geometry) and resolves
+    // with the chart. A class with async work sets this._ready to its
+    // promise; the others draw on setData, so theirs resolves at once (K-12).
+    whenReady() {
+      return Promise.resolve(this._ready).then(() => this);
+    }
+    onScaleChange(fn) {
+      this._onScaleChangeCb = fn;
+      return this;
+    }
+    // ── Footer (Source) ───────────────────────────────────────────────────────
+    _renderFooter() {
+      const hasSource = !!this.options.source;
+      const hasNote = !!this.options.note;
+      if (!hasSource && !hasNote) return;
+      if (this._footerEl?.parentNode) this._footerEl.remove();
+      this._footerEl = document.createElement("div");
+      this._footerEl.className = "rc-chart-footer";
+      if (hasSource) {
+        this._sourceEl = document.createElement("cite");
+        this._sourceEl.className = "rc-chart-source";
+        const src = this.options.source;
+        if (Array.isArray(src)) this._sourceEl.classList.add("rc-chart-source--rich");
+        this._renderAttribution(this._sourceEl, src);
+        this._footerEl.appendChild(this._sourceEl);
+      }
+      if (hasNote) {
+        this._noteEl = document.createElement("p");
+        this._noteEl.className = "rc-chart-note";
+        const note = this.options.note;
+        if (note instanceof HTMLElement) {
+          this._noteEl.appendChild(note);
+        } else {
+          this._noteEl.textContent = String(note);
+        }
+        this._footerEl.appendChild(this._noteEl);
+      }
+      this.container.appendChild(this._footerEl);
+    }
+    // ── Controls slot ────────────────────────────────────────────────────────
+    // Page-owned controls (filters, sliders, toggles) that drive the chart,
+    // shown inside the card between the drawing and the footer — so they read
+    // as part of the chart, not as stray markup above it. Pass an element or
+    // a selector; the element is moved in as is (its listeners keep working).
+    _renderControls() {
+      const c = this.options.controls;
+      if (!c) return;
+      const el = typeof c === "string" ? document.querySelector(c) : c;
+      if (!(el instanceof HTMLElement)) return;
+      this._adoptPageElement(el, (e) => e.classList.remove("rc-chart-controls"));
+      el.classList.add("rc-chart-controls");
+      this._controlsEl = el;
+      this.container.appendChild(el);
+    }
+    // A page-owned element the chart moves into its card (controls, a Graph
+    // details panel): destroy() puts it back where the page had it, undoing
+    // the chart's changes with `cleanup` — but only while the chart still holds
+    // it. One the page has moved meanwhile, or given to a new chart, stays.
+    _adoptPageElement(el, cleanup = null) {
+      this._adopted.push({ el, parent: el.parentNode, next: el.nextSibling, cleanup });
+    }
+    _returnPageElements() {
+      this._adopted.forEach(({ el, parent, next, cleanup }) => {
+        if (el.parentNode !== this.container) return;
+        cleanup?.(el);
+        if (parent && parent !== this.container && parent.isConnected) {
+          parent.insertBefore(el, next && next.parentNode === parent ? next : null);
+        } else {
+          el.remove();
+        }
+      });
+      this._adopted = [];
+    }
+    /**
+     * Render a source/attribution value into `el`. Accepts:
+     *   string                         → plain text
+     *   HTMLElement                    → appended as-is
+     *   { text, href }                 → an <a> opening in a new tab
+     *   { text }                       → plain text (no href, no link)
+     *   Array<string | { text, href } | HTMLElement>
+     *                                  → each part in sequence, so a footer can mix
+     *                                    several links and unlinked text on one line
+     *                                    (e.g. "Source: NASDAQ, Bloomberg, Internal").
+     * Links inherit the source text color and are distinguished by an underline.
+     */
+    _renderAttribution(el, value) {
+      const appendPart = (part) => {
+        if (part == null) return;
+        if (part instanceof HTMLElement) {
+          el.appendChild(part);
+          return;
+        }
+        if (typeof part === "object" && part.href) {
+          const a = document.createElement("a");
+          a.href = part.href;
+          a.textContent = part.text ?? part.href;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          el.appendChild(a);
+          return;
+        }
+        if (typeof part === "object") {
+          if (part.text != null) el.appendChild(document.createTextNode(String(part.text)));
+          return;
+        }
+        el.appendChild(document.createTextNode(String(part)));
+      };
+      if (Array.isArray(value)) value.forEach(appendPart);
+      else appendPart(value);
+    }
+    // ── Tooltip ──────────────────────────────────────────────────────────────
+    // The chart's one tooltip (core/Tooltip.js), made on first use: a class
+    // that shows none (MultiChart) makes none. The classes that do ask for it
+    // in their constructor, so its element takes the same place in the card as
+    // ever. destroy() takes it down for every class — the element and, if it
+    // is pinned, its document listeners; after that there is none (null).
+    get tooltip() {
+      if (!this._tooltip && !this._destroyed) this._tooltip = new Tooltip(this.container, this.theme);
+      return this._tooltip;
+    }
+    // ── SVG root ─────────────────────────────────────────────────────────────
+    // The rule: every SVG chart class creates its svg through
+    // Chart._createSvg(). The root is made, placed in the card and given its
+    // accessible name (applySvgA11y: role="img", an aria-label from ariaLabel
+    // or the title and subtitle) here, in one place — a class cannot leave its
+    // drawing unnamed or ignore ariaLabel. (Overview, the navigator strip, is
+    // not a Chart: it lives inside the card of the chart it serves.)
+    //
+    //   size          'fill' (default): the card takes options.height and the
+    //                 svg fills it (width and height 100%); 'width': width
+    //                 100%, the class sets the height (HierarchicalBar grows
+    //                 with its rows); 'none': the class sizes it (Map)
+    //   className     the svg's class
+    //   style         inline styles, set in the order given
+    //   beforeFooter  placed ahead of the footer rather than last in the card
+    //
+    // The attributes come in that order — class, size, style, then the name.
+    // Sets this.svg and returns it.
+    _createSvg({ size = "fill", className = null, style = null, beforeFooter = false } = {}) {
+      if (size === "fill") this.container.style.height = this.options.height + "px";
+      const footer = beforeFooter && this._footerEl?.parentNode === this.container ? this._footerEl : null;
+      const svg = select_default2(this.container).insert("svg", () => footer);
+      if (className) svg.attr("class", className);
+      if (size === "fill" || size === "width") svg.attr("width", "100%");
+      if (size === "fill") svg.attr("height", "100%");
+      Object.entries(style ?? {}).forEach(([name, value]) => svg.style(name, value));
+      applySvgA11y(svg, this.options);
+      this.svg = svg;
+      return svg;
+    }
+    // The plot of an axis chart (Line, DualAxes, TimeSeries, Bar): the svg
+    // filling the card and in it the group the marks are drawn in, moved in by
+    // the margin. Sets this.svg and this.g; returns the group.
+    _createPlot() {
+      this._createSvg();
+      const { left: left2, top: top2 } = this.margin;
+      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this._axisPlot = true;
+      return this.g;
+    }
+    // The plot in the card's frame, { x, y, width, height }, for what is laid
+    // over it (the zoom hint, the loading bar): an axis chart's plot inside its
+    // margins, else the drawing's svg cut to the card (Graph leaves out its
+    // side panel), else the card's top edge.
+    _plotBox() {
+      if (this._axisPlot) {
+        const [x2, y2] = this._plotToCard(0, 0);
+        return { x: x2, y: y2, width: this.width, height: this.height };
+      }
+      const svg = this.svg?.node();
+      return svg ? boxInCard(svg, this.container) : { x: 0, y: 0, width: this.container.clientWidth, height: 0 };
+    }
+    // A point of the plot (this.g's frame) in the card's frame — the one the
+    // tooltip is placed in, and d3.pointer(event, container) gives.
+    _plotToCard(px, py) {
+      const svgBox = this.svg.node().getBoundingClientRect();
+      const cardBox = this.container.getBoundingClientRect();
+      const dx = svgBox.left - cardBox.left - this.container.clientLeft;
+      const dy = svgBox.top - cardBox.top - this.container.clientTop;
+      return [px + this.margin.left + dx, py + this.margin.top + dy];
+    }
+    // A log axis has no place for values ≤ 0: filterLogSeries skips them, and
+    // the page is told once per setData (setData clears the flag). `label`
+    // names the class, `where` the scale ('scale', or 'axis' on DualAxes).
+    _warnLogSkips(skipped, label, where = "scale") {
+      if (!skipped || this._warnedNonPositive) return;
+      this._warnedNonPositive = true;
+      console.warn(`RareCharts.${label}: ${skipped} value${skipped === 1 ? "" : "s"} \u2264 0 skipped on the log ${where}`);
+    }
+    // ── Value gutters (RC-060) ─────────────────────────────────────────────────
+    // Tick and end labels wider than their gutter ('$100,000' in 64 px) reached
+    // past the drawing, and a card without padding cut them off. Each gutter
+    // the page's margin does not set takes the room its labels need — never
+    // less than the class's own width — and one more render follows when a
+    // side changes. `sides`: [[group or groups, 'left' | 'right'], …]. Returns
+    // true after that render, so the caller stops drawing.
+    _fitGutters(sides) {
+      if (this._fittingGutters || this._destroyed) return false;
+      const box = this.svg?.node()?.getBoundingClientRect?.();
+      if (!box || !(box.width > 0)) return false;
+      this._gutterBase ??= {};
+      let changed = false;
+      for (const [groups2, side] of sides) {
+        if ((this._pageMargin ?? this.options.margin)?.[side] != null) continue;
+        const base = this._gutterBase[side] ??= this.margin[side];
+        let over = null;
+        for (const g of [].concat(groups2)) {
+          g?.selectAll?.("text").each(function() {
+            if (this.getAttribute("visibility") === "hidden" || this.getAttribute("display") === "none") return;
+            const r = this.getBoundingClientRect();
+            if (!(r.width > 0)) return;
+            const o = side === "right" ? r.right - box.right : box.left - r.left;
+            over = over == null ? o : Math.max(over, o);
+          });
+        }
+        if (over == null) continue;
+        const now2 = this.margin[side];
+        const target = over > 0 || now2 > base ? Math.max(base, Math.ceil(now2 + over + 2)) : now2;
+        if (target !== now2) {
+          this.margin[side] = target;
+          changed = true;
+        }
+      }
+      if (!changed) return false;
+      this.g?.attr("transform", `translate(${this.margin.left},${this.margin.top})`);
+      this._fittingGutters = true;
+      try {
+        this.render();
+      } finally {
+        this._fittingGutters = false;
+      }
+      return true;
+    }
+    // ── Dimensions ────────────────────────────────────────────────────────────
+    get width() {
+      const legendW = this._legendAsideEl ? this._legendAsideEl.offsetWidth : 0;
+      const cs = window.getComputedStyle(this.container);
+      const padH = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight);
+      return Math.max(0, this.container.clientWidth - padH - this.margin.left - this.margin.right - legendW);
+    }
+    // RC-066 (maintainer, 2026-11-17/18): the range buttons go under the
+    // subtitle, as on a card of 460 px or less, when beside them the title is
+    // cut ('SIT…' at 600–800 px on TimeSeries, 600–900 on the big flow) or the
+    // subtitle, squeezed into what the buttons leave, runs past two lines (six
+    // at 700 px, three at 1000). Measured once per card width, texts and font
+    // state — the height a render reads follows from it.
+    _fitHeader() {
+      const h = this._headerEl, title = this._titleEl, sub = this._subtitleEl, row = this._rangeRowEl;
+      if (!h || !row || !(title || sub) || !h.isConnected) return;
+      const key = [
+        this.container.clientWidth,
+        title?.textContent,
+        sub?.textContent,
+        row.textContent,
+        document.fonts?.status ?? ""
+      ].join("|");
+      if (key === this._headerFitKey) return;
+      this._headerFitKey = key;
+      const STACKED = "rc-chart-header--stacked";
+      h.classList.remove(STACKED);
+      if (title && title.scrollWidth > title.clientWidth + 1) {
+        h.classList.add(STACKED);
+        return;
+      }
+      if (!sub) return;
+      const line = parseFloat(getComputedStyle(sub).lineHeight) || 16;
+      if (Math.round(sub.offsetHeight / line) > 2) h.classList.add(STACKED);
+    }
+    get height() {
+      this._fitHeader();
+      const shown = (el) => el && el.style.display !== "none";
+      const headerH = shown(this._headerEl) ? this._headerEl.offsetHeight + 8 : 0;
+      const navigatorH = shown(this._navigatorEl) ? this._navigatorEl.offsetHeight + 8 : 0;
+      const footerH = this._footerEl ? this._footerEl.offsetHeight + 6 : 0;
+      const controlsH = this._controlsEl ? this._controlsEl.offsetHeight : 0;
+      const cs = window.getComputedStyle(this.container);
+      const padV = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      const h = this.options.height ?? this.container.clientHeight;
+      const plot = h - padV - this.margin.top - this.margin.bottom - headerH - navigatorH - footerH - controlsH;
+      return Math.max(0, this._keepPlotHeight(h, plot));
+    }
+    // A narrow card wraps its title, buttons, legend and footer onto more
+    // lines, and they take the plot's share of `height` — down to nothing
+    // (C-32). Below MIN_PLOT_HEIGHT the card grows instead, so the plot keeps
+    // that much; once the parts fit again it returns to `height`. Only a card
+    // at the height the chart gave it (or grew it to) is touched: a height the
+    // page or the chart itself manages (a Graph details panel) stays, and a
+    // card without one (Map) grows with its drawing.
+    _keepPlotHeight(h, plot) {
+      if (this.options.height == null) return plot;
+      const style = this.container.style;
+      if (!style.height) return Math.max(plot, MIN_PLOT_HEIGHT);
+      const given = `${h}px`;
+      if (style.height !== given && style.height !== this._grownHeight) return plot;
+      const want = plot < MIN_PLOT_HEIGHT ? `${h + MIN_PLOT_HEIGHT - plot}px` : given;
+      if (style.height !== want) style.height = want;
+      this._grownHeight = want === given ? null : want;
+      return Math.max(plot, MIN_PLOT_HEIGHT);
+    }
+    _onResize() {
+      if (this.width > 0 && this.height > 0) this.render();
+    }
+    // The deprecated alias viewSteps was removed in 0.9.8_7 (RC-059; the
+    // maintainer's decision of 2026-10-26): only timeframes builds the buttons.
+    _getTimeframeOptions() {
+      const stepsOpt = this.options.timeframes ?? [];
+      const steps = stepsOpt === true ? defaultTimeframes : stepsOpt;
+      return (Array.isArray(steps) ? steps : []).map((step) => {
+        if (!isCustomStep(step)) return typeof step === "string" ? { key: step, label: step } : step;
+        return typeof step === "string" ? { key: step, label: CUSTOM_LABEL } : { ...step, label: step.label ?? CUSTOM_LABEL };
+      }).filter((step) => !!(step?.key ?? step?.label));
+    }
+    // ── Time of relation charts ──────────────────────────────────────────────
+    // Graph's flow view and MapFlow hold ties with start / end rather than a
+    // dated series. They say so with _isLinkTimeChart() (known at construction:
+    // the navigator is built in this constructor) and hand over their ties with
+    // _timeLinks(); the base then provides the time scale over them — data
+    // extent, navigator series, the setTimeWindow ⇄ view link and the render
+    // sync — once for both.
+    _isLinkTimeChart() {
+      return false;
+    }
+    _timeLinks() {
+      return null;
+    }
+    _hasTimeNav() {
+      return this._isLinkTimeChart() && (this._getTimeframeOptions().length > 0 || this._hasNavigatorEnabled());
+    }
+    // The zone this chart reads, cuts and names its dates in: its timeZone
+    // option (T-10) — a time series' rows and a relation chart's ties alike
+    // (RC-006), with their timeframe steps and navigator strip.
+    _zone() {
+      return this._timeZone;
+    }
+    // How a view bound (setView, defaultView, a timeframe range) is read, in
+    // the chart's zone. Time series take Dates, date strings and epoch ms;
+    // relation charts read bounds like their ties' start / end: a number below
+    // 10000 is a year, 'YYYY' and 'YYYY-MM' are periods, and an upper bound
+    // runs to the period's end.
+    _parseViewBound(v, isEnd = false) {
+      if (!this._isLinkTimeChart()) return parseDate(v, this._zone());
+      const t = parseTime(v, { end: isEnd, timeZone: this._zone() });
+      return t == null ? null : new Date(t);
+    }
+    // setTimeWindow(from, to) on a relation chart with a time scale: the window
+    // becomes the view, so the buttons and the brush follow it.
+    _timeWindowAsView(from, to) {
+      const full = this._getDataExtent();
+      const a = this._parseViewBound(from, false), b = this._parseViewBound(to, true);
+      if (!a && !b) return this.setView(full);
+      return this.setView([a ?? full?.[0], b ?? full?.[1]]);
+    }
+    // At render: buttons and navigator follow the view; returns the window the
+    // drawing applies ({ from, to }, or null for the whole span).
+    _syncLinkTimeView() {
+      const full = this._getDataExtent();
+      const view = this._resolveViewExtent(full);
+      this._syncTimeframeButtons(full, view);
+      this._syncNavigator();
+      return view && !extentEquals(view, full) ? { from: view[0], to: view[1] } : null;
+    }
+    // Extent and navigator series of the ties, worked out once per data set
+    // (the array is replaced on setData) rather than on every render — a
+    // brush drag renders many times over the same ties (K-16). Both in the
+    // chart's zone, which is fixed at construction.
+    _linkTime() {
+      const links = this._timeLinks();
+      if (!links) return null;
+      if (this._linkTimeCache?.links !== links) {
+        this._linkTimeCache = { links, extent: linkTimeExtent(links, this._zone()), series: void 0 };
+      }
+      return this._linkTimeCache;
+    }
+    // The extent of the data itself: [first, last]. A class with dated rows
+    // overrides it; a relation chart's is its ties' start / end. The full
+    // extent the view works in is _getDataExtent's (the timeframe anchor).
+    _dataExtent() {
+      return this._linkTime()?.extent ?? null;
+    }
+    // The strip's series over the full extent — up to the anchor when that is
+    // past the ties (RC-001), so a tie with no end runs on to it. Worked out
+    // again only when the extent moves: a new data set or a new "now".
+    _getNavigatorData() {
+      const t = this._linkTime();
+      if (!t) return null;
+      const full = this._getDataExtent();
+      const key = full ? `${+full[0]}:${+full[1]}` : "";
+      if (t.series === void 0 || t.seriesKey !== key) {
+        t.series = activeLinkSeries(t.links, full, this._zone());
+        t.seriesKey = key;
+      }
+      return t.series;
+    }
+    // true or an options object turns the strip on; anything else (false,
+    // null, 0, '') leaves it off.
+    _hasNavigatorEnabled() {
+      const n = this.options.navigator;
+      return n === true || n !== null && typeof n === "object";
+    }
+    // The navigator lines up with the plot: its side margins default to the
+    // chart's own (a relation chart's drawing has no axis gutter — it keeps
+    // 6px for the brush handles and shows a time axis). A user `navigator`
+    // object is merged over that, margin side by side.
+    _getNavigatorOptions() {
+      const user = typeof this.options.navigator === "object" ? this.options.navigator : {};
+      const base = this._isLinkTimeChart() ? { axis: true, margin: { left: 6, right: 6 } } : { margin: { left: this.margin.left, right: this.margin.right } };
+      return { ...base, ...user, margin: { ...base.margin, ...user.margin ?? {} }, timeZone: this._zone() };
+    }
+    _ensureNavigator() {
+      if (this._destroyed || !this._hasNavigatorEnabled()) return null;
+      if (this._navigatorEl) return this._navigatorEl;
+      this._navigatorEl = document.createElement("div");
+      this._navigatorEl.className = "rc-chart-navigator";
+      if (this._footerEl?.parentNode === this.container) {
+        this.container.insertBefore(this._navigatorEl, this._footerEl);
+      } else {
+        this.container.appendChild(this._navigatorEl);
+      }
+      this._navigator = new Overview(this._navigatorEl, {
+        theme: this.theme,
+        ...this._getNavigatorOptions()
+      });
+      return this._navigatorEl;
+    }
+    _syncNavigator() {
+      if (this._destroyed || !this._hasNavigatorEnabled()) return;
+      const data = this._getNavigatorData();
+      if (!Array.isArray(data) || !data.length) {
+        if (this._navigatorEl) this._navigatorEl.style.display = "none";
+        return;
+      }
+      this._ensureNavigator();
+      this._navigatorEl.style.display = "";
+      this._navigator.setData(
+        data,
+        (extent2, { final = false } = {}) => this._onNavigatorBrush(extent2, final),
+        { extent: this._getDataExtent() }
+      );
+      const view = this.getView();
+      if (view) this._navigator.setBrush(view);
+    }
+    // A drag fires an event on every pointer move, and each one used to
+    // re-render the chart — a flow layout, the strip (K-16). Live moves now
+    // land once per animation frame, the latest window winning, silently; the
+    // drag's end applies at once and reports through onViewChange, like the
+    // buttons do.
+    _onNavigatorBrush(extent2, final) {
+      if (this._destroyed) return;
+      if (final) {
+        cancelFrame(this._brushFrame);
+        this._brushFrame = null;
+        this._pendingBrush = null;
+        this.setView(extent2);
+        return;
+      }
+      this._pendingBrush = extent2;
+      if (this._brushFrame) return;
+      this._brushFrame = nextFrame(() => {
+        const pending = this._pendingBrush;
+        this._brushFrame = null;
+        this._pendingBrush = null;
+        if (pending && !this._destroyed) this.setView(pending, { silent: true });
+      });
+    }
+    _resolveDefaultView(fullExtent) {
+      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+      const parse = (v, isEnd) => this._parseViewBound(v, isEnd);
+      if (Array.isArray(this.options.defaultView)) {
+        return clampDateExtent(this.options.defaultView, fullExtent, parse);
+      }
+      if (this.options.defaultTimeframe) {
+        return this._timeframeExtent(this._findTimeframe(this.options.defaultTimeframe), fullExtent);
+      }
+      return null;
+    }
+    // The window of a timeframe step over `fullExtent`: its bounds read as
+    // view bounds, its calendar steps cut in the chart's zone (T-10) and
+    // counted back from the anchor (RC-001), a week from weekStart. The
+    // custom range is the days last applied (RC-003), none before.
+    _timeframeExtent(step, fullExtent) {
+      if (isCustomStep(step)) step = this._customRange ? { range: this._customRange } : null;
+      return resolveTimeframeExtent(
+        step,
+        fullExtent,
+        (v, isEnd) => this._parseViewBound(v, isEnd),
+        this._zone(),
+        { anchor: this._anchorInstant(), weekStart: this._weekStart() }
+      );
+    }
+    // ── The timeframe anchor (RC-001) ────────────────────────────────────────
+    // timeframeAnchor — the end every timeframe counts back from:
+    //   'dataEnd' (default)  the data's last date: the rule before RC-001
+    //   'now'                the moment read at the last data or selection
+    //                        change (_readAnchor)
+    //   a date               a fixed "as of" instant, read as a view bound is
+    //                        (a relation chart's 1950 is the end of 1950)
+    // With 'now' or a date the full extent runs to the anchor when that is past
+    // the data — ALL, the zoom and the navigator reach it — and the windows
+    // still start no earlier than the data (resolveTimeframeExtent).
+    // weekStart — the first day of a week, for WTD (and a TimeSeries' week
+    // buckets): Monday by default, 'sunday' or 0 (any day name, 0–6).
+    // The anchor's instant, or null under 'dataEnd' (the windows end at the
+    // full extent's end). A value that is none of these warns once and counts
+    // as 'dataEnd'.
+    _anchorInstant() {
+      const v = this.options.timeframeAnchor;
+      const word = this._anchorWord();
+      if (v == null || word === "dataend") return null;
+      if (word === "now") return this._now ?? (this._now = /* @__PURE__ */ new Date());
+      const at2 = this._parseViewBound(v, true);
+      if (at2) return at2;
+      this._warnOnce("timeframeAnchor", `timeframeAnchor "${v}" is not 'dataEnd', 'now' or a date \u2014 the timeframes count back from the data's end`);
+      return null;
+    }
+    // The anchor's keyword in lower case ('dataend', 'now'), or null for a
+    // value that is not a string.
+    _anchorWord() {
+      const v = this.options.timeframeAnchor;
+      return typeof v === "string" ? v.trim().toLowerCase() : null;
+    }
+    // "Now" is read once per data or selection change — setData, appendPoint,
+    // setTimeframe and so a button click — and every render in between (a
+    // resize, the fonts settling, a brush frame) reuses it: the buttons light
+    // by exact comparison of windows, which a clock read at every render would
+    // break. `at` puts back an earlier reading (setTimeframe on a step that
+    // does not resolve). Under any other anchor there is nothing to read.
+    _readAnchor(at2 = /* @__PURE__ */ new Date()) {
+      if (this._anchorWord() === "now") this._now = at2;
+    }
+    // The first day of a week, 0 Sunday … 6 Saturday; Monday unless weekStart
+    // names another. A value that names no day warns once.
+    _weekStart() {
+      const v = this.options.weekStart;
+      const day = weekdayOf(v);
+      if (day != null) return day;
+      if (v != null) this._warnOnce("weekStart", `weekStart "${v}" is not a day name or 0\u20136 \u2014 weeks start on Monday`);
+      return 1;
+    }
+    // The full extent: the data's own (_dataExtent), run on to the anchor when
+    // that is past the data's end.
+    _getDataExtent() {
+      const data = this._dataExtent();
+      if (!data) return null;
+      const at2 = this._anchorInstant();
+      return at2 && +at2 > +data[1] ? [data[0], /* @__PURE__ */ new Date(+at2)] : data;
+    }
+    // A console warning, once per chart and key.
+    _warnOnce(key, text) {
+      this._warned ??= /* @__PURE__ */ new Set();
+      if (this._warned.has(key)) return;
+      this._warned.add(key);
+      console.warn(`RareCharts.${this._chartName()}: ${text}`);
+    }
+    _resolveViewExtent(fullExtent) {
+      if (!Array.isArray(fullExtent) || !fullExtent[0] || !fullExtent[1]) return null;
+      if (this._viewExtent) {
+        return clampDateExtent(this._viewExtent, fullExtent) ?? clampDateExtent(this._viewExtent, null);
+      }
+      return this._resolveDefaultView(fullExtent) ?? clampDateExtent(fullExtent, fullExtent);
+    }
+    // A timeframe step by key, from the chart's own list (custom
+    // { key, label, range } steps included); an unknown key is returned as is,
+    // so preset keys ('1Y', 'YTD', 'ALL') still resolve.
+    _findTimeframe(key) {
+      if (key && typeof key === "object") return key;
+      return this._getTimeframeOptions().find((step) => (step.key ?? step.label) === key) ?? key;
+    }
+    // After setData: "now" is read anew (timeframeAnchor: 'now'), a chosen
+    // timeframe re-applies to the new data (the last 3M of the new range, not
+    // the old dates; the custom range its own days); any other view that no
+    // longer meets the data falls back to the full extent (_resolveViewExtent).
+    _refreshViewForData() {
+      this._readAnchor();
+      const full = this._getDataExtent();
+      if (full && this._selectedTimeframe) {
+        const step = this._findTimeframe(this._selectedTimeframe);
+        this._viewExtent = this._timeframeExtent(step, full) ?? this._viewExtent;
+      }
+      if (full && this._viewExtent && !clampDateExtent(this._viewExtent, full)) this._viewExtent = null;
+      this._syncTimeframeButtons(full);
+    }
+    _syncTimeframeButtons(fullExtent, viewExtent = null) {
+      if (!this._timeframeButtons.length) return;
+      const resolvedView = viewExtent ?? this._resolveViewExtent(fullExtent);
+      const matchingSteps = this._getTimeframeOptions().filter(
+        (step) => extentEquals(this._timeframeExtent(step, fullExtent), resolvedView)
+      );
+      const chosen = this._selectedTimeframe ?? this._defaultTimeframeKey();
+      const selectedMatch = chosen ? matchingSteps.find((step) => (step.key ?? step.label) === chosen) : null;
+      const fullMatch = extentEquals(resolvedView, fullExtent) ? matchingSteps.find(isFullStep) : null;
+      const active = selectedMatch ?? fullMatch ?? matchingSteps[0];
+      const activeKey = active ? active.key ?? active.label ?? null : null;
+      this._timeframeButtons.forEach((btn) => {
+        const on = btn.dataset.timeframe === activeKey;
+        btn.classList.toggle("active", on);
+        if (btn.getAttribute("aria-pressed") !== String(on)) btn.setAttribute("aria-pressed", String(on));
+      });
+    }
+    // The defaultTimeframe's key while the default view is in force — no
+    // window set since (a button, the brush, setView) and no defaultView,
+    // which wins over it.
+    _defaultTimeframeKey() {
+      const d = this.options.defaultTimeframe;
+      if (!d || this._viewExtent || Array.isArray(this.options.defaultView)) return null;
+      return typeof d === "object" ? d.key ?? d.label ?? null : d;
+    }
+    setView(extent2, { silent = false, preserveSelectedTimeframe = false } = {}) {
+      const parsed = Array.isArray(extent2) ? [this._parseViewBound(extent2[0], false), this._parseViewBound(extent2[1], true)] : null;
+      this._viewExtent = parsed?.[0] && parsed?.[1] ? parsed : null;
+      if (!preserveSelectedTimeframe) this._selectedTimeframe = null;
+      this._syncTimeframeButtons(this._getDataExtent());
+      this.render();
+      const resolved = this._resolveViewExtent(this._getDataExtent());
+      if (!silent && resolved) this._emit(this._onViewChangeCb, resolved, this._viewInfo());
+      return this;
+    }
+    // onViewChange's second argument (§2.3 of the analytics spec), { key,
+    // level }: `key` the timeframe key when a button or setTimeframe set the
+    // view, null when the brush, the wheel or setView did; `level` the level
+    // drawn for the view (TimeSeries levels, RC-002), null for plain data.
+    _viewInfo() {
+      return { key: this._selectedTimeframe ?? null, level: this._viewLevel() };
+    }
+    // The level drawn for the current view: none by default.
+    _viewLevel() {
+      return null;
+    }
+    getView() {
+      return this._resolveViewExtent(this._getDataExtent());
+    }
+    // `range` (the custom range, RC-003): [from, to], read as view bounds; the
+    // view becomes those whole days in the chart's zone, and the chart keeps
+    // them. setTimeframe('CUSTOM') without one applies the days kept.
+    setTimeframe(key, { silent = false, range: range3 = null } = {}) {
+      const kept = this._now;
+      this._readAnchor();
+      const fullExtent = this._getDataExtent();
+      const step = this._findTimeframe(key);
+      const newDays = isCustomStep(step) && Array.isArray(range3);
+      const days = newDays ? this._customDays(range3) : null;
+      const extent2 = newDays ? days && this._timeframeExtent({ range: days }, fullExtent) : this._timeframeExtent(step, fullExtent);
+      if (!extent2) {
+        this._readAnchor(kept);
+        return this;
+      }
+      if (days) {
+        this._customRange = days;
+        this._syncCustomTitle();
+      }
+      this._selectedTimeframe = typeof key === "string" ? key : step.key ?? step.label ?? null;
+      return this.setView(extent2, { silent, preserveSelectedTimeframe: true });
+    }
+    // ── The custom range (RC-003) ────────────────────────────────────────────
+    // core/customRange.js holds the rule and the panel. The chart keeps the
+    // days applied (_customRange), and every path that resolves a timeframe
+    // reads them (_timeframeExtent): setData re-applies the same dates, and
+    // the button lights while the view is theirs.
+    // The whole days of a range given as view bounds, in the chart's zone
+    // (a relation chart reads 1950 as that year, to its end); null when a
+    // bound does not read.
+    _customDays(range3) {
+      return dayRange(this._parseViewBound(range3[0], false), this._parseViewBound(range3[1], true), this._zone());
+    }
+    // The Custom button's title names the days applied.
+    _syncCustomTitle() {
+      if (!this._customRange) return;
+      const title = rangeTitle(this._customRange, this._zone());
+      this._timeframeButtons.forEach((btn) => {
+        if (btn.classList.contains("rc-range-custom")) btn.title = title;
+      });
+    }
+    // A click on a Custom button: its panel opens at the view's days, or
+    // closes. Apply goes through setTimeframe, under the button's own key.
+    _toggleRangePanel(btn, key) {
+      if (this._destroyed) return;
+      if (this._rangePanel?.isOpen) {
+        this._rangePanel.close();
+        return;
+      }
+      if (this._rangePanel?.button !== btn) {
+        this._rangePanel?.destroy();
+        this._rangePanel = new RangePanel(btn, {
+          container: this.container,
+          theme: this.theme,
+          zone: this._zone(),
+          onApply: (from, to) => this.setTimeframe(key, { range: [from, to] })
+        });
+      }
+      this._rangePanel.open(this.getView(), this._getDataExtent());
+    }
+    // Empty state — no data, or nothing in the current window: the drawing
+    // layers the class lists in _dataLayers() are cleared (marks, axes, grid,
+    // labels, annotations), tooltip and crosshair hidden, and the header
+    // buttons and the navigator synced (the navigator hides without data).
+    // Title, legend and footer stay.
+    _renderEmpty() {
+      this._dataLayers().forEach((g) => g?.selectAll("*").remove());
+      this._crosshair?.unbind?.();
+      this._tooltip?.hide?.();
+      this._syncTimeframeButtons(this._getDataExtent());
+      this._syncNavigator();
+    }
+    _dataLayers() {
+      return [];
+    }
+    // fn(extent, { key, level }) after every view change the page did not ask
+    // to be silent: once per button click, per brush drag (at its release),
+    // per wheel or pinch step, per setView and setTimeframe — never for
+    // setData. A callback that reads only the extent works as before.
+    onViewChange(fn) {
+      this._onViewChangeCb = fn;
+      return this;
+    }
+    // ── Loading (RC-002) ─────────────────────────────────────────────────────
+    // setLoading(true) while the page fetches rows — a finer level for the
+    // window onViewChange reported: a slim "Loading…" bar across the top of the
+    // plot and aria-busy on the card; the drawing stays as it is until the
+    // data comes. setLoading(false) takes both away. The bar wears the
+    // tooltip's colours (--rc-tooltip-*, from the theme: dark with darkTheme);
+    // rare-charts.css lays it out and hides it in print. It is made on first
+    // need and removed again, so a chart that never loads keeps its DOM.
+    setLoading(on = true) {
+      if (this._destroyed) return this;
+      if (on && !this._loadingEl) {
+        const el = document.createElement("div");
+        el.className = "rc-chart-loading";
+        el.textContent = "Loading\u2026";
+        setTooltipTokens(el, this.theme);
+        this.container.appendChild(el);
+        this._loadingEl = el;
+        this._hostBusy = this.container.getAttribute("aria-busy");
+        this.container.setAttribute("aria-busy", "true");
+        this._placeLoading();
+      } else if (!on && this._loadingEl) {
+        this._loadingEl.remove();
+        this._loadingEl = null;
+        this._restoreBusy();
+      }
+      return this;
+    }
+    // The bar across the top of the plot, as wide as the plot.
+    _placeLoading() {
+      const b = this._plotBox();
+      const style = this._loadingEl.style;
+      style.left = `${b.x}px`;
+      style.top = `${b.y}px`;
+      style.width = `${b.width}px`;
+    }
+    _restoreBusy() {
+      if (this._hostBusy != null) this.container.setAttribute("aria-busy", this._hostBusy);
+      else this.container.removeAttribute("aria-busy");
+      this._hostBusy = null;
+    }
+    render() {
+      throw new Error("render() must be implemented");
+    }
+    // Tear down: stop observers and late renders (fonts, fetches, queued
+    // tasks check _destroyed), take the tooltip down, hand the page's own
+    // controls element back to where it was, empty the container and restore
+    // its class and style.
+    destroy() {
+      this._destroyed = true;
+      this._tooltip?.destroy();
+      this._tooltip = null;
+      if (this._loadingEl) this._restoreBusy();
+      this._loadingEl = null;
+      this._zoomHint?.destroy();
+      this._zoomHint = null;
+      this._rangePanel?.destroy();
+      this._rangePanel = null;
+      cancelFrame(this._brushFrame);
+      this._brushFrame = null;
+      cancelFrame(this._resizeFrame);
+      this._resizeFrame = null;
+      this._pendingBrush = null;
+      this._onViewChangeCb = null;
+      this._onScaleChangeCb = null;
+      this._resizeObserver.disconnect();
+      this._returnPageElements();
+      this._controlsEl = null;
+      this.container.innerHTML = "";
+      [...this.container.classList].filter((c) => c.startsWith("rc-") && !this._hostClasses.has(c)).forEach((c) => this.container.classList.remove(c));
+      if (!this.container.classList.length && !this._hostClasses.size) this.container.removeAttribute("class");
+      restoreStyle(this.container, this._hostStyle);
+      this._headerEl = null;
+      this._titleEl = null;
+      this._subtitleEl = null;
+      this._legendEl = null;
+      this._legendAsideEl = null;
+      this._footerEl = null;
+      this._sourceEl = null;
+      this._noteEl = null;
+      this._rangeRowEl = null;
+      this._rangeBarEl = null;
+      this._timeframeButtons = [];
+      this._scaleButton = null;
+      if (this._navigator) this._navigator.destroy();
+      this._navigator = null;
+      this._navigatorEl = null;
+    }
+  };
+
+  // assets/charts/src/core/html.js
+  var ENTITIES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  var escapeHtml = (v) => v == null ? "" : String(v).replace(/[&<>"']/g, (c) => ENTITIES[c]);
+  var safeUrl = (url) => typeof url === "string" && /^(https?:|\/|#)/i.test(url.trim());
+  var classes2 = (...names) => names.filter(Boolean).join(" ");
+  var isRoleColor = (c) => typeof c === "string" && c.trimStart().startsWith("var(--rc-");
+  var dataColor = (c) => c && !isRoleColor(c) ? c : null;
+  var colorStyle = (color2) => dataColor(color2) ? ` style="color:${escapeHtml(color2)}"` : "";
+  var tipHeader = (html, { color: color2 = null, muted = false, title = false } = {}) => `<div class="${classes2("rc-tooltip-header", (muted || isRoleColor(color2)) && "rc-tooltip-muted", title && "rc-tooltip-title")}"${colorStyle(color2)}>${html}</div>`;
+  var tipTitle = (html) => tipHeader(html, { title: true });
+  var tipNum = (html, tag = "span") => `<${tag} class="rc-num">${html}</${tag}>`;
+  var tipDate = (html) => tipHeader(tipNum(html), { muted: true });
+  var SWATCHES = {
+    line: "rc-tooltip-swatch",
+    dashed: "rc-tooltip-swatch rc-tooltip-swatch--dashed",
+    dot: "rc-tooltip-swatch rc-tooltip-swatch--dot",
+    band: "rc-tooltip-swatch rc-tooltip-swatch--band"
+  };
+  function tipRow(label, value, { swatch = null, color: color2 = null, note = "", muted = false, num = !muted } = {}) {
+    const mark = Object.hasOwn(SWATCHES, swatch) ? `<span class="${classes2(SWATCHES[swatch], isRoleColor(color2) && "rc-tooltip-muted")}"${dataColor(color2) ? ` style="--rc-swatch-color:${escapeHtml(color2)}"` : ""}></span>` : "";
+    const cells = [
+      `<span class="rc-tooltip-label">${label ?? ""}</span>`,
+      `<span class="${classes2("rc-tooltip-value", num && "rc-num", muted && "rc-tooltip-muted")}">${value ?? ""}</span>`,
+      note ? `<span class="rc-tooltip-note">${note}</span>` : ""
+    ];
+    return `<div class="${classes2("rc-tooltip-row", !mark && "rc-tooltip-row--plain")}">${mark}${cells.filter(Boolean).join(" ")}</div>`;
+  }
+  var tipSub = (html, { section = false, tag = "div" } = {}) => `<${tag} class="${classes2("rc-tooltip-sub", section && "rc-tooltip-section")}">${html}</${tag}>`;
+  var tipKind = (html, color2 = null, tag = "span") => `<${tag} class="${classes2("rc-tooltip-kind", !dataColor(color2) && "rc-tooltip-muted")}"${colorStyle(color2)}>${html}</${tag}>`;
+  var tipBody = (html) => `<div class="rc-tooltip-body">${html}</div>`;
+  function tipSources(sources) {
+    const list = Array.isArray(sources) ? sources : [];
+    if (!list.length) return "";
+    return `<div class="rc-tooltip-small rc-tooltip-section">${list.map((src) => {
+      const url = typeof src === "string" ? src : src?.url;
+      const title = typeof src === "string" ? src : src?.title ?? src?.url;
+      return safeUrl(url) ? `<div><a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></div>` : `<div>${escapeHtml(title ?? "")}</div>`;
+    }).join("")}</div>`;
+  }
+  function linkTooltipHtml({ from, to, ties }) {
+    const detail = (l) => {
+      const rows = [];
+      if (l.label) rows.push(`<div>${escapeHtml(l.label)}</div>`);
+      if (l.value != null && l.value !== "") {
+        rows.push(tipSub(tipNum(escapeHtml(typeof l.value === "number" ? l.value.toLocaleString() : l.value))));
+      }
+      if (l.start != null || l.end != null) {
+        rows.push(tipSub(tipNum([l.start, l.end].filter((v) => v != null && v !== "").map(escapeHtml).join(" \u2013 "))));
+      }
+      return rows.join("") + tipSources(l.sources);
+    };
+    const tie = ({ link: link2, kind }) => `<div class="rc-tooltip-section">${kind ? tipKind(escapeHtml(kind.label), kind.color) : ""}${detail(link2)}</div>`;
+    return tipBody(`${tipTitle(`${escapeHtml(from)} \u2192 ${escapeHtml(to)}`)}${ties.map(tie).join("")}`);
+  }
+
+  // assets/charts/src/core/Crosshair.js
+  var Crosshair = class _Crosshair {
+    /**
+     * The crosshair layer of a plot (Line, DualAxes), appended to its group: a
+     * group for the line and the dots, then the transparent overlay over the
+     * plot that takes the pointer.
+     *
+     * @param {d3.Selection} plot — the plot <g>
+     * @param {Tooltip}      tooltip
+     * @param {object}       theme
+     * @returns {Crosshair}
+     */
+    static attach(plot, tooltip, theme) {
+      const g = plot.append("g").attr("class", "rc-crosshair");
+      const overlay = plot.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
+      return new _Crosshair(g, overlay, tooltip, theme);
+    }
+    /**
+     * @param {d3.Selection}  g        — parent <g> for crosshair elements
+     * @param {d3.Selection}  overlay  — transparent rect for mouse events
+     * @param {Tooltip}       tooltip  — RareCharts Tooltip instance
+     * @param {object}        theme
+     * @param {object}        [opts]
+     * @param {boolean}       [opts.horizontal=false] — the point crosshair of
+     *   TimeSeries (see the top of this file and bind)
+     */
+    constructor(g, overlay, tooltip, theme, { horizontal = false } = {}) {
+      this._overlay = overlay;
+      this._tooltip = tooltip;
+      this._theme = theme;
+      this._horizontal = horizontal;
+      if (horizontal) {
+        const below = overlay.node().parentNode === g.node() ? overlay.node() : null;
+        this._line = g.insert("line", () => below).style("opacity", 0);
+        this._hLine = g.insert("line", () => below).style("opacity", 0);
+        this._dots = null;
+        return;
+      }
+      this._line = g.append("line").attr("class", "rc-cross-line").attr("opacity", 0);
+      this._dots = g.append("g").attr("class", "rc-cross-dots");
+    }
+    /**
+     * Bind (or update) crosshair behaviour to the overlay rect.
+     *
+     * @param {object} ctx
+     * @param {number}       ctx.W           — chart width
+     * @param {number}       ctx.H           — chart height
+     * @param {Function}     ctx.x           — d3 time scale
+     * @param {Function}     ctx.scaleFor    — (series) => d3 y-scale for that series
+     * @param {Function}     ctx.formatFor   — (series, value) => formatted string
+     * @param {Array}        ctx.series      — all series (line + bar)
+     * @param {boolean}      ctx.enabled     — show crosshair (default true)
+     * @param {Function}     ctx.tooltipFmt  — optional custom html builder
+     * @param {string}       ctx.timeZone    — 'local' (default) | 'UTC': the zone
+     *                                         the default header names the date in (T-10)
+     * @param {*}            ctx.dash        — the chart's strokeDash for every line
+     *                                         (a series' own wins): the default
+     *                                         tooltip draws such a line dashed
+     *
+     * With { horizontal: true }: the crosshair follows `series[0]`;
+     * `tooltipFmt(d, others)` builds the html for its row d (required) —
+     * `others` holds, for each further series, its row nearest d's date, or
+     * null where d's date is outside its rows (pointNear) — and
+     * `toCard(px, py)` maps the point from the plot to the tooltip's frame;
+     * `formatFor` is not used.
+     */
+    bind(ctx) {
+      if (this._horizontal) {
+        this._bindPoint(ctx);
+        return;
+      }
+      const { W, H, x: x2, scaleFor, formatFor, series, enabled = true, tooltipFmt, timeZone = "local", dash = null } = ctx;
+      const t = this._theme;
+      const hex2 = hexOf(t);
+      const headerDate = timeKit(timeZone).format("%b %d, %Y");
+      const markOf2 = (s) => s.type === "band" ? "band" : s.type === "bar" ? "dot" : resolveStrokeDash(s.strokeDash ?? dash) ? "dashed" : "line";
+      const marks = new Map(series.map((s) => [s.name, markOf2(s)]));
+      this._overlay.attr("width", W).attr("height", H);
+      this._line.attr("y1", 0).attr("y2", H).attr("stroke", t.crosshair).attr("stroke-dasharray", "2,3");
+      if (!enabled) {
+        this._overlay.on("mousemove", null).on("mouseleave", null);
+        return;
+      }
+      const bisect = bisector((d) => d.date).left;
+      const pickNearest = (vals, dt) => {
+        const i = bisect(vals, dt, 1);
+        const a = vals[i - 1];
+        const b = vals[i];
+        if (!a) return b;
+        if (!b) return a;
+        return dt - a.date < b.date - dt ? a : b;
+      };
+      const move = (event) => {
+        const [mx] = pointer_default(event, this._overlay.node());
+        const [d0, d1] = x2.domain();
+        const dt = new Date(Math.min(Math.max(+x2.invert(mx), +d0), +d1));
+        const points = series.map((s) => {
+          const d = pickNearest(s.values, dt);
+          if (!d) return null;
+          if (dt < s.values[0].date || dt > s.values[s.values.length - 1].date) return null;
+          if (s.type === "band") {
+            return {
+              name: s.name,
+              series: s.name,
+              type: "band",
+              color: hex2(s.color),
+              date: d.date,
+              lower: d.lower,
+              upper: d.upper,
+              fmt: `${formatFor(s, d.lower)} \u2013 ${formatFor(s, d.upper)}`
+            };
+          }
+          const fmt = formatFor(s, d.value);
+          return { name: s.name, series: s.name, axis: s.axis, type: s.type, color: hex2(s.color), date: d.date, value: d.value, fmt };
+        }).filter(Boolean);
+        if (!points.length) {
+          this.hide();
+          return;
+        }
+        this._line.attr("x1", mx).attr("x2", mx).attr("opacity", 1);
+        this._dots.selectAll(".rc-cross-dot").data(points.filter((p) => p.type !== "bar" && p.type !== "band"), (p) => p.name).join("circle").attr("class", "rc-cross-dot").attr("r", t.dotRadius ?? 3).attr("fill", (p) => p.color).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("cx", (p) => x2(p.date)).attr("cy", (p) => scaleFor(p)(p.value)).attr("opacity", 1);
+        const payload = { date: points[0]?.date, points };
+        const html = tooltipFmt ? tooltipFmt(payload) : tipDate(headerDate(payload.date)) + points.map(
+          (p) => tipRow(escapeHtml(p.name), escapeHtml(p.fmt), { swatch: marks.get(p.name), color: p.color })
+        ).join("");
+        const [px, py] = pointer_default(event, this._overlay.node().closest(".rc-chart") ?? this._overlay.node().parentElement);
+        this._tooltip.show(px, py, html);
+      };
+      this._overlay.on("mousemove", move).on("mouseleave", () => this.hide());
+    }
+    // The point crosshair (horizontal: true). The lines go through the point
+    // nearest the pointer — on a tie the earlier one; there is always one
+    // while the series has a value — and the tooltip sits at that point. A
+    // gap (a value of null, TimeSeries gaps 'break') has no height: only the
+    // vertical line marks it, and the tooltip sits at the pointer. The other
+    // series are reported to the tooltip at that point's date, not drawn.
+    _bindPoint({ W, H, x: x2, scaleFor, series, enabled = true, tooltipFmt, toCard }) {
+      const t = this._theme;
+      this._overlay.attr("width", W).attr("height", H);
+      [this._line, this._hLine].forEach((l) => l.attr("stroke", t.crosshair).attr("stroke-width", 1).attr("stroke-dasharray", "3 3"));
+      if (!enabled) {
+        this._overlay.on("mousemove", null).on("mouseleave", null);
+        return;
+      }
+      const s = series[0];
+      const values = s?.values ?? [];
+      const others = series.slice(1);
+      const bisect = bisector((d) => d.date).left;
+      const move = (event) => {
+        const [mx, my] = pointer_default(event, this._overlay.node());
+        const date2 = x2.invert(mx);
+        const i = bisect(values, date2, 1);
+        const d0 = values[i - 1];
+        const d1 = values[i];
+        const d = d1 && date2 - d0.date > d1.date - date2 ? d1 : d0 || d1;
+        if (!d) return;
+        const gap = d.value === null;
+        const cx = x2(d.date);
+        const cy = gap ? Math.min(Math.max(my, 0), H) : scaleFor(s)(d.value);
+        this._line.attr("x1", cx).attr("x2", cx).attr("y1", 0).attr("y2", H).style("opacity", 1);
+        if (gap) this._hLine.style("opacity", 0);
+        else this._hLine.attr("x1", 0).attr("x2", W).attr("y1", cy).attr("y2", cy).style("opacity", 1);
+        const html = tooltipFmt(d, others.map((o) => pointNear(o.values, d.date)));
+        const [tx, ty] = toCard(cx, cy);
+        this._tooltip.show(tx, ty, html);
+      };
+      this._overlay.on("mousemove", move).on("mouseleave", () => this.hide());
+    }
+    hide() {
+      if (this._horizontal) {
+        this._line.style("opacity", 0);
+        this._hLine.style("opacity", 0);
+      } else {
+        this._line.attr("opacity", 0);
+        this._dots.selectAll(".rc-cross-dot").attr("opacity", 0);
+      }
+      this._tooltip.hide();
+    }
+    // Empty chart: hide, and drop the hover handlers — they hold the last
+    // series and scale. The next bind() attaches fresh ones.
+    unbind() {
+      this._overlay.on("mousemove", null).on("mouseleave", null);
+      this.hide();
+    }
+  };
+  function pointNear(values, date2) {
+    if (!values?.length || date2 < values[0].date || date2 > values[values.length - 1].date) return null;
+    const i = bisector((d) => d.date).left(values, date2, 1);
+    const a = values[i - 1], b = values[i];
+    return b && date2 - a.date > b.date - date2 ? b : a;
+  }
+
   // assets/charts/src/charts/Line.js
   var Line = class extends Chart {
     constructor(selector, options = {}) {
       const { margin: _margin, ...restOptions } = options;
-      const annotations = normalizeAnnotations(options.annotations);
-      const annLabelHeight = options.annotationLabelHeight ?? 22;
-      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
+      const ann = annotationRoom(options);
       const yLeft = options.yAxisPosition === "left";
       const yGutter = options.showYAxis !== false;
       const endGutter = options.endLabels !== false;
       super(selector, {
         height: 240,
         margin: {
-          top: options.margin?.top ?? Math.max(10, annTopReserve),
+          top: options.margin?.top ?? Math.max(10, ann.top),
           bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
           right: options.margin?.right ?? ((yLeft ? endGutter : yGutter || endGutter) ? 64 : 0),
           left: options.margin?.left ?? (yLeft && yGutter ? 64 : 0)
         },
         ...restOptions
       });
+      this._pageMargin = options.margin ?? {};
       this._series = [];
       this._entry = new EntryMotion();
-      this._annotations = annotations;
-      this._annLabelHeight = annLabelHeight;
-      const tooltip = new Tooltip(this.container, this.theme);
-      this._initSVG(tooltip);
+      this._annotations = ann.annotations;
+      this._annLabelHeight = ann.labelHeight;
+      this._initSVG(this.tooltip);
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
     setData(data) {
@@ -14221,7 +16904,27 @@ var RareCharts = (() => {
     _isLogScale() {
       return this.options.yScale === "log";
     }
-    _getDataExtent() {
+    // ─── Legend ───────────────────────────────────────────────────────────────
+    // Show only the named series (null: every series) and redraw. Names as in
+    // the data; a band is a series too; a name not in the data is ignored. The
+    // header legend follows. No onLegendToggle: a page that mirrors one chart's
+    // legend into another from that event cannot loop. Chained after setData,
+    // both run in one task — nothing paints in between.
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
+    // The series the legend toggles: every series in the data (bands too), in
+    // data order, keyed by name.
+    _legendSeries() {
+      return (this._series ?? []).map((s) => ({ key: s.name, color: s.color }));
+    }
+    // A visibility change drops the hover readout: its dots and tooltip rows
+    // were placed for the series and the Y scale before it. The next pointer
+    // move draws them again from what is shown.
+    _unpinHidden() {
+      this._crosshair?.hide();
+    }
+    _dataExtent() {
       const all = this._series.flatMap((s) => s.values);
       return all.length ? extent(all, (d) => d.date) : null;
     }
@@ -14236,13 +16939,14 @@ var RareCharts = (() => {
       if (!Array.isArray(data)) return [];
       const isRow = (v) => v != null && typeof v === "object";
       const colors = this.theme.colors ?? [];
+      const timeZone = this._zone();
       const firstRow = data.find(isRow);
       if (firstRow && "date" in firstRow && !("values" in firstRow)) {
         const s = normalizeLineSeries({
           name: this.options.seriesName ?? "Series",
           color: this.options.lineColor ?? this.theme.accent,
           values: data
-        }, 0);
+        }, 0, { timeZone });
         return s.values.length ? [s] : [];
       }
       return data.map((s, idx) => {
@@ -14251,17 +16955,14 @@ var RareCharts = (() => {
         const isBand = s.type === "band" || isRow(first) && "lower" in first && "upper" in first;
         return normalizeLineSeries(s, idx, {
           color: colors[idx % (colors.length || 1)] ?? this.theme.accent,
-          type: isBand ? "band" : "line"
+          type: isBand ? "band" : "line",
+          timeZone
         });
       }).filter((s) => s?.values.length);
     }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG(tooltip) {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
-      const { left: left2, top: top2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this._createPlot();
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
       this.gBands = this.g.append("g").attr("class", "rc-bands");
       this.gLines = this.g.append("g").attr("class", "rc-lines");
@@ -14271,9 +16972,7 @@ var RareCharts = (() => {
       this.gMarkers = this.g.append("g").attr("class", "rc-markers");
       this.gZero = this.g.append("g").attr("class", "rc-zero-layer");
       this.gAnnotations = this.g.append("g").attr("class", "rc-annotations");
-      const gCross = this.g.append("g").attr("class", "rc-crosshair");
-      const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
-      this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
+      this._crosshair = Crosshair.attach(this.g, tooltip, this.theme);
     }
     // ─── Render ───────────────────────────────────────────────────────────────
     _dataLayers() {
@@ -14301,33 +17000,27 @@ var RareCharts = (() => {
       const isLog = o.yScale === "log";
       const fullExtent = this._getDataExtent();
       const viewExtent = this._resolveViewExtent(fullExtent);
-      let skipped = 0;
-      const positive = (d) => {
-        const ok = "lower" in d ? d.lower > 0 && d.upper > 0 : d.value > 0;
-        if (!ok) skipped++;
-        return ok;
-      };
-      const visibleSeries = this._series.map((s) => ({ ...s, values: s.values.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1] && (!isLog || positive(d))) })).filter((s) => s.values.length);
-      if (skipped && !this._warnedNonPositive) {
-        this._warnedNonPositive = true;
-        console.warn(`RareCharts.Line: ${skipped} value${skipped === 1 ? "" : "s"} \u2264 0 skipped on the log scale`);
-      }
-      if (!visibleSeries.length) {
+      const { series: inView, skipped } = filterLogSeries(this._series, viewExtent, () => isLog);
+      this._warnLogSkips(skipped, "Line");
+      if (!inView.length) {
         this._renderEmpty();
         return;
       }
+      const shown = inView.filter((s) => this._isShown(String(s.name)));
+      const scaleSet = this._legendRescale() && shown.length ? shown : inView;
       this._syncTimeframeButtons(fullExtent, viewExtent);
       this._syncNavigator();
-      const duration = motionDuration(o.duration ?? 650);
+      const duration = motionDuration(o.duration ?? ENTRY_DURATION);
       const phase = this._entry.phase(o.animate ?? true ? duration : 0);
       const ease = resolveEase(o.ease ?? "cubicOut");
-      const lineSeries = visibleSeries.filter((s) => s.type !== "band");
-      const bandSeries = visibleSeries.filter((s) => s.type === "band");
+      const lineSeries = shown.filter((s) => s.type !== "band");
+      const bandSeries = shown.filter((s) => s.type === "band");
       const yValuesOf = (s) => s.type === "band" ? s.values.flatMap((d) => [d.lower, d.upper]) : s.values.map((d) => d.value);
+      const tz = timeKit(this._zone());
       const xPad = 8;
-      const x2 = time().domain(viewExtent).range([xPad, W - xPad]);
+      const x2 = tz.scale().domain(viewExtent).range([xPad, W - xPad]);
       const yTicks = o.yTicks ?? 4;
-      const allY = visibleSeries.flatMap(yValuesOf);
+      const allY = scaleSet.flatMap(yValuesOf);
       const maxY = max(allY);
       const minY = min(allY);
       let [lo, hi] = isLog ? logPaddedDomain(minY, maxY) : [minY - ((maxY - minY) * 0.08 || 1), maxY + ((maxY - minY) * 0.08 || 1)];
@@ -14342,7 +17035,8 @@ var RareCharts = (() => {
         resolvedYTickValues = isLog ? logTickValues(lo, hi, yTicks) : linearTickValues(lo, hi, yTicks);
       }
       const y2 = (isLog ? log2() : linear3()).domain([lo, hi]).range([H, 0]);
-      const absMax = max(allY, (v) => Math.abs(v)) ?? 0;
+      const viewY = scaleSet === inView ? allY : inView.flatMap(yValuesOf);
+      const absMax = max(viewY, (v) => Math.abs(v)) ?? 0;
       const usePercent = (o.yFormat ?? "auto") === "percent" || (o.yFormat ?? "auto") === "auto" && absMax <= 1;
       const prefix = o.yPrefix ?? "";
       const suffix = o.ySuffix ?? "";
@@ -14352,13 +17046,11 @@ var RareCharts = (() => {
       const valueBase = usePercent ? format("+.2%") : compactValue;
       const yTickFormat = o.yTickFormat ?? dress(tickBase);
       const yValueFormat = o.yTickFormat ?? dress(valueBase);
-      const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
+      const xSpec = o.xTickFormat ? null : spanTimeFormat(viewExtent);
+      const xTickFormat = o.xTickFormat ?? spanTimeFormatter(viewExtent, tz.zone);
       const defaultCurve = o.curve ?? "monotone";
       const tension = o.curveTension ?? 0;
-      const globalArea = o.area ?? false;
       const globalAreaOp = o.areaOpacity ?? 0.12;
-      const globalAreaBase = o.areaBaseline ?? "zero";
-      const globalDash = o.strokeDash ?? null;
       const globalMarkers = o.markers ?? false;
       const globalShape = o.markerShape ?? "circle";
       const globalSize = o.markerSize ?? t.markerSize ?? 4;
@@ -14370,37 +17062,56 @@ var RareCharts = (() => {
       renderZeroBaseline(this.gZero, y2, W, t);
       if (o.showXAxis ?? true) {
         let xTicks = o.xTicks ?? 6;
-        if (!o.xTickFormat && typeof xTicks === "number") {
-          xTicks = dayTicks(viewExtent, xTicks) ?? xTicks;
+        if (xSpec === "%b %d" && typeof xTicks === "number") {
+          xTicks = dayTicks(viewExtent, xTicks, tz.zone) ?? xTicks;
         }
         renderAxisX(this.gAxisX, x2, H, xTickFormat, t, xTicks);
       } else {
         this.gAxisX.selectAll("*").remove();
       }
       if (o.showYAxis ?? true) {
-        if ((o.yAxisPosition ?? "right") === "left") {
-          renderAxisYLeft(this.gAxisY, y2, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
-        } else {
-          renderAxisYRight(this.gAxisY, y2, W, yTicks, yTickFormat, o.yLabelsOnly ?? true, t, resolvedYTickValues);
-        }
+        renderAxisY(this.gAxisY, y2, {
+          side: o.yAxisPosition ?? "right",
+          width: W,
+          ticks: yTicks,
+          tickValues: resolvedYTickValues,
+          tickFormat: yTickFormat,
+          labelsOnly: o.yLabelsOnly ?? true,
+          theme: t
+        });
       } else {
         this.gAxisY.selectAll("*").remove();
       }
       this.gBands.selectAll(".rc-band").data(bandSeries, (s) => s.name).join("path").attr("class", "rc-band").attr("d", (s) => bandPath(s, x2, y2, defaultCurve, tension)).attr("fill", (s) => s.color).attr("opacity", (s) => s.fillOpacity ?? globalAreaOp);
-      const areaSeries = lineSeries.filter((s) => (s.area ?? globalArea) === true);
-      this.gLines.selectAll(".rc-line-area").data(areaSeries, (s) => s.name).join("path").attr("class", "rc-line-area").attr("d", (s) => areaPath(s, x2, y2, defaultCurve, globalAreaBase, tension)).attr("fill", (s) => s.color).attr("opacity", (s) => s.areaOpacity ?? globalAreaOp);
-      const paths = this.gLines.selectAll(".rc-line").data(lineSeries, (s) => s.name).join("path").attr("class", "rc-line").attr("fill", "none").attr("stroke", (s) => s.color).attr("stroke-width", (s) => s.strokeWidth ?? t.strokeWidth ?? 2).attr("stroke-dasharray", (s) => resolveStrokeDash(s.strokeDash ?? globalDash)).attr("d", (s) => linePath(s, x2, y2, defaultCurve, tension));
-      const dashOf = (s) => resolveStrokeDash(s.strokeDash ?? globalDash);
-      paths.filter((s) => dashOf(s)).interrupt().attr("stroke-dasharray", dashOf).attr("stroke-dashoffset", null);
-      drawLinesIn(
-        paths.filter((s) => !dashOf(s)),
-        phase === "none" ? null : this._entry.timing(0, duration, ease)
+      const timing = phase === "none" ? null : this._entry.timing(0, duration, ease);
+      const sweep = !!timing && (bandSeries.length > 0 || lineSeries.some((s) => resolveStrokeDash(s.strokeDash ?? o.strokeDash ?? null)));
+      drawLineSeries(this.gLines, lineSeries, {
+        x: x2,
+        yFor: () => y2,
+        curve: defaultCurve,
+        tension,
+        area: o.area ?? false,
+        areaOpacity: globalAreaOp,
+        areaBaseline: o.areaBaseline ?? "zero",
+        dash: o.strokeDash ?? null,
+        width: t.strokeWidth ?? 2,
+        classes: { area: "rc-line-area", line: "rc-line" },
+        timing: sweep ? null : timing
+      });
+      sweepIn(
+        this.svg,
+        [this.gBands, this.gLines, this.gMarkers],
+        `${this._uid}-sweep`,
+        { x: -8, y: -this.margin.top, width: W + 16, height: H + this.margin.top + this.margin.bottom },
+        sweep ? timing : null
       );
       if (o.endLabels ?? true) {
-        renderEndLabels(this.gEnds, lineSeries, y2, W, yValueFormat, t);
+        renderEndLabels(this.gEnds, lineSeries, y2, W, yValueFormat, t, { axis: o.showYAxis ?? true ? this.gAxisY : null });
       } else {
         this.gEnds.selectAll("*").remove();
       }
+      const ySide = o.yAxisPosition ?? "right";
+      if (this._fitGutters(ySide === "right" ? [[[this.gAxisY, this.gEnds], "right"]] : [[this.gAxisY, "left"], [this.gEnds, "right"]])) return;
       renderMarkers(this.gMarkers, lineSeries, x2, () => y2, globalMarkers, globalShape, globalSize, t);
       renderAnnotations(this.gAnnotations, this._annotations, x2, () => y2, H, this._annLabelHeight, t);
       this._crosshair.bind({
@@ -14411,41 +17122,156 @@ var RareCharts = (() => {
         enabled: o.crosshair ?? true,
         scaleFor: () => y2,
         formatFor: (_s, v) => yValueFormat(v),
-        tooltipFmt: o.tooltipFormat
+        tooltipFmt: o.tooltipFormat,
+        timeZone: tz.zone,
+        dash: o.strokeDash ?? null
       });
     }
   };
 
+  // assets/charts/src/core/levels.js
+  var DEFAULT_MAX_POINTS = 500;
+  var dated = bisector((d) => d.date);
+  function levelName(key) {
+    const name = String(key).trim().toLowerCase();
+    return INTERVAL_NAMES.includes(name) ? name : null;
+  }
+  function countInWindow(rows, [from, to]) {
+    return Math.max(0, dated.right(rows, to) - dated.left(rows, from));
+  }
+  function levelCovers(rows, [from, to], name, timeZone = "local", weekStart = 1) {
+    const bucket = timeKit(timeZone).interval(name, weekStart);
+    if (!bucket || !rows.length) return false;
+    const first = bucket.floor(rows[0].date);
+    const last = bucket.floor(rows[rows.length - 1].date);
+    return +first <= +stepInterval(name, bucket.floor(from), 1, timeZone) && +last >= +stepInterval(name, bucket.floor(to), -1, timeZone);
+  }
+  function chooseLevel(levels, view, { maxPoints = DEFAULT_MAX_POINTS, timeZone = "local", weekStart = 1 } = {}) {
+    if (!levels.length) return null;
+    const coarsest = levels[levels.length - 1];
+    if (!view) return coarsest.name;
+    const covering = levels.filter((l) => levelCovers(l.rows, view, l.name, timeZone, weekStart));
+    const level = covering.find((l) => countInWindow(l.rows, view) <= maxPoints) ?? covering[covering.length - 1] ?? levels.find((l) => countInWindow(l.rows, view) > 0) ?? coarsest;
+    return level.name;
+  }
+
+  // assets/charts/src/core/compare.js
+  var COMPARE_MODES = Object.freeze(["previousPeriod", "previousYear"]);
+  var COMPARE_NAMES = Object.freeze({
+    previousPeriod: "Previous period",
+    previousYear: "Previous year"
+  });
+  var HOUR2 = 36e5;
+  var CALENDAR_KEYS = Object.freeze({ TODAY: "D", WTD: "W", MTD: "M", YTD: "Y" });
+  var dated2 = bisector((d) => d.date);
+  var SOURCE = /* @__PURE__ */ Symbol("rc.compare.source");
+  function compareMode(v) {
+    if (typeof v !== "string") return null;
+    const name = v.trim().toLowerCase();
+    return COMPARE_MODES.find((m) => m.toLowerCase() === name) ?? null;
+  }
+  function compareShift(mode, view, { key = null, days = null, timeZone = "local" } = {}) {
+    if (mode === "previousYear") return { unit: "Y", n: 1 };
+    if (mode !== "previousPeriod") return null;
+    const k = key == null ? "" : String(key).trim().toUpperCase();
+    if (CALENDAR_KEYS[k]) return { unit: CALENDAR_KEYS[k], n: 1 };
+    const rolling = k.match(/^(\d+)\s*([HDWMY])$/);
+    if (rolling && +rolling[1] > 0) {
+      const n = +rolling[1];
+      return rolling[2] === "H" ? { ms: n * HOUR2 } : { unit: rolling[2], n };
+    }
+    return lengthShift(days ?? view, timeZone);
+  }
+  function lengthShift(win, timeZone) {
+    if (!Array.isArray(win) || !win[0] || !win[1]) return null;
+    const day = timeKit(timeZone).day;
+    const midnight = (t) => +day.floor(new Date(t)) === t;
+    const from = +win[0], to = +win[1];
+    const end = midnight(to + 1) ? to + 1 : to;
+    if (midnight(from) && midnight(end)) {
+      const n = day.count(new Date(from), new Date(end));
+      return n > 0 ? { unit: "D", n } : null;
+    }
+    const span = to - from;
+    if (!(span > 0)) return null;
+    if (span >= 24 * HOUR2) return { unit: "D", n: Math.round(span / (24 * HOUR2)) };
+    if (span >= HOUR2) return { ms: Math.round(span / HOUR2) * HOUR2 };
+    return { ms: span };
+  }
+  function shiftDate(date2, shift, sign3 = 1, timeZone = "local") {
+    return "ms" in shift ? new Date(+date2 + sign3 * shift.ms) : offsetCalendar(date2, shift.unit, sign3 * shift.n, timeZone);
+  }
+  function shiftKey(shift) {
+    if (!shift) return "";
+    return "ms" in shift ? `${shift.ms}ms` : `${shift.n}${shift.unit}`;
+  }
+  function comparisonRows(rows, view, shift, timeZone = "local") {
+    if (!shift || !Array.isArray(rows) || !rows.length || !Array.isArray(view) || !view[0] || !view[1]) return [];
+    const from = shiftDate(view[0], shift, -1, timeZone);
+    const to = shiftDate(view[1], shift, -1, timeZone);
+    const moved = [];
+    for (let i = dated2.left(rows, from), hi = dated2.right(rows, to); i < hi; i++) {
+      const d = rows[i];
+      moved.push({ ...d, date: shiftDate(d.date, shift, 1, timeZone), [SOURCE]: d.date });
+    }
+    moved.sort((a, b) => a.date - b.date);
+    const out = [];
+    for (const d of moved) {
+      if (out.length && +out[out.length - 1].date === +d.date) out[out.length - 1] = d;
+      else out.push(d);
+    }
+    return out;
+  }
+  var sourceDate = (d) => d?.[SOURCE] ?? null;
+  function changeOf(value, prev) {
+    if (!Number.isFinite(value) || !Number.isFinite(prev) || prev === 0) return null;
+    return (value - prev) / Math.abs(prev);
+  }
+
   // assets/charts/src/charts/TimeSeries.js
+  var COMPARE_DASH = "4 3";
+  var COMPARE_WIDTH = 1.5;
+  var changeText = format("+.1%");
+  var loneRows = (values) => {
+    const drawn = (i) => i >= 0 && i < values.length && !isGap(values[i]);
+    return values.filter((d, i) => drawn(i) && !drawn(i - 1) && !drawn(i + 1));
+  };
   var TimeSeries = class extends Chart {
     constructor(selector, options = {}) {
-      const annotations = normalizeAnnotations(options.annotations);
-      const annLabelHeight = options.annotationLabelHeight ?? 22;
-      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
+      const ann = annotationRoom(options);
       const { margin: _margin, ...restOptions } = options;
       super(selector, {
         height: 340,
         margin: {
-          top: options.margin?.top ?? Math.max(16, annTopReserve),
+          top: options.margin?.top ?? Math.max(16, ann.top),
           right: options.margin?.right ?? (options.showYAxis === false ? 0 : 70),
           bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 28),
           left: options.margin?.left ?? 0
         },
         ...restOptions
       });
+      this._pageMargin = options.margin ?? {};
+      this._rows = [];
       this._data = [];
+      this._levels = null;
+      this._level = null;
       this._viewExtent = null;
       this._onViewChangeCb = null;
-      this._tooltip = new Tooltip(this.container, this.theme);
-      this._annotations = annotations;
-      this._annLabelHeight = annLabelHeight;
+      this.tooltip;
+      this._annotations = ann.annotations;
+      this._annLabelHeight = ann.labelHeight;
       this._initSVG();
       this._bindZoomPan();
-      this._bindHover();
     }
     // ── Public API ────────────────────────────────────────────────────────────
     setData(data) {
-      this._data = normalizePoints(data, { keep: true });
+      if (data && typeof data === "object" && !Array.isArray(data)) {
+        this._levels = this._readLevels(data);
+      } else {
+        this._levels = null;
+        this._level = null;
+        this._rows = this._readRows(data);
+      }
       this._warnedNonPositive = false;
       this._refreshViewForData();
       this.render();
@@ -14465,52 +17291,345 @@ var RareCharts = (() => {
     }
     // Add one point (normalized like setData) and redraw. The chart keeps its
     // own copy of the data, so the array passed to setData is never touched.
-    // A selected timeframe moves with the new point.
-    appendPoint(point6) {
-      const [p] = normalizePoints([point6], { keep: true });
+    // A selected timeframe moves with the new point. With levels the point
+    // goes to `level` — a new level if the data has none of that name — or
+    // to the finest level without one; plain rows take no level.
+    appendPoint(point6, level) {
+      const [p] = this._readRows([point6]);
       if (!p) return this;
-      this._data = this._data.concat(p).sort(byDate);
+      if (this._levels) {
+        const name = level == null ? [...this._levels.keys()][0] : levelName(level);
+        if (!name) {
+          this._warnOnce("appendLevel", level == null ? "appendPoint: the chart holds no level \u2014 name the level to append to" : `appendPoint: "${level}" is not a level (${INTERVAL_NAMES.join(", ")}) \u2014 the point is left out`);
+          return this;
+        }
+        const lv = this._levels.get(name);
+        if (lv) lv.rows = lv.rows.concat(p).sort(byDate);
+        else this._levels = new Map(INTERVAL_NAMES.filter((n) => n === name || this._levels.has(n)).map((n) => [n, n === name ? { rows: [p] } : this._levels.get(n)]));
+      } else {
+        this._rows = this._rows.concat(p).sort(byDate);
+      }
       this._refreshViewForData();
       this.render();
       return this;
     }
-    _getDataExtent() {
-      return this._data.length ? extent(this._data, (d) => d.date) : null;
+    // The level drawn for the current view (RC-002): 'hour', 'day'…, or null
+    // for plain rows.
+    getLevel() {
+      return this._levels ? this._levelFor(this.getView()) : null;
     }
+    // Show only the series named (seriesName, and compareName for the
+    // comparison); null shows every one. No onLegendToggle. Chain it after
+    // setData.
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
+    // ── Series: the legend hook ───────────────────────────────────────────────
+    // Every series the chart draws, in legend order: the main one, then the
+    // comparison ({ key, role: 'compare', values, color, dashed: true, area:
+    // false }, RC-004) for `view` (the one in force by default). Both are
+    // listed, scaled and crosshaired through this list alone.
+    _drawnSeries(view) {
+      const main = { key: this.options.seriesName ?? "Series", role: "main", values: this._data };
+      const cmp = this._comparison(view);
+      const band2 = this._bandSeries();
+      return [main, cmp, band2].filter(Boolean);
+    }
+    // ── The band (RC-051) ─────────────────────────────────────────────────────
+    // The `band` option read: null without it.
+    _bandOptions() {
+      const b = this.options.band;
+      if (!b) return null;
+      const o = b === true ? {} : b;
+      return {
+        lower: o.lower ?? "lower",
+        upper: o.upper ?? "upper",
+        name: String(o.name ?? "Range"),
+        color: o.color,
+        fillOpacity: o.fillOpacity
+      };
+    }
+    // The band over the rows drawn (the level in force): a row whose two edges
+    // read as numbers is a point of the ribbon; any other row is a gap in it
+    // (value null, as the rows' own gaps). Worked out again only for new rows.
+    _bandSeries() {
+      const b = this._bandOptions();
+      if (!b || !this._data.length) return null;
+      const f = this._bandFor;
+      if (f?.data !== this._data || f.lower !== b.lower || f.upper !== b.upper) {
+        const read = (v) => v == null || v === "" || typeof v === "boolean" ? NaN : +v;
+        const values = this._data.map((d) => {
+          const lower2 = read(d[b.lower]), upper = read(d[b.upper]);
+          return !isGap(d) && Number.isFinite(lower2) && Number.isFinite(upper) ? { date: d.date, lower: lower2, upper } : { date: d.date, lower: null, upper: null, value: null };
+        });
+        this._bandFor = { data: this._data, lower: b.lower, upper: b.upper, values, byTime: null };
+      }
+      return {
+        key: b.name,
+        role: "band",
+        type: "band",
+        values: this._bandFor.values,
+        color: b.color ?? this.theme.accent,
+        fillOpacity: b.fillOpacity
+      };
+    }
+    // The band's edges at a row's date while the band is shown, else null.
+    _bandAt(date2) {
+      if (!this._shownBand || !this._bandFor) return null;
+      const f = this._bandFor;
+      f.byTime ??= new Map(f.values.filter((d2) => !isGap(d2)).map((d2) => [+d2.date, d2]));
+      const d = f.byTime.get(+date2);
+      return d ? { lower: d.lower, upper: d.upper } : null;
+    }
+    // ── The comparison (RC-004) ───────────────────────────────────────────────
+    // The comparison series for a view, built from the rows drawn whenever
+    // the legend or the render asks — so it is there on the first render that
+    // brings data, before the legend first maps its items — and worked out
+    // again only for new rows, a new view or a new shift. null without
+    // `compare` or without data; with no rows in its window it has no values
+    // (no line), and its legend item stays.
+    _comparison(view) {
+      const mode = this._compareMode();
+      if (!mode || !this._data.length) return this._compareSeries = null;
+      view ??= this.getView();
+      const shift = view ? this._compareShift(mode, view) : null;
+      const key = `${mode}|${view ? `${+view[0]}:${+view[1]}` : ""}|${shiftKey(shift)}`;
+      if (this._compareFor?.data !== this._data || this._compareFor.key !== key) {
+        this._compareFor = { data: this._data, key, values: comparisonRows(this._data, view, shift, this._zone()) };
+      }
+      return this._compareSeries = {
+        key: this._compareName(mode),
+        role: "compare",
+        values: this._compareFor.values,
+        color: this.options.compareColor ?? this.theme.muted,
+        dashed: true,
+        area: false
+      };
+    }
+    // 'previousPeriod', 'previousYear' or null (no comparison). A value that
+    // names neither warns once and draws none.
+    _compareMode() {
+      const v = this.options.compare;
+      const mode = compareMode(v);
+      if (!mode && v != null && v !== false) {
+        this._warnOnce("compare", `compare "${v}" is not 'previousPeriod' or 'previousYear' \u2014 no comparison is drawn`);
+      }
+      return mode;
+    }
+    _compareName(mode = this._compareMode()) {
+      return String(this.options.compareName ?? COMPARE_NAMES[mode]);
+    }
+    // How far back the comparison lies for a view (compareShift, core/
+    // compare.js). The period picked sets it: a timeframe button or
+    // setTimeframe, or the defaultTimeframe while the default view holds; the
+    // custom range by its days. That shift then holds while the brush, the
+    // wheel or setView move the window — zoomed into a week, the comparison is
+    // still the week before, so the two lines keep their phase (maintainer,
+    // 2026-11-18: with the window's own length as the shift, every wheel step
+    // moved the dashed line off the main one). Without a period picked, or
+    // after ALL, the window's own length in whole days (hours under a day).
+    _compareShift(mode, view) {
+      if (mode !== "previousPeriod") return compareShift(mode, view);
+      const zone = this._zone();
+      const picked = this._selectedTimeframe ?? this._defaultTimeframeKey();
+      const step = picked == null ? null : this._findTimeframe(picked);
+      const keyed = step != null && extentEquals(this._timeframeExtent(step, this._getDataExtent()), view);
+      if (keyed) {
+        const custom3 = isCustomStep(step);
+        const name = typeof step === "string" ? step : step.key ?? step.label;
+        const whole = !Array.isArray(step.range) && ["ALL", "MAX"].includes(String(name ?? "").trim().toUpperCase());
+        const key = !custom3 && !Array.isArray(step.range) ? name : null;
+        const shift = compareShift(mode, view, { key, days: custom3 ? this._customRange : null, timeZone: zone });
+        this._pickedShift = whole ? null : shift;
+        return shift;
+      }
+      return this._pickedShift ?? compareShift(mode, view, { timeZone: zone });
+    }
+    // ── Levels (RC-002) ───────────────────────────────────────────────────────
+    // Rows as setData reads them: copied, parsed, sorted; null values kept as
+    // missing buckets under gaps 'zero' / 'break'.
+    _readRows(rows) {
+      return normalizePoints(rows, { keep: true, timeZone: this._zone(), keepNull: this._gapMode() !== "join" });
+    }
+    // setData's levels object: each key that names a level (in any case) read
+    // as rows, finest first; a level without a readable row is left out, and
+    // so, with a one-time warning, is a key that names no level.
+    _readLevels(data) {
+      const found = /* @__PURE__ */ new Map();
+      Object.entries(data).forEach(([key, rows]) => {
+        const name = levelName(key);
+        if (!name) {
+          this._warnOnce(`level:${key}`, `setData: "${key}" is not a level (${INTERVAL_NAMES.join(", ")}) \u2014 its rows are left out`);
+          return;
+        }
+        const points = this._readRows(rows);
+        if (points.length) found.set(name, { rows: points });
+      });
+      return new Map(INTERVAL_NAMES.filter((n) => found.has(n)).map((n) => [n, found.get(n)]));
+    }
+    // The level drawn for a view (chooseLevel, core/levels.js), from the rows
+    // each level draws — after the gaps rule, so a 'zero' level filled up to
+    // the anchor covers the window up to it.
+    _levelFor(view) {
+      const levels = [...this._levels].map(([name, lv]) => ({ name, rows: lv.data ?? lv.rows }));
+      return chooseLevel(levels, view, { maxPoints: this._maxPoints(), timeZone: this._zone(), weekStart: this._weekStart() });
+    }
+    // Draw that level: its rows become _rows and _data. null (no level) draws
+    // nothing.
+    _useLevel(name) {
+      const lv = name == null ? null : this._levels.get(name);
+      this._level = lv ? name : null;
+      this._rows = lv?.rows ?? [];
+      this._data = lv?.data ?? lv?.rows ?? [];
+    }
+    // resolution.maxPoints: a number above 0, else the default with a
+    // one-time warning.
+    _maxPoints() {
+      const n = this.options.resolution?.maxPoints;
+      if (n == null) return DEFAULT_MAX_POINTS;
+      if (typeof n === "number" && n > 0) return n;
+      this._warnOnce("maxPoints", `resolution.maxPoints "${n}" is not a number above 0 \u2014 ${DEFAULT_MAX_POINTS} is used`);
+      return DEFAULT_MAX_POINTS;
+    }
+    // The level the strip draws: navigator.level when the data holds it, else
+    // the coarsest. A name that is no level warns once.
+    _navigatorLevel() {
+      const own2 = this.options.navigator?.level;
+      const name = own2 == null ? null : levelName(own2);
+      if (own2 != null && !name) this._warnOnce("navigatorLevel", `navigator.level "${own2}" is not a level (${INTERVAL_NAMES.join(", ")}) \u2014 the strip draws the coarsest`);
+      return name && this._levels.has(name) ? name : [...this._levels.keys()].pop() ?? null;
+    }
+    // onViewChange's info.level (the base Chart's hook).
+    _viewLevel() {
+      return this.getLevel();
+    }
+    // ── Gaps (RC-005) ─────────────────────────────────────────────────────────
+    // 'join' (the default), 'zero' or 'break'; any other value joins, with a
+    // one-time warning.
+    _gapMode() {
+      const gaps = this.options.gaps;
+      if (gaps === "zero" || gaps === "break") return gaps;
+      if (gaps != null && gaps !== "join") this._warnOnce("gaps", `gaps "${gaps}" is not 'join', 'zero' or 'break' \u2014 the line joins its neighbours`);
+      return "join";
+    }
+    // The bucket the rows are counted in, for the gaps and the tooltip's date
+    // (§2.6 of the analytics spec): the drawn level's name, else the interval
+    // option, else the one the rows' own steps name, else none — then only
+    // null rows are gaps, and the tooltip names the day.
+    _gapInterval() {
+      if (this._levels) return this._level;
+      const own2 = this.options.interval;
+      if (own2 != null) {
+        const name = String(own2).toLowerCase();
+        if (INTERVAL_NAMES.includes(name)) return name;
+        this._warnOnce("interval", `interval "${own2}" is not one of ${INTERVAL_NAMES.join(", ")} \u2014 it is read from the data`);
+      }
+      if (this._inferred?.rows !== this._rows) {
+        this._inferred = { rows: this._rows, interval: inferInterval(this._rows, this._zone()) };
+      }
+      return this._inferred.interval;
+    }
+    // The instant the gaps are filled up to after the last row (RC-001): the
+    // timeframe anchor when it is not the data's end — the "now" read at the
+    // last data or selection change, or the fixed date. Under 'dataEnd' none.
+    _gapsUntil() {
+      return this._anchorInstant();
+    }
+    // Every reading of the anchor (setData, appendPoint, setTimeframe) fills
+    // the gaps anew: under 'now' the buckets after the last row run to the
+    // new moment.
+    _readAnchor(at2) {
+      super._readAnchor(at2);
+      this._applyGaps();
+    }
+    // The rows drawn, from the rows given, by the gaps rule: under 'join' the
+    // same array, so a chart without the option keeps its rows as they were.
+    // With levels, each level by its own bucket; the level drawn stays until
+    // the render chooses again (the coarsest when it is gone).
+    _applyGaps() {
+      if (!this._levels) {
+        this._data = this._fillRows(this, this._rows, () => this._gapInterval());
+        return;
+      }
+      this._levels.forEach((lv, name) => {
+        lv.data = this._fillRows(lv, lv.rows, () => name);
+      });
+      this._useLevel(this._levels.has(this._level) ? this._level : [...this._levels.keys()].pop());
+    }
+    // One series' rows by the gaps rule. A fill is worked out again only for
+    // new rows or a new anchor, and `holder` (the chart, or a level) keeps it:
+    // a button click under 'dataEnd' keeps the rows drawn (and the strip's) as
+    // they are. `interval()` is asked only for a new fill.
+    _fillRows(holder, rows, interval2) {
+      const gaps = this._gapMode();
+      if (gaps === "join") return rows;
+      const until = this._gapsUntil();
+      const key = until ? +until : null;
+      if (holder._filledFor?.rows === rows && holder._filledFor.until === key) return holder._filled;
+      const { rows: filled, capped } = fillGaps(rows, {
+        gaps,
+        interval: interval2(),
+        timeZone: this._zone(),
+        weekStart: this._weekStart(),
+        until
+      });
+      holder._filledFor = { rows, until: key };
+      holder._filled = filled;
+      if (capped) this._warnOnce("fill", `gaps: more than ${MAX_FILLED_BUCKETS} empty buckets \u2014 the rest of the gaps join; check interval`);
+      return filled;
+    }
+    // The legend's series (the base Chart's hook): none without data. The
+    // comparison is drawn dashed, and so is its swatch unless the item says.
+    _legendSeries() {
+      return this._data?.length ? this._drawnSeries().map((s) => ({ key: s.key, color: s.color ?? this.theme.accent, dashed: s.dashed === true })) : [];
+    }
+    // The rows' own extent — with levels, the union of theirs (each sorted by
+    // date); the full extent runs on to the timeframe anchor
+    // (Chart._getDataExtent, RC-001).
+    _dataExtent() {
+      if (!this._levels) return this._data.length ? extent(this._data, (d) => d.date) : null;
+      let lo = null, hi = null;
+      this._levels.forEach(({ data }) => {
+        if (!data?.length) return;
+        const first = data[0].date, last = data[data.length - 1].date;
+        if (!lo || first < lo) lo = first;
+        if (!hi || last > hi) hi = last;
+      });
+      return lo ? [lo, hi] : null;
+    }
+    // The strip draws the rows after the 'zero' fill — with levels, the
+    // navigator's level (the coarsest by default) over the whole extent; over
+    // a 'break' it joins the neighbours of a gap — it is a strip, not a
+    // reading (RC-005).
     _getNavigatorData() {
-      return this._data.length ? this._data : null;
+      const data = this._levels ? this._levels.get(this._navigatorLevel())?.data ?? [] : this._data;
+      if (!data.length) return null;
+      if (this._gapMode() !== "break") return data;
+      if (this._navRows?.of !== data) {
+        this._navRows = { of: data, rows: data.filter((d) => !isGap(d)) };
+      }
+      return this._navRows.rows.length ? this._navRows.rows : null;
     }
     // ── Init ──────────────────────────────────────────────────────────────────
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
-      const { top: top2, left: left2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this._createPlot();
       const clipId = `${this._uid}-clip`;
       this.clipRect = this.svg.append("defs").append("clipPath").attr("id", clipId).append("rect");
-      this.clipId = clipId;
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
       this.gArea = this.g.append("g").attr("clip-path", `url(#${clipId})`);
       this.gPaths = this.gArea.append("g");
       this.gAnnotations = this.g.append("g").attr("class", "rc-annotations");
       this.gAxisX = this.g.append("g").attr("class", "rc-axis");
       this.gAxisY = this.g.append("g").attr("class", "rc-axis");
-      this.crossX = this.g.append("line").style("opacity", 0);
-      this.crossY = this.g.append("line").style("opacity", 0);
       this.overlay = this.g.append("rect").attr("fill", "none").attr("pointer-events", "all");
+      this._crosshair = new Crosshair(this.g, this.overlay, this.tooltip, this.theme, { horizontal: true });
     }
     // ── Render ────────────────────────────────────────────────────────────────
     _dataLayers() {
       return [this.gGrid, this.gPaths, this.gAnnotations, this.gAxisX, this.gAxisY];
     }
-    _renderEmpty() {
-      this._visible = [];
-      this.crossX?.style("opacity", 0);
-      this.crossY?.style("opacity", 0);
-      super._renderEmpty();
-    }
     render() {
+      if (this._levels) this._useLevel(this._levelFor(this.getView()));
       if (!this._data.length) {
         this._renderEmpty();
         return;
@@ -14526,23 +17645,23 @@ var RareCharts = (() => {
       this._syncNavigator();
       this._syncZoomToView(fullExtent, viewExtent, W);
       const isLog = this.options.yScale === "log";
-      const inView = this._data.filter((d) => d.date >= viewExtent[0] && d.date <= viewExtent[1]);
-      const visible = isLog ? inView.filter((d) => d.value > 0) : inView;
-      if (isLog && visible.length < inView.length && !this._warnedNonPositive) {
-        this._warnedNonPositive = true;
-        const n = inView.length - visible.length;
-        console.warn(`RareCharts.TimeSeries: ${n} value${n === 1 ? "" : "s"} \u2264 0 skipped on the log scale`);
-      }
-      this._visible = visible;
-      if (!visible.length) {
+      const gaps = this._gapMode();
+      const { series: inView, skipped } = filterLogSeries(this._drawnSeries(viewExtent), viewExtent, () => isLog, () => gaps !== "join");
+      this._warnLogSkips(skipped, "TimeSeries");
+      if (!inView.length) {
         this._renderEmpty();
         return;
       }
+      const shown = inView.filter((s) => this._isShown(String(s.key)));
+      const scaleSet = this._legendRescale() && shown.length ? shown : inView;
+      const values = scaleSet.flatMap((s) => s.type === "band" ? s.values.flatMap((d) => isGap(d) ? [] : [{ value: d.lower }, { value: d.upper }]) : s.values);
+      const main = shown.find((s) => s.role === "main");
       const yTicks = this.options.yTicks ?? 5;
-      this.xScale = time().domain(viewExtent).range([0, W]);
+      const zone = this._zone();
+      this.xScale = timeKit(zone).scale().domain(viewExtent).range([0, W]);
       let yTickValues = this.options.yTickValues ?? null;
       if (isLog) {
-        let [lo, hi] = logPaddedDomain(min(visible, (d) => d.value), max(visible, (d) => d.value));
+        let [lo, hi] = logPaddedDomain(min(values, (d) => d.value), max(values, (d) => d.value));
         yTickValues = yTickValues ? yTickValues.filter((v) => v > 0) : null;
         if (yTickValues?.length) {
           lo = Math.min(lo, min(yTickValues));
@@ -14552,8 +17671,8 @@ var RareCharts = (() => {
         }
         this.yScale = log2().domain([lo, hi]).range([H, 0]);
       } else {
-        let yMin = min(visible, (d) => d.value) * 0.99;
-        let yMax = max(visible, (d) => d.value) * 1.01;
+        let yMin = min(values, (d) => d.value) * 0.99;
+        let yMax = max(values, (d) => d.value) * 1.01;
         if (yTickValues?.length) {
           yMin = Math.min(yMin, min(yTickValues));
           yMax = Math.max(yMax, max(yTickValues));
@@ -14565,21 +17684,15 @@ var RareCharts = (() => {
       } else {
         this.gGrid.selectAll("*").remove();
       }
-      const curveName = this.options.curve ?? "monotone";
-      const curveMap = {
-        linear: linear_default,
-        monotone: monotoneX,
-        basis: basis_default2,
-        cardinal: cardinal_default,
-        step: step_default,
-        stepBefore,
-        stepAfter
-      };
-      const curve = curveMap[curveName] ?? monotoneX;
-      const line = line_default2().x((d) => this.xScale(d.date)).y((d) => this.yScale(d.value)).curve(curve);
+      const curveKey = curveName(this.options.curve, "monotone");
+      const tension = this.options.curveTension ?? 0;
+      const curve = resolveCurve(curveKey, tension);
+      this._shownBand = shown.find((s) => s.role === "band") ?? null;
+      this._drawBand(this._shownBand, curve);
       const areaOpt = this.options.area;
-      if (areaOpt !== false) {
-        const area = area_default3().x((d) => this.xScale(d.date)).y0(H).y1((d) => this.yScale(d.value)).curve(curve);
+      const visible = main?.values;
+      if (areaOpt !== false && visible) {
+        const area = area_default3().defined((d) => !isGap(d)).x((d) => this.xScale(d.date)).y0(H).y1((d) => this.yScale(d.value)).curve(curve);
         const solidOpacity = typeof areaOpt === "number" ? areaOpt : null;
         const areaColor = this.options.areaColor ?? t.accent;
         if (solidOpacity !== null) {
@@ -14598,31 +17711,43 @@ var RareCharts = (() => {
       } else {
         this.gPaths.selectAll(".rc-ts-area").remove();
       }
-      this.gPaths.selectAll(".rc-ts-line").data([visible]).join("path").attr("class", "rc-ts-line").attr("d", line).attr("fill", "none").attr("stroke", t.accent).attr("stroke-width", t.strokeWidth ?? 1.5);
+      this._drawComparison(shown.find((s) => s.role === "compare"), { curveKey, tension, gaps });
+      drawLineSeries(this.gPaths, visible ? [{ name: "value", color: t.accent, values: visible }] : [], {
+        x: this.xScale,
+        yFor: () => this.yScale,
+        curve: curveKey,
+        tension,
+        dash: null,
+        width: t.strokeWidth ?? 2,
+        classes: { line: "rc-ts-line" },
+        timing: null
+      });
+      const lone = gaps !== "join" && visible ? loneRows(visible) : [];
+      this.gPaths.selectAll(".rc-ts-dot").data(lone).join("circle").attr("class", "rc-ts-dot").attr("cx", (d) => this.xScale(d.date)).attr("cy", (d) => this.yScale(d.value)).attr("r", t.dotRadius ?? 3).attr("fill", t.accent);
       if (this.options.showXAxis ?? true) {
-        const own = this.options.xTickFormat;
-        const spec = own ? null : spanTimeFormat(viewExtent);
-        const xTickFormat = own ?? spanTimeFormatter(viewExtent);
-        const xTicks = spec === "%b %d" ? dayTicks(viewExtent, 6) ?? 6 : 6;
+        const own2 = this.options.xTickFormat;
+        const spec = own2 ? null : spanTimeFormat(viewExtent);
+        const xTickFormat = own2 ?? spanTimeFormatter(viewExtent, zone);
+        const xTicks = spec === "%b %d" ? dayTicks(viewExtent, 6, zone) ?? 6 : 6;
         renderAxisX(this.gAxisX, this.xScale, H, xTickFormat, t, xTicks);
       } else {
         this.gAxisX.selectAll("*").remove();
       }
       if (this.options.showYAxis ?? true) {
-        const yTickFormat = this.options.yTickFormat ?? ((v) => "$" + format(",.0f")(v));
-        renderAxisYRight(
-          this.gAxisY,
-          this.yScale,
-          W,
-          yTicks,
-          yTickFormat,
-          this.options.yLabelsOnly ?? true,
-          t,
-          yTickValues
-        );
+        const yTickFormat = this.options.yTickFormat ?? this._tickFormat(yTickValues ?? this.yScale.ticks(yTicks), isLog);
+        renderAxisY(this.gAxisY, this.yScale, {
+          side: "right",
+          width: W,
+          ticks: yTicks,
+          tickValues: yTickValues,
+          tickFormat: yTickFormat,
+          labelsOnly: this.options.yLabelsOnly ?? true,
+          theme: t
+        });
       } else {
         this.gAxisY.selectAll("*").remove();
       }
+      if (this._fitGutters([[this.gAxisY, "right"]])) return;
       renderAnnotations(
         this.gAnnotations,
         this._annotations,
@@ -14632,9 +17757,62 @@ var RareCharts = (() => {
         this._annLabelHeight,
         t
       );
-      [this.crossX, this.crossY].forEach(
-        (l) => l.attr("stroke", t.crosshair).attr("stroke-width", 1).attr("stroke-dasharray", "3 3")
-      );
+      const points = shown.filter((s) => s.role !== "band");
+      if (!points.length) {
+        this._crosshair.unbind();
+        return;
+      }
+      const lead = points[0];
+      const colorOf = () => lead.color ?? this.theme.accent;
+      this._crosshair.bind({
+        W,
+        H,
+        x: this.xScale,
+        series: points,
+        enabled: this.options.crosshair ?? true,
+        scaleFor: () => this.yScale,
+        tooltipFmt: (d, [partner = null] = []) => this._pointTooltip(d, lead, partner, colorOf),
+        toCard: (px, py) => this._plotToCard(px, py)
+      });
+    }
+    // The band's ribbon, first in the plot (under the area and the lines), in
+    // a group of its own; no group without `band`, so a chart without it keeps
+    // its drawing. A gap in the band stops the ribbon.
+    _drawBand(band2, curve) {
+      let g = this.gPaths.select("g.rc-ts-band");
+      if (!this._bandOptions()) {
+        g.remove();
+        return;
+      }
+      const plot = this.gPaths.node();
+      if (g.empty()) g = this.gPaths.append("g").attr("class", "rc-ts-band");
+      if (plot.firstChild !== g.node()) plot.insertBefore(g.node(), plot.firstChild);
+      const ribbon = area_default3().defined((d) => !isGap(d)).x((d) => this.xScale(d.date)).y0((d) => this.yScale(d.lower)).y1((d) => this.yScale(d.upper)).curve(curve);
+      g.selectAll("path.rc-band").data(band2 ? [band2] : []).join("path").attr("class", "rc-band").attr("d", (s) => ribbon(s.values)).attr("fill", (s) => s.color).attr("opacity", (s) => s.fillOpacity ?? 0.12);
+    }
+    // The comparison's line and its lone dots, in a group of their own that
+    // sits over the area and under the main line; no group without `compare`,
+    // so a chart without it keeps its drawing.
+    _drawComparison(cmp, { curveKey, tension, gaps }) {
+      let g = this.gPaths.select("g.rc-ts-compare");
+      if (!this._compareMode()) {
+        g.remove();
+        return;
+      }
+      if (g.empty()) g = this.gPaths.append("g").attr("class", "rc-ts-compare");
+      drawLineSeries(g, cmp ? [{ name: "compare", color: cmp.color, values: cmp.values }] : [], {
+        x: this.xScale,
+        yFor: () => this.yScale,
+        curve: curveKey,
+        tension,
+        dash: COMPARE_DASH,
+        width: COMPARE_WIDTH,
+        classes: { line: "rc-ts-compare-line" },
+        timing: null
+      });
+      g.selectAll(".rc-ts-compare-dot").data(cmp && gaps !== "join" ? loneRows(cmp.values) : []).join("circle").attr("class", "rc-ts-compare-dot").attr("cx", (d) => this.xScale(d.date)).attr("cy", (d) => this.yScale(d.value)).attr("r", this.theme.dotRadius ?? 3).attr("fill", cmp?.color);
+      const above = this.gPaths.select(".rc-ts-line").node() ?? this.gPaths.select(".rc-ts-dot").node();
+      if (g.node().nextSibling !== above) this.gPaths.node().insertBefore(g.node(), above);
     }
     // ── Zoom & Pan ────────────────────────────────────────────────────────────
     // The wheel/drag zoom is measured against the full extent: after a view
@@ -14645,14 +17823,33 @@ var RareCharts = (() => {
       if (!this._zoom || !full || !view || W <= 0) return;
       const span = +full[1] - +full[0], vspan = +view[1] - +view[0];
       if (!(span > 0) || !(vspan > 0)) return;
+      const maxK = Math.max(500, span / this._minWindow());
+      if (this._zoom.scaleExtent()[1] !== maxK) this._zoom.scaleExtent([1, maxK]);
       const k = span / vspan;
       const xFull = time().domain(full).range([0, W]);
       this.svg.property("__zoom", identity4.translate(-k * xFull(view[0]), 0).scale(k));
     }
+    // The narrowest window the wheel zooms to: four steps of the finest rows
+    // (with levels, the finest level's). Worked out again only for new rows.
+    _minWindow() {
+      const finest = this._levels ? [...this._levels.values()][0] : null;
+      const rows = finest ? finest.data ?? finest.rows ?? [] : this._data;
+      if (this._minWindowFor?.rows !== rows) {
+        let step = Infinity;
+        for (let i = 1; i < rows.length; i++) {
+          const d = rows[i].date - rows[i - 1].date;
+          if (d > 0 && d < step) step = d;
+        }
+        this._minWindowFor = { rows, ms: 4 * step };
+      }
+      return this._minWindowFor.ms;
+    }
     _bindZoomPan() {
-      this._zoom = zoom_default2().scaleExtent([1, 500]).on("zoom", (event) => {
-        if (!this._data.length) return;
-        const fullExtent = extent(this._data, (d) => d.date);
+      this._zoom = zoom_default2().extent(function() {
+        return [[0, 0], [this.clientWidth || 1, this.clientHeight || 1]];
+      }).scaleExtent([1, 500]).on("zoom", (event) => {
+        const fullExtent = this._getDataExtent();
+        if (!fullExtent) return;
         const xFull = time().domain(fullExtent).range([0, this.width]);
         const newX = event.transform.rescaleX(xFull);
         const extent2 = [
@@ -14661,47 +17858,123 @@ var RareCharts = (() => {
         ];
         this.setView(extent2);
       });
-      this.svg.call(this._zoom);
-    }
-    // ── Hover / Crosshair ─────────────────────────────────────────────────────
-    _bindHover() {
-      this.overlay.on("mousemove", (event) => {
-        if (!(this.options.crosshair ?? true)) return;
-        if (!this._visible?.length) return;
-        const [mx] = pointer_default(event);
-        const W = this.width, H = this.height;
-        const date2 = this.xScale.invert(mx);
-        const bisect = bisector((d2) => d2.date).left;
-        const idx = bisect(this._visible, date2, 1);
-        const d0 = this._visible[idx - 1];
-        const d1 = this._visible[idx];
-        const d = d1 && date2 - d0.date > d1.date - date2 ? d1 : d0 || d1;
-        if (!d) return;
-        const cx = this.xScale(d.date);
-        const cy = this.yScale(d.value);
-        this.crossX.attr("x1", cx).attr("x2", cx).attr("y1", 0).attr("y2", H).style("opacity", 1);
-        this.crossY.attr("x1", 0).attr("x2", W).attr("y1", cy).attr("y2", cy).style("opacity", 1);
-        const html = this.options.tooltipFormat ? this.options.tooltipFormat(d, { date: d.date, value: d.value, color: this.theme.accent }) : this._defaultTooltip(d);
-        const svgBox = this.svg.node().getBoundingClientRect();
-        const cardBox = this.container.getBoundingClientRect();
-        const dx = svgBox.left - cardBox.left - this.container.clientLeft;
-        const dy = svgBox.top - cardBox.top - this.container.clientTop;
-        this._tooltip.show(cx + this.margin.left + dx, cy + this.margin.top + dy, html);
-      }).on("mouseleave", () => {
-        this.crossX.style("opacity", 0);
-        this.crossY.style("opacity", 0);
-        this._tooltip.hide();
+      this._zoomHint = bindZoom(this.svg, this._zoom, {
+        container: this.container,
+        theme: this.theme,
+        box: () => this._plotBox()
       });
     }
-    _defaultTooltip(d) {
-      const t = this.theme;
-      const date2 = d.date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-      return `
-      ${tipHeader(date2, { muted: true })}
-      <div class="rc-tooltip-value" style="color:${escapeHtml(t.accent)}">
-        ${typeof d.value === "number" ? "$" + format(",.2f")(d.value) : escapeHtml(d.value)}
-      </div>
-    `;
+    // ── Tooltip ───────────────────────────────────────────────────────────────
+    // The row's date in the chart's zone (T-10), named by the bucket the rows
+    // are counted in (RC-002: bucketDateText, core/utils.js) — the hour of an
+    // hourly row, the month of a monthly one; with no known bucket, the day.
+    _tooltipDate(d) {
+      return bucketDateText(d.date, this._gapInterval(), this._zone());
+    }
+    // The tooltip at the crosshair's row d of `lead` (the series it is on);
+    // `partner` is the comparison's row at that date when the main series
+    // leads. Over a gap the tooltip says so, and tooltipFormat is not asked.
+    // tooltipFormat gets the row first, as before, and the role fields
+    // second (K-09) — with `compare`, also `series` and `compare`.
+    _pointTooltip(d, lead, partner, colorOf) {
+      const mode = this._compareMode();
+      const onCompare = lead.role === "compare";
+      const compare = !mode ? null : onCompare ? this._compareInfo(d, null) : partner ? this._compareInfo(partner, d) : null;
+      const band2 = this._bandAt(d.date);
+      if (!isGap(d) && this.options.tooltipFormat) {
+        const info = { date: d.date, value: d.value, color: this._hex(colorOf()), level: this._level };
+        if (mode) Object.assign(info, { series: lead.key, compare });
+        if (this._bandOptions()) info.band = band2;
+        return this.options.tooltipFormat(d, info);
+      }
+      return this._defaultTooltip(d, lead, colorOf(), compare, band2);
+    }
+    // info.compare for a row of the comparison: its date before the shift,
+    // its value, and the change to the main row's value (none without one).
+    _compareInfo(prev, main) {
+      return {
+        date: sourceDate(prev) ?? prev.date,
+        value: prev.value,
+        change: main ? changeOf(main.value, prev.value) : null
+      };
+    }
+    // The default tooltip (RC-082): the date, small and muted, then a row per
+    // series — the one hovered (the main line, or the comparison while the
+    // main one is hidden), the comparison beside the main one, the band.
+    // `color` is the hovered series' (the main one takes the accent).
+    _defaultTooltip(d, lead, color2, compare = null, band2 = null) {
+      const onCompare = lead.role === "compare";
+      const rows = [onCompare ? this._compareRow(compare, d.date, color2) : this._seriesRow(lead.key, d.value, { swatch: "line", color: color2 })];
+      if (compare && !onCompare) {
+        rows.push(this._compareRow(compare, d.date, this.options.compareColor ?? this.theme.muted));
+      }
+      if (band2) rows.push(this._bandRow(band2));
+      return tipDate(this._tooltipDate(d)) + rows.join("");
+    }
+    // A series row: its mark, its name and its value in the chart's format;
+    // "No data" over a gap. A data colour goes in as hex; a role colour (the
+    // comparison's muted) is not written inline — the mark takes the
+    // tooltip's muted (core/html.js).
+    _seriesRow(name, value, { swatch, color: color2, note = "" }) {
+      const gap = value == null;
+      const text = gap ? "No data" : typeof value === "number" ? this._valueFormat()(value) : value;
+      return tipRow(escapeHtml(name), escapeHtml(text), {
+        swatch,
+        note,
+        muted: gap,
+        color: isRoleColor(color2) ? color2 : this._hex(color2)
+      });
+    }
+    // The comparison's row: 'Previous period  1,100', and under it its own
+    // date by the bucket (the year only when it is not the year hovered) and
+    // the change when there is one: 'Oct 18 · +12.2%'.
+    _compareRow({ date: date2, value, change }, at2, color2) {
+      const zone = this._zone();
+      const year = timeKit(zone).year;
+      const note = [bucketDateText(date2, this._gapInterval(), zone, { year: +year.floor(date2) !== +year.floor(at2) })];
+      if (change != null) note.push(changeText(change));
+      return this._seriesRow(this._compareName(), value, {
+        swatch: "dashed",
+        color: color2,
+        note: tipNum(note.map(escapeHtml).join(" \xB7 "))
+      });
+    }
+    // The band's row (RC-051): 'Range  90 – 110', in the chart's value format.
+    _bandRow({ lower: lower2, upper }) {
+      const f = this._valueFormat();
+      const b = this._bandOptions();
+      return tipRow(escapeHtml(b.name), `${escapeHtml(f(lower2))} \u2013 ${escapeHtml(f(upper))}`, {
+        swatch: "band",
+        color: this._hex(b.color ?? this.theme.accent)
+      });
+    }
+    // ── Value labels (RC-005) ─────────────────────────────────────────────────
+    // 'currency' (the default) or 'number'; any other value is 'currency',
+    // with a one-time warning.
+    _yFormat() {
+      const f = this.options.yFormat;
+      if (f === "number") return "number";
+      if (f != null && f !== "currency") this._warnOnce("yFormat", `yFormat "${f}" is not 'currency' or 'number' \u2014 currency labels are drawn`);
+      return "currency";
+    }
+    // The default labels dressed in yPrefix / ySuffix: the prefix is '$' under
+    // 'currency' and nothing under 'number', unless the page sets one.
+    _dressValue(format2) {
+      const prefix = this.options.yPrefix ?? (this._yFormat() === "number" ? "" : "$");
+      const suffix = this.options.ySuffix ?? "";
+      return (v) => `${prefix}${format2(v)}${suffix}`;
+    }
+    // The Y tick labels: currency to the unit (',.0f'), or counts as Line
+    // labels them — by the step between the ticks drawn (compactTickFormat),
+    // round powers on a log scale.
+    _tickFormat(tickValues, isLog) {
+      if (this._yFormat() !== "number") return this._dressValue(format(",.0f"));
+      return this._dressValue(isLog ? format(".3~s") : compactTickFormat(tickValues));
+    }
+    // The tooltip's value: currency to the cent, or the exact count with
+    // separators (§2.2: 1,234).
+    _valueFormat() {
+      return this._dressValue(format(this._yFormat() === "number" ? ",.2~f" : ",.2f"));
     }
   };
 
@@ -14740,28 +18013,39 @@ var RareCharts = (() => {
     const [d0, d1] = scale.domain();
     return range(count + 1).map((i) => d0 + (d1 - d0) * (i / count));
   }
+  var stackOffsetShareOf = (field) => (series, order) => {
+    if (!series.length) return;
+    for (let j = 0; j < series[0].length; j++) {
+      const whole = series[0][j].data[field];
+      if (whole) series.forEach((s) => {
+        s[j][1] /= whole;
+      });
+    }
+    none_default(series, order);
+  };
   var GUTTER_MIN = 65;
   var GUTTER_PAD = 9;
   var GUTTER_SHARE = 0.4;
+  var barValueText = format(",.2~f");
   var Bar = class extends Chart {
     constructor(selector, options = {}) {
       const { margin: _margin, ...restOptions } = options;
       const horizontal = options.orientation === "horizontal";
       const yGutter = options.showYAxis !== false;
       const xGutter = options.showXAxis !== false;
-      const annotations = normalizeAnnotations(options.annotations);
-      const annLabelHeight = options.annotationLabelHeight ?? 22;
-      const annTopReserve = annotations.length && !horizontal ? annLabelHeight + 4 : 0;
+      const ann = annotationRoom(options, !horizontal);
       super(selector, {
         height: 200,
         margin: {
-          top: options.margin?.top ?? Math.max(12, annTopReserve),
-          right: options.margin?.right ?? (!horizontal && yGutter ? 65 : 0),
+          top: options.margin?.top ?? Math.max(12, ann.top),
+          // the value axis gutter: 64px, as Line's (K-10; it was 65)
+          right: options.margin?.right ?? (!horizontal && yGutter ? 64 : 0),
           left: options.margin?.left ?? (horizontal && yGutter ? 65 : 0),
           bottom: options.margin?.bottom ?? (xGutter ? horizontal ? 16 : 8 : 0)
         },
         ...restOptions
       });
+      this._pageMargin = options.margin ?? {};
       this._data = [];
       this._isTimeSeries = false;
       this._isStacked = false;
@@ -14772,11 +18056,11 @@ var RareCharts = (() => {
       this._autoGutter = horizontal && yGutter && options.margin?.left == null;
       this._builtMargin = this.options.margin;
       this._labelRoom = null;
-      this._annotations = annotations;
-      this._annLabelHeight = annLabelHeight;
+      this._annotations = ann.annotations;
+      this._annLabelHeight = ann.labelHeight;
       this._warnedAnnotations = false;
       this._warnedHorizontalDates = false;
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this.tooltip;
       this._initSVG();
     }
     setData(data) {
@@ -14787,7 +18071,7 @@ var RareCharts = (() => {
       this._isTimeSeries = isTimeSeries;
       this._data = isTimeSeries ? data.map((d) => ({
         ...d,
-        date: parseDate(d.date),
+        date: parseDate(d.date, this._zone()),
         value: +d.value,
         label: d.label ?? ""
       })).filter((d) => d.date && Number.isFinite(d.value)).sort(byDate) : (Array.isArray(data) ? data : []).filter((d) => d && typeof d === "object").map((d) => {
@@ -14803,7 +18087,7 @@ var RareCharts = (() => {
     _hasDateAxis() {
       return this._isTimeSeries && this.options.orientation !== "horizontal";
     }
-    _getDataExtent() {
+    _dataExtent() {
       return this._hasDateAxis() && this._data.length ? extent(this._data, (d) => d.date) : null;
     }
     _getNavigatorData() {
@@ -14813,7 +18097,7 @@ var RareCharts = (() => {
     // before it knows its data. A mode without a date axis (categorical,
     // stacked, horizontal) hides them, so no inert buttons or empty strip are
     // left on the card; dated vertical bars show them again. (Bar has no
-    // Lin/Log switch, so the range row holds only the timeframes.) A header
+    // Log toggle, so the range row holds only the timeframes.) A header
     // with nothing else in it — no title, subtitle or legend — goes with it.
     _showTimeControls(on) {
       const row = this._rangeRowEl;
@@ -14825,11 +18109,7 @@ var RareCharts = (() => {
       this._syncNavigator();
     }
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
-      const { left: left2, top: top2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this._createPlot();
       this.gGrid = this.g.append("g");
       this.gBars = this.g.append("g");
       this.gAnnotations = this.g.append("g").attr("class", "rc-annotations").attr("pointer-events", "none");
@@ -14846,13 +18126,18 @@ var RareCharts = (() => {
       return d.color || this.options.barColor || this.theme.accent;
     }
     // The role fields of a bar (K-09): formatters get the row first, as
-    // before, and these second.
+    // before, and these second; the colour as hex (core/paint.js).
     _barRole(d) {
-      const color2 = this._barColor(d);
+      const color2 = this._hex(this._barColor(d));
       return this._isTimeSeries ? { date: d.date, value: d.value, color: color2 } : { label: d.label, value: d.value, color: color2 };
     }
+    // The default (RC-082): a bar's dot in its colour, its label and its
+    // value; on dates, the date above the row.
     _tooltipHtml(d) {
-      return this.options.tooltipFormat ? this.options.tooltipFormat(d, this._barRole(d)) : `${tipHeader(escapeHtml(d.label || timeFormat("%b %d, %Y")(d.date)))}<div>${format(",")(d.value)}</div>`;
+      if (this.options.tooltipFormat) return this.options.tooltipFormat(d, this._barRole(d));
+      const opts = { swatch: "dot", color: this._hex(this._barColor(d)) };
+      const value = escapeHtml(format(",")(d.value));
+      return d.label ? tipRow(escapeHtml(d.label), value, opts) : tipDate(escapeHtml(timeKit(this._zone()).format("%b %d, %Y")(d.date))) + tipRow("", value, opts);
     }
     _dataLayers() {
       return [this.gGrid, this.gBars, this.gAnnotations, this.gAxisX, this.gAxisY];
@@ -14870,6 +18155,7 @@ var RareCharts = (() => {
       if (this._isStacked) {
         this._showTimeControls(false);
         this._renderStacked();
+        if (this.options.orientation !== "horizontal") this._fitGutters([[this.gAxisY, "right"]]);
         return;
       }
       if (!this._data.length) {
@@ -14887,7 +18173,7 @@ var RareCharts = (() => {
       if (W <= 0 || H <= 0) return;
       const t = this.theme;
       const animate = this.options.animate ?? true;
-      const duration = motionDuration(this.options.duration ?? 500);
+      const duration = motionDuration(this.options.duration ?? ENTRY_DURATION);
       const stagger = this.options.stagger ?? 0;
       const ease = resolveEase(this.options.ease ?? "cubicOut");
       const barFill = (d) => this._barColor(d);
@@ -14911,9 +18197,15 @@ var RareCharts = (() => {
         this._syncTimeframeButtons(fullExtent, viewExtent);
         this._syncNavigator();
         this._renderTimeSeries({ data: visible, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent });
+        this._fitGutters([[this.gAxisY, "right"]]);
         return;
       }
-      horizontal ? this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) : this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+      if (horizontal) {
+        this._renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+      } else {
+        this._renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut });
+        this._fitGutters([[this.gAxisY, "right"]]);
+      }
     }
     // ─── Horizontal ───────────────────────────────────────────────────────────
     _renderHorizontal({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
@@ -14924,14 +18216,12 @@ var RareCharts = (() => {
       const by = (d) => y2(d.label) + (y2.bandwidth() - bh) / 2;
       const maxVal = max(this._data, (d) => d.value) ?? 0;
       const minVal = min(this._data, (d) => d.value) ?? 0;
-      const x2 = linear3().domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)]).range([0, W]);
+      const x2 = linear3().domain(barValueDomain(minVal, maxVal, { tickValues: this.options.xTickValues })).range([0, W]);
       const showValues = this.options.showValues ?? false;
       const valueOffset = this.options.valueOffset ?? 6;
       const valueInsideGap = this.options.valueInsideGap ?? 42;
-      const valueFormat = this.options.valueFormat ?? ((d) => format(",.0f")(d.value));
+      const valueFormat = this.options.valueFormat ?? ((d) => barValueText(d.value));
       const showGrid = this.options.showGrid ?? true;
-      const showXAxis = this.options.showXAxis ?? true;
-      const showYAxis = this.options.showYAxis ?? true;
       const labelW = /* @__PURE__ */ new Map();
       let thick = true;
       if (showValues) {
@@ -14940,7 +18230,7 @@ var RareCharts = (() => {
         this._data.filter((d) => !d.missing).forEach((d) => {
           const text = valueFormat(d, this._barRole(d));
           probe.text(text);
-          labelW.set(d.label, probe.node().getComputedTextLength?.() || text.length * 7);
+          labelW.set(d.label, textWidth(probe.node(), 7, text));
           labelH = Math.max(labelH, probe.node().getBBox?.().height || 14);
         });
         probe.remove();
@@ -14970,11 +18260,7 @@ var RareCharts = (() => {
       const xTickVals = this.options.xTickValues ?? x2.ticks(this.options.xTicks ?? 4);
       const xTickFormat = this.options.xTickFormat ?? compactTickFormat(xTickVals);
       if (showGrid) {
-        this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x2).ticks(this.options.xTicks ?? 4).tickSize(-H).tickFormat("")).call((g) => {
-          g.selectAll("line").attr("stroke", t.grid);
-          g.select(".domain").remove();
-          g.selectAll("text").remove();
-        });
+        renderGridX(this.gGrid, x2, H, this.options.xTicks ?? 4, t, this.options.xTickValues ?? null);
       } else {
         this.gGrid.selectAll("*").remove();
       }
@@ -15009,28 +18295,8 @@ var RareCharts = (() => {
       } else {
         this.gBars.selectAll(".rc-bar-value").remove();
       }
-      if (showYAxis) {
-        this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(y2).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").remove();
-          this._fitCategoryLabels(g);
-          this._bindLabelTooltips(g, "left");
-        });
-      } else {
-        this.gAxisX.selectAll("*").remove();
-      }
-      if (showXAxis) {
-        this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x2).tickValues(xTickVals).tickFormat(xTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
-          const ticks2 = g.selectAll(".tick text");
-          const n = ticks2.size();
-          ticks2.attr("text-anchor", (d, i) => i === 0 ? "start" : i === n - 1 ? "end" : "middle");
-        });
-      } else {
-        this.gAxisY.selectAll("*").remove();
-      }
+      this._renderCategoryAxis(y2, "left", H);
+      this._renderValueAxisX(x2, H, xTickVals, xTickFormat);
     }
     // ─── Vertical ─────────────────────────────────────────────────────────────
     _renderVertical({ W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut }) {
@@ -15042,22 +18308,23 @@ var RareCharts = (() => {
       const maxVal = max(this._data, (d) => d.value) ?? 0;
       const minVal = min(this._data, (d) => d.value) ?? 0;
       const yTicks = this.options.yTicks ?? 4;
-      const y2 = linear3().domain([Math.min(0, minVal * 1.1), Math.max(0, maxVal * 1.1)]).nice(yTicks).range([H, 0]);
+      const yTickValues = this.options.yTickValues ?? null;
+      const y2 = linear3().domain(barValueDomain(minVal, maxVal, { tickValues: yTickValues })).range([H, 0]);
+      const drawn = this._data.filter((d) => !d.missing);
+      const values = this._valueLabels(drawn);
+      if (values) this._roomForValues(y2, drawn, values);
       const zeroY = y2(0);
-      const resolvedYTickValues = this.options.yTickValues ?? y2.ticks(yTicks);
+      const resolvedYTickValues = yTickValues ?? linearTickValues(...y2.domain(), yTicks);
       const prefix = this.options.yPrefix ?? "";
       const suffix = this.options.ySuffix ?? "";
       const yTickBase = compactTickFormat(resolvedYTickValues);
       const yTickFormat = this.options.yTickFormat ?? ((d) => `${prefix}${yTickBase(d)}${suffix}`);
       const showGrid = this.options.showGrid ?? true;
-      const showXAxis = this.options.showXAxis ?? true;
-      const showYAxis = this.options.showYAxis ?? true;
       if (showGrid) {
         renderGrid(this.gGrid, y2, W, yTicks, t, resolvedYTickValues);
       } else {
         this.gGrid.selectAll("*").remove();
       }
-      const drawn = this._data.filter((d) => !d.missing);
       const phase = this._entry.phase(animate ? duration + Math.max(0, drawn.length - 1) * stagger : 0);
       const grow = phase !== "none";
       const bars = this.gBars.selectAll(".rc-bar").data(drawn, (d) => d.label).join(
@@ -15067,24 +18334,16 @@ var RareCharts = (() => {
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("x", bx).attr("width", bw).attr("fill", barFill);
       this._entryMove(bars, phase, { duration, stagger, ease }, (sel) => sel.attr("y", (d) => y2(Math.max(0, d.value))).attr("height", (d) => Math.abs(y2(d.value) - zeroY)));
-      if (showXAxis) {
-        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(x2).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").attr("stroke", t.border);
-          this._bindLabelTooltips(g, "bottom");
-        });
-      } else {
-        this.gAxisX.selectAll("*").remove();
-      }
-      if (showYAxis) {
-        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y2).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
-        });
-      } else {
-        this.gAxisY.selectAll("*").remove();
-      }
+      this._drawVerticalValues(
+        drawn,
+        values,
+        (d) => x2(d.label) + x2.bandwidth() / 2,
+        (d) => d.label,
+        y2,
+        { W, barSpan: (d) => [bx(d), bx(d) + bw], phase, grow, duration, stagger, ease }
+      );
+      this._renderCategoryAxis(x2, "bottom", H);
+      this._renderValueAxisY(y2, W, yTicks, resolvedYTickValues, yTickFormat);
     }
     _renderTimeSeries({ data, W, H, t, animate, duration, stagger, ease, barFill, onBarOver, onBarOut, viewExtent }) {
       this.gAxisX.classed("rc-axis", true).classed("rc-axis-cat", false);
@@ -15095,24 +18354,27 @@ var RareCharts = (() => {
       const widthAt = (L) => fixed !== void 0 ? Math.max(0, Math.min(fixed, slotAt(L))) : Math.max(2, Math.min(48, slotAt(L) * ratio));
       const inset = barInset(W - 2 * xPad, widthAt);
       const barW = widthAt(W - 2 * xPad - 2 * inset);
-      const x2 = time().domain(viewExtent).range([xPad + inset, W - xPad - inset]);
+      const zone = this._zone();
+      const x2 = timeKit(zone).scale().domain(viewExtent).range([xPad + inset, W - xPad - inset]);
       const minValue = min(data, (d) => d.value) ?? 0;
       const maxValue = max(data, (d) => d.value) ?? 0;
       const yTicks = this.options.yTicks ?? 4;
-      const y2 = linear3().domain([Math.min(0, minValue), Math.max(0, maxValue)]).nice(yTicks).range([H, 0]);
-      const resolvedYTickValues = this.options.yTickValues ?? y2.ticks(yTicks);
+      const yTickValues = this.options.yTickValues ?? null;
+      const y2 = linear3().domain(barValueDomain(minValue, maxValue, { tickValues: yTickValues })).range([H, 0]);
+      const values = this._valueLabels(data);
+      if (values) this._roomForValues(y2, data, values);
+      const resolvedYTickValues = yTickValues ?? linearTickValues(...y2.domain(), yTicks);
       const prefix = this.options.yPrefix ?? "";
       const suffix = this.options.ySuffix ?? "";
       const yTickBase = compactTickFormat(resolvedYTickValues);
       const yTickFormat = this.options.yTickFormat ?? ((d) => `${prefix}${yTickBase(d)}${suffix}`);
-      const xTickFormat = this.options.xTickFormat ?? spanTimeFormatter(viewExtent);
+      const xTickFormat = this.options.xTickFormat ?? spanTimeFormatter(viewExtent, zone);
       let xTicks = this.options.xTicks ?? 6;
       if (!this.options.xTickFormat && typeof xTicks === "number" && spanTimeFormat(viewExtent) === "%b %d") {
-        xTicks = dayTicks(viewExtent, xTicks) ?? xTicks;
+        xTicks = dayTicks(viewExtent, xTicks, zone) ?? xTicks;
       }
       const showGrid = this.options.showGrid ?? true;
       const showXAxis = this.options.showXAxis ?? true;
-      const showYAxis = this.options.showYAxis ?? true;
       if (showGrid) {
         renderGrid(this.gGrid, y2, W, yTicks, t, resolvedYTickValues);
       } else {
@@ -15128,21 +18390,99 @@ var RareCharts = (() => {
       ).on("mouseover", onBarOver).on("mouseout", onBarOut);
       bars.attr("x", (d) => x2(d.date) - barW / 2).attr("width", barW).attr("fill", barFill);
       this._entryMove(bars, phase, { duration, stagger, ease }, (sel) => sel.attr("y", (d) => y2(Math.max(0, d.value))).attr("height", (d) => Math.abs(y2(d.value) - zeroY)));
+      this._drawVerticalValues(
+        data,
+        values,
+        (d) => x2(d.date),
+        (d) => +d.date,
+        y2,
+        { W, barSpan: (d) => [x2(d.date) - barW / 2, x2(d.date) + barW / 2], phase, grow, duration, stagger, ease }
+      );
       if (showXAxis) {
         renderAxisX(this.gAxisX, x2, H, xTickFormat, t, xTicks);
       } else {
         this.gAxisX.selectAll("*").remove();
       }
-      if (showYAxis) {
-        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y2).tickValues(resolvedYTickValues).tickFormat(yTickFormat)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
-        });
-      } else {
-        this.gAxisY.selectAll("*").remove();
-      }
+      this._renderValueAxisY(y2, W, yTicks, resolvedYTickValues, yTickFormat);
       renderAnnotations(this.gAnnotations, this._annotations, x2, () => y2, H, this._annLabelHeight, t, [xPad, W - xPad]);
+    }
+    // ─── Value labels on vertical bars ─────────────────────────────────────────
+    // showValues on a vertical mode: each drawn bar's label text and width,
+    // and the height of the line, measured on a probe in the labels' own class
+    // (0 before layout: estimated from the numeric font). null when off.
+    _valueLabels(drawn) {
+      if (!(this.options.showValues ?? false)) return null;
+      const format2 = this.options.valueFormat ?? ((d) => barValueText(d.value));
+      const probe = this.gBars.append("text").attr("class", "rc-bar-value");
+      const text = /* @__PURE__ */ new Map(), width = /* @__PURE__ */ new Map();
+      let height = 0;
+      drawn.forEach((d) => {
+        const s = format2(d, this._barRole(d));
+        probe.text(s);
+        text.set(d, s);
+        width.set(d, textWidth(probe.node(), 7, s));
+        height = Math.max(height, probe.node().getBBox?.().height || 14);
+      });
+      probe.remove();
+      return { text, width, height, offset: this.options.valueOffset ?? 6 };
+    }
+    // Room for the labels past the bar ends: the value domain grows until a
+    // label above the tallest bar, and below the deepest negative one, fits
+    // inside the plot. The ticks are picked afterwards, inside the new domain.
+    _roomForValues(y2, drawn, { height, offset }) {
+      const need = height + offset;
+      const [H] = y2.range();
+      for (let pass = 0; pass < 3; pass++) {
+        let top2 = 0, bottom2 = 0;
+        drawn.forEach((d) => {
+          const end = y2(d.value);
+          if (d.value < 0) bottom2 = Math.max(bottom2, end + need - H);
+          else top2 = Math.max(top2, need - end);
+        });
+        if (top2 < 0.5 && bottom2 < 0.5) return;
+        const ys = y2.copy().range([H - bottom2, top2]);
+        y2.domain([ys.invert(H), ys.invert(0)]);
+      }
+    }
+    // The labels: centred on the bar — moved in just enough to stay inside the
+    // plot at its edges — above a positive one (or zero), below a negative
+    // one, in the text colour. Where they would collide, the larger values
+    // win: labels are placed from the largest |value| down, and one that would
+    // come closer than 6px side by side (2px above or below) to a label
+    // already placed, or overprint another bar, is left out — the peaks keep
+    // theirs on a narrow card; the tooltip keeps every value. They fade in at
+    // their place with the bars (the entry timeline).
+    _drawVerticalValues(drawn, values, cx, key, y2, { W, barSpan, phase, grow, duration, stagger, ease }) {
+      if (!values) {
+        this.gBars.selectAll(".rc-bar-value").remove();
+        return;
+      }
+      const { text, width, height, offset } = values;
+      const zero3 = y2(0);
+      const at2 = (d) => {
+        const half = width.get(d) / 2;
+        return Math.max(Math.min(cx(d), W - half), half);
+      };
+      const ly = (d) => d.value < 0 ? y2(d.value) + offset : y2(d.value) - offset;
+      const box = (d) => {
+        const half = width.get(d) / 2, top2 = d.value < 0 ? ly(d) : ly(d) - height;
+        return { x0: at2(d) - half, x1: at2(d) + half, y0: top2, y1: top2 + height };
+      };
+      const bars = drawn.map((d) => {
+        const [x06, x12] = barSpan(d);
+        return { d, x0: x06, x1: x12, y0: Math.min(y2(d.value), zero3), y1: Math.max(y2(d.value), zero3) };
+      });
+      const hits = (a, b, gx, gy) => a.x0 < b.x1 + gx && b.x0 < a.x1 + gx && a.y0 < b.y1 + gy && b.y0 < a.y1 + gy;
+      const placed = [];
+      [...drawn].sort((a, b) => Math.abs(b.value) - Math.abs(a.value)).forEach((d) => {
+        const b = box(d);
+        if (placed.some((p) => hits(b, p.box, 6, 2))) return;
+        if (bars.some((r) => r.d !== d && hits(b, r, 0, 0))) return;
+        placed.push({ d, box: b });
+      });
+      const keep = new Set(placed.map((p) => p.d));
+      const sel = this.gBars.selectAll(".rc-bar-value").data(drawn.filter((d) => keep.has(d)), key).join((enter) => enter.append("text").attr("class", "rc-bar-value").attr("opacity", grow ? 0 : 1)).attr("x", at2).attr("y", ly).attr("dy", (d) => d.value < 0 ? "0.71em" : null).attr("text-anchor", "middle").attr("fill", this.theme.text).text((d) => text.get(d));
+      this._entryMove(sel, phase, { duration, stagger, ease }, (s) => s.attr("opacity", 1));
     }
     // ─── Stacked (multi-series composition)─────────────────────────────────────
     _setStackedData(data) {
@@ -15166,46 +18506,85 @@ var RareCharts = (() => {
       return this;
     }
     // A stacked series' colour: its own, then the palette, then the accent.
+    // By its place in the data, so hiding a series recolours none.
     _seriesColor(i) {
       const palette = this.theme.colors ?? [];
       return this._series[i].color ?? palette[i % palette.length] ?? this.theme.accent;
     }
-    // Auto-build a legend from the series names unless the caller passed their own.
+    // A stacked series' name — in its tooltip and legend item, and as a
+    // string its key in the legend and the hidden set: `name`, else 'Series N'.
+    _seriesName(i) {
+      return this._series[i].name || `Series ${i + 1}`;
+    }
+    // The series the legend toggles: the stacked ones, in data order. The
+    // categorical and date modes draw one series and list none, so a legend
+    // there stays a caption.
+    _legendSeries() {
+      if (!this._isStacked) return [];
+      return this._series.map((_, i) => ({ key: this._seriesName(i), color: this._seriesColor(i) }));
+    }
+    // Shows only the stacked series named (null: all) and redraws; no
+    // onLegendToggle (the base's _setVisibleKeys). Chain it after setData.
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
+    // Auto-build a legend from the series names unless the caller passed their
+    // own. Its items name their series (`series`), so they are toggles. The
+    // header is built once, when the chart has no legend element yet: later
+    // the render's legend sync updates the items in place, so the element —
+    // and the focus in it — survive a new setData.
     _ensureStackedLegend() {
       if (!this._hasUserLegend) {
         this.options.legend = this._series.map((s, i) => ({
-          label: s.name || `Series ${i + 1}`,
+          label: this._seriesName(i),
+          series: this._seriesName(i),
           type: "bar",
           color: this._seriesColor(i)
         }));
       }
-      this._renderHeader();
+      if (!this._legendEl) this._renderHeader();
     }
+    // The stack rows, one per category. A hidden series counts 0 in its row,
+    // so its segments drop out and those above close up; its key — the series
+    // index — stays, so colours and segment keys do not move. `_total` sums
+    // the shown series, `_totalAll` every one.
+    //
+    // The base (legendRescale): what is shown — the value axis runs to the
+    // tallest shown stack, a 'percent' bar is the shares of its shown total —
+    // or, with legendRescale: false or nothing drawn, the whole: the axis
+    // keeps every series, a 'percent' bar is shares of the whole row (its top
+    // stays empty). `baseField` names the row field of that base, the
+    // segments' `total`.
     _computeStack() {
       const keys = this._series.map((_, i) => String(i));
+      const shown = this._series.map((_, i) => this._isShown(String(this._seriesName(i))));
       const rows = this._categories.map((cat) => {
-        const row = { label: cat, _total: 0 };
+        const row = { label: cat, _total: 0, _totalAll: 0 };
         this._series.forEach((s, i) => {
           const hit = s.values.find((v) => v.label === cat);
           const val = hit && Number.isFinite(hit.value) && hit.value > 0 ? hit.value : 0;
-          row[String(i)] = val;
-          row._total += val;
+          row[String(i)] = shown[i] ? val : 0;
+          if (shown[i]) row._total += val;
+          row._totalAll += val;
         });
         return row;
       });
       const percent = this.options.stacked === "percent";
+      const shownMax = max(rows, (r) => r._total) || 0;
+      const whole = !this._legendRescale() || !(shownMax > 0);
       const gen = stack_default().keys(keys);
-      if (percent) gen.offset(expand_default);
-      return { layers: gen(rows), maxTotal: percent ? 1 : max(rows, (r) => r._total) || 0, percent };
+      if (percent) gen.offset(whole ? stackOffsetShareOf("_totalAll") : expand_default);
+      const maxTotal = percent ? 1 : whole ? max(rows, (r) => r._totalAll) || 0 : shownMax;
+      return { layers: gen(rows), maxTotal, percent, baseField: whole ? "_totalAll" : "_total" };
     }
-    _stackSegments(layers) {
+    _stackSegments(layers, baseField) {
       const segs = [];
       layers.forEach((layer, i) => {
         layer.forEach((d, j) => {
           const value = d.data[String(i)];
           if (!(value > 0)) return;
-          const name = this._series[i].name || `Series ${i + 1}`;
-          const total = d.data._total;
+          const name = this._seriesName(i);
+          const total = d.data[baseField];
           segs.push({
             i,
             name,
@@ -15216,7 +18595,8 @@ var RareCharts = (() => {
             total,
             label: this._categories[j],
             series: name,
-            color: this._seriesColor(i),
+            color: this._hex(this._seriesColor(i)),
+            // the payload's colour: hex
             percent: total > 0 ? value / total : 0
           });
         });
@@ -15227,9 +18607,11 @@ var RareCharts = (() => {
       if (this.options.tooltipFormat) return this.options.tooltipFormat(seg);
       const valFmt = this.options.valueFormat ?? ((d) => format(",")(d.value));
       const pct = seg.total > 0 ? seg.value / seg.total : 0;
-      return `${tipHeader(escapeHtml(seg.cat))}
-      <div>${escapeHtml(seg.name)}: ${escapeHtml(valFmt(seg))}</div>
-      ${tipMuted(format(".1%")(pct))}`;
+      return tipHeader(escapeHtml(seg.cat), { muted: true }) + tipRow(escapeHtml(seg.name), escapeHtml(valFmt(seg)), {
+        swatch: "dot",
+        color: seg.color,
+        note: tipNum(format(".1%")(pct))
+      });
     }
     _renderStacked() {
       this.gAxisX.classed("rc-axis-cat", true).classed("rc-axis", false);
@@ -15244,15 +18626,13 @@ var RareCharts = (() => {
       this._skipAnnotations("stacked");
       const t = this.theme;
       const colorFor = (i) => this._seriesColor(i);
-      const { layers, maxTotal, percent } = this._computeStack();
-      const segs = this._stackSegments(layers);
-      const duration = motionDuration(this.options.duration ?? 500);
+      const { layers, maxTotal, percent, baseField } = this._computeStack();
+      const segs = this._stackSegments(layers, baseField);
+      const duration = motionDuration(this.options.duration ?? ENTRY_DURATION);
       const ease = resolveEase(this.options.ease ?? "cubicOut");
       const phase = this._entry.phase(this.options.animate ?? true ? duration : 0);
       const segEnter = (enter) => enter.append("rect").attr("opacity", phase !== "none" ? 0 : 1);
       const showGrid = this.options.showGrid ?? true;
-      const showXAxis = this.options.showXAxis ?? true;
-      const showYAxis = this.options.showYAxis ?? true;
       const onOver = (event, d) => {
         select_default2(event.currentTarget).attr("opacity", 0.8);
         const [mx, my] = pointer_default(event, this.container);
@@ -15271,38 +18651,14 @@ var RareCharts = (() => {
         const x2 = linear3().domain([0, maxTotal || 1]).nice(xTicks).range([0, W]);
         const xTickValues = this.options.xTickValues ?? stackTickValues(x2, xTicks);
         if (showGrid) {
-          this.gGrid.attr("transform", `translate(0,${H})`).call(axisBottom(x2).tickValues(xTickValues).tickSize(-H).tickFormat("")).call((g) => {
-            g.selectAll("line").attr("stroke", t.grid);
-            g.select(".domain").remove();
-            g.selectAll("text").remove();
-          });
+          renderGridX(this.gGrid, x2, H, xTicks, t, xTickValues);
         } else {
           this.gGrid.selectAll("*").remove();
         }
         const rects2 = this.gBars.selectAll(".rc-bar-seg").data(segs, (d) => d.cat + SEG_SEP + d.i).join(segEnter).attr("class", "rc-bar-seg").attr("y", cpos).attr("height", cw).attr("x", (d) => x2(d.v0)).attr("width", (d) => Math.max(0, x2(d.v1) - x2(d.v0))).attr("fill", (d) => colorFor(d.i)).on("mouseover", onOver).on("mouseout", onOut);
         this._entryMove(rects2, phase, { duration, stagger: 0, ease }, (sel) => sel.attr("opacity", 1));
-        if (showYAxis) {
-          this.gAxisX.attr("transform", "translate(0,0)").call(axisLeft(cat).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-            g.selectAll("text").attr("fill", t.muted);
-            g.select(".domain").remove();
-            this._fitCategoryLabels(g);
-            this._bindLabelTooltips(g, "left");
-          });
-        } else {
-          this.gAxisX.selectAll("*").remove();
-        }
-        if (showXAxis) {
-          this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x2).tickValues(xTickValues).tickFormat(this.options.xTickFormat ?? valFmtFor(xTickValues))).call((g) => {
-            g.selectAll("text").attr("fill", t.muted);
-            g.select(".domain").remove();
-            g.selectAll("line").remove();
-            const ticks2 = g.selectAll(".tick text");
-            const n = ticks2.size();
-            ticks2.attr("text-anchor", (d, i) => i === 0 ? "start" : i === n - 1 ? "end" : "middle");
-          });
-        } else {
-          this.gAxisY.selectAll("*").remove();
-        }
+        this._renderCategoryAxis(cat, "left", H);
+        this._renderValueAxisX(x2, H, xTickValues, this.options.xTickFormat ?? valFmtFor(xTickValues));
         return;
       }
       const yTicks = this.options.yTicks ?? 4;
@@ -15315,28 +18671,12 @@ var RareCharts = (() => {
       }
       const rects = this.gBars.selectAll(".rc-bar-seg").data(segs, (d) => d.cat + SEG_SEP + d.i).join(segEnter).attr("class", "rc-bar-seg").attr("x", cpos).attr("width", cw).attr("y", (d) => y2(d.v1)).attr("height", (d) => Math.max(0, y2(d.v0) - y2(d.v1))).attr("fill", (d) => colorFor(d.i)).on("mouseover", onOver).on("mouseout", onOut);
       this._entryMove(rects, phase, { duration, stagger: 0, ease }, (sel) => sel.attr("opacity", 1));
-      if (showXAxis) {
-        this.gAxisX.attr("transform", `translate(0,${H})`).call(axisBottom(cat).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").attr("stroke", t.border);
-          this._bindLabelTooltips(g, "bottom");
-        });
-      } else {
-        this.gAxisX.selectAll("*").remove();
-      }
+      this._renderCategoryAxis(cat, "bottom", H);
       const prefix = this.options.yPrefix ?? "";
       const suffix = this.options.ySuffix ?? "";
       const yBase = valFmtFor(yTickValues);
       const yFmt = this.options.yTickFormat ?? (percent ? yBase : ((d) => `${prefix}${yBase(d)}${suffix}`));
-      if (showYAxis) {
-        this.gAxisY.attr("transform", `translate(${W},0)`).call(axisRight(y2).tickValues(yTickValues).tickFormat(yFmt)).call((g) => {
-          g.selectAll("text").attr("fill", t.muted);
-          g.select(".domain").remove();
-          g.selectAll("line").remove();
-        });
-      } else {
-        this.gAxisY.selectAll("*").remove();
-      }
+      this._renderValueAxisY(y2, W, yTicks, yTickValues, yFmt);
     }
     // Bars, segments and value labels move on the chart's entry timeline
     // (C-16): once per instance, mark i from i·stagger ms after the first
@@ -15358,6 +18698,71 @@ var RareCharts = (() => {
       });
       apply(settled);
       apply(moving);
+    }
+    // ─── Axes ──────────────────────────────────────────────────────────────────
+    // gAxisX holds the category axis (the time axis in the date mode), gAxisY
+    // the value axis; the orientation decides where each one sits. showXAxis
+    // shows the axis at the bottom, showYAxis the one at the side. A hidden
+    // axis is emptied.
+    _showsAxis(side) {
+      return side === "bottom" ? this.options.showXAxis ?? true : this.options.showYAxis ?? true;
+    }
+    // The category axis: band labels cut to labelMaxLength, the full label in
+    // a tooltip, and no axis line in either orientation, as on Line, DualAxes
+    // and TimeSeries (maintainer, 2026-11-18): with negative values the bars
+    // start at zero, not at the plot's edge, and the line read as a stray
+    // rule under them. Vertical bars put it at the bottom and show every
+    // second (third…) label when neighbours would sit closer than 8px, as the
+    // time axis does (thinBandLabels); horizontal ones on the left, labels
+    // fitted to the gutter.
+    _renderCategoryAxis(scale, side, H) {
+      if (!this._showsAxis(side)) {
+        this.gAxisX.selectAll("*").remove();
+        return;
+      }
+      const left2 = side === "left";
+      this.gAxisX.attr("transform", left2 ? "translate(0,0)" : `translate(0,${H})`).call((left2 ? axisLeft : axisBottom)(scale).tickSize(0).tickFormat((d) => this._formatLabel(d))).call((g) => {
+        g.selectAll("text").attr("fill", this.theme.muted);
+        g.select(".domain").remove();
+        if (left2) this._fitCategoryLabels(g);
+        else thinBandLabels(g, scale);
+        this._bindLabelTooltips(g, side);
+      });
+    }
+    // The value axis of the vertical modes, on the right: the shared Y axis
+    // of Line, DualAxes and TimeSeries, labels 8px out (until 0.9.8_7 Bar's
+    // sat 9px out, d3's default tick plus padding; aligned by the maintainer,
+    // 2026-11-17).
+    _renderValueAxisY(y2, W, ticks2, tickValues, tickFormat2) {
+      if (!this._showsAxis("right")) {
+        this.gAxisY.selectAll("*").remove();
+        return;
+      }
+      renderAxisY(this.gAxisY, y2, {
+        side: "right",
+        width: W,
+        ticks: ticks2,
+        tickValues,
+        tickFormat: tickFormat2,
+        theme: this.theme
+      });
+    }
+    // The value axis of the horizontal modes, at the bottom. It can run flush
+    // with the card's edge (margin.left / right = 0), where a centred first or
+    // last label is half cut off: the end labels anchor inward.
+    _renderValueAxisX(x2, H, tickValues, tickFormat2) {
+      if (!this._showsAxis("bottom")) {
+        this.gAxisY.selectAll("*").remove();
+        return;
+      }
+      this.gAxisY.attr("transform", `translate(0,${H})`).call(axisBottom(x2).tickValues(tickValues).tickFormat(tickFormat2)).call((g) => {
+        g.selectAll("text").attr("fill", this.theme.muted);
+        g.select(".domain").remove();
+        g.selectAll("line").remove();
+        const labels = g.selectAll(".tick text");
+        const n = labels.size();
+        labels.attr("text-anchor", (d, i) => i === 0 ? "start" : i === n - 1 ? "end" : "middle").attr("dx", (d, i) => n > 1 && i === n - 1 ? -1 : null);
+      });
     }
     // ─── Category gutter (horizontal) ──────────────────────────────────────────
     // C-39: the left gutter of horizontal bars was a fixed 65px, so a long
@@ -15531,7 +18936,7 @@ var RareCharts = (() => {
       });
       this._tree = null;
       this._entry = new EntryMotion();
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this.tooltip;
       this._initSVG();
     }
     setData(input) {
@@ -15545,8 +18950,7 @@ var RareCharts = (() => {
       return this;
     }
     _initSVG() {
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").style("display", "block");
-      applySvgA11y(this.svg, this.options);
+      this._createSvg({ size: "width", style: { display: "block" } });
       this.g = this.svg.append("g");
       this.gRows = this.g.append("g");
     }
@@ -15587,13 +18991,18 @@ var RareCharts = (() => {
       return rows;
     }
     // info: the row's role fields (K-09) — the node stays the first argument.
-    _tooltipHtml(node, info) {
+    // `color`: the row's own, before hex — a role colour (the root's muted)
+    // gives the dot the tooltip's muted (core/html.js).
+    _tooltipHtml(node, info, color2 = info.color) {
       if (this.options.tooltipFormat) return this.options.tooltipFormat(node, info);
       const valueFmt = this.options.valueFormat ?? ((n) => format(",")(n.value));
       const pct = info.percent;
-      const value = node.missing ? tipMuted("not disclosed", "span") : escapeHtml(valueFmt(node, info));
-      const pctLine = node.missing || pct == null ? "" : tipMuted(format(".1%")(pct));
-      return `${tipHeader(escapeHtml(node.label))}<div>${value}</div>${pctLine}`;
+      return tipRow(escapeHtml(node.label), node.missing ? "not disclosed" : escapeHtml(valueFmt(node, info)), {
+        swatch: "dot",
+        color: color2,
+        muted: !!node.missing,
+        note: node.missing || pct == null ? "" : tipNum(format(".1%")(pct))
+      });
     }
     render() {
       const rows = this._tree ? this._flatten() : [];
@@ -15603,6 +19012,7 @@ var RareCharts = (() => {
       }
       const W = this.width;
       if (W <= 0) return;
+      this._hex.many(rows.map((r) => r.color));
       const t = this.theme;
       const side = W >= SIDE_MIN_WIDTH;
       const rowHeight = this.options.rowHeight ?? (side ? 28 : 44);
@@ -15611,13 +19021,16 @@ var RareCharts = (() => {
       const probe = this.gRows.append("text").attr("class", "rc-hbar-value").text("0");
       const fontPx = parseFloat(typeof getComputedStyle !== "undefined" && getComputedStyle(probe.node()).fontSize || "") || 14;
       probe.remove();
-      const barHeight = this.options.barHeight ?? Math.round(fontPx + 2);
+      if (this.options.barHeight != null) {
+        this._warnOnce("barHeight", "barHeight was removed in 0.9.8_7 \u2014 use barWidth (the name Bar and DualAxes use)");
+      }
+      const barHeight = this.options.barWidth ?? Math.round(fontPx + 2);
       const labelY = 14;
       const barGap = 6;
       const showValues = this.options.showValues ?? true;
       const valueFmt = this.options.valueFormat ?? ((n) => format(",")(n.value));
       const glyph = this.options.missingGlyph ?? "?";
-      const duration = motionDuration(this.options.duration ?? 500);
+      const duration = motionDuration(this.options.duration ?? ENTRY_DURATION);
       const ease = resolveEase(this.options.ease ?? "cubicOut");
       const phase = this._entry.phase(this.options.animate ?? true ? duration : 0);
       const lineH = Math.round(fontPx * 1.2);
@@ -15625,7 +19038,7 @@ var RareCharts = (() => {
       const maxDepth2 = this.options.maxDepth ?? Infinity;
       const meter = this.gRows.append("text");
       const measure = (text, cls, bold) => {
-        meter.attr("class", cls).attr("font-weight", bold ? 600 : null).text(text);
+        meter.attr("class", cls).attr("font-weight", bold ? 700 : null).text(text);
         const n = meter.node();
         const len = n.getComputedTextLength ? n.getComputedTextLength() : 0;
         return len > 0 || !text ? len : text.length * fontPx * (bold ? 0.6 : 0.56);
@@ -15660,7 +19073,7 @@ var RareCharts = (() => {
         r.info = {
           label: r.node.label,
           value: r.node.value,
-          color: r.color,
+          color: this._hex(r.color),
           percent: typeof r.node.value === "number" && total > 0 ? r.node.value / total : null
         };
       });
@@ -15715,8 +19128,9 @@ var RareCharts = (() => {
       );
       sel.each((r, i, nodes) => {
         const g = select_default2(nodes[i]);
-        const weight = r.parent ? 600 : null;
-        g.select(".rc-hbar-label").attr("x", r.labelX).attr("y", r.labelY).attr("text-anchor", flush ? "end" : null).attr("font-weight", weight).attr("fill", r.node.isRemainder ? t.muted : t.text).selectAll("tspan").data(r.lines).join("tspan").attr("x", r.labelX).attr("dy", (d, k) => k ? lineH : side ? "0.35em" : 0).text((d, k) => k < r.lines.length - 1 ? `${d} ` : d);
+        const weight = r.parent ? 700 : null;
+        const parts = r.lines.flatMap((d, k) => k ? [{ gap: true }, { d, k }] : [{ d, k }]);
+        g.select(".rc-hbar-label").attr("x", r.labelX).attr("y", r.labelY).attr("text-anchor", flush ? "end" : null).attr("font-weight", weight).attr("fill", r.node.isRemainder ? t.muted : t.text).selectAll("tspan").data(parts).join("tspan").attr("x", (p) => p.gap ? null : r.labelX).attr("dy", (p) => p.gap ? null : p.k ? lineH : side ? "0.35em" : 0).attr("display", (p) => p.gap ? "none" : null).text((p) => p.gap ? " " : p.d);
         g.select(".rc-hbar-bar").attr("x", r.barX).attr("y", r.barY).attr("height", barHeight).attr("rx", 2).attr("fill", r.color).attr("opacity", r.opacity).attr("display", r.node.missing ? "none" : null);
         const vsel = g.select(".rc-hbar-value").attr("y", r.barY + barHeight / 2).attr("dy", "0.35em").attr("font-weight", r.node.missing ? null : weight);
         if (r.node.missing) {
@@ -15732,7 +19146,7 @@ var RareCharts = (() => {
         }
         const move = (event) => {
           const [mx, my] = pointer_default(event, this.container);
-          this._tooltip.show(mx, my, this._tooltipHtml(r.node, r.info));
+          this._tooltip.show(mx, my, this._tooltipHtml(r.node, r.info, r.color));
         };
         g.style("cursor", "default").on("mouseenter", (event) => {
           g.select(".rc-hbar-bar").attr("opacity", Math.min(1, r.opacity + 0.2));
@@ -15761,9 +19175,7 @@ var RareCharts = (() => {
   var DualAxes = class extends Chart {
     constructor(selector, options = {}) {
       const hasAxisTitles = !!(options.y1Title || options.y2Title);
-      const annotations = normalizeAnnotations(options.annotations);
-      const annLabelHeight = options.annotationLabelHeight ?? 22;
-      const annTopReserve = annotations.length ? annLabelHeight + 4 : 0;
+      const ann = annotationRoom(options);
       const { margin: _margin, ...restOptions } = options;
       const y1Gutter = options.showY1Axis !== false || !!options.y1Title;
       const y2Gutter = options.showY2Axis !== false || !!options.y2Title;
@@ -15771,19 +19183,19 @@ var RareCharts = (() => {
       super(selector, {
         height: 280,
         margin: {
-          top: options.margin?.top ?? Math.max(hasAxisTitles ? 30 : 10, annTopReserve),
+          top: options.margin?.top ?? Math.max(hasAxisTitles ? 30 : 10, ann.top),
           right: options.margin?.right ?? (y1Gutter || endGutter ? 64 : 0),
           bottom: options.margin?.bottom ?? (options.showXAxis === false ? 0 : 18),
           left: options.margin?.left ?? (y2Gutter ? 64 : 0)
         },
         ...restOptions
       });
+      this._pageMargin = options.margin ?? {};
       this._series = [];
       this._entry = new EntryMotion();
-      this._annotations = annotations;
-      this._annLabelHeight = annLabelHeight;
-      const tooltip = new Tooltip(this.container, this.theme);
-      this._initSVG(tooltip);
+      this._annotations = ann.annotations;
+      this._annLabelHeight = ann.labelHeight;
+      this._initSVG(this.tooltip);
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
     setData(series) {
@@ -15792,6 +19204,17 @@ var RareCharts = (() => {
       this._refreshViewForData();
       this.render();
       return this;
+    }
+    // Show only the series named (series.name; a string or a list) and hide
+    // the others in the data; null shows them all. Redraws, silently (no
+    // onLegendToggle). A hidden series stays hidden across setData.
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
+    // The legend's series (the base Chart's hook): every series in the data,
+    // by name, in data order, with its colour.
+    _legendSeries() {
+      return this._series.map((s) => ({ key: s.name, color: s.color }));
     }
     // Switch an axis between 'linear' and 'log' and redraw. `axis`: 'y1', 'y2'
     // or 'both' (default). Fires onScaleChange unless { silent: true }.
@@ -15816,12 +19239,12 @@ var RareCharts = (() => {
       const log3 = (a) => this.options[`${a}Scale`] === "log";
       return axis2 === "y1" || axis2 === "y2" ? log3(axis2) : log3("y1") || log3("y2");
     }
-    _getDataExtent() {
+    _dataExtent() {
       const all = this._series.flatMap((s) => s.values);
       return all.length ? extent(all, (d) => d.date) : null;
     }
     _getNavigatorData() {
-      const preferred = this._series.find((s) => s.type === "line") ?? this._series[0];
+      const preferred = this._series.find((s) => s.type === "line") ?? this._series.find((s) => s.type !== "band");
       return preferred?.values?.length ? preferred.values : null;
     }
     // One normaliser with Line (C-03): every per-series style field reaches
@@ -15832,18 +19255,15 @@ var RareCharts = (() => {
         if (s == null || typeof s !== "object") return null;
         return normalizeLineSeries(s, idx, {
           color: colors[idx % (colors.length || 1)] ?? this.theme.accent,
-          type: s.type === "bar" ? "bar" : "line",
-          axis: s.axis === "y2" ? "y2" : "y1"
+          type: s.type === "bar" || s.type === "band" ? s.type : "line",
+          axis: s.axis === "y2" ? "y2" : "y1",
+          timeZone: this._zone()
         });
       }).filter((s) => s?.values.length);
     }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG(tooltip) {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
-      const { left: left2, top: top2 } = this.margin;
-      this.g = this.svg.append("g").attr("transform", `translate(${left2},${top2})`);
+      this._createPlot();
       this.gGrid = this.g.append("g").attr("class", "rc-grid");
       this.gBars = this.g.append("g").attr("class", "rc-bars");
       this.gLines = this.g.append("g").attr("class", "rc-lines");
@@ -15859,9 +19279,7 @@ var RareCharts = (() => {
       this._clipRect = this.svg.append("defs").append("clipPath").attr("id", this._clipId).append("rect");
       this.gBars.attr("clip-path", `url(#${this._clipId})`);
       this.gLines.attr("clip-path", `url(#${this._clipId})`);
-      const gCross = this.g.append("g").attr("class", "rc-crosshair");
-      const overlay = this.g.append("rect").attr("class", "rc-overlay").attr("fill", "transparent").style("pointer-events", "all");
-      this._crosshair = new Crosshair(gCross, overlay, tooltip, this.theme);
+      this._crosshair = Crosshair.attach(this.g, tooltip, this.theme);
     }
     // ─── Bars ─────────────────────────────────────────────────────────────────
     // Bar widths per visible bar series for a scale L px long (B-07): an
@@ -15869,13 +19287,16 @@ var RareCharts = (() => {
     // ratio share as before. The space per date (the smallest gap between bar
     // dates) caps explicit widths: an overlapping bar is never wider than it,
     // a cluster is narrowed proportionally to fit it.
-    _barLayout(bars, viewExtent, allValues) {
+    // `inView`: the bar series in view, hidden ones included (default: `bars`)
+    // — the space per date comes from them, so a bar series the legend hides
+    // re-packs a cluster without widening the others past the X inset (C-27).
+    _barLayout(bars, viewExtent, allValues, inView = bars) {
       const o = this.options;
       const ratio = o.barWidthRatio ?? 0.65;
       const cluster = (o.barGrouping ?? "overlap") === "cluster";
       const msOf = (values) => Array.from(new Set(values.map((d) => +d.date))).sort((a, b) => a - b);
       const gapAt = timeSlot(
-        msOf(bars.flatMap((s) => s.values)),
+        msOf(inView.flatMap((s) => s.values)),
         viewExtent,
         timeSlot(msOf(allValues), viewExtent, null)
       );
@@ -15884,7 +19305,9 @@ var RareCharts = (() => {
       const fixed = bars.map((s) => readBarWidth(s.barWidth) ?? readBarWidth(o.barWidth));
       const anyFixed = fixed.some((w) => w !== void 0);
       const widths = (L) => {
-        const share = Math.max(4, Math.max(6, slotAt(L)) * ratio) / (cluster ? bars.length : 1);
+        const slot = slotAt(L);
+        const wide = Math.max(4, Math.max(6, slot) * ratio);
+        const share = (gapAt ? Math.min(wide, Math.max(0, slot)) : wide) / (cluster ? bars.length : 1);
         let ws = fixed.map((w) => w ?? share);
         if (anyFixed) {
           const cap = Math.max(0, capAt(L));
@@ -15934,25 +19357,38 @@ var RareCharts = (() => {
       }
     }
     // ─── Lines ────────────────────────────────────────────────────────────────
+    // Areas, then lines, each on its own axis — the drawing Line has; solid
+    // lines draw in on the entry timeline, dashed ones show at once.
     _renderLines({ lines, x: x2, y1: y12, y2, defaultCurve, tension, globalDash, phase, duration, ease }) {
-      const globalArea = this.options.area ?? false;
-      const globalAreaOp = this.options.areaOpacity ?? 0.12;
-      const globalAreaBase = this.options.areaBaseline ?? "zero";
-      const yFor = (s) => s.axis === "y2" ? y2 : y12;
-      const areaSeries = lines.filter((s) => (s.area ?? globalArea) === true);
-      this.gLines.selectAll(".rc-dual-area").data(areaSeries, (s) => s.name).join("path").attr("class", "rc-dual-area").attr("d", (s) => areaPath(s, x2, yFor(s), defaultCurve, globalAreaBase, tension)).attr("fill", (s) => s.color).attr("opacity", (s) => s.areaOpacity ?? globalAreaOp);
-      const paths = this.gLines.selectAll(".rc-dual-line").data(lines, (s) => s.name).join("path").attr("class", "rc-dual-line").attr("fill", "none").attr("stroke", (s) => s.color).attr("stroke-width", (s) => s.strokeWidth ?? this.theme.strokeWidth ?? 2).attr("stroke-dasharray", (s) => resolveStrokeDash(s.strokeDash ?? globalDash)).attr("d", (s) => linePath(s, x2, yFor(s), defaultCurve, tension));
-      const dashOf = (s) => resolveStrokeDash(s.strokeDash ?? globalDash);
-      paths.filter((s) => dashOf(s)).interrupt().attr("stroke-dasharray", dashOf).attr("stroke-dashoffset", null);
-      drawLinesIn(
-        paths.filter((s) => !dashOf(s)),
-        phase === "none" ? null : this._entry.timing(0, duration, ease)
-      );
+      const o = this.options;
+      drawLineSeries(this.gLines, lines, {
+        x: x2,
+        yFor: (s) => s.axis === "y2" ? y2 : y12,
+        curve: defaultCurve,
+        tension,
+        area: o.area ?? false,
+        areaOpacity: o.areaOpacity ?? 0.12,
+        areaBaseline: o.areaBaseline ?? "zero",
+        dash: globalDash,
+        width: this.theme.strokeWidth ?? 2,
+        classes: { area: "rc-dual-area", line: "rc-dual-line" },
+        timing: phase === "none" ? null : this._entry.timing(0, duration, ease)
+      });
     }
     // ─── Render ───────────────────────────────────────────────────────────────
+    // The bands (RC-051) in a group of their own under the bars, made with the
+    // first band, so a chart without one keeps its drawing; clipped as the
+    // bars and the lines are. Drawn as Line draws its bands.
+    _renderBands(bands, { x: x2, y1: y12, y2, defaultCurve, tension }) {
+      if (!bands.length && !this.gBands) return;
+      this.gBands ??= this.g.insert("g", () => this.gBars.node()).attr("class", "rc-bands").attr("clip-path", `url(#${this._clipId})`);
+      const areaOp = this.options.areaOpacity ?? 0.12;
+      this.gBands.selectAll(".rc-band").data(bands, (s) => s.name).join("path").attr("class", "rc-band").attr("d", (s) => bandPath(s, x2, s.axis === "y2" ? y2 : y12, defaultCurve, tension)).attr("fill", (s) => s.color).attr("opacity", (s) => s.fillOpacity ?? areaOp);
+    }
     _dataLayers() {
       return [
         this.gGrid,
+        this.gBands,
         this.gBars,
         this.gLines,
         this.gAxisX,
@@ -15977,61 +19413,69 @@ var RareCharts = (() => {
       const fullExtent = this._getDataExtent();
       const viewExtent = this._resolveViewExtent(fullExtent);
       const logOn = { y1: o.y1Scale === "log", y2: o.y2Scale === "log" };
-      let skipped = 0;
-      const visibleSeries = this._series.map((s) => ({ ...s, values: s.values.filter((d) => {
-        if (d.date < viewExtent[0] || d.date > viewExtent[1]) return false;
-        if (logOn[s.axis] && !(d.value > 0)) {
-          skipped++;
-          return false;
-        }
-        return true;
-      }) })).filter((s) => s.values.length);
-      if (skipped && !this._warnedNonPositive) {
-        this._warnedNonPositive = true;
-        console.warn(`RareCharts.DualAxes: ${skipped} value${skipped === 1 ? "" : "s"} \u2264 0 skipped on the log axis`);
-      }
-      if (!visibleSeries.length) {
+      const { series: inView, skipped } = filterLogSeries(this._series, viewExtent, (s) => logOn[s.axis]);
+      this._warnLogSkips(skipped, "DualAxes", "axis");
+      if (!inView.length) {
         this._renderEmpty();
         return;
       }
+      const shown = inView.filter((s) => this._isShown(String(s.name)));
       this._syncTimeframeButtons(fullExtent, viewExtent);
       this._syncNavigator();
-      const duration = motionDuration(o.duration ?? 650);
+      const duration = motionDuration(o.duration ?? ENTRY_DURATION);
       const phase = this._entry.phase(o.animate ?? true ? duration : 0);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const defaultCurve = o.curve ?? "linear";
       const tension = o.curveTension ?? 0;
       const xPad = o.xPad ?? 8;
-      const lines = visibleSeries.filter((s) => s.type === "line");
-      const bars = visibleSeries.filter((s) => s.type === "bar");
-      const allValues = visibleSeries.flatMap((s) => s.values);
-      const allY1 = visibleSeries.filter((s) => s.axis === "y1").flatMap((s) => s.values);
-      const allY2 = visibleSeries.filter((s) => s.axis === "y2").flatMap((s) => s.values);
+      const lines = shown.filter((s) => s.type === "line");
+      const bars = shown.filter((s) => s.type === "bar");
+      const barsInView = inView.filter((s) => s.type === "bar");
+      const allValues = inView.filter((s) => s.type !== "band").flatMap((s) => s.values);
+      const valuesOf = (s) => s.type === "band" ? s.values.flatMap((d) => [{ value: d.lower }, { value: d.upper }]) : s.values;
+      const axisValues = (axis2) => {
+        const on = (list) => list.filter((s) => s.axis === axis2).flatMap(valuesOf);
+        const own2 = this._legendRescale() ? on(shown) : [];
+        return own2.length ? own2 : on(inView);
+      };
+      const allY1 = axisValues("y1");
+      const allY2 = axisValues("y2");
       this._clipRect.attr("x", xPad).attr("y", 0).attr("width", W - 2 * xPad).attr("height", H);
-      const barLayout = bars.length ? this._barLayout(bars, viewExtent, allValues) : null;
-      const inset = barLayout ? barInset(W - 2 * xPad, barLayout.extent) : 0;
-      const x2 = time().domain(viewExtent).range([xPad + inset, W - xPad - inset]);
-      const axisScale = (axis2, own, other) => {
-        const values = (own.length ? own : other).map((d) => d.value);
+      const barLayout = bars.length ? this._barLayout(bars, viewExtent, allValues, barsInView) : null;
+      const insetLayout = bars.length === barsInView.length ? barLayout : this._barLayout(barsInView, viewExtent, allValues);
+      const inset = insetLayout ? barInset(W - 2 * xPad, insetLayout.extent) : 0;
+      const tz = timeKit(this._zone());
+      const x2 = tz.scale().domain(viewExtent).range([xPad + inset, W - xPad - inset]);
+      const axisScale = (axis2, own2, other) => {
+        const values = (own2.length ? own2 : other).map((d) => d.value);
         const domain = o[`${axis2}Domain`];
+        const count = o[`${axis2}Ticks`] ?? 4;
         if (!logOn[axis2]) {
-          const scale = Array.isArray(domain) ? linear3().domain(domain) : linear3().domain(extent(values)).nice(o[`${axis2}Ticks`] ?? 4);
-          return { scale: scale.range([H, 0]), tickValues: null };
+          if (Array.isArray(domain)) return { scale: linear3().domain(domain).range([H, 0]), tickValues: null };
+          const [min4, max4] = extent(values);
+          if (min4 == null) return { scale: linear3().domain([0, 1]).range([H, 0]), tickValues: null };
+          const pad3 = (max4 - min4) * 0.08 || 1;
+          const [lo2, hi2] = [min4 - pad3, max4 + pad3];
+          return { scale: linear3().domain([lo2, hi2]).range([H, 0]), tickValues: linearTickValues(lo2, hi2, count) };
         }
         const positive = values.filter((v) => v > 0);
         const [lo, hi] = Array.isArray(domain) && domain[0] > 0 && domain[1] > domain[0] ? domain : positive.length ? logPaddedDomain(min(positive), max(positive)) : [1, 10];
         return {
           scale: log2().domain([lo, hi]).range([H, 0]),
-          tickValues: logTickValues(lo, hi, o[`${axis2}Ticks`] ?? 4)
+          tickValues: logTickValues(lo, hi, count)
         };
       };
       const { scale: y12, tickValues: y1TickValues } = axisScale("y1", allY1, allY2);
       const { scale: y2, tickValues: y2TickValues } = axisScale("y2", allY2, allY1);
       const logFormat = format(".3~s");
-      const xTickFormat = o.xTickFormat ?? ((d) => timeFormat("%m/%d")(d));
-      const xTicks = o.xTickFormat ? 6 : dayTicks(viewExtent, 6) ?? 6;
-      const y1TickFormat = o.y1TickFormat ?? (logOn.y1 ? logFormat : (v) => format(",.2f")(v));
-      const y2TickFormat = o.y2TickFormat ?? (logOn.y2 ? logFormat : (v) => Math.abs(v) < 1e-6 ? "0" : format("+.2f")(v));
+      const xSpec = o.xTickFormat ? null : spanTimeFormat(viewExtent);
+      const xTickFormat = o.xTickFormat ?? spanTimeFormatter(viewExtent, tz.zone);
+      const xTicks = xSpec === "%b %d" ? dayTicks(viewExtent, 6, tz.zone) ?? 6 : 6;
+      const tickFormatOf = (axis2, scale, tickValues) => o[`${axis2}TickFormat`] ?? (logOn[axis2] ? logFormat : compactTickFormat(tickValues ?? scale.ticks(o[`${axis2}Ticks`] ?? 4)));
+      const y1TickFormat = tickFormatOf("y1", y12, y1TickValues);
+      const y2TickFormat = tickFormatOf("y2", y2, y2TickValues);
+      const y1ValueFormat = o.y1TickFormat ?? compactValue;
+      const y2ValueFormat = o.y2TickFormat ?? compactValue;
       if (o.showGrid ?? true) {
         renderGrid(this.gGrid, y2, W, o.y2Ticks ?? 4, t, y2TickValues);
       } else {
@@ -16044,12 +19488,27 @@ var RareCharts = (() => {
         this.gAxisX.selectAll("*").remove();
       }
       if (o.showY1Axis ?? true) {
-        renderAxisYRight(this.gAxisY1, y12, W, o.y1Ticks ?? 4, y1TickFormat, o.y1LabelsOnly ?? true, t, y1TickValues);
+        renderAxisY(this.gAxisY1, y12, {
+          side: "right",
+          width: W,
+          ticks: o.y1Ticks ?? 4,
+          tickValues: y1TickValues,
+          tickFormat: y1TickFormat,
+          labelsOnly: o.y1LabelsOnly ?? true,
+          theme: t
+        });
       } else {
         this.gAxisY1.selectAll("*").remove();
       }
       if (o.showY2Axis ?? true) {
-        renderAxisYLeft(this.gAxisY2, y2, o.y2Ticks ?? 4, y2TickFormat, o.y2LabelsOnly ?? true, t, y2TickValues);
+        renderAxisY(this.gAxisY2, y2, {
+          side: "left",
+          ticks: o.y2Ticks ?? 4,
+          tickValues: y2TickValues,
+          tickFormat: y2TickFormat,
+          labelsOnly: o.y2LabelsOnly ?? true,
+          theme: t
+        });
       } else {
         this.gAxisY2.selectAll("*").remove();
       }
@@ -16061,6 +19520,7 @@ var RareCharts = (() => {
         y2Avail: this.margin.left + padL - 8,
         maxLength: o.axisTitleMaxLength
       });
+      this._renderBands(shown.filter((s) => s.type === "band"), { x: x2, y1: y12, y2, defaultCurve, tension });
       if (bars.length) {
         this._renderBars({
           bars,
@@ -16084,16 +19544,17 @@ var RareCharts = (() => {
       }
       if (o.endLabels ?? true) {
         const endAxis = o.endLabelsAxis ?? "y1";
-        const endSeries = visibleSeries.filter((s) => s.axis === endAxis);
+        const endSeries = shown.filter((s) => s.axis === endAxis && s.type !== "band");
         const endScale = endAxis === "y2" ? y2 : y12;
-        const endFmt = endAxis === "y2" ? y2TickFormat : y1TickFormat;
-        renderEndLabels(this.gEnds, endSeries, endScale, W, endFmt, t);
+        const endFmt = endAxis === "y2" ? y2ValueFormat : y1ValueFormat;
+        renderEndLabels(this.gEnds, endSeries, endScale, W, endFmt, t, { axis: o.showY1Axis ?? true ? this.gAxisY1 : null });
       } else {
         this.gEnds.selectAll("*").remove();
       }
+      if (this._fitGutters([[[this.gAxisY1.selectAll(".tick"), this.gEnds], "right"], [this.gAxisY2.selectAll(".tick"), "left"]])) return;
       renderMarkers(
         this.gMarkers,
-        visibleSeries,
+        shown.filter((s) => s.type !== "band"),
         x2,
         (s) => s.axis === "y2" ? y2 : y12,
         o.markers ?? false,
@@ -16115,16 +19576,28 @@ var RareCharts = (() => {
         W,
         H,
         x: x2,
-        series: visibleSeries,
+        series: shown,
         enabled: o.crosshair ?? true,
         scaleFor: (s) => s.axis === "y2" ? y2 : y12,
-        formatFor: (s, v) => s.axis === "y2" ? y2TickFormat(v) : y1TickFormat(v),
-        tooltipFmt: o.tooltipFormat
+        formatFor: (s, v) => s.axis === "y2" ? y2ValueFormat(v) : y1ValueFormat(v),
+        tooltipFmt: o.tooltipFormat,
+        timeZone: tz.zone,
+        dash: o.strokeDash ?? null
       });
     }
   };
 
   // assets/charts/src/charts/Donut.js
+  var LEADER_LINE = 14;
+  var LEADER_TICK = 12;
+  var LABEL_GAP = 3;
+  var RING_CLEAR = 16;
+  var sliceKey = (d) => String(d.id ?? d.label);
+  var sliceOf = (item, slices) => {
+    if (item.id != null) return slices.find((d) => d.id === item.id);
+    const label = item.label ?? item.name;
+    return label == null ? void 0 : slices.find((d) => d.label === label);
+  };
   var Donut = class extends Chart {
     constructor(selector, options = {}) {
       super(selector, {
@@ -16133,8 +19606,9 @@ var RareCharts = (() => {
         ...options
       });
       this._data = [];
+      this._given = [];
       this._entry = new EntryMotion();
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this.tooltip;
       this._mode = "flat";
       this._tree = null;
       this._trail = [];
@@ -16159,15 +19633,21 @@ var RareCharts = (() => {
       this._mode = "flat";
       this._tree = null;
       this._trail = [];
-      this._data = (data ?? []).filter((d) => Number.isFinite(+d.value) && +d.value > 0);
+      this._given = data ?? [];
+      this._data = this._given.filter((d) => Number.isFinite(+d.value) && +d.value > 0);
       this.render();
       return this;
     }
+    // Shows the slices named — keys as the legend's: a slice's id, else its
+    // label — and hides the others; null shows every slice. Returns the chart;
+    // chain it after setData. No onLegendToggle. Flat data only: drilled in,
+    // the ring hides nothing (the legend there is a static key).
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
+      this._createSvg();
       this.gSlices = this.svg.append("g").attr("class", "rc-donut-slices");
       this.gLabels = this.svg.append("g").attr("class", "rc-donut-labels");
       this.gCenter = this.svg.append("g").attr("class", "rc-donut-center");
@@ -16177,6 +19657,20 @@ var RareCharts = (() => {
     _focus() {
       return this._trail[this._trail.length - 1] ?? null;
     }
+    // The slices of the level shown: the flat data, or the focused node's
+    // children with a value. Current before the render too (the legend sync
+    // reads it), where this._data still holds the level drawn last.
+    _levelData() {
+      if (this._mode !== "hier") return this._data ?? [];
+      return (this._focus()?.children ?? []).filter((d) => typeof d.value === "number");
+    }
+    // A slice's colour: its own, else the palette at its place in the level,
+    // else the accent; a remainder is muted.
+    _sliceColor(d, i) {
+      const t = this.theme;
+      const palette = t.colors ?? [];
+      return d.isRemainder ? t.muted : d.color ?? palette[i % palette.length] ?? t.accent;
+    }
     _drillable(node) {
       return !!node && !node.isRemainder && Array.isArray(node.children) && node.children.some((c) => typeof c.value === "number");
     }
@@ -16185,26 +19679,42 @@ var RareCharts = (() => {
     // the shown level's children, so it draws the level a click draws (the
     // copy setData makes keeps remainders and undisclosed children; K-21).
     drillTo(target) {
+      return this._drillTo(target, null);
+    }
+    _drillTo(target, event) {
       const kids = this._focus()?.children ?? [];
       const isObj = target != null && typeof target === "object";
       const id2 = isObj ? target.id : target;
       const label = isObj ? target.label : target;
       const node = kids.find((c) => c === target || isObj && c.data === target) ?? (id2 != null ? kids.find((c) => c.data?.id != null && c.data.id === id2) : void 0) ?? kids.find((c) => c.label === label);
       if (!node || !this._drillable(node)) return this;
-      this._trail = [...this._trail, node];
-      this._entry.reset();
-      this.render();
-      return this;
+      return this._setTrail([...this._trail, node], event);
     }
     drillToDepth(index2) {
-      if (index2 < 0 || index2 >= this._trail.length - 1) return this;
-      this._trail = this._trail.slice(0, index2 + 1);
-      this._entry.reset();
-      this.render();
-      return this;
+      return this._drillToDepth(index2, null);
     }
     drillUp() {
-      return this.drillToDepth(this._trail.length - 2);
+      return this._drillToDepth(this._trail.length - 2, null);
+    }
+    // The methods report event null; the click and key handlers pass theirs.
+    _drillToDepth(index2, event) {
+      if (index2 < 0 || index2 >= this._trail.length - 1) return this;
+      return this._setTrail(this._trail.slice(0, index2 + 1), event);
+    }
+    // The one place the level shown changes: the trail, a fresh entry, the
+    // render, then onDrill — for a click, a key or a method alike, with the DOM
+    // event or null (the handlers pass theirs).
+    _setTrail(trail, event) {
+      this._trail = trail;
+      this._entry.reset();
+      this.render();
+      this._emit(this.options.onDrill, {
+        node: this._focus().data,
+        path: trail.map((n) => n.data),
+        depth: trail.length - 1,
+        event
+      });
+      return this;
     }
     // ─── Render ───────────────────────────────────────────────────────────────
     _dataLayers() {
@@ -16221,21 +19731,20 @@ var RareCharts = (() => {
           this._centerButton(null, 0);
           return;
         }
-        this._data = (focus.children ?? []).filter((d) => typeof d.value === "number");
+        this._data = this._levelData();
         missingChildren = (focus.children ?? []).filter((d) => d.missing);
       }
       if (!this._data.length) {
         this._centerButton(null, 0);
-        this._syncLegendColors([], null);
         this._renderEmpty();
         return;
       }
       const W = this.width + this.margin.left + this.margin.right;
-      const H = this.height + this.margin.top + this.margin.bottom;
+      const H = this.svg?.node()?.clientHeight || this.height + this.margin.top + this.margin.bottom;
       if (W <= 0 || H <= 0) return;
       const o = this.options;
       const t = this.theme;
-      const duration = motionDuration(o.duration ?? 650);
+      const duration = motionDuration(o.duration ?? ENTRY_DURATION);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const phase = this._entry.phase(o.animate ?? true ? duration : 0);
       const isPie = (o.innerRadius ?? 0.58) === 0;
@@ -16248,35 +19757,74 @@ var RareCharts = (() => {
       const cx = W / 2;
       const cy = inset + (H - inset) / 2;
       const labelRoom = showLabels ? 36 : 0;
-      const outerR = Math.min(cx, (H - inset) / 2) - labelRoom - 4;
-      const innerR = outerR * innerFrac;
-      const total = sum(this._data, (d) => +d.value);
+      let outerR = Math.min(cx - 4, (H - inset) / 2 - RING_CLEAR) - labelRoom;
+      const shownIdx = [];
+      this._data.forEach((d, i) => {
+        if (hier || this._isShown(sliceKey(d))) shownIdx.push(i);
+      });
+      const shownSet = new Set(shownIdx);
+      const rescale = hier || this._legendRescale();
+      const base = rescale ? shownIdx.map((i) => this._data[i]) : this._data;
+      const nothing = !shownIdx.length;
+      const total = sum(base, (d) => +d.value);
       const valueFmt = o.valueFormat ?? ((v) => format(",")(v));
       const percentFmt = o.percentFormat ?? ((p) => format(".1%")(p));
-      const palette = t.colors ?? [];
-      const colorFor = (d, i) => d.isRemainder ? t.muted : d.color ?? palette[i % palette.length] ?? t.accent;
-      const sliceRole = (d, i) => ({
+      const colorFor = (d, i) => this._sliceColor(d, i);
+      const sliceRole = (d) => ({
         label: d.data.label,
         value: d.data.value,
         percent: total > 0 ? d.data.value / total : 0,
-        color: colorFor(d.data, i)
+        color: this._hex(colorFor(d.data, d.at))
       });
-      const arc = arc_default().innerRadius(innerR).outerRadius(outerR).padAngle(padAngle).cornerRadius(cornerR);
-      const arcHover = arc_default().innerRadius(innerR).outerRadius(outerR + 6).padAngle(padAngle).cornerRadius(cornerR);
       const pie = pie_default().value((d) => +d.value).sort(null).padAngle(padAngle);
-      const arcs = pie(this._data);
+      const arcs = rescale ? pie(base).map((a, j) => Object.assign(a, { at: shownIdx[j] })) : pie(this._data).map((a, i) => Object.assign(a, { at: i })).filter((a) => shownSet.has(a.at));
       const seen = /* @__PURE__ */ new Map();
-      arcs.forEach((a) => {
-        const k = String(a.data.id ?? a.data.label);
+      const joinKeys = this._data.map((d) => {
+        const k = sliceKey(d);
         const n = seen.get(k) ?? 0;
         seen.set(k, n + 1);
-        a.key = n ? `${k}#${n}` : k;
+        return n ? `${k}#${n}` : k;
       });
+      arcs.forEach((a) => {
+        a.key = joinKeys[a.at];
+      });
+      if (showLabels && (o.labelContent ?? "both") !== "percent" && total > 0) {
+        const minPct = o.labelMinPct ?? 0.04;
+        const probe = this.gLabels.append("text").attr("class", "rc-donut-label");
+        let fit2 = outerR;
+        arcs.forEach((a) => {
+          const sin3 = Math.abs(Math.sin((a.startAngle + a.endAngle) / 2));
+          if (a.data.value / total < minPct || sin3 < 1e-6) return;
+          probe.text(a.data.label);
+          const w = probe.node().getComputedTextLength?.() || 0;
+          if (w > 0) fit2 = Math.min(fit2, (cx - LEADER_TICK - LABEL_GAP - 2 - w) / sin3 - LEADER_LINE);
+        });
+        probe.remove();
+        if (fit2 >= outerR * 0.75) outerR = fit2;
+      }
+      if (showLabels && (o.labelContent ?? "both") !== "label" && total > 0) {
+        const minPct = o.labelMinPct ?? 0.04;
+        const probe = this.gLabels.append("text").attr("class", "rc-donut-label-pct");
+        let fit2 = outerR;
+        arcs.forEach((a) => {
+          const share = a.data.value / total;
+          const sin3 = Math.abs(Math.sin((a.startAngle + a.endAngle) / 2));
+          if (share < minPct || sin3 < 1e-6) return;
+          probe.text(percentFmt(share, sliceRole(a)));
+          const w = probe.node().getComputedTextLength?.() || 0;
+          if (w > 0) fit2 = Math.min(fit2, (cx - LEADER_TICK - LABEL_GAP - 2 - w) / sin3 - LEADER_LINE);
+        });
+        probe.remove();
+        if (fit2 > 0 && fit2 < outerR) outerR = fit2;
+      }
+      const innerR = outerR * innerFrac;
+      const arc = arc_default().innerRadius(innerR).outerRadius(outerR).padAngle(padAngle).cornerRadius(cornerR);
+      const arcHover = arc_default().innerRadius(innerR).outerRadius(outerR + 6).padAngle(padAngle).cornerRadius(cornerR);
       this.gSlices.attr("transform", `translate(${cx},${cy})`);
       this.gLabels.attr("transform", `translate(${cx},${cy})`);
       this.gCenter.attr("transform", `translate(${cx},${cy})`);
       const slices = this.gSlices.selectAll(".rc-donut-slice").data(arcs, (d) => d.key).join(
-        (enter) => enter.append("path").attr("class", "rc-donut-slice").attr("fill", (d, i) => colorFor(d.data, i)).attr(
+        (enter) => enter.append("path").attr("class", "rc-donut-slice").attr("fill", (d) => colorFor(d.data, d.at)).attr(
           "d",
           phase !== "none" ? (d) => arc({ ...d, endAngle: d.startAngle }) : (d) => arc(d)
         ).property("__rcSweep", (d) => phase !== "none" ? { startAngle: d.startAngle, endAngle: d.startAngle } : null),
@@ -16289,28 +19837,34 @@ var RareCharts = (() => {
         // mouseover / mouseout start on the slice just clicked to drill in
         // (E-04). So: stop its hover and entry transitions, name the exit,
         // take no more pointer events, and let a pointer leaving it only hide
-        // the tooltip.
+        // the tooltip. A slice the legend (or setSeriesVisible) has just
+        // hidden goes at once: a sweep out that a second click would turn
+        // back reads as jitter (no new motion on a legend redraw).
         (exit) => {
           exit.interrupt().style("pointer-events", "none").on("mouseover click", null).on("mouseout", () => this._tooltip?.hide());
           if (!(o.animate ?? true)) {
             exit.remove();
             return;
           }
-          exit.transition("exit").duration(duration / 2).ease(ease).attr("d", (d) => arc({ ...d, endAngle: d.startAngle })).remove();
+          const hidden = (d) => !hier && !this._isShown(sliceKey(d.data));
+          exit.filter(hidden).remove();
+          exit.filter((d) => !hidden(d)).transition("exit").duration(duration / 2).ease(ease).attr("d", (d) => arc({ ...d, endAngle: d.startAngle })).remove();
         }
-      ).attr("fill", (d, i) => colorFor(d.data, i)).on("mouseover", (event, d) => {
+      ).attr("fill", (d) => colorFor(d.data, d.at)).on("mouseover", (event, d) => {
         select_default2(event.currentTarget).transition().duration(120).ease(quadOut).attr("d", arcHover(d));
-        const role = sliceRole(d, arcs.indexOf(d));
-        const html = o.tooltipFormat ? o.tooltipFormat(role) : `${tipHeader(escapeHtml(role.label), { color: role.color })}
-             <div>${escapeHtml(valueFmt(role.value, role))}</div>
-             ${tipMuted(escapeHtml(percentFmt(role.percent, role)))}`;
+        const role = sliceRole(d);
+        const html = o.tooltipFormat ? o.tooltipFormat(role) : tipRow(escapeHtml(role.label), escapeHtml(valueFmt(role.value, role)), {
+          swatch: "dot",
+          color: d.data.isRemainder ? this.theme.muted : role.color,
+          note: tipNum(escapeHtml(percentFmt(role.percent, role)))
+        });
         const [mx, my] = pointer_default(event, this.container);
         this._tooltip.show(mx, my, html);
       }).on("mouseout", (event, d) => {
         select_default2(event.currentTarget).transition().duration(180).ease(quadOut).attr("d", arc(d));
         this._tooltip.hide();
       }).on("click", (event, d) => {
-        if (hier && this._drillable(d.data)) this.drillTo(d.data);
+        if (hier && this._drillable(d.data)) this._drillTo(d.data, event);
       }).style("cursor", (d) => hier && this._drillable(d.data) ? "pointer" : "default");
       if (phase === "none") {
         slices.filter(function() {
@@ -16339,12 +19893,11 @@ var RareCharts = (() => {
           });
         });
       }
-      this._syncLegendColors(arcs, colorFor);
       this.gLabels.selectAll("*").remove();
       if (showLabels) {
-        const lineLen = 14;
-        const tickLen = 12;
-        const labelGap = 3;
+        const lineLen = LEADER_LINE;
+        const tickLen = LEADER_TICK;
+        const labelGap = LABEL_GAP;
         const lineH = 14;
         const labelMinPct = o.labelMinPct ?? 0.04;
         const content = o.labelContent ?? "both";
@@ -16353,14 +19906,13 @@ var RareCharts = (() => {
         const lineCount = (showName ? 1 : 0) + (showPct ? 1 : 0);
         const blockH = lineCount * lineH;
         const entries = [];
-        arcs.forEach((d, i) => {
+        arcs.forEach((d) => {
           const pct = d.data.value / total;
           if (pct < labelMinPct) return;
           const mid = (d.startAngle + d.endAngle) / 2;
           entries.push({
             d,
             pct,
-            i,
             isRight: Math.sin(mid) >= 0,
             x1: Math.sin(mid) * outerR,
             // on the outer arc edge
@@ -16398,17 +19950,17 @@ var RareCharts = (() => {
             fitTextNode(name.node(), e.d.data.label, cx - Math.abs(tx) - 2);
           }
           if (showPct) {
-            this.gLabels.append("text").attr("class", "rc-donut-label-pct").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.muted).text(percentFmt(e.pct, sliceRole(e.d, e.i)));
+            this.gLabels.append("text").attr("class", "rc-donut-label-pct").attr("x", tx).attr("y", topY + lineIdx++ * lineH).attr("text-anchor", anchor).attr("dominant-baseline", "middle").attr("fill", t.muted).text(percentFmt(e.pct, sliceRole(e.d)));
           }
         });
       }
       this.gCenter.selectAll("*").remove();
       const drilled = hier && this._trail.length > 1;
-      if (showCenter && innerR > 0) {
+      if (showCenter && innerR > 0 && !nothing) {
         const rawCenter = o.centerText;
         const centerLabel = drilled ? focus.label : o.centerLabel ?? "Total";
         const centerRole = { label: centerLabel, value: hier ? focus.value : total };
-        const centerVal = hier ? valueFmt(focus.value, centerRole) : typeof rawCenter === "function" ? rawCenter(this._data, centerRole) : rawCenter ?? valueFmt(total, centerRole);
+        const centerVal = hier ? valueFmt(focus.value, centerRole) : typeof rawCenter === "function" ? rawCenter(base, centerRole) : rawCenter ?? valueFmt(total, centerRole);
         const holeAvail = 2 * innerR - 12;
         const valueSize = Math.max(14, innerR * 0.28);
         const valueSel = this.gCenter.append("text").attr("class", "rc-donut-center-value").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("y", centerLabel ? -10 : 0).attr("fill", t.text).style("font-size", `${valueSize}px`).text(centerVal);
@@ -16433,9 +19985,8 @@ var RareCharts = (() => {
             const isLast = idx === this._trail.length - 1;
             const label = node.label.length > 22 ? node.label.slice(0, 22).trimEnd() + "\u2026" : node.label;
             const txt = this.gCrumb.append("text").attr("x", cursorX).attr("y", 14).attr("fill", isLast ? t.text : t.accent).style("cursor", isLast ? "default" : "pointer").text(label);
-            if (!isLast) txt.on("click", () => this.drillToDepth(idx));
-            const len = txt.node().getComputedTextLength ? txt.node().getComputedTextLength() : 0;
-            cursorX += (len || label.length * 7) + 8;
+            if (!isLast) txt.on("click", (event) => this._drillToDepth(idx, event));
+            cursorX += textWidth(txt.node(), 7, label) + 8;
           });
         }
         if (missingChildren.length) {
@@ -16443,29 +19994,61 @@ var RareCharts = (() => {
         }
       }
     }
-    // Legend items given as objects without a `color` take the colour of their
-    // slice: the one with the same `id` when the item has one, else the first
-    // with the same label — not the slice at the same position (K-22), so an
-    // item order that differs from the data, or a value the ring filtered out,
-    // no longer shifts the colours. An item with no slice in this ring (a level
-    // drilled away from, a zero value) goes back to the accent the legend was
-    // built with; an item with its own `color` is left alone. Dots, lines,
-    // dashed lines and bands are all repainted.
-    _syncLegendColors(arcs, colorFor) {
-      const items = this.options.legend;
-      if (!this._legendEl || !Array.isArray(items)) return;
-      const rows = [...this._legendEl.children].filter((el) => el.classList.contains("rc-legend-item"));
-      items.forEach((item, j) => {
-        const indicator = rows[j]?.firstElementChild;
-        if (!indicator || item?.color != null) return;
-        const i = item.id != null ? arcs.findIndex((a) => a.data.id === item.id) : arcs.findIndex((a) => a.data.label === (item.label ?? item.name));
-        const color2 = i >= 0 ? colorFor(arcs[i].data, i) : this.theme.accent;
-        if (indicator.classList.contains("rc-legend-line--dashed")) {
-          indicator.style.backgroundImage = `repeating-linear-gradient(90deg, ${color2} 0 5px, transparent 5px 8px)`;
-        } else {
-          indicator.style.background = color2;
-        }
+    // ─── Legend ───────────────────────────────────────────────────────────────
+    // The header legend is the base's (core/Chart.js, core/legend.js); these
+    // hooks tell it what a slice is. Flat data only: drilled in, each level
+    // shows other slices while the page's legend is one list, so it stays a
+    // static key.
+    // An item whose slice is not in the ring (drilled away from, a zero value)
+    // is grey, as a slice with no data: the accent is the first slice's colour
+    // and would read as that slice (maintainer, 2026-11-17).
+    _legendFallbackColor() {
+      return this.theme.muted;
+    }
+    // The slices the legend toggles, in data order, with their colours.
+    _legendSeries() {
+      if (this._mode === "hier") return [];
+      return this._data.map((d, i) => ({ key: sliceKey(d), color: this._sliceColor(d, i) }));
+    }
+    // An item names its slice by `series` (a slice key), else by `id` (the
+    // slice with that id), else by its label (the first slice with it) — the
+    // K-22 match, not the slice at the item's position. `series: false` is a
+    // caption.
+    _legendKeyOf(item, present) {
+      if (item == null || typeof item !== "object" || item.series === false) return null;
+      const slice2 = item.series == null ? sliceOf(item, this._levelData()) : null;
+      const key = item.series != null ? String(item.series) : slice2 ? sliceKey(slice2) : null;
+      return key != null && present.has(key) ? key : null;
+    }
+    // Drilled in: every item a label, an uncoloured one in the colour of its
+    // slice in the level shown, else grey (K-22).
+    _headerLegendItems(present) {
+      if (this._mode !== "hier" || !present) return super._headerLegendItems(present);
+      const level = /* @__PURE__ */ new Map();
+      this._levelData().forEach((d, i) => {
+        const key = sliceKey(d);
+        if (!level.has(key)) level.set(key, { key, color: this._sliceColor(d, i) });
       });
+      return super._headerLegendItems(level).map((item) => ({ ...item, key: null, on: true }));
+    }
+    // An item that names a slice the page gave with nothing to draw (a zero,
+    // negative or missing value) names a slice all the same: it stays a label
+    // in grey, without the "names no series" warning.
+    _warnUnmappedLegend(legend, items) {
+      const rows = this._mode !== "hier" && Array.isArray(this._given) ? this._given : [];
+      const given = rows.filter((d) => d != null && typeof d === "object");
+      const namesGiven = (item) => item.series != null ? given.some((d) => sliceKey(d) === String(item.series)) : !!sliceOf(item, given);
+      super._warnUnmappedLegend(legend, items.map((item, i) => {
+        const entry = legend[i];
+        const named3 = item.key == null && entry != null && typeof entry === "object" && entry.series !== false && namesGiven(entry);
+        return named3 ? { ...item, key: "" } : item;
+      }));
+    }
+    // A legend change redraws the ring under a pointer that has not moved: the
+    // slice it was on may be gone, and every percent moves. The tooltip goes
+    // (Donut pins none).
+    _unpinHidden() {
+      this._tooltip?.hide();
     }
     // Drilled in, the hole is the button back up (E-21): a transparent disc
     // under the center text takes the click anywhere in the hole — not only on
@@ -16476,10 +20059,10 @@ var RareCharts = (() => {
       if (on) {
         this.gCenter.insert("circle", ":first-child").attr("class", "rc-donut-center-hit").attr("r", innerR).attr("fill", "transparent");
       }
-      this.gCenter.style("cursor", on ? "pointer" : null).attr("tabindex", on ? 0 : null).attr("role", on ? "button" : null).attr("aria-label", on ? `Back to ${parent.label}` : null).on("click", on ? () => this.drillUp() : null).on("keydown", on ? (event) => {
+      this.gCenter.style("cursor", on ? "pointer" : null).attr("tabindex", on ? 0 : null).attr("role", on ? "button" : null).attr("aria-label", on ? `Back to ${parent.label}` : null).on("click", on ? (event) => this._drillToDepth(this._trail.length - 2, event) : null).on("keydown", on ? (event) => {
         if (event.key !== "Enter" && event.key !== " ") return;
         event.preventDefault();
-        this.drillUp();
+        this._drillToDepth(this._trail.length - 2, event);
       } : null);
     }
   };
@@ -16502,7 +20085,8 @@ var RareCharts = (() => {
       this._min = options.min ?? 0;
       this._entry = new EntryMotion();
       this._sweep = null;
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this.tooltip;
+      this.container.classList.add("rc-chart--gauge");
       this._initSVG();
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
@@ -16524,9 +20108,7 @@ var RareCharts = (() => {
     }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
+      this._createSvg();
       this.gArc = this.svg.append("g").attr("class", "rc-gauge-arc");
       this.gNeedle = this.svg.append("g").attr("class", "rc-gauge-needle");
       this.gCenter = this.svg.append("g").attr("class", "rc-gauge-center");
@@ -16542,7 +20124,7 @@ var RareCharts = (() => {
       const endAngle = o.endAngle ?? Math.PI * 0.75;
       const thickness = o.thickness ?? 0.18;
       const cornerR = o.cornerRadius ?? 6;
-      const duration = motionDuration(o.duration ?? 800);
+      const duration = motionDuration(o.duration ?? ENTRY_DURATION);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const phase = this._entry.phase(o.animate ?? true ? duration : 0);
       const trackColor = o.trackColor ?? t.grid;
@@ -16601,9 +20183,12 @@ var RareCharts = (() => {
         }
       }
       const pct = fraction;
-      const role = { value: this._value, max: this._max, min: this._min, percent: pct, color: fillColor };
-      const tooltipHtml = o.tooltipFormat ? o.tooltipFormat({ ...role }) : `<div>${format(".1%")(pct)}</div>
-         ${tipMuted(`${escapeHtml(this._value)} / ${escapeHtml(this._max)}`)}`;
+      const role = { value: this._value, max: this._max, min: this._min, percent: pct, color: this._hex(fillColor) };
+      const tooltipHtml = o.tooltipFormat ? o.tooltipFormat({ ...role }) : tipRow("", format(".1%")(pct), {
+        swatch: "dot",
+        color: role.color,
+        note: tipNum(`${escapeHtml(this._value)} / ${escapeHtml(this._max)}`)
+      });
       this.gArc.selectAll("path").on("mousemove", (event) => {
         const [mx, my] = pointer_default(event, this.container);
         this._tooltip.show(mx, my, tooltipHtml);
@@ -16623,8 +20208,7 @@ var RareCharts = (() => {
 
   // assets/charts/src/graph/layouts/flowAuto.js
   var isHinted = (n) => ["row", "col", "x", "y"].some((k) => Number.isFinite(n[k]));
-  var num = (v) => v == null || v === "" || !Number.isFinite(+v) ? null : Math.max(0, +v);
-  function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf }) {
+  function autoFlowHints({ nodes = [], links = [], laneIndex, laneOf, timeZone = "local" }) {
     const index2 = new Map(nodes.map((n, i) => [n.id, i]));
     const lane = new Map(nodes.map((n) => [n.id, laneIndex(laneOf(n))]));
     const pinned = new Set(nodes.filter(isHinted).map((n) => n.id));
@@ -16662,7 +20246,7 @@ var RareCharts = (() => {
     byLane.forEach((all, k) => {
       const ids = all.filter((id2) => !satelliteOf.has(id2));
       const inner = edges.filter((e) => lane.get(e.source) === k && lane.get(e.target) === k && !satelliteOf.has(e.source) && !satelliteOf.has(e.target));
-      const forward = inner.some((e) => parseTime(e.start) != null) ? temporalForward(ids, inner) : eadesForward(ids, inner, index2);
+      const forward = inner.some((e) => parseTime(e.start) != null) ? temporalForward(ids, inner, timeZone) : eadesForward(ids, inner, index2);
       const pinnedCol = (id2) => {
         const n = byId.get(id2);
         return Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
@@ -16739,8 +20323,8 @@ var RareCharts = (() => {
     });
     return { hints, main, cols: col };
   }
-  function temporalForward(ids, edges) {
-    const t = (e) => parseTime(e.start);
+  function temporalForward(ids, edges, timeZone) {
+    const t = (e) => parseTime(e.start, { timeZone });
     const order = edges.map((e, i) => [e, i]).sort((a, b) => {
       const ta = t(a[0]), tb = t(b[0]);
       if (ta == null || tb == null) return ta == null && tb == null ? a[1] - b[1] : ta == null ? 1 : -1;
@@ -16800,7 +20384,7 @@ var RareCharts = (() => {
         }
       }
       if (!left2.size) break;
-      const weight = (list) => list.reduce((s, e) => s + (num(e.value) ?? 0), 0);
+      const weight = (list) => list.reduce((s, e) => s + (linkValue(e) ?? 0), 0);
       const best = [...left2].sort(byInput).reduce((a, b) => {
         const da = outs(a).length - ins(a).length, db = outs(b).length - ins(b).length;
         if (db !== da) return db > da ? b : a;
@@ -16830,8 +20414,8 @@ var RareCharts = (() => {
     const ids = new Set(nodes.map((n) => n.id));
     const forward = edges.filter((e) => ids.has(e.source) && ids.has(e.target) && slot(e.source) < slot(e.target));
     if (!forward.length) return /* @__PURE__ */ new Set();
-    const total = forward.reduce((s, e) => s + (num(e.value) ?? 0), 0);
-    const w = (e) => 1 + (total ? (num(e.value) ?? 0) / (total * 2) : 0);
+    const total = forward.reduce((s, e) => s + (linkValue(e) ?? 0), 0);
+    const w = (e) => 1 + (total ? (linkValue(e) ?? 0) / (total * 2) : 0);
     const order = nodes.map((n) => n.id).sort((a, b) => slot(a) - slot(b) || index2.get(a) - index2.get(b));
     const best = new Map(order.map((id2) => [id2, 0]));
     const prev = /* @__PURE__ */ new Map();
@@ -16881,18 +20465,385 @@ var RareCharts = (() => {
     return out;
   }
 
-  // assets/charts/src/graph/legendFocus.js
-  function legendFocus(el) {
-    const active = typeof document !== "undefined" ? document.activeElement : null;
-    if (!el || !active || active === el || !el.contains(active)) return () => {
-    };
-    const key = active.dataset?.type ?? null;
-    return () => {
-      const buttons = [...el.querySelectorAll("button")].filter((b) => !b.disabled && !b.hidden);
-      const target = key != null && buttons.find((b) => b.dataset.type === key) || buttons[0];
-      target?.focus();
-    };
+  // assets/charts/src/graph/chrome.js
+  var GRAPH_LEGEND_ALIAS = Object.freeze({
+    item: "rc-graph-legend-item",
+    reset: "rc-graph-legend-reset",
+    dataType: true
+  });
+  var NO_RELATION_TYPES = /* @__PURE__ */ Symbol("no relation types");
+  function drawnDash(dash) {
+    const list = Array.isArray(dash) ? dash.map(String) : typeof dash === "string" || typeof dash === "number" ? String(dash).trim().split(/[\s,]+/) : [];
+    const lengths = list.map((v) => /^(\d+\.?\d*|\.\d+)(px)?$/i.test(v.trim()) ? parseFloat(v) : NaN);
+    return lengths.length && lengths.every(Number.isFinite) && lengths.some((v) => v > 0) ? dash : null;
   }
+  var graphChrome = {
+    _initGraphChrome() {
+      this._breadcrumbsEl = document.createElement("nav");
+      this._breadcrumbsEl.className = "rc-graph-breadcrumbs";
+      this._breadcrumbsEl.setAttribute("aria-label", "Graph navigation");
+      this.container.appendChild(this._breadcrumbsEl);
+      this._overflowEl = document.createElement("div");
+      this._overflowEl.className = "rc-graph-overflow";
+      this._overflowEl.setAttribute("role", "dialog");
+      this._overflowEl.setAttribute("aria-label", "Hidden nodes");
+      this._overflowEl.hidden = true;
+      this._overflowEl.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") this._closeOverflow();
+      });
+      this.container.appendChild(this._overflowEl);
+    },
+    // ─── Details panel ────────────────────────────────────────────────────────
+    _initDetails() {
+      const d = this.options.details;
+      if (!d) return;
+      let el;
+      if (d === true) {
+        el = document.createElement("div");
+        this._detailsOwned = true;
+      } else {
+        el = typeof d === "string" ? document.querySelector(d) : d;
+        if (!(el instanceof HTMLElement)) return;
+        this._detailsOwned = false;
+        const addedLive = !el.hasAttribute("aria-live");
+        this._adoptPageElement(el, (e) => {
+          e.classList.remove("rc-graph-details");
+          if (addedLive) e.removeAttribute("aria-live");
+          ["width", "height", "top", "right"].forEach((p) => e.style.removeProperty(p));
+          if (!e.getAttribute("style")) e.removeAttribute("style");
+        });
+      }
+      el.classList.add("rc-graph-details");
+      if (!el.hasAttribute("aria-live")) el.setAttribute("aria-live", "polite");
+      this._detailsEl = el;
+      this._detailsSubject = null;
+      this.container.appendChild(el);
+    },
+    // Side or below, by card width. Returns the width the layout must leave
+    // free on the right (0 when the panel sits below).
+    _layoutDetails() {
+      const el = this._detailsEl;
+      if (!el) return 0;
+      const o = this.options;
+      const cs = window.getComputedStyle(this.container);
+      const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
+      const cw = this.container.clientWidth - padL - padR;
+      this._detailsInset = padR;
+      const width = o.detailsWidth ?? 300;
+      const minDrawing = this._view === "flow" ? o.minWidth ?? 0 : 0;
+      const side = cw >= (o.detailsBreakpoint ?? 1e3) && cw >= minDrawing + width + 12;
+      this.container.classList.toggle("rc-graph--details-side", side);
+      this.container.classList.toggle("rc-graph--details-below", !side);
+      if (!this._expanded) {
+        this._baseCardHeight ??= this.container.style.height;
+        const base = parseFloat(this._baseCardHeight) || o.height || 520;
+        const want = side ? `${base}px` : `${base + (o.detailsHeight ?? 200)}px`;
+        if (this.container.style.height !== want) this.container.style.height = want;
+      }
+      el.style.width = side ? `${width}px` : "";
+      el.style.height = side ? "" : `${o.detailsHeight ?? 200}px`;
+      const clear = side ? `${width + 12}px` : "";
+      if (this._typeLegendEl) this._typeLegendEl.style.marginRight = clear;
+      if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
+      if (this._navigatorEl) this._navigatorEl.style.marginRight = clear;
+      return side ? width + 12 : 0;
+    },
+    // Side panel: aligned with the drawing's top and height. Called after the
+    // drawing and its legend are done — the legend's height moves the svg.
+    _placeDetails(svgEl) {
+      const el = this._detailsEl;
+      if (!el || !this.container.classList.contains("rc-graph--details-side")) {
+        if (el) {
+          el.style.top = "";
+          el.style.height = el.style.height || "";
+        }
+        return;
+      }
+      const svgBox = svgEl.getBoundingClientRect();
+      const cardBox = this.container.getBoundingClientRect();
+      const top2 = svgBox.top - cardBox.top - this.container.clientTop + this.container.scrollTop;
+      el.style.top = `${top2}px`;
+      el.style.right = `${this._detailsInset ?? 0}px`;
+      el.style.height = `${svgBox.height}px`;
+    },
+    // What the panel shows: a hovered/selected node or tie, else the default
+    // (the focused node in the ego view, nothing elsewhere).
+    _showDetails(subject) {
+      this._detailsSubject = subject;
+      this._refreshDetails();
+    },
+    _refreshDetails() {
+      const el = this._detailsEl;
+      if (!el || !this._detailsOwned) return;
+      let subject = this._detailsSubject;
+      const drawn = this._view === "flow" ? this._flowView?._lastVisible?.nodes : (this._shown ?? this._viewData)?.nodes;
+      if (subject?.node && !drawn?.some((n) => n.id === subject.node.id)) subject = null;
+      if (!subject && this._view === "ego" && this._root != null) {
+        const root2 = this._model.node(this._root);
+        if (root2) subject = { node: root2 };
+      }
+      const fmt = this.options.detailsFormat;
+      el.innerHTML = fmt ? fmt({ node: subject?.node ?? null, link: subject?.link ?? null, view: this._view }) : this._defaultDetails(subject);
+    },
+    // ─── Footer tools and full screen ────────────────────────────────────────
+    // Footer tools, right of the source line: the "+N more" and "N hidden"
+    // notes, zoom buttons, full screen. Never over the canvas, where they
+    // covered the bottom row. A chart without source/note gets a footer row
+    // just for them.
+    _initTools() {
+      const tools = document.createElement("div");
+      tools.className = "rc-graph-tools";
+      const mkButton = (label, title, fn, cls = "") => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = label;
+        b.title = title;
+        b.setAttribute("aria-label", title);
+        b.className = cls ? `rc-graph-tool ${cls}` : "rc-graph-tool";
+        b.addEventListener("click", fn);
+        return b;
+      };
+      const mkNote = (cls, fn) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = cls;
+        b.hidden = true;
+        b.addEventListener("click", fn);
+        tools.appendChild(b);
+        return b;
+      };
+      this._overflowNoteEl = mkNote("rc-graph-note", () => this._toggleOverflow());
+      this._hiddenNoteEl = mkNote("rc-graph-hidden-note", () => {
+        this._hidden.clear();
+        this.render();
+      });
+      if (this.options.zoom !== false) {
+        const zoom = document.createElement("div");
+        zoom.className = "rc-graph-zoom-controls";
+        zoom.setAttribute("role", "group");
+        zoom.setAttribute("aria-label", "Zoom");
+        zoom.append(
+          mkButton("+", "Zoom in", () => this._zoomBy(1.4)),
+          mkButton("\u2212", "Zoom out", () => this._zoomBy(1 / 1.4)),
+          mkButton("\u27F2", "Reset view", () => {
+            if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, identity4);
+          })
+        );
+        tools.appendChild(zoom);
+      }
+      if (this.options.fullscreen !== false) {
+        this._fullscreenBtn = mkButton("\u26F6", "Full screen", () => this.toggleFullscreen(), "rc-graph-fullscreen");
+        tools.appendChild(this._fullscreenBtn);
+        this._onFullscreenChange = () => this._syncFullscreen(document.fullscreenElement === this.container);
+        document.addEventListener("fullscreenchange", this._onFullscreenChange);
+        this._onFullscreenKey = (event) => {
+          if (event.key === "Escape" && this._expanded && !document.fullscreenElement) this.toggleFullscreen(false);
+        };
+        document.addEventListener("keydown", this._onFullscreenKey);
+      }
+      if (!this._footerEl) {
+        this._footerEl = document.createElement("div");
+        this._footerEl.className = "rc-chart-footer";
+        this.container.appendChild(this._footerEl);
+      }
+      this._footerEl.classList.add("rc-chart-footer--tools");
+      this._footerEl.insertBefore(tools, this._sourceEl ? this._sourceEl.nextSibling : this._footerEl.firstChild);
+    },
+    _syncFullscreen(on) {
+      if (on === this._expanded) return;
+      this._expanded = on;
+      const el = this.container;
+      if (on) {
+        this._savedHeight = el.style.height;
+        el.style.height = "100vh";
+        el.classList.add("rc-graph--fullscreen");
+      } else {
+        el.style.height = this._savedHeight ?? "";
+        el.classList.remove("rc-graph--fullscreen");
+      }
+      if (this._fullscreenBtn) {
+        this._fullscreenBtn.textContent = on ? "\u2715" : "\u26F6";
+        this._fullscreenBtn.title = on ? "Exit full screen (Esc)" : "Full screen";
+        this._fullscreenBtn.setAttribute("aria-label", this._fullscreenBtn.title);
+      }
+      requestAnimationFrame?.(() => this.render());
+    },
+    _zoomBy(factor) {
+      if (!this._zoom) return;
+      this.svg.transition().duration(200).call(this._zoom.scaleBy, factor);
+    },
+    // ─── Legend ───────────────────────────────────────────────────────────────
+    // The relation-type legend, drawn by the one legend builder (core/legend.js,
+    // D-04) like every RareCharts legend. In the ego view each known type is a
+    // toggle, and the toggles drive the traversal (K-05): a click, Enter or
+    // Space turns a type off or on, a double click keeps only that type and a
+    // second double click brings all back, "Show all" shows while a type is
+    // off. The path view lists the types on screen as plain labels — buttons
+    // that did nothing would read as broken, and the accumulated catalogue
+    // would list types the canvas doesn't show. The builder updates the items
+    // in place, so a focused item keeps focus through every redraw and
+    // re-query (R-16).
+    _renderLegend(typesInUse) {
+      const el = this._typeLegendEl;
+      if (!el) return;
+      typesInUse.forEach((type2) => this._knownTypes.add(String(type2)));
+      const ego = this._view === "ego";
+      const interactive = ego && this.options.legendInteractive !== false;
+      const keys = ego && this._knownTypes.size ? [...this._knownTypes] : typesInUse.map(String);
+      const shown = ego ? this._legendShownTypes() : null;
+      let items = keys.map((type2) => {
+        const info = this._typeInfo(type2);
+        const dash = drawnDash(info.dash);
+        return {
+          key: type2,
+          label: info.label ?? type2,
+          color: info.color,
+          mark: dash ? "dashed" : "line",
+          dash,
+          on: !shown || shown.has(type2)
+        };
+      });
+      if (!interactive) items = items.filter((item) => item.on);
+      this._typeLegendKeys = interactive ? keys : [];
+      renderLegendItems(el, items, {
+        interactive,
+        busy: !!this._legendPending,
+        alias: GRAPH_LEGEND_ALIAS,
+        onToggle: (info) => this._relationLegendGesture(info)
+      });
+    },
+    // The types the ego legend shows on: those of a legend gesture whose
+    // re-query is still pending (the builder wrote them at once, and a redraw
+    // meanwhile must not flip them back), else the traversal filter. null:
+    // every type.
+    _legendShownTypes() {
+      return this._legendPending ? this._legendPending.shown : this._relationTypes;
+    },
+    // A committed gesture on the ego legend (the builder's onToggle). The types
+    // it leaves on become the traversal filter (K-05): all → no filter, none →
+    // the legend's own "nothing shown", the root alone without a source call
+    // (spec decision 26), else the list. The view re-queries around its root,
+    // which is read when the query runs; aria-busy sits on the legend until
+    // then, and onLegendToggle fires after it. `replaces`: the second click of
+    // a double click whose first click already re-queried — its breadcrumb
+    // takes over that click's instead of adding one.
+    _relationLegendGesture({ kind, key, visibleKeys, replaces }) {
+      if (this._destroyed) return;
+      const keys = this._typeLegendKeys ?? [];
+      const on = new Set(visibleKeys);
+      const visible = keys.filter((k) => on.has(k));
+      const shown = kind === "showAll" || visible.length === keys.length ? null : new Set(visible);
+      const pending = { shown };
+      const gen = this._dataGen;
+      this._legendPending = pending;
+      this._typeLegendEl?.setAttribute("aria-busy", "true");
+      this._enqueue(async () => {
+        if (gen !== this._dataGen) return;
+        const types = shown == null ? null : shown.size ? [...shown] : NO_RELATION_TYPES;
+        if (this._view === "ego" && this._root != null) {
+          await this._focusTask(this._root, { types, legend: { replaces: !!replaces } });
+        } else {
+          this._setRelationTypesState(types);
+          this.render();
+        }
+      });
+      this._enqueue(() => {
+        if (this._legendPending === pending) {
+          this._legendPending = null;
+          this._typeLegendEl?.removeAttribute("aria-busy");
+        }
+        if (gen !== this._dataGen) return;
+        this._emit(this.options.onLegendToggle, {
+          name: kind === "showAll" ? null : key,
+          visible: kind === "toggle" ? on.has(key) : true,
+          visibleNames: [...this._knownTypes].filter((type2) => !this._relationTypes || this._relationTypes.has(type2))
+        });
+      });
+    },
+    // ─── "+N more" list ───────────────────────────────────────────────────────
+    _renderOverflow() {
+      if (!this._overflowEl) return;
+      if (!this._overflowNodes.length || this._view !== "ego") {
+        this._overflowEl.hidden = true;
+        this._overflowEl.replaceChildren();
+        return;
+      }
+      const title = document.createElement("div");
+      title.className = "rc-graph-overflow-title";
+      title.textContent = `${this._overflowNodes.length} more node${this._overflowNodes.length === 1 ? "" : "s"}`;
+      const list = document.createElement("div");
+      list.className = "rc-graph-overflow-list";
+      this._overflowNodes.forEach((node) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "rc-graph-overflow-item";
+        button.textContent = node.label ?? node.id;
+        button.title = `Focus ${node.label ?? node.id}`;
+        button.addEventListener("click", () => {
+          this._overflowEl.hidden = true;
+          this.focus(node.id);
+        });
+        list.appendChild(button);
+      });
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "rc-graph-overflow-close";
+      close.setAttribute("aria-label", "Close hidden nodes list");
+      close.textContent = "\xD7";
+      close.addEventListener("click", () => this._closeOverflow());
+      this._overflowEl.replaceChildren(title, close, list);
+    },
+    // Escape or ×: the list closes and keyboard focus goes back to the
+    // "+N more" button that opened it, not to the page's <body> (D7).
+    _closeOverflow() {
+      this._overflowEl.hidden = true;
+      if (this._overflowNoteEl && !this._overflowNoteEl.hidden) this._overflowNoteEl.focus();
+    },
+    _toggleOverflow() {
+      if (!this._overflowEl || !this._overflowNodes.length) return;
+      this._overflowEl.hidden = !this._overflowEl.hidden;
+      if (!this._overflowEl.hidden) {
+        this._overflowEl.querySelector(".rc-graph-overflow-close")?.focus();
+      }
+    },
+    // ─── Breadcrumbs ──────────────────────────────────────────────────────────
+    _renderBreadcrumbs() {
+      if (!this._breadcrumbsEl) return;
+      if (this.options.breadcrumbs === false || this._history.length < 2) {
+        this._breadcrumbsEl.hidden = true;
+        this._breadcrumbsEl.replaceChildren();
+        this._refitIfResized();
+        return;
+      }
+      this._breadcrumbsEl.hidden = false;
+      this._breadcrumbsEl.replaceChildren();
+      this._history.forEach((state, index2) => {
+        if (index2) this._breadcrumbsEl.append(" / ");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.disabled = index2 === this._history.length - 1;
+        button.textContent = this._historyLabel(state);
+        button.addEventListener("click", () => {
+          const target = this._history[index2];
+          this._history = this._history.slice(0, index2 + 1);
+          this._skipHistoryOnce = true;
+          this._restoreState(target);
+          this._renderBreadcrumbs();
+        });
+        this._breadcrumbsEl.appendChild(button);
+      });
+      this._refitIfResized();
+    },
+    _historyLabel(state) {
+      if (state.view === "cluster") return "Overview";
+      if (state.view === "path") {
+        const a = this._model.node(state.a)?.label ?? state.a;
+        const b = this._model.node(state.b)?.label ?? state.b;
+        return state.a === state.b ? String(a) : `${a} \u2194 ${b}`;
+      }
+      return this._model.node(state.root)?.label ?? state.root;
+    }
+  };
 
   // assets/charts/src/graph/roving.js
   function rovingTabindex(sel, { state, keyOf = (d) => d.id, preferred = null }) {
@@ -16928,8 +20879,8 @@ var RareCharts = (() => {
     return !!el && !!active && active !== el && el.contains(active);
   }
   function gridStep(items, item, key, posOf) {
-    const at = posOf(item);
-    if (!at) return null;
+    const at2 = posOf(item);
+    if (!at2) return null;
     const placed = items.filter((d) => posOf(d));
     const order = placed.slice().sort((a, b) => Math.round(posOf(a).y) - Math.round(posOf(b).y) || posOf(a).x - posOf(b).x);
     const i = order.indexOf(item);
@@ -16942,9 +20893,9 @@ var RareCharts = (() => {
       let best = null, score = Infinity;
       placed.forEach((d) => {
         const p = posOf(d);
-        const dy = (p.y - at.y) * dir;
+        const dy = (p.y - at2.y) * dir;
         if (dy < 1) return;
-        const s = dy + 2 * Math.abs(p.x - at.x);
+        const s = dy + 2 * Math.abs(p.x - at2.x);
         if (s < score) {
           score = s;
           best = d;
@@ -16962,6 +20913,37 @@ var RareCharts = (() => {
     if (key === "ArrowRight" || key === "ArrowDown") return order[i + 1] ?? null;
     if (key === "ArrowLeft" || key === "ArrowUp") return i > 0 ? order[i - 1] : null;
     return null;
+  }
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+  var tipKeys = /* @__PURE__ */ new WeakMap();
+  function enterPinnedTip(event, tooltip, item) {
+    if (event.key !== "Tab" || event.shiftKey || !tooltip?.isPinned) return false;
+    const el = tooltip.el;
+    const parts = () => [...el.querySelectorAll(FOCUSABLE)];
+    if (!parts().length) return false;
+    event.preventDefault();
+    const done = () => {
+      el.removeEventListener("keydown", tipKeys.get(el));
+      tipKeys.delete(el);
+    };
+    if (tipKeys.has(el)) done();
+    const onKey = (e) => {
+      if (!tooltip.isPinned || !item.isConnected) {
+        done();
+        return;
+      }
+      const list = parts();
+      const out = e.key === "Tab" && (e.shiftKey ? e.target === list[0] : e.target === list[list.length - 1]);
+      if (e.key !== "Escape" && !out) return;
+      e.preventDefault();
+      done();
+      if (!(e.key === "Tab" && e.shiftKey)) tooltip.unpin();
+      item.focus();
+    };
+    tipKeys.set(el, onKey);
+    el.addEventListener("keydown", onKey);
+    parts()[0].focus();
+    return true;
   }
 
   // assets/charts/src/graph/views/flowFold.js
@@ -16990,7 +20972,8 @@ var RareCharts = (() => {
   function foldGraph({ nodes, links }, folds, collapsed, {
     keyOf = (l) => String(l.type ?? "default"),
     aggregate = false,
-    laneOf = (n) => n.lane
+    laneOf = (n) => n.lane,
+    timeZone = "local"
   } = {}) {
     const metaOf = /* @__PURE__ */ new Map();
     const metas = /* @__PURE__ */ new Map();
@@ -17031,40 +21014,35 @@ var RareCharts = (() => {
       });
       outNodes.push(meta);
     });
-    const bucket = /* @__PURE__ */ new Map();
-    const outLinks = [];
-    links.forEach((l) => {
-      const s = metaOf.get(l.source) ?? l.source;
-      const t = metaOf.get(l.target) ?? l.target;
-      const touched = s !== l.source || t !== l.target;
-      if (touched && s === t) return;
-      if (!touched && !aggregate) {
-        outLinks.push(l);
-        return;
-      }
-      const key = JSON.stringify([s, t, keyOf(l)]);
-      if (!bucket.has(key)) {
-        const entry = { key, source: s, target: t, links: [] };
-        bucket.set(key, entry);
-        outLinks.push(entry);
-      }
-      bucket.get(key).links.push(l);
+    const ends = (l) => [metaOf.get(l.source) ?? l.source, metaOf.get(l.target) ?? l.target];
+    const moved = (l, [s, t]) => s !== l.source || t !== l.target;
+    const kept = links.filter((l) => {
+      const e = ends(l);
+      return !(moved(l, e) && e[0] === e[1]);
     });
+    const ties = groupTies(
+      kept,
+      { tie: (l) => {
+        const e = ends(l);
+        return moved(l, e) || aggregate ? [...e, keyOf(l)] : null;
+      } }
+    );
+    const inputs = new Set(kept);
     return {
       nodes: outNodes,
-      links: outLinks.map((l) => l.links && l.key ? mergeTies(l) : l),
+      links: ties.map((l) => inputs.has(l) ? l : mergeTies(l, timeZone)),
       metaOf,
       metas
     };
   }
-  function mergeTies({ key, source, target, links }) {
+  function mergeTies({ key, source, target, links }, timeZone) {
     const first = links[0];
     if (links.length === 1) return { ...first, source, target, links, aggregate: true };
     const live = links.filter((l) => !l._dim);
     const counted = live.length ? live : links;
-    const vals = counted.map((l) => l.value).filter((v) => v != null && v !== "" && Number.isFinite(+v));
-    const starts = links.map((l) => [l.start, parseTime(l.start)]);
-    const ends = links.map((l) => [l.end, parseTime(l.end, { end: true })]);
+    const vals = counted.map((l) => linkValue(l, { min: -Infinity })).filter((v) => v != null);
+    const starts = links.map((l) => [l.start, parseTime(l.start, { timeZone })]);
+    const ends = links.map((l) => [l.end, parseTime(l.end, { end: true, timeZone })]);
     const earliest = starts.some((s) => s[1] == null) ? null : starts.reduce((a, b) => b[1] < a[1] ? b : a)[0];
     const latest = ends.some((e) => e[1] == null) ? null : ends.reduce((a, b) => b[1] > a[1] ? b : a)[0];
     return {
@@ -17072,7 +21050,7 @@ var RareCharts = (() => {
       id: `agg:${key}`,
       source,
       target,
-      value: vals.length ? vals.reduce((s, v) => s + +v, 0) : null,
+      value: vals.length ? vals.reduce((s, v) => s + v, 0) : null,
       label: `${links.length} ties`,
       start: earliest,
       end: latest,
@@ -17083,6 +21061,10 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/graph/views/flow.js
+  function laneOfNode(n, laneBy = "lane") {
+    if (n._lane !== void 0) return n._lane;
+    return typeof laneBy === "function" ? laneBy(n) : n[laneBy];
+  }
   function layoutFlow({ nodes = [], lanes = [], links = [] } = {}, {
     width = 900,
     height = 600,
@@ -17096,14 +21078,19 @@ var RareCharts = (() => {
     // below a node's edge: label + sub line
     padBottom = pad3,
     // extra room under the drawing (e.g. zoom controls)
-    minPad = 8
+    minPad = 8,
     // the least either padding shrinks to (C-38)
+    timeZone = "local",
+    // the chart's: the automatic hints order ties by start in it
+    hints = null
+    // the automatic hints of an earlier call on the same nodes,
+    // links and lanes (they do not depend on the size): reused
   } = {}) {
-    const laneOf = (n) => n._lane !== void 0 ? n._lane : typeof laneBy === "function" ? laneBy(n) : n[laneBy];
+    const laneIds = nodes.map((n) => String(laneOfNode(n, laneBy) ?? ""));
+    const colOf = (n) => Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
     const laneList = lanes.map((l) => ({ id: String(l.id), label: l.label ?? String(l.id), weight: l.weight, declared: l.weight != null }));
     const known = new Set(laneList.map((l) => l.id));
-    nodes.forEach((n) => {
-      const id2 = laneOf(n) == null ? "" : String(laneOf(n));
+    laneIds.forEach((id2) => {
       if (!known.has(id2)) {
         known.add(id2);
         laneList.push({ id: id2, label: id2, weight: void 0, declared: false });
@@ -17112,22 +21099,22 @@ var RareCharts = (() => {
     const laneIdx = new Map(laneList.map((l, i) => [l.id, i]));
     let auto = null;
     if (layout === "auto" && nodes.length) {
-      auto = autoFlowHints({
+      const laneAt = new Map(nodes.map((n, i) => [n, laneIds[i]]));
+      auto = hints ?? autoFlowHints({
         nodes,
         links,
-        laneOf: (n) => String(laneOf(n) ?? ""),
-        laneIndex: (id2) => laneIdx.get(id2) ?? 0
+        laneOf: (n) => laneAt.get(n),
+        laneIndex: (id2) => laneIdx.get(id2) ?? 0,
+        timeZone
       }).hints;
       if (auto.size) nodes = nodes.map((n) => auto.has(n.id) ? { ...n, ...auto.get(n.id) } : n);
     }
-    const colsOf = /* @__PURE__ */ new Map();
-    nodes.forEach((n) => {
-      const lane = String(laneOf(n) ?? "");
-      const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
-      colsOf.set(lane, Math.max(colsOf.get(lane) ?? 1, c + 1));
+    const colsPerLane = /* @__PURE__ */ new Map();
+    nodes.forEach((n, i) => {
+      colsPerLane.set(laneIds[i], Math.max(colsPerLane.get(laneIds[i]) ?? 1, colOf(n) + 1));
     });
     laneList.forEach((l) => {
-      if (!l.declared) l.weight = auto?.size ? colsOf.get(l.id) ?? 1 : 1;
+      if (!l.declared) l.weight = auto?.size ? colsPerLane.get(l.id) ?? 1 : 1;
       delete l.declared;
     });
     const totalW = laneList.reduce((s, l) => s + l.weight, 0) || 1;
@@ -17138,19 +21125,13 @@ var RareCharts = (() => {
       x2 = l.x1;
     });
     const laneById = new Map(laneList.map((l) => [l.id, l]));
-    const colsPerLane = /* @__PURE__ */ new Map();
-    nodes.forEach((n) => {
-      const lane = String(laneOf(n) ?? "");
-      const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
-      colsPerLane.set(lane, Math.max(colsPerLane.get(lane) ?? 1, c + 1));
-    });
     const rowOf = /* @__PURE__ */ new Map();
     const taken = /* @__PURE__ */ new Map();
-    const cellKey = (n) => `${laneOf(n) ?? ""}|${Number.isInteger(n.col) && n.col >= 0 ? n.col : 0}`;
-    nodes.forEach((n) => {
+    const cellKey = (n, i) => `${laneIds[i]}|${colOf(n)}`;
+    nodes.forEach((n, i) => {
       if (Number.isFinite(n.row)) {
         rowOf.set(n.id, n.row);
-        const k = cellKey(n);
+        const k = cellKey(n, i);
         if (!taken.has(k)) taken.set(k, /* @__PURE__ */ new Set());
         taken.get(k).add(n.row);
       }
@@ -17162,9 +21143,9 @@ var RareCharts = (() => {
         yield -i;
       }
     };
-    nodes.forEach((n) => {
+    nodes.forEach((n, i) => {
       if (rowOf.has(n.id)) return;
-      const k = cellKey(n);
+      const k = cellKey(n, i);
       if (!taken.has(k)) taken.set(k, /* @__PURE__ */ new Set());
       const used = taken.get(k);
       for (const r of freeRows()) {
@@ -17199,10 +21180,10 @@ var RareCharts = (() => {
     const bandOffset = span ? (bandH - rowStep * span) / 2 : bandH / 2;
     const rowY = (r) => bandTop + bandOffset + (r - minRow) * rowStep;
     const positions = /* @__PURE__ */ new Map();
-    nodes.forEach((n) => {
-      const lane = laneById.get(String(laneOf(n) ?? ""));
-      const cols = colsPerLane.get(lane.id) ?? 1;
-      const c = Number.isInteger(n.col) && n.col >= 0 ? n.col : 0;
+    nodes.forEach((n, i) => {
+      const lane = laneById.get(laneIds[i]);
+      const cols = colsPerLane.get(lane.id);
+      const c = colOf(n);
       const laneW = lane.x1 - lane.x0;
       let px = lane.x0 + (c + 0.5) / cols * laneW;
       let py = rowY(rowOf.get(n.id) ?? 0);
@@ -17220,17 +21201,29 @@ var RareCharts = (() => {
         }
       }
     });
-    return { positions, lanes: laneList, top: top2, height, colsPerLane };
+    return { positions, lanes: laneList, top: top2, height, colsPerLane, hints: auto };
   }
-  var SHAPES = ["circle", "square", "diamond", "stack"];
+  var SHAPES2 = ["circle", "square", "diamond", "stack"];
+  var LINK_DASH = "6 5";
   var sameSelection = (a, b) => (a?.node ?? null) === (b?.node ?? null) && (a?.link ?? null) === (b?.link ?? null);
+  var fontEpoch = 0;
+  var fontsWatched = false;
+  function watchFonts() {
+    if (fontsWatched) return;
+    fontsWatched = true;
+    try {
+      globalThis.document?.fonts?.addEventListener?.("loadingdone", () => {
+        fontEpoch += 1;
+      });
+    } catch {
+    }
+  }
   var FlowView = class {
     constructor(graph) {
       this.g = graph;
       this.data = { nodes: [], links: [] };
       this.filter = null;
       this.window = null;
-      this.hiddenTypes = new Set((graph.options.hiddenLinkTypes ?? []).map(String));
       this.selected = null;
       this.labels = graph.options.linkLabels !== false;
       this.foldState = /* @__PURE__ */ new Map();
@@ -17248,6 +21241,107 @@ var RareCharts = (() => {
       this.data = { nodes, links };
       this._foldCache = null;
       this._keyList = null;
+      this._layoutCache = null;
+    }
+    // ── Caches (K-16) ──
+    // The whole trace's layout does not depend on the filter, the legend or
+    // the time window: a brush move or a legend click reuses it. It is laid
+    // out again for a new payload, size, fold state or lane option, and at a
+    // new size only placed again: the folded trace and the automatic hints
+    // (layouts/flowAuto.js) do not depend on it.
+    _layout(W, H, R) {
+      const o = this.g.options;
+      const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+      const traceKey = [
+        this.data,
+        this._folds(),
+        [...this._collapsed()].join("\0"),
+        this._opt("laneBy", "lane"),
+        o.layout ?? "auto",
+        JSON.stringify(o.lanes ?? []),
+        this.g._zone(),
+        !!this._opt("aggregateLinks", false),
+        o.linkColorBy
+      ];
+      const c = this._layoutCache;
+      if (c && same(c.traceKey, traceKey) && same(c.sizeKey, [W, H, R])) return c;
+      const reuse = c && same(c.traceKey, traceKey) ? c : null;
+      const whole = reuse?.whole ?? this._fold(this.data);
+      const out = layoutFlow(
+        { nodes: whole.nodes, links: whole.links, lanes: o.lanes ?? [] },
+        {
+          width: W,
+          height: H,
+          laneBy: this._opt("laneBy", "lane"),
+          layout: o.layout ?? "auto",
+          nodeRadius: R,
+          timeZone: this.g._zone(),
+          hints: reuse?.hints ?? null
+        }
+      );
+      this._layoutCache = { traceKey, sizeKey: [W, H, R], whole, ...out };
+      return this._layoutCache;
+    }
+    // Captions cut to their room as fitTextNode cuts them — the same strings
+    // measured, the same result — but all at once: every caption is written,
+    // then every one measured, then the ones too wide lose a character each,
+    // and so on. A measure after a write lays the drawing out again, so one
+    // caption at a time cost a layout per character per caption (K-16).
+    // Each result is remembered by kind, room and text, so a redraw at the
+    // same size measures nothing, and an uncut width by kind and text, so at
+    // a new size a caption that fits is not measured again. Where text cannot
+    // be measured (jsdom) this does what fitTextNode does: nothing. A caption
+    // measured 0 px wide (not laid out) is not remembered.
+    _fitCaptions(items) {
+      if (!items.length || !items[0][0].getComputedTextLength) return;
+      watchFonts();
+      if (!this._captions || this._captionEpoch !== fontEpoch || this._captions.size > 5e3) {
+        this._captions = /* @__PURE__ */ new Map();
+        this._captionWidths = /* @__PURE__ */ new Map();
+        this._captionEpoch = fontEpoch;
+      }
+      const width = (node) => {
+        try {
+          return node.getComputedTextLength();
+        } catch {
+          return 0;
+        }
+      };
+      let pending = [];
+      items.forEach(([node, text, room, kind]) => {
+        const full = String(text);
+        const key = `${kind}\0${room}\0${full}`;
+        const wKey = `${kind}\0${full}`;
+        const known = this._captions.get(key);
+        const wide = this._captionWidths.get(wKey);
+        if (known != null || wide != null && wide <= room) {
+          node.textContent = known ?? full;
+          if (known == null) this._captions.set(key, full);
+          return;
+        }
+        node.textContent = full;
+        pending.push({ node, full, s: full, room, key, wKey });
+      });
+      let first = true;
+      while (pending.length) {
+        const next = [];
+        pending.forEach((c) => {
+          const w = width(c.node);
+          if (c.s.length > 1 && w > c.room) {
+            next.push(c);
+            return;
+          }
+          if (!(w > 0) && c.full) return;
+          this._captions.set(c.key, c.node.textContent);
+          if (first) this._captionWidths.set(c.wKey, w);
+        });
+        next.forEach((c) => {
+          c.s = c.s.slice(0, -1).trimEnd();
+          c.node.textContent = `${c.s}\u2026`;
+        });
+        pending = next;
+        first = false;
+      }
     }
     clear() {
       [this.gLanes, this.gHulls, this.gLinks, this.gHits, this.gLinkLabels, this.gNodes].forEach((g) => g.selectAll("*").remove());
@@ -17257,9 +21351,7 @@ var RareCharts = (() => {
       return this.g.options[name] ?? fallback;
     }
     _laneOf(n) {
-      if (n._lane !== void 0) return n._lane;
-      const by = this._opt("laneBy", "lane");
-      return typeof by === "function" ? by(n) : n[by];
+      return laneOfNode(n, this._opt("laneBy", "lane"));
     }
     _groupCfg(n) {
       return this._opt("nodeGroups", {})[n.group] ?? null;
@@ -17274,24 +21366,44 @@ var RareCharts = (() => {
     }
     _shape(n) {
       if (n.fold != null && n.id.startsWith(META_PREFIX)) return "stack";
+      return this._shapeOfKind(this._kindOf(n));
+    }
+    // A node's kind, by shapeBy: a field name or a function of the node.
+    _kindOf(n) {
       const by = this._opt("shapeBy", "kind");
-      const key = typeof by === "function" ? by(n) : n[by];
+      return typeof by === "function" ? by(n) : n[by];
+    }
+    // The shape a kind draws. The nodeShapes map first (an SVG path comes
+    // only from there); a kind that names a built-in shape is that shape; any
+    // other kind is a circle. A kind value is never drawn as a path itself:
+    // 'mixer' or 'Multisig' made an invisible <path d="mixer">. A map value
+    // that is neither a built-in name nor a path draws a circle, so it is one.
+    _shapeOfKind(key) {
       const map2 = this._opt("nodeShapes", {}) ?? {};
-      if (key != null && Object.prototype.hasOwnProperty.call(map2, key) && map2[key] != null) return map2[key];
-      return SHAPES.includes(key) ? key : "circle";
+      if (key != null && Object.prototype.hasOwnProperty.call(map2, key) && map2[key] != null) {
+        const shape = map2[key];
+        return SHAPES2.includes(shape) || /^[Mm]/.test(String(shape)) ? shape : "circle";
+      }
+      return SHAPES2.includes(key) ? key : "circle";
     }
     _linkKey(l) {
       const by = this._opt("linkColorBy", "type");
       const v = typeof by === "function" ? by(l) : l[by];
       return v == null ? "default" : String(v);
     }
+    // The tie categories of the trace, in data order (cached per payload).
+    linkKeys() {
+      return this._keyList ??= [...new Set(this.data.links.map((x2) => this._linkKey(x2)))];
+    }
     // A tie's category (by linkColorBy) → { key, color, dash, label }, the
     // rule every relation chart shares (core/links.js resolveLinkType). The
     // Graph's tooltip and details panel ask here, so they name the category
     // the drawing shows.
     typeOf(l) {
-      this._keyList ??= [...new Set(this.data.links.map((x2) => this._linkKey(x2)))];
-      return resolveLinkType(this._opt("linkTypes", {}), this._linkKey(l), { keys: this._keyList, theme: this.g.theme });
+      return this._typeOfKey(this._linkKey(l));
+    }
+    _typeOfKey(key) {
+      return resolveLinkType(this._opt("linkTypes", {}), key, { keys: this.linkKeys(), theme: this.g.theme });
     }
     // ── Folds ──
     // The page's folds plus, with laneCap, one per crowded lane holding its
@@ -17308,8 +21420,7 @@ var RareCharts = (() => {
         this.data.links.forEach((l) => [l.source, l.target].forEach((id2) => {
           const w = weight.get(id2);
           if (!w) return;
-          const v = +l.value;
-          w[0] += Number.isFinite(v) && l.value !== null ? Math.max(0, v) : 0;
+          w[0] += linkValue(l) ?? 0;
           w[1] += 1;
         }));
         const index2 = new Map(nodes.map((n, i) => [n.id, i]));
@@ -17344,7 +21455,8 @@ var RareCharts = (() => {
       return foldGraph(payload, this._folds(), this._collapsed(), {
         keyOf: (l) => this._linkKey(l),
         aggregate: !!this._opt("aggregateLinks", false),
-        laneOf: (n) => this._laneOf(n)
+        laneOf: (n) => this._laneOf(n),
+        timeZone: this.g._zone()
       });
     }
     isCollapsed(id2) {
@@ -17369,8 +21481,9 @@ var RareCharts = (() => {
       let nodes = this.data.nodes.filter(pass);
       let keep = new Set(nodes.map((n) => n.id));
       const shown = this.data.links.filter((l) => pass(l) && keep.has(l.source) && keep.has(l.target));
-      let links = shown.filter((l) => !this.hiddenTypes.has(this._linkKey(l)));
-      if (this.hiddenTypes.size) {
+      const hidden = this.g._hiddenKeys;
+      let links = shown.filter((l) => !hidden.has(this._linkKey(l)));
+      if (links.length < shown.length) {
         const hasTie = /* @__PURE__ */ new Set(), hasVisible = /* @__PURE__ */ new Set();
         shown.forEach((l) => {
           hasTie.add(l.source);
@@ -17384,7 +21497,8 @@ var RareCharts = (() => {
         keep = new Set(nodes.map((n) => n.id));
         links = links.filter((l) => keep.has(l.source) && keep.has(l.target));
       }
-      const out = this._fold({ nodes, links: applyTimeWindow(links, this.window, this._opt("timeWindowMode", "dim")) });
+      const timed = applyTimeWindow(links, this.window, this._opt("timeWindowMode", "dim"), this.g._zone());
+      const out = this._fold({ nodes, links: timed });
       const tied = /* @__PURE__ */ new Set();
       links.forEach((l) => {
         const s = out.metaOf.get(l.source) ?? l.source;
@@ -17402,11 +21516,7 @@ var RareCharts = (() => {
       const o = graph.options;
       const palette = t.colors ?? ["#888"];
       const R = o.nodeRadius ?? 18;
-      const whole = this._fold(this.data);
-      const { positions, lanes, top: top2, colsPerLane } = layoutFlow(
-        { nodes: whole.nodes, links: whole.links, lanes: o.lanes ?? [] },
-        { width: W, height: H, laneBy: (n) => this._laneOf(n), layout: o.layout ?? "auto", nodeRadius: R }
-      );
+      const { whole, positions, lanes, colsPerLane } = this._layout(W, H, R);
       const { nodes, links, metas, metaOf, tied } = this._visible();
       const byId = new Map(nodes.map((n) => [n.id, n]));
       const resolve = (s) => this._resolveSelection(s, byId, links, metaOf);
@@ -17456,7 +21566,7 @@ var RareCharts = (() => {
         if (fromType) return fromType;
         if (!o.linkDash) return null;
         const dashed = l.links ? l.links.every((x2) => o.linkDash(x2)) : o.linkDash(l);
-        return dashed ? "6 5" : null;
+        return dashed ? LINK_DASH : null;
       };
       const markerId = (key) => `${graph._uid}-flow-arrow-${keys.indexOf(key)}`;
       graph._defs.selectAll(".rc-flow-arrow").remove();
@@ -17468,23 +21578,14 @@ var RareCharts = (() => {
       const geom = (l) => {
         const a = positions.get(l.source), b = positions.get(l.target);
         if (!a || !b) return null;
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const len = Math.hypot(dx, dy) || 1;
-        const ux = dx / len, uy = dy / len;
-        const sx = a.x + ux * (R + 2), sy = a.y + uy * (R + 2);
-        const tx = b.x - ux * (R + 4), ty = b.y - uy * (R + 4);
-        const { index: index2 = 0, count = 1 } = par.get(l.id) ?? {};
-        const flip = l.source > l.target ? -1 : 1;
-        const fan = count > 1 ? (index2 - (count - 1) / 2) * 2 * flip : 0;
-        const bend = (l.bend ?? (count > 1 ? 0 : 0.35)) + fan;
-        const off = bend * Math.min(60, len * 0.18);
-        const nx = -uy, ny = ux;
-        const cx = (sx + tx) / 2 + nx * off, cy = (sy + ty) / 2 + ny * off;
-        const side = off >= 0 ? 1 : -1;
+        const { count = 1, offset = 0 } = par.get(l.id) ?? {};
+        const bend = (l.bend ?? (count > 1 ? 0 : 0.35)) + offset * 2;
+        const q = quadBow(a, b, { from: R + 2, to: R + 4, bow: (len) => bend * Math.min(60, len * 0.18) });
+        const side = q.off >= 0 ? 1 : -1;
         return {
-          d: `M${sx},${sy}Q${cx},${cy} ${tx},${ty}`,
-          mid: { x: (sx + 2 * cx + tx) / 4, y: (sy + 2 * cy + ty) / 4 },
-          out: { x: nx * side, y: ny * side }
+          d: q.d,
+          mid: quadPoint(q, 0.5),
+          out: { x: q.n.x * side, y: q.n.y * side }
         };
       };
       const linkSel = this.gLinks.selectAll(".rc-flow-link").data(links, (l) => l.id).join("path").attr("class", "rc-flow-link").attr("fill", "none").attr("d", (l) => geom(l)?.d ?? "").attr("stroke", colorOf).attr("stroke-width", widthOf).attr("stroke-dasharray", dashOf).attr("stroke-linecap", "round").attr("marker-end", (l) => `url(#${markerId(this._linkKey(l))})`);
@@ -17499,13 +21600,13 @@ var RareCharts = (() => {
       const boxes = [];
       nodes.forEach((n) => {
         const p = positions.get(n.id);
-        const w = Math.min(roomOf(n), Math.max(2 * R, String(n.label ?? n.id).length * 6.6, String(n.sub ?? "").length * 6.4));
+        const w = Math.min(roomOf(n), Math.max(2 * R, estimateTextWidth(n.label ?? n.id, 6.6), estimateTextWidth(n.sub ?? "", 6.4)));
         boxes.push({ x0: p.x - R, x1: p.x + R, y0: p.y - R, y1: p.y + R });
         boxes.push({ x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + R + 2, y1: p.y + R + (n.sub ? 34 : 20) });
       });
       hulls.forEach((h) => {
         const x2 = h.pts[0].x - R, y2 = Math.max(...h.pts.map((p) => p.y)) + R + 48;
-        const w = String(h.label ?? "").length * 6.2;
+        const w = estimateTextWidth(h.label ?? "", 6.2);
         boxes.push({ x0: x2, x1: x2 + w, y0: y2 - 12, y1: y2 + 3 });
       });
       const labelAt = /* @__PURE__ */ new Map();
@@ -17513,16 +21614,12 @@ var RareCharts = (() => {
       labelled.forEach((l) => {
         const gm = geom(l);
         if (!gm) return;
-        const w = String(l.label).length * 6.4 + 6, h = 13;
-        const tries = [0, 14, 28, 44].map((k) => [gm.out.x * k, gm.out.y * k]).concat([[0, -16], [0, 16], [gm.out.x * 44, gm.out.y * 44 - 16]]);
-        for (const [ox, oy] of tries) {
-          const x2 = gm.mid.x + ox, y2 = gm.mid.y + oy;
-          const box = { x0: x2 - w / 2, x1: x2 + w / 2, y0: y2 - 4 - h, y1: y2 - 4 };
-          if (boxes.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0)) continue;
-          boxes.push(box);
-          labelAt.set(l.id, { x: x2, y: y2 });
-          break;
-        }
+        const w = estimateTextWidth(l.label, 6.4) + 6, h = 13;
+        const tries = [0, 14, 28, 44].map((k) => [gm.out.x * k, gm.out.y * k]).concat([[0, -16], [0, 16], [gm.out.x * 44, gm.out.y * 44 - 16]]).map(([ox, oy]) => ({ x: gm.mid.x + ox, y: gm.mid.y + oy }));
+        const spot = placeFirstFree(tries, ({ x: x2, y: y2 }) => ({ x0: x2 - w / 2, x1: x2 + w / 2, y0: y2 - 4 - h, y1: y2 - 4 }), boxes);
+        if (!spot) return;
+        boxes.push(spot.box);
+        labelAt.set(l.id, spot.at);
       });
       const placed = labelled.filter((l) => labelAt.has(l.id));
       this.gLinkLabels.selectAll(".rc-flow-link-label").data(placed, (l) => l.id).join("text").attr("class", "rc-flow-link-label").attr("x", (l) => labelAt.get(l.id).x).attr("y", (l) => labelAt.get(l.id).y - 5).attr("text-anchor", "middle").attr("fill", t.muted).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").style("pointer-events", "none").text((l) => l.label);
@@ -17542,6 +21639,7 @@ var RareCharts = (() => {
         const sw = switchOf(n);
         return sw ? String(sw.open) : null;
       }).style("cursor", "pointer").order();
+      const captions = [];
       nodeSel.each((n, i, els) => {
         const g = select_default2(els[i]);
         g.selectAll("*").remove();
@@ -17553,19 +21651,13 @@ var RareCharts = (() => {
           Object.entries({ ...stroke, ...attrs }).forEach(([k, v]) => el.attr(k, v));
           return el;
         };
-        if (shape === "square") add("rect", { x: -R + 1, y: -R + 1, width: 2 * R - 2, height: 2 * R - 2, rx: 6 });
-        else if (shape === "diamond") add("path", { d: `M0,${-R - 3}L${R + 3},0L0,${R + 3}L${-R - 3},0z` });
-        else if (shape === "stack") {
-          add("circle", { cx: 6, cy: -5, r: R - 2, opacity: 0.55 });
-          add("circle", { r: R });
-        } else if (!SHAPES.includes(shape) && /^[Mm]/.test(String(shape))) add("path", { d: shape });
-        else add("circle", { r: R });
+        shapeParts(shape, R).forEach(([tag, attrs]) => add(tag, attrs));
         const room = roomOf(n);
         const label = g.append("text").attr("class", "rc-flow-node-label").attr("y", R + 16).attr("text-anchor", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke");
-        fitTextNode(label.node(), n.label ?? n.id, room);
+        captions.push([label.node(), n.label ?? n.id, room, "label"]);
         if (n.sub) {
           const sub = g.append("text").attr("class", "rc-flow-node-sub").attr("y", R + 30).attr("text-anchor", "middle").attr("fill", t.muted).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke");
-          fitTextNode(sub.node(), n.sub, room);
+          captions.push([sub.node(), n.sub, room, "sub"]);
         }
         if (n.terminal) {
           g.append("text").attr("class", "rc-flow-node-sub").attr("x", R + 6).attr("y", -R + 4).attr("fill", t.muted).text("end");
@@ -17581,6 +21673,7 @@ var RareCharts = (() => {
           b.append("title").text(sw.open ? `Collapse ${sw.fold.label ?? sw.fold.id}` : `Expand ${sw.fold.label ?? sw.fold.id}`);
         }
       });
+      this._fitCaptions(captions);
       const apply = () => {
         const sel = this.selected;
         let nearNodes = null, onLinks = null;
@@ -17617,7 +21710,6 @@ var RareCharts = (() => {
           return sel?.node === n.id ? 4 : 2.5;
         });
       };
-      this._apply = apply;
       this._lastVisible = { nodes, links };
       apply();
       const nodeById = (id2) => byId.get(id2) ?? { id: id2 };
@@ -17665,7 +21757,7 @@ var RareCharts = (() => {
         if (graph._tooltip.isPinned) return;
         const [mx, my] = pointer_default(event, graph.container);
         const nodeLinks = links.filter((l) => l.source === n.id || l.target === n.id);
-        const html = o.tooltipFormat ? o.tooltipFormat({ node: n, links: nodeLinks }) : this._nodeTooltip(n, nodeLinks, nodeById, switchOf(n));
+        const html = o.tooltipFormat ? o.tooltipFormat({ node: n, links: nodeLinks }) : this._nodeTooltip(n, nodeLinks, switchOf(n));
         graph._tooltip.show(mx, my, html);
       }).on("mouseout", () => {
         if (!graph._tooltip.isPinned) graph._tooltip.hide();
@@ -17706,6 +21798,7 @@ var RareCharts = (() => {
         this._pointerFocus = false;
       }).on("keydown", (event, l) => {
         this._pointerFocus = false;
+        if (enterPinnedTip(event, graph._tooltip, event.currentTarget)) return;
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           pickTie(event, l, tieAt(l));
@@ -17734,9 +21827,11 @@ var RareCharts = (() => {
         if (this.selected) select(null);
       });
       const pass = (item) => !this.filter || this.filter(item);
-      const passing = new Set(this.data.nodes.filter(pass).map((n) => n.id));
-      const shown = new Set(this.data.links.filter((l) => pass(l) && passing.has(l.source) && passing.has(l.target)).map((l) => this._linkKey(l)));
-      this._renderLegend(keys.filter((k) => shown.has(k)), colorOf, dashOf, palette);
+      const passingNodes = this.data.nodes.filter(pass);
+      const passing = new Set(passingNodes.map((n) => n.id));
+      const passingLinks = this.data.links.filter((l) => pass(l) && passing.has(l.source) && passing.has(l.target));
+      const shown = new Set(passingLinks.map((l) => this._linkKey(l)));
+      this._renderLegend(keys.filter((k) => shown.has(k)), palette, this._symbolItems(passingNodes, passingLinks));
       if (prevSelection && !sameSelection(prevSelection, this.selected)) {
         const s = this.selected;
         const node = s?.node ? byId.get(s.node) ?? null : null;
@@ -17760,8 +21855,8 @@ var RareCharts = (() => {
       }
       if (key === "ArrowUp" || key === "ArrowDown") {
         const laneIdx = new Map(lanes.map((l, i2) => [l.id, i2]));
-        const at = (x2) => positions.get(x2.id);
-        const walk = ordered.slice().sort((a, b) => (laneIdx.get(at(a).lane) ?? 0) - (laneIdx.get(at(b).lane) ?? 0) || at(a).y - at(b).y || at(a).x - at(b).x);
+        const at2 = (x2) => positions.get(x2.id);
+        const walk = ordered.slice().sort((a, b) => (laneIdx.get(at2(a).lane) ?? 0) - (laneIdx.get(at2(b).lane) ?? 0) || at2(a).y - at2(b).y || at2(a).x - at2(b).x);
         const i = walk.findIndex((x2) => x2.id === n.id);
         return walk[i + (key === "ArrowDown" ? 1 : -1)] ?? null;
       }
@@ -17776,7 +21871,7 @@ var RareCharts = (() => {
       const label = l.links?.length > 1 ? `${l.links.length} ties` : l.label;
       return [`${name(l.source)} \u2192 ${name(l.target)}`, kind, label].filter((v) => v != null && v !== "").join(", ");
     }
-    _nodeTooltip(n, nodeLinks, nodeById, sw = null) {
+    _nodeTooltip(n, nodeLinks, sw = null) {
       const ins = nodeLinks.filter((l) => l.target === n.id);
       const outs = nodeLinks.filter((l) => l.source === n.id);
       const group2 = this._groupCfg(n)?.label ?? n.group;
@@ -17786,7 +21881,7 @@ var RareCharts = (() => {
       ${group2 ? tipKind(escapeHtml(group2), null, "div") : ""}
       ${n.sub ? tipSub(escapeHtml(n.sub)) : ""}
       ${members}
-      ${tipSub(`${ins.length} in \xB7 ${outs.length} out`, { section: true })}
+      ${tipSub(`${tipNum(ins.length)} in \xB7 ${tipNum(outs.length)} out`, { section: true })}
       ${hint}`);
     }
     // Toggle a fold from the drawing (switch click or + / − key) and redraw;
@@ -17834,49 +21929,105 @@ var RareCharts = (() => {
       if (!vis) return null;
       return s.node ? { node: vis.nodes.find((n) => n.id === s.node) ?? null } : { link: vis.links.find((l) => l.id === s.link) ?? null };
     }
-    // Legend: node groups (dots) and tie categories (lines). Clicking a tie
-    // category hides/shows it; positions stay put.
-    _renderLegend(keys, colorOf, dashOf, palette) {
-      const el = this.g._legendEl;
-      if (!el) return;
+    // The key to the drawing (RC-053): static rows after the tie categories,
+    // their marks in the muted text colour. `legendSymbols` gives the words:
+    //   shapes — a row per node shape drawn, named by the kinds that draw it
+    //            (shapeBy), when the nodes draw two or more shapes. Kinds in
+    //            nodeShapes order, then the others as the nodes bring them;
+    //            kinds that share a shape share a row. `shapes: { kind: label }`
+    //            renames a kind, `{ kind: false }` leaves it out, `shapes: false`
+    //            leaves them all out. A fold's stack is no kind: no row
+    //   dash   — words for the ties linkDash dashes: a row with that dash,
+    //            when linkDash dashes a tie
+    //   width  — words for the tie width: a row with a wedge, when a tie has
+    //            a value to size it by (linkWidth.by)
+    // No words, no dash or width row. `legendSymbols: false`: no key.
+    // Not `legendKey`: in the legend a key is an item's identity (data-key,
+    // legendKey() in core/legend.js), and pages read that one.
+    // `nodes`, `links`: what the page's filter lets through, as the list rule
+    // reads them — not the legend's own hiding, the folds or the time window,
+    // so the rows stay put while categories go and come back.
+    _symbolItems(nodes, links) {
       const o = this.g.options;
-      const refocus = legendFocus(el);
-      el.replaceChildren();
-      const groups2 = o.nodeGroups ?? {};
-      Object.entries(groups2).forEach(([key, cfg], i) => {
-        const item = document.createElement("span");
-        item.className = "rc-legend-item rc-flow-legend-group";
-        item.innerHTML = `<svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="${cfg.color ?? palette[i % palette.length]}"/></svg><span></span>`;
-        item.querySelector("span").textContent = cfg.label ?? key;
-        el.appendChild(item);
-      });
-      const types = o.linkTypes ?? {};
-      keys.forEach((key) => {
-        const sample = this.data.links.find((l) => this._linkKey(l) === key);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "rc-legend-item rc-graph-legend-item";
-        button.dataset.type = key;
-        const off = this.hiddenTypes.has(key);
-        button.setAttribute("aria-pressed", String(!off));
-        button.style.opacity = off ? "0.35" : "1";
-        const info = this.typeOf(sample);
-        const dash = info.dash ?? "";
-        button.innerHTML = `<svg width="22" height="12" aria-hidden="true"><line x1="1" y1="6" x2="21" y2="6" stroke="${colorOf(sample)}" stroke-width="3" ${dash ? `stroke-dasharray="${dash}"` : ""}/></svg><span></span>`;
-        button.querySelector("span").textContent = info.label;
-        button.addEventListener("click", () => {
-          if (this.hiddenTypes.has(key)) this.hiddenTypes.delete(key);
-          else this.hiddenTypes.add(key);
-          this.g.render();
+      const words = o.legendSymbols;
+      if (words === false) return [];
+      const cfg = words && typeof words === "object" ? words : {};
+      const text = (v) => typeof v === "string" && v !== "" ? v : null;
+      const row = (label, mark, more) => ({ key: null, label, color: this.g.theme.muted, mark, alias: "", ...more });
+      const items = [];
+      if (cfg.shapes !== false) {
+        const names = cfg.shapes && typeof cfg.shapes === "object" ? cfg.shapes : {};
+        const drawn = /* @__PURE__ */ new Set();
+        const present = /* @__PURE__ */ new Set();
+        nodes.forEach((n) => {
+          const kind = this._kindOf(n);
+          drawn.add(this._shapeOfKind(kind));
+          if (kind != null && kind !== "") present.add(String(kind));
         });
-        el.appendChild(button);
+        if (drawn.size >= 2) {
+          const declared = Object.keys(o.nodeShapes ?? {}).filter((k) => present.has(k));
+          const labels = /* @__PURE__ */ new Map();
+          (/* @__PURE__ */ new Set([...declared, ...present])).forEach((kind) => {
+            const given = names[kind];
+            if (given === false) return;
+            const shape = this._shapeOfKind(kind);
+            const label = text(given) ?? kind;
+            if (!labels.has(shape)) labels.set(shape, []);
+            if (!labels.get(shape).includes(label)) labels.get(shape).push(label);
+          });
+          const radius = o.nodeRadius ?? 18;
+          labels.forEach((list, shape) => items.push(row(list.join(", "), "shape", { shape, radius })));
+        }
+      }
+      const dash = text(cfg.dash);
+      if (dash && typeof o.linkDash === "function" && links.some((l) => !this.typeOf(l).dash && o.linkDash(l))) {
+        items.push(row(dash, "dashed", { dash: LINK_DASH }));
+      }
+      const width = text(cfg.width);
+      const { by = "value" } = o.linkWidth ?? {};
+      if (width && links.some((l) => linkValue(l, { by }) != null)) items.push(row(width, "width"));
+      return items;
+    }
+    // Legend, through the one legend builder (core/legend.js, D-04): the node
+    // groups as plain labels with a dot, then the tie categories as toggles,
+    // then the key (`symbols`, from _symbolItems). A click, Enter or Space
+    // hides or shows a category's ties, a double click keeps only that
+    // category and a second one brings all back, "Show all" shows while one
+    // is off; positions stay put. The state is the chart's hidden set, the
+    // gestures the base Chart's (_legendGesture): it redraws, then
+    // onLegendToggle. legendInteractive: false lists the categories drawn as
+    // labels. `keys`: the categories offered (the list rule above).
+    _renderLegend(keys, palette, symbols = []) {
+      const graph = this.g;
+      const el = graph._typeLegendEl;
+      if (!el) return;
+      const o = graph.options;
+      const interactive = o.legendInteractive !== false;
+      const hidden = graph._hiddenKeys;
+      const groups2 = Object.entries(o.nodeGroups ?? {}).map(([key, cfg], i) => ({
+        key: null,
+        label: cfg.label ?? key,
+        color: cfg.color ?? palette[i % palette.length],
+        mark: "dot",
+        alias: "rc-flow-legend-group"
+      }));
+      const ties = keys.filter((key) => interactive || !hidden.has(key)).map((key) => {
+        const info = this._typeOfKey(key);
+        const dash = drawnDash(info.dash);
+        return { key, label: info.label, color: info.color, mark: dash ? "dashed" : "line", dash, on: !hidden.has(key) };
       });
-      refocus();
+      renderLegendItems(el, [...groups2, ...ties, ...symbols], {
+        interactive,
+        // a category off that the page's filter keeps out of the list still
+        // shows Show all, which clears it too
+        anyHidden: this.linkKeys().some((key) => hidden.has(key)),
+        alias: GRAPH_LEGEND_ALIAS,
+        onToggle: (info) => graph._legendGesture(info, keys)
+      });
     }
   };
 
   // assets/charts/src/graph/layouts/ego.js
-  var linkW = (l) => l.weight ?? l.strength ?? 0.5;
   var CELL_W = 96;
   var CELL_H = 50;
   var PAD = 28;
@@ -17930,7 +22081,7 @@ var RareCharts = (() => {
     const parentOf = /* @__PURE__ */ new Map();
     nodes.forEach((n) => {
       if ((n.depth ?? 0) === 0) return;
-      const candidates = (adjacency.get(n.id) ?? []).filter(({ other }) => (byId.get(other)?.depth ?? Infinity) === n.depth - 1).sort((a, b) => linkW(b.link) - linkW(a.link) || (a.other < b.other ? -1 : 1));
+      const candidates = (adjacency.get(n.id) ?? []).filter(({ other }) => (byId.get(other)?.depth ?? Infinity) === n.depth - 1).sort((a, b) => linkWeight(b.link) - linkWeight(a.link) || (a.other < b.other ? -1 : 1));
       if (candidates[0]) parentOf.set(n.id, candidates[0]);
     });
     const typeKey = (id2) => {
@@ -18072,8 +22223,8 @@ var RareCharts = (() => {
       });
     });
     if (context) {
-      const fan = (ids, at, side) => {
-        if (!ids?.length || !at) return;
+      const fan = (ids, at2, side) => {
+        if (!ids?.length || !at2) return;
         const R = Math.max(48, Math.min(120, pad3 - 30, (H - 100) / 2));
         const base = side === "left" ? Math.PI : 0;
         const spread = Math.PI * 0.8;
@@ -18083,8 +22234,8 @@ var RareCharts = (() => {
           const t = ids.length === 1 ? 0 : i / (ids.length - 1) - 0.5;
           const ang = base + t * spread * dir;
           positions.set(id2, {
-            x: at.x + R * Math.cos(ang),
-            y: at.y + R * Math.sin(ang),
+            x: at2.x + R * Math.cos(ang),
+            y: at2.y + R * Math.sin(ang),
             context: true
           });
         });
@@ -18155,6 +22306,7 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/graph/views/network.js
+  var GRAPH_TRANSITION = 500;
   var networkView = {
     // ego / path / cluster: render() hands over the measured drawing area
     // (the flow view draws through FlowView.render instead).
@@ -18206,16 +22358,16 @@ var RareCharts = (() => {
         if (cur) positions.set(id2, { ...cur, x: p.x, y: p.y });
       });
       this._labelRoom = this._view === "ego" ? this._egoCellW - 6 : null;
-      this._draw(positions, W, H, sectors);
+      this._draw(positions, sectors);
     },
     // ego / path / cluster with nothing to show (setData with an empty
     // payload): no nodes, ties, captions, legend or notes of the previous
     // data, and the details panel back to its hint (R-17).
     _clearDrawing() {
-      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes].forEach((g) => g?.selectAll("*").remove());
+      [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes, this.gLinkKeys].forEach((g) => g?.selectAll("*").remove());
       this.gRoot.selectAll(".rc-graph-row-label").remove();
       this._defs.selectAll(".rc-arrow").remove();
-      this._legendEl?.replaceChildren();
+      if (this._typeLegendEl) renderLegendItems(this._typeLegendEl, []);
       if (this._tooltip?.isPinned) this._tooltip.unpin();
       this._tooltip?.hide?.();
       this._root = null;
@@ -18233,6 +22385,7 @@ var RareCharts = (() => {
       this._renderOverflow();
       this._detailsSubject = null;
       this._refreshDetails();
+      this._syncSvgRole();
     },
     // Half the drawn width of each node's label, its backdrop included:
     // measured with the label's own font where the browser can measure,
@@ -18244,13 +22397,7 @@ var RareCharts = (() => {
       nodes.forEach((n) => {
         const text = String(n.label ?? n.id);
         el.textContent = text;
-        let w = 0;
-        try {
-          w = el.getComputedTextLength?.() ?? 0;
-        } catch {
-          w = 0;
-        }
-        out.set(n.id, (w > 0 ? w : text.length * 6.2) / 2 + 3);
+        out.set(n.id, textWidth(el, 6.2, text) / 2 + 3);
       });
       probe.remove();
       return out;
@@ -18276,7 +22423,7 @@ var RareCharts = (() => {
         links: data.links.filter((l) => keep.has(l.source) && keep.has(l.target))
       };
     },
-    _draw(positions, W, H, sectors = null) {
+    _draw(positions, sectors = null) {
       const t = this.theme;
       const o = this.options;
       const { nodes, links: viewLinks } = this._shown ?? this._viewData;
@@ -18307,7 +22454,7 @@ var RareCharts = (() => {
       };
       const nodeR = (n) => baseR * sizeOf(n);
       const byId = new Map(nodes.map((n) => [n.id, n]));
-      const dur = this._hasRendered ? motionDuration(o.duration ?? 500) : 0;
+      const dur = this._hasRendered ? motionDuration(o.duration ?? GRAPH_TRANSITION) : 0;
       const anchors = this._anchors ?? /* @__PURE__ */ new Set();
       const isDark = (d) => anchors.has(d.id) || !!d.color;
       const fillOf = (d) => d.color ?? (anchors.has(d.id) ? t.text : t.surface ?? t.bg);
@@ -18324,28 +22471,22 @@ var RareCharts = (() => {
         const s = positions.get(d.source);
         const e = positions.get(d.target);
         if (!s || !e) return null;
-        const rT = nodeR(byId.get(d.target)) + 6;
-        const dx = e.x - s.x, dy = e.y - s.y;
-        const len = Math.hypot(dx, dy) || 1;
-        const ex = e.x - dx / len * rT;
-        const ey = e.y - dy / len * rT;
-        const { index: index2 = 0, count = 1 } = par.get(d.id) ?? {};
-        const base = this._view !== "path" && len >= 40 ? Math.min(26, len * 0.08) : 0;
-        const flip = d.source > d.target ? -1 : 1;
-        const fan = count > 1 ? (index2 - (count - 1) / 2) * 16 * flip : 0;
-        const bow2 = base + fan;
-        const nx = -dy / len, ny = dx / len;
-        const cx = (s.x + ex) / 2 + nx * bow2;
-        const cy = (s.y + ey) / 2 + ny * bow2;
+        const { offset = 0 } = par.get(d.id) ?? {};
+        const g = quadBow(s, e, {
+          to: nodeR(byId.get(d.target)) + 6,
+          // Grid views (ego, cluster): cell centres are collinear, so ties bow
+          // gently instead of running straight through the nodes between them.
+          bow: (len) => (this._view !== "path" && len >= 40 ? Math.min(26, len * 0.08) : 0) + offset * 16
+        });
         const rS = nodeR(byId.get(d.source));
-        const vx = s.x + dx / len * rS, vy = s.y + dy / len * rS;
-        const mid = { x: (vx + ex) / 2 + nx * bow2 * 0.5, y: (vy + ey) / 2 + ny * bow2 * 0.5 };
-        return { s, e: { x: ex, y: ey }, c: { x: cx, y: cy }, mid, curved: bow2 !== 0 };
+        const vx = s.x + g.u.x * rS, vy = s.y + g.u.y * rS;
+        const mid = { x: (vx + g.e.x) / 2 + g.n.x * g.off * 0.5, y: (vy + g.e.y) / 2 + g.n.y * g.off * 0.5 };
+        return { ...g, mid, curved: g.off !== 0 };
       };
       const linkD = (d) => {
         const g = linkGeom(d);
         if (!g) return "";
-        return g.curved ? `M${g.s.x},${g.s.y}Q${g.c.x},${g.c.y} ${g.e.x},${g.e.y}` : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
+        return g.curved ? g.d : `M${g.s.x},${g.s.y}L${g.e.x},${g.e.y}`;
       };
       const linkKey = (d) => pairKey(d.source, d.target);
       const linkSel = this.gLinks.selectAll(".rc-graph-link").data(links, (d) => d.id).join(
@@ -18353,7 +22494,7 @@ var RareCharts = (() => {
         (update) => update,
         (exit) => exit.remove()
       ).attr("stroke", (d) => this._typeInfo(d.type).color).attr("stroke-width", (d) => {
-        const w = Math.max(0.75, 1.4 * (d.weight ?? d.strength ?? 0.5));
+        const w = Math.max(0.75, 1.4 * linkWeight(d));
         return this._shortestKeys?.has(linkKey(d)) ? Math.max(2, w * 1.6) : w;
       }).attr("stroke-dasharray", (d) => this._typeInfo(d.type).dash).attr("marker-end", (d) => `url(#${markerId(d.type ?? "default")})`);
       const linkOpacity = (l) => {
@@ -18366,11 +22507,13 @@ var RareCharts = (() => {
       this._linkOpacity = linkOpacity;
       (dur ? linkSel.transition().duration(dur) : linkSel).attr("d", linkD).attr("stroke-opacity", linkOpacity);
       const badgeSel = this.gLinkBadges.selectAll(".rc-graph-link-more").data(links.filter((l) => l._siblings), (d) => d.id).join("text").attr("class", "rc-graph-link-more").attr("text-anchor", "middle").attr("dominant-baseline", "middle").attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").style("pointer-events", "none").text((d) => `+${d._siblings.length - 1}`);
+      const labelPadX = 3;
+      const labelW = /* @__PURE__ */ new Map();
       const nodeBoxes = () => nodes.map((n) => {
         const p = positions.get(n.id);
         if (!p) return null;
         const r = nodeR(n);
-        const w = Math.max(2 * r, String(n.label ?? n.id).length * 6.2);
+        const w = Math.max(2 * r, (labelW.get(n.id) ?? 0) + 2 * labelPadX);
         return [
           { x0: p.x - r, x1: p.x + r, y0: p.y - r, y1: p.y + r },
           { x0: p.x - w / 2, x1: p.x + w / 2, y0: p.y + r + 3, y1: p.y + r + 19 }
@@ -18379,22 +22522,14 @@ var RareCharts = (() => {
       const badgeAt = (d, obstacles) => {
         const g = linkGeom(d);
         if (!g) return { x: 0, y: 0 };
-        const q = (tt) => ({
-          x: (1 - tt) ** 2 * g.s.x + 2 * (1 - tt) * tt * g.c.x + tt ** 2 * g.e.x,
-          y: (1 - tt) ** 2 * g.s.y + 2 * (1 - tt) * tt * g.c.y + tt ** 2 * g.e.y
-        });
-        const dx = g.e.x - g.s.x, dy = g.e.y - g.s.y, len = Math.hypot(dx, dy) || 1;
-        const nx = -dy / len, ny = dx / len;
+        const { n } = chord(g.s, g.e);
         const half = 9;
-        for (const tt of [0.5, 0.4, 0.6, 0.3, 0.7]) {
-          for (const off of [0, 12, -12]) {
-            const p = q(tt);
-            const x2 = p.x + nx * off, y2 = p.y + ny * off;
-            const hit = obstacles.some((b) => x2 + half > b.x0 && x2 - half < b.x1 && y2 + 7 > b.y0 && y2 - 7 < b.y1);
-            if (!hit) return { x: x2, y: y2 };
-          }
-        }
-        return g.mid;
+        const spots = [0.5, 0.4, 0.6, 0.3, 0.7].flatMap((tt) => {
+          const p = quadPoint(g, tt);
+          return [0, 12, -12].map((off) => ({ x: p.x + n.x * off, y: p.y + n.y * off }));
+        });
+        const spot = placeFirstFree(spots, ({ x: x2, y: y2 }) => ({ x0: x2 - half, x1: x2 + half, y0: y2 - 7, y1: y2 + 7 }), obstacles);
+        return spot ? spot.at : g.mid;
       };
       const placeBadges = (sel) => {
         const obstacles = nodeBoxes();
@@ -18403,12 +22538,21 @@ var RareCharts = (() => {
           select_default2(this).attr("x", p.x).attr("y", p.y);
         });
       };
-      placeBadges(badgeSel);
       const hitSel = this.gLinkHits.selectAll(".rc-graph-link-hit").data(links, (d) => d.id).join("path").attr("class", "rc-graph-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 12).style("pointer-events", "stroke").style("cursor", "pointer").attr("d", linkD);
       const tieHtml = (d) => {
         const source = this._model.node(d.source) ?? { id: d.source };
         const target = this._model.node(d.target) ?? { id: d.target };
         return o.linkTooltipFormat ? o.linkTooltipFormat({ link: d, source, target }) : this._defaultLinkTooltip(d, source, target);
+      };
+      const pinTie = (d, [x2, y2]) => {
+        this._highlightTie(d, nodeSel, linkSel);
+        this._showDetails({ link: d });
+        this._tooltip.pin(x2, y2, tieHtml(d), {
+          onClose: () => {
+            this._highlight(null, nodeSel, linkSel);
+            this._showDetails(null);
+          }
+        });
       };
       hitSel.on("mouseover", (event, d) => {
         if (this._tooltip.isPinned) return;
@@ -18421,20 +22565,13 @@ var RareCharts = (() => {
         this._highlight(null, nodeSel, linkSel);
       }).on("click", (event, d) => {
         event.stopPropagation();
-        const [mx, my] = pointer_default(event, this.container);
-        this._highlightTie(d, nodeSel, linkSel);
-        this._showDetails({ link: d });
-        this._tooltip.pin(mx, my, tieHtml(d), {
-          onClose: () => {
-            this._highlight(null, nodeSel, linkSel);
-            this._showDetails(null);
-          }
-        });
+        pinTie(d, pointer_default(event, this.container));
       });
       this._redrawTies = (id2) => {
         const touches = (l) => l.source === id2 || l.target === id2;
         linkSel.filter(touches).attr("d", linkD);
         hitSel.filter(touches).attr("d", linkD);
+        this.gLinkKeys.selectAll(".rc-graph-link-key").filter(touches).attr("d", linkD);
         placeBadges(badgeSel.filter(touches));
       };
       const keyFocus = holdsFocus(this.gNodes.node()) && !this._pointerFocus;
@@ -18463,6 +22600,7 @@ var RareCharts = (() => {
         const full = d.label ?? d.id;
         if (room) fitTextNode(this, full, room);
         else this.textContent = full;
+        labelW.set(d.id, textWidth(this, 6.2));
       });
       nodeSel.select(".rc-graph-node-icon").attr("d", (d) => this._nodeIcons?.[d.group] ?? null).attr("fill", (d) => isDark(d) ? t.bg ?? "#ffffff" : t.text).attr("transform", (d) => {
         const s = nodeR(d) * 1.24 / 24;
@@ -18473,9 +22611,10 @@ var RareCharts = (() => {
         const tEl = grp.select(".rc-graph-node-label").node();
         if (!tEl) return;
         const bbox = tEl.getBBox ? tEl.getBBox() : { x: 0, y: 0, width: 0, height: 0 };
-        const padX = 3, padY = 1;
+        const padX = labelPadX, padY = 1;
         grp.select(".rc-graph-node-label-bg").attr("x", bbox.x - padX).attr("y", bbox.y - padY).attr("width", bbox.width + padX * 2).attr("height", bbox.height + padY * 2);
       });
+      placeBadges(badgeSel);
       (dur ? nodeSel.transition().duration(dur) : nodeSel).attr("transform", (d) => {
         const p = positions.get(d.id);
         return p ? `translate(${p.x},${p.y})` : null;
@@ -18567,6 +22706,50 @@ var RareCharts = (() => {
       } else if (!this._pointerFocus) {
         showFocused(focusedEl.__data__);
       }
+      const tieKeyFocus = holdsFocus(this.gLinkKeys.node());
+      const at2 = (id2) => positions.get(id2) ?? { x: 0, y: 0 };
+      const reading = (a, b) => Math.round(at2(a).y) - Math.round(at2(b).y) || at2(a).x - at2(b).x;
+      const tieOrder = links.slice().sort((a, b) => reading(a.source, b.source) || reading(a.target, b.target));
+      const keySel = this.gLinkKeys.selectAll(".rc-graph-link-key").data(tieOrder, (d) => d.id).join("path").attr("class", "rc-graph-link-key").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", 12).style("pointer-events", "none").attr("d", linkD).attr("role", "button").attr("aria-label", (d) => this._tieAriaLabel(d, (id2) => byId.get(id2) ?? this._model.node(id2)));
+      const tieStop = rovingTabindex(keySel, { state: this._tieRoving });
+      const tieAt = (d) => {
+        const m = linkGeom(d)?.mid ?? { x: 0, y: 0 };
+        return this._toCard(m.x, m.y);
+      };
+      const showTie = (d) => {
+        if (this._tooltip.isPinned) return;
+        this._tooltip.show(...tieAt(d), tieHtml(d));
+        this._highlightTie(d, nodeSel, linkSel);
+      };
+      keySel.on("focus.tip", (event, d) => {
+        if (!this._destroyed) showTie(d);
+      }).on("blur.tip", (event) => {
+        if (!event.target.isConnected || this._destroyed) return;
+        if (this._tooltip.isPinned) return;
+        this._tooltip.hide();
+        this._highlight(null, nodeSel, linkSel);
+      }).on("keydown", (event, d) => {
+        if (enterPinnedTip(event, this._tooltip, event.currentTarget)) return;
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          pinTie(d, tieAt(d));
+          return;
+        }
+        if (event.key === "Escape") {
+          if (this._tooltip.isPinned) this._tooltip.unpin();
+          this._tooltip.hide();
+          this._highlight(null, nodeSel, linkSel);
+          return;
+        }
+        const next = listStep(tieOrder, d, event.key);
+        if (next) {
+          event.preventDefault();
+          tieStop.focus(next.id);
+        }
+      });
+      const keyEl = typeof document !== "undefined" ? document.activeElement : null;
+      if (keyEl && keySel.nodes().includes(keyEl)) showTie(keyEl.__data__);
+      else if (tieKeyFocus) tieStop.focus(this._tieRoving.current);
       const showSectors = o.sectorLabels === true && (sectors?.length ?? 0) > 1;
       this.gSectors.selectAll(".rc-graph-sector-label").data(showSectors ? sectors : [], (d) => d.key).join("text").attr("class", "rc-graph-sector-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => Math.cos(d.angle) > 0.35 ? "start" : Math.cos(d.angle) < -0.35 ? "end" : "middle").attr("dominant-baseline", "middle").attr("fill", t.muted).style("pointer-events", "none").text((d) => d.key);
       if (this._overflowNoteEl) {
@@ -18583,8 +22766,8 @@ var RareCharts = (() => {
         this._hiddenNoteEl.hidden = !n;
         this._hiddenNoteEl.textContent = n ? `${n} hidden \xB7 restore` : "";
       }
-      if (this._view === "cluster") this._legendEl.innerHTML = "";
-      else this._renderLegend(typesInUse, t);
+      if (this._view === "cluster") renderLegendItems(this._typeLegendEl, []);
+      else this._renderLegend(typesInUse);
     },
     // The accessible name of a node: its label, group and number of ties, and
     // whether it is the centre or an endpoint of the view (K-20).
@@ -18594,6 +22777,17 @@ var RareCharts = (() => {
       const n = ties.filter((l) => l.source === d.id || l.target === d.id).length;
       const role = anchors.has(d.id) ? this._view === "ego" ? "center" : "endpoint" : null;
       return [name, d.group, `${n} connection${n === 1 ? "" : "s"}`, role].filter(Boolean).join(" \u2014 ");
+    },
+    // The accessible name of a tie (K-23), as the flow view names its ties:
+    // its ends, its category and its label. A pair drawn as one line with a
+    // +N badge says how many ties it stands for (of several categories).
+    // `nodeOf` finds an end among the drawn nodes (a community in the cluster
+    // view) or the model.
+    _tieAriaLabel(d, nodeOf) {
+      const name = (id2) => String(nodeOf(id2)?.label ?? id2);
+      const kind = d._siblings ? null : this._typeInfo(d.type).label;
+      const label = d._siblings ? `${d._siblings.length} ties` : d.label;
+      return [`${name(d.source)} \u2192 ${name(d.target)}`, kind, label].filter((v) => v != null && v !== "").join(", ");
     },
     // ─── Node dragging ────────────────────────────────────────────────────────
     _dragBehavior(positions) {
@@ -18644,342 +22838,6 @@ var RareCharts = (() => {
     }
   };
 
-  // assets/charts/src/graph/chrome.js
-  var graphChrome = {
-    _initGraphChrome() {
-      this.container.style.position = "relative";
-      this._breadcrumbsEl = document.createElement("nav");
-      this._breadcrumbsEl.className = "rc-graph-breadcrumbs";
-      this._breadcrumbsEl.setAttribute("aria-label", "Graph navigation");
-      this.container.appendChild(this._breadcrumbsEl);
-      this._overflowEl = document.createElement("div");
-      this._overflowEl.className = "rc-graph-overflow";
-      this._overflowEl.setAttribute("role", "dialog");
-      this._overflowEl.setAttribute("aria-label", "Hidden nodes");
-      this._overflowEl.hidden = true;
-      this._overflowEl.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") this._closeOverflow();
-      });
-      this.container.appendChild(this._overflowEl);
-    },
-    // ─── Details panel ────────────────────────────────────────────────────────
-    _initDetails() {
-      const d = this.options.details;
-      if (!d) return;
-      let el;
-      if (d === true) {
-        el = document.createElement("div");
-        this._detailsOwned = true;
-      } else {
-        el = typeof d === "string" ? document.querySelector(d) : d;
-        if (!(el instanceof HTMLElement)) return;
-        this._detailsOwned = false;
-        const addedLive = !el.hasAttribute("aria-live");
-        this._adoptPageElement(el, (e) => {
-          e.classList.remove("rc-graph-details");
-          if (addedLive) e.removeAttribute("aria-live");
-          ["width", "height", "top", "right"].forEach((p) => e.style.removeProperty(p));
-          if (!e.getAttribute("style")) e.removeAttribute("style");
-        });
-      }
-      el.classList.add("rc-graph-details");
-      if (!el.hasAttribute("aria-live")) el.setAttribute("aria-live", "polite");
-      this._detailsEl = el;
-      this._detailsSubject = null;
-      this.container.appendChild(el);
-    },
-    // Side or below, by card width. Returns the width the layout must leave
-    // free on the right (0 when the panel sits below).
-    _layoutDetails() {
-      const el = this._detailsEl;
-      if (!el) return 0;
-      const o = this.options;
-      const cs = window.getComputedStyle(this.container);
-      const padL = parseFloat(cs.paddingLeft) || 0, padR = parseFloat(cs.paddingRight) || 0;
-      const cw = this.container.clientWidth - padL - padR;
-      this._detailsInset = padR;
-      const width = o.detailsWidth ?? 300;
-      const minDrawing = this._view === "flow" ? o.minWidth ?? 0 : 0;
-      const side = cw >= (o.detailsBreakpoint ?? 1e3) && cw >= minDrawing + width + 12;
-      this.container.classList.toggle("rc-graph--details-side", side);
-      this.container.classList.toggle("rc-graph--details-below", !side);
-      if (!this._expanded) {
-        this._baseCardHeight ??= this.container.style.height;
-        const base = parseFloat(this._baseCardHeight) || o.height || 520;
-        const want = side ? `${base}px` : `${base + (o.detailsHeight ?? 200)}px`;
-        if (this.container.style.height !== want) this.container.style.height = want;
-      }
-      el.style.width = side ? `${width}px` : "";
-      el.style.height = side ? "" : `${o.detailsHeight ?? 200}px`;
-      const clear = side ? `${width + 12}px` : "";
-      if (this._legendEl) this._legendEl.style.marginRight = clear;
-      if (this._breadcrumbsEl) this._breadcrumbsEl.style.marginRight = clear;
-      if (this._navigatorEl) this._navigatorEl.style.marginRight = clear;
-      return side ? width + 12 : 0;
-    },
-    // Side panel: aligned with the drawing's top and height. Called after the
-    // drawing and its legend are done — the legend's height moves the svg.
-    _placeDetails(svgEl) {
-      const el = this._detailsEl;
-      if (!el || !this.container.classList.contains("rc-graph--details-side")) {
-        if (el) {
-          el.style.top = "";
-          el.style.height = el.style.height || "";
-        }
-        return;
-      }
-      const svgBox = svgEl.getBoundingClientRect();
-      const cardBox = this.container.getBoundingClientRect();
-      const top2 = svgBox.top - cardBox.top - this.container.clientTop + this.container.scrollTop;
-      el.style.top = `${top2}px`;
-      el.style.right = `${this._detailsInset ?? 0}px`;
-      el.style.height = `${svgBox.height}px`;
-    },
-    // What the panel shows: a hovered/selected node or tie, else the default
-    // (the focused node in the ego view, nothing elsewhere).
-    _showDetails(subject) {
-      this._detailsSubject = subject;
-      this._refreshDetails();
-    },
-    _refreshDetails() {
-      const el = this._detailsEl;
-      if (!el || !this._detailsOwned) return;
-      let subject = this._detailsSubject;
-      const drawn = this._view === "flow" ? this._flowView?._lastVisible?.nodes : (this._shown ?? this._viewData)?.nodes;
-      if (subject?.node && !drawn?.some((n) => n.id === subject.node.id)) subject = null;
-      if (!subject && this._view === "ego" && this._root != null) {
-        const root2 = this._model.node(this._root);
-        if (root2) subject = { node: root2 };
-      }
-      const fmt = this.options.detailsFormat;
-      el.innerHTML = fmt ? fmt({ node: subject?.node ?? null, link: subject?.link ?? null, view: this._view }) : this._defaultDetails(subject);
-    },
-    // ─── Footer tools and full screen ────────────────────────────────────────
-    // Footer tools, right of the source line: the "+N more" and "N hidden"
-    // notes, zoom buttons, full screen. Never over the canvas, where they
-    // covered the bottom row. A chart without source/note gets a footer row
-    // just for them.
-    _initTools() {
-      const t = this.theme;
-      const tools = document.createElement("div");
-      tools.className = "rc-graph-tools";
-      this._toolsEl = tools;
-      const mkButton = (label, title, fn, cls = "") => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.textContent = label;
-        b.title = title;
-        b.setAttribute("aria-label", title);
-        if (cls) b.className = cls;
-        b.style.cssText = `height:26px;min-width:26px;padding:0 6px;border:1px solid ${t.border ?? t.muted};border-radius:4px;background:${t.bg ?? "#fff"};color:${t.text};font-size:14px;line-height:1;cursor:pointer;`;
-        b.addEventListener("click", fn);
-        return b;
-      };
-      const mkNote = (cls, fn) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = cls;
-        b.hidden = true;
-        b.addEventListener("click", fn);
-        tools.appendChild(b);
-        return b;
-      };
-      this._overflowNoteEl = mkNote("rc-graph-note", () => this._toggleOverflow());
-      this._hiddenNoteEl = mkNote("rc-graph-hidden-note", () => {
-        this._hidden.clear();
-        this.render();
-      });
-      if (this.options.zoom !== false) {
-        const zoom = document.createElement("div");
-        zoom.className = "rc-graph-zoom-controls";
-        zoom.setAttribute("role", "group");
-        zoom.setAttribute("aria-label", "Zoom");
-        zoom.append(
-          mkButton("+", "Zoom in", () => this._zoomBy(1.4)),
-          mkButton("\u2212", "Zoom out", () => this._zoomBy(1 / 1.4)),
-          mkButton("\u27F2", "Reset view", () => {
-            if (this._zoom) this.svg.transition().duration(200).call(this._zoom.transform, identity4);
-          })
-        );
-        tools.appendChild(zoom);
-        this._zoomControlsEl = zoom;
-      }
-      if (this.options.fullscreen !== false) {
-        this._fullscreenBtn = mkButton("\u26F6", "Full screen", () => this.toggleFullscreen(), "rc-graph-fullscreen");
-        tools.appendChild(this._fullscreenBtn);
-        this._onFullscreenChange = () => this._syncFullscreen(document.fullscreenElement === this.container);
-        document.addEventListener("fullscreenchange", this._onFullscreenChange);
-        this._onFullscreenKey = (event) => {
-          if (event.key === "Escape" && this._expanded && !document.fullscreenElement) this.toggleFullscreen(false);
-        };
-        document.addEventListener("keydown", this._onFullscreenKey);
-      }
-      if (!this._footerEl) {
-        this._footerEl = document.createElement("div");
-        this._footerEl.className = "rc-chart-footer";
-        this.container.appendChild(this._footerEl);
-      }
-      this._footerEl.classList.add("rc-chart-footer--tools");
-      this._footerEl.insertBefore(tools, this._sourceEl ? this._sourceEl.nextSibling : this._footerEl.firstChild);
-    },
-    _syncFullscreen(on) {
-      if (on === this._expanded) return;
-      this._expanded = on;
-      const el = this.container;
-      if (on) {
-        this._savedHeight = el.style.height;
-        el.style.height = "100vh";
-        el.classList.add("rc-graph--fullscreen");
-      } else {
-        el.style.height = this._savedHeight ?? "";
-        el.classList.remove("rc-graph--fullscreen");
-      }
-      if (this._fullscreenBtn) {
-        this._fullscreenBtn.textContent = on ? "\u2715" : "\u26F6";
-        this._fullscreenBtn.title = on ? "Exit full screen (Esc)" : "Full screen";
-        this._fullscreenBtn.setAttribute("aria-label", this._fullscreenBtn.title);
-      }
-      requestAnimationFrame?.(() => this.render());
-    },
-    _zoomBy(factor) {
-      if (!this._zoom) return;
-      this.svg.transition().duration(200).call(this._zoom.scaleBy, factor);
-    },
-    // ─── Legend ───────────────────────────────────────────────────────────────
-    _renderLegend(typesInUse, t) {
-      if (!this._legendEl) return;
-      typesInUse.forEach((type2) => this._knownTypes.add(String(type2)));
-      const filterable = this._view === "ego";
-      const available = filterable && this._knownTypes.size ? [...this._knownTypes] : typesInUse.map(String);
-      const items = available.map((type2) => ({ ...this._typeInfo(type2), type: type2 }));
-      const active = filterable ? this._relationTypes : null;
-      const refocus = legendFocus(this._legendEl);
-      this._legendEl.replaceChildren();
-      items.forEach((item) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "rc-legend-item rc-graph-legend-item";
-        button.dataset.type = item.type;
-        const selected = !active || active.has(item.type);
-        if (filterable) button.setAttribute("aria-pressed", String(selected));
-        button.style.opacity = selected ? "1" : "0.35";
-        button.disabled = !filterable || this.options.interactiveLegend === false;
-        button.innerHTML = `<svg width="22" height="12" aria-hidden="true">
-        <line x1="1" y1="6" x2="21" y2="6" stroke="${item.color}"
-          stroke-width="2" ${item.dash ? `stroke-dasharray="${item.dash}"` : ""}/>
-      </svg><span></span>`;
-        button.querySelector("span").textContent = item.label ?? item.type;
-        button.addEventListener("click", (event) => this._toggleRelationType(item.type, event));
-        this._legendEl.appendChild(button);
-      });
-      if (active) {
-        const reset = document.createElement("button");
-        reset.type = "button";
-        reset.className = "rc-graph-legend-reset";
-        reset.textContent = "Show all";
-        reset.addEventListener("click", () => this.clearRelationTypes());
-        this._legendEl.appendChild(reset);
-      }
-      refocus();
-    },
-    _toggleRelationType(type2, event) {
-      if (this.options.interactiveLegend === false) return;
-      const multi = event.shiftKey || event.ctrlKey || event.metaKey;
-      if (!multi) {
-        const onlyThis = this._relationTypes?.size === 1 && this._relationTypes.has(type2);
-        this.setRelationTypes(onlyThis ? null : [type2]);
-        return;
-      }
-      const next = new Set(this._relationTypes ?? this._knownTypes);
-      if (next.has(type2)) next.delete(type2);
-      else next.add(type2);
-      this.setRelationTypes(next.size === this._knownTypes.size || next.size === 0 ? null : [...next]);
-    },
-    // ─── "+N more" list ───────────────────────────────────────────────────────
-    _renderOverflow() {
-      if (!this._overflowEl) return;
-      if (!this._overflowNodes.length || this._view !== "ego") {
-        this._overflowEl.hidden = true;
-        this._overflowEl.replaceChildren();
-        return;
-      }
-      const title = document.createElement("div");
-      title.className = "rc-graph-overflow-title";
-      title.textContent = `${this._overflowNodes.length} more node${this._overflowNodes.length === 1 ? "" : "s"}`;
-      const list = document.createElement("div");
-      list.className = "rc-graph-overflow-list";
-      this._overflowNodes.forEach((node) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "rc-graph-overflow-item";
-        button.textContent = node.label ?? node.id;
-        button.title = `Focus ${node.label ?? node.id}`;
-        button.addEventListener("click", () => {
-          this._overflowEl.hidden = true;
-          this.focus(node.id);
-        });
-        list.appendChild(button);
-      });
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "rc-graph-overflow-close";
-      close.setAttribute("aria-label", "Close hidden nodes list");
-      close.textContent = "\xD7";
-      close.addEventListener("click", () => this._closeOverflow());
-      this._overflowEl.replaceChildren(title, close, list);
-    },
-    // Escape or ×: the list closes and keyboard focus goes back to the
-    // "+N more" button that opened it, not to the page's <body> (D7).
-    _closeOverflow() {
-      this._overflowEl.hidden = true;
-      if (this._overflowNoteEl && !this._overflowNoteEl.hidden) this._overflowNoteEl.focus();
-    },
-    _toggleOverflow() {
-      if (!this._overflowEl || !this._overflowNodes.length) return;
-      this._overflowEl.hidden = !this._overflowEl.hidden;
-      if (!this._overflowEl.hidden) {
-        this._overflowEl.querySelector(".rc-graph-overflow-close")?.focus();
-      }
-    },
-    // ─── Breadcrumbs ──────────────────────────────────────────────────────────
-    _renderBreadcrumbs() {
-      if (!this._breadcrumbsEl) return;
-      if (this.options.breadcrumbs === false || this._history.length < 2) {
-        this._breadcrumbsEl.hidden = true;
-        this._breadcrumbsEl.replaceChildren();
-        this._refitIfResized();
-        return;
-      }
-      this._breadcrumbsEl.hidden = false;
-      this._breadcrumbsEl.replaceChildren();
-      this._history.forEach((state, index2) => {
-        if (index2) this._breadcrumbsEl.append(" / ");
-        const button = document.createElement("button");
-        button.type = "button";
-        button.disabled = index2 === this._history.length - 1;
-        button.textContent = this._historyLabel(state);
-        button.addEventListener("click", () => {
-          const target = this._history[index2];
-          this._history = this._history.slice(0, index2 + 1);
-          this._skipHistoryOnce = true;
-          this._restoreState(target);
-          this._renderBreadcrumbs();
-        });
-        this._breadcrumbsEl.appendChild(button);
-      });
-      this._refitIfResized();
-    },
-    _historyLabel(state) {
-      if (state.view === "cluster") return "Overview";
-      if (state.view === "path") {
-        const a = this._model.node(state.a)?.label ?? state.a;
-        const b = this._model.node(state.b)?.label ?? state.b;
-        return state.a === state.b ? String(a) : `${a} \u2194 ${b}`;
-      }
-      return this._model.node(state.root)?.label ?? state.root;
-    }
-  };
-
   // assets/charts/src/graph/tooltips.js
   var graphTooltips = {
     // ─── Tooltip ──────────────────────────────────────────────────────────────
@@ -18988,12 +22846,11 @@ var RareCharts = (() => {
       const name = esc(node.label ?? node.id);
       if (node._size != null) {
         return tipBody(`${tipTitle(name)}
-        ${tipSub(`${node._size} node${node._size !== 1 ? "s" : ""} \u2014 click to explore`)}`);
+        ${tipSub(`${tipNum(node._size)} node${node._size !== 1 ? "s" : ""} \u2014 click to explore`)}`);
       }
       const MAX_NAMES = 6;
-      const linkW2 = (l) => l.weight ?? l.strength ?? 0.5;
       const byType = /* @__PURE__ */ new Map();
-      nodeLinks.slice().sort((a, b) => linkW2(b) - linkW2(a)).forEach((l) => {
+      nodeLinks.slice().sort((a, b) => linkWeight(b) - linkWeight(a)).forEach((l) => {
         const type2 = l.type ?? "default";
         if (!byType.has(type2)) byType.set(type2, []);
         const otherId = l.source === node.id ? l.target : l.source;
@@ -19006,32 +22863,32 @@ var RareCharts = (() => {
         const take = Math.max(0, Math.min(names.length, MAX_NAMES - shown));
         shown += take;
         const list = take ? `<div>${names.slice(0, take).map(esc).join(", ")}${names.length > take ? "\u2026" : ""}</div>` : "";
-        return `<div class="rc-tooltip-section">${tipKind(esc(cfg(type2).label ?? type2), cfg(type2).color)}${tipKind(` \xB7 ${names.length}`)}${list}</div>`;
+        return `<div class="rc-tooltip-section">${tipKind(esc(cfg(type2).label ?? type2), cfg(type2).color)}${tipKind(` \xB7 ${tipNum(names.length)}`)}${list}</div>`;
       }).join("");
       const hiddenNames = nodeLinks.length - shown;
-      const footer = hiddenNames > 0 ? tipSub(`+${hiddenNames} more`, { section: true }) : "";
+      const footer = hiddenNames > 0 ? tipSub(`${tipNum(`+${hiddenNames}`)} more`, { section: true }) : "";
       const total = nodeLinks.length;
       return tipBody(`${tipTitle(name)}
       ${node.group ? tipKind(esc(node.group), null, "div") : ""}
-      ${tipSub(`${total} connection${total !== 1 ? "s" : ""}`)}
+      ${tipSub(`${tipNum(total)} connection${total !== 1 ? "s" : ""}`)}
       ${rows}
       ${footer}`);
     },
     // Tie tooltip: endpoints, type, then whatever the payload carries — label,
     // value, period, and `sources` (posts proving the tie) as links, which is
     // why a clicked tie pins its tooltip. A pair collapsed under a +N badge
-    // lists every tie it stands for.
+    // lists every tie it stands for. The value goes in as text (linkValueText),
+    // as the details panel prints it.
     _defaultLinkTooltip(link2, source, target) {
       const ties = link2._siblings ?? [link2];
       return linkTooltipHtml({
         from: source.label ?? source.id,
         to: target.label ?? target.id,
-        ties: ties.map((l) => ({ link: l, kind: this._linkTypeOf(l) }))
+        ties: ties.map((l) => ({ link: { ...l, value: linkValueText(l, this.options.valueFormat) }, kind: this._linkTypeOf(l) }))
       });
     },
     // ─── Details panel (details: true) ───────────────────────────────────────
     _defaultDetails(subject) {
-      const t = this.theme;
       const esc = escapeHtml;
       const kind = (txt) => `<p class="rc-graph-details-kind">${esc(txt)}</p>`;
       const row = (k, v) => `<dt>${esc(k)}</dt><dd>${v}</dd>`;
@@ -19054,7 +22911,7 @@ var RareCharts = (() => {
         const list = ties.slice(0, 12).map((l) => {
           const other = l.source === n.id ? l.target : l.source;
           const dir = l.source === n.id ? "\u2192" : "\u2190";
-          const extra = l.label ?? (l.value != null ? Number(l.value).toLocaleString() : "");
+          const extra = l.label ?? linkValueText(l, this.options.valueFormat);
           const type2 = this._linkTypeOf(l).label;
           return `<li>${dir} ${nameOf(other)}${type2 ? ` <span class="rc-graph-details-muted">\xB7 ${esc(type2)}</span>` : ""}${extra ? ` <span class="rc-graph-details-muted">\xB7 ${esc(extra)}</span>` : ""}</li>`;
         }).join("");
@@ -19075,11 +22932,11 @@ var RareCharts = (() => {
           return safeUrl(url) ? `<li><a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(title)}</a></li>` : `<li>${esc(title ?? "")}</li>`;
         }).join("") : "";
         return `${type2 ? kind(type2) : ""}<h4>${nameOf(l.source)} \u2192 ${nameOf(l.target)}</h4>
-        <dl>${l.label ? row("Label", esc(l.label)) : ""}${l.value != null && l.value !== "" ? row("Value", esc(typeof l.value === "number" ? l.value.toLocaleString() : l.value)) : ""}${period ? row("Period", period) : ""}</dl>
+        <dl>${l.label ? row("Label", esc(l.label)) : ""}${linkValueText(l, this.options.valueFormat) ? row("Value", esc(linkValueText(l, this.options.valueFormat))) : ""}${period ? row("Period", period) : ""}</dl>
         ${sources ? `<ul>${sources}</ul>` : ""}`;
       }
       const hint = this._view === "flow" ? "Select a node or a tie to see its details." : "Hover a node, or click a tie, to see its details.";
-      return `${kind("Details")}<p style="color:${t.muted}">${hint}</p>`;
+      return `${kind("Details")}<p class="rc-graph-details-muted">${hint}</p>`;
     }
   };
 
@@ -19325,7 +23182,7 @@ var RareCharts = (() => {
     }
   };
   var NODE = 0;
-  var SOURCE = 1;
+  var SOURCE2 = 1;
   var TARGET = 2;
   var OPPOSITE = 3;
   function findRelevantNodeData(graph, method, mode, nodeOrEdge, nameOrEdge, add1, add2) {
@@ -19365,7 +23222,7 @@ var RareCharts = (() => {
         throw new NotFoundGraphError(
           `Graph.${method}: could not find the "${nodeOrEdge}" edge in the graph.`
         );
-      if (mode === SOURCE) {
+      if (mode === SOURCE2) {
         nodeData = edgeData.source;
       } else {
         nodeData = edgeData.target;
@@ -19592,7 +23449,7 @@ var RareCharts = (() => {
   function attachNodeAttributesMethods(Graph3) {
     NODE_ATTRIBUTES_METHODS.forEach(function({ name, attacher }) {
       attacher(Graph3, name("Node"), NODE);
-      attacher(Graph3, name("Source"), SOURCE);
+      attacher(Graph3, name("Source"), SOURCE2);
       attacher(Graph3, name("Target"), TARGET);
       attacher(Graph3, name("Opposite"), OPPOSITE);
     });
@@ -20703,9 +24560,9 @@ var RareCharts = (() => {
     this.A = null;
     this.B = null;
   }
-  CompositeSetWrapper.prototype.wrap = function(set3) {
-    if (this.A === null) this.A = set3;
-    else if (this.B === null) this.B = set3;
+  CompositeSetWrapper.prototype.wrap = function(set4) {
+    if (this.A === null) this.A = set4;
+    else if (this.B === null) this.B = set4;
   };
   CompositeSetWrapper.prototype.has = function(key) {
     if (this.A !== null && key in this.A) return true;
@@ -23333,7 +27190,7 @@ var RareCharts = (() => {
       return ((t ^ t >>> 14) >>> 0) / 4294967296;
     };
   }
-  var edgeWeight = (edge, attrs) => attrs.weight ?? attrs.strength ?? 1;
+  var edgeWeight = (edge, attrs) => linkWeight(attrs, 1);
   var INPUT = {
     unknownEndpoints: "create",
     accept: (l) => l.source === l.target ? null : l,
@@ -23582,42 +27439,42 @@ var RareCharts = (() => {
 
   // assets/charts/src/charts/presets/linkPresets.js
   var personal = {
-    professional: { color: "#00aaff", dash: null, label: "Professional" },
+    professional: { color: "#1677ff", dash: null, label: "Professional" },
     family: { color: "#00c97a", dash: null, label: "Family" },
     friendship: { color: "#ffcc00", dash: "5,4", label: "Friendship" },
-    investment: { color: "#ff6200", dash: null, label: "Investment" },
+    investment: { color: "#fa8c16", dash: null, label: "Investment" },
     philanthropy: { color: "#cc44ff", dash: "2,4", label: "Philanthropy" },
     education: { color: "#aaaaaa", dash: "8,4", label: "Education" }
   };
   var knowledge = {
     partOf: { color: "#00c97a", dash: null, label: "Part of" },
     causes: { color: "#333333", dash: null, label: "causes" },
-    related: { color: "#00aaff", dash: "5,4", label: "Related" },
+    related: { color: "#1677ff", dash: "5,4", label: "Related" },
     example: { color: "#ffcc00", dash: "2,4", label: "Example" },
     contradicts: { color: "#ff3b5c", dash: "3,3", label: "Contradicts" },
-    prerequisite: { color: "#ff6200", dash: null, label: "Prerequisite" },
+    prerequisite: { color: "#fa8c16", dash: null, label: "Prerequisite" },
     extends: { color: "#cc44ff", dash: null, label: "Extends" }
   };
   var org = {
-    subsidiary: { color: "#00aaff", dash: null, label: "Subsidiary" },
-    investment: { color: "#ff6200", dash: null, label: "Investment" },
+    subsidiary: { color: "#1677ff", dash: null, label: "Subsidiary" },
+    investment: { color: "#fa8c16", dash: null, label: "Investment" },
     board: { color: "#00c97a", dash: "5,4", label: "Board member" },
     partnership: { color: "#ffcc00", dash: null, label: "Partnership" },
     acquisition: { color: "#cc44ff", dash: null, label: "Acquisition" },
     competitor: { color: "#ff3b5c", dash: "3,3", label: "Competitor" }
   };
   var tech = {
-    depends: { color: "#00aaff", dash: null, label: "Depends on" },
-    calls: { color: "#ff6200", dash: null, label: "Calls" },
+    depends: { color: "#1677ff", dash: null, label: "Depends on" },
+    calls: { color: "#fa8c16", dash: null, label: "Calls" },
     dataFlow: { color: "#00c97a", dash: "5,4", label: "Data flow" },
     inherits: { color: "#cc44ff", dash: null, label: "Inherits" },
     optional: { color: "#aaaaaa", dash: "3,3", label: "Optional dep" }
   };
   var causal = {
-    causes: { color: "#ff6200", dash: null, label: "Causes" },
+    causes: { color: "#fa8c16", dash: null, label: "Causes" },
     enables: { color: "#00c97a", dash: null, label: "Enables" },
     blocks: { color: "#ff3b5c", dash: "4,3", label: "Blocks" },
-    correlates: { color: "#00aaff", dash: "5,4", label: "Correlates" },
+    correlates: { color: "#1677ff", dash: "5,4", label: "Correlates" },
     weakens: { color: "#ffcc00", dash: "2,3", label: "Weakens" }
   };
   var linkPresets = { personal, knowledge, org, tech, causal };
@@ -23635,10 +27492,10 @@ var RareCharts = (() => {
         near.get(t).add(s);
       });
       let best = null, most = 0;
-      near.forEach((set3, id3) => {
-        if (set3.size > most) {
+      near.forEach((set4, id3) => {
+        if (set4.size > most) {
           best = id3;
-          most = set3.size;
+          most = set4.size;
         }
       });
       return best;
@@ -23668,6 +27525,13 @@ var RareCharts = (() => {
       this._overflowNodes = [];
       this._relationTypes = options.relationTypes?.length ? new Set(options.relationTypes.map(String)) : null;
       this._knownTypes = /* @__PURE__ */ new Set();
+      this._typeLegendKeys = [];
+      this._legendPending = null;
+      this._legendEntry = null;
+      (options.hiddenLinkTypes ?? []).forEach((type2) => this._hiddenKeys.add(String(type2)));
+      if (options.interactiveLegend !== void 0) {
+        console.warn("RareCharts.Graph: `interactiveLegend` is no longer read \u2014 use `legendInteractive`");
+      }
       this._history = [];
       this._skipHistoryOnce = false;
       this._manual = /* @__PURE__ */ new Map();
@@ -23678,7 +27542,8 @@ var RareCharts = (() => {
       this._switching = false;
       this._hasRendered = false;
       this._nodeRoving = { current: null };
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this._tieRoving = { current: null };
+      this.tooltip;
       this._linkTypes = options.linkTypes ?? {
         default: { color: "#888888", dash: null, label: "Connection" }
       };
@@ -23698,16 +27563,21 @@ var RareCharts = (() => {
       id2 = String(id2);
       return this._enqueue(() => this._focusTask(id2, { types }));
     }
-    async _focusTask(id2, { types } = {}) {
+    // `legend`: { replaces } when a legend gesture asked (chrome.js
+    // _relationLegendGesture).
+    async _focusTask(id2, { types, legend = null } = {}) {
       id2 = String(id2);
       if (types !== void 0) this._setRelationTypesState(types);
       const depth = this.options.depth ?? 2;
       const activeTypes = this._activeRelationTypes();
+      const none2 = activeTypes?.length === 0;
       const gen = this._dataGen;
-      const sub = await this._requireSource().neighbors(id2, { depth, types: activeTypes });
-      if (this._isStale(gen)) return;
-      this._model.merge(sub);
-      (sub.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
+      if (!none2 || !this._model.has(id2)) {
+        const sub = await this._requireSource().neighbors(id2, { depth, types: none2 ? null : activeTypes });
+        if (this._isStale(gen)) return;
+        this._model.merge(sub);
+        (sub.links ?? []).forEach((l) => this._knownTypes.add(String(l.type ?? "default")));
+      }
       this._view = "ego";
       this._root = id2;
       this._paths = null;
@@ -23719,7 +27589,13 @@ var RareCharts = (() => {
       this._viewData = this._model.neighborhood(id2, depth, { types: activeTypes });
       this._resetZoomSilently();
       this.render();
-      this._recordHistory({ view: "ego", root: id2, types: activeTypes });
+      if (none2) {
+        if (legend) this._legendEntry = null;
+        return;
+      }
+      const replace = !!legend?.replaces && this._history[this._history.length - 1] === this._legendEntry;
+      const entry = this._recordHistory({ view: "ego", root: id2, types: activeTypes }, { replace });
+      if (legend) this._legendEntry = entry;
     }
     // Path view: up to `pathCount` routes between a and b.
     // Pathfinding is the source's job (server-side on a real backend) — the
@@ -23751,7 +27627,7 @@ var RareCharts = (() => {
           const inPath = new Set(res.nodes.map((n) => n.id));
           const pickCtx = (sub, endpoint) => {
             const picked = [];
-            sub.links.filter((l) => l.source === endpoint || l.target === endpoint).sort((x2, y2) => (y2.weight ?? y2.strength ?? 0.5) - (x2.weight ?? x2.strength ?? 0.5)).forEach((l) => {
+            sub.links.filter((l) => l.source === endpoint || l.target === endpoint).sort((x2, y2) => linkWeight(y2) - linkWeight(x2)).forEach((l) => {
               const other = l.source === endpoint ? l.target : l.source;
               if (inPath.has(other)) return;
               if (picked.some((p) => p.other === other)) return;
@@ -23837,6 +27713,10 @@ var RareCharts = (() => {
     setData(data = {}) {
       this._dataGen++;
       this._skipHistoryOnce = false;
+      if (this._legendPending) {
+        this._legendPending = null;
+        this._typeLegendEl?.removeAttribute("aria-busy");
+      }
       if (this._view === "flow") return this._setFlowData(data);
       const norm = GraphModel.normalize(data);
       this._source = memorySource(data);
@@ -23848,6 +27728,7 @@ var RareCharts = (() => {
       (this._relationTypes ?? []).forEach((type2) => this._knownTypes.add(String(type2)));
       if (this.options.linkTypes) Object.keys(this._linkTypes).forEach((type2) => this._knownTypes.add(type2));
       this._nodeRoving.current = null;
+      this._tieRoving.current = null;
       const best = bestConnected(norm, this._relationTypes);
       if (best == null) {
         this._autoFocusId = null;
@@ -23949,6 +27830,25 @@ var RareCharts = (() => {
       this.render();
       return this;
     }
+    // Flow view: show only these tie categories (a list, or one name); null
+    // shows them all — what the legend does, without onLegendToggle. Read
+    // against the categories in the trace (MapFlow's rule): a category it
+    // lacks drops from the hidden set. In the other views the set is only
+    // kept for the flow view.
+    setLinkTypesVisible(types) {
+      return this._setVisibleKeys(types);
+    }
+    // The flow trace's tie categories, in data order: what setLinkTypesVisible
+    // reads and onLegendToggle's visibleNames list (core/Chart.js). The ego
+    // view's filter is the traversal, not this set.
+    _legendSeries() {
+      return (this._flowView?.linkKeys() ?? []).map((key) => ({ key }));
+    }
+    // The header `legend` names no series in Graph: every item stays a label.
+    // The type legend is Graph's own (_typeLegendEl).
+    _legendKeyOf() {
+      return null;
+    }
     // Merge an incremental payload — e.g. a news item asserting a new tie —
     // into the accumulated model and refresh the current ego view. Nodes
     // referenced only by link endpoints are created automatically (their label
@@ -24003,12 +27903,9 @@ var RareCharts = (() => {
       this._renderBreadcrumbs();
       return this;
     }
-    // Resolves when all queued view changes have fetched and rendered.
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%").style("cursor", "grab").style("overflow", "hidden");
-      applySvgA11y(this.svg, this.options);
+      this._createSvg({ style: { cursor: "grab", overflow: "hidden" } });
       this._defs = this.svg.append("defs");
       this.gRoot = this.svg.append("g").attr("class", "rc-graph-root");
       this.gZoom = this.gRoot.append("g").attr("class", "rc-graph-zoom");
@@ -24016,18 +27913,24 @@ var RareCharts = (() => {
       this.gLinks = this.gZoom.append("g").attr("class", "rc-graph-links");
       this.gLinkHits = this.gZoom.append("g").attr("class", "rc-graph-link-hits");
       this.gNodes = this.gZoom.append("g").attr("class", "rc-graph-nodes");
+      this.gLinkKeys = this.gZoom.append("g").attr("class", "rc-graph-link-keys");
       this.gLinkBadges = this.gZoom.append("g").attr("class", "rc-graph-link-badges");
-      this._legendEl = document.createElement("div");
-      this._legendEl.className = "rc-graph-legend rc-legend";
-      this.container.appendChild(this._legendEl);
+      this._typeLegendEl = document.createElement("div");
+      this._typeLegendEl.className = "rc-graph-legend rc-legend";
+      this.container.appendChild(this._typeLegendEl);
       if (this.options.zoom !== false) {
         this._zoom = zoom_default2().extent(function() {
           return [[0, 0], [this.clientWidth || 1, this.clientHeight || 1]];
-        }).scaleExtent([0.2, 4]).filter((event) => event.type !== "wheel" && !event.button).on("zoom", (event) => {
+        }).scaleExtent([0.2, 4]).on("zoom", (event) => {
           this.gZoom.attr("transform", event.transform);
           this._maybeSemanticZoom(event.transform.k);
         });
-        this.svg.call(this._zoom).on("dblclick.zoom", null);
+        this._zoomHint = bindZoom(this.svg, this._zoom, {
+          container: this.container,
+          theme: this.theme,
+          box: () => this._drawingBox()
+        });
+        this.svg.on("dblclick.zoom", null);
       }
       this._initTools();
     }
@@ -24047,11 +27950,25 @@ var RareCharts = (() => {
       return this;
     }
     // ─── Render ───────────────────────────────────────────────────────────────
+    // The header's fit first (RC-066): the drawing measures the svg, not
+    // this.height, which is where the other charts fit it. Then the drawing,
+    // then the svg's role from what it holds.
     render() {
+      this._fitHeader();
+      this._renderDrawing();
+      this._syncSvgRole();
+    }
+    // A group while the drawing has focusable nodes or ties — an image would
+    // hide those buttons from assistive technology — an image while it has
+    // none (K-24).
+    _syncSvgRole() {
+      this.svg?.attr("role", this.svg.select("[tabindex]").empty() ? "img" : "group");
+    }
+    _renderDrawing() {
       if (!this._viewData?.nodes?.length) {
         if (this._view === "flow") {
           this._flowView?.clear();
-          this._legendEl?.replaceChildren();
+          if (this._typeLegendEl) renderLegendItems(this._typeLegendEl, []);
           if (this._tooltip?.isPinned) this._tooltip.unpin();
           this._tooltip?.hide?.();
           const f = this._flowView;
@@ -24085,7 +28002,7 @@ var RareCharts = (() => {
       const H = svgEl?.clientHeight || this.height;
       if (W <= 0 || H <= 0) return;
       if (this._view === "flow") {
-        [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes].forEach((g) => g?.selectAll("*").remove());
+        [this.gSectors, this.gLinks, this.gLinkHits, this.gLinkBadges, this.gNodes, this.gLinkKeys].forEach((g) => g?.selectAll("*").remove());
         this.gRoot.selectAll(".rc-graph-row-label").remove();
         if (this._overflowNoteEl) this._overflowNoteEl.hidden = true;
         if (this._hiddenNoteEl) this._hiddenNoteEl.hidden = true;
@@ -24136,6 +28053,19 @@ var RareCharts = (() => {
         this._refitting = false;
       }
     }
+    // The drawing's box in the card's frame, where the zoom hint centres and
+    // the loading bar lies (the base Chart's _plotBox): the svg's, less a
+    // details panel beside it (it sits over the svg's right side).
+    _plotBox() {
+      return this._drawingBox();
+    }
+    _drawingBox() {
+      const box = boxInCard(this.svg.node(), this.container);
+      if (this._detailsEl && this.container.classList.contains("rc-graph--details-side")) {
+        box.width = Math.max(0, box.width - (this.options.detailsWidth ?? 300) - 12);
+      }
+      return box;
+    }
     // A point of the drawing (zoom-group coordinates) in the card's frame,
     // where tooltips are placed — for tooltips opened from the keyboard.
     _toCard(x2, y2) {
@@ -24176,25 +28106,39 @@ var RareCharts = (() => {
       }
     }
     // ─── Relation filter and history ─────────────────────────────────────────
+    // null or [] → every type; NO_RELATION_TYPES (the legend's "nothing
+    // shown") → an empty set, which no public call makes.
     _setRelationTypesState(types) {
+      if (types === NO_RELATION_TYPES) {
+        this._relationTypes = /* @__PURE__ */ new Set();
+        return;
+      }
       const list = types == null ? [] : [...types].map(String);
       this._relationTypes = list.length ? new Set(list) : null;
     }
     _activeRelationTypes() {
       return this._relationTypes ? [...this._relationTypes] : null;
     }
-    _recordHistory(state) {
+    // `replace`: the new state takes the last entry's place. Returns the
+    // entry pushed, or null (the same state as the last, a restore).
+    _recordHistory(state, { replace = false } = {}) {
       if (this._skipHistoryOnce) {
         this._skipHistoryOnce = false;
         this._renderBreadcrumbs();
-        return;
+        return null;
       }
       const normalized = { ...state, types: state.types ? [...state.types].sort() : null };
+      if (replace) this._history.pop();
       const last = this._history[this._history.length - 1];
-      if (JSON.stringify(last) !== JSON.stringify(normalized)) this._history.push(normalized);
+      let entry = null;
+      if (JSON.stringify(last) !== JSON.stringify(normalized)) {
+        this._history.push(normalized);
+        entry = normalized;
+      }
       const max4 = Math.max(1, this.options.historyLimit ?? 12);
       if (this._history.length > max4) this._history.splice(0, this._history.length - max4);
       this._renderBreadcrumbs();
+      return entry;
     }
     _restoreState(state) {
       if (state.view === "path") {
@@ -24251,9 +28195,8 @@ var RareCharts = (() => {
       }
       if (this._onFullscreenChange) document.removeEventListener("fullscreenchange", this._onFullscreenChange);
       if (this._onFullscreenKey) document.removeEventListener("keydown", this._onFullscreenKey);
-      this._tooltip?.destroy();
-      this._tooltip = null;
       super.destroy();
+      this._typeLegendEl = null;
     }
   };
   [networkView, graphChrome, graphTooltips].forEach((part) => {
@@ -24261,1057 +28204,6 @@ var RareCharts = (() => {
       Object.defineProperty(Graph2.prototype, name, { ...desc, enumerable: false });
     });
   });
-
-  // assets/charts/src/charts/MultiChart.js
-  var TYPE_MAP = { Line, Bar };
-  function chartClassFor(type2, index2) {
-    if (type2 == null) return Line;
-    if (typeof type2 === "string" && Object.prototype.hasOwnProperty.call(TYPE_MAP, type2)) return TYPE_MAP[type2];
-    const names = Object.keys(TYPE_MAP);
-    const near = typeof type2 === "string" ? names.find((n) => n.toLowerCase() === type2.trim().toLowerCase()) : null;
-    const shown = typeof type2 === "string" ? `"${type2}"` : typeof type2 === "function" ? type2.name || "function" : String(type2);
-    console.warn(
-      `RareCharts.MultiChart: charts[${index2}] has an unknown type ${shown} \u2014 drawn as Line. ` + (near ? `Did you mean '${near}'?` : `Supported types: ${names.map((n) => `'${n}'`).join(", ")}.`)
-    );
-    return Line;
-  }
-  var MultiChart = class extends Chart {
-    constructor(selector, options = {}) {
-      super(selector, {
-        margin: { top: 0, right: 0, bottom: 0, left: 0 },
-        ...options
-      });
-      this.charts = [];
-      this._cells = [];
-      this._isMobile = false;
-      this._lastData = [];
-      this._buildGrid();
-    }
-    // ── Grid ───────────────────────────────────────────────────────────────────
-    // The narrow layout is a matter of width alone (C-15): it used to be read
-    // off the column count, so a grid with columns ≤ mobileColumns was "mobile"
-    // — mobileOptions and all — on any screen. clientWidth 0 means the element
-    // is hidden or not laid out yet: keep the wide layout.
-    _narrow() {
-      const w = this.container.clientWidth;
-      return w > 0 && w <= (this.options.mobileBreakpoint ?? 480);
-    }
-    _currentColumns() {
-      const mobileCols = this.options.mobileColumns ?? 1;
-      const desktopCols = Math.min(Math.max(this.options.columns ?? 2, 1), 4);
-      return this._narrow() ? mobileCols : desktopCols;
-    }
-    // The constructor options of panel i on one side of the breakpoint: the
-    // grid's defaults, the descriptor's options, then (narrow) its mobileOptions;
-    // margin merged by side over the grid's bottom default.
-    _childOptions(cfg, isMobile) {
-      const mobileOverride = isMobile && cfg.mobileOptions ? cfg.mobileOptions : {};
-      return {
-        animate: this.options.animate ?? true,
-        height: this.options.chartHeight ?? 200,
-        theme: this.options.theme,
-        // inherit parent theme
-        ...cfg.options,
-        ...mobileOverride,
-        // Deep-merge margin: base → mobileOverride → bottom default
-        margin: {
-          bottom: 26,
-          ...cfg.options?.margin ?? {},
-          ...mobileOverride.margin ?? {}
-        }
-      };
-    }
-    // Build panel i's chart in its wrapper. Its setData is recorded — whether
-    // it comes from cfg.data, mc.setData or mc.charts[i].setData — so a rebuild
-    // can hand the new chart the same data; a call on a replaced instance is not.
-    _createChild(i, wrapper, isMobile) {
-      const cfg = (this.options.charts ?? [])[i];
-      const ChartClass = chartClassFor(cfg.type, i);
-      const chart = new ChartClass(wrapper, this._childOptions(cfg, isMobile));
-      const own = chart.setData;
-      chart.setData = (data) => {
-        if (this.charts[i] === chart) this._lastData[i] = data;
-        return own.call(chart, data);
-      };
-      this._wrappers[i] = wrapper;
-      this.charts[i] = chart;
-      return chart;
-    }
-    _buildGrid() {
-      const { charts = [], gap } = this.options;
-      const cols = this._currentColumns();
-      this._isMobile = this._narrow();
-      this._wrappers = [];
-      this._gridEl = document.createElement("div");
-      this._gridEl.className = "rc-multichart-grid";
-      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-      if (gap != null) {
-        this._gridEl.style.gap = typeof gap === "number" ? `${gap}px` : gap;
-      }
-      if (this._footerEl?.parentNode) {
-        this.container.insertBefore(this._gridEl, this._footerEl);
-      } else {
-        this.container.appendChild(this._gridEl);
-      }
-      charts.forEach((cfg, i) => {
-        const cell = document.createElement("div");
-        cell.className = "rc-multichart-cell";
-        if (cfg.span && cfg.span > 1 && cols > 1) {
-          cell.style.gridColumn = `span ${cfg.span}`;
-        }
-        if (cfg.title) {
-          const titleEl = document.createElement("div");
-          titleEl.className = "rc-multichart-cell-title";
-          titleEl.style.color = this.theme.text;
-          titleEl.textContent = cfg.title;
-          cell.appendChild(titleEl);
-        }
-        const wrapper = document.createElement("div");
-        wrapper.className = "rc-multichart-chart-wrapper";
-        cell.appendChild(wrapper);
-        this._gridEl.appendChild(cell);
-        this._cells.push(cell);
-        const chart = this._createChild(i, wrapper, this._isMobile);
-        if (cfg.data != null) chart.setData(cfg.data);
-      });
-    }
-    // ── Rebuild the panels with mobileOptions on a breakpoint crossing ─────────
-    // A chart reads much of its options once, in its constructor — height
-    // sizes the card, margin places the plot — so patching child.options left a
-    // crossing half-applied (C-15). Each panel with mobileOptions is rebuilt
-    // instead: destroyed, made again with the options of the new side, and
-    // given its last data. State set through the panel's own methods (a y
-    // scale, a view window) starts over from its options.
-    _applyBreakpointOptions(isMobile) {
-      const charts = this.options.charts ?? [];
-      charts.forEach((cfg, i) => {
-        if (!cfg.mobileOptions) return;
-        const old = this.charts[i];
-        const wrapper = this._wrappers[i];
-        if (!old || !wrapper) return;
-        const data = this._lastData[i];
-        old.destroy();
-        const chart = this._createChild(i, wrapper, isMobile);
-        if (data != null) chart.setData(data);
-      });
-    }
-    // ── Public ────────────────────────────────────────────────────────────────
-    /**
-     * Feed data into children by position.
-     * @param {Array} dataArray — each element is passed to the corresponding child's setData()
-     */
-    setData(dataArray) {
-      if (!Array.isArray(dataArray)) return this;
-      dataArray.forEach((data, i) => {
-        if (this.charts[i] && data != null) this.charts[i].setData(data);
-      });
-      return this;
-    }
-    // ── Lifecycle ─────────────────────────────────────────────────────────────
-    render() {
-    }
-    _onResize() {
-      if (!this._gridEl) return;
-      const cols = this._currentColumns();
-      const isMobile = this._narrow();
-      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-      (this.options.charts ?? []).forEach((cfg, i) => {
-        if (!cfg.span || cfg.span <= 1) return;
-        const cell = this._cells[i];
-        if (cell) cell.style.gridColumn = cols > 1 ? `span ${cfg.span}` : "";
-      });
-      if (isMobile !== this._isMobile) {
-        this._isMobile = isMobile;
-        this._applyBreakpointOptions(isMobile);
-      }
-    }
-    destroy() {
-      this.charts.forEach((c) => c.destroy());
-      this.charts = [];
-      this._cells = [];
-      this._wrappers = [];
-      this._lastData = [];
-      if (this._gridEl?.parentNode) this._gridEl.remove();
-      this._gridEl = null;
-      super.destroy();
-    }
-  };
-
-  // node_modules/topojson-client/src/identity.js
-  function identity_default6(x2) {
-    return x2;
-  }
-
-  // node_modules/topojson-client/src/transform.js
-  function transform_default(transform2) {
-    if (transform2 == null) return identity_default6;
-    var x06, y06, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
-    return function(input, i) {
-      if (!i) x06 = y06 = 0;
-      var j = 2, n = input.length, output = new Array(n);
-      output[0] = (x06 += input[0]) * kx + dx;
-      output[1] = (y06 += input[1]) * ky + dy;
-      while (j < n) output[j] = input[j], ++j;
-      return output;
-    };
-  }
-
-  // node_modules/topojson-client/src/reverse.js
-  function reverse_default(array2, n) {
-    var t, j = array2.length, i = j - n;
-    while (i < --j) t = array2[i], array2[i++] = array2[j], array2[j] = t;
-  }
-
-  // node_modules/topojson-client/src/feature.js
-  function feature_default(topology, o) {
-    if (typeof o === "string") o = topology.objects[o];
-    return o.type === "GeometryCollection" ? { type: "FeatureCollection", features: o.geometries.map(function(o2) {
-      return feature(topology, o2);
-    }) } : feature(topology, o);
-  }
-  function feature(topology, o) {
-    var id2 = o.id, bbox = o.bbox, properties = o.properties == null ? {} : o.properties, geometry = object(topology, o);
-    return id2 == null && bbox == null ? { type: "Feature", properties, geometry } : bbox == null ? { type: "Feature", id: id2, properties, geometry } : { type: "Feature", id: id2, bbox, properties, geometry };
-  }
-  function object(topology, o) {
-    var transformPoint = transform_default(topology.transform), arcs = topology.arcs;
-    function arc(i, points) {
-      if (points.length) points.pop();
-      for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length; k < n; ++k) {
-        points.push(transformPoint(a[k], k));
-      }
-      if (i < 0) reverse_default(points, n);
-    }
-    function point6(p) {
-      return transformPoint(p);
-    }
-    function line(arcs2) {
-      var points = [];
-      for (var i = 0, n = arcs2.length; i < n; ++i) arc(arcs2[i], points);
-      if (points.length < 2) points.push(points[0]);
-      return points;
-    }
-    function ring(arcs2) {
-      var points = line(arcs2);
-      while (points.length < 4) points.push(points[0]);
-      return points;
-    }
-    function polygon(arcs2) {
-      return arcs2.map(ring);
-    }
-    function geometry(o2) {
-      var type2 = o2.type, coordinates;
-      switch (type2) {
-        case "GeometryCollection":
-          return { type: type2, geometries: o2.geometries.map(geometry) };
-        case "Point":
-          coordinates = point6(o2.coordinates);
-          break;
-        case "MultiPoint":
-          coordinates = o2.coordinates.map(point6);
-          break;
-        case "LineString":
-          coordinates = line(o2.arcs);
-          break;
-        case "MultiLineString":
-          coordinates = o2.arcs.map(line);
-          break;
-        case "Polygon":
-          coordinates = polygon(o2.arcs);
-          break;
-        case "MultiPolygon":
-          coordinates = o2.arcs.map(polygon);
-          break;
-        default:
-          return null;
-      }
-      return { type: type2, coordinates };
-    }
-    return geometry(o);
-  }
-
-  // assets/charts/src/charts/Map.js
-  var Map2 = class extends Chart {
-    constructor(selector, options = {}) {
-      super(selector, {
-        height: 400,
-        margin: { top: 0, right: 0, bottom: 0, left: 0 },
-        ...options
-      });
-      this._features = [];
-      this._dataMap = new globalThis.Map();
-      this._tooltip = new Tooltip(this.container, this.theme);
-      this._geoReady = false;
-      this._activeTooltipHtml = null;
-      this._zoomTransform = identity4;
-      this._initSVG();
-      this._ready = this._loadGeo();
-    }
-    // ─── Public API ───────────────────────────────────────────────────────────
-    setData(items = []) {
-      this._dataMap.clear();
-      items.forEach((item) => {
-        if (item?.id != null) {
-          this._dataMap.set(String(item.id), item);
-        }
-      });
-      if (this._geoReady) this.render();
-      return this;
-    }
-    // ─── Init ─────────────────────────────────────────────────────────────────
-    _initSVG() {
-      this.container.style.overflow = "hidden";
-      this.svg = create_default("svg").attr("class", "rc-map-svg").style("display", "block").style("overflow", "hidden");
-      applySvgA11y(this.svg, this.options);
-      if (this._footerEl && this._footerEl.parentNode === this.container) {
-        this.container.insertBefore(this.svg.node(), this._footerEl);
-      } else {
-        this.container.appendChild(this.svg.node());
-      }
-      this._bgRect = this.svg.append("rect").attr("class", "rc-map-ocean");
-      this._clipId = `${this._uid}-map-clip`;
-      this._defs = this.svg.append("defs");
-      this._clipRect = this._defs.append("clipPath").attr("id", this._clipId).append("rect");
-      this.gZoom = this.svg.append("g").attr("class", "rc-map-zoom").attr("clip-path", `url(#${this._clipId})`);
-      if (this.options.graticule) {
-        this._graticule = this.gZoom.append("path").attr("class", "rc-map-graticule").attr("fill", "none").attr("vector-effect", "non-scaling-stroke").style("pointer-events", "none");
-      }
-      this.gPaths = this.gZoom.append("g").attr("class", "rc-map-paths");
-      if (this.options.zoom) {
-        this._zoom = zoom_default2().scaleExtent(this.options.zoomExtent ?? [0.8, 12]).translateExtent([[-2e3, -2e3], [4e3, 4e3]]).on("zoom", (event) => {
-          this._zoomTransform = event.transform;
-          this.gZoom.attr("transform", event.transform);
-          this._onZoom(event.transform);
-        });
-        this.svg.call(this._zoom).on("dblclick.zoom", null);
-      }
-    }
-    // ─── Load geographic data ─────────────────────────────────────────────────
-    async _loadGeo() {
-      try {
-        const o = this.options;
-        let data;
-        if (o.geoData) data = o.geoData;
-        else if (o.topoData) data = o.topoData;
-        else if (o.geoUrl) data = await json_default(o.geoUrl);
-        else if (o.topoUrl) data = await json_default(o.topoUrl);
-        else {
-          console.warn("RareCharts Map: no geographic data \u2014 pass geoData, topoData, geoUrl or topoUrl");
-          return;
-        }
-        if (this._destroyed) return;
-        const features = this._extractFeatures(data, o.topoObject);
-        this._features = this._prepareFeatures(features);
-        this._geoReady = true;
-        this.render();
-      } catch (err) {
-        if (this._destroyed) return;
-        console.error("RareCharts Map: failed to load geographic data", err);
-      }
-    }
-    _prepareFeatures(features) {
-      return this._clipFeatures(this._applyFilter(features));
-    }
-    _applyFilter(features) {
-      const fn = this.options.featureFilter;
-      return typeof fn === "function" ? features.filter(fn) : features;
-    }
-    _extractFeatures(data, topoObject) {
-      if (data?.type === "Topology") {
-        const objName = topoObject ?? Object.keys(data.objects ?? {})[0];
-        if (!objName || !data.objects?.[objName]) return [];
-        const fc = feature_default(data, data.objects[objName]);
-        return fc.type === "FeatureCollection" ? fc.features ?? [] : [fc];
-      }
-      if (data?.type === "FeatureCollection") return data.features ?? [];
-      if (data?.type === "Feature") return [data];
-      return [];
-    }
-    // ─── Geographic clipping ──────────────────────────────────────────────────
-    _clipFeatures(features) {
-      const clip = this.options.clipExtent;
-      if (!clip) return features;
-      const [[minLon, minLat], [maxLon, maxLat]] = clip;
-      const intersects = ([[x06, y06], [x12, y12]]) => !(x12 < minLon || x06 > maxLon || y12 < minLat || y06 > maxLat);
-      const clipGeom = (geom) => {
-        if (!geom) return null;
-        if (geom.type === "Polygon") {
-          const b = bounds_default({ type: "Feature", geometry: geom });
-          return intersects(b) ? geom : null;
-        }
-        if (geom.type === "MultiPolygon") {
-          const polys = geom.coordinates.filter((c) => {
-            const b = bounds_default({
-              type: "Feature",
-              geometry: { type: "Polygon", coordinates: c }
-            });
-            return intersects(b);
-          });
-          if (!polys.length) return null;
-          return polys.length === 1 ? { type: "Polygon", coordinates: polys[0] } : { type: "MultiPolygon", coordinates: polys };
-        }
-        return geom;
-      };
-      return features.map((f) => {
-        const g = clipGeom(f.geometry);
-        return g ? { ...f, geometry: g } : null;
-      }).filter(Boolean);
-    }
-    // ─── Render ───────────────────────────────────────────────────────────────
-    render() {
-      if (!this._geoReady || !this._features.length) return;
-      const W = this.width;
-      const H = this.height;
-      if (W <= 0 || H <= 0) return;
-      const t = this.theme;
-      const tm = t.map ?? {};
-      const o = this.options;
-      const pad3 = o.fitPadding ?? 20;
-      const idField = o.idField ?? "id";
-      this.svg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`).attr("preserveAspectRatio", "xMidYMid meet");
-      const oceanColor = o.oceanColor ?? tm.ocean ?? "transparent";
-      this._bgRect.attr("width", W).attr("height", H).attr("fill", oceanColor);
-      this._clipRect.attr("x", 0).attr("y", 0).attr("width", W).attr("height", H);
-      const projName = o.projection ?? "naturalEarth1";
-      const proj = this._buildProjection(projName);
-      this._fitProjection(proj, [[pad3, pad3], [W - pad3, H - pad3]]);
-      const path2 = path_default(proj);
-      this._projection = proj;
-      this._geoPath = path2;
-      const defaultFill = o.defaultFill ?? tm.unmatchedFill ?? t.surface ?? "#e8e8e8";
-      const matchFill = o.matchFill ?? tm.matchFill ?? t.accent ?? "#00aaff";
-      const borderColor = o.borderColor ?? tm.border ?? t.border ?? "#ffffff";
-      const fillFor = (feature2) => {
-        const fid = this._featureId(feature2, idField);
-        if (fid == null) return defaultFill;
-        const item = this._dataMap.get(fid);
-        if (!item) return defaultFill;
-        return item.color ?? matchFill;
-      };
-      const brighten = Number.isFinite(tm.hoverBrighten) ? tm.hoverBrighten : 1.3;
-      const hoverFillFor = (feature2) => {
-        if (o.hoverFill != null) return o.hoverFill;
-        const fill = fillFor(feature2);
-        const c = hsl(fill);
-        if (!Number.isFinite(c.l)) return fill;
-        const step = brighten - 1;
-        c.l = c.l > 0.85 ? Math.max(0, c.l - step * 0.4) : c.l + (1 - c.l) * step;
-        return String(c);
-      };
-      if (this._graticule) {
-        this._graticule.attr("d", projName === "identity" ? null : path2(graticule10())).attr("stroke", tm.graticule ?? t.grid ?? "rgba(0,0,0,0.08)").attr("stroke-width", 1);
-      }
-      this.gPaths.selectAll(".rc-map-feature").data(
-        this._features,
-        (d) => this._featureId(d, idField) ?? d.id ?? JSON.stringify(d.geometry)
-      ).join("path").attr("class", "rc-map-feature").attr("d", path2).attr("fill", fillFor).attr("stroke", borderColor).attr("stroke-width", o.borderWidth ?? 0.5).attr("vector-effect", "non-scaling-stroke").on("mouseover", (event, d) => {
-        const fid = this._featureId(d, idField);
-        const item = fid != null ? this._dataMap.get(fid) ?? null : null;
-        if (item) {
-          select_default2(event.currentTarget).attr("fill", hoverFillFor(d));
-        }
-        const fmt = this._regionTooltipFormat();
-        const html = fmt ? fmt({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, color: fillFor(d) }) : this._defaultTooltip(d, item);
-        this._activeTooltipHtml = html;
-        if (html) {
-          const [mx, my] = pointer_default(event, this.container);
-          this._tooltip.show(mx, my, html);
-        }
-      }).on("mousemove", (event) => {
-        if (!this._activeTooltipHtml) return;
-        const [mx, my] = pointer_default(event, this.container);
-        this._tooltip.show(mx, my, this._activeTooltipHtml);
-      }).on("mouseout", (event, d) => {
-        select_default2(event.currentTarget).attr("fill", fillFor(d));
-        this._activeTooltipHtml = null;
-        this._tooltip.hide();
-      });
-      if (this._zoom) {
-        this._zoom.translateExtent([[-W * 2, -H * 2], [W * 3, H * 3]]);
-      }
-    }
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-    // The formatter for a region's tooltip — tooltipFormat here; MapFlow keeps
-    // tooltipFormat for its places and reads regionTooltipFormat instead.
-    _regionTooltipFormat() {
-      return this.options.tooltipFormat;
-    }
-    // Fit the projection into the extent [[x0, y0], [x1, y1]]: to the fit
-    // object. MapFlow then folds in its arcs as drawn (fitTo: 'links').
-    _fitProjection(proj, extent2) {
-      proj.fitExtent(extent2, this._fitObject());
-    }
-    // What the projection is fitted to: every feature. MapFlow can fit to its
-    // own places instead (fitTo: 'links').
-    _fitObject() {
-      return { type: "FeatureCollection", features: this._features };
-    }
-    // Called on every zoom and pan with the new transform, after the map
-    // group has taken it: overlays that keep their screen size (MapFlow's
-    // dots, labels and arrowheads) follow here.
-    _onZoom() {
-    }
-    _featureId(feature2, idField) {
-      if (feature2?.id != null) return String(feature2.id);
-      if (feature2?.properties) {
-        const v = feature2.properties[idField] ?? feature2.properties.iso_a2 ?? feature2.properties.iso_a3 ?? feature2.properties.ISO_A2 ?? feature2.properties.ISO_A3;
-        if (v != null) return String(v);
-      }
-      return null;
-    }
-    _buildProjection(name) {
-      let proj;
-      switch (name) {
-        case "mercator":
-          proj = mercator_default();
-          break;
-        case "equalEarth":
-          proj = equalEarth_default();
-          break;
-        case "orthographic":
-          proj = orthographic_default();
-          break;
-        case "identity":
-          proj = identity_default4().reflectY(this.options.reflectY ?? false);
-          break;
-        default:
-          proj = naturalEarth1_default();
-      }
-      if (this.options.rotate && typeof proj.rotate === "function") {
-        proj.rotate(this.options.rotate);
-      }
-      return proj;
-    }
-    // A region's name: its data item's label, then the feature's own.
-    _regionName(feature2, item) {
-      return item?.label ?? feature2?.properties?.name ?? feature2?.properties?.NAME ?? feature2?.id ?? "\u2014";
-    }
-    _defaultTooltip(feature2, item) {
-      const name = this._regionName(feature2, item);
-      const valueRow = item?.value != null ? tipMuted(escapeHtml(item.value)) : "";
-      return `${tipTitle(escapeHtml(name))}${valueRow}`;
-    }
-    // ─── Resize & Destroy ─────────────────────────────────────────────────────
-    _onResize() {
-      if (this._geoReady) this.render();
-    }
-    destroy() {
-      this._tooltip?.destroy?.();
-      this._tooltip = null;
-      super.destroy();
-    }
-  };
-
-  // assets/charts/src/charts/MapFlow.js
-  function densify(pts) {
-    const lens = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
-    const step = Math.max(Math.min(8, lens.reduce((s, v) => s + v, 0) / 24), 1e-9);
-    const out = [pts[0]];
-    lens.forEach((len, i) => {
-      const [x06, y06] = pts[i], [x12, y12] = pts[i + 1];
-      const n = Math.ceil(len / step);
-      for (let j = 1; j <= n; j++) out.push([x06 + (x12 - x06) * j / n, y06 + (y12 - y06) * j / n]);
-    });
-    if (out.length < 2) out.push(pts[pts.length - 1].slice());
-    return out;
-  }
-  function bow(pts, bend) {
-    const [x06, y06] = pts[0], [x12, y12] = pts[pts.length - 1];
-    const len = Math.hypot(x12 - x06, y12 - y06) || 1;
-    const nx = -(y12 - y06) / len, ny = (x12 - x06) / len;
-    const amp = bend * Math.min(90, len * 0.6);
-    const s = [0];
-    for (let i = 1; i < pts.length; i++) s.push(s[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
-    const total = s[s.length - 1] || 1;
-    return pts.map(([x2, y2], i) => {
-      const k = Math.sin(Math.PI * (s[i] / total)) * amp;
-      return [x2 + nx * k, y2 + ny * k];
-    });
-  }
-  function trimEnd(pts, b, stop, slack) {
-    const body = pts.slice();
-    const toB = (p2) => Math.hypot(p2[0] - b[0], p2[1] - b[1]);
-    while (body.length > 2 && toB(body[body.length - 2]) < stop) body.pop();
-    const p = body[body.length - 2], e = body[body.length - 1];
-    const short = stop - toB(e);
-    if (short > 0) {
-      const seg = Math.hypot(e[0] - p[0], e[1] - p[1]) || 1;
-      const back = Math.min(short, seg - slack);
-      body[body.length - 1] = [e[0] - (e[0] - p[0]) / seg * back, e[1] - (e[1] - p[1]) / seg * back];
-    }
-    return body;
-  }
-  function midway(lines) {
-    const segs = [];
-    lines.forEach((pts) => pts.slice(1).forEach((q, i) => segs.push([pts[i], q, Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1])])));
-    let half = segs.reduce((s, [, , len]) => s + len, 0) / 2;
-    for (const [p, q, len] of segs) {
-      if (half <= len) {
-        const f = len ? half / len : 0;
-        return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f];
-      }
-      half -= len;
-    }
-    return lines[0]?.[0] ?? null;
-  }
-  var MapFlow = class extends Map2 {
-    constructor(selector, options = {}) {
-      super(selector, { height: 420, ...options });
-      if (options.nodes || options.links || options.flows) {
-        this.setData({ nodes: options.nodes, links: options.links ?? options.flows });
-      }
-    }
-    // ─── Public API ───────────────────────────────────────────────────────────
-    setData(data = {}) {
-      if (Array.isArray(data)) data = { nodes: [], links: data };
-      const { nodes, links } = normalizeRelationData(data, {
-        unknownEndpoints: "drop",
-        onUnknown: (l) => console.warn(`RareCharts.MapFlow: flow ${l.id} points to an unknown node \u2014 dropped`)
-      });
-      this._flowData = { nodes, links };
-      if (this._hasTimeNav()) this._refreshViewForData();
-      if (this._geoReady) this.render();
-      return this;
-    }
-    // Flows outside [from, to] hide (or dim, timeWindowMode: 'dim'); null
-    // bounds are open. Years, 'YYYY-MM' or ISO dates.
-    // With timeframes or a navigator, the window is the view.
-    setTimeWindow(from = null, to = null) {
-      if (this._hasTimeNav()) return this._timeWindowAsView(from, to);
-      this._window = from == null && to == null ? null : { from, to };
-      if (this._geoReady) this.render();
-      return this;
-    }
-    // ── Time scale: the base Chart's timeframes and navigator over the flows'
-    // start / end (Chart._timeLinks and friends).
-    _isLinkTimeChart() {
-      return true;
-    }
-    // Hovering a country: MapFlow's tooltipFormat is for places ({ node,
-    // links }); regions take their own regionTooltipFormat ({ feature, item }).
-    _regionTooltipFormat() {
-      return this.options.regionTooltipFormat;
-    }
-    _timeLinks() {
-      return this._flowData?.links ?? null;
-    }
-    // Show only these flow types (null shows all) — what the legend does.
-    setLinkTypesVisible(types) {
-      const all = this._typeKeys();
-      const on = types == null ? null : new Set(types.map(String));
-      this._hiddenTypes = new Set(on ? all.filter((k) => !on.has(k)) : []);
-      if (this._geoReady) this.render();
-      return this;
-    }
-    // ─── Init ─────────────────────────────────────────────────────────────────
-    // Runs inside Map's constructor — before this constructor's body, and
-    // before inline geometry renders — so all flow state starts here.
-    _initSVG() {
-      super._initSVG();
-      const o = this.options;
-      this._flowData = { nodes: [], links: [] };
-      this._window = Array.isArray(o.timeWindow) ? { from: o.timeWindow[0] ?? null, to: o.timeWindow[1] ?? null } : null;
-      this._hiddenTypes = new Set((o.hiddenLinkTypes ?? []).map(String));
-      this.svg.attr("role", this.svg.attr("role") ?? "img");
-      this.gFlows = this.gZoom.append("g").attr("class", "rc-mapflow-links");
-      this.gHits = this.gZoom.append("g").attr("class", "rc-mapflow-link-hits");
-      this.gOverlay = this.svg.append("g").attr("class", "rc-mapflow-overlay");
-      this.gHeads = this.gOverlay.append("g").attr("class", "rc-mapflow-heads");
-      this.gNodes = this.gOverlay.append("g").attr("class", "rc-mapflow-nodes");
-      this.gLabels = this.gOverlay.append("g").attr("class", "rc-mapflow-labels");
-      if (o.linkLegend !== false) {
-        this._flowLegendEl = document.createElement("div");
-        this._flowLegendEl.className = "rc-legend rc-mapflow-legend";
-        this.container.appendChild(this._flowLegendEl);
-      }
-      this.svg.on("click.mapflow", () => {
-        if (this._tooltip?.isPinned) this._tooltip.unpin();
-      });
-    }
-    // ─── Render ───────────────────────────────────────────────────────────────
-    render() {
-      if (this._flowData && this._hasTimeNav()) this._window = this._syncLinkTimeView();
-      super.render();
-      if (!this._projection) return;
-      this._renderFlows();
-    }
-    _fitObject() {
-      if (this.options.fitTo !== "links") return super._fitObject();
-      const pts = this._flowData.nodes.map((n) => this._coordsOf(n)).filter(Boolean);
-      const distinct = new Set(pts.map((p) => `${p[0]},${p[1]}`));
-      if (distinct.size < 2) return super._fitObject();
-      return { type: "MultiPoint", coordinates: pts };
-    }
-    // fitTo: 'links' — the arcs too, as they are drawn: a great circle runs
-    // far from its ends (China → New York goes over the Arctic) and the bow
-    // adds px on top. After a fit, every point of every arc (all flows, so the
-    // time window and the legend do not move the frame) that falls outside
-    // the frame goes into the fit object, read back to [lon, lat], and the
-    // projection is fitted again. A bow capped at bend × 90 px does not shrink
-    // with the map: a second pass, or a third, takes up the rest (C-35).
-    _fitProjection(proj, extent2) {
-      super._fitProjection(proj, extent2);
-      const fit2 = this._fitObject();
-      if (this.options.fitTo !== "links" || fit2.type !== "MultiPoint") return;
-      const [[x06, y06], [x12, y12]] = extent2;
-      const extra = [];
-      for (let pass = 0; pass < 3; pass++) {
-        const at = this._placesAt(proj);
-        const arcs = this._bowArcs(proj, this._flowData.links.filter((l) => at.has(l.source) && at.has(l.target)), at);
-        const out = [];
-        arcs.forEach(({ pieces }) => pieces.forEach((pts) => pts.forEach((p) => {
-          if (p[0] >= x06 - 0.5 && p[0] <= x12 + 0.5 && p[1] >= y06 - 0.5 && p[1] <= y12 + 0.5) return;
-          const c = proj.invert?.(p);
-          if (!c?.every(Number.isFinite)) return;
-          const q = proj(c);
-          if (q && Math.hypot(q[0] - p[0], q[1] - p[1]) < 1) out.push(c);
-        })));
-        if (!out.length) return;
-        extra.push(...out);
-        proj.fitExtent(extent2, { type: "MultiPoint", coordinates: [...fit2.coordinates, ...extra] });
-      }
-    }
-    // Where each place falls: its [lon, lat], its point in projection px, and
-    // whether the projection shows it — a place behind an orthographic globe
-    // projects onto the front, so it is hidden instead (R-13).
-    _placesAt(proj) {
-      const at = new globalThis.Map();
-      let seen = false;
-      const probe = proj.stream({
-        point() {
-          seen = true;
-        },
-        lineStart() {
-        },
-        lineEnd() {
-        },
-        polygonStart() {
-        },
-        polygonEnd() {
-        },
-        sphere() {
-        }
-      });
-      this._flowData.nodes.forEach((n) => {
-        const c = this._coordsOf(n);
-        if (!c) return;
-        const p = proj(c);
-        seen = false;
-        probe.point(c[0], c[1]);
-        const finite = !!p && p.every(Number.isFinite);
-        at.set(n.id, { lonlat: c, x: finite ? p[0] : NaN, y: finite ? p[1] : NaN, shown: seen && finite });
-      });
-      return at;
-    }
-    // Each flow's arc in projection px: the great circle between its places
-    // as d3.geoPath draws it — cut where the projection cuts, at the edge of a
-    // flat map and at the horizon of the globe, so in pieces, or none at all
-    // (R-13) — each piece bowed on its own (see bow) so the arc reads as a
-    // flow and two directions never overlap. Parallel flows of one direction
-    // fan out; the opposite direction bows to the other side on its own.
-    // `toTarget`: the last piece ends at the target's dot (not at the horizon).
-    _bowArcs(proj, links, at) {
-      const fan = new globalThis.Map();
-      group(links, (l) => `${l.source}\u2192${l.target}`).forEach((list) => list.forEach((l, i) => fan.set(l.id, i - (list.length - 1) / 2)));
-      const baseBend = this.options.bend ?? 0.18;
-      let pieces = [];
-      const trace = path_default(proj, {
-        moveTo(x2, y2) {
-          pieces.push([[x2, y2]]);
-        },
-        lineTo(x2, y2) {
-          pieces[pieces.length - 1].push([x2, y2]);
-        },
-        closePath() {
-        },
-        arc() {
-        }
-      });
-      const arcs = new globalThis.Map();
-      links.forEach((l) => {
-        const a = at.get(l.source), b = at.get(l.target);
-        pieces = [];
-        trace({ type: "LineString", coordinates: [a.lonlat, b.lonlat] });
-        const bend = baseBend + (fan.get(l.id) ?? 0) * 0.16;
-        const drawn = pieces.filter((p) => p.length > 1).map((p) => bow(densify(p), bend));
-        if (!drawn.length) return;
-        const last = drawn[drawn.length - 1];
-        const [ex, ey] = last[last.length - 1];
-        arcs.set(l.id, { pieces: drawn, b: [b.x, b.y], toTarget: b.shown && Math.hypot(ex - b.x, ey - b.y) < 0.5 });
-      });
-      return arcs;
-    }
-    // [lon, lat] of a node: its coords, else the centroid of the largest
-    // polygon of its country feature.
-    _coordsOf(n) {
-      if (Array.isArray(n.coords) && n.coords.length >= 2 && n.coords.every(Number.isFinite)) return n.coords;
-      if (n.country == null) return null;
-      this._centroids ??= new globalThis.Map();
-      const key = String(n.country);
-      if (this._centroids.has(key)) return this._centroids.get(key);
-      const idField = this.options.idField ?? "id";
-      const f = this._features.find((x2) => this._featureId(x2, idField) === key);
-      let c = null;
-      if (f?.geometry) {
-        const g = f.geometry;
-        const polys = g.type === "MultiPolygon" ? g.coordinates.map((p) => ({ type: "Polygon", coordinates: p })) : [g];
-        const fix = (poly) => area_default(poly) > 2 * Math.PI ? { type: "Polygon", coordinates: poly.coordinates.map((r) => r.slice().reverse()) } : poly;
-        const biggest = polys.map(fix).reduce((a, b) => area_default(b) > area_default(a) ? b : a);
-        c = centroid_default(biggest);
-      }
-      if (!c) console.warn(`RareCharts.MapFlow: node ${n.id} \u2014 no feature "${key}" on the map`);
-      this._centroids.set(key, c);
-      return c;
-    }
-    _typeOf(l) {
-      return l.type == null ? "default" : String(l.type);
-    }
-    // A flow's category is named (tooltip, aria-label) when it has a type, or
-    // when the page described the untyped 'default' — as the legend does.
-    _namesType(l) {
-      return l.type != null || !!this.options.linkTypes?.[this._typeOf(l)];
-    }
-    _typeKeys() {
-      return [...new Set(this._flowData.links.map((l) => this._typeOf(l)))];
-    }
-    _renderFlows() {
-      const o = this.options;
-      const t = this.theme;
-      const types = o.linkTypes ?? {};
-      const keys = this._typeKeys();
-      const infoOf = (key) => resolveLinkType(types, key, { keys, theme: t });
-      const colorOf = (key) => infoOf(key).color;
-      const { nodes } = this._flowData;
-      const at = this._placesAt(this._projection);
-      const byId = new globalThis.Map(nodes.map((n) => [n.id, n]));
-      const typed = this._flowData.links.filter((l) => at.has(l.source) && at.has(l.target) && !this._hiddenTypes.has(this._typeOf(l)));
-      const mode = o.timeWindowMode ?? "hide";
-      const links = applyTimeWindow(typed, this._window, mode);
-      const widthOf = linkWidthScale(this._flowData.links, { min: 1, max: 6, ...o.linkWidth ?? {} });
-      const arcs = this._bowArcs(this._projection, links, at);
-      const name = (id2) => byId.get(id2)?.label ?? id2;
-      const ordered = links.filter((l) => arcs.has(l.id)).sort((a, b) => widthOf(b) - widthOf(a));
-      this.gFlows.selectAll(".rc-mapflow-link").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-link").attr("fill", "none").attr("stroke", (l) => colorOf(this._typeOf(l))).attr("stroke-width", widthOf).attr("stroke-opacity", (l) => l._dim ? 0.15 : 0.8).attr("stroke-dasharray", (l) => infoOf(this._typeOf(l)).dash).attr("stroke-linecap", (l) => infoOf(this._typeOf(l)).dash ? "butt" : "round").attr("vector-effect", "non-scaling-stroke");
-      this.gHeads.selectAll(".rc-mapflow-head").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-head").attr("fill", (l) => colorOf(this._typeOf(l))).attr("fill-opacity", (l) => l._dim ? 0.15 : 0.9).style("pointer-events", "none");
-      const tieHtml = (l) => {
-        const source = byId.get(l.source), target = byId.get(l.target);
-        return o.linkTooltipFormat ? o.linkTooltipFormat({ link: l, source, target }) : this._linkTooltip(l, source, target, infoOf);
-      };
-      this.gHits.selectAll(".rc-mapflow-link-hit").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", (l) => Math.max(12, widthOf(l) + 8)).attr("vector-effect", "non-scaling-stroke").attr("tabindex", 0).attr("role", "button").attr("aria-label", (l) => [
-        `${name(l.source)} \u2192 ${name(l.target)}`,
-        this._namesType(l) ? infoOf(this._typeOf(l)).label : null,
-        l.label
-      ].filter(Boolean).join(", ")).style("pointer-events", "stroke").style("cursor", "pointer").on("mouseover", (event, l) => {
-        const [mx, my] = pointer_default(event, this.container);
-        this._tooltip.show(mx, my, tieHtml(l));
-      }).on("mouseout", () => this._tooltip.hide()).on("click", (event, l) => {
-        event.stopPropagation();
-        const [mx, my] = pointer_default(event, this.container);
-        this._tooltip.pin(mx, my, tieHtml(l));
-      }).on("keydown", (event, l) => {
-        if (event.key !== "Enter" && event.key !== " ") return;
-        event.preventDefault();
-        const [mx, my] = this._zoomTransform.apply(this._flowLayout.get(l.id).mid);
-        const svgBox = this.svg.node().getBoundingClientRect();
-        const cardBox = this.container.getBoundingClientRect();
-        this._tooltip.pin(
-          mx + svgBox.left - cardBox.left - this.container.clientLeft,
-          my + svgBox.top - cardBox.top - this.container.clientTop,
-          tieHtml(l)
-        );
-      });
-      const live = /* @__PURE__ */ new Set(), tied = /* @__PURE__ */ new Set();
-      links.forEach((l) => {
-        tied.add(l.source);
-        tied.add(l.target);
-        if (!l._dim) {
-          live.add(l.source);
-          live.add(l.target);
-        }
-      });
-      this._flowData.links.forEach((l) => {
-        tied.add(l.source);
-        tied.add(l.target);
-      });
-      const total = new globalThis.Map(nodes.map((n) => [n.id, 0]));
-      this._flowData.links.forEach((l) => {
-        const v = Number.isFinite(+l.value) && l.value !== null ? Math.max(0, +l.value) : 0;
-        total.set(l.source, total.get(l.source) + v);
-        total.set(l.target, total.get(l.target) + v);
-      });
-      const placed = nodes.filter((n) => at.get(n.id)?.shown);
-      const faded = (n) => tied.has(n.id) && !live.has(n.id);
-      this.gNodes.selectAll(".rc-mapflow-node").data(placed, (n) => n.id).join("circle").attr("class", "rc-mapflow-node").attr("r", o.nodeRadius ?? 4).attr("fill", (n) => n.color ?? t.text).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("opacity", (n) => faded(n) ? 0.3 : 1).on("mouseover", (event, n) => {
-        if (this._tooltip.isPinned) return;
-        const nodeLinks = links.filter((l) => l.source === n.id || l.target === n.id);
-        const html = o.tooltipFormat ? o.tooltipFormat({ node: n, links: nodeLinks }) : this._nodeTooltip(n, nodeLinks, name);
-        const [mx, my] = pointer_default(event, this.container);
-        this._tooltip.show(mx, my, html);
-      }).on("mouseout", () => this._tooltip.hide());
-      this._flowView = { at, arcs, ordered, placed, nodes, total, faded, widthOf, k: null };
-      this._layoutFlows();
-      this._renderFlowLegend(keys, infoOf);
-    }
-    // The zoom moved: dots, labels and arrowheads follow in screen px (R-14).
-    _onZoom(transform2) {
-      this._layoutFlows(transform2);
-    }
-    // Everything that depends on the zoom, for the transform z (default: the
-    // current one). Arcs and their mouse targets are in map px, inside the
-    // zoom group; only their trimmed ends depend on the scale, so they are
-    // redrawn when it changes. Arrowheads, dots and labels are in screen px:
-    // same size at any zoom, and the labels are placed again.
-    _layoutFlows(z = this._zoomTransform) {
-      const v = this._flowView;
-      if (!v) return;
-      const o = this.options;
-      const t = this.theme;
-      const R = o.nodeRadius ?? 4;
-      const k = z.k;
-      const line = line_default2();
-      const layout = new globalThis.Map();
-      v.ordered.forEach((l) => {
-        const arc = v.arcs.get(l.id);
-        const w = v.widthOf(l);
-        const hl = 6 + w * 1.2, hw = 2.6 + w * 0.8;
-        const drawn = arc.pieces.slice();
-        let chord = null, head = "", headBox = null;
-        if (arc.toTarget) {
-          const last = drawn.pop();
-          const b = arc.b, from = last[0];
-          const stop = (R + 2 + hl * 0.85) / k;
-          const span = Math.hypot(b[0] - from[0], b[1] - from[1]);
-          let end, ux, uy;
-          if (span > stop + 1 / k) {
-            const body = trimEnd(last, b, stop, 0.5 / k);
-            drawn.push(body);
-            const q = body[body.length - 2];
-            end = body[body.length - 1];
-            const dl = Math.hypot(end[0] - q[0], end[1] - q[1]) || 1;
-            ux = (end[0] - q[0]) / dl;
-            uy = (end[1] - q[1]) / dl;
-          } else {
-            const dl = span || 1;
-            ux = (b[0] - from[0]) / dl;
-            uy = (b[1] - from[1]) / dl;
-            end = [b[0] - ux * stop, b[1] - uy * stop];
-            chord = [from, b];
-          }
-          const [ex, ey] = z.apply(end);
-          const bx = ex - ux * hl * 0.15, by = ey - uy * hl * 0.15;
-          const tx = bx + ux * hl, ty = by + uy * hl;
-          head = `M${tx},${ty}L${bx - uy * hw},${by + ux * hw}L${bx + uy * hw},${by - ux * hw}Z`;
-          const hx = [tx, bx - uy * hw, bx + uy * hw], hy = [ty, by + ux * hw, by - ux * hw];
-          headBox = { x0: Math.min(...hx), x1: Math.max(...hx), y0: Math.min(...hy), y1: Math.max(...hy) };
-        }
-        const d = drawn.map((p) => line(p)).join("");
-        layout.set(l.id, {
-          d,
-          hit: d + (chord ? `M${chord[0]}L${chord[1]}` : ""),
-          mid: midway(drawn.length ? drawn : chord ? [chord] : arc.pieces),
-          // labels, keyboard pin
-          head,
-          headBox
-        });
-      });
-      this._flowLayout = layout;
-      if (v.k !== k) {
-        this.gFlows.selectAll(".rc-mapflow-link").attr("d", (l) => layout.get(l.id).d);
-        this.gHits.selectAll(".rc-mapflow-link-hit").attr("d", (l) => layout.get(l.id).hit);
-        v.k = k;
-      }
-      this.gHeads.selectAll(".rc-mapflow-head").attr("d", (l) => layout.get(l.id).head);
-      const screen = new globalThis.Map(v.placed.map((n) => {
-        const p = v.at.get(n.id);
-        return [n.id, { x: z.applyX(p.x), y: z.applyY(p.y) }];
-      }));
-      this.gNodes.selectAll(".rc-mapflow-node").attr("cx", (n) => screen.get(n.id).x).attr("cy", (n) => screen.get(n.id).y);
-      const heads = v.ordered.map((l) => layout.get(l.id).headBox).filter(Boolean);
-      const dots = v.placed.map((n) => {
-        const { x: x2, y: y2 } = screen.get(n.id);
-        return { id: n.id, x0: x2 - R, x1: x2 + R, y0: y2 - R, y1: y2 + R };
-      });
-      const labelBoxes = [];
-      const labels = [];
-      if (o.nodeLabels !== false) {
-        const W = this.width, H = this.height;
-        v.placed.slice().sort((a, b) => v.total.get(b.id) - v.total.get(a.id) || v.nodes.indexOf(a) - v.nodes.indexOf(b)).forEach((n) => {
-          const { x: x2, y: y2 } = screen.get(n.id);
-          const text = String(n.label ?? n.id);
-          const w = text.length * 6.4, h = 12;
-          const tries = [
-            [x2 + R + 4, y2 + 4, "start"],
-            [x2 - R - 4, y2 + 4, "end"],
-            [x2, y2 - R - 5, "middle"],
-            [x2, y2 + R + 13, "middle"]
-          ];
-          const hits = (box, list) => list.some((b) => box.x0 < b.x1 && box.x1 > b.x0 && box.y0 < b.y1 && box.y1 > b.y0);
-          const others = dots.filter((d) => d.id !== n.id);
-          for (const avoid of [[...heads, ...others, ...labelBoxes], [...others, ...labelBoxes]]) {
-            const spot = tries.find(([lx2, ly2, anchor2]) => {
-              const x07 = anchor2 === "start" ? lx2 : anchor2 === "end" ? lx2 - w : lx2 - w / 2;
-              const box = { x0: x07, x1: x07 + w, y0: ly2 - h + 2, y1: ly2 + 2 };
-              return !(box.x0 < 0 || box.x1 > W || box.y0 < 0 || box.y1 > H) && !hits(box, avoid);
-            });
-            if (!spot) continue;
-            const [lx, ly, anchor] = spot;
-            const x06 = anchor === "start" ? lx : anchor === "end" ? lx - w : lx - w / 2;
-            labelBoxes.push({ x0: x06, x1: x06 + w, y0: ly - h + 2, y1: ly + 2 });
-            labels.push({ n, x: lx, y: ly, anchor });
-            break;
-          }
-        });
-      }
-      this.gLabels.selectAll(".rc-mapflow-label").data(labels, (d) => d.n.id).join("text").attr("class", "rc-mapflow-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => d.anchor).attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").attr("opacity", (d) => v.faded(d.n) ? 0.4 : 1).style("pointer-events", "none").text((d) => d.n.label ?? d.n.id);
-    }
-    _renderFlowLegend(keys, infoOf) {
-      const el = this._flowLegendEl;
-      if (!el) return;
-      const focused = el.ownerDocument.activeElement;
-      const refocus = el.contains(focused) ? focused.dataset.key : null;
-      el.replaceChildren();
-      const types = this.options.linkTypes ?? {};
-      if (keys.length < 2 && !Object.keys(types).length) return;
-      keys.forEach((key) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "rc-legend-item rc-graph-legend-item";
-        button.dataset.key = key;
-        const off = this._hiddenTypes.has(key);
-        button.setAttribute("aria-pressed", String(!off));
-        button.style.opacity = off ? "0.35" : "1";
-        const { color: color2, dash, label } = infoOf(key);
-        button.innerHTML = `<svg width="22" height="12" aria-hidden="true"><line x1="1" y1="6" x2="21" y2="6" stroke="${escapeHtml(color2)}" stroke-width="3" ${dash ? `stroke-dasharray="${escapeHtml(dash)}"` : ""}/></svg><span></span>`;
-        button.querySelector("span").textContent = label;
-        button.addEventListener("click", () => {
-          if (this._hiddenTypes.has(key)) this._hiddenTypes.delete(key);
-          else this._hiddenTypes.add(key);
-          this.render();
-        });
-        el.appendChild(button);
-      });
-      if (refocus != null) {
-        [...el.querySelectorAll("button")].find((b) => b.dataset.key === refocus)?.focus({ preventScroll: true });
-      }
-    }
-    // Graph's tie tooltip (core/html.js linkTooltipHtml, D-03): label, value,
-    // period and `sources`, clickable once the tooltip is pinned.
-    _linkTooltip(l, source, target, infoOf) {
-      const kind = this._namesType(l) ? infoOf(this._typeOf(l)) : null;
-      return linkTooltipHtml({
-        from: source?.label ?? l.source,
-        to: target?.label ?? l.target,
-        ties: [{ link: l, kind }]
-      });
-    }
-    _nodeTooltip(n, nodeLinks, name) {
-      const outs = nodeLinks.filter((l) => l.source === n.id && !l._dim);
-      const ins = nodeLinks.filter((l) => l.target === n.id && !l._dim);
-      const line = (arrow, other, l) => `<div>${arrow} ${escapeHtml(name(other))}${l.label ? ` \u2014 ${escapeHtml(l.label)}` : ""}</div>`;
-      return tipBody(`${tipTitle(escapeHtml(n.label ?? n.id))}
-      ${tipSub(`${outs.map((l) => line("\u2192", l.target, l)).join("")}${ins.map((l) => line("\u2190", l.source, l)).join("")}`)}`);
-    }
-  };
 
   // assets/charts/src/core/sankey.js
   function sankeyLayout({ nodes = [], links = [] } = {}, {
@@ -25513,24 +28405,29 @@ var RareCharts = (() => {
   }
 
   // assets/charts/src/charts/Sankey.js
+  var HIT_MIN = 8;
   var Sankey = class extends Chart {
     constructor(selector, options = {}) {
-      const legend = options.legend ?? (options.linkColor === "type" && options.linkTypes ? Object.entries(options.linkTypes).map(([type2, cfg]) => ({
+      const auto = options.legend == null && options.linkColor === "type" && options.linkTypes ? Object.entries(options.linkTypes).map(([type2, cfg]) => ({
         label: cfg.label ?? type2,
         color: cfg.color,
-        type: "bar"
-      })) : void 0);
+        type: "bar",
+        series: type2
+      })) : null;
       super(selector, {
         height: 400,
         margin: { top: 8, right: 8, bottom: 8, left: 8 },
         ...options,
-        ...legend ? { legend } : {}
+        ...auto ? { legend: auto } : {}
       });
+      this._autoLegend = !!auto;
+      [].concat(this.options.hiddenLinkTypes ?? []).forEach((t) => this._hiddenKeys.add(String(t)));
+      this._pinnedItem = null;
       this._baseHeight = this.options.height;
       this._nodes = [];
       this._links = [];
       this._entry = new EntryMotion();
-      this._tooltip = new Tooltip(this.container, this.theme);
+      this.tooltip;
       this._initSVG();
     }
     // ─── Data ─────────────────────────────────────────────────────────────────
@@ -25538,8 +28435,8 @@ var RareCharts = (() => {
       const given = (data.nodes ?? []).length > 0;
       const { nodes: readNodes, links } = normalizeRelationData(data, {
         accept: (l) => {
-          const v = +l.value;
-          if (l.value == null || l.value === "" || !Number.isFinite(v) || v <= 0) {
+          const v = linkValue(l);
+          if (!(v > 0)) {
             console.warn(`RareCharts.Sankey: link ${l.source} \u2192 ${l.target} has no positive value \u2014 dropped`);
             return null;
           }
@@ -25549,18 +28446,10 @@ var RareCharts = (() => {
         onUnknown: (l) => console.warn(`RareCharts.Sankey: link ${l.source} \u2192 ${l.target} references an unknown node \u2014 dropped`)
       });
       const nodes = given ? readNodes : readNodes.map((n) => ({ ...n, label: n.id }));
-      const merged = /* @__PURE__ */ new Map();
-      links.forEach((l) => {
-        const key = JSON.stringify([l.source, l.target, l.type ?? ""]);
-        const prev = merged.get(key);
-        if (prev) {
-          console.warn(`RareCharts.Sankey: repeated link ${l.source} \u2192 ${l.target}${l.type ? ` (${l.type})` : ""} \u2014 values summed`);
-          prev.value += l.value;
-        } else {
-          merged.set(key, { ...l });
-        }
-      });
-      const nextLinks = [...merged.values()];
+      const nextLinks = groupTies(links, {
+        tie: (l) => [l.source, l.target, l.type ?? ""],
+        onRepeat: (l) => console.warn(`RareCharts.Sankey: repeated link ${l.source} \u2192 ${l.target}${l.type ? ` (${l.type})` : ""} \u2014 values summed`)
+      }).map((g) => ({ ...g.links[0], value: g.links.reduce((s, l) => s + l.value, 0) }));
       sankeyLayout({ nodes, links: nextLinks }, { width: 100, height: 100, iterations: 0 });
       this._nodes = nodes;
       this._links = nextLinks;
@@ -25568,14 +28457,70 @@ var RareCharts = (() => {
       this.render();
       return this;
     }
+    // Show only these link types (a list, or one type); null shows all. Types
+    // not in the data are dropped from the hidden set. The chart redraws
+    // without a new layout; onLegendToggle does not fire.
+    setLinkTypesVisible(types) {
+      return this._setVisibleKeys(types);
+    }
+    // ─── Legend ───────────────────────────────────────────────────────────────
+    // A band's link type, the legend key: an untyped band is 'default'
+    // (core/links.js). `data` is the link as given (a layout link's .data).
+    _typeOf(data) {
+      return resolveLinkType(this.options.linkTypes, data?.type).key;
+    }
+    _linkShown(l) {
+      return this._isShown(this._typeOf(l.data));
+    }
+    // The link types in the data, in data order, with the colour their bands
+    // take: the type's own with linkColor 'type' (an undescribed type muted, as
+    // drawn), the one colour with a CSS colour; by source, target or gradient a
+    // type has no one colour, and an item without its own takes the accent.
+    _legendSeries() {
+      const o = this.options;
+      const mode = o.linkColor ?? "source";
+      const colorOf = (key) => {
+        if (mode === "type") return resolveLinkType(o.linkTypes ?? {}, key, { theme: this.theme }).color;
+        return ["source", "target", "gradient"].includes(mode) ? void 0 : mode;
+      };
+      const seen = /* @__PURE__ */ new Map();
+      (this._links ?? []).forEach((l) => {
+        const key = this._typeOf(l);
+        if (!seen.has(key)) seen.set(key, { key, color: colorOf(key) });
+      });
+      return [...seen.values()];
+    }
+    // The auto legend lists the described types the data uses: a type that
+    // is not in the data has no item (a page's own legend keeps a label for
+    // it). Before any data every described type stays, as a label.
+    _headerLegendItems(present) {
+      const items = super._headerLegendItems(present);
+      return this._autoLegend && present?.size ? items.filter((item) => item.key != null) : items;
+    }
+    // A legend change lets go of a pinned tooltip that no longer holds: a band
+    // that is now hidden, or a node whose shown in/out sums changed.
+    _unpinHidden() {
+      const pin = this._pinnedItem;
+      if (!pin || !this._tooltip?.isPinned) return;
+      let stale;
+      if (pin.kind === "band") {
+        stale = !this._isShown(pin.key);
+      } else {
+        const n = this._layout?.nodes.find((x2) => x2.id === pin.id);
+        stale = !n || this._nodeHtml(n, this._valueFormat()) !== pin.html;
+      }
+      if (stale) this._tooltip.unpin();
+    }
+    _valueFormat() {
+      return this.options.valueFormat ?? ((v) => Number(v).toLocaleString());
+    }
     // ─── Init ─────────────────────────────────────────────────────────────────
     _initSVG() {
-      this.container.style.height = this.options.height + "px";
-      this.svg = select_default2(this.container).append("svg").attr("width", "100%").attr("height", "100%");
-      applySvgA11y(this.svg, this.options);
+      this._createSvg();
       this._defs = this.svg.append("defs");
       this.gRoot = this.svg.append("g").attr("class", "rc-sankey");
       this.gLinks = this.gRoot.append("g").attr("class", "rc-sankey-links");
+      this.gLinkHits = this.gRoot.append("g").attr("class", "rc-sankey-link-hits").attr("aria-hidden", "true");
       this.gNodes = this.gRoot.append("g").attr("class", "rc-sankey-nodes");
       this.gLabels = this.gRoot.append("g").attr("class", "rc-sankey-labels");
     }
@@ -25590,12 +28535,12 @@ var RareCharts = (() => {
       const o = this.options;
       const t = this.theme;
       if (!this._links.length) {
-        [this.gLinks, this.gNodes, this.gLabels].forEach((g) => g.selectAll("*").remove());
+        [this.gLinks, this.gLinkHits, this.gNodes, this.gLabels].forEach((g) => g.selectAll("*").remove());
+        this.svg.attr("role", "img");
         this._renderTable([]);
         return;
       }
       const vertical = this._orientation() === "vertical";
-      this._vertical = vertical;
       const pre = sankeyLayout(
         { nodes: this._nodes, links: this._links },
         { width: 100, height: 100, iterations: 0, align: o.nodeAlign ?? "justify" }
@@ -25612,7 +28557,7 @@ var RareCharts = (() => {
       if (W <= 0 || H <= 0) return;
       const labelGap = 6;
       const pad3 = 8;
-      const fmt = o.valueFormat ?? ((v) => Number(v).toLocaleString());
+      const fmt = this._valueFormat();
       const labelText = (n) => o.showValues === false ? this._name(n) : `${this._name(n)} \xB7 ${fmt(n.value)}`;
       let gutter = 0;
       if (!vertical && o.labels !== false && pre.columns > 1) {
@@ -25635,6 +28580,8 @@ var RareCharts = (() => {
         iterations: o.iterations ?? 6
       });
       this._layout = layout;
+      const shown = layout.links.filter((l) => this._linkShown(l));
+      const drawn = new Set(shown);
       const P = vertical ? (flow, cross) => [lane.x + cross, lane.y + flow] : (flow, cross) => [lane.x + flow, lane.y + cross];
       const nodeRect = (n) => {
         const [x06, y06] = P(n.x0, n.y0);
@@ -25664,9 +28611,10 @@ var RareCharts = (() => {
         if (mode === "gradient") return `url(#${gradId(l)})`;
         return mode;
       };
+      this._bandColor = (l, far) => mode === "gradient" ? nodeColor(far) : linkStroke(l);
       this._defs.selectAll("linearGradient").remove();
       if (mode === "gradient") {
-        layout.links.forEach((l) => {
+        shown.forEach((l) => {
           const [sx, sy] = P(l.source.x1, l.y0);
           const [tx, ty] = P(l.target.x0, l.y1);
           const g = this._defs.append("linearGradient").attr("id", gradId(l)).attr("gradientUnits", "userSpaceOnUse").attr("x1", sx).attr("y1", sy).attr("x2", tx).attr("y2", ty);
@@ -25675,10 +28623,10 @@ var RareCharts = (() => {
         });
       }
       const baseOpacity = o.linkOpacity ?? 0.45;
-      const dur = motionDuration(o.duration ?? 600);
+      const dur = motionDuration(o.duration ?? ENTRY_DURATION);
       const ease = resolveEase(o.ease ?? "cubicOut");
       const phase = this._entry.phase(o.animate ?? true ? dur : 0);
-      const linkSel = this.gLinks.selectAll(".rc-sankey-link").data(layout.links, (l) => l.id).join("path").attr("class", "rc-sankey-link").attr("fill", "none").attr("d", bandPath2).attr("stroke", linkStroke).attr("stroke-width", (l) => Math.max(1, l.width)).attr("role", "img").attr("aria-label", (l) => `${this._name(l.source)} \u2192 ${this._name(l.target)}: ${fmt(l.value)}`).style("cursor", "pointer");
+      const linkSel = this.gLinks.selectAll(".rc-sankey-link").data(shown, (l) => l.id).join("path").attr("class", "rc-sankey-link").attr("fill", "none").attr("d", bandPath2).attr("stroke", linkStroke).attr("stroke-width", (l) => Math.max(1, l.width)).attr("role", "img").attr("aria-label", (l) => `${this._name(l.source)} \u2192 ${this._name(l.target)}: ${fmt(l.value)}`).style("cursor", "pointer");
       if (phase === "none") {
         linkSel.interrupt().attr("stroke-opacity", baseOpacity);
       } else {
@@ -25690,7 +28638,9 @@ var RareCharts = (() => {
         settled.attr("stroke-opacity", baseOpacity);
         moving.attr("stroke-opacity", baseOpacity);
       }
+      const hitSel = this.gLinkHits.selectAll(".rc-sankey-link-hit").data(shown.slice().sort((a, b) => b.width - a.width), (l) => l.id).join("path").attr("class", "rc-sankey-link-hit").attr("fill", "none").attr("d", bandPath2).attr("stroke", "transparent").attr("stroke-width", (l) => Math.max(HIT_MIN, l.width)).style("pointer-events", "stroke").style("cursor", "pointer").order();
       const nodeSel = this.gNodes.selectAll(".rc-sankey-node").data(layout.nodes, (n) => n.id).join("rect").attr("class", "rc-sankey-node").attr("x", (n) => nodeRect(n).x).attr("y", (n) => nodeRect(n).y).attr("width", (n) => Math.max(1, nodeRect(n).w)).attr("height", (n) => Math.max(1, nodeRect(n).h)).attr("fill", nodeColor).attr("tabindex", 0).attr("role", "img").attr("aria-label", (n) => `${this._name(n)}: ${fmt(n.value)}`).style("cursor", "pointer");
+      this.svg.attr("role", "group");
       const minLabel = o.minLabelSize ?? 10;
       const labelled = o.labels === false ? [] : layout.nodes.filter((n) => vertical ? nodeRect(n).w >= Math.max(minLabel, 24) : nodeRect(n).h >= minLabel);
       const lastCol = layout.columns - 1;
@@ -25712,12 +28662,20 @@ var RareCharts = (() => {
         linkSel.interrupt().attr("stroke-opacity", baseOpacity);
         nodeSel.style("opacity", 1);
       };
+      const unpinned = () => {
+        this._pinnedItem = null;
+        reset();
+      };
       const highlightNode = (n) => {
         const touches = (l) => l.source === n || l.target === n;
         linkSel.interrupt().attr("stroke-opacity", (l) => touches(l) ? Math.min(1, baseOpacity + 0.35) : 0.12);
         const near = /* @__PURE__ */ new Set([n]);
-        n.sourceLinks.forEach((l) => near.add(l.target));
-        n.targetLinks.forEach((l) => near.add(l.source));
+        n.sourceLinks.forEach((l) => {
+          if (drawn.has(l)) near.add(l.target);
+        });
+        n.targetLinks.forEach((l) => {
+          if (drawn.has(l)) near.add(l.source);
+        });
         nodeSel.style("opacity", (x2) => near.has(x2) ? 1 : 0.35);
       };
       const highlightLink = (l) => {
@@ -25744,9 +28702,11 @@ var RareCharts = (() => {
         event.preventDefault();
         const [mx, my] = centerOf(event.currentTarget);
         highlightNode(n);
-        this._tooltip.pin(mx, my, this._nodeHtml(n, fmt), { onClose: reset });
+        const html = this._nodeHtml(n, fmt);
+        this._tooltip.pin(mx, my, html, { onClose: unpinned });
+        this._pinnedItem = { kind: "node", id: n.id, html };
       });
-      linkSel.on("mouseover", (event, l) => {
+      [linkSel, hitSel].forEach((sel) => sel.on("mouseover", (event, l) => {
         if (this._tooltip.isPinned) return;
         const [mx, my] = pointer(event);
         this._tooltip.show(mx, my, this._linkHtml(l, fmt));
@@ -25759,44 +28719,63 @@ var RareCharts = (() => {
         event.stopPropagation();
         const [mx, my] = pointer(event);
         highlightLink(l);
-        this._tooltip.pin(mx, my, this._linkHtml(l, fmt), { onClose: reset });
-      });
-      this._renderTable(layout.links, fmt);
+        this._tooltip.pin(mx, my, this._linkHtml(l, fmt), { onClose: unpinned });
+        this._pinnedItem = { kind: "band", id: l.id, key: this._typeOf(l.data) };
+      }));
+      this._renderTable(shown, fmt);
     }
     // ─── Text ─────────────────────────────────────────────────────────────────
     _name(n) {
       return n.data.label ?? n.id;
     }
+    // A node's tooltip: its shown bands in and out (the drawing, not the node's
+    // whole value, which its label keeps).
     _nodeHtml(n, fmt) {
       const o = this.options;
+      const incoming = n.targetLinks.filter((l) => this._linkShown(l));
+      const outgoing = n.sourceLinks.filter((l) => this._linkShown(l));
       if (o.tooltipFormat) {
-        return o.tooltipFormat({
-          node: n.data,
-          incoming: n.targetLinks.map((l) => l.data),
-          outgoing: n.sourceLinks.map((l) => l.data)
-        });
+        const ins = incoming.map((l) => l.data), outs = outgoing.map((l) => l.data);
+        return o.tooltipFormat({ node: n.data, incoming: ins, outgoing: outs, links: [...ins, ...outs] });
       }
-      const inV = n.targetLinks.reduce((s, l) => s + l.value, 0);
-      const outV = n.sourceLinks.reduce((s, l) => s + l.value, 0);
-      const row = (k, v) => `<div>${tipMuted(k, "span")} ${escapeHtml(fmt(v))}</div>`;
+      const inV = incoming.reduce((s, l) => s + l.value, 0);
+      const outV = outgoing.reduce((s, l) => s + l.value, 0);
+      const row = (k, v) => tipRow(k, escapeHtml(fmt(v)));
+      const bands = (list, far) => {
+        const count = /* @__PURE__ */ new Map();
+        list.forEach((l) => count.set(far(l), (count.get(far(l)) ?? 0) + 1));
+        return list.map((l) => {
+          const type2 = l.data.type;
+          const note = count.get(far(l)) > 1 && type2 ? escapeHtml(o.linkTypes?.[type2]?.label ?? type2) : "";
+          return tipRow(
+            escapeHtml(this._name(far(l))),
+            escapeHtml(fmt(l.value)),
+            { swatch: "band", color: this._bandColor?.(l, far(l)) ?? null, note }
+          );
+        }).join("\n");
+      };
       return `${tipTitle(escapeHtml(this._name(n)))}
-      ${n.targetLinks.length ? row("in", inV) : ""}
-      ${n.sourceLinks.length ? row("out", outV) : ""}`;
+      ${incoming.length ? `${row("in", inV)}
+${bands(incoming, (l) => l.source)}` : ""}
+      ${outgoing.length ? `${row("out", outV)}
+${bands(outgoing, (l) => l.target)}` : ""}`;
     }
+    // A band's tooltip. Its share is of the whole source node, hidden bands
+    // included: the node is drawn whole.
     _linkHtml(l, fmt) {
       const o = this.options;
       if (o.linkTooltipFormat) {
         return o.linkTooltipFormat({ link: l.data, source: l.source.data, target: l.target.data });
       }
       const out = l.source.sourceLinks.reduce((s, x2) => s + x2.value, 0);
-      const share = out ? ` \xB7 ${Math.round(l.value / out * 100)}% of ${escapeHtml(this._name(l.source))}` : "";
+      const share = out ? `${tipNum(`${Math.round(l.value / out * 100)}%`)} of ${escapeHtml(this._name(l.source))}` : "";
       const type2 = l.data.type ? tipSub(escapeHtml(o.linkTypes?.[l.data.type]?.label ?? l.data.type)) : "";
-      const label = l.data.label ? `<div>${escapeHtml(l.data.label)}</div>` : "";
       return `${tipTitle(`${escapeHtml(this._name(l.source))} \u2192 ${escapeHtml(this._name(l.target))}`)}
-      <div>${escapeHtml(fmt(l.value))}${tipSub(share, { tag: "span" })}</div>
-      ${type2}${label}`;
+      ${tipRow(l.data.label ? escapeHtml(l.data.label) : "", escapeHtml(fmt(l.value)), { note: share })}
+      ${type2}`;
     }
-    // Visually hidden table: the flows as data, for screen readers.
+    // Visually hidden table: the flows as data (the shown bands), for screen
+    // readers.
     _renderTable(links, fmt = (v) => v) {
       this._tableEl?.remove();
       this._tableEl = null;
@@ -25809,11 +28788,1220 @@ var RareCharts = (() => {
       this.container.appendChild(table);
       this._tableEl = table;
     }
-    // ─── Cleanup ──────────────────────────────────────────────────────────────
+    // No destroy() of its own: Chart.destroy() empties the container, the
+    // table with it (D-02).
+  };
+
+  // node_modules/topojson-client/src/identity.js
+  function identity_default6(x2) {
+    return x2;
+  }
+
+  // node_modules/topojson-client/src/transform.js
+  function transform_default(transform2) {
+    if (transform2 == null) return identity_default6;
+    var x06, y06, kx = transform2.scale[0], ky = transform2.scale[1], dx = transform2.translate[0], dy = transform2.translate[1];
+    return function(input, i) {
+      if (!i) x06 = y06 = 0;
+      var j = 2, n = input.length, output = new Array(n);
+      output[0] = (x06 += input[0]) * kx + dx;
+      output[1] = (y06 += input[1]) * ky + dy;
+      while (j < n) output[j] = input[j], ++j;
+      return output;
+    };
+  }
+
+  // node_modules/topojson-client/src/reverse.js
+  function reverse_default(array2, n) {
+    var t, j = array2.length, i = j - n;
+    while (i < --j) t = array2[i], array2[i++] = array2[j], array2[j] = t;
+  }
+
+  // node_modules/topojson-client/src/feature.js
+  function feature_default(topology, o) {
+    if (typeof o === "string") o = topology.objects[o];
+    return o.type === "GeometryCollection" ? { type: "FeatureCollection", features: o.geometries.map(function(o2) {
+      return feature(topology, o2);
+    }) } : feature(topology, o);
+  }
+  function feature(topology, o) {
+    var id2 = o.id, bbox = o.bbox, properties = o.properties == null ? {} : o.properties, geometry = object(topology, o);
+    return id2 == null && bbox == null ? { type: "Feature", properties, geometry } : bbox == null ? { type: "Feature", id: id2, properties, geometry } : { type: "Feature", id: id2, bbox, properties, geometry };
+  }
+  function object(topology, o) {
+    var transformPoint = transform_default(topology.transform), arcs = topology.arcs;
+    function arc(i, points) {
+      if (points.length) points.pop();
+      for (var a = arcs[i < 0 ? ~i : i], k = 0, n = a.length; k < n; ++k) {
+        points.push(transformPoint(a[k], k));
+      }
+      if (i < 0) reverse_default(points, n);
+    }
+    function point6(p) {
+      return transformPoint(p);
+    }
+    function line(arcs2) {
+      var points = [];
+      for (var i = 0, n = arcs2.length; i < n; ++i) arc(arcs2[i], points);
+      if (points.length < 2) points.push(points[0]);
+      return points;
+    }
+    function ring(arcs2) {
+      var points = line(arcs2);
+      while (points.length < 4) points.push(points[0]);
+      return points;
+    }
+    function polygon(arcs2) {
+      return arcs2.map(ring);
+    }
+    function geometry(o2) {
+      var type2 = o2.type, coordinates;
+      switch (type2) {
+        case "GeometryCollection":
+          return { type: type2, geometries: o2.geometries.map(geometry) };
+        case "Point":
+          coordinates = point6(o2.coordinates);
+          break;
+        case "MultiPoint":
+          coordinates = o2.coordinates.map(point6);
+          break;
+        case "LineString":
+          coordinates = line(o2.arcs);
+          break;
+        case "MultiLineString":
+          coordinates = o2.arcs.map(line);
+          break;
+        case "Polygon":
+          coordinates = polygon(o2.arcs);
+          break;
+        case "MultiPolygon":
+          coordinates = o2.arcs.map(polygon);
+          break;
+        default:
+          return null;
+      }
+      return { type: type2, coordinates };
+    }
+    return geometry(o);
+  }
+
+  // assets/charts/src/charts/Map.js
+  var Map2 = class extends Chart {
+    constructor(selector, options = {}) {
+      super(selector, {
+        height: 400,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        ...options
+      });
+      this._features = [];
+      this._dataMap = new globalThis.Map();
+      this.tooltip;
+      this._geoReady = false;
+      this._activeTooltipHtml = null;
+      this._zoomTransform = identity4;
+      this._initSVG();
+      this._ready = this._loadGeo();
+    }
+    // ─── Public API ───────────────────────────────────────────────────────────
+    setData(items = []) {
+      this._dataMap.clear();
+      items.forEach((item) => {
+        if (item?.id != null) {
+          this._dataMap.set(String(item.id), item);
+        }
+      });
+      if (this._geoReady) this.render();
+      return this;
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    _initSVG() {
+      this.container.style.overflow = "hidden";
+      this._createSvg({
+        size: "none",
+        className: "rc-map-svg",
+        style: { display: "block", overflow: "hidden" },
+        beforeFooter: true
+      });
+      this._bgRect = this.svg.append("rect").attr("class", "rc-map-ocean");
+      this._clipId = `${this._uid}-map-clip`;
+      this._defs = this.svg.append("defs");
+      this._clipRect = this._defs.append("clipPath").attr("id", this._clipId).append("rect");
+      this.gZoom = this.svg.append("g").attr("class", "rc-map-zoom").attr("clip-path", `url(#${this._clipId})`);
+      if (this.options.graticule) {
+        this._graticule = this.gZoom.append("path").attr("class", "rc-map-graticule").attr("fill", "none").attr("vector-effect", "non-scaling-stroke").style("pointer-events", "none");
+      }
+      this.gPaths = this.gZoom.append("g").attr("class", "rc-map-paths");
+      if (this.options.zoom) {
+        this._zoom = zoom_default2().extent(function() {
+          return [[0, 0], [this.clientWidth || 1, this.clientHeight || 1]];
+        }).scaleExtent(this.options.zoomExtent ?? [0.8, 12]).translateExtent([[-2e3, -2e3], [4e3, 4e3]]).on("zoom", (event) => {
+          this._zoomTransform = event.transform;
+          this.gZoom.attr("transform", event.transform);
+          this._onZoom(event.transform);
+        });
+        this._zoomHint = bindZoom(this.svg, this._zoom, { container: this.container, theme: this.theme });
+        this.svg.on("dblclick.zoom", null);
+      }
+    }
+    // ─── Load geographic data ─────────────────────────────────────────────────
+    async _loadGeo() {
+      try {
+        const o = this.options;
+        let data;
+        if (o.geoData) data = o.geoData;
+        else if (o.topoData) data = o.topoData;
+        else if (o.geoUrl) data = await json_default(o.geoUrl);
+        else if (o.topoUrl) data = await json_default(o.topoUrl);
+        else {
+          console.warn("RareCharts Map: no geographic data \u2014 pass geoData, topoData, geoUrl or topoUrl");
+          return;
+        }
+        if (this._destroyed) return;
+        const features = this._extractFeatures(data, o.topoObject);
+        this._features = this._prepareFeatures(features);
+        this._geoReady = true;
+        this.render();
+      } catch (err) {
+        if (this._destroyed) return;
+        console.error("RareCharts Map: failed to load geographic data", err);
+      }
+    }
+    _prepareFeatures(features) {
+      return this._clipFeatures(this._applyFilter(features));
+    }
+    _applyFilter(features) {
+      const fn = this.options.featureFilter;
+      return typeof fn === "function" ? features.filter(fn) : features;
+    }
+    _extractFeatures(data, topoObject) {
+      if (data?.type === "Topology") {
+        const objName = topoObject ?? Object.keys(data.objects ?? {})[0];
+        if (!objName || !data.objects?.[objName]) return [];
+        const fc = feature_default(data, data.objects[objName]);
+        return fc.type === "FeatureCollection" ? fc.features ?? [] : [fc];
+      }
+      if (data?.type === "FeatureCollection") return data.features ?? [];
+      if (data?.type === "Feature") return [data];
+      return [];
+    }
+    // ─── Geographic clipping ──────────────────────────────────────────────────
+    _clipFeatures(features) {
+      const clip = this.options.clipExtent;
+      if (!clip) return features;
+      const [[minLon, minLat], [maxLon, maxLat]] = clip;
+      const intersects = ([[x06, y06], [x12, y12]]) => !(x12 < minLon || x06 > maxLon || y12 < minLat || y06 > maxLat);
+      const clipGeom = (geom) => {
+        if (!geom) return null;
+        if (geom.type === "Polygon") {
+          const b = bounds_default({ type: "Feature", geometry: geom });
+          return intersects(b) ? geom : null;
+        }
+        if (geom.type === "MultiPolygon") {
+          const polys = geom.coordinates.filter((c) => {
+            const b = bounds_default({
+              type: "Feature",
+              geometry: { type: "Polygon", coordinates: c }
+            });
+            return intersects(b);
+          });
+          if (!polys.length) return null;
+          return polys.length === 1 ? { type: "Polygon", coordinates: polys[0] } : { type: "MultiPolygon", coordinates: polys };
+        }
+        return geom;
+      };
+      return features.map((f) => {
+        const g = clipGeom(f.geometry);
+        return g ? { ...f, geometry: g } : null;
+      }).filter(Boolean);
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    render() {
+      if (!this._geoReady || !this._features.length) return;
+      const W = this.width;
+      const H = this.height;
+      if (W <= 0 || H <= 0) return;
+      const t = this.theme;
+      const tm = t.map ?? {};
+      const o = this.options;
+      const pad3 = o.fitPadding ?? 20;
+      const idField = o.idField ?? "id";
+      this.svg.attr("width", W).attr("height", H).attr("viewBox", `0 0 ${W} ${H}`).attr("preserveAspectRatio", "xMidYMid meet");
+      const oceanColor = o.oceanColor ?? tm.ocean ?? "transparent";
+      this._bgRect.attr("width", W).attr("height", H).attr("fill", oceanColor);
+      this._clipRect.attr("x", 0).attr("y", 0).attr("width", W).attr("height", H);
+      const projName = o.projection ?? "naturalEarth1";
+      const proj = this._buildProjection(projName);
+      this._fitProjection(proj, [[pad3, pad3], [W - pad3, H - pad3]]);
+      const path2 = path_default(proj);
+      this._projection = proj;
+      const defaultFill = o.defaultFill ?? tm.unmatchedFill ?? t.surface ?? "#e8e8e8";
+      const matchFill = o.matchFill ?? tm.matchFill ?? t.accent ?? "#1677ff";
+      const borderColor = o.borderColor ?? tm.border ?? t.border ?? "#ffffff";
+      const fillFor = (feature2) => {
+        const fid = this._featureId(feature2, idField);
+        if (fid == null) return defaultFill;
+        const item = this._dataMap.get(fid);
+        if (!item) return defaultFill;
+        return item.color ?? matchFill;
+      };
+      const brighten = Number.isFinite(tm.hoverBrighten) ? tm.hoverBrighten : 1.3;
+      const hoverFillFor = (feature2) => {
+        if (o.hoverFill != null) return o.hoverFill;
+        const fill = fillFor(feature2);
+        const c = hsl(this._hex(fill));
+        if (!Number.isFinite(c.l)) return fill;
+        const step = brighten - 1;
+        c.l = c.l > 0.85 ? Math.max(0, c.l - step * 0.4) : c.l + (1 - c.l) * step;
+        return String(c);
+      };
+      if (this._graticule) {
+        this._graticule.attr("d", projName === "identity" ? null : path2(graticule10())).attr("stroke", tm.graticule ?? t.grid ?? "rgba(0,0,0,0.08)").attr("stroke-width", 1);
+      }
+      this.gPaths.selectAll(".rc-map-feature").data(
+        this._features,
+        (d) => this._featureId(d, idField) ?? d.id ?? JSON.stringify(d.geometry)
+      ).join("path").attr("class", "rc-map-feature").attr("d", path2).attr("fill", fillFor).attr("stroke", borderColor).attr("stroke-width", o.borderWidth ?? 0.5).attr("vector-effect", "non-scaling-stroke").on("mouseover", (event, d) => {
+        const fid = this._featureId(d, idField);
+        const item = fid != null ? this._dataMap.get(fid) ?? null : null;
+        if (item) {
+          select_default2(event.currentTarget).attr("fill", hoverFillFor(d));
+        }
+        const fmt = this._regionTooltipFormat();
+        const color2 = this._hex(fillFor(d));
+        const html = fmt ? fmt({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, color: color2 }) : this._defaultTooltip(d, item, color2);
+        this._activeTooltipHtml = html;
+        if (html) {
+          const [mx, my] = pointer_default(event, this.container);
+          this._tooltip.show(mx, my, html);
+        }
+      }).on("mousemove", (event) => {
+        if (!this._activeTooltipHtml) return;
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, this._activeTooltipHtml);
+      }).on("mouseout", (event, d) => {
+        select_default2(event.currentTarget).attr("fill", fillFor(d));
+        this._activeTooltipHtml = null;
+        this._tooltip.hide();
+      });
+      this._bindRegionClicks(idField);
+      if (this._zoom) {
+        this._zoom.translateExtent([[-W * 2, -H * 2], [W * 3, H * 3]]);
+      }
+    }
+    // ─── Region clicks (B-06) ───────────────────────────────────────────────
+    // With onRegionClick, every region with a data item is a button: a click,
+    // Enter or Space reports { feature, item, label, value, event }; a click on
+    // the rest of the map, or Escape, reports item: null (nothing chosen).
+    // Without it, no attribute and no handler, so the drawing stays as it was.
+    // The handlers are set on every render (namespaced, replaced, never stacked).
+    _bindRegionClicks(idField) {
+      const handler = this.options.onRegionClick;
+      const on = typeof handler === "function";
+      const itemOf = (d) => {
+        const fid = this._featureId(d, idField);
+        return fid != null ? this._dataMap.get(fid) ?? null : null;
+      };
+      const active = (d) => on && !!itemOf(d);
+      const report = (event, d) => {
+        if (this._destroyed) return;
+        const item = itemOf(d);
+        handler({ feature: d, item, label: this._regionName(d, item), value: item?.value ?? null, event });
+      };
+      const clear = (event, d = null) => {
+        if (this._destroyed) return;
+        handler({ feature: d, item: null, label: d ? this._regionName(d, null) : null, value: null, event });
+      };
+      const moved = (event) => {
+        const at2 = this._regionPress;
+        return !!at2 && Math.hypot(event.clientX - at2[0], event.clientY - at2[1]) > 4;
+      };
+      this.svg.attr("role", on ? "group" : "img");
+      this.svg.on("pointerdown.rc-region", on ? (event) => {
+        this._regionPress = [event.clientX, event.clientY];
+      } : null).on("click.rc-region", on ? (event) => {
+        const drag = moved(event);
+        this._regionPress = null;
+        if (drag) return;
+        const t = event.target;
+        const region = t?.closest?.(".rc-map-feature");
+        if (region && this.gPaths.node().contains(region)) {
+          const d = select_default2(region).datum();
+          if (active(d)) report(event, d);
+          else clear(event, d);
+        } else if (t === this.svg.node() || t === this._graticule?.node() || t?.classList?.contains("rc-map-ocean")) {
+          clear(event);
+        }
+      } : null);
+      this.gPaths.selectAll(".rc-map-feature").classed("rc-map-feature--clickable", active).attr("tabindex", (d) => active(d) ? 0 : null).attr("role", (d) => active(d) ? "button" : null).attr("aria-label", (d) => {
+        if (!active(d)) return null;
+        const item = itemOf(d);
+        const label = this._regionName(d, item);
+        return item?.value != null ? `${label}, ${item.value}` : label;
+      }).on("keydown.rc-region", on ? (event, d) => {
+        if (!active(d)) return;
+        if (event.key === "Escape") {
+          clear(event);
+          return;
+        }
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        report(event, d);
+      } : null);
+    }
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // The formatter for a region's tooltip — tooltipFormat here; MapFlow keeps
+    // tooltipFormat for its places and reads regionTooltipFormat instead.
+    _regionTooltipFormat() {
+      return this.options.tooltipFormat;
+    }
+    // Fit the projection into the extent [[x0, y0], [x1, y1]]: to the fit
+    // object. MapFlow then folds in its arcs as drawn (fitTo: 'links').
+    _fitProjection(proj, extent2) {
+      proj.fitExtent(extent2, this._fitObject());
+    }
+    // What the projection is fitted to: every feature. MapFlow can fit to its
+    // own places instead (fitTo: 'links').
+    _fitObject() {
+      return { type: "FeatureCollection", features: this._features };
+    }
+    // Called on every zoom and pan with the new transform, after the map
+    // group has taken it: overlays that keep their screen size (MapFlow's
+    // dots, labels and arrowheads) follow here.
+    _onZoom() {
+    }
+    _featureId(feature2, idField) {
+      if (feature2?.id != null) return String(feature2.id);
+      if (feature2?.properties) {
+        const v = feature2.properties[idField] ?? feature2.properties.iso_a2 ?? feature2.properties.iso_a3 ?? feature2.properties.ISO_A2 ?? feature2.properties.ISO_A3;
+        if (v != null) return String(v);
+      }
+      return null;
+    }
+    _buildProjection(name) {
+      let proj;
+      switch (name) {
+        case "mercator":
+          proj = mercator_default();
+          break;
+        case "equalEarth":
+          proj = equalEarth_default();
+          break;
+        case "orthographic":
+          proj = orthographic_default();
+          break;
+        case "identity":
+          proj = identity_default4().reflectY(this.options.reflectY ?? false);
+          break;
+        default:
+          proj = naturalEarth1_default();
+      }
+      if (this.options.rotate && typeof proj.rotate === "function") {
+        proj.rotate(this.options.rotate);
+      }
+      return proj;
+    }
+    // A region's name: its data item's label, then the feature's own.
+    _regionName(feature2, item) {
+      return item?.label ?? feature2?.properties?.name ?? feature2?.properties?.NAME ?? feature2?.id ?? "\u2014";
+    }
+    _defaultTooltip(feature2, item, color2 = null) {
+      const name = this._regionName(feature2, item);
+      return item?.value != null ? tipRow(escapeHtml(name), escapeHtml(item.value), { swatch: "dot", color: color2 }) : tipTitle(escapeHtml(name));
+    }
+    // ─── Resize ───────────────────────────────────────────────────────────────
+    _onResize() {
+      if (this._geoReady) this.render();
+    }
+  };
+
+  // assets/charts/src/charts/MapFlow.js
+  var LEGEND_ALIAS = Object.freeze({ item: "rc-graph-legend-item", reset: "rc-graph-legend-reset" });
+  function densify(pts) {
+    const lens = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
+    const step = Math.max(Math.min(8, lens.reduce((s, v) => s + v, 0) / 24), 1e-9);
+    const out = [pts[0]];
+    lens.forEach((len, i) => {
+      const [x06, y06] = pts[i], [x12, y12] = pts[i + 1];
+      const n = Math.ceil(len / step);
+      for (let j = 1; j <= n; j++) out.push([x06 + (x12 - x06) * j / n, y06 + (y12 - y06) * j / n]);
+    });
+    if (out.length < 2) out.push(pts[pts.length - 1].slice());
+    return out;
+  }
+  function trimEnd(pts, b, stop, slack) {
+    const body = pts.slice();
+    const toB = (p2) => Math.hypot(p2[0] - b[0], p2[1] - b[1]);
+    while (body.length > 2 && toB(body[body.length - 2]) < stop) body.pop();
+    const p = body[body.length - 2], e = body[body.length - 1];
+    const short = stop - toB(e);
+    if (short > 0) {
+      const seg = Math.hypot(e[0] - p[0], e[1] - p[1]) || 1;
+      const back = Math.min(short, seg - slack);
+      body[body.length - 1] = [e[0] - (e[0] - p[0]) / seg * back, e[1] - (e[1] - p[1]) / seg * back];
+    }
+    return body;
+  }
+  function midway(lines) {
+    const segs = [];
+    lines.forEach((pts) => pts.slice(1).forEach((q, i) => segs.push([pts[i], q, Math.hypot(q[0] - pts[i][0], q[1] - pts[i][1])])));
+    let half = segs.reduce((s, [, , len]) => s + len, 0) / 2;
+    for (const [p, q, len] of segs) {
+      if (half <= len) {
+        const f = len ? half / len : 0;
+        return [p[0] + (q[0] - p[0]) * f, p[1] + (q[1] - p[1]) * f];
+      }
+      half -= len;
+    }
+    return lines[0]?.[0] ?? null;
+  }
+  var MapFlow = class extends Map2 {
+    constructor(selector, options = {}) {
+      super(selector, { height: 420, ...options });
+      if (options.nodes || options.links || options.flows) {
+        this.setData({ nodes: options.nodes, links: options.links ?? options.flows });
+      }
+    }
+    // ─── Public API ───────────────────────────────────────────────────────────
+    setData(data = {}) {
+      if (Array.isArray(data)) data = { nodes: [], links: data };
+      const { nodes, links } = normalizeRelationData(data, {
+        unknownEndpoints: "drop",
+        onUnknown: (l) => console.warn(`RareCharts.MapFlow: flow ${l.id} points to an unknown node \u2014 dropped`)
+      });
+      this._flowData = { nodes, links };
+      if (this._hasTimeNav()) this._refreshViewForData();
+      if (this._geoReady) this.render();
+      return this;
+    }
+    // Flows outside [from, to] hide (or dim, timeWindowMode: 'dim'); null
+    // bounds are open. Years, 'YYYY-MM' or ISO dates.
+    // With timeframes or a navigator, the window is the view.
+    setTimeWindow(from = null, to = null) {
+      if (this._hasTimeNav()) return this._timeWindowAsView(from, to);
+      this._window = from == null && to == null ? null : { from, to };
+      if (this._geoReady) this.render();
+      return this;
+    }
+    // ── Time scale: the base Chart's timeframes and navigator over the flows'
+    // start / end (Chart._timeLinks and friends).
+    _isLinkTimeChart() {
+      return true;
+    }
+    // Hovering a country: MapFlow's tooltipFormat is for places ({ node,
+    // links }); regions take their own regionTooltipFormat ({ feature, item }).
+    _regionTooltipFormat() {
+      return this.options.regionTooltipFormat;
+    }
+    _timeLinks() {
+      return this._flowData?.links ?? null;
+    }
+    // Show only these flow types (a list, or one name); null shows them all —
+    // what the legend does, without onLegendToggle. Read against the types in
+    // the data: a type it lacks drops from the hidden set (core/Chart.js
+    // _setVisibleKeys). Before the geometry has loaded, the map draws them so.
+    setLinkTypesVisible(types) {
+      return this._setVisibleKeys(types);
+    }
+    // The flow types in the data, in data order: what setLinkTypesVisible
+    // reads and onLegendToggle's visibleNames list (core/Chart.js).
+    _legendSeries() {
+      return this._typeKeys().map((key) => ({ key }));
+    }
+    // The header `legend` names no series in MapFlow: every item stays a
+    // label. The type legend is MapFlow's own (linkLegend).
+    _legendKeyOf() {
+      return null;
+    }
+    // A pinned arc tooltip goes when its type is hidden: by Enter or Space on
+    // the legend, or by setLinkTypesVisible (a pointer click on the legend is
+    // a click outside the tooltip, which unpins it already).
+    _unpinHidden() {
+      if (this._pinnedType != null && this._hiddenKeys.has(this._pinnedType)) this._tooltip?.unpin();
+    }
+    // Pin an arc's tooltip, and remember its type until the pin is released.
+    _pinTie(x2, y2, l, html) {
+      this._tooltip.pin(x2, y2, html, { onClose: () => {
+        this._pinnedType = null;
+      } });
+      this._pinnedType = this._typeOf(l);
+    }
+    // ─── Init ─────────────────────────────────────────────────────────────────
+    // Runs inside Map's constructor — before this constructor's body, and
+    // before inline geometry renders — so all flow state starts here.
+    _initSVG() {
+      super._initSVG();
+      const o = this.options;
+      this._flowData = { nodes: [], links: [] };
+      this._window = Array.isArray(o.timeWindow) ? { from: o.timeWindow[0] ?? null, to: o.timeWindow[1] ?? null } : null;
+      (o.hiddenLinkTypes ?? []).forEach((type2) => this._hiddenKeys.add(String(type2)));
+      this._pinnedType = null;
+      this.svg.attr("role", this.svg.attr("role") ?? "img");
+      this.gFlows = this.gZoom.append("g").attr("class", "rc-mapflow-links");
+      this.gHits = this.gZoom.append("g").attr("class", "rc-mapflow-link-hits");
+      this.gOverlay = this.svg.append("g").attr("class", "rc-mapflow-overlay");
+      this.gHeads = this.gOverlay.append("g").attr("class", "rc-mapflow-heads");
+      this.gNodes = this.gOverlay.append("g").attr("class", "rc-mapflow-nodes");
+      this.gLabels = this.gOverlay.append("g").attr("class", "rc-mapflow-labels");
+      if (o.linkLegend !== false) {
+        this._flowLegendEl = document.createElement("div");
+        this._flowLegendEl.className = "rc-legend rc-mapflow-legend";
+        this.container.appendChild(this._flowLegendEl);
+      }
+      this.svg.on("click.mapflow", () => {
+        if (this._tooltip?.isPinned) this._tooltip.unpin();
+      });
+    }
+    // ─── Render ───────────────────────────────────────────────────────────────
+    render() {
+      if (this._flowData && this._hasTimeNav()) this._window = this._syncLinkTimeView();
+      super.render();
+      if (!this._projection) return;
+      this._renderFlows();
+    }
+    _fitObject() {
+      if (this.options.fitTo !== "links") return super._fitObject();
+      const pts = this._flowData.nodes.map((n) => this._coordsOf(n)).filter(Boolean);
+      const distinct = new Set(pts.map((p) => `${p[0]},${p[1]}`));
+      if (distinct.size < 2) return super._fitObject();
+      return { type: "MultiPoint", coordinates: pts };
+    }
+    // fitTo: 'links' — the arcs too, as they are drawn: a great circle runs
+    // far from its ends (China → New York goes over the Arctic) and the bow
+    // adds px on top. After the fit to the places, the box the drawing takes
+    // (the places shown and every point of every arc: all flows, so the time
+    // window and the legend do not move the frame) is scaled and moved into
+    // the frame in px. A projection's px are its scale times the raw point
+    // plus its translate, so this is exact for everything geographic — the
+    // great circles, the places, an arc's end on the antimeridian or on
+    // Mercator's polar edge (C-40) — and needs no point read back to
+    // [lon, lat], which a point on the cut or a bow beyond the pole does not
+    // survive. A bow capped at bend × 90 px does not shrink with the map: a
+    // second pass, or a third, takes up the rest (C-35, RC-071).
+    _fitProjection(proj, extent2) {
+      super._fitProjection(proj, extent2);
+      const fit2 = this._fitObject();
+      if (this.options.fitTo !== "links" || fit2.type !== "MultiPoint") return;
+      const [[x06, y06], [x12, y12]] = extent2;
+      for (let pass = 0; pass < 3; pass++) {
+        const at2 = this._placesAt(proj);
+        const arcs = this._bowArcs(proj, this._flowData.links.filter((l) => at2.has(l.source) && at2.has(l.target)), at2);
+        let bx0 = Infinity, by0 = Infinity, bx1 = -Infinity, by1 = -Infinity;
+        const take = (x2, y2) => {
+          if (!Number.isFinite(x2) || !Number.isFinite(y2)) return;
+          bx0 = Math.min(bx0, x2);
+          bx1 = Math.max(bx1, x2);
+          by0 = Math.min(by0, y2);
+          by1 = Math.max(by1, y2);
+        };
+        at2.forEach((p) => {
+          if (p.shown) take(p.x, p.y);
+        });
+        arcs.forEach(({ pieces }) => pieces.forEach((pts) => pts.forEach((p) => take(p[0], p[1]))));
+        if (!(bx1 > bx0 || by1 > by0)) return;
+        if (bx0 >= x06 - 0.25 && bx1 <= x12 + 0.25 && by0 >= y06 - 0.25 && by1 <= y12 + 0.25) return;
+        const f = Math.min(1, (x12 - x06) / Math.max(bx1 - bx0, 1e-9), (y12 - y06) / Math.max(by1 - by0, 1e-9));
+        const [tx, ty] = proj.translate();
+        const cx = (bx0 + bx1) / 2, cy = (by0 + by1) / 2;
+        proj.scale(proj.scale() * f).translate([(x06 + x12) / 2 + (tx - cx) * f, (y06 + y12) / 2 + (ty - cy) * f]);
+      }
+    }
+    // Where each place falls: its [lon, lat], its point in projection px, and
+    // whether the projection shows it — a place behind an orthographic globe
+    // projects onto the front, so it is hidden instead (R-13).
+    _placesAt(proj) {
+      const at2 = new globalThis.Map();
+      let seen = false;
+      const probe = proj.stream({
+        point() {
+          seen = true;
+        },
+        lineStart() {
+        },
+        lineEnd() {
+        },
+        polygonStart() {
+        },
+        polygonEnd() {
+        },
+        sphere() {
+        }
+      });
+      this._flowData.nodes.forEach((n) => {
+        const c = this._coordsOf(n);
+        if (!c) return;
+        const p = proj(c);
+        seen = false;
+        probe.point(c[0], c[1]);
+        const finite = !!p && p.every(Number.isFinite);
+        at2.set(n.id, { lonlat: c, x: finite ? p[0] : NaN, y: finite ? p[1] : NaN, shown: seen && finite });
+      });
+      return at2;
+    }
+    // Each flow's arc in projection px: the great circle between its places
+    // as d3.geoPath draws it — cut where the projection cuts, at the edge of a
+    // flat map and at the horizon of the globe, so in pieces, or none at all
+    // (R-13) — each piece bowed on its own by a sine over its length
+    // (sineBow), `bend` × 0.6 of its chord, at most `bend` × 90 px, so the arc
+    // reads as a flow and two directions never overlap: parallel flows of one
+    // direction fan out 0.16 bends apart, and the opposite direction bows to
+    // the other side by its own normal (parallelIndex, directed). Both ends of
+    // a piece stay where they are.
+    // `toTarget`: the last piece ends at the target's dot (not at the horizon).
+    _bowArcs(proj, links, at2) {
+      const par = parallelIndex(links, { directed: true });
+      const baseBend = this.options.bend ?? 0.18;
+      let pieces = [];
+      const trace = path_default(proj, {
+        moveTo(x2, y2) {
+          pieces.push([[x2, y2]]);
+        },
+        lineTo(x2, y2) {
+          pieces[pieces.length - 1].push([x2, y2]);
+        },
+        closePath() {
+        },
+        arc() {
+        }
+      });
+      const arcs = new globalThis.Map();
+      links.forEach((l) => {
+        const a = at2.get(l.source), b = at2.get(l.target);
+        pieces = [];
+        trace({ type: "LineString", coordinates: [a.lonlat, b.lonlat] });
+        const bend = baseBend + (par.get(l.id)?.offset ?? 0) * 0.16;
+        const amp = (len) => bend * Math.min(90, len * 0.6);
+        const drawn = pieces.filter((p) => p.length > 1).map((p) => sineBow(densify(p), amp));
+        if (!drawn.length) return;
+        const last = drawn[drawn.length - 1];
+        const [ex, ey] = last[last.length - 1];
+        arcs.set(l.id, { pieces: drawn, b: [b.x, b.y], toTarget: b.shown && Math.hypot(ex - b.x, ey - b.y) < 0.5 });
+      });
+      return arcs;
+    }
+    // [lon, lat] of a node: its coords, else the centroid of the largest
+    // polygon of its country feature.
+    _coordsOf(n) {
+      if (Array.isArray(n.coords) && n.coords.length >= 2 && n.coords.every(Number.isFinite)) return n.coords;
+      if (n.country == null) return null;
+      this._centroids ??= new globalThis.Map();
+      const key = String(n.country);
+      if (this._centroids.has(key)) return this._centroids.get(key);
+      const idField = this.options.idField ?? "id";
+      const f = this._features.find((x2) => this._featureId(x2, idField) === key);
+      let c = null;
+      if (f?.geometry) {
+        const g = f.geometry;
+        const polys = g.type === "MultiPolygon" ? g.coordinates.map((p) => ({ type: "Polygon", coordinates: p })) : [g];
+        const fix = (poly) => area_default(poly) > 2 * Math.PI ? { type: "Polygon", coordinates: poly.coordinates.map((r) => r.slice().reverse()) } : poly;
+        const biggest = polys.map(fix).reduce((a, b) => area_default(b) > area_default(a) ? b : a);
+        c = centroid_default(biggest);
+      }
+      if (!c) console.warn(`RareCharts.MapFlow: node ${n.id} \u2014 no feature "${key}" on the map`);
+      this._centroids.set(key, c);
+      return c;
+    }
+    _typeOf(l) {
+      return l.type == null ? "default" : String(l.type);
+    }
+    // A flow's category is named (tooltip, aria-label) when it has a type, or
+    // when the page described the untyped 'default' — as the legend does.
+    _namesType(l) {
+      return l.type != null || !!this.options.linkTypes?.[this._typeOf(l)];
+    }
+    _typeKeys() {
+      return [...new Set(this._flowData.links.map((l) => this._typeOf(l)))];
+    }
+    _renderFlows() {
+      const o = this.options;
+      const t = this.theme;
+      const types = o.linkTypes ?? {};
+      const keys = this._typeKeys();
+      const infoOf = (key) => resolveLinkType(types, key, { keys, theme: t });
+      const colorOf = (key) => infoOf(key).color;
+      const { nodes } = this._flowData;
+      const at2 = this._placesAt(this._projection);
+      const byId = new globalThis.Map(nodes.map((n) => [n.id, n]));
+      const typed = this._flowData.links.filter((l) => at2.has(l.source) && at2.has(l.target) && !this._hiddenKeys.has(this._typeOf(l)));
+      const mode = o.timeWindowMode ?? "hide";
+      const links = applyTimeWindow(typed, this._window, mode, this._zone());
+      const widthOf = linkWidthScale(this._flowData.links, { min: 1, max: 6, ...o.linkWidth ?? {} });
+      const arcs = this._bowArcs(this._projection, links, at2);
+      const name = (id2) => byId.get(id2)?.label ?? id2;
+      const ordered = links.filter((l) => arcs.has(l.id)).sort((a, b) => widthOf(b) - widthOf(a));
+      this.gFlows.selectAll(".rc-mapflow-link").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-link").attr("fill", "none").attr("stroke", (l) => colorOf(this._typeOf(l))).attr("stroke-width", widthOf).attr("stroke-opacity", (l) => l._dim ? 0.15 : 0.8).attr("stroke-dasharray", (l) => infoOf(this._typeOf(l)).dash).attr("stroke-linecap", (l) => infoOf(this._typeOf(l)).dash ? "butt" : "round").attr("vector-effect", "non-scaling-stroke");
+      this.gHeads.selectAll(".rc-mapflow-head").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-head").attr("fill", (l) => colorOf(this._typeOf(l))).attr("fill-opacity", (l) => l._dim ? 0.15 : 0.9).style("pointer-events", "none");
+      const tieHtml = (l) => {
+        const source = byId.get(l.source), target = byId.get(l.target);
+        return o.linkTooltipFormat ? o.linkTooltipFormat({ link: l, source, target }) : this._linkTooltip(l, source, target, infoOf);
+      };
+      this.gHits.selectAll(".rc-mapflow-link-hit").data(ordered, (l) => l.id).join("path").attr("class", "rc-mapflow-link-hit").attr("fill", "none").attr("stroke", "transparent").attr("stroke-width", (l) => Math.max(12, widthOf(l) + 8)).attr("vector-effect", "non-scaling-stroke").attr("tabindex", 0).attr("role", "button").attr("aria-label", (l) => [
+        `${name(l.source)} \u2192 ${name(l.target)}`,
+        this._namesType(l) ? infoOf(this._typeOf(l)).label : null,
+        l.label
+      ].filter(Boolean).join(", ")).style("pointer-events", "stroke").style("cursor", "pointer").on("mouseover", (event, l) => {
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, tieHtml(l));
+      }).on("mouseout", () => this._tooltip.hide()).on("click", (event, l) => {
+        event.stopPropagation();
+        const [mx, my] = pointer_default(event, this.container);
+        this._pinTie(mx, my, l, tieHtml(l));
+      }).on("keydown", (event, l) => {
+        if (enterPinnedTip(event, this._tooltip, event.currentTarget)) return;
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        const [mx, my] = this._zoomTransform.apply(this._flowLayout.get(l.id).mid);
+        const svgBox = this.svg.node().getBoundingClientRect();
+        const cardBox = this.container.getBoundingClientRect();
+        this._pinTie(
+          mx + svgBox.left - cardBox.left - this.container.clientLeft,
+          my + svgBox.top - cardBox.top - this.container.clientTop,
+          l,
+          tieHtml(l)
+        );
+      });
+      const live = /* @__PURE__ */ new Set(), tied = /* @__PURE__ */ new Set();
+      links.forEach((l) => {
+        tied.add(l.source);
+        tied.add(l.target);
+        if (!l._dim) {
+          live.add(l.source);
+          live.add(l.target);
+        }
+      });
+      this._flowData.links.forEach((l) => {
+        tied.add(l.source);
+        tied.add(l.target);
+      });
+      const total = new globalThis.Map(nodes.map((n) => [n.id, 0]));
+      this._flowData.links.forEach((l) => {
+        const v = linkValue(l) ?? 0;
+        total.set(l.source, total.get(l.source) + v);
+        total.set(l.target, total.get(l.target) + v);
+      });
+      const placed = nodes.filter((n) => at2.get(n.id)?.shown);
+      const faded = (n) => tied.has(n.id) && !live.has(n.id);
+      this.gNodes.selectAll(".rc-mapflow-node").data(placed, (n) => n.id).join("circle").attr("class", "rc-mapflow-node").attr("r", o.nodeRadius ?? 4).attr("fill", (n) => n.color ?? t.text).attr("stroke", t.bg).attr("stroke-width", 1.5).attr("opacity", (n) => faded(n) ? 0.3 : 1).on("mouseover", (event, n) => {
+        if (this._tooltip.isPinned) return;
+        const nodeLinks = links.filter((l) => l.source === n.id || l.target === n.id);
+        const html = o.tooltipFormat ? o.tooltipFormat({ node: n, links: nodeLinks }) : this._nodeTooltip(n, nodeLinks, name);
+        const [mx, my] = pointer_default(event, this.container);
+        this._tooltip.show(mx, my, html);
+      }).on("mouseout", () => this._tooltip.hide());
+      this._flowView = { at: at2, arcs, ordered, placed, nodes, total, faded, widthOf, k: null };
+      this._layoutFlows();
+      if (ordered.length) this.svg.attr("role", "group");
+      this._renderFlowLegend(keys, infoOf);
+    }
+    // The zoom moved: dots, labels and arrowheads follow in screen px (R-14).
+    _onZoom(transform2) {
+      this._layoutFlows(transform2);
+    }
+    // Everything that depends on the zoom, for the transform z (default: the
+    // current one). Arcs and their mouse targets are in map px, inside the
+    // zoom group; only their trimmed ends depend on the scale, so they are
+    // redrawn when it changes. Arrowheads, dots and labels are in screen px:
+    // same size at any zoom, and the labels are placed again.
+    _layoutFlows(z = this._zoomTransform) {
+      const v = this._flowView;
+      if (!v) return;
+      const o = this.options;
+      const t = this.theme;
+      const R = o.nodeRadius ?? 4;
+      const k = z.k;
+      const line = line_default2();
+      const layout = new globalThis.Map();
+      v.ordered.forEach((l) => {
+        const arc = v.arcs.get(l.id);
+        const w = v.widthOf(l);
+        const hl = 6 + w * 1.2, hw = 2.6 + w * 0.8;
+        const drawn = arc.pieces.slice();
+        let chord2 = null, head = "", headBox = null;
+        if (arc.toTarget) {
+          const last = drawn.pop();
+          const b = arc.b, from = last[0];
+          const stop = (R + 2 + hl * 0.85) / k;
+          const span = Math.hypot(b[0] - from[0], b[1] - from[1]);
+          let end, ux, uy;
+          if (span > stop + 1 / k) {
+            const body = trimEnd(last, b, stop, 0.5 / k);
+            drawn.push(body);
+            const q = body[body.length - 2];
+            end = body[body.length - 1];
+            const dl = Math.hypot(end[0] - q[0], end[1] - q[1]) || 1;
+            ux = (end[0] - q[0]) / dl;
+            uy = (end[1] - q[1]) / dl;
+          } else {
+            const dl = span || 1;
+            ux = (b[0] - from[0]) / dl;
+            uy = (b[1] - from[1]) / dl;
+            end = [b[0] - ux * stop, b[1] - uy * stop];
+            chord2 = [from, b];
+          }
+          const [ex, ey] = z.apply(end);
+          const bx = ex - ux * hl * 0.15, by = ey - uy * hl * 0.15;
+          const tx = bx + ux * hl, ty = by + uy * hl;
+          head = `M${tx},${ty}L${bx - uy * hw},${by + ux * hw}L${bx + uy * hw},${by - ux * hw}Z`;
+          const hx = [tx, bx - uy * hw, bx + uy * hw], hy = [ty, by + ux * hw, by - ux * hw];
+          headBox = { x0: Math.min(...hx), x1: Math.max(...hx), y0: Math.min(...hy), y1: Math.max(...hy) };
+        }
+        const d = drawn.map((p) => line(p)).join("");
+        layout.set(l.id, {
+          d,
+          hit: d + (chord2 ? `M${chord2[0]}L${chord2[1]}` : ""),
+          mid: midway(drawn.length ? drawn : chord2 ? [chord2] : arc.pieces),
+          // labels, keyboard pin
+          head,
+          headBox
+        });
+      });
+      this._flowLayout = layout;
+      if (v.k !== k) {
+        this.gFlows.selectAll(".rc-mapflow-link").attr("d", (l) => layout.get(l.id).d);
+        this.gHits.selectAll(".rc-mapflow-link-hit").attr("d", (l) => layout.get(l.id).hit);
+        v.k = k;
+      }
+      this.gHeads.selectAll(".rc-mapflow-head").attr("d", (l) => layout.get(l.id).head);
+      const screen = new globalThis.Map(v.placed.map((n) => {
+        const p = v.at.get(n.id);
+        return [n.id, { x: z.applyX(p.x), y: z.applyY(p.y) }];
+      }));
+      this.gNodes.selectAll(".rc-mapflow-node").attr("cx", (n) => screen.get(n.id).x).attr("cy", (n) => screen.get(n.id).y);
+      const heads = v.ordered.map((l) => layout.get(l.id).headBox).filter(Boolean);
+      const dots = v.placed.map((n) => {
+        const { x: x2, y: y2 } = screen.get(n.id);
+        return { id: n.id, x0: x2 - R, x1: x2 + R, y0: y2 - R, y1: y2 + R };
+      });
+      const labelBoxes = [];
+      const labels = [];
+      if (o.nodeLabels !== false) {
+        const W = this.width, H = this.height;
+        v.placed.slice().sort((a, b) => v.total.get(b.id) - v.total.get(a.id) || v.nodes.indexOf(a) - v.nodes.indexOf(b)).forEach((n) => {
+          const { x: x2, y: y2 } = screen.get(n.id);
+          const text = String(n.label ?? n.id);
+          const w = estimateTextWidth(text, 6.4), h = 12;
+          const tries = [
+            [x2 + R + 4, y2 + 4, "start"],
+            [x2 - R - 4, y2 + 4, "end"],
+            [x2, y2 - R - 5, "middle"],
+            [x2, y2 + R + 13, "middle"]
+          ];
+          const boxOf = ([lx, ly, anchor]) => {
+            const x06 = anchor === "start" ? lx : anchor === "end" ? lx - w : lx - w / 2;
+            return { x0: x06, x1: x06 + w, y0: ly - h + 2, y1: ly + 2 };
+          };
+          const others = dots.filter((d) => d.id !== n.id);
+          for (const avoid of [[...heads, ...others, ...labelBoxes], [...others, ...labelBoxes]]) {
+            const spot = placeFirstFree(tries, boxOf, avoid, { bounds: { x0: 0, x1: W, y0: 0, y1: H } });
+            if (!spot) continue;
+            const [lx, ly, anchor] = spot.at;
+            labelBoxes.push(spot.box);
+            labels.push({ n, x: lx, y: ly, anchor });
+            break;
+          }
+        });
+      }
+      this.gLabels.selectAll(".rc-mapflow-label").data(labels, (d) => d.n.id).join("text").attr("class", "rc-mapflow-label").attr("x", (d) => d.x).attr("y", (d) => d.y).attr("text-anchor", (d) => d.anchor).attr("fill", t.text).attr("stroke", t.bg).attr("stroke-width", 3).attr("paint-order", "stroke").attr("opacity", (d) => v.faded(d.n) ? 0.4 : 1).style("pointer-events", "none").text((d) => d.n.label ?? d.n.id);
+    }
+    // The type legend, through the one legend builder (core/legend.js, D-04):
+    // each flow type in the data a toggle, in its colour and its own dash. A
+    // click, Enter or Space hides or shows a type's flows, a double click
+    // keeps only that type and a second one brings all back, "Show all" shows
+    // while one is off. The state is the chart's hidden set, the gestures the
+    // base Chart's (_legendGesture): it redraws, then onLegendToggle. Shown
+    // with two or more types, or when the page describes them (linkTypes).
+    // legendInteractive: false lists the types drawn as labels. The builder
+    // updates in place: an item keeps focus through the redraw (R-16).
+    _renderFlowLegend(keys, infoOf) {
+      const el = this._flowLegendEl;
+      if (!el) return;
+      const listed = keys.length >= 2 || Object.keys(this.options.linkTypes ?? {}).length ? keys : [];
+      const interactive = this.options.legendInteractive !== false;
+      const hidden = this._hiddenKeys;
+      const items = listed.filter((key) => interactive || !hidden.has(key)).map((key) => {
+        const { color: color2, dash, label } = infoOf(key);
+        const drawn = drawnDash(dash);
+        return { key, label, color: color2, mark: drawn ? "dashed" : "line", dash: drawn, on: !hidden.has(key) };
+      });
+      renderLegendItems(el, items, {
+        interactive,
+        alias: LEGEND_ALIAS,
+        onToggle: (info) => this._legendGesture(info, listed)
+      });
+    }
+    // Graph's tie tooltip (core/html.js linkTooltipHtml, D-03): label, value
+    // (as Graph prints it, linkValueText), period and `sources`, clickable
+    // once the tooltip is pinned.
+    _linkTooltip(l, source, target, infoOf) {
+      const kind = this._namesType(l) ? infoOf(this._typeOf(l)) : null;
+      return linkTooltipHtml({
+        from: source?.label ?? l.source,
+        to: target?.label ?? l.target,
+        ties: [{ link: { ...l, value: linkValueText(l, this.options.valueFormat) }, kind }]
+      });
+    }
+    _nodeTooltip(n, nodeLinks, name) {
+      const outs = nodeLinks.filter((l) => l.source === n.id && !l._dim);
+      const ins = nodeLinks.filter((l) => l.target === n.id && !l._dim);
+      const line = (arrow, other, l) => `<div>${arrow} ${escapeHtml(name(other))}${l.label ? ` \u2014 ${escapeHtml(l.label)}` : ""}</div>`;
+      return tipBody(`${tipTitle(escapeHtml(n.label ?? n.id))}
+      ${tipSub(`${outs.map((l) => line("\u2192", l.target, l)).join("")}${ins.map((l) => line("\u2190", l.source, l)).join("")}`)}`);
+    }
+  };
+
+  // assets/charts/src/charts/MultiChart.js
+  var TYPE_MAP = {
+    Line,
+    Bar,
+    TimeSeries,
+    DualAxes,
+    HierarchicalBar,
+    Donut,
+    Pie,
+    Gauge,
+    Sankey,
+    Graph: Graph2,
+    Map: Map2,
+    MapFlow
+  };
+  var NOT_A_CELL = {
+    Overview: "the navigator strip is not a chart (use `navigator: true` on a time chart)",
+    MultiChart: "a grid does not nest in a cell"
+  };
+  var named2 = (v) => typeof v === "string" && v.trim() !== "";
+  var BOTTOM_AXIS = /* @__PURE__ */ new Set([Line, Bar, DualAxes, TimeSeries]);
+  function chartClassFor(type2, index2) {
+    if (type2 == null) return { ChartClass: Line };
+    const own2 = (map2, key) => typeof key === "string" && Object.prototype.hasOwnProperty.call(map2, key);
+    if (own2(TYPE_MAP, type2)) return { ChartClass: TYPE_MAP[type2] };
+    const names = Object.keys(TYPE_MAP);
+    const near = typeof type2 === "string" ? names.find((n) => n.toLowerCase() === type2.trim().toLowerCase()) : null;
+    const shown = typeof type2 === "string" ? `"${type2}"` : typeof type2 === "function" ? type2.name || "function" : String(type2);
+    const warning = own2(NOT_A_CELL, type2) ? `charts[${index2}] has type ${shown}, which a cell cannot take: ${NOT_A_CELL[type2]} \u2014 drawn as Line.` : `charts[${index2}] has an unknown type ${shown} \u2014 drawn as Line. ` + (near ? `Did you mean '${near}'?` : `Supported types: ${names.map((n) => `'${n}'`).join(", ")}.`);
+    return { ChartClass: Line, warning };
+  }
+  var MultiChart = class extends Chart {
+    constructor(selector, options = {}) {
+      super(selector, {
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        ...options
+      });
+      this.charts = [];
+      this._cells = [];
+      this._isMobile = false;
+      this._lastData = [];
+      this._buildGrid();
+    }
+    // ── Grid ───────────────────────────────────────────────────────────────────
+    // The narrow layout is a matter of width alone (C-15): it used to be read
+    // off the column count, so a grid with columns ≤ mobileColumns was "mobile"
+    // — mobileOptions and all — on any screen. clientWidth 0 means the element
+    // is hidden or not laid out yet: keep the wide layout.
+    _narrow() {
+      const w = this.container.clientWidth;
+      return w > 0 && w <= (this.options.mobileBreakpoint ?? 480);
+    }
+    _currentColumns() {
+      const mobileCols = this.options.mobileColumns ?? 1;
+      const desktopCols = Math.min(Math.max(this.options.columns ?? 2, 1), 4);
+      return this._narrow() ? mobileCols : desktopCols;
+    }
+    // The constructor options of panel i on one side of the breakpoint: the
+    // grid's defaults, the descriptor's options, then (narrow) its mobileOptions;
+    // margin merged by side over the grid's bottom default.
+    // A class without a bottom axis gets only the margin the page sets: its
+    // own defaults stay (Donut's 8px all round, Map's 0).
+    _childOptions(cfg, isMobile, ChartClass = Line) {
+      const mobileOverride = isMobile && cfg.mobileOptions ? cfg.mobileOptions : {};
+      const options = {
+        animate: this.options.animate ?? true,
+        height: this.options.chartHeight ?? 200,
+        theme: this.options.theme,
+        // inherit parent theme
+        ...this.options.legendRescale != null && { legendRescale: this.options.legendRescale },
+        ...cfg.options,
+        ...mobileOverride
+      };
+      if (named2(cfg.title) && ![options.ariaLabel, options.title, options.subtitle].some(named2)) {
+        options.ariaLabel = cfg.title;
+      }
+      const set4 = cfg.options?.margin || mobileOverride.margin;
+      if (BOTTOM_AXIS.has(ChartClass) || set4) {
+        options.margin = {
+          ...BOTTOM_AXIS.has(ChartClass) ? { bottom: 26 } : {},
+          ...cfg.options?.margin ?? {},
+          ...mobileOverride.margin ?? {}
+        };
+      }
+      return options;
+    }
+    // Build panel i's chart in its wrapper. Its setData is recorded — whether
+    // it comes from cfg.data, mc.setData or mc.charts[i].setData — so a rebuild
+    // can hand the new chart the same data; a call on a replaced instance is not.
+    // The new chart starts with the series the shared legend hides, before
+    // any data; after its data the shared legend follows the series.
+    _createChild(i, wrapper, isMobile) {
+      const cfg = (this.options.charts ?? [])[i];
+      const { ChartClass, warning } = chartClassFor(cfg.type, i);
+      if (warning) this._warnOnce(`type:${i}`, warning);
+      const chart = new ChartClass(wrapper, this._childOptions(cfg, isMobile, ChartClass));
+      this._hiddenKeys.forEach((key) => chart._hiddenKeys.add(key));
+      const own2 = chart.setData;
+      chart.setData = (data) => {
+        if (this.charts[i] === chart) this._lastData[i] = data;
+        const out = own2.call(chart, data);
+        if (this.charts[i] === chart) this._syncLegend();
+        return out;
+      };
+      this._wrappers[i] = wrapper;
+      this.charts[i] = chart;
+      return chart;
+    }
+    _buildGrid() {
+      const { charts = [], gap } = this.options;
+      const cols = this._currentColumns();
+      this._isMobile = this._narrow();
+      this._wrappers = [];
+      this._gridEl = document.createElement("div");
+      this._gridEl.className = "rc-multichart-grid";
+      const { ariaLabel, title, subtitle } = this.options;
+      const label = named2(ariaLabel) ? ariaLabel.trim() : [title, subtitle].filter(named2).join(" \u2014 ");
+      this._gridEl.setAttribute("role", "group");
+      if (label) this._gridEl.setAttribute("aria-label", label);
+      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      if (gap != null) {
+        this._gridEl.style.gap = typeof gap === "number" ? `${gap}px` : gap;
+      }
+      if (this._footerEl?.parentNode) {
+        this.container.insertBefore(this._gridEl, this._footerEl);
+      } else {
+        this.container.appendChild(this._gridEl);
+      }
+      charts.forEach((cfg, i) => {
+        const cell = document.createElement("div");
+        cell.className = "rc-multichart-cell";
+        if (cfg.span && cfg.span > 1 && cols > 1) {
+          cell.style.gridColumn = `span ${cfg.span}`;
+        }
+        if (cfg.title) {
+          const titleEl = document.createElement("div");
+          titleEl.className = "rc-multichart-cell-title";
+          titleEl.textContent = cfg.title;
+          cell.appendChild(titleEl);
+        }
+        const wrapper = document.createElement("div");
+        wrapper.className = "rc-multichart-chart-wrapper";
+        cell.appendChild(wrapper);
+        this._gridEl.appendChild(cell);
+        this._cells.push(cell);
+        const chart = this._createChild(i, wrapper, this._isMobile);
+        if (cfg.data != null) chart.setData(cfg.data);
+      });
+    }
+    // ── Rebuild the panels with mobileOptions on a breakpoint crossing ─────────
+    // A chart reads much of its options once, in its constructor — height
+    // sizes the card, margin places the plot — so patching child.options left a
+    // crossing half-applied (C-15). Each panel with mobileOptions is rebuilt
+    // instead: destroyed, made again with the options of the new side, and
+    // given its last data. State set through the panel's own methods (a y
+    // scale, a view window) starts over from its options.
+    _applyBreakpointOptions(isMobile) {
+      const charts = this.options.charts ?? [];
+      charts.forEach((cfg, i) => {
+        if (!cfg.mobileOptions) return;
+        const old = this.charts[i];
+        const wrapper = this._wrappers[i];
+        if (!old || !wrapper) return;
+        const data = this._lastData[i];
+        old.destroy();
+        const chart = this._createChild(i, wrapper, isMobile);
+        if (data != null) chart.setData(data);
+      });
+    }
+    // ── The shared legend (S10) ───────────────────────────────────────────────
+    // Every cell's series, in cell order; a key in several cells is one item,
+    // in the first cell's colour (a later cell's when the first has none).
+    _legendSeries() {
+      const byKey = /* @__PURE__ */ new Map();
+      (this.charts ?? []).forEach((chart) => (chart._legendSeries() ?? []).forEach((s) => {
+        const key = s?.key == null ? null : String(s.key);
+        if (key == null) return;
+        const had = byKey.get(key);
+        if (!had) byKey.set(key, { ...s, key });
+        else if (had.color == null && s.color != null) had.color = s.color;
+      }));
+      return [...byKey.values()];
+    }
+    // A name may belong to a cell whose data has not come yet: the grid
+    // warns about an item that names no series once every cell has its data.
+    _warnUnmappedLegend(legend, items) {
+      if ((this.options.charts ?? []).every((_, i) => this._lastData?.[i] != null)) super._warnUnmappedLegend(legend, items);
+    }
+    // A gesture or setSeriesVisible changed the grid's hidden set for `keys`:
+    // each cell takes the change — a key it does not draw is kept for its
+    // data to come — and redraws, silently, when the change touches a series
+    // it draws. Then the grid's own legend follows.
+    _hiddenChanged(keys) {
+      this.charts.forEach((chart) => {
+        const present = chart._legendPresent();
+        let redraw = false;
+        keys.forEach((key) => {
+          const hide = this._hiddenKeys.has(key);
+          if (chart._hiddenKeys.has(key) === hide) return;
+          if (hide) chart._hiddenKeys.add(key);
+          else chart._hiddenKeys.delete(key);
+          if (present.has(key)) redraw = true;
+        });
+        if (!redraw) return;
+        chart._unpinHidden();
+        chart.render();
+      });
+      this.render();
+    }
+    // ── Public ────────────────────────────────────────────────────────────────
+    /**
+     * Show only these series in every cell (a list, or one name); null shows
+     * them all — what the shared legend does, without onLegendToggle.
+     */
+    setSeriesVisible(names) {
+      return this._setVisibleKeys(names);
+    }
+    /**
+     * Feed data into children by position.
+     * @param {Array} dataArray — each element is passed to the corresponding child's setData()
+     */
+    setData(dataArray) {
+      if (!Array.isArray(dataArray)) return this;
+      dataArray.forEach((data, i) => {
+        if (this.charts[i] && data != null) this.charts[i].setData(data);
+      });
+      return this;
+    }
+    // ── Lifecycle ─────────────────────────────────────────────────────────────
+    render() {
+    }
+    _onResize() {
+      if (!this._gridEl) return;
+      const cols = this._currentColumns();
+      const isMobile = this._narrow();
+      this._gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      (this.options.charts ?? []).forEach((cfg, i) => {
+        if (!cfg.span || cfg.span <= 1) return;
+        const cell = this._cells[i];
+        if (cell) cell.style.gridColumn = cols > 1 ? `span ${cfg.span}` : "";
+      });
+      if (isMobile !== this._isMobile) {
+        this._isMobile = isMobile;
+        this._applyBreakpointOptions(isMobile);
+      }
+    }
     destroy() {
-      this._tooltip?.destroy();
-      this._tooltip = null;
-      this._tableEl?.remove();
+      this.charts.forEach((c) => c.destroy());
+      this.charts = [];
+      this._cells = [];
+      this._wrappers = [];
+      this._lastData = [];
+      if (this._gridEl?.parentNode) this._gridEl.remove();
+      this._gridEl = null;
       super.destroy();
     }
   };

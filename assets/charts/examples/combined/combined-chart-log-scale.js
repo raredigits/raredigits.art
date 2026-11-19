@@ -1,8 +1,8 @@
 (function () {
-  // A synthetic equity index over 45 years (Y1, log by default) and its
+  // A synthetic equity index over 45 years (Y1, linear until Log is pressed) and its
   // yearly change in percent (Y2, bars). The index grows from 100 to over 20k, so a
   // linear Y1 flattens everything before the last ten years; the change can
-  // be negative, so Y2 stays linear. The Lin/Log button drives Y1 only.
+  // be negative, so Y2 stays linear. The Log toggle drives Y1 only.
   const index  = [];
   const change = [];
   let level = 100;
@@ -20,7 +20,9 @@
     height: 340,
     title: 'Index and yearly change',
     subtitle: 'Perception differences example',
-    y1Scale: 'log',
+    // Opens on a linear Y1, as the Line demo does (maintainer, 2026-11-18):
+    // pressing Log shows the early decades that the linear axis flattens.
+    note: 'Press Log to put the index on a logarithmic axis: the first decades stop looking flat.',
     scaleToggle: true,
     y1Title: 'INDEX',
     y2Title: '% Y/Y',

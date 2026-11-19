@@ -13,13 +13,13 @@
     subtitle: 'Your network as a sales rep. Click a ★ lead to see who can introduce you; click yourself to come back.',
     dataSource: memorySource(ColumbusDemo.data),
     source:   'Synthetic demo data',
-    height:   560,
+    height:   594,
     depth:    3,          // the whole human-scale network, all three ★ leads visible
     nodeRadius: 13,
     maxNodes: 24,                 // the whole network on a phone too: the ★ leads sit deepest and went first
     semanticZoom: false,          // small graph — keep the zoom literal
     linkTypes: {
-      colleague: { color: '#00aaff', dash: null,  label: 'Colleague'       },
+      colleague: { color: '#1677ff', dash: null,  label: 'Colleague'       },
       client:    { color: '#00c97a', dash: null,  label: 'Client'          },
       works:     { color: '#aaaaaa', dash: null,  label: 'Works at'        },
       partner:   { color: '#ffcc00', dash: null,  label: 'Partner'         },

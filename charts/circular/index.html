@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -410,7 +410,6 @@
 <h2 id="donut">Donut</h2>
 <p>The default circular chart. A ring with a center area — the center gives you a place to put something useful: the total, a headline number, or a short label. That makes donut the better default for dashboards, where charts rarely live alone and context matters.</p>
 <div id="chart-donut" class="panel panel--bordered text-content-caption"></div>
-<div class="air-md"></div>
 <pre class="text-content-caption"><code>const d3 = RareCharts.d3;   <span class="code-comment">// the bundled D3</span>
 
 new RareCharts.Donut('#chart', {
@@ -424,17 +423,16 @@ new RareCharts.Donut('#chart', {
 <h3 id="legend-to-the-right">Legend to the right</h3>
 <p>Pass <code>legendPosition: 'right'</code> to place the legend in a vertical column beside the chart instead of above it. Works well when you have many categories or want to keep the chart area compact.</p>
 <div id="chart-donut-legend-right" class="panel panel--bordered text-content-caption"></div>
-<div class="air-md"></div>
 <pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
   legend:         segments.map(d => ({ label: d.label, type: 'bar' })),
   legendPosition: 'right',
   height:         340,
 }).setData(segments);</code></pre>
 <p>Either way the legend items need no <code>color</code>: the chart paints each dot, line or band in the color of the slice with the same <code>label</code> — or the same <code>id</code>, when the item has one — so the items may come in any order. An item whose slice is not in the ring (a zero value, a level you drilled away from) keeps the theme accent, and an item with its own <code>color</code> keeps that.</p>
+<p>An item that names a slice also hides and shows it: a click toggles it, a double click keeps it alone, <em>Show all</em> brings all back. The ring closes over the slices shown, and the total, the percents and the centre are theirs; with <code>legendRescale: false</code> a hidden slice leaves its gap and the percents stay of every slice. <code>setSeriesVisible(names | null)</code> takes slice ids, else labels. With a tree (drill-down) the legend is a static key. A Gauge has no series: its <code>legend</code> is a caption. More: <a href="/charts/settings/#interactive-legend">Interactive legend</a>.</p>
 <h3 id="drill-down-hierarchy-mode">Drill-down (hierarchy mode)</h3>
 <p>Hand Donut a <strong>tree</strong> — a single root object instead of a flat array — and it becomes an interactive drill-down. It opens on the root’s direct children; click a slice that has children to descend into it, and click the center (or a breadcrumb crumb) to come back up — once you are in, the center is a button, so Tab and Enter take you up as well. A leaf slice just shows its value. It is the same tree contract as the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> — one data shape, two views: the bar lays the whole hierarchy out at once, the donut walks it one ring at a time.</p>
 <div id="chart-donut-drilldown" class="panel panel--bordered text-content-caption"></div>
-<div class="air-md"></div>
 <p>Two composition details carry over from the tree contract. A parent whose children don’t add up to its stated value has a <strong>remainder</strong> — the undisclosed gap — which draws as a muted slice once you surface it with <code>showRemainder: true</code> or a per-node <code>remainderLabel</code>. And a <strong>named-but-undisclosed</strong> item (<code>value: null</code>) has no magnitude, so it cannot be a slice; the ring notes it as “<em>N not disclosed</em>” beneath the chart instead. A parent with no <code>value</code> of its own whose children are all undisclosed is undisclosed too — noted the same way, never drawn as an empty slice. See the <a href="/charts/bar/hierarchical-bar/">hierarchical bar</a> page for the full node shape and the value tri-state.</p>
 <pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
   showRemainder: true,
@@ -450,6 +448,12 @@ new RareCharts.Donut('#chart', {
   ],
 });</code></pre>
 <p>From code: <code>chart.drillUp()</code> goes one level up, and <code>chart.drillToDepth(i)</code> jumps to the i-th crumb of the breadcrumb (0 is the root). Both return the chart and do nothing at the root or on flat data. <code>chart.drillTo(child)</code> is the step a click on a slice takes: it descends into a child of the level shown — pass the object you gave <code>setData</code>, its <code>id</code>, or its <code>label</code> — and draws that level as a click does, remainder and undisclosed items included. A child without disclosed children (a leaf, a remainder), or one not in the level shown, is ignored. It returns the chart too.</p>
+<p>To follow the level shown — a details panel next to the ring, a URL hash — pass <code>onDrill</code>. It is called after every change of level, from a click on a slice, the center or a breadcrumb, Enter or Space on the center, or one of the methods above, and the chart has already drawn the new level by then. It receives <code>{ node, path, depth, event }</code>: <code>node</code> holds the focused node’s own fields as you gave them, without <code>children</code>; <code>path</code> the same for every level from the root; <code>depth</code> is 0 at the root; <code>event</code> is the click or the key press, or <code>null</code> when a method made the change. It is not called by <code>setData</code>, nor by a method that changes nothing (<code>drillUp()</code> at the root, <code>drillTo</code> a leaf).</p>
+<pre class="text-content-caption"><code>new RareCharts.Donut('#chart', {
+  onDrill: ({ node, path }) => {
+    details.textContent = path.map(n => n.label).join(' › ') + ': ' + node.value;
+  },
+}).setData(tree);</code></pre>
 <h2 id="pie">Pie</h2>
 <p>A pie is a donut with <code>innerRadius: 0</code>, and that is what <code>Pie</code> draws by default: no hole, no center text, slightly tighter slice gaps. Every other Donut option and method works the same, drill-down included — a pie has no center to click, so you go back up through the breadcrumb; an explicit <code>innerRadius</code> still makes a hole.</p>
 <div id="chart-pie" class="panel panel--bordered text-content-caption"></div>
@@ -459,22 +463,21 @@ new RareCharts.Donut('#chart', {
   showLabels: true,
 }).setData(segments);</code></pre>
 <h3 id="outer-labels">Outer labels</h3>
-<p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically.</p>
+<p>Enable with <code>showLabels: true</code>. Each slice gets a leader line and two-line text (category name + percent). Slices below <code>labelMinPct</code> (default: 4%) are skipped automatically. A name too long for the room beside the chart makes the ring a little smaller (by up to a quarter) so it fits whole; if even that is not enough, as on a phone, the ring keeps its size, the name is cut with an ellipsis, and the tooltip shows it in full.</p>
 <p>Control what appears with <code>labelContent</code>:</p>
 <ul>
 <li><code>'both'</code> — category name + percentage (default)</li>
 <li><code>'label'</code> — category name only</li>
 <li><code>'percent'</code> — percentage only</li>
 </ul>
-<div class="air-md"></div>
 <pre class="text-content-caption"><code>new RareCharts.Pie('#chart', {
   showLabels:   true,
   labelContent: 'percent',   <span class="code-comment">// just percentages</span>
   labelMinPct:  0.05,        <span class="code-comment">// hide labels below 5%</span>
 }).setData(segments);</code></pre>
 <h2 id="gauge">Gauge</h2>
-<p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot;</p>
-<div class="panel__row panel__row--stack panel__row--text-start card-caption">
+<p>An arc-based progress chart. Shows a value relative to a maximum along a partial arc. Use it for goal completion, budget usage, KPI progress — anywhere the question is &quot;how far along are we?&quot; A gauge centres its title, subtitle and source over the dial.</p>
+<div class="panel__row panel__row--stack card-caption">
   <div class="panel__row-item">
     <div id="chart-gauge-progress"></div>
   </div>
@@ -519,7 +522,7 @@ gauge.setData(40);</code></pre>
 <li><strong>Sweep.</strong> <code>startAngle</code> / <code>endAngle</code> set the arc in radians, clockwise from 12 o'clock. The default <code>±Math.PI * 0.75</code> is a 270° horseshoe; <code>-Math.PI / 2 … Math.PI / 2</code> is the flat 180° half-circle. The gauge re-centers vertically for any sweep and reserves room for the center text when the arc is shallow, so nothing clips.</li>
 <li><strong>Needle.</strong> <code>needle: true</code> draws a pointer pivoting on a hub at the dial center, animated to the value together with the fill. The center readout moves below the hub, dial-style. Color it with <code>needleColor</code> (default: theme text).</li>
 </ul>
-<div class="panel__row panel__row--stack panel__row--text-start card-caption margin-y-md">
+<div class="panel__row panel__row--stack card-caption">
   <div class="panel__row-item">
     <div id="chart-gauge-speed"></div>
   </div>
@@ -548,14 +551,17 @@ gauge.setData(40);</code></pre>
 <p>Colors can be provided per item. If omitted, the chart uses the active theme palette in order.</p>
 <h2 id="slice-geometry">Slice geometry</h2>
 <p><code>padAngle</code> controls the gap between slices (a small default keeps separation without turning the chart into a flower). <code>cornerRadius</code> rounds slice corners. Both have sensible defaults and adjust slightly between Pie and Donut mode.</p>
-<p>Hover interaction expands the hovered slice outward and shows a tooltip. Tooltip content is fully customizable:</p>
+<p>Hover interaction expands the hovered slice outward and shows a tooltip: the slice's dot, its label and value (<code>valueFormat</code>), and its share under them (<code>percentFormat</code>). For other content, write your own with the tooltip's row classes (<a href="/charts/settings/#custom-tooltip">Custom tooltip</a>):</p>
 <pre class="text-content-caption"><code>const d3 = RareCharts.d3;
 
 new RareCharts.Donut('#chart', {
   tooltipFormat: ({ label, value, percent, color }) => `
-    &lt;div style="color:${color}"&gt;${label}&lt;/div&gt;
-    &lt;div&gt;${d3.format(',.0f')(value)}&lt;/div&gt;
-    &lt;div class="rc-tooltip-muted"&gt;${d3.format('.1%')(percent)}&lt;/div&gt;
+    &lt;div class="rc-tooltip-row"&gt;
+      &lt;span class="rc-tooltip-swatch rc-tooltip-swatch--dot" style="--rc-swatch-color:${color}"&gt;&lt;/span&gt;
+      &lt;span class="rc-tooltip-label"&gt;${label}&lt;/span&gt;
+      &lt;span class="rc-tooltip-value rc-num"&gt;$${d3.format(',.0f')(value)}K&lt;/span&gt;
+      &lt;span class="rc-tooltip-note"&gt;${d3.format('.1%')(percent)} of revenue&lt;/span&gt;
+    &lt;/div&gt;
   `,
 }).setData(segments);</code></pre>
 <h2 id="circular-charts-options">Circular charts options</h2>
@@ -673,6 +679,11 @@ new RareCharts.Donut('#chart', {
             <td><code>false</code></td>
             <td>Drill-down mode: throw when a node’s children exceed its stated value (default: warn, leave the negative remainder undrawn)</td>
         </tr>
+        <tr>
+            <td><code>onDrill</code></td>
+            <td>—</td>
+            <td>Drill-down mode: <code>function({ node, path, depth, event }) =&gt; void</code> after each change of the level shown, by a click, a key or a drill method (<code>event</code> is then <code>null</code>); not on <code>setData</code></td>
+        </tr>
         <tr class="table-section">
             <td colspan="3"><h5 id="gauge-2">Gauge</h5></td>
         </tr>
@@ -753,7 +764,7 @@ new RareCharts.Donut('#chart', {
         </tr>
         <tr>
             <td><code>duration</code></td>
-            <td><code>800</code></td>
+            <td><code>650</code></td>
             <td>Animation duration ms</td>
         </tr>
         <tr>
@@ -782,7 +793,7 @@ new RareCharts.Donut('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

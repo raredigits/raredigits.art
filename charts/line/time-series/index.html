@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -455,40 +455,31 @@
       <div>
           <span class="price-chart-ticker">RARE</span>
           <span class="price-chart-price" id="hd-price">—</span>
-          <span class="price-chart-change" id="hd-change">—</span>
+          <span class="price-chart-change stat" id="hd-change"><span class="stat__value">—</span></span>
       </div>
   </div>
   <!-- ── Main chart ─────────────────── -->
-  <div class="rc-chart" id="timeseriesChart"></div>
+  <div id="timeseriesChart"></div>
   <!-- ── Stats ─────────────────────── -->
-  <div class="panel__row price-chart-stats">
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">OPEN</div>
-      <div class="price-chart-stat-value" id="s-open">—</div>
+  <div class="panel__row">
+    <div class="panel__row-item stat">
+      <div class="stat__label">OPEN</div>
+      <div class="stat__value" id="s-open">—</div>
     </div>
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">HIGH</div>
-      <div class="price-chart-stat-value" id="s-high">—</div>
+    <div class="panel__row-item stat">
+      <div class="stat__label">HIGH</div>
+      <div class="stat__value" id="s-high">—</div>
     </div>
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">LOW</div>
-      <div class="price-chart-stat-value" id="s-low">—</div>
+    <div class="panel__row-item stat">
+      <div class="stat__label">LOW</div>
+      <div class="stat__value" id="s-low">—</div>
     </div>
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">VOLUME</div>
-      <div class="price-chart-stat-value" id="s-vol">—</div>
-    </div>
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">52W HIGH</div>
-      <div class="price-chart-stat-value" id="s-52h">—</div>
-    </div>
-    <div class="panel__row-item price-chart-stat">
-      <div class="price-chart-stat-label">52W LOW</div>
-      <div class="price-chart-stat-value" id="s-52l">—</div>
+    <div class="panel__row-item stat">
+      <div class="stat__label">VOLUME</div>
+      <div class="stat__value" id="s-vol">—</div>
     </div>
   </div>
 </div>
-<div class="air-md"></div>
 <h3 id="what-problem-it-solves">What problem it solves</h3>
 <p>The plain <code>Line</code> chart is enough when one view is enough. <code>TimeSeries</code> exists for the next step: when you want one chart instance to support “show me the last month”, “show me the last year”, and “show me everything” without wiring a second component tree around it.</p>
 <p>This example uses:</p>
@@ -501,11 +492,10 @@
 <p>Only the first two are specific to the module. The tooltip and stats are just ordinary page code around it.</p>
 <h3 id="range-buttons">Range buttons</h3>
 <p>Range buttons are controlled by the <code>timeframes</code> option.</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
   timeframes: true,
   defaultTimeframe: '1Y',
-});
-</code></pre>
+});</code></pre>
 <p><code>timeframes: true</code> enables the built-in preset set: <code>1M</code>, <code>3M</code>, <code>6M</code>, <code>1Y</code>, <code>2Y</code>, <code>ALL</code>. If you need a custom set, pass an array instead.</p>
 <p>So:</p>
 <ul>
@@ -513,39 +503,35 @@
 <li>if you pass <code>timeframes: true</code>, you get the built-in preset set</li>
 <li>if you pass <code>['1Y', 'ALL']</code>, you get exactly those two buttons</li>
 </ul>
-<p><code>viewSteps</code>, the old name of <code>timeframes</code>, is deprecated: it still works (<code>timeframes</code> wins when both are set) and warns once per chart in the console. Removal is planned for v0.9.9.</p>
 <h3 id="navigator">Navigator</h3>
 <p>The gray strip under the chart is controlled by <code>navigator</code>.</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
   navigator: true,
-});
-</code></pre>
+});</code></pre>
 <p>Or with options:</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', {
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
   navigator: {
     height: 56,
     color: '#666666',
     area: 1,
     areaColor: '#cccccc',
   },
-});
-</code></pre>
+});</code></pre>
 <p>If enabled, the navigator always reflects the full dataset and highlights the current <code>view</code>. Dragging the brush updates the main chart; when the drag ends, <code>onViewChange</code> reports the new window, as a range button does. A click on the strip without a drag keeps the current selection. Clicking a range button also updates the brush. The strip lines up with the plot area (its side margins follow the chart's); pass <code>margin: { left, right }</code> to set them, and <code>area: false</code> to draw the line alone. Same state, two controls, fewer bugs.</p>
 <h3 id="programmatic-control">Programmatic control</h3>
 <p>The visible window is part of the chart API.</p>
-<pre><code class="language-js">const chart = new RareCharts.TimeSeries('#chart', { timeframes: true }).setData(data);
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', { timeframes: true }).setData(data);
 
 chart.setView([new Date('2025-01-01'), new Date('2025-06-30')]);
-chart.setTimeframe('3M');   // as a click on the 3M button
+chart.setTimeframe('3M');   <span class="code-comment">// as a click on the 3M button</span>
 const current = chart.getView();
 
 chart.onViewChange(extent =&gt; {
   console.log(extent);
-});
-</code></pre>
+});</code></pre>
 <p>This matters when the date range is driven by router state, saved user settings, query params, or another piece of UI that insists on being in charge.</p>
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
-<p>For prices that span decades, set <code>yScale: 'log'</code>: ticks fall on powers of ten, the margin above and below is a factor of the data's span, and zero or negative points are skipped with one console warning. <code>scaleToggle: true</code> adds a Lin/Log button to the top right of the header, above the Y-axis labels — the range buttons keep their place; <code>setYScale('log' | 'linear')</code> switches from code, and <code>onScaleChange(fn)</code> reports every switch. The scale is the same as on <a href="/charts/line/">Line</a>.</p>
+<p>For prices that span decades, set <code>yScale: 'log'</code>: ticks fall on powers of ten, the margin above and below is a factor of the data's span, and zero or negative points are skipped with one console warning. <code>scaleToggle: true</code> adds a Log toggle to the top right of the header, filled while the axis is logarithmic, above the Y-axis labels — the range buttons keep their place; <code>setYScale('log' | 'linear')</code> switches from code, and <code>onScaleChange(fn)</code> reports every switch. The scale is the same as on <a href="/charts/line/">Line</a>.</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
     timeframes: true,
     yScale: 'log',
@@ -555,7 +541,7 @@ chart.onViewChange(extent =&gt; {
 chart.onScaleChange(({ scale }) => console.log(scale));</code></pre>
 <h3 id="custom-ranges">Custom ranges</h3>
 <p>If the built-in shortcuts are not enough, you can define your own buttons.</p>
-<pre><code class="language-js">const end = data[data.length - 1].date;
+<pre class="text-content-caption"><code>const end = data[data.length - 1].date;
 
 timeframes: [
   'ALL',
@@ -569,8 +555,7 @@ timeframes: [
     label: 'Since 2026',
     range: [new Date('2026-01-01'), end],
   },
-]
-</code></pre>
+]</code></pre>
 <p>Rules:</p>
 <ul>
 <li><code>ALL</code> means the full data extent</li>
@@ -578,8 +563,155 @@ timeframes: [
 <li>custom buttons use <code>{ key, label, range }</code></li>
 <li><code>range</code> is <code>[start, end]</code></li>
 <li>the final range is clamped to the real data extent, so overshooting the dataset is safe</li>
-<li>if multiple buttons resolve to the same final extent, the button chosen last stays active — clicked or set with <code>setTimeframe()</code>, or <code>defaultTimeframe</code> while its view holds; without one (before any selection, or after a brush drag, the wheel or <code>setView</code>, which clear it) a view of the whole data lights <code>ALL</code> (or <code>MAX</code>), any other the first matching button in the list</li>
+<li>if multiple buttons resolve to the same final extent, the button chosen last stays active — clicked or set with <code>setTimeframe()</code>, or <code>defaultTimeframe</code> while its view holds; without one (before any selection, or after a brush drag, Ctrl/⌘ + wheel or <code>setView</code>, which clear it) a view of the whole data lights <code>ALL</code> (or <code>MAX</code>), any other the first matching button in the list</li>
 </ul>
+<h3 id="analytics-ranges">Analytics ranges</h3>
+<p>A traffic or sales report counts its windows from now: &quot;today&quot;, &quot;this week&quot;, &quot;this month&quot;. Set <code>timeframeAnchor: 'now'</code> and use the calendar keys:</p>
+<div class="panel panel--bordered full-width-caption">
+  <div id="trafficChart"></div>
+  <p class="font-size-sm" id="traffic-level"></p>
+</div>
+<p><span class="meta-info">/assets/charts/examples/line/line-chart-traffic.js</span></p>
+<pre class="text-content-caption"><code>const chart = new RareCharts.TimeSeries('#chart', {
+    timeframeAnchor: 'now',
+    timeframes: [
+        { key: 'TODAY', label: 'Today' },
+        { key: 'WTD',   label: 'Week' },
+        { key: 'MTD',   label: 'Month' },
+        { key: 'YTD',   label: 'Year' },
+        { key: 'ALL',   label: 'All time' },
+        { key: 'CUSTOM', label: 'Custom' },
+    ],
+    compare: 'previousPeriod',
+    yFormat: 'number',
+    gaps: 'zero',
+    navigator: true,
+}).setData({ hour, day, month });   <span class="code-comment">// levels: see Resolution below</span></code></pre>
+<p><code>timeframeAnchor</code> is the end every timeframe counts back from:</p>
+<ul>
+<li><code>'dataEnd'</code> (the default) — the last data point, as before;</li>
+<li><code>'now'</code> — the current moment. It is read when the data is set, a point appended or a button clicked, and kept across resizes. A page that wants a moving &quot;now&quot; calls <code>setData</code> or <code>setTimeframe</code> again;</li>
+<li>a date — a fixed &quot;as of&quot; instant (a Date, epoch ms or an ISO string with a time; a date-only string is that day's midnight).</li>
+</ul>
+<p>With an anchor past the data, <code>ALL</code>, the zoom and the navigator run on to it; a window still starts no earlier than the data.</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ALL</code> / <code>MAX</code></td>
+<td>the whole data</td>
+</tr>
+<tr>
+<td><code>TODAY</code></td>
+<td>from the start of the anchor's day</td>
+</tr>
+<tr>
+<td><code>WTD</code></td>
+<td>from the start of the anchor's week (<code>weekStart</code>: Monday by default, <code>'sunday'</code> or a number 0–6)</td>
+</tr>
+<tr>
+<td><code>MTD</code></td>
+<td>from the start of the anchor's month</td>
+</tr>
+<tr>
+<td><code>YTD</code></td>
+<td>from the start of the anchor's year</td>
+</tr>
+<tr>
+<td><code>24H</code>, <code>nH</code></td>
+<td>n real hours back, so <code>24H</code> across a daylight-saving change is 24 hours while that day is 23 or 25</td>
+</tr>
+<tr>
+<td><code>7D</code>, <code>3M</code>, <code>1Y</code>…</td>
+<td>n calendar days, weeks, months or years back</td>
+</tr>
+</tbody>
+</table>
+<p>Every window ends at the anchor and is cut in the chart's <code>timeZone</code>. The keys, the anchor and the custom range below work on every chart with timeframes; see <a href="/charts/settings/">Settings</a>.</p>
+<h3 id="custom-range">Custom range</h3>
+<p><code>'CUSTOM'</code> in <code>timeframes</code> adds a &quot;Custom&quot; button (the page's label wins). It opens a small panel with From and To date fields and Apply:</p>
+<ul>
+<li>the fields start at the days in view and stay within the data's days; To before From swaps them; an empty field disables Apply;</li>
+<li>Apply shows whole days in the chart's zone, from midnight of From to the end of To;</li>
+<li>Enter applies; Escape or a click outside closes the panel and returns focus to the button;</li>
+<li>the chart keeps the days: <code>setData</code> and <code>appendPoint</code> show the same dates again, and the button stays pressed while that view holds (its title names the days). The brush, the wheel and <code>setView</code> release it.</li>
+</ul>
+<p>From code: <code>chart.setTimeframe('CUSTOM', { range: ['2026-03-01', '2026-03-31'] })</code>. The panel is styled by the library itself (<code>.rc-range-panel</code>), so it looks the same with or without Rare Styles on the page.</p>
+<h3 id="resolution-follows-the-window">Resolution follows the window</h3>
+<p>A year of hourly rows is too many to draw, and a day of daily rows is one point. Hand the chart the same series at several bucket sizes — the server aggregates, the chart never sums — and it draws, for each window, the finest level that fits:</p>
+<pre class="text-content-caption"><code>chart.setData({
+    hour:  [{ date: '2026-11-18T14:00', value: 312 }, …],   <span class="code-comment">// the last weeks only is fine</span>
+    day:   [{ date: '2026-11-18', value: 4120 }, …],
+    month: [{ date: '2026-11', value: 98200 }, …],
+});</code></pre>
+<ul>
+<li>level keys: <code>minute</code>, <code>hour</code>, <code>day</code>, <code>week</code>, <code>month</code>, <code>quarter</code>, <code>year</code>. Each row is dated at the start of its bucket in the chart's zone;</li>
+<li><code>resolution: { maxPoints: 500 }</code> — for a window, the finest level that covers it (one bucket of slack at each end) with at most <code>maxPoints</code> rows; if none fits, the coarsest one that covers it;</li>
+<li>the full range is the union of the levels; the navigator draws the coarsest level (<code>navigator: { level: 'day' }</code> picks another);</li>
+<li><code>getLevel()</code> names the level drawn; <code>appendPoint(point, 'hour')</code> adds to a level;</li>
+<li>the tooltip names the date by the bucket: <code>Nov 18, 2026, 14:00</code>, <code>Nov 18, 2026</code>, <code>Week of Nov 16, 2026</code>, <code>November 2026</code>, <code>Q4 2026</code>, <code>2026</code>.</li>
+</ul>
+<p><strong>Loading on demand.</strong> A level may cover only part of the time. To fetch finer rows when the window asks for them:</p>
+<pre class="text-content-caption"><code>chart.onViewChange(async (extent, { key, level }) => {
+    if (level !== 'month') return;
+    chart.setLoading(true);                        <span class="code-comment">// a slim "Loading…" bar over the plot</span>
+    const day = await fetchDays(extent);
+    chart.setData({ ...levels, day }).setLoading(false);
+});</code></pre>
+<p>The window and the selected button hold across <code>setData</code>, and <code>setData</code> itself reports no view change. Under <code>gaps: 'zero'</code> a level must have no unloaded holes inside its rows: the fill would count them as zeros.</p>
+<h3 id="comparison-with-an-earlier-period">Comparison with an earlier period</h3>
+<p><code>compare: 'previousPeriod'</code> draws the same metric for an earlier window over the current one, as a grey dashed line under the main line; <code>compare: 'previousYear'</code> always compares with a year before.</p>
+<table>
+<thead>
+<tr>
+<th>The view was set by</th>
+<th>Compared with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TODAY</code>, <code>WTD</code>, <code>MTD</code>, <code>YTD</code></td>
+<td>the day, week, month or year before — the same days: 1–18 November against 1–18 October</td>
+</tr>
+<tr>
+<td><code>nH</code>, <code>nD</code>, <code>nW</code>, <code>nM</code>, <code>nY</code></td>
+<td>the n before</td>
+</tr>
+<tr>
+<td>Custom</td>
+<td>as many days before</td>
+</tr>
+<tr>
+<td>the brush, the wheel or <code>setView</code>, after one of the above</td>
+<td>the same as that period: zoomed into a week, still the week before, so the two lines keep their rhythm</td>
+</tr>
+<tr>
+<td><code>ALL</code>, or nothing picked</td>
+<td>its own length before, in whole days (whole hours under a day)</td>
+</tr>
+</tbody>
+</table>
+<p>Each row is moved on its own, so months line up day by day; two rows that land on one date keep the later one. The comparison uses the rows of the level drawn. The default tooltip adds a row such as <code>Previous period  1,100 · Oct 18 · +12.2%</code>. The Y axis fits both lines; the time axis and the navigator follow the main one.</p>
+<p>The comparison is a second legend key, named by <code>compareName</code> (default &quot;Previous period&quot; or &quot;Previous year&quot;): <code>legend: [{ label: 'Visits' }, { label: 'Previous period' }]</code> with <code>seriesName: 'Visits'</code> makes both toggles, and the comparison's item gets a dashed swatch. <code>compareColor</code> recolours it.</p>
+<p>A hidden series leaves the line, the area and the crosshair; with nothing shown the frame stays — axes, grid, annotations — and the crosshair is off. The Y axis fits the series shown; the time axis, the view, the timeframes and the navigator never follow the legend. <code>setSeriesVisible(names | null)</code> sets it from code. More: <a href="/charts/settings/#interactive-legend">Interactive legend</a>.</p>
+<h3 id="counts-and-gaps">Counts and gaps</h3>
+<p>The default Y format is money, as before (<code>$1,234</code>). For counts set <code>yFormat: 'number'</code>: the ticks are compact, as on Line (<code>1.2k</code>), and the tooltip shows the exact number (<code>1,234</code>). <code>yPrefix</code> and <code>ySuffix</code> dress both formats.</p>
+<p><code>gaps</code> says what a missing bucket is:</p>
+<ul>
+<li><code>'join'</code> (default) — the line joins its neighbours, as before;</li>
+<li><code>'zero'</code> — it is drawn as 0. Nothing is filled before the first row; with <code>timeframeAnchor: 'now'</code> the buckets after the last row are filled up to now;</li>
+<li><code>'break'</code> — the line and the area stop there; a lone point gets a dot, and the tooltip over the gap says &quot;No data&quot;.</li>
+</ul>
+<p>With <code>'zero'</code> or <code>'break'</code>, a row whose value is <code>null</code> is a missing bucket too. The bucket comes from the level, or from <code>interval</code> (<code>'hour'</code>, <code>'day'</code>, <code>'week'</code>, <code>'month'</code>…), or from the data's most common step. On a log scale <code>'zero'</code> draws as <code>'break'</code>.</p>
+<h3 id="bands">Bands</h3>
+<p><code>band: true</code> draws a ribbon between the rows' <code>lower</code> and <code>upper</code> fields, under the area and the line — a forecast range, a min–max envelope. <code>band: { lower: 'p10', upper: 'p90', name: 'P10–P90' }</code> names the fields; <code>color</code> and <code>fillOpacity</code> (0.12) restyle it. A row without both edges breaks the ribbon. The Y axis fits it, the tooltip adds <code>Range  90 – 110</code>, and its name is its legend key. The same ribbon on several series lives on <a href="/charts/line/band/">Line</a> and <a href="/charts/line/dual-axes/">Dual Axes</a>.</p>
+<h3 id="zoom-and-pan">Zoom and pan</h3>
+<p>Ctrl (⌘ on a Mac) + the mouse wheel, or a trackpad pinch, zooms; a drag pans. A plain wheel scrolls the page and shows &quot;Hold Ctrl to zoom&quot; for a moment. On a phone one finger scrolls the page and two fingers pan and pinch the chart; the navigator's brush still takes one finger.</p>
 <h3 id="annotations">Annotations</h3>
 <p>Time Series supports event markers and reference levels via the <code>annotations</code> option — useful for marking halvings, earnings dates, or product releases on a long-running price feed, and for placing horizontal levels (break-even, cost basis, target) on top of the area. Annotations stay in sync with zoom and pan: out-of-range entries are skipped, range bands are clamped to the visible window. See the dedicated <a href="/charts/line/annotations/">annotations</a> page for the full API.</p>
 <h2 id="time-series-chart-options">Time Series chart options</h2>
@@ -611,6 +743,12 @@ timeframes: [
             <td>Inner padding <code>{top, right, bottom, left}</code>. Defaults <code>{ top: 16, right: 70, bottom: 28, left: 0 }</code>; hidden axes give their gutters back, and annotations raise <code>top</code> to <code>annotationLabelHeight + 4</code> unless you set <code>margin.top</code>.</td>
         </tr>
         <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone a date string without a zone of its own is read in (the rows, <code>annotations</code>, the view bounds), the timeframes cut in, and the axis and the tooltip name dates in. A <code>Date</code>, epoch milliseconds or an ISO string with <code>Z</code> or an offset stays that instant. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>.</td>
+        </tr>
+        <tr>
             <td><code>timeframes</code></td>
             <td>boolean | array</td>
             <td>—</td>
@@ -629,10 +767,22 @@ timeframes: [
             <td>Initial visible date range as <code>[from, to]</code>. An explicit alternative to <code>defaultTimeframe</code>; clamped to the data extent. If it misses the data, the chart shows the full range; set together with <code>defaultTimeframe</code>, <code>defaultView</code> wins.</td>
         </tr>
         <tr>
+            <td><code>timeframeAnchor</code></td>
+            <td><code>'dataEnd'</code> | <code>'now'</code> | date</td>
+            <td><code>'dataEnd'</code></td>
+            <td>The end every timeframe counts back from: the last data point, the current moment, or a fixed instant. With an anchor past the data, <code>ALL</code>, the zoom and the navigator run on to it. See <a href="#analytics-ranges">Analytics ranges</a>.</td>
+        </tr>
+        <tr>
+            <td><code>weekStart</code></td>
+            <td>string | number</td>
+            <td><code>'monday'</code></td>
+            <td>The first day of a week for <code>WTD</code> and week buckets: a day name or 0–6 (0 is Sunday).</td>
+        </tr>
+        <tr>
             <td><code>navigator</code></td>
             <td>boolean | object</td>
             <td>—</td>
-            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, <code>brushColor</code>, <code>margin</code> (defaults to the chart’s side margins, so the strip lines up with the plot) and <code>axis</code> (a time axis under the strip).</td>
+            <td>Built-in overview strip under the chart. Pass <code>true</code> for defaults or an object with options such as <code>height</code>, <code>color</code>, <code>area</code>, <code>areaColor</code>, <code>brushColor</code>, <code>margin</code> (defaults to the chart’s side margins, so the strip lines up with the plot) and <code>axis</code> (a time axis under the strip). With levels, <code>level</code> picks the level the strip draws (the coarsest by default).</td>
         </tr>
         <tr class="table-section">
             <td colspan="4"><h5 id="axes">Axes</h5></td>
@@ -646,8 +796,20 @@ timeframes: [
         <tr>
             <td><code>yTickFormat</code></td>
             <td>function</td>
-            <td><code>$,.0f</code></td>
+            <td>by <code>yFormat</code></td>
             <td><code>(value) =&gt; string</code> — formats Y axis labels.</td>
+        </tr>
+        <tr>
+            <td><code>yFormat</code></td>
+            <td><code>'currency'</code> | <code>'number'</code></td>
+            <td><code>'currency'</code></td>
+            <td><code>'currency'</code>: <code>$1,234</code> on the axis, <code>$1,234.56</code> in the tooltip. <code>'number'</code>: compact ticks as on Line (<code>1.2k</code>) and the exact count in the tooltip (<code>1,234</code>).</td>
+        </tr>
+        <tr>
+            <td><code>yPrefix / ySuffix</code></td>
+            <td>string</td>
+            <td><code>'$'</code> / —</td>
+            <td>Text around the default labels; the prefix is <code>'$'</code> under <code>'currency'</code> and empty under <code>'number'</code>.</td>
         </tr>
         <tr>
             <td><code>yScale</code></td>
@@ -659,7 +821,7 @@ timeframes: [
             <td><code>scaleToggle</code></td>
             <td>boolean | object</td>
             <td><code>false</code></td>
-            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> or <code>{ labels: { linear, log } }</code>. Each switch fires <code>onScaleChange</code>.</td>
+            <td>A Log toggle pinned to the top right of the header, above the Y-axis labels: filled while the axis is logarithmic, transparent while it is linear; a click flips the scale. <code>true</code> or <code>{ labels: { log } }</code>, <code>labels.log</code> being its text. Each switch fires <code>onScaleChange</code>.</td>
         </tr>
         <tr>
             <td><code>yTicks</code></td>
@@ -713,6 +875,12 @@ timeframes: [
             <td>D3 curve type: <code>'linear'</code>, <code>'monotone'</code>, <code>'basis'</code>, <code>'cardinal'</code>, <code>'step'</code>, <code>'stepBefore'</code>, <code>'stepAfter'</code>.</td>
         </tr>
         <tr>
+            <td><code>curveTension</code></td>
+            <td>number</td>
+            <td><code>0</code></td>
+            <td>0–1, the tension of <code>'cardinal'</code>, as on Line.</td>
+        </tr>
+        <tr>
             <td><code>area</code></td>
             <td>boolean | number</td>
             <td><code>true</code></td>
@@ -725,13 +893,64 @@ timeframes: [
             <td>Area fill color.</td>
         </tr>
         <tr class="table-section">
+            <td colspan="4"><h5 id="analytics">Analytics</h5></td>
+        </tr>
+        <tr>
+            <td><code>resolution</code></td>
+            <td>object</td>
+            <td><code>{ maxPoints: 500 }</code></td>
+            <td>With levels (<code>setData({ hour, day, month… })</code>), the most rows a window may draw: the finest level that covers the window within it is drawn. See <a href="#resolution-follows-the-window">Resolution</a>.</td>
+        </tr>
+        <tr>
+            <td><code>gaps</code></td>
+            <td><code>'join'</code> | <code>'zero'</code> | <code>'break'</code></td>
+            <td><code>'join'</code></td>
+            <td>A missing bucket joins its neighbours, is drawn as 0, or breaks the line (a lone point gets a dot, the tooltip says “No data”). Under <code>'zero'</code> / <code>'break'</code> a <code>null</code> value is a missing bucket.</td>
+        </tr>
+        <tr>
+            <td><code>interval</code></td>
+            <td>string</td>
+            <td>from the data</td>
+            <td>The bucket of plain rows: <code>'minute'</code>, <code>'hour'</code>, <code>'day'</code>, <code>'week'</code>, <code>'month'</code>, <code>'quarter'</code> or <code>'year'</code>. It sets what a missing bucket is and how the tooltip names a date; without it, the data's most common step.</td>
+        </tr>
+        <tr>
+            <td><code>compare</code></td>
+            <td><code>false</code> | <code>'previousPeriod'</code> | <code>'previousYear'</code></td>
+            <td><code>false</code></td>
+            <td>A grey dashed line of an earlier window over the current one; the tooltip adds its value and the change. See <a href="#comparison-with-an-earlier-period">Comparison</a>.</td>
+        </tr>
+        <tr>
+            <td><code>seriesName</code></td>
+            <td>string</td>
+            <td><code>'Series'</code></td>
+            <td>The series' name and legend key: <code>legend: [{ label: 'Visits' }]</code> with <code>seriesName: 'Visits'</code> makes the item a toggle.</td>
+        </tr>
+        <tr>
+            <td><code>compareName</code></td>
+            <td>string</td>
+            <td><code>'Previous period'</code></td>
+            <td>The comparison's name and legend key (<code>'Previous year'</code> for <code>'previousYear'</code>).</td>
+        </tr>
+        <tr>
+            <td><code>compareColor</code></td>
+            <td>string</td>
+            <td>theme muted</td>
+            <td>The comparison's colour.</td>
+        </tr>
+        <tr>
+            <td><code>band</code></td>
+            <td>boolean | object</td>
+            <td>—</td>
+            <td>A ribbon between the rows' <code>lower</code> and <code>upper</code> fields; <code>{ lower, upper, name, color, fillOpacity }</code> names the fields and styles it (name <code>'Range'</code>, opacity <code>0.12</code>).</td>
+        </tr>
+        <tr class="table-section">
             <td colspan="4"><h5 id="interaction">Interaction</h5></td>
         </tr>
         <tr>
             <td><code>tooltipFormat</code></td>
             <td>function</td>
             <td>—</td>
-            <td><code>(point, info) =&gt; html</code> — custom tooltip for the active point: <code>point</code> is the row, with its extra fields; <code>info</code> is <code>{ date, value, color }</code> (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>). The default shows the date and the value as <code>$1,234.56</code>.</td>
+            <td><code>(point, info) =&gt; html</code> — custom tooltip for the active point: <code>point</code> is the row, with its extra fields; <code>info</code> is <code>{ date, value, color, level }</code>, plus <code>series</code> and <code>compare</code> (<code>{ date, value, change }</code> or <code>null</code>) with <code>compare</code>, and <code>band</code> (<code>{ lower, upper }</code> or <code>null</code>) with <code>band</code> (<a href="/charts/settings/#formatter-arguments">formatter arguments</a>). Not called over a gap. The default shows the date, named by the bucket, and the value in the chart's format.</td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>
@@ -770,13 +989,13 @@ timeframes: [
     <tbody>
         <tr>
             <td><code>setData</code></td>
-            <td><code>(data)</code></td>
-            <td>Sets the full dataset and re-renders. The chart keeps a sorted copy: <code>date</code> may be a Date, an ISO string or epoch ms, <code>value</code> a number or a numeric string; unreadable rows are dropped; other fields (<code>open</code>, <code>volume</code>…) reach <code>tooltipFormat</code>. A selected timeframe re-applies to the new data; a window the new data no longer reaches falls back to the default view.</td>
+            <td><code>(data | levels)</code></td>
+            <td>Sets the full dataset and re-renders. The chart keeps a sorted copy: <code>date</code> may be a Date, an ISO string or epoch ms, <code>value</code> a number or a numeric string; unreadable rows are dropped; other fields (<code>open</code>, <code>volume</code>…) reach <code>tooltipFormat</code>. A selected timeframe re-applies to the new data; a window the new data no longer reaches falls back to the default view. <code>levels</code> is <code>{ minute, hour, day, week, month, quarter, year }</code>, each an array of rows (<a href="#resolution-follows-the-window">Resolution</a>).</td>
         </tr>
         <tr>
             <td><code>appendPoint</code></td>
-            <td><code>(point)</code></td>
-            <td>Adds one point (read like <code>setData</code>) to the chart’s copy, keeps it in date order, and re-renders. A selected timeframe moves with the new point. The array passed to <code>setData</code> is not modified.</td>
+            <td><code>(point, level?)</code></td>
+            <td>Adds one point (read like <code>setData</code>) to the chart’s copy, keeps it in date order, and re-renders. A selected timeframe moves with the new point. The array passed to <code>setData</code> is not modified. With levels, it adds to <code>level</code> (the finest without one).</td>
         </tr>
         <tr>
             <td><code>setView</code></td>
@@ -785,8 +1004,8 @@ timeframes: [
         </tr>
         <tr>
             <td><code>setTimeframe</code></td>
-            <td><code>(key, { silent? })</code></td>
-            <td>Applies a timeframe — a key of <code>timeframes</code> or a preset such as <code>'1Y'</code> — as its button does, and highlights the button. Returns the chart.</td>
+            <td><code>(key, { silent?, range? })</code></td>
+            <td>Applies a timeframe — a key of <code>timeframes</code> or a preset such as <code>'1Y'</code> — as its button does, and highlights the button. <code>setTimeframe('CUSTOM', { range: [from, to] })</code> sets the custom range. Returns the chart.</td>
         </tr>
         <tr>
             <td><code>getView</code></td>
@@ -796,28 +1015,37 @@ timeframes: [
         <tr>
             <td><code>onViewChange</code></td>
             <td><code>(fn)</code></td>
-            <td>Registers a callback that runs whenever the visible date window changes: a range button, <code>setView</code>, the wheel, or the end of a navigator drag.</td>
+            <td>Registers <code>fn(extent, { key, level })</code>, run whenever the visible date window changes: a range button, <code>setView</code>, Ctrl/⌘ + wheel, or the end of a navigator drag. <code>key</code> is the timeframe key when a button or <code>setTimeframe</code> set the window, else <code>null</code>; <code>level</code> the level drawn, or <code>null</code> for plain rows.</td>
+        </tr>
+        <tr>
+            <td><code>getLevel</code></td>
+            <td><code>()</code></td>
+            <td>The name of the level drawn, or <code>null</code> for plain rows.</td>
+        </tr>
+        <tr>
+            <td><code>setLoading</code></td>
+            <td><code>(on = true)</code></td>
+            <td>Shows or hides a slim “Loading…” bar over the plot and sets <code>aria-busy</code> on the card; the drawing stays until new data comes. Returns the chart.</td>
         </tr>
         <tr>
             <td><code>setYScale</code></td>
             <td><code>(type, { silent? })</code></td>
-            <td>Switches the Y scale to <code>'log'</code> or <code>'linear'</code>, redraws and renames the Lin/Log button. Returns the chart.</td>
+            <td>Switches the Y scale to <code>'log'</code> or <code>'linear'</code>, redraws and fills or clears the Log toggle. Returns the chart.</td>
         </tr>
         <tr>
             <td><code>onScaleChange</code></td>
             <td><code>(fn)</code></td>
-            <td>Registers a callback that gets <code>{ scale, axis: 'y' }</code> whenever the scale switches (the Lin/Log button or <code>setYScale</code> without <code>silent</code>).</td>
+            <td>Registers a callback that gets <code>{ scale, axis: 'y' }</code> whenever the scale switches (the Log toggle or <code>setYScale</code> without <code>silent</code>).</td>
         </tr>
     </tbody>
 </table>
 </div>
 <h2 id="overview-standalone-navigator">Overview (standalone navigator)</h2>
 <p><code>RareCharts.Overview</code> is the strip the <code>navigator</code> option builds, as a class of its own: a small line of a series with a brush for picking a date window. Use it when the strip and what it drives are apart — a chart in another card, a table, several charts at once. It is not a chart: no header, footer, timeframes or <code>whenReady()</code>, and <code>new Overview(…)</code> draws nothing until <code>setData</code>.</p>
-<pre><code class="language-js">const overview = new RareCharts.Overview('#overview', { height: 56 });
+<pre class="text-content-caption"><code>const overview = new RareCharts.Overview('#overview', { height: 56 });
 
 overview.setData(data, extent =&gt; chart.setView(extent));
-chart.onViewChange(extent =&gt; overview.setBrush(extent));
-</code></pre>
+chart.onViewChange(extent =&gt; overview.setBrush(extent));</code></pre>
 <p>Dates are read as the charts read them — a <code>Date</code>, an ISO string or epoch milliseconds — in the rows, in <code>extent</code> and in <code>setBrush</code>. The strip keeps a sorted copy of the rows; a row with an unreadable date or value is dropped.</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -873,10 +1101,22 @@ chart.onViewChange(extent =&gt; overview.setBrush(extent));
             <td>A time axis under the strip.</td>
         </tr>
         <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone date strings without a zone are read in — the rows, <code>extent</code>, <code>setBrush()</code> — and the axis names dates in. Under a chart the strip takes the chart's zone.</td>
+        </tr>
+        <tr>
+            <td><code>ariaLabel</code></td>
+            <td>string</td>
+            <td><code>'Chart'</code></td>
+            <td>The accessible name of a standalone strip, whose <code>&lt;svg&gt;</code> gets <code>role="img"</code>. Under a chart the strip is part of the chart's drawing and takes no name of its own.</td>
+        </tr>
+        <tr>
             <td><code>theme</code></td>
             <td>object</td>
             <td>default theme</td>
-            <td>Theme overrides, merged over the default theme — <code>RareCharts.darkTheme</code> on a dark page.</td>
+            <td>A theme or overrides, merged as a chart's theme is (<code>createTheme</code>: <code>tooltip</code> and <code>map</code> deeply) — <code>RareCharts.darkTheme</code> on a dark page. The element gets the class <code>rc-overview</code>, which carries the chart tokens, so a standalone Overview follows the page's <code>--chart-*</code> as a chart does.</td>
         </tr>
     </tbody>
 </table>
@@ -911,6 +1151,7 @@ chart.onViewChange(extent =&gt; overview.setBrush(extent));
 </div>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-time-series.js"></script>
+<script src="/assets/charts/examples/line/line-chart-traffic.js"></script>
 
     </article>
   </div>
@@ -921,7 +1162,7 @@ chart.onViewChange(extent =&gt; overview.setBrush(extent));
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

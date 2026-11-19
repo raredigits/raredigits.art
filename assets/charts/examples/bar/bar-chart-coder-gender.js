@@ -15,9 +15,13 @@
     labelMaxLength: 8,
     showValues: true,
     valueFormat: d => `${d.value}%`,
-    tooltipFormat: d => `
-      <div>${d.label}</div>
-      <div>${d.value}%</div>
+    // The default row with a unit: the bar's dot, its label, its value.
+    tooltipFormat: (d, { color }) => `
+      <div class="rc-tooltip-row">
+        <span class="rc-tooltip-swatch rc-tooltip-swatch--dot" style="--rc-swatch-color:${color}"></span>
+        <span class="rc-tooltip-label">${d.label}</span>
+        <span class="rc-tooltip-value rc-num">${d.value}%</span>
+      </div>
     `,
   }).setData(data);
 })();

@@ -10,7 +10,7 @@
     subtitle: 'Both endpoints have many ties and several routes exist — the shortest is highlighted. Click a node to explore its neighborhood.',
     dataSource: memorySource(RareGraphDemo.data),
     source:   'Synthetic demo data (seeded generator)',
-    height:   460,
+    height:   494,
     nodeRadius: 14,
     pathCount: 4,
     linkTypes: linkPresets.personal,

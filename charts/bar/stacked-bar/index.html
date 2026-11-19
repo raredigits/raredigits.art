@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -437,14 +437,14 @@
 <p>Values are expected to be <strong>non-negative</strong> — a stacked bar encodes cumulative length, and a negative slice has no coherent place in the pile. For signed comparisons (before/after, gains/losses around a baseline) use a diverging bar instead. A negative, missing or non-numeric value counts as zero and draws no segment.</p>
 <h3 id="percent-100-mode">Percent (100%) mode</h3>
 <p>When the story is the <em>shifting share</em> rather than the absolute total, normalize every bar to fill the axis: pass <code>stacked: 'percent'</code>. Each category then reads as parts of 100%, which makes a changing mix legible even when the totals move underneath it.</p>
-<div id="stacked-energy" class="panel panel--bordered text-content-caption margin-b-md"></div>
+<div id="stacked-energy" class="panel panel--bordered text-content-caption"></div>
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', {
     stacked: 'percent',
 }).setData(series);</code></pre>
 <h3 id="orientation-and-legend">Orientation and legend</h3>
 <p>Both orientations work. <code>vertical</code> (default) reads as composition over time; <code>horizontal</code> reads as a ranked, composed list and handles long category labels better. Set it the usual way:</p>
 <pre class="text-content-caption"><code>new RareCharts.Bar('#chart', { orientation: 'horizontal' }).setData(series);</code></pre>
-<p>A legend is <strong>built automatically</strong> from the series names, colored to match the segments. Pass your own <code>legend</code> array to override it — see the <a href="/charts/settings/">Settings</a> page for the legend format.</p>
+<p>A legend is <strong>built automatically</strong> from the series names, colored to match the segments, and each item hides and shows its series: a click toggles it, a double click keeps it alone, <em>Show all</em> brings all back. A hidden series leaves the stacks — the segments above close up — and its category keeps its slot. The value axis runs to the tallest stack shown, and <code>stacked: 'percent'</code> bars are shares of what is shown; <code>legendRescale: false</code> keeps the axis on every series and the percents of the whole bar. Pass your own <code>legend</code> array to override the items — see <a href="/charts/settings/#interactive-legend">Interactive legend</a> for the format and the gestures.</p>
 <h3 id="colors-and-tooltips">Colors and tooltips</h3>
 <p>Each series takes the next color from the theme palette, in order. Override a single series with a <code>color</code> on it:</p>
 <pre class="text-content-caption"><code>{ name: 'Cloud', color: '#00c97a', values: [ ... ] }</code></pre>
@@ -527,7 +527,7 @@
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

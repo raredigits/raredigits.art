@@ -1,4 +1,5 @@
-// MapFlow demos — illustrative data, not measurements.
+// MapFlow demos — illustrative data, not measurements: a flow's `weight` sets
+// its relative width (linkWidth.by), with no amount to print in its tooltip.
 //   #mapflow-triangle — three flows, two types, static
 //   #mapflow-eurodollar — five centres on a time scale: era buttons in the
 //                         header and a brushable navigator under the map
@@ -15,7 +16,8 @@
       topoObject: 'countries',
       fitTo: 'links',
       fitPadding: 60,
-      height: 420,
+      height: 454,
+      linkWidth: { by: 'weight' },
       linkTypes: {
         goods:  { color: '#8a5a2b', label: 'goods' },
         silver: { color: '#5b6b7d', label: 'silver', dash: '6 4' },
@@ -26,9 +28,9 @@
         { id: 'LDN', label: 'London', coords: [-0.13, 51.51] },
       ],
       links: [
-        { from: 'IN', to: 'CN', type: 'goods', value: 3, label: 'opium from Bengal', start: 1773, end: 1860 },
-        { from: 'CN', to: 'LDN', type: 'silver', value: 2, label: 'silver and tea', start: 1800, end: 1860 },
-        { from: 'LDN', to: 'IN', type: 'goods', value: 2, label: 'cotton textiles', start: 1813, end: 1860 },
+        { from: 'IN', to: 'CN', type: 'goods', weight: 3, label: 'opium from Bengal', start: 1773, end: 1860 },
+        { from: 'CN', to: 'LDN', type: 'silver', weight: 2, label: 'silver and tea', start: 1800, end: 1860 },
+        { from: 'LDN', to: 'IN', type: 'goods', weight: 2, label: 'cotton textiles', start: 1813, end: 1860 },
       ],
     });
   }
@@ -44,10 +46,11 @@
       topoObject: 'countries',
       fitTo: 'links',
       fitPadding: 50,
-      height: 500,
+      height: 534,
       timeframes: [era(1957), era(1968), era(2025), { key: 'ALL', label: 'All' }],
       defaultView: ['1957-01-01', '1957-12-31'],
       navigator: true,
+      linkWidth: { by: 'weight' },
       linkTypes: {
         deposits: { color: '#2c5d8f', label: 'dollar deposits' },
         lending:  { color: '#a33d36', label: 'dollar lending' },
@@ -60,12 +63,12 @@
         { id: 'SIN', label: 'Singapore', coords: [103.82, 1.35] },
       ],
       links: [
-        { from: 'MOW', to: 'LDN', type: 'deposits', value: 2, label: 'Soviet dollar deposits', start: 1957, end: 2022 },
-        { from: 'MOW', to: 'PAR', type: 'deposits', value: 2, label: 'Soviet dollar deposits', start: 1957, end: 2022 },
-        { from: 'NYC', to: 'LDN', type: 'deposits', value: 4, label: 'US bank branches fund in London', start: 1960, end: 2025 },
-        { from: 'LDN', to: 'NYC', type: 'lending',  value: 3, label: 'eurodollar loans back home', start: 1966, end: 2025 },
-        { from: 'LDN', to: 'SIN', type: 'lending',  value: 2, label: 'Asian dollar market', start: 1968, end: 2025 },
-        { from: 'SIN', to: 'LDN', type: 'deposits', value: 1, label: 'regional deposits', start: 1970, end: 2025 },
+        { from: 'MOW', to: 'LDN', type: 'deposits', weight: 2, label: 'Soviet dollar deposits', start: 1957, end: 2022 },
+        { from: 'MOW', to: 'PAR', type: 'deposits', weight: 2, label: 'Soviet dollar deposits', start: 1957, end: 2022 },
+        { from: 'NYC', to: 'LDN', type: 'deposits', weight: 4, label: 'US bank branches fund in London', start: 1960, end: 2025 },
+        { from: 'LDN', to: 'NYC', type: 'lending',  weight: 3, label: 'eurodollar loans back home', start: 1966, end: 2025 },
+        { from: 'LDN', to: 'SIN', type: 'lending',  weight: 2, label: 'Asian dollar market', start: 1968, end: 2025 },
+        { from: 'SIN', to: 'LDN', type: 'deposits', weight: 1, label: 'regional deposits', start: 1970, end: 2025 },
       ],
     });
   }

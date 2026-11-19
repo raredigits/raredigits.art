@@ -19,7 +19,7 @@
       name: 'UST 10Y (on-the-run)',
       axis: 'y1',
       type: 'line',
-      color: '#00aaff',
+      color: '#1677ff',
       values: dates.map((dt, i) => ({ date: dt, value: onTheRun[i] })),
     },
     {
@@ -48,7 +48,7 @@
     note: 'The spread is the trade: it widens before it converges, and the position has to survive the gap. Synthetic figures, shown for illustration.',
 
     legend: [
-      { label: 'UST 10Y (on-the-run)', color: '#00aaff' },
+      { label: 'UST 10Y (on-the-run)', color: '#1677ff' },
       { label: 'UST 10Y (off-the-run)', color: '#ff3b5c' },
       { label: 'Spread', color: '#000000' },
     ],
@@ -73,15 +73,6 @@
       return d3.format('+.2f')(v);
     },
 
-    xTickFormat: d => d3.timeFormat('%m/%d')(d),
 
-    tooltipFormat: ({ date, points }) => `
-      <div style="color:#555">${d3.timeFormat('%b %d, %Y')(date)}</div>
-      ${points.map(p => `
-        <div style="color:${p.color}">
-          ${p.name}: ${p.fmt}
-        </div>
-      `).join('')}
-    `,
   }).setData(series);
 })();

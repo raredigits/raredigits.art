@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -428,12 +428,12 @@
 <li><strong>A string</strong> — a direct field name from the source row</li>
 </ul>
 <p>Whatever the mapping returns, <code>date</code> is read as a date (a <code>Date</code>, an ISO string or epoch milliseconds) and <code>value</code> as a number — with a function as with a field name, so a CSV's <code>'148.50'</code> becomes <code>148.5</code> either way.</p>
-<div class="air-md"></div>
+<p>A date string without a zone (<code>'2026-01-01'</code>) is read as local midnight, as the charts read it by default. The adapters take no time zone: for a chart with <code>timeZone: 'UTC'</code>, map such a date to epoch milliseconds — <code>date: row =&gt; Date.parse(row.date)</code> reads <code>'2026-01-01'</code> as UTC midnight — or pass the rows' strings to <code>setData</code> without an adapter, and the chart reads them in its own zone (<a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>).</p>
 <pre><code><span class="code-comment">// Source row looks like: { ts: '2026-01-01', close: '148.50', volume: '2300000' }
 // Chart expects:         { date: Date, value: number }</span>
 
 const mapping = {
-  date:  row => new Date(row.ts),     // parse string to Date
+  date:  row => row.ts,               // '2026-01-01': read as local midnight
   value: row => +row.close,           // coerce string to number
 };</code></pre>
 <p>Rows where <code>date</code> cannot be read as a date or <code>value</code> is not a finite number are filtered out automatically; an empty <code>value</code> is kept (see the <a href="#mapping-reference">mapping reference</a>). This keeps garbage data from making your chart look broken.</p>
@@ -441,7 +441,7 @@ const mapping = {
 <p>Fetches a JSON file and applies a mapping.</p>
 <pre><code>const chart = new RareCharts.Line('#chart', { height: 280 });
 const data = await RareCharts.fromJson('/data/prices.json', {
-  date:  row => new Date(row.date),
+  date:  row => row.date,
   value: row => +row.close,
 });
 
@@ -463,7 +463,7 @@ chart.setData(data);</code></pre>
 <h3 id="fromcsv">fromCsv</h3>
 <p>Fetches a CSV file. All values come in as strings — the mapping is where you coerce types.</p>
 <pre><code>const data = await RareCharts.fromCsv('/data/revenue.csv', {
-  date:  row => new Date(row.month),
+  date:  row => row.month,
   value: row => parseFloat(row.revenue_usd),
 });</code></pre>
 <p>CSV headers become field names. If your CSV has a header row (it should), the adapter handles it correctly — D3's CSV parser is doing the actual work under the hood.</p>
@@ -471,19 +471,19 @@ chart.setData(data);</code></pre>
 <p>Fetches from a REST endpoint. Supports custom headers for authenticated APIs and a <code>transform</code> function for non-standard response shapes.</p>
 <p><strong>Basic usage:</strong></p>
 <pre><code>const data = await RareCharts.fromApi('https://api.example.com/metrics', {
-  date:  row => new Date(row.timestamp),
+  date:  row => row.timestamp,
   value: row => row.count,
 });</code></pre>
 <p><strong>With authentication:</strong></p>
 <pre><code>const data = await RareCharts.fromApi(
   'https://api.example.com/private/metrics',
-  { date: row => new Date(row.ts), value: row => row.val },
+  { date: row => row.ts, value: row => row.val },
   { headers: { 'Authorization': 'Bearer ' + token } }
 );</code></pre>
 <p><strong>With a custom transform</strong> — when the response has a non-standard shape that the auto-detection can’t handle:</p>
 <pre><code>const data = await RareCharts.fromApi(
   'https://api.example.com/report',
-  { date: row => new Date(row.period), value: row => row.total },
+  { date: row => row.period, value: row => row.total },
   {
     transform: response => response.results.entries,
   }
@@ -502,7 +502,7 @@ chart.setData(data);</code></pre>
 const raw = myApp.getMetrics(); // returns [{ ts, val }, ...]
 
 const data = RareCharts.fromArray(raw, {
-  date:  row => new Date(row.ts),
+  date:  row => row.ts,
   value: row => row.val,
 });
 
@@ -535,7 +535,7 @@ setInterval(async () => {
 <tr>
 <td>Function</td>
 <td>Called with each row; the return value is used (<code>date</code> read as a date, <code>value</code> as a number)</td>
-<td><code>row =&gt; new Date(row.ts)</code></td>
+<td><code>row =&gt; row.ts.slice(0, 10)</code></td>
 </tr>
 <tr>
 <td>String</td>
@@ -560,7 +560,7 @@ setInterval(async () => {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

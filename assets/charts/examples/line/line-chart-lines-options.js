@@ -8,6 +8,10 @@
  *   - markers (points + shape)
  *
  * UI is implemented via <select> controls.
+ *
+ * Needs the docs site's CSS for its look: the controls are styled by the
+ * .rc-demo-* rules in assets/css/rare-website.css (not part of the library).
+ * Without them the selects still work, unstyled.
  */
 
 (function () {
@@ -19,7 +23,7 @@
 
   function makeSeries(seed, len = 24) {
     let v = seed;
-    const start = new Date('2025-01-01');
+    const start = new Date(2025, 0, 1);   // local midnight, as the chart reads its dates
 
     return Array.from({ length: len }, (_, i) => {
       const date = new Date(start);
@@ -32,8 +36,8 @@
   }
 
   const series = [
-    { name: 'A', color: '#ff6200', values: makeSeries(3.1) },
-    { name: 'B', color: '#00aaff', values: makeSeries(1.7) },
+    { name: 'A', color: '#fa8c16', values: makeSeries(3.1) },
+    { name: 'B', color: '#1677ff', values: makeSeries(1.7) },
     { name: 'C', color: '#00c97a', values: makeSeries(2.3) },
   ];
 
@@ -230,7 +234,6 @@
       markerSize: 4,
       endLabels: true,
       crosshair: false,
-      tooltip: false,
       yTickFormat: v => (v >= 0 ? '+' : '') + v.toFixed(1),
     };
   }

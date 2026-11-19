@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -406,7 +406,7 @@
   </section>
 
     <article>
-      <p>RareCharts uses a two-layer styling system. Structure, layout and typography live in CSS. Colors, the tooltip font and a few sizing defaults live in a JavaScript theme object. They work independently, which means you can swap a theme without touching CSS, and you can override layout without touching the theme.</p>
+      <p>RareCharts uses a two-layer styling system. Structure, layout and typography live in CSS. Colors, the tooltip fonts and a few sizing defaults live in a JavaScript theme object. They work independently, which means you can swap a theme without touching CSS, and you can override layout without touching the theme.</p>
 <h2 id="layer-1-css-structure">Layer 1: CSS structure</h2>
 <p><code>rare-charts.js</code> automatically injects a small stylesheet into <code>&lt;head&gt;</code> when the library loads (a page under a strict Content Security Policy loads it as a file instead — see <a href="/charts/installation/">Installation</a>). It handles:</p>
 <ul>
@@ -415,60 +415,63 @@
 <li>The header layout by the card's width: <code>.rc-chart</code> is a size container (<code>container: rc-chart / inline-size</code>), and on a card 460 px wide or narrower the buttons move under the subtitle, whatever the window's width. The card takes its width from its parent — a block, a grid cell, a stretched flex item; in a box that shrinks to fit its content (an inline-block, an item of a flex row) give it a width, or it collapses</li>
 <li>Tooltips: position and fade, size, weights and spacing of their rows</li>
 <li>SVG axis label styles, end labels, markers</li>
-<li>Spacing, the chart font, and the timeframe buttons — a page's <code>button:hover</code> background does not reach them, and the Lin/Log button keeps its diagonal fill on hover</li>
+<li>Spacing, the chart font, and the timeframe buttons — a page's <code>button:hover</code> background does not reach them, and the Log toggle keeps its fill on hover</li>
 </ul>
-<p><strong>Chart colors are not in CSS.</strong> This is intentional. Every chart color — grid lines, axis text, series fills — is set by the chart from the active theme; tooltip colors reach the stylesheet as <code>--rc-tooltip-*</code> custom properties set on the tooltip from <code>theme.tooltip</code>. That makes theming predictable: change the theme object, everything follows. The stylesheet itself reads a few <a href="/styles/">Rare Styles</a> colors — <code>--primary-color</code> for header and legend text that carries no theme color (an HTML legend, the Graph and MapFlow legend buttons), the timeframe buttons, the Graph panels — and each has a fallback, so a page without Rare Styles needs no extra CSS.</p>
 <p>RareCharts ships with its own typography and spacing defaults. The base stylesheet defines:</p>
 <ul>
-<li><code>--rc-font-family: &quot;Fira Sans&quot;, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif</code></li>
-<li><code>--rc-font-family-numeric: &quot;Cousine&quot;, ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;Liberation Mono&quot;, monospace</code></li>
+<li><code>--rc-font-family</code>: the page's <code>--chart-font-family</code>, else <code>&quot;Fira Sans&quot;, system-ui, -apple-system, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif</code></li>
+<li><code>--rc-font-family-numeric</code>: the page's <code>--chart-font-family-numeric</code>, else <code>&quot;Cousine&quot;, ui-monospace, SFMono-Regular, Menlo, Consolas, &quot;Liberation Mono&quot;, monospace</code></li>
 <li><code>--rc-font-size: 16px</code></li>
 <li><code>--rc-font-size-sm: 14px</code></li>
 <li><code>--rc-space-xs</code>, <code>--rc-space-sm</code>, <code>--rc-space-md</code>, <code>--rc-space-lg</code>: <code>4px</code>, <code>8px</code>, <code>16px</code>, <code>32px</code></li>
 </ul>
 <p>These variables live on <code>.rc-chart</code>, so the charts keep a consistent visual language even when embedded on a third-party site with a completely different type system. The chart sets <code>font-family</code> once, on <code>.rc-chart</code>; everything inside inherits it. To change a variable, use a selector that outranks the library's <code>.rc-chart</code> rule — the library appends its stylesheet to <code>&lt;head&gt;</code> when it loads, after any stylesheet already there, so a plain <code>.rc-chart { … }</code> on the page loses the tie: <code>:root .rc-chart { --rc-font-family: Georgia, serif; }</code>, or the chart's id.</p>
 <p>The library loads no fonts. Fira Sans and Cousine are used when the page provides them — Rare Styles self-hosts both — and system fonts otherwise. <a href="/charts/installation/">Installation</a> has a <code>&lt;link&gt;</code> that loads them on any page.</p>
+<p><strong>Colors are tokens.</strong> A chart has two kinds of color:</p>
+<ul>
+<li><strong>Role colors</strong> — the background behind labels, text, axis labels, axes, grid, crosshair, the range buttons, the focus ring, the tooltip, a map's empty regions and borders — are CSS variables, <code>--rc-*</code>, declared on <code>.rc-chart</code>. The SVG refers to them (<code>fill=&quot;var(--rc-muted, #666666)&quot;</code>) and the HTML reads them through CSS rules, so a chart follows its card, a page theme switch and print without a redraw.</li>
+<li><strong>Data colors</strong> — the accent, the series palette and every color you pass — are plain colors, read when the chart is built, at each <code>setData</code> and at each render. Formatters get them as <code>#rrggbb</code>, never as <code>var()</code>; a color you passed by name, such as <code>'steelblue'</code>, arrives as written.</li>
+</ul>
+<h3 id="where-colors-come-from">Where colors come from</h3>
+<p>Each color resolves in this order, highest first:</p>
+<ol>
+<li>a color the chart's own <code>theme</code> sets — <code>darkTheme</code>, <code>createTheme(…)</code>, any value other than the default. The chart writes it on its element as <code>--rc-*</code>, so it wins over the page;</li>
+<li>the page's chart tokens, <code>--chart-*</code>. Rare Styles <code>v0.7.2</code> sets them on the page, on <code>.card</code> and on <code>.card-inverted</code>;</li>
+<li>older page tokens, only where earlier versions read them: <code>--bg-color</code> for the background; <code>--text-color-light</code>, <code>--border-color</code>, <code>--primary-color</code>, <code>--primary-text-color</code> and <code>--white</code> for the range buttons;</li>
+<li>the library's own value.</li>
+</ol>
+<p>So a chart in a Rare Styles <code>v0.7.2</code> <code>.card-inverted</code> reads light on the dark card, and a page without Rare Styles, or with <code>v0.7.1</code>, gets the library's values. The token behind each color is in the <a href="#theme-token-reference">reference</a> below. A page that changes <code>--chart-series-*</code> while a chart is on screen sees the new colors at the next <code>setData</code> or resize.</p>
+<p><code>darkTheme</code> sets colors of its own, so the page's tokens do not change it, but it does not paint the card: put the chart on a dark container. For a chart on a background of your own, restate the tokens there — <a href="/styles/colors/chart-tokens/#host-surface">On a host's background</a> in Rare Styles shows how.</p>
 <h2 id="layer-2-js-theme">Layer 2: JS theme</h2>
-<p>The theme is a plain object that every chart reads at render time. The default theme looks like this:</p>
+<p>The theme is a plain object that every chart reads at render time. In the default theme each color reads the page's chart token first and ends in the library's value:</p>
 <pre><code>const defaultTheme = {
 
   <span class="code-comment">// ── Backgrounds ────────────────────────────────────────────────────────────</span>
-  bg:      'var(--bg-color, #ffffff)',  <span class="code-comment">// page background under Rare Styles, white otherwise</span>
-  surface: '#f5f5f5',     <span class="code-comment">// Graph node fills, flow lane bands</span>
+  bg:      'var(--chart-bg, var(--bg-color, #ffffff))',  <span class="code-comment">// plates and halos behind labels</span>
+  surface: null,          <span class="code-comment">// Graph node fills, flow lane bands: the background with 4% of the text</span>
 
   <span class="code-comment">// ── Structure ──────────────────────────────────────────────────────────────</span>
-  grid:      '#e8e8e8',   <span class="code-comment">// horizontal grid lines</span>
-  border:    '#cccccc',   <span class="code-comment">// axis lines, zero baseline</span>
-  crosshair: '#aaaaaa',   <span class="code-comment">// vertical hover line — intentionally subtler than border</span>
+  grid:      'var(--chart-grid-color, #e4e4e4)',   <span class="code-comment">// horizontal grid lines, the Gauge track</span>
+  border:    'var(--chart-axis-color, #cccccc)',   <span class="code-comment">// axis lines, zero baseline</span>
+  crosshair: '#aaaaaa',   <span class="code-comment">// vertical hover line — subtler than border</span>
 
   <span class="code-comment">// ── Text ───────────────────────────────────────────────────────────────────</span>
-  text:  '#000000',       <span class="code-comment">// primary labels</span>
-  muted: '#666666',       <span class="code-comment">// axis tick labels, secondary text</span>
+  text:  'var(--chart-text-color, #000000)',    <span class="code-comment">// primary labels, the header and footer</span>
+  muted: 'var(--chart-label-color, #666666)',   <span class="code-comment">// axis tick labels, secondary text</span>
 
-  <span class="code-comment">// ── Semantic (P&L, deltas, signals) ────────────────────────────────────────</span>
-  positive: '#389e0d',    <span class="code-comment">// gains, up moves</span>
-  negative: '#ff0000',    <span class="code-comment">// losses, down moves</span>
-  accent:   '#00aaff',    <span class="code-comment">// highlights, single-series default</span>
-
-  <span class="code-comment">// ── Series palette ─────────────────────────────────────────────────────────
-  // Used in order for multi-series charts; override the full array or per-series.
-  </span>
+  <span class="code-comment">// ── Accent and series palette ──────────────────────────────────────────────</span>
+  accent: 'var(--chart-series-1, #1677ff)',     <span class="code-comment">// highlights, single-series default</span>
   colors: [
-    '#fa8c16',  <span class="code-comment">// orange</span>
-    '#00aaff',  <span class="code-comment">// blue</span>
-    '#00c97a',  <span class="code-comment">// green</span>
-    '#ffcc00',  <span class="code-comment">// yellow</span>
-    '#cc44ff',  <span class="code-comment">// violet</span>
-    '#ff0000',  <span class="code-comment">// red</span>
+    'var(--chart-series-1, #1677ff)',  <span class="code-comment">// blue (the accent)</span>
+    'var(--chart-series-2, #fa8c16)',  <span class="code-comment">// orange</span>
+    'var(--chart-series-3, #00c97a)',  <span class="code-comment">// green</span>
+    'var(--chart-series-4, #ffcc00)',  <span class="code-comment">// yellow</span>
+    'var(--chart-series-5, #cc44ff)',  <span class="code-comment">// violet</span>
+    'var(--chart-series-6, #ff0000)',  <span class="code-comment">// red</span>
   ],
 
-  <span class="code-comment">// ── Typography ─────────────────────────────────────────────────────────────</span>
+  <span class="code-comment">// ── Typography: the tooltip's words and figures ───────────────────────────</span>
   font:        'var(--rc-font-family, "Fira Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif)',
-  fontSize:    'var(--rc-font-size-sm, 14px)',   <span class="code-comment">// not used; removal at 1.0</span>
-
-  <span class="code-comment">// The tooltip font family.
-  // Falls back through a chain of common tabular fonts.
-  </span>
   numericFont: 'var(--rc-font-family-numeric, "Cousine", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace)',
 
   <span class="code-comment">// ── Sizing defaults ────────────────────────────────────────────────────────
@@ -481,28 +484,29 @@
 
   <span class="code-comment">// ── Map ────────────────────────────────────────────────────────────────────</span>
   map: {
-    matchFill:     '#00aaff',
-    unmatchedFill: '#e8e8e8',
+    matchFill:     null,  <span class="code-comment">// regions with data take the accent</span>
+    unmatchedFill: 'var(--chart-grid-color, #e8e8e8)',
     ocean:         'transparent',
-    border:        '#ffffff',
-    hoverBrighten: 1.3,       <span class="code-comment">// hover: 30% towards white</span>
-    graticule:     'rgba(0,0,0,0.08)',
+    border:        'var(--chart-bg, #ffffff)',
+    hoverBrighten: 1.3,   <span class="code-comment">// hover: 30% towards white</span>
+    graticule:     null,  <span class="code-comment">// the text at 8%</span>
   },
 
   <span class="code-comment">// ── Tooltip ────────────────────────────────────────────────────────────────</span>
   tooltip: {
-    bg:     '#ffffff',
-    border: '#e0e0e0',
-    text:   '#000000',
-    muted:  '#666666',
-    shadow: '0 2px 8px rgba(0,0,0,0.10)',
+    bg:     'var(--chart-tooltip-bg, #ffffff)',
+    border: 'var(--chart-tooltip-border, #e4e4e4)',
+    text:   'var(--chart-tooltip-text, #000000)',
+    muted:  'var(--chart-tooltip-muted, #666666)',
+    shadow: 'var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10))',
     header: { text: null, bg: null },
   },
 };</code></pre>
+<p>A color you set in a theme is a plain color, <code>'#e63946'</code>; a key left at its default follows the page. <code>defaultTheme.colors[0]</code> passed as a series color is the chain too: the chart draws it as the page's series color. Read the colors a chart drew from its formatter arguments, not from <code>defaultTheme</code>.</p>
 <h2 id="built-in-themes">Built-in themes</h2>
 <p>Two themes ship with the library.</p>
-<p><code>RareCharts.defaultTheme</code> — light background, clean grays, orange/blue accent palette. Works anywhere.</p>
-<p><code>RareCharts.darkTheme</code> — dark background, deep blacks, muted grids, orange accent. Looks sharp on dashboard UIs and dark-mode pages.</p>
+<p><code>RareCharts.defaultTheme</code> — the page's chart tokens where it has them; otherwise light: clean grays, a blue accent and the palette above. Works anywhere.</p>
+<p><code>RareCharts.darkTheme</code> — dark plates and labels for a dark card: deep blacks, muted grids, an orange accent (<code>#ff6200</code>) for a single series and map regions. It keeps the default palette for several series. It does not paint the card — the demo below sits on a black panel.</p>
 <pre class="text-content-caption"><code>new RareCharts.Line('#chart', {
   theme: RareCharts.darkTheme,
 }).setData(data);</code></pre>
@@ -513,7 +517,7 @@
 <pre class="text-content-caption"><code>const brandTheme = RareCharts.createTheme({
   accent:  '#e63946',
   colors:  ['#e63946', '#457b9d', '#a8dadc', '#1d3557'],
-  numericFont: '"JetBrains Mono", monospace',   <span class="code-comment">// the tooltip font</span>
+  numericFont: '"JetBrains Mono", monospace',   <span class="code-comment">// the tooltip's figures</span>
   tooltip: {
     bg:     '#1d3557',
     border: '#457b9d',
@@ -530,7 +534,7 @@ new RareCharts.Bar('#chart', {
 <p>Spreading it instead — <code>{ ...RareCharts.darkTheme, tooltip: { bg: '#000000' } }</code> — merges the tooltip onto the light defaults: black text on a black tooltip.</p>
 <h2 id="applying-theme-to-multiple-charts">Applying theme to multiple charts</h2>
 <p>Create the theme once and reuse it:</p>
-<pre class="text-content-caption"><code>const theme = RareCharts.createTheme({ accent: '#ff6200' });
+<pre class="text-content-caption"><code>const theme = RareCharts.createTheme({ accent: '#fa8c16' });
 
 new RareCharts.Line('#chart-a', { theme }).setData(dataA);
 new RareCharts.Bar('#chart-b',  { theme }).setData(dataB);
@@ -544,11 +548,14 @@ new RareCharts.Line('#chart', {
 }).setData(data);</code></pre>
 <h2 id="theme-token-reference">Theme token reference</h2>
 <h3 id="colors">Colors</h3>
+<p>The theme's colors, the CSS variable each one reaches, and the page token it reads when the theme leaves it at its default:</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
     <thead>
         <tr>
             <th>Token</th>
+            <th>CSS variable</th>
+            <th>Page token</th>
             <th>Default</th>
             <th>Dark</th>
             <th>Used for</th>
@@ -557,73 +564,131 @@ new RareCharts.Line('#chart', {
     <tbody>
         <tr>
             <td><code>bg</code></td>
-            <td><code>var(--bg-color, #ffffff)</code></td>
+            <td><code>--rc-bg</code></td>
+            <td><code>--chart-bg</code>, then <code>--bg-color</code></td>
+            <td><code>#ffffff</code></td>
             <td><code>#0a0a0a</code></td>
-            <td>Page background under Rare Styles, white otherwise. Plates behind last-value and annotation labels, label backdrops and halos (the tooltip background is <code>tooltip.bg</code>)</td>
+            <td>Plates behind last-value and annotation labels, label backdrops and halos, the Graph tool buttons and full screen (the tooltip background is <code>tooltip.bg</code>)</td>
         </tr>
         <tr>
             <td><code>surface</code></td>
-            <td><code>#f5f5f5</code></td>
+            <td><code>--rc-surface</code></td>
+            <td>mixed from <code>--chart-bg</code> and <code>--chart-text-color</code></td>
+            <td><code>null</code>: the background with 4% of the text, <code>#f5f5f5</code> on white</td>
             <td><code>#141414</code></td>
             <td>Graph node fills, flow lane bands</td>
         </tr>
         <tr>
             <td><code>grid</code></td>
-            <td><code>#e8e8e8</code></td>
+            <td><code>--rc-grid</code></td>
+            <td><code>--chart-grid-color</code></td>
+            <td><code>#e4e4e4</code></td>
             <td><code>#666666</code></td>
-            <td>Horizontal grid lines</td>
+            <td>Horizontal grid lines, the Gauge track</td>
         </tr>
         <tr>
             <td><code>border</code></td>
+            <td><code>--rc-border</code></td>
+            <td><code>--chart-axis-color</code></td>
             <td><code>#cccccc</code></td>
             <td><code>#888888</code></td>
             <td>Axis lines, zero baseline</td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>
+            <td><code>--rc-crosshair</code></td>
+            <td>—</td>
             <td><code>#aaaaaa</code></td>
             <td><code>#3a3a3a</code></td>
             <td>Hover tracker line</td>
         </tr>
         <tr>
             <td><code>text</code></td>
+            <td><code>--rc-text</code></td>
+            <td><code>--chart-text-color</code></td>
             <td><code>#000000</code></td>
             <td><code>#e8e8e8</code></td>
-            <td>Primary labels, node labels, navigator strip tint and window</td>
+            <td>Title, subtitle, legend and source; primary labels, node labels; navigator strip tint and window</td>
         </tr>
         <tr>
             <td><code>muted</code></td>
+            <td><code>--rc-muted</code></td>
+            <td><code>--chart-label-color</code></td>
             <td><code>#666666</code></td>
             <td><code>#888888</code></td>
-            <td>Axis tick labels, secondary text, fallback link color</td>
-        </tr>
-        <tr>
-            <td><code>positive</code></td>
-            <td><code>#389e0d</code></td>
-            <td><code>#389e0d</code></td>
-            <td>Not read by any chart — a named color for your own code (a <code>tooltipFormat</code>, a page header)</td>
-        </tr>
-        <tr>
-            <td><code>negative</code></td>
-            <td><code>#ff0000</code></td>
-            <td><code>#ff0000</code></td>
-            <td>Not read by any chart — a named color for your own code</td>
+            <td>Axis tick labels, the note, secondary text, fallback link color</td>
         </tr>
         <tr>
             <td><code>accent</code></td>
-            <td><code>#00aaff</code></td>
+            <td><code>--rc-accent</code></td>
+            <td><code>--chart-series-1</code></td>
+            <td><code>#1677ff</code></td>
             <td><code>#ff6200</code></td>
-            <td>Single-series default, highlights</td>
+            <td>Single-series default, highlights, map regions with data, the Log toggle when on</td>
         </tr>
         <tr>
             <td><code>colors</code></td>
-            <td>6-color array</td>
+            <td>—</td>
+            <td><code>--chart-series-1</code> … <code>--chart-series-6</code></td>
+            <td><code>#1677ff</code>, <code>#fa8c16</code>, <code>#00c97a</code>, <code>#ffcc00</code>, <code>#cc44ff</code>, <code>#ff0000</code></td>
             <td>same</td>
             <td>Multi-series palette, node group colors</td>
         </tr>
     </tbody>
 </table>
 </div>
+<p>The range buttons and focus rings have CSS variables only. A theme with a background of its own (<code>darkTheme</code>) sets the buttons from its colors: labels in <code>muted</code>, borders in <code>border</code>, the pressed button in <code>text</code> on <code>bg</code>.</p>
+<div class="table-scroll card-caption">
+<table class="table-bordered">
+    <thead>
+        <tr>
+            <th>CSS variable</th>
+            <th>Page token</th>
+            <th>Default</th>
+            <th>Used for</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>--rc-control-text</code></td>
+            <td><code>--chart-control-text</code>, then <code>--text-color-light</code></td>
+            <td><code>#666666</code></td>
+            <td>Range button labels</td>
+        </tr>
+        <tr>
+            <td><code>--rc-control-border</code></td>
+            <td><code>--chart-control-border</code>, then <code>--border-color</code></td>
+            <td><code>#cccccc</code></td>
+            <td>Range button and Graph tool borders</td>
+        </tr>
+        <tr>
+            <td><code>--rc-control-hover-border</code></td>
+            <td><code>--chart-control-hover-border</code>, then <code>--primary-color</code></td>
+            <td><code>#000000</code></td>
+            <td>The border of a hovered or pressed range button</td>
+        </tr>
+        <tr>
+            <td><code>--rc-control-active-text</code></td>
+            <td><code>--chart-control-active-text</code>, then <code>--primary-text-color</code></td>
+            <td><code>#000000</code></td>
+            <td>The label of a hovered or pressed range button</td>
+        </tr>
+        <tr>
+            <td><code>--rc-control-active-bg</code></td>
+            <td><code>--chart-control-active-bg</code>, then <code>--white</code></td>
+            <td><code>#ffffff</code></td>
+            <td>The background of the pressed range button</td>
+        </tr>
+        <tr>
+            <td><code>--rc-focus-ring</code></td>
+            <td><code>--chart-focus-ring</code></td>
+            <td><code>currentColor</code></td>
+            <td>Keyboard focus rings: legend items, the Graph breadcrumbs and "+N more" list, Graph, Sankey and flow nodes, flow and MapFlow ties</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<p>On Rare Styles <code>v0.7.2</code> the focus rings are blue, its <code>--focus-ring-color</code>; elsewhere they take the text color.</p>
 <h3 id="typography">Typography</h3>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -638,17 +703,12 @@ new RareCharts.Line('#chart', {
         <tr>
             <td><code>font</code></td>
             <td><code>var(--rc-font-family, "Fira Sans", system-ui, …, sans-serif)</code></td>
-            <td>Tooltip font when <code>numericFont</code> is unset</td>
-        </tr>
-        <tr>
-            <td><code>fontSize</code></td>
-            <td><code>var(--rc-font-size-sm, 14px)</code></td>
-            <td>Not used — the tooltip size is CSS. Removal at 1.0</td>
+            <td>The tooltip's words: names, labels, titles</td>
         </tr>
         <tr>
             <td><code>numericFont</code></td>
             <td><code>var(--rc-font-family-numeric, "Cousine", ui-monospace, …, monospace)</code></td>
-            <td>Tooltip font family</td>
+            <td>The tooltip's figures: values, percentages, counts (<code>.rc-num</code>)</td>
         </tr>
     </tbody>
 </table>
@@ -666,13 +726,13 @@ new RareCharts.Line('#chart', {
     <tbody>
         <tr>
             <td><code>--rc-font-family</code></td>
-            <td><code>"Fira Sans", system-ui, …, sans-serif</code></td>
-            <td>Chart font: title, legend, source, note, buttons, SVG text</td>
+            <td><code>--chart-font-family</code>, then <code>"Fira Sans", system-ui, …, sans-serif</code></td>
+            <td>Chart font: title, legend, source, note, buttons, SVG text, the tooltip</td>
         </tr>
         <tr>
             <td><code>--rc-font-family-numeric</code></td>
-            <td><code>"Cousine", ui-monospace, …, monospace</code></td>
-            <td>Numeric font for values and axes</td>
+            <td><code>--chart-font-family-numeric</code>, then <code>"Cousine", ui-monospace, …, monospace</code></td>
+            <td>Values and axes, the navigator's time labels (10px), the tooltip's figures</td>
         </tr>
         <tr>
             <td><code>--rc-font-size</code></td>
@@ -704,15 +764,11 @@ new RareCharts.Line('#chart', {
             <td><code>32px</code></td>
             <td><code>MultiChart</code> grid gap, right-hand legend offset</td>
         </tr>
-        <tr>
-            <td><code>--rc-scale-btn-fill</code></td>
-            <td><code>#ccc</code></td>
-            <td>Half fill of the Lin/Log button</td>
-        </tr>
     </tbody>
 </table>
 </div>
-<p>These are RareCharts variables, not host-site variables: a host's spacing scale or page font does not change a chart. If you want a different type system, override them as above. Of the theme's fonts, only <code>numericFont</code> (or <code>font</code> when it is unset) is read — the tooltip font family; the chart text follows the variables.</p>
+<p>Line heights are the chart's own on any page: 24px for the title, the tooltip rows and the controls, 1.3 for the source.</p>
+<p>These are RareCharts variables, not host-site variables: a host's spacing scale does not change a chart. The fonts read the page's <code>--chart-font-family</code> and <code>--chart-font-family-numeric</code> first — Rare Styles <code>v0.7.2</code> sets them — then fall back to Fira Sans and Cousine. If you want a different type system, override the variables as above. Of the theme's fonts, <code>font</code> sets the tooltip's words and <code>numericFont</code> its figures; the chart text follows the variables.</p>
 <h3 id="sizing">Sizing</h3>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
@@ -754,6 +810,7 @@ new RareCharts.Line('#chart', {
     <thead>
         <tr>
             <th>Token</th>
+            <th>CSS variable</th>
             <th>Default</th>
             <th>Dark</th>
             <th>Used for</th>
@@ -762,51 +819,58 @@ new RareCharts.Line('#chart', {
     <tbody>
         <tr>
             <td><code>map.matchFill</code></td>
-            <td><code>#00aaff</code></td>
-            <td><code>#ff6200</code></td>
+            <td>—</td>
+            <td><code>null</code>: the accent, <code>#1677ff</code></td>
+            <td><code>null</code>: the accent, <code>#ff6200</code></td>
             <td>Regions with data and no <code>color</code> of their own (the <code>matchFill</code> option wins)</td>
         </tr>
         <tr>
             <td><code>map.unmatchedFill</code></td>
-            <td><code>#e8e8e8</code></td>
+            <td><code>--rc-map-unmatched-fill</code></td>
+            <td><code>var(--chart-grid-color, #e8e8e8)</code></td>
             <td><code>#1e1e2e</code></td>
             <td>Regions without data (the <code>defaultFill</code> option wins)</td>
         </tr>
         <tr>
             <td><code>map.border</code></td>
-            <td><code>#ffffff</code></td>
+            <td><code>--rc-map-border</code></td>
+            <td><code>var(--chart-bg, #ffffff)</code></td>
             <td><code>#444455</code></td>
             <td>Region borders (the <code>borderColor</code> option wins)</td>
         </tr>
         <tr>
             <td><code>map.ocean</code></td>
+            <td>—</td>
             <td><code>transparent</code></td>
             <td><code>transparent</code></td>
             <td>Background behind the land (the <code>oceanColor</code> option wins)</td>
         </tr>
         <tr>
             <td><code>map.hoverBrighten</code></td>
+            <td>—</td>
             <td><code>1.3</code></td>
             <td><code>1.2</code></td>
             <td>Hover on a region with data: its fill moves (factor − 1) of the way towards white; a very light fill darkens a little instead (the <code>hoverFill</code> option wins; <code>1</code> turns it off)</td>
         </tr>
         <tr>
             <td><code>map.graticule</code></td>
-            <td><code>rgba(0,0,0,0.08)</code></td>
+            <td><code>--rc-map-graticule</code></td>
+            <td><code>null</code>: the text at 8%, <code>rgba(0,0,0,0.08)</code> on black</td>
             <td><code>rgba(255,255,255,0.06)</code></td>
             <td>The 10° grid drawn with the <code>graticule</code> option</td>
         </tr>
     </tbody>
 </table>
 </div>
-<p><code>createTheme</code> merges <code>map</code> deeply, so <code>createTheme({ map: { matchFill: '#ff6200' } })</code> recolors every map; changing <code>accent</code> alone does not.</p>
+<p><code>createTheme</code> merges <code>map</code> deeply, so <code>createTheme({ map: { matchFill: '#fa8c16' } })</code> recolors every map. With <code>matchFill</code> left <code>null</code>, changing <code>accent</code> recolors maps too.</p>
 <h3 id="tooltip">Tooltip</h3>
-<p>The <code>tooltip</code> sub-object colors every built-in tooltip, independently from the main chart:</p>
+<p>The <code>tooltip</code> sub-object colors every built-in tooltip, independently from the main chart. By default the tooltip is a light popover, on a dark card too:</p>
 <div class="table-scroll card-caption">
 <table class="table-bordered">
     <thead>
         <tr>
             <th>Token</th>
+            <th>CSS variable</th>
             <th>Default</th>
             <th>Dark</th>
             <th>Used for</th>
@@ -815,42 +879,49 @@ new RareCharts.Line('#chart', {
     <tbody>
         <tr>
             <td><code>tooltip.bg</code></td>
-            <td><code>#ffffff</code></td>
+            <td><code>--rc-tooltip-bg</code></td>
+            <td><code>var(--chart-tooltip-bg, #ffffff)</code></td>
             <td><code>#1a1a1a</code></td>
             <td>Background</td>
         </tr>
         <tr>
             <td><code>tooltip.border</code></td>
-            <td><code>#e0e0e0</code></td>
+            <td><code>--rc-tooltip-border</code></td>
+            <td><code>var(--chart-tooltip-border, #e4e4e4)</code></td>
             <td><code>#2e2e2e</code></td>
             <td>1px border</td>
         </tr>
         <tr>
             <td><code>tooltip.text</code></td>
-            <td><code>#000000</code></td>
+            <td><code>--rc-tooltip-text</code></td>
+            <td><code>var(--chart-tooltip-text, #000000)</code></td>
             <td><code>#e8e8e8</code></td>
-            <td>Values, names, titles, links</td>
+            <td>Names, values, titles, links</td>
         </tr>
         <tr>
             <td><code>tooltip.muted</code></td>
-            <td><code>#666666</code></td>
+            <td><code>--rc-tooltip-muted</code></td>
+            <td><code>var(--chart-tooltip-muted, #666666)</code></td>
             <td><code>#888888</code></td>
-            <td>Dates, percentages, counts — every secondary row</td>
+            <td>The date on top, notes, percentages, counts — every secondary line</td>
         </tr>
         <tr>
             <td><code>tooltip.shadow</code></td>
-            <td><code>0 2px 8px rgba(0,0,0,0.10)</code></td>
+            <td><code>--rc-tooltip-shadow</code></td>
+            <td><code>var(--chart-tooltip-shadow, 0 2px 8px rgba(0,0,0,0.10))</code></td>
             <td><code>0 2px 12px rgba(0,0,0,0.55)</code></td>
             <td>Box shadow</td>
         </tr>
         <tr>
             <td><code>tooltip.header.text</code></td>
+            <td><code>--rc-tooltip-header-text</code></td>
             <td><code>null</code></td>
             <td><code>null</code></td>
-            <td>Color of the header — the row naming what is hovered</td>
+            <td>Color of the header — the line naming what is hovered</td>
         </tr>
         <tr>
             <td><code>tooltip.header.bg</code></td>
+            <td><code>--rc-tooltip-header-bg</code></td>
             <td><code>null</code></td>
             <td><code>null</code></td>
             <td>A band behind the header, across the top of the tooltip</td>
@@ -858,13 +929,13 @@ new RareCharts.Line('#chart', {
     </tbody>
 </table>
 </div>
-<p>The header is the date in Line, DualAxes and TimeSeries, the label in Bar, HierarchicalBar and Donut, the title in Map, MapFlow, Sankey and Graph. With <code>header.text</code> left <code>null</code> each keeps its role: a date is muted, a title bold in <code>tooltip.text</code>. A data color — a Donut slice label — wins over <code>header.text</code>.</p>
+<p>The header is the date on top in Line, DualAxes, TimeSeries and a dated Bar, the category in a stacked Bar, and the bold title in Map (a region without a value), MapFlow, Sankey and Graph; Bar, HierarchicalBar, Donut, Pie and Gauge show rows only. With <code>header.text</code> left <code>null</code> each keeps its role: a date is muted, a title bold in <code>tooltip.text</code>.</p>
 <p>A dark tooltip on a light chart sets the secondary color too:</p>
 <pre class="text-content-caption"><code>theme: {
   tooltip: { bg: '#1a1a1a', border: '#333333', text: '#e8e8e8', muted: '#888888' },
 }</code></pre>
-<p>The theme reaches the tooltip as custom properties set on its element: <code>--rc-tooltip-font</code>, <code>--rc-tooltip-text</code>, <code>--rc-tooltip-muted</code>, <code>--rc-tooltip-bg</code>, <code>--rc-tooltip-border</code>, <code>--rc-tooltip-shadow</code>, <code>--rc-tooltip-header-text</code> and <code>--rc-tooltip-header-bg</code>.</p>
-<p>The size (13px), weights and spacing of the tooltip are CSS; a visible tooltip (<code>.is-visible</code>) is drawn at 90% opacity. Its rows carry classes — <code>.rc-tooltip-header</code>, <code>.rc-tooltip-title</code>, <code>.rc-tooltip-muted</code>, <code>.rc-tooltip-sub</code>, <code>.rc-tooltip-small</code>, <code>.rc-tooltip-kind</code>, <code>.rc-tooltip-value</code>, <code>.rc-tooltip-section</code>, and <code>.rc-tooltip-body</code> for the text of relation tooltips — and a page rule that outranks the library's <code>.rc-tooltip</code> restyles any of it, colors included: <code>.rc-chart .rc-tooltip { font-size: 14px; }</code>. A plain <code>.rc-tooltip { … }</code> loses the tie, as with <code>.rc-chart</code> above.</p>
+<p>The tooltip inherits these variables from the chart's element: a theme writes its own values there, and without them the tooltip reads the page's <code>--chart-tooltip-*</code>. A theme's fonts arrive the same way, as <code>--rc-tooltip-font</code> (words) and <code>--rc-tooltip-font-numeric</code> (figures).</p>
+<p>The tooltip text is 14px on a 24px line, the date on top and the notes 13px; a visible tooltip (<code>.is-visible</code>) is opaque. Its rows carry classes — <code>.rc-tooltip-header</code>, <code>.rc-tooltip-row</code>, <code>.rc-tooltip-swatch</code>, <code>.rc-tooltip-label</code>, <code>.rc-tooltip-value</code>, <code>.rc-tooltip-note</code>, <code>.rc-num</code> and the others listed under <a href="/charts/settings/#custom-tooltip">Custom tooltip</a>, and <code>.rc-tooltip-kind</code>, <code>.rc-tooltip-section</code>, <code>.rc-tooltip-small</code> and <code>.rc-tooltip-body</code> in the relation tooltips. A page rule that outranks the library's <code>.rc-tooltip</code> restyles any of it, colors included: <code>.rc-chart .rc-tooltip { border-radius: 4px; }</code>. A plain <code>.rc-tooltip { … }</code> loses the tie, as with <code>.rc-chart</code> above.</p>
 <script src="/assets/charts/rare-charts.js"></script>
 <script src="/assets/charts/examples/line/line-chart-revenue-black-theme.js"></script>
 
@@ -877,7 +948,7 @@ new RareCharts.Line('#chart', {
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

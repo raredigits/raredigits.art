@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -497,7 +497,7 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <li><code>setTimeframe(key)</code> applies a timeframe from code — a key of <code>timeframes</code> or a preset such as <code>'1Y'</code> — as its button does, and highlights the button.</li>
 <li><code>getView()</code> returns the currently visible <code>[start, end]</code>.</li>
 <li><code>onViewChange(fn)</code> lets external UI stay synchronized with the chart’s active date window.</li>
-<li><code>scaleToggle: true</code> adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels; <code>onScaleChange(fn)</code> reports each switch (see Logarithmic scale below).</li>
+<li><code>scaleToggle: true</code> adds a Log toggle, pinned right in the same header row, above the Y-axis labels; <code>onScaleChange(fn)</code> reports each switch (see Logarithmic scale below).</li>
 </ul>
 <p>If you want the built-in mini navigator as well, enable it explicitly:</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
@@ -530,21 +530,21 @@ chart.setView([new Date('2025-01-01'), new Date('2025-12-31')]);</code>
 <p>This moves the Y axis to the left while preserving all formatting and scaling logic.</p>
 <div id="line-chart-left-axis-demo" class="panel panel--bordered text-content-caption"></div>
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
-<p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. Switch the demo between Lin and Log to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
+<p>For long-horizon prices and indices, set <code>yScale: 'log'</code>. On a linear axis the same percentage move looks bigger the higher the series stands: the index below falls by half twice, in 2000 and in 2022, but on a linear scale the first crash is a ripple near the floor and the second a collapse. On a log scale equal percentage moves get equal height — both crashes look the same size, because they are. The demo opens on a linear axis; press Log to compare. Ticks fall on powers of ten (10, 100, 1k, 10k, 100k); a range narrower than two powers gets 1-2-5 steps instead (20, 50, 100). The margin above and below the data is a factor of its span rather than a share of the range, so both ends get the same room.</p>
 <p>Zero and negative values have no place on a log scale: they are skipped (the line joins its neighbours) and the chart warns once in the console. Horizontal annotations at or below zero are dropped; an area fills down to the bottom of the plot.</p>
-<p>The demo's Lin/Log button is built in: <code>scaleToggle: true</code> pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. The button is split on the diagonal so it does not read as one more period. It names the current scale, flips it on click, and <code>onScaleChange(fn)</code> tells the page when the reader switches. The same switch works on <code>TimeSeries</code> and <code>DualAxes</code>.</p>
+<p>The demo's Log toggle is built in: <code>scaleToggle: true</code> pins it to the top right of the chart header, above the Y-axis labels; timeframe buttons, when present, keep their place to its left. It is filled while the axis is logarithmic and transparent while it is linear; a click flips the scale, and <code>onScaleChange(fn)</code> tells the page when the reader switches. The same switch works on <code>TimeSeries</code> and <code>DualAxes</code>.</p>
 <div id="line-chart-log-demo" class="panel panel--bordered text-content-caption"></div>
-<br>
 <pre class="text-content-caption"><code>const chart = new RareCharts.Line('#chart', {
     yScale: 'log',
-    scaleToggle: true,  <span class="code-comment">// or { labels: { … } }</span>
+    scaleToggle: true,  <span class="code-comment">// a Log toggle; or { labels: { log: '…' } }</span>
 });
-<p>chart.onScaleChange(({ scale }) =&gt; console.log(scale));</p></code></pre><p></p>
-<p>The scale can also change from code, between data swaps — for example log on the full history, linear on the last year. <code>setYScale()</code> redraws, renames the button and returns the chart, so chaining it before <code>setData()</code> changes both in one paint. Pass <code>{ silent: true }</code> to skip the event:</p>
+
+chart.onScaleChange(({ scale }) => console.log(scale));</code></pre>
+<p>The scale can also change from code, between data swaps — for example log on the full history, linear on the last year. <code>setYScale()</code> redraws, fills or clears the Log toggle and returns the chart, so chaining it before <code>setData()</code> changes both in one paint. Pass <code>{ silent: true }</code> to skip the event:</p>
 <pre class="text-content-caption"><code>chart.setYScale('log').setData(allHistory);
 chart.setYScale('linear').setData(lastYear);</code></pre>
 <h3 id="x-axis-formatting">X axis formatting</h3>
-<p><code>xTickFormat</code> is a function <code>(date) =&gt; string</code>. The default format is MM/DD. For business dashboards you often want clearer labels, especially for longer ranges, for example:</p>
+<p><code>xTickFormat</code> is a function <code>(date) =&gt; string</code>. By default the labels follow the span in view, as on TimeSeries and Bar: <code>'%H:%M'</code> up to 36 hours, <code>'%b %d'</code> up to 92 days, <code>'%b'</code> up to a year, <code>&quot;%b '%y&quot;</code> up to five years, <code>'%Y'</code> beyond. To fix one format whatever the span, pass your own, for example:</p>
 <pre class="text-content-caption"><code>xTickFormat: RareCharts.d3.timeFormat('%b %d')   <span class="code-comment">// Jan 05</span>
 <span class="code-comment">// or</span>
 xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2026-01</span></code>
@@ -557,8 +557,11 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
 <h3 id="crosshair-and-tooltip">Crosshair and tooltip</h3>
 <p><code>crosshair</code> is enabled by default. It provides a vertical tracker line, dots at the nearest points, and a tooltip.</p>
 <p>You can override tooltip content via:</p>
-<pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, series, value, color, fmt }, …] }) => html</code></pre>
+<pre class="text-content-caption"><code>tooltipFormat: ({ date, points: [{ name, series, type, color, date, value, fmt }, …] }) => html</code></pre>
+<p>One point per series that covers the hovered date; a band has <code>lower</code> and <code>upper</code> in place of <code>value</code>.</p>
 <p>If you need a plain-text tooltip, return simple HTML with minimal markup, or keep the default and let the library handle it.</p>
+<h3 id="legend">Legend</h3>
+<p>A <code>legend</code> item that names a series — by <code>series</code>, else <code>name</code>, else <code>label</code> — hides and shows it: a click toggles it, a double click keeps it alone, <em>Show all</em> brings every series back. A band is a series too. A hidden series leaves the plot, its end label and markers, the crosshair and the tooltip; the Y axis fits the series still shown (<code>legendRescale: false</code> keeps it on all of them), and the time axis, the timeframes, the navigator and the annotations stay. <code>chart.setSeriesVisible(['Revenue'])</code> sets it from code, after <code>setData</code>. More: <a href="/charts/settings/#interactive-legend">Interactive legend</a>.</p>
 <h3 id="line-shape-area-fills-and-markers">Line shape, area fills, and markers</h3>
 <p>Line interpolation is controlled by curve (default <code>monotone</code>). You can use <code>linear</code>, <code>basis</code>, <code>cardinal</code>, <code>step</code>, and other D3 curve names supported by the library. If you choose <code>cardinal</code>, you can tune the smoothing via <code>curveTension</code> (0–1, default 0).</p>
 <p>Area under the line can be enabled globally via <code>area: true</code>. <code>areaOpacity</code> defaults to 0.12. <code>areaBaseline</code> supports <code>zero</code>, <code>min</code>, or a numeric value; the fill always ends inside the plot.</p>
@@ -603,6 +606,12 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
             <td><code>'right'</code> | <code>'left'</code></td>
             <td><code>'right'</code></td>
             <td>Side the Y axis is rendered on. End labels stay on the right either way.</td>
+        </tr>
+        <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone a date string without a zone of its own is read in (the rows, <code>annotations</code>, the view bounds), the timeframes cut in, and the axis and the tooltip name dates in. A <code>Date</code>, epoch milliseconds or an ISO string with <code>Z</code> or an offset stays that instant. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>.</td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -653,7 +662,7 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
             <td><code>scaleToggle</code></td>
             <td>boolean | object</td>
             <td><code>false</code></td>
-            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> or <code>{ labels: { linear, log } }</code>. Each switch fires <code>onScaleChange</code>.</td>
+            <td>A Log toggle pinned to the top right of the header, above the Y-axis labels: filled while the axis is logarithmic, transparent while it is linear; a click flips the scale. <code>true</code> or <code>{ labels: { log } }</code>, <code>labels.log</code> being its text. Each switch fires <code>onScaleChange</code>.</td>
         </tr>
         <tr>
             <td><code>xTicks</code></td>
@@ -703,7 +712,7 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
         <tr>
             <td><code>xTickFormat</code></td>
             <td>function</td>
-            <td><code>'%m/%d'</code></td>
+            <td>by span</td>
             <td><code>(date) =&gt; string</code> — controls X tick labels.</td>
         </tr>
         <tr class="table-section">
@@ -976,7 +985,7 @@ xTickFormat: RareCharts.d3.timeFormat('%Y-%m')   <span class="code-comment">// 2
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>

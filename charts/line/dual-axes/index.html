@@ -25,7 +25,7 @@
     <link rel="icon" href="/assets/img/favicon/favicon-32.png" sizes="32x32">
     <link rel="apple-touch-icon" href="/assets/img/favicon/apple-touch-icon.png" sizes="180x180">
     <script>
-      if (location.hostname !== "localhost") {
+      if (location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
         var s = document.createElement('script');
         s.async = true;
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-FM752YW3F4";
@@ -450,11 +450,15 @@
 <h3 id="axis-behavior-and-formatting">Axis behavior and formatting</h3>
 <p>Both axes are configured independently. You can set titles (<code>y1Title</code>, <code>y2Title</code>), control tick formatting (<code>y1TickFormat</code>, <code>y2TickFormat</code>), and, when needed, override the visible ranges (<code>y1Domain</code>, <code>y2Domain</code>) to keep the chart stable and comparable across screenshots, reports, or multiple panels.</p>
 <p>Axis titles are meant to be terse units (<code>PRICE</code>, <code>N · K HLX</code>). A title that would run past its axis margin is trimmed with an ellipsis — measured by rendered width, so a short label that fits is left alone — with the full text on hover and a one-time console hint. Set <code>axisTitleMaxLength</code> to cap it explicitly, or widen <code>margin</code> if you need more room.</p>
-<p>In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine. That is also the default <code>y2TickFormat</code>: a sign, two decimals, and a plain <code>0</code> near zero.</p>
+<p>In this example, the spread axis uses a signed format and treats very small values as clean zero, so you do not get the infamous +0.00 noise that makes charts look broken even when the data is fine. Without one, <code>y2TickFormat</code> labels as <code>Line</code> does: ticks by their step (<code>0.5</code>, <code>65k</code>), end labels and tooltip values with three significant digits.</p>
 <h3 id="logarithmic-scale">Logarithmic scale</h3>
-<p>Each axis has its own scale: <code>y1Scale</code> and <code>y2Scale</code> take <code>'linear'</code> (default) or <code>'log'</code>, and <code>setYScale(type, { axis })</code> switches <code>'y1'</code>, <code>'y2'</code> or <code>'both'</code>. <code>scaleToggle</code> adds a Lin/Log button pinned to the top right of the header, above the Y-axis labels; <code>onScaleChange(fn)</code> reports every switch. A worked example — a long-horizon index on a log Y1 next to a signed yearly change on Y2 — is on the <a href="/charts/combined/#logarithmic-scale">Combined</a> page.</p>
+<p>Each axis has its own scale: <code>y1Scale</code> and <code>y2Scale</code> take <code>'linear'</code> (default) or <code>'log'</code>, and <code>setYScale(type, { axis })</code> switches <code>'y1'</code>, <code>'y2'</code> or <code>'both'</code>. <code>scaleToggle</code> adds a Log toggle pinned to the top right of the header, above the Y-axis labels, filled while the axis is logarithmic; <code>onScaleChange(fn)</code> reports every switch. A worked example — a long-horizon index on a log Y1 next to a signed yearly change on Y2 — is on the <a href="/charts/combined/#logarithmic-scale">Combined</a> page.</p>
+<h3 id="bands">Bands</h3>
+<p>A series with <code>type: 'band'</code> draws a ribbon on its axis, as on <a href="/charts/line/band/">Line</a>: <code>{ name, type: 'band', axis: 'y1', values: [{ date, lower, upper }] }</code> — a forecast range, a min–max envelope. It sits behind the bars and the lines (opacity <code>fillOpacity</code>, else <code>areaOpacity</code>, else 0.12), its axis fits both edges, the crosshair reports its range, and the legend toggles it by name. End labels, markers and the navigator leave it out.</p>
 <h3 id="interaction">Interaction</h3>
 <p>Dual Axes supports cursor inspection through a crosshair and a tooltip. The tooltip is fully customizable through <code>tooltipFormat: ({ date, points }) =&gt; html</code>, so you can present values in your product’s language instead of whatever generic tooltip someone thought was “good enough”.</p>
+<h3 id="legend">Legend</h3>
+<p>The header <code>legend</code> is not built from the series: pass it, and every item that names a series (by <code>series</code>, else <code>name</code>, else <code>label</code>) hides and shows it. Each axis then fits its own series still shown. An axis whose series are all hidden keeps their range, so its labels stay in its units, and the bars left re-pack in their slots while the time axis stays put. <code>legendRescale: false</code> keeps both axes on every series; <code>setSeriesVisible(names | null)</code> sets the legend from code. More: <a href="/charts/settings/#interactive-legend">Interactive legend</a>.</p>
 <h3 id="built-in-timeframe-controls">Built-in timeframe controls</h3>
 <p>Because <code>DualAxes</code> is inherently time-based, it can also render the shared timeframe switcher in its own chart header:</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
@@ -472,7 +476,7 @@ chart.setData(series);</code></pre>
 <li><code>getView()</code> returns the currently visible <code>[start, end]</code>.</li>
 <li><code>setTimeframe(key, { silent })</code> selects a timeframe from code, as a button click does.</li>
 <li><code>onViewChange(fn)</code> calls <code>fn([start, end])</code> (Dates, clamped to the data; a window entirely outside the data is passed as given) after every view change — a button, the end of a navigator drag, <code>setTimeframe()</code> or <code>setView()</code> — unless that call passed <code>{ silent: true }</code>, so external UI stays synchronized.</li>
-<li><code>scaleToggle</code> adds a Lin/Log button, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).</li>
+<li><code>scaleToggle</code> adds a Log toggle, pinned right in the same header row, above the Y-axis labels (see Logarithmic scale above).</li>
 </ul>
 <p>Example:</p>
 <pre class="text-content-caption"><code>const chart = new RareCharts.DualAxes('#chart', {
@@ -523,6 +527,12 @@ chart.setData(series);</code></pre>
                 Gap in px between the plot edge and the outermost mark on both ends of the X scale.<br>
                 With bars, the scale is inset by half the widest bar or cluster, so the first and last bars are drawn whole and <code>xPad</code> is the gap to their outer edge; lines start and end at the bar centres.
             </td>
+        </tr>
+        <tr>
+            <td><code>timeZone</code></td>
+            <td>string</td>
+            <td><code>'local'</code></td>
+            <td><code>'local'</code> or <code>'UTC'</code>: the zone a date string without a zone of its own is read in (the rows, <code>annotations</code>, the view bounds), the timeframes cut in, and the axis and the tooltip name dates in. A <code>Date</code>, epoch milliseconds or an ISO string with <code>Z</code> or an offset stays that instant. See <a href="/charts/settings/#dates-and-time-zones">Dates and time zones</a>.</td>
         </tr>
         <tr>
             <td><code>timeframes</code></td>
@@ -578,8 +588,8 @@ chart.setData(series);</code></pre>
         <tr>
             <td><code>y1TickFormat</code></td>
             <td>function</td>
-            <td><code>,.2f</code> (log: <code>.3~s</code>)</td>
-            <td><code>(value) =&gt; string</code> — Y1 tick labels, also used for the Y1 end labels and tooltip values.</td>
+            <td>as Line (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y1 tick labels, also used for the Y1 end labels and tooltip values. By default ticks are labelled by their step, as on Line (<code>65k</code>, <code>0.5</code>), end labels and tooltip values with three significant digits (<code>1.23k</code>).</td>
         </tr>
         <tr>
             <td><code>y1LabelsOnly</code></td>
@@ -620,8 +630,8 @@ chart.setData(series);</code></pre>
         <tr>
             <td><code>y2TickFormat</code></td>
             <td>function</td>
-            <td><code>+.2f</code>, <code>0</code> near zero (log: <code>.3~s</code>)</td>
-            <td><code>(value) =&gt; string</code> — Y2 tick labels, also used for the Y2 end labels and tooltip values.</td>
+            <td>as Line (log: <code>.3~s</code>)</td>
+            <td><code>(value) =&gt; string</code> — Y2 tick labels, also used for the Y2 end labels and tooltip values; the default as for <code>y1TickFormat</code>.</td>
         </tr>
         <tr>
             <td><code>y2LabelsOnly</code></td>
@@ -641,7 +651,7 @@ chart.setData(series);</code></pre>
         <tr>
             <td><code>xTickFormat</code></td>
             <td>function</td>
-            <td><code>'%m/%d'</code></td>
+            <td>by span</td>
             <td><code>(date) =&gt; string</code> — X tick labels. With the default format a view of a few days gets at most one tick per day, so a date is never repeated.</td>
         </tr>
         <tr class="table-section">
@@ -780,7 +790,7 @@ chart.setData(series);</code></pre>
             <td><code>scaleToggle</code></td>
             <td>boolean | <code>'y1'</code> | <code>'y2'</code> | <code>'both'</code> | object</td>
             <td><code>false</code></td>
-            <td>A Lin/Log button pinned to the top right of the header, above the Y-axis labels; it names the current scale and flips it. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both; or <code>{ axis, labels: { linear, log } }</code>. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
+            <td>A Log toggle pinned to the top right of the header, above the Y-axis labels: filled while the axis is logarithmic, transparent while it is linear; a click flips the scale. <code>true</code> drives Y1, <code>'y2'</code> the left axis, <code>'both'</code> both (filled while either is logarithmic); or <code>{ axis, labels: { log } }</code>, <code>labels.log</code> being its text. Each switch fires <code>onScaleChange({ scale, axis })</code>.</td>
         </tr>
         <tr>
             <td><code>crosshair</code></td>
@@ -956,7 +966,7 @@ chart.setData(series);</code></pre>
     <div>
       <p>&copy; 2023—2026 <a href="https://raredigits.io">Rare Digits</a> | 
       <a href="/legal/terms/">Terms of Use</a> | <a href="/legal/privacy/">Privacy Policy</a> |
-      Last release: <time datetime="2026-11-18T10:02:10.201Z">November 18, 2026</time></p>
+      Last release: <time datetime="2026-11-19T13:51:24.335Z">November 19, 2026</time></p>
     </div>
     <div class="row gap-md padding-y-sm font-size-lg">
       <a class="link-img" href="https://raredigits.io/about/contacts/"><span class="vendor-logo wa bw"></span></a>
