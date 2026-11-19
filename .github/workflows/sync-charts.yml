@@ -5,6 +5,15 @@ name: Sync Charts to rare-charts
 # version pins from these tags, and @latest only from semver tags (it stays on
 # v0.9.8 while tags are v0.9.8_N), so main pushes between releases never reach
 # CDN consumers. To release: bump version.json and push.
+#
+# The commit and the tag go up in one atomic push, then the GitHub Release is
+# made (RC-067). If a run fails after the push, the tag is there without its
+# Release, and a plain rerun skips a tagged version. Manual run
+# (workflow_dispatch) = dry run: the tests and the build, nothing published.
+# With `resume`, a manual run finishes a release whose tag exists — only if
+# the tag holds byte for byte the files this run built — and creates the
+# Release if it is missing. "Re-run failed jobs" on a failed run of the push
+# does the same, as release-css.yml does.
 
 on:
   push:
@@ -16,6 +25,17 @@ on:
       - 'assets/charts/examples/**'
       - 'assets/charts/data/**'
       - '.github/workflows/sync-charts.yml'
+  workflow_dispatch:
+    inputs:
+      resume:
+        description: "Finish a partly published release whose tag already exists (the tag must hold exactly the files this run builds)"
+        type: boolean
+        default: false
+
+# One release at a time; never cancel a release half way.
+concurrency:
+  group: sync-rare-charts
+  cancel-in-progress: false
 
 jobs:
   sync:
@@ -27,17 +47,33 @@ jobs:
         with:
           fetch-depth: 0 # test/size-baseline.test.js recomputes rows from older commits
 
+      # new: build and test (true), publish: push and release (true).
+      # A rerun of a failed push run (github.run_attempt > 1) resumes as a
+      # manual run with `resume` does: the tag step below checks the tag.
       - name: Check whether this version is already released
         id: release
         run: |
           VERSION=$(node -p "require('./assets/charts/src/version.json').version")
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          RESUME=${{ (github.event_name == 'workflow_dispatch' && inputs.resume) || (github.event_name == 'push' && github.run_attempt > 1) }}
           if git ls-remote --exit-code --tags https://github.com/raredigits/rare-charts.git "refs/tags/$VERSION" > /dev/null; then
-            echo "new=false" >> "$GITHUB_OUTPUT"
-            echo "$VERSION is already tagged in rare-charts — skipping sync. Bump version.json to release."
+            if [ "$RESUME" = "true" ]; then
+              echo "new=true" >> "$GITHUB_OUTPUT"
+              echo "publish=true" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is tagged — resuming: the tag must hold this build, the Release is made if missing."
+            elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+              echo "new=true" >> "$GITHUB_OUTPUT"
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is already released — dry run of the tests and the build only."
+            else
+              echo "new=false" >> "$GITHUB_OUTPUT"
+              echo "publish=false" >> "$GITHUB_OUTPUT"
+              echo "$VERSION is already tagged in rare-charts — skipping sync. Bump version.json to release."
+            fi
           else
             echo "new=true" >> "$GITHUB_OUTPUT"
-            echo "$VERSION is not tagged in rare-charts yet — releasing."
+            echo "publish=${{ github.event_name == 'push' }}" >> "$GITHUB_OUTPUT"
+            echo "$VERSION is not tagged in rare-charts yet — ${{ github.event_name == 'push' && 'releasing' || 'dry run' }}."
           fi
 
       - name: Setup Node.js
@@ -54,17 +90,46 @@ jobs:
         if: steps.release.outputs.new == 'true'
         run: npm run test:run
 
+      # The whole browser suite before the tag, as release-css runs it
+      # (maintainer, 2026-11-19): a change to a chart's DOM shows here, not at
+      # the next Rare Styles tag, whose tests read it too (RC-063). A clean
+      # checkout has no _site: build it first. About ten minutes.
+      - name: Build the site (CSS, RareCharts, Eleventy)
+        if: steps.release.outputs.new == 'true'
+        run: npm run build
+
+      - name: "Browser checks: the whole suite (headless Google Chrome)"
+        if: steps.release.outputs.new == 'true'
+        run: npm run test:browser:run
+
       - name: Build charts bundles
         if: steps.release.outputs.new == 'true'
         run: npm run charts:build
 
       - name: Clone rare-charts repo
-        if: steps.release.outputs.new == 'true'
+        if: steps.release.outputs.publish == 'true'
         run: |
           git clone https://x-access-token:${{ secrets.RARE_STYLES_PAT }}@github.com/raredigits/rare-charts.git temp-rare-charts
 
+      # A tag is never moved or rewritten. If it exists (an earlier run pushed
+      # it, then failed), the files below are copied over its tree: no change
+      # means it holds exactly this build, and only the Release is left to
+      # make; any change stops the run.
+      - name: Check out the existing tag, if any
+        id: tag
+        if: steps.release.outputs.publish == 'true'
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
+          if git -C temp-rare-charts ls-remote --exit-code --tags origin "refs/tags/$VERSION" > /dev/null; then
+            git -C temp-rare-charts fetch origin "refs/tags/$VERSION:refs/tags/$VERSION"
+            git -C temp-rare-charts checkout --quiet "refs/tags/$VERSION"
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Copy built files and examples to rare-charts
-        if: steps.release.outputs.new == 'true'
+        if: steps.release.outputs.publish == 'true'
         run: |
           rsync -av --delete assets/charts/examples/ temp-rare-charts/examples/
           rsync -av --delete assets/charts/data/ temp-rare-charts/data/
@@ -76,23 +141,50 @@ jobs:
           CHARTS_VERSION=$(node -p "require('./assets/charts/src/version.json').version")
           sed -i "s/{{ versions.charts }}/${CHARTS_VERSION}/g" temp-rare-charts/README.md
 
-      - name: Commit, tag & push to rare-charts
-        if: steps.release.outputs.new == 'true'
+      - name: The existing tag must hold exactly this build
+        if: steps.release.outputs.publish == 'true' && steps.tag.outputs.exists == 'true'
+        working-directory: temp-rare-charts
         run: |
-          cd temp-rare-charts
+          if [ -n "$(git status --porcelain)" ]; then
+            git status --short | head -20
+            echo "::error::${{ steps.release.outputs.version }} is already tagged in rare-charts with different files — tags are immutable, bump the version."
+            exit 1
+          fi
+          echo "The tag holds exactly this build — going on to the Release."
+
+      # The commit and the tag in one push: either both reach rare-charts or
+      # neither does (RC-067; `git push origin main --tags` could leave a tag
+      # without its commit on main, or the other way round).
+      - name: Commit, tag and push atomically
+        if: steps.release.outputs.publish == 'true' && steps.tag.outputs.exists == 'false'
+        working-directory: temp-rare-charts
+        run: |
+          VERSION="${{ steps.release.outputs.version }}"
           git config user.name "Rare Sync Bot"
           git config user.email "actions@github.com"
-          git add .
-          git commit -m "RareCharts ${{ steps.release.outputs.version }}" || echo "Nothing to commit"
-          git tag ${{ steps.release.outputs.version }}
-          git push origin main --tags
+          git add -A
+          git commit -m "RareCharts $VERSION" || echo "Tree unchanged — tagging the current state"
+          git tag -a "$VERSION" -m "RareCharts $VERSION"
+          git push --atomic origin main "refs/tags/$VERSION"
 
       # The tag drives jsDelivr; the GitHub Release is the human-facing card on
       # the Releases page. Title and notes are lifted from the CHANGELOG entry.
+      # Idempotent: made only if the tag has none yet.
       - name: Create GitHub Release
-        if: steps.release.outputs.new == 'true'
+        if: steps.release.outputs.publish == 'true'
         run: |
           VERSION="${{ steps.release.outputs.version }}"
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' \
+            -H "Authorization: Bearer ${{ secrets.RARE_STYLES_PAT }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/raredigits/rare-charts/releases/tags/$VERSION")
+          if [ "$CODE" = "200" ]; then
+            echo "Release for $VERSION already exists."
+            exit 0
+          elif [ "$CODE" != "404" ]; then
+            echo "::error::GitHub API returned $CODE for the $VERSION release"
+            exit 1
+          fi
           TITLE=$(grep -m1 -F "## [$VERSION]" assets/charts/CHANGELOG.md | sed -E 's/^## \[//; s/\] — [0-9]{4}-[0-9]{2}-[0-9]{2} — / — /')
           [ -n "$TITLE" ] || TITLE="$VERSION"
           awk -v ver="$VERSION" 'index($0, "## [" ver "]")==1{f=1; next} /^## \[/{f=0} f' \

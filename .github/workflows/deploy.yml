@@ -8,7 +8,10 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    # Two waits run one after the other, the styles tag and then the charts
+    # tag on jsDelivr (RC-068): room for both to stall before the job fails
+    # (maintainer, 2026-11-19; was 75).
+    timeout-minutes: 135
 
     steps:
       - name: Checkout source
@@ -49,6 +52,27 @@ jobs:
             sleep 30
           done
           echo "::error::rare-styles $VERSION is not tagged/served after 60 min — check the Release Rare Styles workflow. Not deploying docs that pin it."
+          exit 1
+
+      # The same for `rare-charts@<versions.charts>` (charts/index.md, the
+      # CDN line on /charts/installation/; RC-068): when a merge bumps
+      # assets/charts/src/version.json, sync-charts.yml tags rare-charts in
+      # parallel, and the docs must not advertise the tag before jsDelivr
+      # serves it. If the sync fails, the site keeps its last deploy.
+      - name: Wait until the documented RareCharts version is on jsDelivr
+        run: |
+          VERSION=$(node -p "require('./_data/versions.js').charts")
+          URL="https://cdn.jsdelivr.net/gh/raredigits/rare-charts@$VERSION/rare-charts.min.js"
+          for i in $(seq 1 120); do
+            if git ls-remote --exit-code --tags https://github.com/raredigits/rare-charts.git "refs/tags/$VERSION" > /dev/null \
+               && curl -sfI "$URL" > /dev/null; then
+              echo "rare-charts $VERSION is tagged and served: $URL"
+              exit 0
+            fi
+            echo "waiting for rare-charts $VERSION ($i/120)…"
+            sleep 30
+          done
+          echo "::error::rare-charts $VERSION is not tagged/served after 60 min — check the Sync Charts to rare-charts workflow. Not deploying docs that pin it."
           exit 1
 
       - name: Build SCSS and 11ty site
