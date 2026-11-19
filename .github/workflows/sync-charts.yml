@@ -24,6 +24,10 @@ on:
       - 'assets/charts/rare-charts.css'
       - 'assets/charts/examples/**'
       - 'assets/charts/data/**'
+      # the tests gate the release: a fix to a test alone must start the
+      # release it unblocks (v0.9.8_7, 2026-11-19); a released version is
+      # skipped in seconds
+      - 'test/**'
       - '.github/workflows/sync-charts.yml'
   workflow_dispatch:
     inputs:
